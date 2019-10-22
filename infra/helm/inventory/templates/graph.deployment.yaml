@@ -1,0 +1,97 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "inventory.graph.fullname" . }}
+  labels: {{- include "inventory.graph.metaLabels" . | nindent 4 }}
+  {{- with .Values.graph.deploymentAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.graph.replicas }}
+  selector:
+    matchLabels: {{- include "inventory.graph.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "inventory.graph.selectorLabels" . | nindent 8 }}
+      {{- with .Values.graph.podAnnotations }}
+      annotations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "inventory.graph.serviceAccountName" . }}
+      {{- with .Values.graph.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "inventory.imagePullSecrets" . | indent 6 }}
+      containers:
+        - name: graph
+          image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
+          imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
+          args:
+            - --web.listen-address={{ printf ":%d" (int .Values.graph.service.port.http.targetPort) }}
+            - --grpc.listen-address={{ printf ":%d" (int .Values.graph.service.port.grpc.targetPort) }}
+          env:
+            - name: WS_AUTH_URL
+              value: {{ printf "http://%s:%d/user/me" (include "inventory.front.fullname" .) (int .Values.front.service.port) | quote }}
+            {{- with .Values.graph.spec.event.url }}
+            - name: EVENT_PUBSUB_URL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- if .Values.integrations.orc8r.enabled }}
+            - name: ORC8R_HOST
+              value: {{ required ".Values.integrations.orc8r.host is required" .Values.integrations.orc8r.host | quote }}
+            - name: ORC8R_CERT
+              value: "/certs/orc8r/tls.cert"
+            - name: ORC8R_PKEY
+              value: "/certs/orc8r/tls.key"
+            {{- end }}
+            {{- include "inventory.loggingEnv" .Values.graph | nindent 12 }}
+            {{- include "inventory.tracingEnv" . | nindent 12 }}
+            {{- with .Values.graph.spec.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ template "inventory.graph.fullname" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.graph.service.port.http.targetPort }}
+            - name: grpc
+              containerPort: {{ .Values.graph.service.port.grpc.targetPort }}
+          {{- if .Values.integrations.orc8r.enabled }}
+          volumeMounts:
+            - mountPath: /certs/orc8r
+              name: orc8r-certs
+              readOnly: true
+          {{- end }}
+          {{- if .Values.graph.probes.liveness }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/liveness
+              port: http
+            {{- toYaml .Values.graph.probes.liveness | nindent 12 }}
+          {{- end }}
+          {{- if .Values.graph.probes.readiness }}
+          readinessProbe:
+            httpGet:
+              path: /healthz/readiness
+              port: http
+            {{- toYaml .Values.graph.probes.readiness | nindent 12 }}
+          {{- end }}
+          resources: {{- toYaml .Values.graph.resources | nindent 12 }}
+      {{- if .Values.integrations.orc8r.enabled }}
+      volumes:
+        - name: orc8r-certs
+          secret:
+            secretName: {{ template  "inventory.integrations.orc8r.certsSecretName" . }}
+      {{- end }}

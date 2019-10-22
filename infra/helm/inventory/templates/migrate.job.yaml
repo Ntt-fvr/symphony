@@ -1,0 +1,45 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "inventory.migrate.fullname" . }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+  labels: {{- include "inventory.migrate.metaLabels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: {{ template "inventory.migrate.fullname" . }}
+      labels: {{- include "inventory.migrate.metaLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.graph.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "inventory.imagePullSecrets" . | indent 6 }}
+      containers:
+        - name: migrate
+          image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
+          imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
+          command:
+            - /bin/migrate
+          args:
+            - --db-driver=mysql
+            - --db-dsn=$(MYSQL_DSN)
+          env:
+            - name: MYSQL_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "inventory.graph.fullname" . }}
+                  key: MYSQL_DSN
+      restartPolicy: OnFailure

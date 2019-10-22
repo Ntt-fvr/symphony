@@ -1,0 +1,18 @@
+# Copyright (c) 2004-present Facebook All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+apiVersion: v2
+name: inventory
+type: application
+version: 1.4.0
+appVersion: 0.1
+description: Inventory system for Symphony project.
+keywords:
+  - symphony
+  - inventory
+sources:
+  - https://github.com/facebookincubator/symphony
+maintainers:
+  - name: Alex Snast
+    email: alexsn@fb.com

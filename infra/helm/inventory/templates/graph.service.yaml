@@ -1,0 +1,32 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "inventory.graph.fullname" . }}
+  labels: {{- include "inventory.graph.metaLabels" . | nindent 4 }}
+spec:
+  selector: {{- include "inventory.graph.selectorLabels" . | nindent 4 }}
+  type: {{ .Values.graph.service.type }}
+  ports:
+    {{- with .Values.graph.service.port.http }}
+    - name: http
+      port: {{ .port }}
+      targetPort: http
+      {{- if (and (eq $.Values.graph.service.type "NodePort") (not (empty .nodePort))) }}
+      nodePort: {{ .nodePort }}
+      {{- end }}
+    {{- end }}
+    {{- with .Values.graph.service.port.grpc }}
+    - name: grpc
+      port: {{ .port }}
+      targetPort: grpc
+    {{- end }}
+    {{- if .Values.serviceMonitor.enabled }}
+    - name: http-metrics
+      port: 9464
+      targetPort: http
+    {{- end }}
