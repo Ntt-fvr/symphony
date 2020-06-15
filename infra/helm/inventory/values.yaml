@@ -299,6 +299,9 @@ graph:
       pass: "root"
       param: ""
 
+    tenancy:
+      tenantMaxDBConn: 10
+
     # Event pubsub configuration
     # ref: https://gocloud.dev/howto/pubsub/
     event:

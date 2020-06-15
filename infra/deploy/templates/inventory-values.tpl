@@ -51,6 +51,8 @@ graph:
       port: ${graph_db_port}
       user: ${graph_db_user}
       param: charset=utf8&parseTime=true&interpolateParams=true
+    tenancy:
+      tenantMaxDBConn: 10
     event:
       url: nats://graph.event
     extraEnvVars:

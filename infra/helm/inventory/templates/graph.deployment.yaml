@@ -49,6 +49,10 @@ spec:
             - name: EVENT_SUB_URL
               value: {{ . | quote }}
             {{- end }}
+            {{- with .Values.graph.spec.tenancy.tenantMaxDBConn }}
+            - name: TENANCY_DB_MAX_CONN
+              value: {{ . | quote }}
+            {{- end }}
             {{- if .Values.integrations.orc8r.enabled }}
             - name: ORC8R_HOST
               value: {{ required ".Values.integrations.orc8r.host is required" .Values.integrations.orc8r.host | quote }}
