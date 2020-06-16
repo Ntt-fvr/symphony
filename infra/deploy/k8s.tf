@@ -63,6 +63,9 @@ resource "helm_release" "cluster_autoscaler" {
   keyring    = ""
 
   values = [<<VALUES
+  image:
+    repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
+    tag: v1.16.5
   autoDiscovery:
     clusterName: ${module.eks.cluster_id}
   awsRegion: ${data.aws_region.current.id}
