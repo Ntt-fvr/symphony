@@ -1,0 +1,78 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "inventory.async.fullname" . }}
+  labels: {{- include "inventory.async.metaLabels" . | nindent 4 }}
+  {{- with .Values.async.deploymentAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.async.replicas }}
+  selector:
+    matchLabels: {{- include "inventory.async.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "inventory.async.selectorLabels" . | nindent 8 }}
+      {{- with .Values.async.podAnnotations }}
+      annotations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "inventory.async.serviceAccountName" . }}
+      {{- with .Values.async.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.async.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.async.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "inventory.imagePullSecrets" . | indent 6 }}
+      containers:
+        - name: async
+          image: {{ .Values.async.image.repository }}:{{ .Values.async.image.tag }}
+          imagePullPolicy: {{ .Values.async.image.pullPolicy }}
+          env:
+            {{- with .Values.async.spec.event.pub_url }}
+            - name: EVENT_PUB_URL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.async.spec.event.sub_url }}
+            - name: EVENT_SUB_URL
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.async.spec.tenancy.tenantMaxDBConn }}
+            - name: TENANCY_DB_MAX_CONN
+              value: {{ . | quote }}
+            {{- end }}
+            {{- include "inventory.loggingEnv" .Values.async | nindent 12 }}
+            {{- include "inventory.tracingEnv" . | nindent 12 }}
+            {{- with .Values.async.spec.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ template "inventory.graphDB.secretName" . }}
+          ports:
+            - name: http
+              containerPort: 80
+          {{- if .Values.async.probes.liveness }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/liveness
+              port: http
+            {{- toYaml .Values.async.probes.liveness | nindent 12 }}
+          {{- end }}
+          {{- if .Values.async.probes.readiness }}
+          readinessProbe:
+            httpGet:
+              path: /healthz/readiness
+              port: http
+            {{- toYaml .Values.async.probes.readiness | nindent 12 }}
+          {{- end }}
+          resources: {{- toYaml .Values.async.resources | nindent 12 }}

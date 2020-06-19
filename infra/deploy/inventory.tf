@@ -87,7 +87,7 @@ resource "helm_release" "inventory" {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "inventory"
-  version             = "1.4.2"
+  version             = "1.5.0"
   keyring             = ""
   max_history         = 100
 
@@ -113,6 +113,7 @@ resource "helm_release" "inventory" {
     graph_db_port      = module.graph_db.this_db_instance_port
     graph_db_user      = module.graph_db.this_db_instance_username
     graph_replicas     = 3
+    async_replicas     = 3
     store_bucket_url   = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
     store_sa_name      = module.inventory_store_role.service_account_name
     store_rolearn      = module.inventory_store_role.role_arn
@@ -127,7 +128,7 @@ resource "helm_release" "inventory" {
   }
 
   set_sensitive {
-    name  = "graph.spec.mysql.pass"
+    name  = "graphDB.mysql.pass"
     value = module.graph_db.this_db_instance_password
   }
 

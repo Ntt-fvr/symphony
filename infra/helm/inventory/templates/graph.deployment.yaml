@@ -68,7 +68,7 @@ spec:
             {{- end }}
           envFrom:
             - secretRef:
-                name: {{ template "inventory.graph.fullname" . }}
+                name: {{ template "inventory.graphDB.secretName" . }}
           ports:
             - name: http
               containerPort: {{ .Values.graph.service.port.http.targetPort }}
