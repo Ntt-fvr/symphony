@@ -9,7 +9,7 @@ import sys
 from argparse import Namespace
 from asyncio.events import AbstractEventLoop
 from datetime import datetime
-from typing import Tuple
+from typing import Sequence, Tuple
 
 from pyinventory import InventoryClient
 from pyinventory.common.data_class import Location
@@ -46,7 +46,7 @@ async def run_it(
 
 async def main(
     email: str, password: str, tenant: str
-) -> Tuple[Tuple[Location, float, float]]:
+) -> Sequence[Tuple[Location, float, float]]:
     client = get_client(email=email, password=password, tenant=tenant)
     locations_with_external_ids = get_building_locations(client)
     t = Timer()

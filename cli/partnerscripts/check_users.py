@@ -7,7 +7,8 @@ import sys
 from typing import List
 
 from pyinventory import InventoryClient
-from pyinventory.graphql.fragment.user import UserFragment
+from pyinventory.api.user import get_users
+from pyinventory.common.data_class import User
 
 
 if __name__ == "__main__":
@@ -21,7 +22,7 @@ if __name__ == "__main__":
     password: str = args.password
     tenant: str = args.tenant
     result: List[str] = []
-    users: List[UserFragment] = []
+    users: List[User] = []
     try:
         client = InventoryClient(username, password, tenant)
     except Exception as e:
@@ -29,7 +30,7 @@ if __name__ == "__main__":
         print(f"ERROR - {str(e)}")
 
     try:
-        users = client.get_users()  # pyre-ignore
+        users = get_users(client)
     except Exception as e:
         print(f"ERROR collectng users - {str(e)}")
     finally:
@@ -44,7 +45,7 @@ if __name__ == "__main__":
             continue
 
     print(f"{tenant}")
-    for user in result:
-        print(f"\t{user}")
+    for user_id in result:
+        print(f"\t{user_id}")
 
     sys.exit(0)

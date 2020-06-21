@@ -10,6 +10,7 @@ import sys
 from typing import Generator
 
 from pyinventory import InventoryClient
+from pyinventory.api.file import add_file
 
 
 def list_dir(directory_path: str) -> Generator[str, None, None]:
@@ -40,6 +41,5 @@ if __name__ == "__main__":
     for file in list_dir(args.local_dir_path):
         file_name = os.path.basename(file)
         category = file_name.split("_")[1]
-        # pyre-fixme[16]: `InventoryClient` has no attribute `add_file`.
-        client.add_file(file, args.entity_type, args.entity_id, category)
+        add_file(client, file, args.entity_type, args.entity_id, category)
     sys.exit(0)

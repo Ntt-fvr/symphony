@@ -7,6 +7,7 @@ import argparse
 import sys
 
 from pyinventory import InventoryClient
+from pyinventory.api.file import add_files
 
 
 if __name__ == "__main__":
@@ -27,6 +28,5 @@ if __name__ == "__main__":
     # pyre-fixme[5]: Global expression must be annotated.
     args = parser.parse_args()
     client = InventoryClient(args.email, args.password, args.tenant)
-    # pyre-fixme[16]: `InventoryClient` has no attribute `add_files`.
-    client.add_files(args.local_dir_path, args.entity_type, args.entity_id)
+    add_files(client, args.local_dir_path, args.entity_type, args.entity_id)
     sys.exit(0)
