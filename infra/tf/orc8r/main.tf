@@ -31,7 +31,7 @@ locals {
       es_domain     = "tf-symphony-default"
       chart_version = "1.4.31"
 
-      use_nginx_proxy = false
+      use_nginx_proxy = true
     }
   }
 
