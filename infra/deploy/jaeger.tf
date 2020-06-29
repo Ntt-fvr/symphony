@@ -4,7 +4,7 @@ resource "helm_release" "jaeger_operator" {
   repository = local.helm_repository.jaegertracing
   name       = "jaeger-operator"
   namespace  = "observability"
-  version    = "2.15.0"
+  version    = "2.15.1"
   keyring    = ""
 
   values = [<<EOT

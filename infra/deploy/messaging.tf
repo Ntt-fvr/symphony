@@ -4,7 +4,7 @@ resource "helm_release" "nats" {
   namespace  = "messaging"
   repository = local.helm_repository.bitnami
   chart      = "nats"
-  version    = "4.4.0"
+  version    = "4.4.1"
   keyring    = ""
 
   values = [<<VALUES

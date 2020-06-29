@@ -86,7 +86,7 @@ resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.2.0"
+  version    = "4.2.1"
   namespace  = "kube-system"
   keyring    = ""
 }
@@ -124,7 +124,7 @@ resource "helm_release" "aws_vpc_cni" {
   repository = local.helm_repository.eks
   name       = "aws-vpc-cni"
   namespace  = "kube-system"
-  version    = "1.0.4"
+  version    = "1.0.6"
   keyring    = ""
 
   values = [<<VALUES
