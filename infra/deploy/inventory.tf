@@ -117,7 +117,7 @@ resource "helm_release" "inventory" {
     store_bucket_url   = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
     store_sa_name      = module.inventory_store_role.service_account_name
     store_rolearn      = module.inventory_store_role.role_arn
-    orc8r_host         = terraform.workspace == "staging" ? "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}" : "orc8r-clientcert-legacy.${kubernetes_namespace.orc8r.id}"
+    orc8r_host         = "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}"
     grafana_address    = "orc8r-user-grafana.${kubernetes_namespace.orc8r.id}:3000"
     nats_server_url    = format("nats://%s-client.%s", helm_release.nats.name, helm_release.nats.namespace)
   })]
