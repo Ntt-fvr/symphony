@@ -89,6 +89,12 @@ resource "helm_release" "metrics_server" {
   version    = "4.2.1"
   namespace  = "kube-system"
   keyring    = ""
+
+  values = [<<VALUES
+  extraArgs:
+    kubelet-preferred-address-types: InternalIP
+  VALUES
+  ]
 }
 
 # monitors extra attributes on nodes
