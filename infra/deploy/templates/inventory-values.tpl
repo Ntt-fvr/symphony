@@ -15,6 +15,7 @@ tracing:
   enabled: true
   jaeger:
     agentEndpoint: localhost:6831
+    agentThriftEndpoint: localhost:6832
 graphDB:
   mysql:
     host: ${graph_db_host}
@@ -22,6 +23,8 @@ graphDB:
     user: ${graph_db_user}
     param: charset=utf8&parseTime=true&interpolateParams=true
 front:
+  deploymentAnnotations:
+    sidecar.jaegertracing.io/inject: "true"
   podDisruptionBudget:
     enabled: true
   replicas: ${replicas}
