@@ -65,7 +65,7 @@ resource "helm_release" "efs_provisioner" {
   name       = "efs-provisioner"
   repository = local.helm_repository.stable
   chart      = "efs-provisioner"
-  version    = "0.12.0"
+  version    = "0.12.1"
   namespace  = "kube-system"
   keyring    = ""
 

@@ -1,11 +1,12 @@
 # An open-source, cloud-native messaging system
 resource "helm_release" "nats" {
-  name       = "nats"
-  namespace  = "messaging"
-  repository = local.helm_repository.bitnami
-  chart      = "nats"
-  version    = "4.4.1"
-  keyring    = ""
+  name             = "nats"
+  namespace        = "messaging"
+  create_namespace = true
+  repository       = local.helm_repository.bitnami
+  chart            = "nats"
+  version          = "4.4.1"
+  keyring          = ""
 
   values = [<<VALUES
   replicaCount: 3
@@ -13,6 +14,24 @@ resource "helm_release" "nats" {
     enabled: false
   VALUES
   ]
+}
+
+# pod disruption budget for nats pods
+resource "kubernetes_pod_disruption_budget" "nats" {
+  metadata {
+    name      = helm_release.nats.name
+    namespace = helm_release.nats.namespace
+  }
+
+  spec {
+    max_unavailable = 1
+    selector {
+      match_labels = {
+        app     = helm_release.nats.name
+        release = helm_release.nats.name
+      }
+    }
+  }
 }
 
 # exports nats stats to prometheus

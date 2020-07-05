@@ -58,7 +58,7 @@ resource "helm_release" "cluster_autoscaler" {
   chart      = "cluster-autoscaler"
   repository = local.helm_repository.stable
   name       = "cluster-autoscaler"
-  version    = "7.3.2"
+  version    = "7.3.3"
   namespace  = module.cluster_autoscaler_role.service_account_namespace
   keyring    = ""
 
@@ -148,7 +148,7 @@ resource "helm_release" "node_termination_handler" {
   repository = local.helm_repository.eks
   name       = "aws-node-termination-handler"
   namespace  = "kube-system"
-  version    = "0.7.5"
+  version    = "0.8.0"
   keyring    = ""
 
   set {
