@@ -5,33 +5,19 @@ resource "helm_release" "nats" {
   create_namespace = true
   repository       = local.helm_repository.bitnami
   chart            = "nats"
-  version          = "4.4.1"
+  version          = "4.5.1"
   keyring          = ""
 
   values = [<<VALUES
   replicaCount: 3
   auth:
     enabled: false
+  pdb:
+    create: true
+    minAvailable: null
+    maxUnavailable: 1
   VALUES
   ]
-}
-
-# pod disruption budget for nats pods
-resource "kubernetes_pod_disruption_budget" "nats" {
-  metadata {
-    name      = helm_release.nats.name
-    namespace = helm_release.nats.namespace
-  }
-
-  spec {
-    max_unavailable = 1
-    selector {
-      match_labels = {
-        app     = helm_release.nats.name
-        release = helm_release.nats.name
-      }
-    }
-  }
 }
 
 # exports nats stats to prometheus
