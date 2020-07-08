@@ -30,7 +30,7 @@ if __name__ == "__main__":
         print(f"ERROR - {str(e)}")
 
     try:
-        users = get_users(client)
+        users = list(get_users(client))
     except Exception as e:
         print(f"ERROR collectng users - {str(e)}")
     finally:

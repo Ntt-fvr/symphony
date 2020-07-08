@@ -56,7 +56,7 @@ def get_location(client: InventoryClient, external_id: str) -> Tuple[Location, f
 def get_building_locations(client: InventoryClient) -> List[Tuple[Location, str]]:
     t = Timer()
     t.start()
-    locations = get_locations(client=client)
+    locations = list(get_locations(client=client))
     print(f"Collected {len(locations)} Locations in {t.stop():.4f} secs")
     result = []
     for location in locations:
