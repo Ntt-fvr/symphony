@@ -29,7 +29,7 @@ resource "helm_release" "orc8r" {
     envdir_secret  = kubernetes_secret.orc8r["envdir"].metadata.0.name
 
     controller_replicas = 2
-    proxy_replicas      = 2
+    proxy_replicas      = 0
 
     controller_hostname = format(
       "controller%s.%s",
