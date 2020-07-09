@@ -16,6 +16,43 @@ resource "aws_wafregional_regex_match_set" "blocked_uris" {
   }
 }
 
+resource "aws_wafregional_regex_pattern_set" "keycloak_blocked_uris" {
+  name = "keycloakblockeduris"
+  regex_pattern_strings = [
+    "^/auth/admin/",
+    "^/auth/realms/master/",
+    "^/?$",
+  ]
+}
+
+resource "aws_wafregional_regex_match_set" "keycloak_blocked_uris" {
+  name = "keycloakblockeduris"
+
+  regex_match_tuple {
+    regex_pattern_set_id = aws_wafregional_regex_pattern_set.keycloak_blocked_uris.id
+    text_transformation  = "NONE"
+
+    field_to_match {
+      type = "URI"
+    }
+  }
+}
+
+resource "aws_wafregional_byte_match_set" "keycloak_host" {
+  name = "keycloak"
+
+  byte_match_tuples {
+    text_transformation   = "LOWERCASE"
+    target_string         = "auth.${local.domains.symphony.name}"
+    positional_constraint = "ENDS_WITH"
+
+    field_to_match {
+      type = "HEADER"
+      data = "host"
+    }
+  }
+}
+
 resource "aws_wafregional_rule" "blocked_uris" {
   metric_name = "blockeduris"
   name        = "blockeduris"
@@ -59,9 +96,33 @@ resource "aws_wafregional_rule" "master" {
   }
 }
 
+resource "aws_wafregional_rule" "keycloak" {
+  metric_name = "keycloakblockeduris"
+  name        = "keycloakblockeduris"
+
+  predicate {
+    data_id = aws_wafregional_byte_match_set.keycloak_host.id
+    negated = false
+    type    = "ByteMatch"
+  }
+
+  predicate {
+    data_id = aws_wafregional_regex_match_set.keycloak_blocked_uris.id
+    negated = false
+    type    = "RegexMatch"
+  }
+
+  predicate {
+    data_id = aws_wafregional_ipset.fb_ips.id
+    negated = true
+    type    = "IPMatch"
+  }
+}
+
 locals {
   wafacl_rules = [
     aws_wafregional_rule.master.id,
+    aws_wafregional_rule.keycloak.id,
     aws_wafregional_rule.blocked_uris.id,
     aws_wafregional_rule.cellcom.id,
   ]

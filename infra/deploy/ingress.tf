@@ -235,6 +235,7 @@ resource "kubernetes_ingress" "gateway" {
         for _, domain in local.domains : [
           domain.name,
           format("*.%s", domain.name),
+          format("auth.%s", domain.name),
         ]
       ])
     }
@@ -245,7 +246,6 @@ resource "kubernetes_ingress" "gateway" {
         for _, domain in local.domains : [
           domain.intern_name,
           format("*.%s", domain.intern_name),
-          format("auth.%s", domain.name),
         ]
       ])
     }
