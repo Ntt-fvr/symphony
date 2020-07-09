@@ -32,7 +32,7 @@ module "keycloak_db" {
   monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
   monitoring_interval = 60
 
-  vpc_security_group_ids = [aws_security_group.eks_mysql.id]
+  vpc_security_group_ids = [aws_security_group.eks_rds["mysql"].id]
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 

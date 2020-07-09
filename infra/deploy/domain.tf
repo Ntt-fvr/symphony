@@ -84,7 +84,7 @@ data "aws_route53_zone" "magma" {
 }
 
 locals {
-  magma_hosted_zone = length(aws_route53_zone.magma) > 0 ? aws_route53_zone.magma[0] : data.aws_route53_zone.magma[0]
+  magma_hosted_zone = try(aws_route53_zone.magma[0], data.aws_route53_zone.magma[0])
 }
 
 resource "aws_route53_record" "symphony_signup" {

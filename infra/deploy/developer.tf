@@ -33,7 +33,7 @@ data "aws_iam_role" "eks_developer" {
 }
 
 locals {
-  eks_developer_role  = length(aws_iam_role.eks_developer) > 0 ? aws_iam_role.eks_developer[0] : data.aws_iam_role.eks_developer[0]
+  eks_developer_role  = try(aws_iam_role.eks_developer[0], data.aws_iam_role.eks_developer[0])
   eks_developer_group = "symphony:developers"
 }
 

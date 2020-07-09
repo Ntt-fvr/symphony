@@ -1,26 +1,3 @@
-locals {
-  # postgres standard port
-  postgres_port = 5432
-}
-
-# grant postgres access to eks nodes
-resource "aws_security_group" "eks_postgres" {
-  name_prefix = "eks-postgres"
-  description = "EKS node access to Postgres"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port       = local.postgres_port
-    to_port         = local.postgres_port
-    protocol        = "tcp"
-    security_groups = [module.eks.worker_security_group_id]
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
 # orc8r database password
 resource "random_password" "orc8r_db" {
   length  = 50
@@ -63,7 +40,7 @@ module "orc8r_db" {
   monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
   monitoring_interval = 60
 
-  vpc_security_group_ids = [aws_security_group.eks_postgres.id]
+  vpc_security_group_ids = [aws_security_group.eks_rds["postgres"].id]
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
@@ -76,7 +53,7 @@ resource "aws_secretsmanager_secret" "orc8r_db" {
   description = "Orchestrator database credentials"
 }
 
-# store orc8r_db credentionals for orc8r deployment
+# store orc8r_db credentials for orc8r deployment
 resource "aws_secretsmanager_secret_version" "orc8r_db" {
   secret_id = aws_secretsmanager_secret.orc8r_db.id
   secret_string = jsonencode({
@@ -190,7 +167,7 @@ data "aws_iam_role" "orc8r_admin" {
 }
 
 locals {
-  orc8r_admin_role  = length(aws_iam_role.orc8r_admin) > 0 ? aws_iam_role.orc8r_admin[0] : data.aws_iam_role.orc8r_admin[0]
+  orc8r_admin_role  = try(aws_iam_role.orc8r_admin[0], data.aws_iam_role.orc8r_admin[0])
   orc8r_admin_group = "orc8r:admins"
 }
 
