@@ -54,7 +54,7 @@ resource "random_string" "rds_password" {
   special = false
 }
 
-# generate random database indentifier
+# generate random database identifier
 resource "random_pet" "rds_identifier" {}
 
 module "db" {
