@@ -3,6 +3,7 @@ locals {
   ctf_count  = terraform.workspace == "staging" ? 1 : 0
   ctf_create = local.ctf_count > 0
   # k8s group name for ctf admins.
+  ctf_admin_user  = "ctf:master"
   ctf_admin_group = "ctf:masters"
 }
 

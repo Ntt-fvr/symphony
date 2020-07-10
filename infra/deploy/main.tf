@@ -13,8 +13,8 @@ terraform {
 }
 
 locals {
-  # current enviroment name
-  enviroment = terraform.workspace != "default" ? terraform.workspace : "production"
+  # current environment name
+  environment = terraform.workspace != "default" ? terraform.workspace : "production"
 
   # default resource tags
   tags = {

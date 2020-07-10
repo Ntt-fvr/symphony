@@ -1,7 +1,7 @@
 output "kubeconfig" {
   description = "kubectl config file contents for this EKS cluster."
   value = templatefile("${path.module}/templates/kubeconfig.tpl", {
-    cluster_name      = format("symphony-%s", terraform.workspace != "default" ? terraform.workspace : "production")
+    cluster_name      = "symphony-${local.environment}"
     eks_cluster_name  = local.eks_cluster_name
     cluster_endpoint  = module.eks.cluster_endpoint
     cluster_auth_data = module.eks.cluster_certificate_authority_data

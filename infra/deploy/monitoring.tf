@@ -10,7 +10,7 @@ resource "helm_release" "prometheus_operator" {
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
     host               = local.domains.symphony.intern_name
-    env                = local.enviroment
+    env                = local.environment
     access_token       = jsondecode(data.aws_secretsmanager_secret_version.alertmanager.secret_string)["access_token"]
     grafana_sa_name    = module.grafana_role.service_account_name
     grafana_rolearn    = module.grafana_role.role_arn

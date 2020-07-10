@@ -3,7 +3,7 @@ locals {
   eks_cluster_name = "${var.project}-${terraform.workspace}"
 
   # iam role path for service accounts
-  eks_sa_role_path = "/service_accounts/${local.enviroment}/"
+  eks_sa_role_path = "/service_accounts/${local.environment}/"
 }
 
 # eks workers ssh key
@@ -101,12 +101,12 @@ module "eks" {
     ],
     try([{
       rolearn  = aws_iam_role.ctf_admin[0].arn
-      username = ""
+      username = local.ctf_admin_user
       groups   = [local.ctf_admin_group]
     }], []),
   )
 
-  kubeconfig_name                      = "symphony-${local.enviroment}"
+  kubeconfig_name                      = "symphony-${local.environment}"
   kubeconfig_aws_authenticator_command = "aws"
   kubeconfig_aws_authenticator_command_args = concat(
     [
