@@ -163,7 +163,7 @@ resource "helm_release" "alb_ingress_controller" {
   chart      = "aws-alb-ingress-controller"
   name       = module.alb_ingress_controller_role.service_account_name
   repository = local.helm_repository.incubator
-  version    = "1.0.0"
+  version    = "1.0.2"
   namespace  = module.alb_ingress_controller_role.service_account_namespace
   keyring    = ""
 
@@ -188,7 +188,7 @@ resource "helm_release" "nginx_ingress" {
   repository = local.helm_repository.stable
   name       = "nginx-ingress"
   namespace  = "kube-system"
-  version    = "1.40.2"
+  version    = "1.40.3"
   keyring    = ""
 
   values = [<<VALUES
