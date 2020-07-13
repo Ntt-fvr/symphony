@@ -28,8 +28,9 @@ resource "helm_release" "orc8r" {
     configs_secret = kubernetes_secret.orc8r["configs"].metadata.0.name
     envdir_secret  = kubernetes_secret.orc8r["envdir"].metadata.0.name
 
+    create_nginx        = true
     controller_replicas = 2
-    proxy_replicas      = 0
+    nginx_replicas      = 2
 
     controller_hostname = format(
       "controller%s.%s",
@@ -62,9 +63,6 @@ resource "helm_release" "orc8r" {
     grafana_pvc_grafanaDatasources = kubernetes_persistent_volume_claim.storage["grafanadatasources"].metadata.0.name
     grafana_pvc_grafanaProviders   = kubernetes_persistent_volume_claim.storage["grafanaproviders"].metadata.0.name
     grafana_pvc_grafanaDashboards  = kubernetes_persistent_volume_claim.storage["grafanadashboards"].metadata.0.name
-
-    create_nginx   = local.env[terraform.workspace].use_nginx_proxy
-    nginx_replicas = 2
   })]
 
   set_sensitive {

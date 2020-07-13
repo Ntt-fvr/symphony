@@ -21,17 +21,13 @@ locals {
       region        = "eu-west-1"
       cluster       = "phb-staging"
       es_domain     = "tf-symphony-staging"
-      chart_version = "1.4.31"
-
-      use_nginx_proxy = true
+      chart_version = "1.4.32"
     }
     production = {
       region        = "us-east-1"
       cluster       = "phb-default"
       es_domain     = "tf-symphony-default"
-      chart_version = "1.4.31"
-
-      use_nginx_proxy = true
+      chart_version = "1.4.32"
     }
   }
 
