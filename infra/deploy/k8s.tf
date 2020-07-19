@@ -130,7 +130,7 @@ resource "helm_release" "aws_vpc_cni" {
   repository = local.helm_repository.eks
   name       = "aws-vpc-cni"
   namespace  = "kube-system"
-  version    = "1.0.7"
+  version    = "1.0.8"
   keyring    = ""
 
   values = [<<VALUES
@@ -140,19 +140,4 @@ resource "helm_release" "aws_vpc_cni" {
       eks.amazonaws.com/role-arn: ${module.aws_node_role.role_arn}
   VALUES
   ]
-}
-
-# gracefully handle EC2 instance shutdown
-resource "helm_release" "node_termination_handler" {
-  chart      = "aws-node-termination-handler"
-  repository = local.helm_repository.eks
-  name       = "aws-node-termination-handler"
-  namespace  = "kube-system"
-  version    = "0.9.0"
-  keyring    = ""
-
-  set {
-    name  = "deleteLocalData"
-    value = "true"
-  }
 }

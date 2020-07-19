@@ -193,7 +193,7 @@ resource "helm_release" "fluentd_elasticsearch" {
   repository = local.helm_repository.kiwigrid
   name       = "fluentd-elasticsearch"
   namespace  = "monitoring"
-  version    = "9.4.2"
+  version    = "9.6.0"
   keyring    = ""
 
   values = [<<EOT
