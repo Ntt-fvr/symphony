@@ -9,13 +9,13 @@ require (
 	github.com/99designs/gqlgen v0.11.3
 	github.com/AlekSi/pointer v1.1.0
 	github.com/Azure/azure-amqp-common-go/v2 v2.1.0 // indirect
-	github.com/DATA-DOG/go-sqlmock v1.3.3
+	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.33.0
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebookincubator/ent v0.2.8-0.20200716170737-33e4eb3a5253
+	github.com/facebookincubator/ent v0.2.8-0.20200719150104-54f0a6769bda
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
