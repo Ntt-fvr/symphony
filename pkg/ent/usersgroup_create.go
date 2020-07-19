@@ -187,6 +187,19 @@ func (ugc *UsersGroupCreate) SaveX(ctx context.Context) *UsersGroup {
 }
 
 func (ugc *UsersGroupCreate) sqlSave(ctx context.Context) (*UsersGroup, error) {
+	ug, _spec := ugc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ugc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	ug.ID = int(id)
+	return ug, nil
+}
+
+func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 	var (
 		ug    = &UsersGroup{config: ugc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -275,13 +288,5 @@ func (ugc *UsersGroupCreate) sqlSave(ctx context.Context) (*UsersGroup, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ugc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	ug.ID = int(id)
-	return ug, nil
+	return ug, _spec
 }

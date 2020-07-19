@@ -203,8 +203,8 @@ func (hq *HyperlinkQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (hq *HyperlinkQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (hq *HyperlinkQuery) OnlyIDX(ctx context.Context) int {
 	id, err := hq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

@@ -163,8 +163,8 @@ func (ppq *PermissionsPolicyQuery) OnlyID(ctx context.Context) (id int, err erro
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (ppq *PermissionsPolicyQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (ppq *PermissionsPolicyQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ppq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

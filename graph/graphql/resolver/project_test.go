@@ -291,7 +291,7 @@ func TestEditProject(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, input.Name, project.Name)
 		assert.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
-		assert.Equal(t, *input.CreatorID, project.QueryCreator().OnlyXID(ctx))
+		assert.Equal(t, *input.CreatorID, project.QueryCreator().OnlyIDX(ctx))
 
 		updateInput := models.EditProjectInput{
 			ID:          project.ID,
@@ -366,22 +366,22 @@ func TestAddProjectWithProperties(t *testing.T) {
 
 	strValue := "Foo"
 	strProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 	strFixedProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyIDX(ctx),
 		StringValue:    &strFixedValue,
 	}
 	intValue := 5
 	intProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("int_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("int_prop")).OnlyIDX(ctx),
 		StringValue:    nil,
 		IntValue:       &intValue,
 	}
 	fl1, fl2 := 5.5, 7.8
 	rngProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyIDX(ctx),
 		RangeFromValue: &fl1,
 		RangeToValue:   &fl2,
 	}
@@ -404,20 +404,20 @@ func TestAddProjectWithProperties(t *testing.T) {
 
 	intFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("int_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetInt(intFetchProp.IntVal), pointer.GetInt(intProp.IntValue), "Comparing properties: int value")
-	require.Equal(t, intFetchProp.QueryType().OnlyXID(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	strFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	fixedStrFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_fixed_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(fixedStrFetchProp.StringVal), pointer.GetString(strFixedProp.StringValue), "Comparing properties: fixed string value")
-	require.Equal(t, fixedStrFetchProp.QueryType().OnlyXID(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	rngFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("rng_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeFromVal), pointer.GetFloat64(rngProp.RangeFromValue), "Comparing properties: range value")
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeToVal), pointer.GetFloat64(rngProp.RangeToValue), "Comparing properties: range value")
-	require.Equal(t, rngFetchProp.QueryType().OnlyXID(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	fetchedProps, err := pr.Properties(ctx, fetchedProj)
 	require.NoError(t, err)
@@ -470,7 +470,7 @@ func TestAddProjectWithProperties(t *testing.T) {
 
 	updatedProp := updatedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(updatedProp.StringVal), pointer.GetString(prop.StringValue), "Comparing updated properties: string value")
-	require.Equal(t, updatedProp.QueryType().OnlyXID(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.Equal(t, updatedProp.QueryType().OnlyIDX(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
 }
 
 func TestEditProjectType(t *testing.T) {

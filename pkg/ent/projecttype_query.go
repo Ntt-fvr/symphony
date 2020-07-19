@@ -203,8 +203,8 @@ func (ptq *ProjectTypeQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (ptq *ProjectTypeQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ptq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

@@ -174,6 +174,19 @@ func (sec *ServiceEndpointCreate) SaveX(ctx context.Context) *ServiceEndpoint {
 }
 
 func (sec *ServiceEndpointCreate) sqlSave(ctx context.Context) (*ServiceEndpoint, error) {
+	se, _spec := sec.createSpec()
+	if err := sqlgraph.CreateNode(ctx, sec.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	se.ID = int(id)
+	return se, nil
+}
+
+func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.CreateSpec) {
 	var (
 		se    = &ServiceEndpoint{config: sec.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -276,13 +289,5 @@ func (sec *ServiceEndpointCreate) sqlSave(ctx context.Context) (*ServiceEndpoint
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, sec.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	se.ID = int(id)
-	return se, nil
+	return se, _spec
 }

@@ -434,6 +434,19 @@ func (scsc *SurveyCellScanCreate) SaveX(ctx context.Context) *SurveyCellScan {
 }
 
 func (scsc *SurveyCellScanCreate) sqlSave(ctx context.Context) (*SurveyCellScan, error) {
+	scs, _spec := scsc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, scsc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	scs.ID = int(id)
+	return scs, nil
+}
+
+func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.CreateSpec) {
 	var (
 		scs   = &SurveyCellScan{config: scsc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -677,13 +690,5 @@ func (scsc *SurveyCellScanCreate) sqlSave(ctx context.Context) (*SurveyCellScan,
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, scsc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	scs.ID = int(id)
-	return scs, nil
+	return scs, _spec
 }

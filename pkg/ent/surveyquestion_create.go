@@ -424,6 +424,19 @@ func (sqc *SurveyQuestionCreate) SaveX(ctx context.Context) *SurveyQuestion {
 }
 
 func (sqc *SurveyQuestionCreate) sqlSave(ctx context.Context) (*SurveyQuestion, error) {
+	sq, _spec := sqc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, sqc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	sq.ID = int(id)
+	return sq, nil
+}
+
+func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.CreateSpec) {
 	var (
 		sq    = &SurveyQuestion{config: sqc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -689,13 +702,5 @@ func (sqc *SurveyQuestionCreate) sqlSave(ctx context.Context) (*SurveyQuestion, 
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, sqc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	sq.ID = int(id)
-	return sq, nil
+	return sq, _spec
 }

@@ -566,7 +566,7 @@ func TestEditServiceWithProperties(t *testing.T) {
 		var strValue = *v.StringVal + "-2"
 		propInput := &models.PropertyInput{
 			ID:             &v.ID,
-			PropertyTypeID: v.QueryType().OnlyXID(ctx),
+			PropertyTypeID: v.QueryType().OnlyIDX(ctx),
 			StringValue:    &strValue,
 		}
 		propInputClone = append(propInputClone, propInput)

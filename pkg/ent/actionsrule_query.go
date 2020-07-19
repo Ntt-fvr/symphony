@@ -141,8 +141,8 @@ func (arq *ActionsRuleQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (arq *ActionsRuleQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (arq *ActionsRuleQuery) OnlyIDX(ctx context.Context) int {
 	id, err := arq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

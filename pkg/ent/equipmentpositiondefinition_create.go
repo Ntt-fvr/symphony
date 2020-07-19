@@ -177,6 +177,19 @@ func (epdc *EquipmentPositionDefinitionCreate) SaveX(ctx context.Context) *Equip
 }
 
 func (epdc *EquipmentPositionDefinitionCreate) sqlSave(ctx context.Context) (*EquipmentPositionDefinition, error) {
+	epd, _spec := epdc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, epdc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	epd.ID = int(id)
+	return epd, nil
+}
+
+func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionDefinition, *sqlgraph.CreateSpec) {
 	var (
 		epd   = &EquipmentPositionDefinition{config: epdc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -265,13 +278,5 @@ func (epdc *EquipmentPositionDefinitionCreate) sqlSave(ctx context.Context) (*Eq
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, epdc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	epd.ID = int(id)
-	return epd, nil
+	return epd, _spec
 }

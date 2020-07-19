@@ -121,23 +121,23 @@ func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method m
 }
 
 func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResolver) {
-	id := r.client.Equipment.Query().Where(equipment.Name(currEquip)).OnlyXID(ctx)
+	id := r.client.Equipment.Query().Where(equipment.Name(currEquip)).OnlyIDX(ctx)
 	_, err := r.Mutation().RemoveEquipment(ctx, id, nil)
 	require.NoError(t, err)
 
-	id = r.client.Equipment.Query().Where(equipment.Name(parentEquip)).OnlyXID(ctx)
+	id = r.client.Equipment.Query().Where(equipment.Name(parentEquip)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveEquipment(ctx, id, nil)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(childLocation)).OnlyXID(ctx)
+	id = r.client.Location.Query().Where(location.Name(childLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(parentLocation)).OnlyXID(ctx)
+	id = r.client.Location.Query().Where(location.Name(parentLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(grandParentLocation)).OnlyXID(ctx)
+	id = r.client.Location.Query().Where(location.Name(grandParentLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 }

@@ -140,6 +140,19 @@ func (fprpc *FloorPlanReferencePointCreate) SaveX(ctx context.Context) *FloorPla
 }
 
 func (fprpc *FloorPlanReferencePointCreate) sqlSave(ctx context.Context) (*FloorPlanReferencePoint, error) {
+	fprp, _spec := fprpc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, fprpc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	fprp.ID = int(id)
+	return fprp, nil
+}
+
+func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoint, *sqlgraph.CreateSpec) {
 	var (
 		fprp  = &FloorPlanReferencePoint{config: fprpc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -198,13 +211,5 @@ func (fprpc *FloorPlanReferencePointCreate) sqlSave(ctx context.Context) (*Floor
 		})
 		fprp.Longitude = value
 	}
-	if err := sqlgraph.CreateNode(ctx, fprpc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	fprp.ID = int(id)
-	return fprp, nil
+	return fprp, _spec
 }

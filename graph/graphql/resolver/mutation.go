@@ -2937,7 +2937,7 @@ func (r mutationResolver) MoveLocation(ctx context.Context, locationID int, pare
 	}
 	if parentLocationID == nil {
 		// location becoming root which requires validation, see comment in AddLocation
-		if err := r.validateRootLocationUniqueness(ctx, l.QueryType().OnlyXID(ctx), l.Name); err != nil {
+		if err := r.validateRootLocationUniqueness(ctx, l.QueryType().OnlyIDX(ctx), l.Name); err != nil {
 			return nil, err
 		}
 		return client.Location.

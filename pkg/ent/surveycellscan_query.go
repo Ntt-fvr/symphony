@@ -203,8 +203,8 @@ func (scsq *SurveyCellScanQuery) OnlyID(ctx context.Context) (id int, err error)
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (scsq *SurveyCellScanQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (scsq *SurveyCellScanQuery) OnlyIDX(ctx context.Context) int {
 	id, err := scsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

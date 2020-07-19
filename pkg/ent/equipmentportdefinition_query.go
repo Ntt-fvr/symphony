@@ -204,8 +204,8 @@ func (epdq *EquipmentPortDefinitionQuery) OnlyID(ctx context.Context) (id int, e
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (epdq *EquipmentPortDefinitionQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (epdq *EquipmentPortDefinitionQuery) OnlyIDX(ctx context.Context) int {
 	id, err := epdq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

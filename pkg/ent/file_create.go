@@ -399,6 +399,19 @@ func (fc *FileCreate) SaveX(ctx context.Context) *File {
 }
 
 func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
+	f, _spec := fc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, fc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	f.ID = int(id)
+	return f, nil
+}
+
+func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	var (
 		f     = &File{config: fc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -668,13 +681,5 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, fc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	f.ID = int(id)
-	return f, nil
+	return f, _spec
 }

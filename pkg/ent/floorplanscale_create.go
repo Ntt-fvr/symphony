@@ -149,6 +149,19 @@ func (fpsc *FloorPlanScaleCreate) SaveX(ctx context.Context) *FloorPlanScale {
 }
 
 func (fpsc *FloorPlanScaleCreate) sqlSave(ctx context.Context) (*FloorPlanScale, error) {
+	fps, _spec := fpsc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, fpsc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	fps.ID = int(id)
+	return fps, nil
+}
+
+func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.CreateSpec) {
 	var (
 		fps   = &FloorPlanScale{config: fpsc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -215,13 +228,5 @@ func (fpsc *FloorPlanScaleCreate) sqlSave(ctx context.Context) (*FloorPlanScale,
 		})
 		fps.ScaleInMeters = value
 	}
-	if err := sqlgraph.CreateNode(ctx, fpsc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	fps.ID = int(id)
-	return fps, nil
+	return fps, _spec
 }

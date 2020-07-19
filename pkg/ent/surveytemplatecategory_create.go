@@ -158,6 +158,19 @@ func (stcc *SurveyTemplateCategoryCreate) SaveX(ctx context.Context) *SurveyTemp
 }
 
 func (stcc *SurveyTemplateCategoryCreate) sqlSave(ctx context.Context) (*SurveyTemplateCategory, error) {
+	stc, _spec := stcc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, stcc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	stc.ID = int(id)
+	return stc, nil
+}
+
+func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory, *sqlgraph.CreateSpec) {
 	var (
 		stc   = &SurveyTemplateCategory{config: stcc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -238,13 +251,5 @@ func (stcc *SurveyTemplateCategoryCreate) sqlSave(ctx context.Context) (*SurveyT
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, stcc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	stc.ID = int(id)
-	return stc, nil
+	return stc, _spec
 }

@@ -467,6 +467,19 @@ func (pc *PropertyCreate) SaveX(ctx context.Context) *Property {
 }
 
 func (pc *PropertyCreate) sqlSave(ctx context.Context) (*Property, error) {
+	pr, _spec := pc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	pr.ID = int(id)
+	return pr, nil
+}
+
+func (pc *PropertyCreate) createSpec() (*Property, *sqlgraph.CreateSpec) {
 	var (
 		pr    = &Property{config: pc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -804,13 +817,5 @@ func (pc *PropertyCreate) sqlSave(ctx context.Context) (*Property, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	pr.ID = int(id)
-	return pr, nil
+	return pr, _spec
 }

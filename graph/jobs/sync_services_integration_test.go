@@ -34,7 +34,7 @@ func TestAddNewService(t *testing.T) {
 	require.Len(t, services, 1)
 	s := services[0]
 
-	require.Equal(t, sData.st1.ID, s.QueryType().OnlyXID(ctx))
+	require.Equal(t, sData.st1.ID, s.QueryType().OnlyIDX(ctx))
 	for _, ep := range s.QueryEndpoints().AllX(ctx) {
 		e := ep.QueryEquipment().OnlyX(ctx)
 		switch ep.QueryDefinition().OnlyX(ctx).Index {
@@ -89,13 +89,13 @@ func TestRemoveLinkAndAddNewLink(t *testing.T) {
 				Equipment: eData.equ3.ID,
 				Port: eData.equ3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p6")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: eData.equ1.ID,
 				Port: eData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p6")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	require.NoError(t, err)
@@ -105,7 +105,7 @@ func TestRemoveLinkAndAddNewLink(t *testing.T) {
 	require.Len(t, services, 1)
 	s := services[0]
 
-	require.Equal(t, sData.st2.ID, s.QueryType().OnlyXID(ctx))
+	require.Equal(t, sData.st2.ID, s.QueryType().OnlyIDX(ctx))
 	for _, ep := range s.QueryEndpoints().AllX(ctx) {
 		e := ep.QueryEquipment().OnlyX(ctx)
 		switch ep.QueryDefinition().OnlyX(ctx).Index {
@@ -140,21 +140,21 @@ func TestEditServiceTypeEndpointDefinitionsOrder(t *testing.T) {
 		Endpoints: []*models.ServiceEndpointDefinitionInput{
 			{
 				Name:            "endpoint type1",
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type1")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type1")).OnlyIDX(ctx)),
 				Role:            pointer.ToString("PROVIDER2"),
 				Index:           0,
 				EquipmentTypeID: eData.equType2.ID,
 			},
 			{
 				Index:           1,
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type3")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type3")).OnlyIDX(ctx)),
 				Name:            "endpoint type3",
 				Role:            pointer.ToString("CONSUMER2"),
 				EquipmentTypeID: eData.equType1.ID,
 			},
 			{
 				Index:           2,
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type2")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type2")).OnlyIDX(ctx)),
 				Name:            "endpoint type2",
 				Role:            pointer.ToString("MIDDLE2"),
 				EquipmentTypeID: eData.equType3.ID,
@@ -174,21 +174,21 @@ func TestEditServiceTypeEndpointDefinitionsOrder(t *testing.T) {
 		Endpoints: []*models.ServiceEndpointDefinitionInput{
 			{
 				Name:            "endpoint type1",
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type1")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type1")).OnlyIDX(ctx)),
 				Role:            pointer.ToString("PROVIDER2"),
 				Index:           0,
 				EquipmentTypeID: eData.equType3.ID,
 			},
 			{
 				Index:           1,
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type3")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type3")).OnlyIDX(ctx)),
 				Name:            "endpoint type3",
 				Role:            pointer.ToString("CONSUMER2"),
 				EquipmentTypeID: eData.equType2.ID,
 			},
 			{
 				Index:           2,
-				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type2")).OnlyXID(ctx)),
+				ID:              pointer.ToInt(sData.st1.QueryEndpointDefinitions().Where(serviceendpointdefinition.Name("endpoint type2")).OnlyIDX(ctx)),
 				Name:            "endpoint type2",
 				Role:            pointer.ToString("MIDDLE2"),
 				EquipmentTypeID: eData.equType1.ID,
@@ -202,7 +202,7 @@ func TestEditServiceTypeEndpointDefinitionsOrder(t *testing.T) {
 	require.Len(t, services, 1)
 	s := services[0]
 
-	require.Equal(t, sData.st1.ID, s.QueryType().OnlyXID(ctx))
+	require.Equal(t, sData.st1.ID, s.QueryType().OnlyIDX(ctx))
 	for _, ep := range s.QueryEndpoints().AllX(ctx) {
 		e := ep.QueryEquipment().OnlyX(ctx)
 		switch ep.QueryDefinition().OnlyX(ctx).Index {

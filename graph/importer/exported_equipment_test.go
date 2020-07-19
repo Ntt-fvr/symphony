@@ -250,21 +250,21 @@ func TestLocationHierarchy(t *testing.T) {
 	loc, err := importer.verifyOrCreateLocationHierarchy(ctx, rec, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc.Name, "locNameL")
-	require.Equal(t, loc.QueryType().OnlyXID(ctx), ids.locTypeIDL)
+	require.Equal(t, loc.QueryType().OnlyIDX(ctx), ids.locTypeIDL)
 	require.False(t, loc.QueryChildren().ExistX(ctx))
 
 	rec2, _ := NewImportRecord(test2, title)
 	loc2, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc2.Name, "locNameS")
-	require.Equal(t, loc2.QueryType().OnlyXID(ctx), ids.locTypeIDS)
+	require.Equal(t, loc2.QueryType().OnlyIDX(ctx), ids.locTypeIDS)
 	require.Equal(t, loc2.QueryParent().OnlyX(ctx).Name, "locNameM")
 
 	rec3, _ := NewImportRecord(test3, title)
 	loc3, err := importer.verifyOrCreateLocationHierarchy(ctx, rec3, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc3.Name, "locNameM")
-	require.Equal(t, loc3.QueryType().OnlyXID(ctx), ids.locTypeIDM)
+	require.Equal(t, loc3.QueryType().OnlyIDX(ctx), ids.locTypeIDM)
 	require.False(t, loc3.QueryChildren().ExistX(ctx))
 }
 

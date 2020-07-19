@@ -180,6 +180,19 @@ func (ptc *ProjectTypeCreate) SaveX(ctx context.Context) *ProjectType {
 }
 
 func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error) {
+	pt, _spec := ptc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	pt.ID = int(id)
+	return pt, nil
+}
+
+func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) {
 	var (
 		pt    = &ProjectType{config: ptc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -279,13 +292,5 @@ func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	pt.ID = int(id)
-	return pt, nil
+	return pt, _spec
 }

@@ -191,6 +191,19 @@ func (epc *EquipmentPortCreate) SaveX(ctx context.Context) *EquipmentPort {
 }
 
 func (epc *EquipmentPortCreate) sqlSave(ctx context.Context) (*EquipmentPort, error) {
+	ep, _spec := epc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, epc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	ep.ID = int(id)
+	return ep, nil
+}
+
+func (epc *EquipmentPortCreate) createSpec() (*EquipmentPort, *sqlgraph.CreateSpec) {
 	var (
 		ep    = &EquipmentPort{config: epc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -312,13 +325,5 @@ func (epc *EquipmentPortCreate) sqlSave(ctx context.Context) (*EquipmentPort, er
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, epc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	ep.ID = int(id)
-	return ep, nil
+	return ep, _spec
 }

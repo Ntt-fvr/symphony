@@ -179,6 +179,19 @@ func (ppc *PermissionsPolicyCreate) SaveX(ctx context.Context) *PermissionsPolic
 }
 
 func (ppc *PermissionsPolicyCreate) sqlSave(ctx context.Context) (*PermissionsPolicy, error) {
+	pp, _spec := ppc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ppc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	pp.ID = int(id)
+	return pp, nil
+}
+
+func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.CreateSpec) {
 	var (
 		pp    = &PermissionsPolicy{config: ppc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -264,13 +277,5 @@ func (ppc *PermissionsPolicyCreate) sqlSave(ctx context.Context) (*PermissionsPo
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ppc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	pp.ID = int(id)
-	return pp, nil
+	return pp, _spec
 }

@@ -183,8 +183,8 @@ func (ugq *UsersGroupQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (ugq *UsersGroupQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (ugq *UsersGroupQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ugq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

@@ -204,8 +204,8 @@ func (sedq *ServiceEndpointDefinitionQuery) OnlyID(ctx context.Context) (id int,
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (sedq *ServiceEndpointDefinitionQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (sedq *ServiceEndpointDefinitionQuery) OnlyIDX(ctx context.Context) int {
 	id, err := sedq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

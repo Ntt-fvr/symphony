@@ -184,8 +184,8 @@ func (epdq *EquipmentPositionDefinitionQuery) OnlyID(ctx context.Context) (id in
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (epdq *EquipmentPositionDefinitionQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (epdq *EquipmentPositionDefinitionQuery) OnlyIDX(ctx context.Context) int {
 	id, err := epdq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

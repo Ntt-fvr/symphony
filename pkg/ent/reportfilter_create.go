@@ -150,6 +150,19 @@ func (rfc *ReportFilterCreate) SaveX(ctx context.Context) *ReportFilter {
 }
 
 func (rfc *ReportFilterCreate) sqlSave(ctx context.Context) (*ReportFilter, error) {
+	rf, _spec := rfc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, rfc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	rf.ID = int(id)
+	return rf, nil
+}
+
+func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec) {
 	var (
 		rf    = &ReportFilter{config: rfc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -200,13 +213,5 @@ func (rfc *ReportFilterCreate) sqlSave(ctx context.Context) (*ReportFilter, erro
 		})
 		rf.Filters = value
 	}
-	if err := sqlgraph.CreateNode(ctx, rfc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	rf.ID = int(id)
-	return rf, nil
+	return rf, _spec
 }

@@ -223,8 +223,8 @@ func (wotq *WorkOrderTypeQuery) OnlyID(ctx context.Context) (id int, err error) 
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (wotq *WorkOrderTypeQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (wotq *WorkOrderTypeQuery) OnlyIDX(ctx context.Context) int {
 	id, err := wotq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

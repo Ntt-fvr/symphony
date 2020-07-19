@@ -185,6 +185,19 @@ func (lc *LinkCreate) SaveX(ctx context.Context) *Link {
 }
 
 func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
+	l, _spec := lc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	l.ID = int(id)
+	return l, nil
+}
+
+func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	var (
 		l     = &Link{config: lc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -295,13 +308,5 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	l.ID = int(id)
-	return l, nil
+	return l, _spec
 }

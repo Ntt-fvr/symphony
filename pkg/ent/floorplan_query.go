@@ -224,8 +224,8 @@ func (fpq *FloorPlanQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (fpq *FloorPlanQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (fpq *FloorPlanQuery) OnlyIDX(ctx context.Context) int {
 	id, err := fpq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

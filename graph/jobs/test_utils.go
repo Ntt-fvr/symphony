@@ -255,13 +255,13 @@ func prepareLongServiceTypeData(ctx context.Context, r TestJobsResolver, equipDa
 				Equipment: equipData.equ3.ID,
 				Port: equipData.equ3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p3")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equ4.ID,
 				Port: equ4.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 
@@ -271,13 +271,13 @@ func prepareLongServiceTypeData(ctx context.Context, r TestJobsResolver, equipDa
 				Equipment: equ4.ID,
 				Port: equ4.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p2")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equ5.ID,
 				Port: equ5.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	_, _ = mr.AddLink(ctx, models.AddLinkInput{
@@ -286,13 +286,13 @@ func prepareLongServiceTypeData(ctx context.Context, r TestJobsResolver, equipDa
 				Equipment: equ5.ID,
 				Port: equ5.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p2")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equ6.ID,
 				Port: equ6.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 
@@ -398,13 +398,13 @@ func prepareLinksData(ctx context.Context, r TestJobsResolver, equipData equipme
 				Equipment: equipData.equ1.ID,
 				Port: equipData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equipData.equ2.ID,
 				Port: equipData.equ2.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	l2, _ := mr.AddLink(ctx, models.AddLinkInput{
@@ -413,13 +413,13 @@ func prepareLinksData(ctx context.Context, r TestJobsResolver, equipData equipme
 				Equipment: equipData.equ2.ID,
 				Port: equipData.equ2.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p2")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equipData.equ3.ID,
 				Port: equipData.equ3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p2")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 
@@ -429,13 +429,13 @@ func prepareLinksData(ctx context.Context, r TestJobsResolver, equipData equipme
 				Equipment: equipData.equ3.ID,
 				Port: equipData.equ3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equipData.equ2.ID,
 				Port: equipData.equ2.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p3")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	l4, _ := mr.AddLink(ctx, models.AddLinkInput{
@@ -444,13 +444,13 @@ func prepareLinksData(ctx context.Context, r TestJobsResolver, equipData equipme
 				Equipment: equipData.equ2.ID,
 				Port: equipData.equ2.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p4")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: equipData.equ1.ID,
 				Port: equipData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p2")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	/*

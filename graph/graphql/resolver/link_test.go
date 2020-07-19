@@ -81,8 +81,8 @@ func TestAddLink(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -179,8 +179,8 @@ func TestAddLinkWithProperties(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -296,8 +296,8 @@ func TestEditLinkWithProperties(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -439,8 +439,8 @@ func TestAddLinkWithWorkOrder(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)

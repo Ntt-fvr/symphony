@@ -471,6 +471,19 @@ func (woc *WorkOrderCreate) SaveX(ctx context.Context) *WorkOrder {
 }
 
 func (woc *WorkOrderCreate) sqlSave(ctx context.Context) (*WorkOrder, error) {
+	wo, _spec := woc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, woc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	wo.ID = int(id)
+	return wo, nil
+}
+
+func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 	var (
 		wo    = &WorkOrder{config: woc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -827,13 +840,5 @@ func (woc *WorkOrderCreate) sqlSave(ctx context.Context) (*WorkOrder, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, woc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	wo.ID = int(id)
-	return wo, nil
+	return wo, _spec
 }

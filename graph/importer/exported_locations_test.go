@@ -148,7 +148,7 @@ func TestImportLocationHierarchy(t *testing.T) {
 	parentLoc2, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, &parentIndex)
 	require.NoError(t, err)
 	require.Equal(t, parentLoc2.Name, "locNameM")
-	require.Equal(t, parentLoc2.QueryType().OnlyXID(ctx), ids.locTypeIDM)
+	require.Equal(t, parentLoc2.QueryType().OnlyIDX(ctx), ids.locTypeIDM)
 	require.Equal(t, parentLoc2.QueryParent().OnlyX(ctx).Name, "locNameL")
 
 	rec3, _ := NewImportRecord(test3, title)
@@ -170,7 +170,7 @@ func TestImportLocationHierarchy(t *testing.T) {
 	parentLoc3, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, &parentIndex)
 	require.NoError(t, err)
 	require.Equal(t, parentLoc3.Name, "locNameL")
-	require.Equal(t, parentLoc3.QueryType().OnlyXID(ctx), ids.locTypeIDL)
+	require.Equal(t, parentLoc3.QueryType().OnlyIDX(ctx), ids.locTypeIDL)
 	require.False(t, parentLoc3.QueryParent().ExistX(ctx))
 }
 
@@ -289,7 +289,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Properties: []*models.PropertyInput{{
 			RangeFromValue: pointer.ToFloat64(30),
 			RangeToValue:   pointer.ToFloat64(50.88),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName5)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName5)).OnlyIDX(ctx),
 		}},
 	})
 	require.NoError(t, err)
@@ -298,7 +298,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Type: ids.locTypeIDM,
 		Properties: []*models.PropertyInput{{
 			StringValue:    pointer.ToString("10/11/88"),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName3)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName3)).OnlyIDX(ctx),
 		}},
 		Latitude:  pointer.ToFloat64(16),
 		Longitude: pointer.ToFloat64(44),
@@ -309,7 +309,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Type: ids.locTypeIDS,
 		Properties: []*models.PropertyInput{{
 			IntValue:       pointer.ToInt(16),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName2)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName2)).OnlyIDX(ctx),
 		}},
 		Parent:     pointer.ToInt(loc1.ID),
 		ExternalID: pointer.ToString("123"),

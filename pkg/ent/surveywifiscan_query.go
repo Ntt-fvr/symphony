@@ -203,8 +203,8 @@ func (swfsq *SurveyWiFiScanQuery) OnlyID(ctx context.Context) (id int, err error
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (swfsq *SurveyWiFiScanQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (swfsq *SurveyWiFiScanQuery) OnlyIDX(ctx context.Context) int {
 	id, err := swfsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

@@ -223,8 +223,8 @@ func (seq *ServiceEndpointQuery) OnlyID(ctx context.Context) (id int, err error)
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (seq *ServiceEndpointQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (seq *ServiceEndpointQuery) OnlyIDX(ctx context.Context) int {
 	id, err := seq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

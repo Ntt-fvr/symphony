@@ -193,6 +193,19 @@ func (fpc *FloorPlanCreate) SaveX(ctx context.Context) *FloorPlan {
 }
 
 func (fpc *FloorPlanCreate) sqlSave(ctx context.Context) (*FloorPlan, error) {
+	fp, _spec := fpc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, fpc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	fp.ID = int(id)
+	return fp, nil
+}
+
+func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 	var (
 		fp    = &FloorPlan{config: fpc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -303,13 +316,5 @@ func (fpc *FloorPlanCreate) sqlSave(ctx context.Context) (*FloorPlan, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, fpc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	fp.ID = int(id)
-	return fp, nil
+	return fp, _spec
 }

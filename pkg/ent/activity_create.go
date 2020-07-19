@@ -204,6 +204,19 @@ func (ac *ActivityCreate) SaveX(ctx context.Context) *Activity {
 }
 
 func (ac *ActivityCreate) sqlSave(ctx context.Context) (*Activity, error) {
+	a, _spec := ac.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ac.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	a.ID = int(id)
+	return a, nil
+}
+
+func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 	var (
 		a     = &Activity{config: ac.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -300,13 +313,5 @@ func (ac *ActivityCreate) sqlSave(ctx context.Context) (*Activity, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ac.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	a.ID = int(id)
-	return a, nil
+	return a, _spec
 }

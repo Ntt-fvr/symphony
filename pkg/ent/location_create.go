@@ -389,6 +389,19 @@ func (lc *LocationCreate) SaveX(ctx context.Context) *Location {
 }
 
 func (lc *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
+	l, _spec := lc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	l.ID = int(id)
+	return l, nil
+}
+
+func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 	var (
 		l     = &Location{config: lc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -683,13 +696,5 @@ func (lc *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	l.ID = int(id)
-	return l, nil
+	return l, _spec
 }

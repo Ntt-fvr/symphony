@@ -203,8 +203,8 @@ func (ltq *LocationTypeQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (ltq *LocationTypeQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (ltq *LocationTypeQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ltq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

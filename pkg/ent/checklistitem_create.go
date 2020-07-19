@@ -270,6 +270,19 @@ func (clic *CheckListItemCreate) SaveX(ctx context.Context) *CheckListItem {
 }
 
 func (clic *CheckListItemCreate) sqlSave(ctx context.Context) (*CheckListItem, error) {
+	cli, _spec := clic.createSpec()
+	if err := sqlgraph.CreateNode(ctx, clic.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	cli.ID = int(id)
+	return cli, nil
+}
+
+func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateSpec) {
 	var (
 		cli   = &CheckListItem{config: clic.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -436,13 +449,5 @@ func (clic *CheckListItemCreate) sqlSave(ctx context.Context) (*CheckListItem, e
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, clic.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	cli.ID = int(id)
-	return cli, nil
+	return cli, _spec
 }

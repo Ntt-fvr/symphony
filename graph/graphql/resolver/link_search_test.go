@@ -312,7 +312,7 @@ func TestSearchLinksFutureState(t *testing.T) {
 	ports := res1.Links[0].QueryPorts().AllX(ctx)
 	require.NotEqual(t, ports[0].QueryParent().OnlyX(ctx).ID, ports[1].QueryParent().OnlyX(ctx).ID)
 	for _, port := range ports {
-		id := port.QueryParent().OnlyXID(ctx)
+		id := port.QueryParent().OnlyIDX(ctx)
 		require.Contains(t, []int{data.e2, data.e4}, id)
 	}
 }

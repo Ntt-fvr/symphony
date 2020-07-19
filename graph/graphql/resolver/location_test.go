@@ -37,7 +37,7 @@ func TestAddLocation(t *testing.T) {
 		Type: locationType.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, locationType.ID, location.QueryType().OnlyXID(ctx), "Verifying 'AddLocation' return value")
+	require.Equal(t, locationType.ID, location.QueryType().OnlyIDX(ctx), "Verifying 'AddLocation' return value")
 
 	fetchedNode, err := qr.Node(ctx, location.ID)
 	require.NoError(t, err)
@@ -53,7 +53,7 @@ func TestAddLocation(t *testing.T) {
 
 	require.Equal(t, location.ID, fetchedLocation.ID, "Verifying saved location vs fetched location: ID")
 	require.Equal(t, location.Name, fetchedLocation.Name, "Verifying saved location vs fetched location: Name")
-	require.Equal(t, location.QueryType().OnlyXID(ctx), fetchedLocation.QueryType().OnlyXID(ctx), "Verifying saved location vs fetched location: locationType")
+	require.Equal(t, location.QueryType().OnlyIDX(ctx), fetchedLocation.QueryType().OnlyIDX(ctx), "Verifying saved location vs fetched location: locationType")
 	require.Equal(t, location.Longitude, fetchedLocation.Longitude, "Verifying saved location vs fetched location: Longitude")
 	require.Equal(t, location.Latitude, fetchedLocation.Latitude, "Verifying saved location vs fetched location: Latitude")
 }
@@ -157,18 +157,18 @@ func TestAddLocationWithProperties(t *testing.T) {
 	require.NoError(t, err, "Adding location type")
 
 	strProp := models.PropertyInput{
-		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 	intValue := 5
 	intProp := models.PropertyInput{
-		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("int_prop")).OnlyXID(ctx),
+		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("int_prop")).OnlyIDX(ctx),
 		StringValue:    nil,
 		IntValue:       &intValue,
 	}
 	fl1, fl2 := 5.5, 7.8
 	rngProp := models.PropertyInput{
-		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("rng_prop")).OnlyXID(ctx),
+		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("rng_prop")).OnlyIDX(ctx),
 		RangeFromValue: &fl1,
 		RangeToValue:   &fl2,
 	}
@@ -187,16 +187,16 @@ func TestAddLocationWithProperties(t *testing.T) {
 
 	intFetchProp := fetchedLoc.QueryProperties().Where(property.HasTypeWith(propertytype.Name("int_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetInt(intFetchProp.IntVal), pointer.GetInt(intProp.IntValue), "Comparing properties: int value")
-	require.Equal(t, intFetchProp.QueryType().OnlyXID(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	strFetchProp := fetchedLoc.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	rngFetchProp := fetchedLoc.QueryProperties().Where(property.HasTypeWith(propertytype.Name("rng_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeFromVal), pointer.GetFloat64(rngProp.RangeFromValue), "Comparing properties: range value")
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeToVal), pointer.GetFloat64(rngProp.RangeToValue), "Comparing properties: range value")
-	require.Equal(t, rngFetchProp.QueryType().OnlyXID(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
 }
 
 func TestDontAddDuplicateProperties(t *testing.T) {
@@ -228,7 +228,7 @@ func TestDontAddDuplicateProperties(t *testing.T) {
 	require.NoError(t, err, "Adding location type")
 
 	strProp := models.PropertyInput{
-		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 
@@ -242,7 +242,7 @@ func TestDontAddDuplicateProperties(t *testing.T) {
 
 	strFetchProp := loc.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	require.NoError(t, err, "Adding location instance")
 
@@ -255,11 +255,11 @@ func TestDontAddDuplicateProperties(t *testing.T) {
 	require.NoError(t, err)
 	strFetchProp = loc.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
 
 	// same for equipment
 	strProp = models.PropertyInput{
-		PropertyTypeID: eqType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: eqType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 
@@ -301,7 +301,7 @@ func TestAddLocationWithInvalidProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	latlongProp := models.PropertyInput{
-		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("lat_long_prop")).OnlyXID(ctx),
+		PropertyTypeID: locType.QueryPropertyTypes().Where(propertytype.Name("lat_long_prop")).OnlyIDX(ctx),
 	}
 	propInputs := []*models.PropertyInput{&latlongProp}
 	_, err = mr.AddLocation(ctx, models.AddLocationInput{
@@ -623,7 +623,7 @@ func TestEditLocationWithProperties(t *testing.T) {
 		strValue := *v.StringVal + "-2"
 		propInput := &models.PropertyInput{
 			ID:             &v.ID,
-			PropertyTypeID: v.QueryType().OnlyXID(ctx),
+			PropertyTypeID: v.QueryType().OnlyIDX(ctx),
 			StringValue:    &strValue,
 		}
 		propInputClone = append(propInputClone, propInput)
@@ -708,7 +708,7 @@ func TestAddAndDeleteLocationImages(t *testing.T) {
 		Type: locationType.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, locationType.ID, location.QueryType().OnlyXID(ctx))
+	require.Equal(t, locationType.ID, location.QueryType().OnlyIDX(ctx))
 
 	now := time.Now()
 	category := "TSS"
@@ -780,7 +780,7 @@ func TestAddAndDeleteLocationHyperlink(t *testing.T) {
 		Type: locationType.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, locationType.ID, location.QueryType().OnlyXID(ctx))
+	require.Equal(t, locationType.ID, location.QueryType().OnlyIDX(ctx))
 
 	category := "TSS"
 	url := "http://some.url"

@@ -163,8 +163,8 @@ func (ecq *EquipmentCategoryQuery) OnlyID(ctx context.Context) (id int, err erro
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (ecq *EquipmentCategoryQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (ecq *EquipmentCategoryQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ecq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

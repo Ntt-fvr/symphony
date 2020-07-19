@@ -229,6 +229,19 @@ func (ltc *LocationTypeCreate) SaveX(ctx context.Context) *LocationType {
 }
 
 func (ltc *LocationTypeCreate) sqlSave(ctx context.Context) (*LocationType, error) {
+	lt, _spec := ltc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ltc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	lt.ID = int(id)
+	return lt, nil
+}
+
+func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec) {
 	var (
 		lt    = &LocationType{config: ltc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -352,13 +365,5 @@ func (ltc *LocationTypeCreate) sqlSave(ctx context.Context) (*LocationType, erro
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ltc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	lt.ID = int(id)
-	return lt, nil
+	return lt, _spec
 }

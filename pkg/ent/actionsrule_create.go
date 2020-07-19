@@ -141,6 +141,19 @@ func (arc *ActionsRuleCreate) SaveX(ctx context.Context) *ActionsRule {
 }
 
 func (arc *ActionsRuleCreate) sqlSave(ctx context.Context) (*ActionsRule, error) {
+	ar, _spec := arc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, arc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	ar.ID = int(id)
+	return ar, nil
+}
+
+func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) {
 	var (
 		ar    = &ActionsRule{config: arc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -199,13 +212,5 @@ func (arc *ActionsRuleCreate) sqlSave(ctx context.Context) (*ActionsRule, error)
 		})
 		ar.RuleActions = value
 	}
-	if err := sqlgraph.CreateNode(ctx, arc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	ar.ID = int(id)
-	return ar, nil
+	return ar, _spec
 }

@@ -141,8 +141,8 @@ func (fprpq *FloorPlanReferencePointQuery) OnlyID(ctx context.Context) (id int, 
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (fprpq *FloorPlanReferencePointQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (fprpq *FloorPlanReferencePointQuery) OnlyIDX(ctx context.Context) int {
 	id, err := fprpq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

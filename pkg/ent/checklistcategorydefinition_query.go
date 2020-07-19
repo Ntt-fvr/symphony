@@ -204,8 +204,8 @@ func (clcdq *CheckListCategoryDefinitionQuery) OnlyID(ctx context.Context) (id i
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (clcdq *CheckListCategoryDefinitionQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (clcdq *CheckListCategoryDefinitionQuery) OnlyIDX(ctx context.Context) int {
 	id, err := clcdq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

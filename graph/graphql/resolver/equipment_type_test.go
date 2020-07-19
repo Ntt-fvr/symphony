@@ -91,7 +91,7 @@ func TestAddEquipmentTypeWithPositions(t *testing.T) {
 
 	require.Equal(t, equipmentType.ID, fetchedEquipmentType.ID, "Verifying saved equipment type vs fetched equipmenttype : ID")
 	require.Equal(t, equipmentType.Name, fetchedEquipmentType.Name, "Verifying saved equipment type  vs fetched equipment type : Name")
-	require.Equal(t, equipmentType.QueryPositionDefinitions().OnlyXID(ctx), fetchedEquipmentType.QueryPositionDefinitions().OnlyXID(ctx), "Verifying saved equipment type  vs fetched equipment type: position definition")
+	require.Equal(t, equipmentType.QueryPositionDefinitions().OnlyIDX(ctx), fetchedEquipmentType.QueryPositionDefinitions().OnlyIDX(ctx), "Verifying saved equipment type  vs fetched equipment type: position definition")
 }
 
 func TestAddEquipmentTypeWithProperties(t *testing.T) {

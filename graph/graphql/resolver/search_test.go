@@ -95,7 +95,7 @@ func prepareEquipmentData(ctx context.Context, r *TestResolver, name string, pro
 		Properties: []*models.PropertyTypeInput{&propType},
 	})
 	if len(props) != 0 {
-		props[0].PropertyTypeID = equType.QueryPropertyTypes().OnlyXID(ctx)
+		props[0].PropertyTypeID = equType.QueryPropertyTypes().OnlyIDX(ctx)
 	}
 	_, _ = mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:       name + "eq_inst1",
@@ -528,7 +528,7 @@ func TestSearchEquipmentByDate(t *testing.T) {
 		Properties: []*models.PropertyTypeInput{&propType},
 	})
 	date = "2010-01-01"
-	ptypeID := eqType.QueryPropertyTypes().OnlyXID(ctx)
+	ptypeID := eqType.QueryPropertyTypes().OnlyIDX(ctx)
 
 	prop1 := models.PropertyInput{
 		PropertyTypeID: ptypeID,

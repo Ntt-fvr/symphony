@@ -201,6 +201,19 @@ func (hc *HyperlinkCreate) SaveX(ctx context.Context) *Hyperlink {
 }
 
 func (hc *HyperlinkCreate) sqlSave(ctx context.Context) (*Hyperlink, error) {
+	h, _spec := hc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, hc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	h.ID = int(id)
+	return h, nil
+}
+
+func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 	var (
 		h     = &Hyperlink{config: hc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -308,13 +321,5 @@ func (hc *HyperlinkCreate) sqlSave(ctx context.Context) (*Hyperlink, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, hc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	h.ID = int(id)
-	return h, nil
+	return h, _spec
 }

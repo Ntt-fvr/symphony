@@ -160,6 +160,19 @@ func (eptc *EquipmentPortTypeCreate) SaveX(ctx context.Context) *EquipmentPortTy
 }
 
 func (eptc *EquipmentPortTypeCreate) sqlSave(ctx context.Context) (*EquipmentPortType, error) {
+	ept, _spec := eptc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, eptc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	ept.ID = int(id)
+	return ept, nil
+}
+
+func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph.CreateSpec) {
 	var (
 		ept   = &EquipmentPortType{config: eptc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -251,13 +264,5 @@ func (eptc *EquipmentPortTypeCreate) sqlSave(ctx context.Context) (*EquipmentPor
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, eptc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	ept.ID = int(id)
-	return ept, nil
+	return ept, _spec
 }

@@ -203,8 +203,8 @@ func (stq *ServiceTypeQuery) OnlyID(ctx context.Context) (id int, err error) {
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (stq *ServiceTypeQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (stq *ServiceTypeQuery) OnlyIDX(ctx context.Context) int {
 	id, err := stq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

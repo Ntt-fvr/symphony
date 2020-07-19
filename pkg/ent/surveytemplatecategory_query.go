@@ -184,8 +184,8 @@ func (stcq *SurveyTemplateCategoryQuery) OnlyID(ctx context.Context) (id int, er
 	return
 }
 
-// OnlyXID is like OnlyID, but panics if an error occurs.
-func (stcq *SurveyTemplateCategoryQuery) OnlyXID(ctx context.Context) int {
+// OnlyIDX is like OnlyID, but panics if an error occurs.
+func (stcq *SurveyTemplateCategoryQuery) OnlyIDX(ctx context.Context) int {
 	id, err := stcq.OnlyID(ctx)
 	if err != nil {
 		panic(err)

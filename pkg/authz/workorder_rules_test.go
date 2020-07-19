@@ -455,7 +455,7 @@ func TestWorkOrderOwnerUnchangedWritePolicyRule(t *testing.T) {
 		viewertest.WithUser("user"),
 		viewertest.WithRole(user.RoleUSER),
 		viewertest.WithPermissions(permissions))
-	ownerID := workOrder.QueryOwner().OnlyXID(ctx)
+	ownerID := workOrder.QueryOwner().OnlyIDX(ctx)
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetOwnerID(ownerID).
 		Exec(ctx)

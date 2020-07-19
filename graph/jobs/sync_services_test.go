@@ -85,13 +85,13 @@ func TestNextEquipmentInstances(t *testing.T) {
 				Equipment: newEq1.ID,
 				Port: newEq1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: eData.equ1.ID,
 				Port: eData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p4")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	require.NoError(t, err)
@@ -113,13 +113,13 @@ func TestNextEquipmentInstances(t *testing.T) {
 				Equipment: eData.equ1.ID,
 				Port: eData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p6")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: eData.equ1.ID,
 				Port: eData.equ1.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p5")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	require.NoError(t, err)
@@ -241,13 +241,13 @@ func TestGetServiceDetailsList(t *testing.T) {
 				Equipment: longServiceData.equ4.ID,
 				Port: longServiceData.equ4.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p3")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: eData.equ3.ID,
 				Port: eData.equ3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p4")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	require.NoError(t, err)
@@ -268,13 +268,13 @@ func TestGetServiceDetailsList(t *testing.T) {
 				Equipment: longServiceData.equ4.ID,
 				Port: longServiceData.equ4.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p4")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 			{
 				Equipment: newE3.ID,
 				Port: newE3.QueryType().QueryPortDefinitions().
 					Where(equipmentportdefinition.Name("p1")).
-					OnlyXID(ctx),
+					OnlyIDX(ctx),
 			},
 		}})
 	require.NoError(t, err)

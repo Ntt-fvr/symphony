@@ -188,6 +188,19 @@ func (clcdc *CheckListCategoryDefinitionCreate) SaveX(ctx context.Context) *Chec
 }
 
 func (clcdc *CheckListCategoryDefinitionCreate) sqlSave(ctx context.Context) (*CheckListCategoryDefinition, error) {
+	clcd, _spec := clcdc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, clcdc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	clcd.ID = int(id)
+	return clcd, nil
+}
+
+func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategoryDefinition, *sqlgraph.CreateSpec) {
 	var (
 		clcd  = &CheckListCategoryDefinition{config: clcdc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -287,13 +300,5 @@ func (clcdc *CheckListCategoryDefinitionCreate) sqlSave(ctx context.Context) (*C
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, clcdc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	clcd.ID = int(id)
-	return clcd, nil
+	return clcd, _spec
 }

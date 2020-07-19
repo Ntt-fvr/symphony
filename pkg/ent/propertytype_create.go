@@ -542,6 +542,19 @@ func (ptc *PropertyTypeCreate) SaveX(ctx context.Context) *PropertyType {
 }
 
 func (ptc *PropertyTypeCreate) sqlSave(ctx context.Context) (*PropertyType, error) {
+	pt, _spec := ptc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	pt.ID = int(id)
+	return pt, nil
+}
+
+func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec) {
 	var (
 		pt    = &PropertyType{config: ptc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -883,13 +896,5 @@ func (ptc *PropertyTypeCreate) sqlSave(ctx context.Context) (*PropertyType, erro
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	pt.ID = int(id)
-	return pt, nil
+	return pt, _spec
 }

@@ -129,6 +129,19 @@ func (ecc *EquipmentCategoryCreate) SaveX(ctx context.Context) *EquipmentCategor
 }
 
 func (ecc *EquipmentCategoryCreate) sqlSave(ctx context.Context) (*EquipmentCategory, error) {
+	ec, _spec := ecc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ecc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	ec.ID = int(id)
+	return ec, nil
+}
+
+func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.CreateSpec) {
 	var (
 		ec    = &EquipmentCategory{config: ecc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -182,13 +195,5 @@ func (ecc *EquipmentCategoryCreate) sqlSave(ctx context.Context) (*EquipmentCate
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ecc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	ec.ID = int(id)
-	return ec, nil
+	return ec, _spec
 }

@@ -201,11 +201,11 @@ func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolv
 }
 
 func deleteServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) {
-	id := r.client.Service.Query().Where(service.Name(serviceName)).OnlyXID(ctx)
+	id := r.client.Service.Query().Where(service.Name(serviceName)).OnlyIDX(ctx)
 	_, err := r.importer.r.Mutation().RemoveService(ctx, id)
 	require.NoError(t, err)
 
-	id2 := r.client.Service.Query().Where(service.Name(service2Name)).OnlyXID(ctx)
+	id2 := r.client.Service.Query().Where(service.Name(service2Name)).OnlyIDX(ctx)
 	_, err = r.importer.r.Mutation().RemoveService(ctx, id2)
 	require.NoError(t, err)
 }

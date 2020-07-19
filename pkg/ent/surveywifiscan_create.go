@@ -293,6 +293,19 @@ func (swfsc *SurveyWiFiScanCreate) SaveX(ctx context.Context) *SurveyWiFiScan {
 }
 
 func (swfsc *SurveyWiFiScanCreate) sqlSave(ctx context.Context) (*SurveyWiFiScan, error) {
+	swfs, _spec := swfsc.createSpec()
+	if err := sqlgraph.CreateNode(ctx, swfsc.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	swfs.ID = int(id)
+	return swfs, nil
+}
+
+func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.CreateSpec) {
 	var (
 		swfs  = &SurveyWiFiScan{config: swfsc.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -464,13 +477,5 @@ func (swfsc *SurveyWiFiScanCreate) sqlSave(ctx context.Context) (*SurveyWiFiScan
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, swfsc.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	swfs.ID = int(id)
-	return swfs, nil
+	return swfs, _spec
 }

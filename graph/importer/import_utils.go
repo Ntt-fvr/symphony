@@ -180,8 +180,8 @@ func (m *importer) getOrCreateEquipment(
 
 	var parentEquipmentID, positionDefinitionID *int
 	if position != nil {
-		p := position.QueryParent().OnlyXID(ctx)
-		d := position.QueryDefinition().OnlyXID(ctx)
+		p := position.QueryParent().OnlyIDX(ctx)
+		d := position.QueryDefinition().OnlyIDX(ctx)
 		parentEquipmentID = &p
 		positionDefinitionID = &d
 	}

@@ -134,8 +134,8 @@ func (m *importer) processPortConnectionCSV(w http.ResponseWriter, r *http.Reque
 			if _, err = mr.AddLink(ctx,
 				models.AddLinkInput{
 					Sides: []*models.LinkSide{
-						{Equipment: pA.QueryParent().OnlyXID(ctx), Port: pA.QueryDefinition().OnlyXID(ctx)},
-						{Equipment: pB.QueryParent().OnlyXID(ctx), Port: pB.QueryDefinition().OnlyXID(ctx)},
+						{Equipment: pA.QueryParent().OnlyIDX(ctx), Port: pA.QueryDefinition().OnlyIDX(ctx)},
+						{Equipment: pB.QueryParent().OnlyIDX(ctx), Port: pB.QueryDefinition().OnlyIDX(ctx)},
 					},
 				}); err != nil {
 				log.Warn("cannot connect ports",

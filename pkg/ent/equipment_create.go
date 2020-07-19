@@ -335,6 +335,19 @@ func (ec *EquipmentCreate) SaveX(ctx context.Context) *Equipment {
 }
 
 func (ec *EquipmentCreate) sqlSave(ctx context.Context) (*Equipment, error) {
+	e, _spec := ec.createSpec()
+	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
+		if cerr, ok := isSQLConstraintError(err); ok {
+			err = cerr
+		}
+		return nil, err
+	}
+	id := _spec.ID.Value.(int64)
+	e.ID = int(id)
+	return e, nil
+}
+
+func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 	var (
 		e     = &Equipment{config: ec.config}
 		_spec = &sqlgraph.CreateSpec{
@@ -583,13 +596,5 @@ func (ec *EquipmentCreate) sqlSave(ctx context.Context) (*Equipment, error) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
-		if cerr, ok := isSQLConstraintError(err); ok {
-			err = cerr
-		}
-		return nil, err
-	}
-	id := _spec.ID.Value.(int64)
-	e.ID = int(id)
-	return e, nil
+	return e, _spec
 }

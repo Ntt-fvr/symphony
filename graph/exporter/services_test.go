@@ -201,14 +201,14 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 		ID:          s2.ID,
 		PortID:      nil,
 		EquipmentID: e1.ID,
-		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(0)).OnlyXID(ctx),
+		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(0)).OnlyIDX(ctx),
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
 		ID:          s2.ID,
 		PortID:      nil,
 		EquipmentID: e2.ID,
-		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(1)).OnlyXID(ctx),
+		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(1)).OnlyIDX(ctx),
 	})
 	require.NoError(t, err)
 }

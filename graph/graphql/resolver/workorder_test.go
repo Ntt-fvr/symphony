@@ -220,7 +220,7 @@ func TestAddWorkOrderWithAssignee(t *testing.T) {
 	require.NoError(t, err)
 	fetchedWorkOrder, ok := node.(*ent.WorkOrder)
 	require.True(t, ok)
-	require.Equal(t, workOrder.QueryAssignee().OnlyXID(ctx), assignee.ID)
+	require.Equal(t, workOrder.QueryAssignee().OnlyIDX(ctx), assignee.ID)
 
 	fetchedWorkOrderType, err := wr.WorkOrderType(ctx, fetchedWorkOrder)
 	require.NoError(t, err)
@@ -595,7 +595,7 @@ func TestExecuteWorkOrderInstallEquipment(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, models.FutureStateInstall.String(), workOrderEquipment.FutureState)
-	assert.Equal(t, workOrder.ID, workOrderEquipment.QueryWorkOrder().OnlyXID(ctx))
+	assert.Equal(t, workOrder.ID, workOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
 	require.NoError(t, err)
@@ -663,7 +663,7 @@ func TestExecuteWorkOrderRemoveEquipment(t *testing.T) {
 	fetchedWorkOrderEquipment, ok := fetchedWorkOrderNode.(*ent.Equipment)
 	require.True(t, ok)
 	assert.Equal(t, models.FutureStateRemove.String(), fetchedWorkOrderEquipment.FutureState)
-	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipment.QueryWorkOrder().OnlyXID(ctx))
+	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
 	require.NoError(t, err)
@@ -726,7 +726,7 @@ func TestExecuteWorkOrderInstallLink(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, models.FutureStateInstall.String(), createdLink.FutureState)
-	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyXID(ctx))
+	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
 	require.NoError(t, err)
@@ -792,7 +792,7 @@ func TestExecuteWorkOrderRemoveLink(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, models.FutureStateRemove.String(), fetchedLink.FutureState)
-	assert.Equal(t, workOrder.ID, fetchedLink.QueryWorkOrder().OnlyXID(ctx))
+	assert.Equal(t, workOrder.ID, fetchedLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
 	require.NoError(t, err)
@@ -847,7 +847,7 @@ func TestExecuteWorkOrderInstallDependantEquipmentAndLink(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, models.FutureStateInstall.String(), createdLink.FutureState)
-	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyXID(ctx))
+	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
 	require.NoError(t, err)
@@ -891,8 +891,8 @@ func TestExecuteWorkOrderInstallEquipmentMultilayer(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		prevEquipmentPosition, err := equipments[i].QueryPositions().Only(ctx)
 		require.NoError(t, err)
-		defID := prevEquipmentPosition.QueryDefinition().OnlyXID(ctx)
-		parentID := prevEquipmentPosition.QueryParent().OnlyXID(ctx)
+		defID := prevEquipmentPosition.QueryDefinition().OnlyIDX(ctx)
+		parentID := prevEquipmentPosition.QueryParent().OnlyIDX(ctx)
 		require.NoError(t, err)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 			Name:               string(i),
@@ -946,8 +946,8 @@ func TestExecuteWorkOrderRemoveEquipmentMultilayer(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		position, err := equipments[i].QueryPositions().Only(ctx)
 		require.NoError(t, err)
-		defID := position.QueryDefinition().OnlyXID(ctx)
-		parentID := position.QueryParent().OnlyXID(ctx)
+		defID := position.QueryDefinition().OnlyIDX(ctx)
+		parentID := position.QueryParent().OnlyIDX(ctx)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 			Name:               string(i),
 			Type:               rootEquipmentType.ID,
@@ -1232,7 +1232,7 @@ func TestAddAndDeleteWorkOrderHyperlink(t *testing.T) {
 		WorkOrderTypeID: workOrderType.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, workOrderType.ID, workOrder.QueryType().OnlyXID(ctx))
+	require.Equal(t, workOrderType.ID, workOrder.QueryType().OnlyIDX(ctx))
 
 	category := "TSS"
 	url := "http://some.url"
@@ -1368,24 +1368,24 @@ func TestAddWorkOrderWithProperties(t *testing.T) {
 
 	strValue := "Foo"
 	strProp := models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 
 	strFixedProp := models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("str_fixed_prop")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("str_fixed_prop")).OnlyIDX(ctx),
 		StringValue:    &strFixedValue,
 	}
 
 	intValue := 5
 	intProp := models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("int_prop")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("int_prop")).OnlyIDX(ctx),
 		StringValue:    nil,
 		IntValue:       &intValue,
 	}
 	fl1, fl2 := 5.5, 7.8
 	rngProp := models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("rng_prop")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("rng_prop")).OnlyIDX(ctx),
 		RangeFromValue: &fl1,
 		RangeToValue:   &fl2,
 	}
@@ -1407,27 +1407,27 @@ func TestAddWorkOrderWithProperties(t *testing.T) {
 	intFetchProp := fetchedWo.QueryProperties().Where(property.HasTypeWith(propertytype.Name("int_prop"))).OnlyX(ctx)
 	tIntFetchProp := fetchedWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("int_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetInt(intFetchProp.IntVal), pointer.GetInt(intProp.IntValue), "Comparing properties: int value")
-	require.NotEqual(t, intFetchProp.QueryType().OnlyXID(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
-	require.Equal(t, intFetchProp.QueryType().OnlyXID(ctx), tIntFetchProp.ID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), tIntFetchProp.ID, "Comparing properties: PropertyType value")
 
 	strFetchProp := fetchedWo.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	tStrFetchProp := fetchedWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.NotEqual(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), tStrFetchProp.ID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), tStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fixedStrFetchProp := fetchedWo.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_fixed_prop"))).OnlyX(ctx)
 	tFixedStrFetchProp := fetchedWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("str_fixed_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(fixedStrFetchProp.StringVal), pointer.GetString(strFixedProp.StringValue), "Comparing properties: fixed string value")
-	require.NotEqual(t, fixedStrFetchProp.QueryType().OnlyXID(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
-	require.Equal(t, fixedStrFetchProp.QueryType().OnlyXID(ctx), tFixedStrFetchProp.ID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), tFixedStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	rngFetchProp := fetchedWo.QueryProperties().Where(property.HasTypeWith(propertytype.Name("rng_prop"))).OnlyX(ctx)
 	tRngFetchProp := fetchedWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("rng_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeFromVal), pointer.GetFloat64(rngProp.RangeFromValue), "Comparing properties: range value")
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeToVal), pointer.GetFloat64(rngProp.RangeToValue), "Comparing properties: range value")
-	require.NotEqual(t, rngFetchProp.QueryType().OnlyXID(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
-	require.Equal(t, rngFetchProp.QueryType().OnlyXID(ctx), tRngFetchProp.ID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fetchedProps, err := wr.Properties(ctx, fetchedWo)
 	require.NoError(t, err)
@@ -1495,14 +1495,14 @@ func TestAddWorkOrderWithProperties(t *testing.T) {
 	updatedProp := updatedWO.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
 	tUpdatedProp := fetchedUWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("str_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(updatedProp.StringVal), pointer.GetString(prop.StringValue), "Comparing updated properties: string value")
-	require.NotEqual(t, updatedProp.QueryType().OnlyXID(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
-	require.Equal(t, updatedProp.QueryType().OnlyXID(ctx), tUpdatedProp.ID, "Comparing updated properties: PropertyType value")
+	require.NotEqual(t, updatedProp.QueryType().OnlyIDX(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.Equal(t, updatedProp.QueryType().OnlyIDX(ctx), tUpdatedProp.ID, "Comparing updated properties: PropertyType value")
 
 	notUpdatedFixedProp := updatedWO.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_fixed_prop"))).OnlyX(ctx)
 	tNotUpdatedFixedProp := fetchedUWorkOrderTemplate.QueryPropertyTypes().Where(propertytype.Name("str_fixed_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(notUpdatedFixedProp.StringVal), pointer.GetString(strFixedProp.StringValue), "Comparing not changed fixed property: string value")
-	require.NotEqual(t, notUpdatedFixedProp.QueryType().OnlyXID(ctx), strFixedProp.PropertyTypeID, "Comparing updated properties: PropertyType value")
-	require.Equal(t, notUpdatedFixedProp.QueryType().OnlyXID(ctx), tNotUpdatedFixedProp.ID, "Comparing updated properties: PropertyType value")
+	require.NotEqual(t, notUpdatedFixedProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.Equal(t, notUpdatedFixedProp.QueryType().OnlyIDX(ctx), tNotUpdatedFixedProp.ID, "Comparing updated properties: PropertyType value")
 }
 
 func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
@@ -1542,7 +1542,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	latlongProp := &models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("lat_long_prop")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("lat_long_prop")).OnlyIDX(ctx),
 		LatitudeValue:  pointer.ToFloat64(32.6),
 		LongitudeValue: pointer.ToFloat64(34.7),
 	}
@@ -1556,7 +1556,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 
 	textProp := &models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("textMandatory")).OnlyXID(ctx),
+		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("textMandatory")).OnlyIDX(ctx),
 		StringValue:    pointer.ToString("String"),
 	}
 	propInputs = []*models.PropertyInput{latlongProp, textProp}
