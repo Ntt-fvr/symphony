@@ -142,6 +142,8 @@ const WorkOrderPopover = (props: Props) => {
         status: workOrder.status,
         priority: workOrder.priority,
         assigneeId: workOrder.assignedTo?.id,
+        locationId: workOrder.location?.id,
+        projectId: workOrder.project?.id,
       },
     };
     switch (key) {

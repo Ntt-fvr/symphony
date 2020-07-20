@@ -59,7 +59,9 @@ export type WorkOrder = {
   files: Array<FileAttachmentType>,
   assignedTo: ?ShortUser,
   properties: Array<Property>,
-  projectId: ?string,
+  project: ?{
+    id: string,
+  },
   checkListCategories: ?CheckListCategoryExpandingPanel_list,
 };
 
