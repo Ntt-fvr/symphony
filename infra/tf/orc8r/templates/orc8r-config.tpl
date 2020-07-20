@@ -74,13 +74,13 @@ metrics:
   prometheusConfigurer:
     create: true
     image:
-      repository: ${docker_registry}/prometheus-configurer
-      tag: "${docker_tag}"
+      repository: docker.io/facebookincubator/prometheus-configurer
+      tag: 1.0.0
   alertmanagerConfigurer:
     create: true
     image:
-      repository: ${docker_registry}/alertmanager-configurer
-      tag: "${docker_tag}"
+      repository: docker.io/facebookincubator/alertmanager-configurer
+      tag: 1.0.0
   prometheusCache:
     create: true
     image:
