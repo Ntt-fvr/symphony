@@ -26,6 +26,8 @@ class Cache(MutableMapping[str, T]):
     def __setitem__(self, key: str, value: T) -> None:
         self.store[self.__keytransform__(key)] = value
 
+    # pyre-fixme[14]: `__delitem__` overrides method defined in `MutableMapping`
+    #  inconsistently.
     def __delitem__(self, key: str) -> None:
         del self.store[self.__keytransform__(key)]
 
