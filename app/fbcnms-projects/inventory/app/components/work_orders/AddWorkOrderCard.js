@@ -215,7 +215,7 @@ const AddWorkOrderCard = (props: Props) => {
           files: [],
           images: [],
           assignedTo: null,
-          projectId: null,
+          project: null,
           checkListCategories: [],
         }
       : null,
@@ -261,7 +261,7 @@ const AddWorkOrderCard = (props: Props) => {
       name,
       description,
       locationId,
-      projectId,
+      project,
       assignedTo,
       status,
       priority,
@@ -275,7 +275,7 @@ const AddWorkOrderCard = (props: Props) => {
         locationId,
         workOrderTypeId,
         assigneeId: assignedTo?.id,
-        projectId,
+        projectId: project?.id,
         status,
         priority,
         properties: toPropertyInput(properties),
@@ -309,7 +309,7 @@ const AddWorkOrderCard = (props: Props) => {
       | 'name'
       | 'description'
       | 'assignedTo'
-      | 'projectId'
+      | 'project'
       | 'locationId'
       | 'priority'
       | 'status',
@@ -415,7 +415,7 @@ const AddWorkOrderCard = (props: Props) => {
                           className={classes.gridInput}
                           margin="dense"
                           onProjectSelection={project =>
-                            _setWorkOrderDetail('projectId', project?.id)
+                            _setWorkOrderDetail('project', project)
                           }
                         />
                       </FormField>
