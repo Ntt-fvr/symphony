@@ -188,7 +188,7 @@ resource "helm_release" "nginx_ingress" {
   repository = local.helm_repository.stable
   name       = "nginx-ingress"
   namespace  = "kube-system"
-  version    = "1.41.0"
+  version    = "1.41.1"
   keyring    = ""
 
   values = [<<VALUES

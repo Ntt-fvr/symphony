@@ -130,7 +130,7 @@ resource "helm_release" "aws_vpc_cni" {
   repository = local.helm_repository.eks
   name       = "aws-vpc-cni"
   namespace  = "kube-system"
-  version    = "1.0.8"
+  version    = "1.0.9"
   keyring    = ""
 
   values = [<<VALUES
