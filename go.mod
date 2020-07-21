@@ -11,9 +11,8 @@ require (
 	github.com/Azure/azure-amqp-common-go/v2 v2.1.0 // indirect
 	github.com/DATA-DOG/go-sqlmock v1.4.1
 	github.com/NYTimes/gziphandler v1.1.1
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
-	github.com/aws/aws-sdk-go v1.33.0
+	github.com/aws/aws-sdk-go v1.33.7
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/facebookincubator/ent v0.2.8-0.20200719150104-54f0a6769bda
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
@@ -27,7 +26,6 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
-	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.10.0
