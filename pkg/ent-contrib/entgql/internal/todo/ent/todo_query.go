@@ -304,12 +304,12 @@ func (tq *TodoQuery) WithChildren(opts ...func(*TodoQuery)) *TodoQuery {
 // Example:
 //
 //	var v []struct {
-//		Status todo.Status `json:"status,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Todo.Query().
-//		GroupBy(todo.FieldStatus).
+//		GroupBy(todo.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -330,11 +330,11 @@ func (tq *TodoQuery) GroupBy(field string, fields ...string) *TodoGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Status todo.Status `json:"status,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Todo.Query().
-//		Select(todo.FieldStatus).
+//		Select(todo.FieldCreatedAt).
 //		Scan(ctx, &v)
 //
 func (tq *TodoQuery) Select(field string, fields ...string) *TodoSelect {

@@ -9,6 +9,7 @@ package usersgroup
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -115,7 +116,7 @@ func StatusValidator(s Status) error {
 
 // MarshalGQL implements graphql.Marshaler interface.
 func (s Status) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, s)
+	io.WriteString(w, strconv.Quote(s.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -129,17 +130,4 @@ func (s *Status) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("%s is not a valid Status", str)
 	}
 	return nil
-}
-
-func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-	const quote = '"'
-	switch w := w.(type) {
-	case io.ByteWriter:
-		w.WriteByte(quote)
-		defer w.WriteByte(quote)
-	default:
-		w.Write([]byte{quote})
-		defer w.Write([]byte{quote})
-	}
-	io.WriteString(w, s.String())
 }

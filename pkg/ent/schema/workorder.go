@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/ent/schema/index"
 	"github.com/facebookincubator/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 )
@@ -136,11 +137,17 @@ func (WorkOrder) Fields() []ent.Field {
 			Optional(),
 		field.Time("install_date").
 			Optional(),
-		field.Time("creation_date"),
+		field.Time("creation_date").
+			Annotations(entgql.Annotation{
+				OrderField: "CREATED_AT",
+			}),
 		field.Int("index").
 			Optional(),
 		field.Time("close_date").
-			Optional(),
+			Optional().
+			Annotations(entgql.Annotation{
+				OrderField: "CLOSED_AT",
+			}),
 	}
 }
 
@@ -197,6 +204,19 @@ func (WorkOrder) Indexes() []ent.Index {
 		)
 	}
 	return indexes
+}
+
+// Mixin returns work order mixins.
+func (WorkOrder) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.CreateTime{},
+		mixin.AnnotateFields(
+			mixin.UpdateTime{},
+			entgql.Annotation{
+				OrderField: "UPDATED_AT",
+			},
+		),
+	}
 }
 
 // Hooks returns work order hooks.

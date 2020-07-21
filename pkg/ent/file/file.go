@@ -9,6 +9,7 @@ package file
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -201,7 +202,7 @@ func TypeValidator(_type Type) error {
 
 // MarshalGQL implements graphql.Marshaler interface.
 func (_type Type) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, _type)
+	io.WriteString(w, strconv.Quote(_type.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -215,17 +216,4 @@ func (_type *Type) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("%s is not a valid Type", str)
 	}
 	return nil
-}
-
-func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-	const quote = '"'
-	switch w := w.(type) {
-	case io.ByteWriter:
-		w.WriteByte(quote)
-		defer w.WriteByte(quote)
-	default:
-		w.Write([]byte{quote})
-		defer w.Write([]byte{quote})
-	}
-	io.WriteString(w, s.String())
 }

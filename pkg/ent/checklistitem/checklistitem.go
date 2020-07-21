@@ -9,6 +9,7 @@ package checklistitem
 import (
 	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/facebookincubator/ent"
 )
@@ -159,7 +160,7 @@ func YesNoValValidator(ynv YesNoVal) error {
 
 // MarshalGQL implements graphql.Marshaler interface.
 func (esmv EnumSelectionModeValue) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, esmv)
+	io.WriteString(w, strconv.Quote(esmv.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -175,22 +176,9 @@ func (esmv *EnumSelectionModeValue) UnmarshalGQL(v interface{}) error {
 	return nil
 }
 
-func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-	const quote = '"'
-	switch w := w.(type) {
-	case io.ByteWriter:
-		w.WriteByte(quote)
-		defer w.WriteByte(quote)
-	default:
-		w.Write([]byte{quote})
-		defer w.Write([]byte{quote})
-	}
-	io.WriteString(w, s.String())
-}
-
 // MarshalGQL implements graphql.Marshaler interface.
 func (ynv YesNoVal) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, ynv)
+	io.WriteString(w, strconv.Quote(ynv.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.

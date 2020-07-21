@@ -156,15 +156,20 @@ func (r queryResolver) WorkOrders(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	orderBy *models.WorkOrderOrder,
+	orderBy *ent.WorkOrderOrder,
 	filterBy []*models.WorkOrderFilterInput,
 ) (*ent.WorkOrderConnection, error) {
-	query := r.ClientFrom(ctx).WorkOrder.Query()
-	query, err := resolverutil.WorkOrderFilter(query, filterBy)
-	if err != nil {
-		return nil, err
-	}
-	return query.Paginate(ctx, after, first, before, last)
+	return r.ClientFrom(ctx).
+		WorkOrder.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithWorkOrderOrder(orderBy),
+			ent.WithWorkOrderFilter(
+				func(query *ent.WorkOrderQuery) (*ent.WorkOrderQuery, error) {
+					return resolverutil.WorkOrderFilter(query, filterBy)
+				},
+			),
+		)
 }
 
 func (r queryResolver) WorkOrderTypes(

@@ -9,6 +9,8 @@ package todo
 import (
 	"fmt"
 	"io"
+	"strconv"
+	"time"
 )
 
 const (
@@ -16,8 +18,12 @@ const (
 	Label = "todo"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldPriority holds the string denoting the priority field in the database.
+	FieldPriority = "priority"
 	// FieldText holds the string denoting the text field in the database.
 	FieldText = "text"
 
@@ -41,7 +47,9 @@ const (
 // Columns holds all SQL columns for todo fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
 	FieldStatus,
+	FieldPriority,
 	FieldText,
 }
 
@@ -51,6 +59,10 @@ var ForeignKeys = []string{
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the created_at field.
+	DefaultCreatedAt func() time.Time
+	// DefaultPriority holds the default value on creation for the priority field.
+	DefaultPriority int
 	// TextValidator is a validator for the "text" field. It is called by the builders before save.
 	TextValidator func(string) error
 )
@@ -80,7 +92,7 @@ func StatusValidator(s Status) error {
 
 // MarshalGQL implements graphql.Marshaler interface.
 func (s Status) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, s)
+	io.WriteString(w, strconv.Quote(s.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -94,17 +106,4 @@ func (s *Status) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("%s is not a valid Status", str)
 	}
 	return nil
-}
-
-func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-	const quote = '"'
-	switch w := w.(type) {
-	case io.ByteWriter:
-		w.WriteByte(quote)
-		defer w.WriteByte(quote)
-	default:
-		w.Write([]byte{quote})
-		defer w.Write([]byte{quote})
-	}
-	io.WriteString(w, s.String())
 }

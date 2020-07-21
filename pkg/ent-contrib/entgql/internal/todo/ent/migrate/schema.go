@@ -15,7 +15,9 @@ var (
 	// TodosColumns holds the columns for the "todos" table.
 	TodosColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "COMPLETED"}},
+		{Name: "priority", Type: field.TypeInt},
 		{Name: "text", Type: field.TypeString, Size: 2147483647},
 		{Name: "todo_children", Type: field.TypeInt, Nullable: true},
 	}
@@ -27,7 +29,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "todos_todos_children",
-				Columns: []*schema.Column{TodosColumns[3]},
+				Columns: []*schema.Column{TodosColumns[5]},
 
 				RefColumns: []*schema.Column{TodosColumns[0]},
 				OnDelete:   schema.SetNull,

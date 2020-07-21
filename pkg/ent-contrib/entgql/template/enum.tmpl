@@ -11,7 +11,7 @@ in the LICENSE file in the root directory of this source tree.
 	{{ $receiver := receiver $f.BuilderField -}}
 	// MarshalGQL implements graphql.Marshaler interface.
 	func ({{ $receiver }} {{ $enum }}) MarshalGQL(w io.Writer) {
-		writeQuotedStringer(w, {{ $receiver }})
+		io.WriteString(w, strconv.Quote({{ $receiver }}.String()))
 	}
 
 	// UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -26,21 +26,6 @@ in the LICENSE file in the root directory of this source tree.
 		}
 		return nil
 	}
-
-	{{ if eq $i 0 }}
-		func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-			const quote = '"'
-			switch w := w.(type) {
-			case io.ByteWriter:
-				w.WriteByte(quote)
-				defer w.WriteByte(quote)
-			default:
-				w.Write([]byte{quote})
-				defer w.Write([]byte{quote})
-			}
-			io.WriteString(w, s.String())
-		}
-	{{ end }}
 {{ end }}
 
 {{ end }}

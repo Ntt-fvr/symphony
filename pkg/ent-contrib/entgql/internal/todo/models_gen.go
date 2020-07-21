@@ -11,7 +11,8 @@ import (
 )
 
 type TodoInput struct {
-	Status todo.Status `json:"status"`
-	Text   string      `json:"text"`
-	Parent *int        `json:"parent"`
+	Status   todo.Status `json:"status"`
+	Priority *int        `json:"priority"`
+	Text     string      `json:"text"`
+	Parent   *int        `json:"parent"`
 }

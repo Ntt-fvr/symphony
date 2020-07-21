@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
@@ -23,9 +24,37 @@ type TodoCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the created_at field.
+func (tc *TodoCreate) SetCreatedAt(t time.Time) *TodoCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
+}
+
+// SetNillableCreatedAt sets the created_at field if the given value is not nil.
+func (tc *TodoCreate) SetNillableCreatedAt(t *time.Time) *TodoCreate {
+	if t != nil {
+		tc.SetCreatedAt(*t)
+	}
+	return tc
+}
+
 // SetStatus sets the status field.
 func (tc *TodoCreate) SetStatus(t todo.Status) *TodoCreate {
 	tc.mutation.SetStatus(t)
+	return tc
+}
+
+// SetPriority sets the priority field.
+func (tc *TodoCreate) SetPriority(i int) *TodoCreate {
+	tc.mutation.SetPriority(i)
+	return tc
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (tc *TodoCreate) SetNillablePriority(i *int) *TodoCreate {
+	if i != nil {
+		tc.SetPriority(*i)
+	}
 	return tc
 }
 
@@ -76,6 +105,10 @@ func (tc *TodoCreate) Mutation() *TodoMutation {
 
 // Save creates the Todo in the database.
 func (tc *TodoCreate) Save(ctx context.Context) (*Todo, error) {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		v := todo.DefaultCreatedAt()
+		tc.mutation.SetCreatedAt(v)
+	}
 	if _, ok := tc.mutation.Status(); !ok {
 		return nil, &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
@@ -83,6 +116,10 @@ func (tc *TodoCreate) Save(ctx context.Context) (*Todo, error) {
 		if err := todo.StatusValidator(v); err != nil {
 			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
+	}
+	if _, ok := tc.mutation.Priority(); !ok {
+		v := todo.DefaultPriority
+		tc.mutation.SetPriority(v)
 	}
 	if _, ok := tc.mutation.Text(); !ok {
 		return nil, &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
@@ -152,6 +189,14 @@ func (tc *TodoCreate) createSpec() (*Todo, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	if value, ok := tc.mutation.CreatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: todo.FieldCreatedAt,
+		})
+		t.CreatedAt = value
+	}
 	if value, ok := tc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
@@ -159,6 +204,14 @@ func (tc *TodoCreate) createSpec() (*Todo, *sqlgraph.CreateSpec) {
 			Column: todo.FieldStatus,
 		})
 		t.Status = value
+	}
+	if value, ok := tc.mutation.Priority(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: todo.FieldPriority,
+		})
+		t.Priority = value
 	}
 	if value, ok := tc.mutation.Text(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

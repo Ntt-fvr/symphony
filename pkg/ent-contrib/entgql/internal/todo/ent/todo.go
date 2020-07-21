@@ -9,6 +9,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
@@ -19,8 +20,12 @@ type Todo struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Status holds the value of the "status" field.
 	Status todo.Status `json:"status,omitempty"`
+	// Priority holds the value of the "priority" field.
+	Priority int `json:"priority,omitempty"`
 	// Text holds the value of the "text" field.
 	Text string `json:"text,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -67,7 +72,9 @@ func (e TodoEdges) ChildrenOrErr() ([]*Todo, error) {
 func (*Todo) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
+		&sql.NullTime{},   // created_at
 		&sql.NullString{}, // status
+		&sql.NullInt64{},  // priority
 		&sql.NullString{}, // text
 	}
 }
@@ -91,17 +98,27 @@ func (t *Todo) assignValues(values ...interface{}) error {
 	}
 	t.ID = int(value.Int64)
 	values = values[1:]
-	if value, ok := values[0].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field status", values[0])
+	if value, ok := values[0].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field created_at", values[0])
+	} else if value.Valid {
+		t.CreatedAt = value.Time
+	}
+	if value, ok := values[1].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field status", values[1])
 	} else if value.Valid {
 		t.Status = todo.Status(value.String)
 	}
-	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field text", values[1])
+	if value, ok := values[2].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field priority", values[2])
+	} else if value.Valid {
+		t.Priority = int(value.Int64)
+	}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field text", values[3])
 	} else if value.Valid {
 		t.Text = value.String
 	}
-	values = values[2:]
+	values = values[4:]
 	if len(values) == len(todo.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field todo_children", value)
@@ -146,8 +163,12 @@ func (t *Todo) String() string {
 	var builder strings.Builder
 	builder.WriteString("Todo(")
 	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(", created_at=")
+	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", t.Status))
+	builder.WriteString(", priority=")
+	builder.WriteString(fmt.Sprintf("%v", t.Priority))
 	builder.WriteString(", text=")
 	builder.WriteString(t.Text)
 	builder.WriteByte(')')

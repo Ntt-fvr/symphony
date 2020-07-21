@@ -33,15 +33,21 @@ func (r *resolvers) Node(ctx context.Context, id int) (ent.Noder, error) {
 	return nil, err
 }
 
-func (r *resolvers) Todos(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.TodoConnection, error) {
+func (r *resolvers) Todos(
+	ctx context.Context, after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int, orderBy *ent.TodoOrder,
+) (*ent.TodoConnection, error) {
 	return r.client.Todo.Query().
-		Paginate(ctx, after, first, before, last)
+		Paginate(ctx, after, first, before, last,
+			ent.WithTodoOrder(orderBy),
+		)
 }
 
 func (r *resolvers) CreateTodo(ctx context.Context, todo TodoInput) (*ent.Todo, error) {
 	return r.client.Todo.
 		Create().
 		SetStatus(todo.Status).
+		SetNillablePriority(todo.Priority).
 		SetText(todo.Text).
 		SetNillableParentID(todo.Parent).
 		Save(ctx)

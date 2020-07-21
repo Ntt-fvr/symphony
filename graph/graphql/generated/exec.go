@@ -851,7 +851,7 @@ type ComplexityRoot struct {
 		Vertex                   func(childComplexity int, id int) int
 		WorkOrderSearch          func(childComplexity int, filters []*models.WorkOrderFilterInput, limit *int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *models.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) int
+		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) int
 	}
 
 	ReportFilter struct {
@@ -1480,7 +1480,7 @@ type QueryResolver interface {
 	EquipmentTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentTypeConnection, error)
 	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.EquipmentFilterInput) (*ent.EquipmentConnection, error)
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
-	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *models.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
+	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
 	WorkOrderTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkOrderTypeConnection, error)
 	Links(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) (*ent.LinkConnection, error)
 	Services(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ServiceFilterInput) (*ent.ServiceConnection, error)
@@ -5691,7 +5691,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.WorkOrders(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*models.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput)), true
+		return e.complexity.Query.WorkOrders(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput)), true
 
 	case "ReportFilter.entity":
 		if e.complexity.ReportFilter.Entity == nil {
@@ -9221,7 +9221,7 @@ input WorkOrderOrder {
   """
   The field to order work orders by.
   """
-  field: WorkOrderOrderField!
+  field: WorkOrderOrderField
 }
 
 """
@@ -14453,9 +14453,9 @@ func (ec *executionContext) field_Query_workOrders_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
-	var arg4 *models.WorkOrderOrder
+	var arg4 *ent.WorkOrderOrder
 	if tmp, ok := rawArgs["orderBy"]; ok {
-		arg4, err = ec.unmarshalOWorkOrderOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrder(ctx, tmp)
+		arg4, err = ec.unmarshalOWorkOrderOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -30618,7 +30618,7 @@ func (ec *executionContext) _Query_workOrders(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().WorkOrders(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*models.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput))
+		return ec.resolvers.Query().WorkOrders(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45223,21 +45223,21 @@ func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputWorkOrderOrder(ctx context.Context, obj interface{}) (models.WorkOrderOrder, error) {
-	var it models.WorkOrderOrder
+func (ec *executionContext) unmarshalInputWorkOrderOrder(ctx context.Context, obj interface{}) (ent.WorkOrderOrder, error) {
+	var it ent.WorkOrderOrder
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
 		case "direction":
 			var err error
-			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐOrderDirection(ctx, v)
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
 			if err != nil {
 				return it, err
 			}
 		case "field":
 			var err error
-			it.Field, err = ec.unmarshalNWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrderField(ctx, v)
+			it.Field, err = ec.unmarshalOWorkOrderOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -56570,12 +56570,12 @@ func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋfacebookincubatorᚋs
 	return ret
 }
 
-func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐOrderDirection(ctx context.Context, v interface{}) (models.OrderDirection, error) {
-	var res models.OrderDirection
+func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx context.Context, v interface{}) (ent.OrderDirection, error) {
+	var res ent.OrderDirection
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v models.OrderDirection) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v ent.OrderDirection) graphql.Marshaler {
 	return v
 }
 
@@ -59066,15 +59066,6 @@ func (ec *executionContext) unmarshalNWorkOrderFilterType2githubᚗcomᚋfaceboo
 }
 
 func (ec *executionContext) marshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterType(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderFilterType) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) unmarshalNWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrderField(ctx context.Context, v interface{}) (models.WorkOrderOrderField, error) {
-	var res models.WorkOrderOrderField
-	return res, res.UnmarshalGQL(v)
-}
-
-func (ec *executionContext) marshalNWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrderField(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderOrderField) graphql.Marshaler {
 	return v
 }
 
@@ -61713,16 +61704,40 @@ func (ec *executionContext) unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋ
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOWorkOrderOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrder(ctx context.Context, v interface{}) (models.WorkOrderOrder, error) {
+func (ec *executionContext) unmarshalOWorkOrderOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrder(ctx context.Context, v interface{}) (ent.WorkOrderOrder, error) {
 	return ec.unmarshalInputWorkOrderOrder(ctx, v)
 }
 
-func (ec *executionContext) unmarshalOWorkOrderOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrder(ctx context.Context, v interface{}) (*models.WorkOrderOrder, error) {
+func (ec *executionContext) unmarshalOWorkOrderOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrder(ctx context.Context, v interface{}) (*ent.WorkOrderOrder, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOWorkOrderOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderOrder(ctx, v)
+	res, err := ec.unmarshalOWorkOrderOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrder(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) unmarshalOWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx context.Context, v interface{}) (ent.WorkOrderOrderField, error) {
+	var res ent.WorkOrderOrderField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderOrderField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOWorkOrderOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx context.Context, v interface{}) (*ent.WorkOrderOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOWorkOrderOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOWorkOrderOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.WorkOrderOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOWorkOrderPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐPriority(ctx context.Context, v interface{}) (workorder.Priority, error) {

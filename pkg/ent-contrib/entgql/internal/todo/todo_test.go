@@ -5,9 +5,11 @@
 package todo
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
@@ -64,6 +66,11 @@ func (s *todoTestSuite) SetupTest() {
 		),
 	)
 
+	const mutation = `mutation($priority: Int, $text: String!, $parent: ID) {
+		createTodo(todo: {status: COMPLETED, priority: $priority, text: $text, parent: $parent}) {
+			id
+		}
+	}`
 	var (
 		rsp struct {
 			CreateTodo struct {
@@ -74,17 +81,18 @@ func (s *todoTestSuite) SetupTest() {
 	)
 	for i := 1; i <= maxTodos; i++ {
 		id := strconv.Itoa(i)
-		err := s.Post(
-			`mutation($text: String!, $parent: ID) { createTodo(todo:{status: COMPLETED, text: $text, parent: $parent}) { id } }`,
-			&rsp, client.Var("text", id), client.Var("parent", func() *int {
-				if i == root {
-					return nil
-				}
-				if i%2 != 0 {
-					return pointer.ToInt(i - 2)
-				}
-				return &root
-			}()),
+		var parent *int
+		if i != root {
+			if i%2 != 0 {
+				parent = pointer.ToInt(i - 2)
+			} else {
+				parent = pointer.ToInt(root)
+			}
+		}
+		err := s.Post(mutation, &rsp,
+			client.Var("priority", i),
+			client.Var("text", id),
+			client.Var("parent", parent),
 		)
 		s.Require().NoError(err)
 		s.Require().Equal(id, rsp.CreateTodo.ID)
@@ -100,8 +108,11 @@ type response struct {
 		TotalCount int
 		Edges      []struct {
 			Node struct {
-				ID     string
-				Status todo.Status
+				ID        string
+				CreatedAt string
+				Priority  int
+				Status    todo.Status
+				Text      string
 			}
 			Cursor string
 		}
@@ -303,6 +314,181 @@ func (s *todoTestSuite) TestPageBackwards() {
 	s.Assert().Empty(rsp.Todos.Edges)
 	s.Assert().Empty(rsp.Todos.PageInfo.StartCursor)
 	s.Assert().False(rsp.Todos.PageInfo.HasPreviousPage)
+}
+
+func (s *todoTestSuite) TestPaginationOrder() {
+	const (
+		query = `query($after: Cursor, $first: Int, $before: Cursor, $last: Int, $direction: OrderDirection!, $field: TodoOrderField) {
+			todos(after: $after, first: $first, before: $before, last: $last, orderBy: { direction: $direction, field: $field }) {
+				totalCount
+				edges {
+					node {
+						id
+						createdAt
+						priority
+						status
+						text
+					}
+					cursor
+				}
+				pageInfo {
+					hasNextPage
+					hasPreviousPage
+					startCursor
+					endCursor
+				}
+			}
+		}`
+		step  = 5
+		steps = maxTodos/step + 1
+	)
+	s.Run("ForwardAscending", func() {
+		var (
+			rsp     response
+			endText string
+		)
+		for i := 0; i < steps; i++ {
+			err := s.Post(query, &rsp,
+				client.Var("after", rsp.Todos.PageInfo.EndCursor),
+				client.Var("first", step),
+				client.Var("direction", "ASC"),
+				client.Var("field", "TEXT"),
+			)
+			s.Require().NoError(err)
+			s.Assert().Equal(maxTodos, rsp.Todos.TotalCount)
+			if i < steps-1 {
+				s.Require().Len(rsp.Todos.Edges, step)
+				s.Assert().True(rsp.Todos.PageInfo.HasNextPage)
+			} else {
+				s.Require().Len(rsp.Todos.Edges, maxTodos%step)
+				s.Assert().False(rsp.Todos.PageInfo.HasNextPage)
+			}
+			s.Assert().True(sort.SliceIsSorted(rsp.Todos.Edges, func(i, j int) bool {
+				return rsp.Todos.Edges[i].Node.Text < rsp.Todos.Edges[j].Node.Text
+			}))
+			s.Require().NotNil(rsp.Todos.PageInfo.StartCursor)
+			s.Assert().Equal(*rsp.Todos.PageInfo.StartCursor, rsp.Todos.Edges[0].Cursor)
+			s.Require().NotNil(rsp.Todos.PageInfo.EndCursor)
+			end := rsp.Todos.Edges[len(rsp.Todos.Edges)-1]
+			s.Assert().Equal(*rsp.Todos.PageInfo.EndCursor, end.Cursor)
+			if i > 0 {
+				s.Assert().Less(endText, rsp.Todos.Edges[0].Node.Text)
+			}
+			endText = end.Node.Text
+		}
+	})
+	s.Run("ForwardDescending", func() {
+		var (
+			rsp   response
+			endID int
+		)
+		for i := 0; i < steps; i++ {
+			err := s.Post(query, &rsp,
+				client.Var("after", rsp.Todos.PageInfo.EndCursor),
+				client.Var("first", step),
+				client.Var("direction", "DESC"),
+			)
+			s.Require().NoError(err)
+			s.Assert().Equal(maxTodos, rsp.Todos.TotalCount)
+			if i < steps-1 {
+				s.Require().Len(rsp.Todos.Edges, step)
+				s.Assert().True(rsp.Todos.PageInfo.HasNextPage)
+			} else {
+				s.Require().Len(rsp.Todos.Edges, maxTodos%step)
+				s.Assert().False(rsp.Todos.PageInfo.HasNextPage)
+			}
+			s.Assert().True(sort.SliceIsSorted(rsp.Todos.Edges, func(i, j int) bool {
+				left, _ := strconv.Atoi(rsp.Todos.Edges[i].Node.ID)
+				right, _ := strconv.Atoi(rsp.Todos.Edges[j].Node.ID)
+				return left > right
+			}))
+			s.Require().NotNil(rsp.Todos.PageInfo.StartCursor)
+			s.Assert().Equal(*rsp.Todos.PageInfo.StartCursor, rsp.Todos.Edges[0].Cursor)
+			s.Require().NotNil(rsp.Todos.PageInfo.EndCursor)
+			end := rsp.Todos.Edges[len(rsp.Todos.Edges)-1]
+			s.Assert().Equal(*rsp.Todos.PageInfo.EndCursor, end.Cursor)
+			if i > 0 {
+				id, _ := strconv.Atoi(rsp.Todos.Edges[0].Node.ID)
+				s.Assert().Greater(endID, id)
+			}
+			endID, _ = strconv.Atoi(end.Node.ID)
+		}
+	})
+	s.Run("BackwardAscending", func() {
+		var (
+			rsp           response
+			startPriority int
+		)
+		for i := 0; i < steps; i++ {
+			err := s.Post(query, &rsp,
+				client.Var("before", rsp.Todos.PageInfo.StartCursor),
+				client.Var("last", step),
+				client.Var("direction", "ASC"),
+				client.Var("field", "PRIORITY"),
+			)
+			s.Require().NoError(err)
+			s.Assert().Equal(maxTodos, rsp.Todos.TotalCount)
+			if i < steps-1 {
+				s.Require().Len(rsp.Todos.Edges, step)
+				s.Assert().True(rsp.Todos.PageInfo.HasPreviousPage)
+			} else {
+				s.Require().Len(rsp.Todos.Edges, maxTodos%step)
+				s.Assert().False(rsp.Todos.PageInfo.HasPreviousPage)
+			}
+			s.Assert().True(sort.SliceIsSorted(rsp.Todos.Edges, func(i, j int) bool {
+				return rsp.Todos.Edges[i].Node.Priority < rsp.Todos.Edges[j].Node.Priority
+			}))
+			s.Require().NotNil(rsp.Todos.PageInfo.StartCursor)
+			start := rsp.Todos.Edges[0]
+			s.Assert().Equal(*rsp.Todos.PageInfo.StartCursor, start.Cursor)
+			s.Require().NotNil(rsp.Todos.PageInfo.EndCursor)
+			end := rsp.Todos.Edges[len(rsp.Todos.Edges)-1]
+			s.Assert().Equal(*rsp.Todos.PageInfo.EndCursor, end.Cursor)
+			if i > 0 {
+				s.Assert().Greater(startPriority, end.Node.Priority)
+			}
+			startPriority = start.Node.Priority
+		}
+	})
+	s.Run("BackwardDescending", func() {
+		var (
+			rsp            response
+			startCreatedAt time.Time
+		)
+		for i := 0; i < steps; i++ {
+			err := s.Post(query, &rsp,
+				client.Var("before", rsp.Todos.PageInfo.StartCursor),
+				client.Var("last", step),
+				client.Var("direction", "DESC"),
+				client.Var("field", "CREATED_AT"),
+			)
+			s.Require().NoError(err)
+			s.Assert().Equal(maxTodos, rsp.Todos.TotalCount)
+			if i < steps-1 {
+				s.Require().Len(rsp.Todos.Edges, step)
+				s.Assert().True(rsp.Todos.PageInfo.HasPreviousPage)
+			} else {
+				s.Require().Len(rsp.Todos.Edges, maxTodos%step)
+				s.Assert().False(rsp.Todos.PageInfo.HasPreviousPage)
+			}
+			s.Assert().True(sort.SliceIsSorted(rsp.Todos.Edges, func(i, j int) bool {
+				left, _ := time.Parse(time.RFC3339, rsp.Todos.Edges[i].Node.CreatedAt)
+				right, _ := time.Parse(time.RFC3339, rsp.Todos.Edges[j].Node.CreatedAt)
+				return left.After(right)
+			}))
+			s.Require().NotNil(rsp.Todos.PageInfo.StartCursor)
+			start := rsp.Todos.Edges[0]
+			s.Assert().Equal(*rsp.Todos.PageInfo.StartCursor, start.Cursor)
+			s.Require().NotNil(rsp.Todos.PageInfo.EndCursor)
+			end := rsp.Todos.Edges[len(rsp.Todos.Edges)-1]
+			s.Assert().Equal(*rsp.Todos.PageInfo.EndCursor, end.Cursor)
+			if i > 0 {
+				endCreatedAt, _ := time.Parse(time.RFC3339, end.Node.CreatedAt)
+				s.Assert().True(startCreatedAt.Before(endCreatedAt) || startCreatedAt.Equal(endCreatedAt))
+			}
+			startCreatedAt, _ = time.Parse(time.RFC3339, start.Node.CreatedAt)
+		}
+	})
 }
 
 func (s *todoTestSuite) TestNodeCollection() {

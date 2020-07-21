@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
 
@@ -35,7 +36,10 @@ type TodoMutation struct {
 	op              Op
 	typ             string
 	id              *int
+	created_at      *time.Time
 	status          *todo.Status
+	priority        *int
+	addpriority     *int
 	text            *string
 	clearedFields   map[string]struct{}
 	parent          *int
@@ -125,6 +129,43 @@ func (m *TodoMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
+// SetCreatedAt sets the created_at field.
+func (m *TodoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the created_at value in the mutation.
+func (m *TodoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old created_at value of the Todo.
+// If the Todo object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *TodoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreatedAt is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt reset all changes of the "created_at" field.
+func (m *TodoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
 // SetStatus sets the status field.
 func (m *TodoMutation) SetStatus(t todo.Status) {
 	m.status = &t
@@ -160,6 +201,63 @@ func (m *TodoMutation) OldStatus(ctx context.Context) (v todo.Status, err error)
 // ResetStatus reset all changes of the "status" field.
 func (m *TodoMutation) ResetStatus() {
 	m.status = nil
+}
+
+// SetPriority sets the priority field.
+func (m *TodoMutation) SetPriority(i int) {
+	m.priority = &i
+	m.addpriority = nil
+}
+
+// Priority returns the priority value in the mutation.
+func (m *TodoMutation) Priority() (r int, exists bool) {
+	v := m.priority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPriority returns the old priority value of the Todo.
+// If the Todo object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *TodoMutation) OldPriority(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPriority is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPriority requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
+	}
+	return oldValue.Priority, nil
+}
+
+// AddPriority adds i to priority.
+func (m *TodoMutation) AddPriority(i int) {
+	if m.addpriority != nil {
+		*m.addpriority += i
+	} else {
+		m.addpriority = &i
+	}
+}
+
+// AddedPriority returns the value that was added to the priority field in this mutation.
+func (m *TodoMutation) AddedPriority() (r int, exists bool) {
+	v := m.addpriority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPriority reset all changes of the "priority" field.
+func (m *TodoMutation) ResetPriority() {
+	m.priority = nil
+	m.addpriority = nil
 }
 
 // SetText sets the text field.
@@ -294,9 +392,15 @@ func (m *TodoMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *TodoMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
+	if m.created_at != nil {
+		fields = append(fields, todo.FieldCreatedAt)
+	}
 	if m.status != nil {
 		fields = append(fields, todo.FieldStatus)
+	}
+	if m.priority != nil {
+		fields = append(fields, todo.FieldPriority)
 	}
 	if m.text != nil {
 		fields = append(fields, todo.FieldText)
@@ -309,8 +413,12 @@ func (m *TodoMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *TodoMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case todo.FieldCreatedAt:
+		return m.CreatedAt()
 	case todo.FieldStatus:
 		return m.Status()
+	case todo.FieldPriority:
+		return m.Priority()
 	case todo.FieldText:
 		return m.Text()
 	}
@@ -322,8 +430,12 @@ func (m *TodoMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *TodoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case todo.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
 	case todo.FieldStatus:
 		return m.OldStatus(ctx)
+	case todo.FieldPriority:
+		return m.OldPriority(ctx)
 	case todo.FieldText:
 		return m.OldText(ctx)
 	}
@@ -335,12 +447,26 @@ func (m *TodoMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type mismatch the field type.
 func (m *TodoMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case todo.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
 	case todo.FieldStatus:
 		v, ok := value.(todo.Status)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case todo.FieldPriority:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPriority(v)
 		return nil
 	case todo.FieldText:
 		v, ok := value.(string)
@@ -356,13 +482,21 @@ func (m *TodoMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *TodoMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addpriority != nil {
+		fields = append(fields, todo.FieldPriority)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *TodoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case todo.FieldPriority:
+		return m.AddedPriority()
+	}
 	return nil, false
 }
 
@@ -371,6 +505,13 @@ func (m *TodoMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *TodoMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case todo.FieldPriority:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPriority(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Todo numeric field %s", name)
 }
@@ -399,8 +540,14 @@ func (m *TodoMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *TodoMutation) ResetField(name string) error {
 	switch name {
+	case todo.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
 	case todo.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case todo.FieldPriority:
+		m.ResetPriority()
 		return nil
 	case todo.FieldText:
 		m.ResetText()

@@ -37,6 +37,27 @@ func (tu *TodoUpdate) SetStatus(t todo.Status) *TodoUpdate {
 	return tu
 }
 
+// SetPriority sets the priority field.
+func (tu *TodoUpdate) SetPriority(i int) *TodoUpdate {
+	tu.mutation.ResetPriority()
+	tu.mutation.SetPriority(i)
+	return tu
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (tu *TodoUpdate) SetNillablePriority(i *int) *TodoUpdate {
+	if i != nil {
+		tu.SetPriority(*i)
+	}
+	return tu
+}
+
+// AddPriority adds i to priority.
+func (tu *TodoUpdate) AddPriority(i int) *TodoUpdate {
+	tu.mutation.AddPriority(i)
+	return tu
+}
+
 // SetText sets the text field.
 func (tu *TodoUpdate) SetText(s string) *TodoUpdate {
 	tu.mutation.SetText(s)
@@ -190,6 +211,20 @@ func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: todo.FieldStatus,
 		})
 	}
+	if value, ok := tu.mutation.Priority(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: todo.FieldPriority,
+		})
+	}
+	if value, ok := tu.mutation.AddedPriority(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: todo.FieldPriority,
+		})
+	}
 	if value, ok := tu.mutation.Text(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -291,6 +326,27 @@ type TodoUpdateOne struct {
 // SetStatus sets the status field.
 func (tuo *TodoUpdateOne) SetStatus(t todo.Status) *TodoUpdateOne {
 	tuo.mutation.SetStatus(t)
+	return tuo
+}
+
+// SetPriority sets the priority field.
+func (tuo *TodoUpdateOne) SetPriority(i int) *TodoUpdateOne {
+	tuo.mutation.ResetPriority()
+	tuo.mutation.SetPriority(i)
+	return tuo
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (tuo *TodoUpdateOne) SetNillablePriority(i *int) *TodoUpdateOne {
+	if i != nil {
+		tuo.SetPriority(*i)
+	}
+	return tuo
+}
+
+// AddPriority adds i to priority.
+func (tuo *TodoUpdateOne) AddPriority(i int) *TodoUpdateOne {
+	tuo.mutation.AddPriority(i)
 	return tuo
 }
 
@@ -443,6 +499,20 @@ func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (t *Todo, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: todo.FieldStatus,
+		})
+	}
+	if value, ok := tuo.mutation.Priority(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: todo.FieldPriority,
+		})
+	}
+	if value, ok := tuo.mutation.AddedPriority(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: todo.FieldPriority,
 		})
 	}
 	if value, ok := tuo.mutation.Text(); ok {

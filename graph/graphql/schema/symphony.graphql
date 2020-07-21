@@ -1758,7 +1758,7 @@ input WorkOrderOrder {
   """
   The field to order work orders by.
   """
-  field: WorkOrderOrderField!
+  field: WorkOrderOrderField
 }
 
 """

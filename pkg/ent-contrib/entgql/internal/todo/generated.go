@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -64,15 +65,17 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Node  func(childComplexity int, id int) int
-		Todos func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
+		Todos func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TodoOrder) int
 	}
 
 	Todo struct {
-		Children func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Parent   func(childComplexity int) int
-		Status   func(childComplexity int) int
-		Text     func(childComplexity int) int
+		Children  func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Parent    func(childComplexity int) int
+		Priority  func(childComplexity int) int
+		Status    func(childComplexity int) int
+		Text      func(childComplexity int) int
 	}
 
 	TodoConnection struct {
@@ -93,7 +96,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
-	Todos(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.TodoConnection, error)
+	Todos(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.TodoOrder) (*ent.TodoConnection, error)
 }
 type TodoResolver interface {
 	Parent(ctx context.Context, obj *ent.Todo) (*ent.Todo, error)
@@ -184,7 +187,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Todos(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
+		return e.complexity.Query.Todos(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TodoOrder)), true
 
 	case "Todo.children":
 		if e.complexity.Todo.Children == nil {
@@ -192,6 +195,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Todo.Children(childComplexity), true
+
+	case "Todo.createdAt":
+		if e.complexity.Todo.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Todo.CreatedAt(childComplexity), true
 
 	case "Todo.id":
 		if e.complexity.Todo.ID == nil {
@@ -206,6 +216,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Todo.Parent(childComplexity), true
+
+	case "Todo.priority":
+		if e.complexity.Todo.Priority == nil {
+			break
+		}
+
+		return e.complexity.Todo.Priority(childComplexity), true
 
 	case "Todo.status":
 		if e.complexity.Todo.Status == nil {
@@ -329,9 +346,13 @@ enum Status {
   COMPLETED
 }
 
+scalar Time
+
 type Todo implements Node {
   id: ID!
+  createdAt: Time
   status: Status!
+  priority: Int!
   text: String!
   parent: Todo
   children: [Todo!]
@@ -339,6 +360,7 @@ type Todo implements Node {
 
 input TodoInput {
   status: Status! = IN_PROGRESS
+  priority: Int
   text: String!
   parent: ID
 }
@@ -363,9 +385,32 @@ type TodoEdge {
   cursor: Cursor!
 }
 
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+enum TodoOrderField {
+  CREATED_AT
+  PRIORITY
+  STATUS
+  TEXT
+}
+
+input TodoOrder {
+  direction: OrderDirection!
+  field: TodoOrderField
+}
+
 type Query {
   node(id: ID!): Node
-  todos(after: Cursor, first: Int, before: Cursor, last: Int): TodoConnection
+  todos(
+    after: Cursor
+    first: Int
+    before: Cursor
+    last: Int
+    orderBy: TodoOrder
+  ): TodoConnection
 }
 
 type Mutation {
@@ -457,6 +502,14 @@ func (ec *executionContext) field_Query_todos_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
+	var arg4 *ent.TodoOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		arg4, err = ec.unmarshalOTodoOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
 	return args, nil
 }
 
@@ -763,7 +816,7 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Todos(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+		return ec.resolvers.Query().Todos(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.TodoOrder))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -880,6 +933,37 @@ func (ec *executionContext) _Todo_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Todo_createdAt(ctx context.Context, field graphql.CollectedField, obj *ent.Todo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Todo",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Todo_status(ctx context.Context, field graphql.CollectedField, obj *ent.Todo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -912,6 +996,40 @@ func (ec *executionContext) _Todo_status(ctx context.Context, field graphql.Coll
 	res := resTmp.(todo.Status)
 	fc.Result = res
 	return ec.marshalNStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚋtodoᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Todo_priority(ctx context.Context, field graphql.CollectedField, obj *ent.Todo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Todo",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Priority, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Todo_text(ctx context.Context, field graphql.CollectedField, obj *ent.Todo) (ret graphql.Marshaler) {
@@ -2245,6 +2363,12 @@ func (ec *executionContext) unmarshalInputTodoInput(ctx context.Context, obj int
 			if err != nil {
 				return it, err
 			}
+		case "priority":
+			var err error
+			it.Priority, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "text":
 			var err error
 			it.Text, err = ec.unmarshalNString2string(ctx, v)
@@ -2254,6 +2378,30 @@ func (ec *executionContext) unmarshalInputTodoInput(ctx context.Context, obj int
 		case "parent":
 			var err error
 			it.Parent, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputTodoOrder(ctx context.Context, obj interface{}) (ent.TodoOrder, error) {
+	var it ent.TodoOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalOTodoOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2425,8 +2573,15 @@ func (ec *executionContext) _Todo(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdAt":
+			out.Values[i] = ec._Todo_createdAt(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._Todo_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "priority":
+			out.Values[i] = ec._Todo_priority(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
@@ -2827,6 +2982,15 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐOrderDirection(ctx context.Context, v interface{}) (ent.OrderDirection, error) {
+	var res ent.OrderDirection
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v ent.OrderDirection) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v ent.PageInfo) graphql.Marshaler {
 	return ec._PageInfo(ctx, sel, &v)
 }
@@ -3221,6 +3385,14 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return ec.marshalOString2string(ctx, sel, *v)
 }
 
+func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
+	return graphql.UnmarshalTime(v)
+}
+
+func (ec *executionContext) marshalOTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	return graphql.MarshalTime(v)
+}
+
 func (ec *executionContext) marshalOTodo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodo(ctx context.Context, sel ast.SelectionSet, v ent.Todo) graphql.Marshaler {
 	return ec._Todo(ctx, sel, &v)
 }
@@ -3332,6 +3504,42 @@ func (ec *executionContext) marshalOTodoEdge2ᚖgithubᚗcomᚋfacebookincubator
 		return graphql.Null
 	}
 	return ec._TodoEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTodoOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrder(ctx context.Context, v interface{}) (ent.TodoOrder, error) {
+	return ec.unmarshalInputTodoOrder(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOTodoOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrder(ctx context.Context, v interface{}) (*ent.TodoOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOTodoOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrder(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOTodoOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx context.Context, v interface{}) (ent.TodoOrderField, error) {
+	var res ent.TodoOrderField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOTodoOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx context.Context, sel ast.SelectionSet, v ent.TodoOrderField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOTodoOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx context.Context, v interface{}) (*ent.TodoOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOTodoOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOTodoOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚑcontribᚋentgqlᚋinternalᚋtodoᚋentᚐTodoOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.TodoOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -1176,6 +1176,7 @@ func init() {
 
 	workorder.Hooks[2] = workorderHooks[1]
 	workorderMixinFields0 := workorderMixin[0].Fields()
+	workorderMixinFields1 := workorderMixin[1].Fields()
 	workorderFields := schema.WorkOrder{}.Fields()
 	_ = workorderFields
 	// workorderDescCreateTime is the schema descriptor for create_time field.
@@ -1183,7 +1184,7 @@ func init() {
 	// workorder.DefaultCreateTime holds the default value on creation for the create_time field.
 	workorder.DefaultCreateTime = workorderDescCreateTime.Default.(func() time.Time)
 	// workorderDescUpdateTime is the schema descriptor for update_time field.
-	workorderDescUpdateTime := workorderMixinFields0[1].Descriptor()
+	workorderDescUpdateTime := workorderMixinFields1[0].Descriptor()
 	// workorder.DefaultUpdateTime holds the default value on creation for the update_time field.
 	workorder.DefaultUpdateTime = workorderDescUpdateTime.Default.(func() time.Time)
 	// workorder.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
@@ -1236,6 +1237,6 @@ func init() {
 }
 
 const (
-	Version = "v0.2.8-0.20200719150104-54f0a6769bda"            // Version of ent codegen.
-	Sum     = "h1:tqhV1WAdf0ipoXYcslPaHH53OkiIVvcKz8kdq6GdmlE=" // Sum of ent codegen.
+	Version = "v0.2.8-0.20200721072151-3b77e5d71a2c"            // Version of ent codegen.
+	Sum     = "h1:ctwO2IBuaYObQJOcNi9vtuHXFdvMNehkuno3AQFGDPE=" // Sum of ent codegen.
 )

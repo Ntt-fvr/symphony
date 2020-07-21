@@ -9,6 +9,7 @@ package servicetype
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -120,7 +121,7 @@ func DiscoveryMethodValidator(dm DiscoveryMethod) error {
 
 // MarshalGQL implements graphql.Marshaler interface.
 func (dm DiscoveryMethod) MarshalGQL(w io.Writer) {
-	writeQuotedStringer(w, dm)
+	io.WriteString(w, strconv.Quote(dm.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
@@ -134,17 +135,4 @@ func (dm *DiscoveryMethod) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("%s is not a valid DiscoveryMethod", str)
 	}
 	return nil
-}
-
-func writeQuotedStringer(w io.Writer, s fmt.Stringer) {
-	const quote = '"'
-	switch w := w.(type) {
-	case io.ByteWriter:
-		w.WriteByte(quote)
-		defer w.WriteByte(quote)
-	default:
-		w.Write([]byte{quote})
-		defer w.Write([]byte{quote})
-	}
-	io.WriteString(w, s.String())
 }
