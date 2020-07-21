@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -80,8 +81,8 @@ func (r mutationResolver) validatedPropertyInputsFromTemplate(
 				LongitudeValue:     propTyp.LongitudeVal,
 				RangeFromValue:     propTyp.RangeFromVal,
 				RangeToValue:       propTyp.RangeToVal,
-				IsInstanceProperty: &propTyp.IsInstanceProperty,
-				IsEditable:         &propTyp.Editable,
+				IsInstanceProperty: pointer.ToBool(propTyp.IsInstanceProperty),
+				IsEditable:         pointer.ToBool(propTyp.Editable),
 			})
 		}
 	}
