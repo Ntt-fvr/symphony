@@ -77,9 +77,7 @@ export type WorkOrderProperties = {
   description: string,
   status: WorkOrderStatus,
   priority: WorkOrderPriority,
-  project: ?{
-    id: string,
-  },
+  projectId: ?string,
   owner: ShortUser,
   assignedTo: ?ShortUser,
   installDate: string,
@@ -113,7 +111,7 @@ export const workOrderToGeoFeature = (
       assignedTo: workOrder.workOrder.assignedTo,
       installDate: workOrder.workOrder.installDate,
       location: workOrder.workOrder.location,
-      project: workOrder.workOrder.project,
+      projectId: workOrder.workOrder.project?.id,
       iconStatus: getWorkOrderStatusIcon(workOrder.workOrder.status),
       iconTech: workOrder.workOrder.assignedTo
         ? 'icon_pin'
