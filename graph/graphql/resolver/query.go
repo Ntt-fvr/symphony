@@ -163,14 +163,18 @@ func (r queryResolver) Equipments(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	filters []*models.EquipmentFilterInput,
+	orderBy *ent.EquipmentOrder,
+	filterBy []*models.EquipmentFilterInput,
 ) (*ent.EquipmentConnection, error) {
-	query := r.ClientFrom(ctx).Equipment.Query()
-	query, err := resolverutil.EquipmentFilter(query, filters)
-	if err != nil {
-		return nil, err
-	}
-	return query.Paginate(ctx, after, first, before, last)
+	return r.ClientFrom(ctx).
+		Equipment.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithEquipmentOrder(orderBy),
+			ent.WithEquipmentFilter(func(query *ent.EquipmentQuery) (*ent.EquipmentQuery, error) {
+				return resolverutil.EquipmentFilter(query, filterBy)
+			}),
+		)
 }
 
 func (r queryResolver) WorkOrders(

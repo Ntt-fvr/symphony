@@ -819,7 +819,7 @@ type ComplexityRoot struct {
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) int
 		EquipmentSearch          func(childComplexity int, filters []*models.EquipmentFilterInput, limit *int) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.EquipmentFilterInput) int
+		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models.EquipmentFilterInput) int
 		LatestPythonPackage      func(childComplexity int) int
 		LinkSearch               func(childComplexity int, filters []*models.LinkFilterInput, limit *int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) int
@@ -1478,7 +1478,7 @@ type QueryResolver interface {
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
 	EquipmentPorts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) (*ent.EquipmentPortConnection, error)
 	EquipmentTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentTypeConnection, error)
-	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.EquipmentFilterInput) (*ent.EquipmentConnection, error)
+	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models.EquipmentFilterInput) (*ent.EquipmentConnection, error)
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
 	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
 	WorkOrderTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkOrderTypeConnection, error)
@@ -5327,7 +5327,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.EquipmentFilterInput)), true
+		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models.EquipmentFilterInput)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -8443,6 +8443,36 @@ type EquipmentEdge {
 }
 
 """
+Properties by which equipment connections can be ordered.
+"""
+enum EquipmentOrderField {
+  """
+  Order equipment by name.
+  """
+  NAME
+
+  """
+  Order equipment by future state.
+  """
+  FUTURE_STATE
+}
+
+"""
+Ordering options for equipment connections.
+"""
+input EquipmentOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order equipment by.
+  """
+  field: EquipmentOrderField
+}
+
+"""
 A connection to a list of location types.
 """
 type LocationTypeConnection {
@@ -10487,11 +10517,39 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): EquipmentTypeConnection!
+
+  """
+  A list of equipment.
+  """
   equipments(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned equipment.
+    """
+    orderBy: EquipmentOrder
+
+    """
+    Filtering options for the returned equipment.
+    """
     filterBy: [EquipmentFilterInput!]
   ): EquipmentConnection!
   serviceTypes(
@@ -12963,14 +13021,22 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*models.EquipmentFilterInput
-	if tmp, ok := rawArgs["filterBy"]; ok {
-		arg4, err = ec.unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
+	var arg4 *ent.EquipmentOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		arg4, err = ec.unmarshalOEquipmentOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["filterBy"] = arg4
+	args["orderBy"] = arg4
+	var arg5 []*models.EquipmentFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		arg5, err = ec.unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -30685,7 +30751,7 @@ func (ec *executionContext) _Query_equipments(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Equipments(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.EquipmentFilterInput))
+		return ec.resolvers.Query().Equipments(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models.EquipmentFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43358,6 +43424,30 @@ func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Conte
 		case "maxDepth":
 			var err error
 			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEquipmentOrder(ctx context.Context, obj interface{}) (ent.EquipmentOrder, error) {
+	var it ent.EquipmentOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalOEquipmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60028,6 +60118,42 @@ func (ec *executionContext) unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋ
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalOEquipmentOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrder(ctx context.Context, v interface{}) (ent.EquipmentOrder, error) {
+	return ec.unmarshalInputEquipmentOrder(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOEquipmentOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrder(ctx context.Context, v interface{}) (*ent.EquipmentOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOEquipmentOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrder(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOEquipmentOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx context.Context, v interface{}) (ent.EquipmentOrderField, error) {
+	var res ent.EquipmentOrderField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOEquipmentOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentOrderField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOEquipmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx context.Context, v interface{}) (*ent.EquipmentOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOEquipmentOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOEquipmentOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.EquipmentOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOEquipmentPort2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentPort) graphql.Marshaler {

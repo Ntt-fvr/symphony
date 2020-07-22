@@ -980,6 +980,36 @@ type EquipmentEdge {
 }
 
 """
+Properties by which equipment connections can be ordered.
+"""
+enum EquipmentOrderField {
+  """
+  Order equipment by name.
+  """
+  NAME
+
+  """
+  Order equipment by future state.
+  """
+  FUTURE_STATE
+}
+
+"""
+Ordering options for equipment connections.
+"""
+input EquipmentOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order equipment by.
+  """
+  field: EquipmentOrderField
+}
+
+"""
 A connection to a list of location types.
 """
 type LocationTypeConnection {
@@ -3024,11 +3054,39 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): EquipmentTypeConnection!
+
+  """
+  A list of equipment.
+  """
   equipments(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned equipment.
+    """
+    orderBy: EquipmentOrder
+
+    """
+    Filtering options for the returned equipment.
+    """
     filterBy: [EquipmentFilterInput!]
   ): EquipmentConnection!
   serviceTypes(

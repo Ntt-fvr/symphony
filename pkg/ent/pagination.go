@@ -2234,6 +2234,63 @@ func (e *EquipmentQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// EquipmentOrderFieldName orders Equipment by name.
+	EquipmentOrderFieldName = &EquipmentOrderField{
+		field: equipment.FieldName,
+		toCursor: func(e *Equipment) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.Name,
+			}
+		},
+	}
+	// EquipmentOrderFieldFutureState orders Equipment by future_state.
+	EquipmentOrderFieldFutureState = &EquipmentOrderField{
+		field: equipment.FieldFutureState,
+		toCursor: func(e *Equipment) Cursor {
+			return Cursor{
+				ID:    e.ID,
+				Value: e.FutureState,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f EquipmentOrderField) String() string {
+	var str string
+	switch f.field {
+	case equipment.FieldName:
+		str = "NAME"
+	case equipment.FieldFutureState:
+		str = "FUTURE_STATE"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f EquipmentOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *EquipmentOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("EquipmentOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *EquipmentOrderFieldName
+	case "FUTURE_STATE":
+		*f = *EquipmentOrderFieldFutureState
+	default:
+		return fmt.Errorf("%s is not a valid EquipmentOrderField", str)
+	}
+	return nil
+}
+
 // EquipmentOrderField defines the ordering field of Equipment.
 type EquipmentOrderField struct {
 	field    string
