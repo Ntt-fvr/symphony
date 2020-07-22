@@ -79,6 +79,20 @@ func (clidc *CheckListItemDefinitionCreate) SetNillableIndex(i *int) *CheckListI
 	return clidc
 }
 
+// SetIsMandatory sets the is_mandatory field.
+func (clidc *CheckListItemDefinitionCreate) SetIsMandatory(b bool) *CheckListItemDefinitionCreate {
+	clidc.mutation.SetIsMandatory(b)
+	return clidc
+}
+
+// SetNillableIsMandatory sets the is_mandatory field if the given value is not nil.
+func (clidc *CheckListItemDefinitionCreate) SetNillableIsMandatory(b *bool) *CheckListItemDefinitionCreate {
+	if b != nil {
+		clidc.SetIsMandatory(*b)
+	}
+	return clidc
+}
+
 // SetEnumValues sets the enum_values field.
 func (clidc *CheckListItemDefinitionCreate) SetEnumValues(s string) *CheckListItemDefinitionCreate {
 	clidc.mutation.SetEnumValues(s)
@@ -260,6 +274,14 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Column: checklistitemdefinition.FieldIndex,
 		})
 		clid.Index = value
+	}
+	if value, ok := clidc.mutation.IsMandatory(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: checklistitemdefinition.FieldIsMandatory,
+		})
+		clid.IsMandatory = value
 	}
 	if value, ok := clidc.mutation.EnumValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -53,6 +53,20 @@ func (clic *CheckListItemCreate) SetNillableIndex(i *int) *CheckListItemCreate {
 	return clic
 }
 
+// SetIsMandatory sets the is_mandatory field.
+func (clic *CheckListItemCreate) SetIsMandatory(b bool) *CheckListItemCreate {
+	clic.mutation.SetIsMandatory(b)
+	return clic
+}
+
+// SetNillableIsMandatory sets the is_mandatory field if the given value is not nil.
+func (clic *CheckListItemCreate) SetNillableIsMandatory(b *bool) *CheckListItemCreate {
+	if b != nil {
+		clic.SetIsMandatory(*b)
+	}
+	return clic
+}
+
 // SetChecked sets the checked field.
 func (clic *CheckListItemCreate) SetChecked(b bool) *CheckListItemCreate {
 	clic.mutation.SetChecked(b)
@@ -316,6 +330,14 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Column: checklistitem.FieldIndex,
 		})
 		cli.Index = value
+	}
+	if value, ok := clic.mutation.IsMandatory(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: checklistitem.FieldIsMandatory,
+		})
+		cli.IsMandatory = value
 	}
 	if value, ok := clic.mutation.Checked(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

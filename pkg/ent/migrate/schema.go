@@ -125,6 +125,7 @@ var (
 		{Name: "title", Type: field.TypeString},
 		{Name: "type", Type: field.TypeString},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
+		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "checked", Type: field.TypeBool, Nullable: true},
 		{Name: "string_val", Type: field.TypeString, Nullable: true},
 		{Name: "enum_values", Type: field.TypeString, Nullable: true},
@@ -142,7 +143,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "check_list_items_check_list_categories_check_list_items",
-				Columns: []*schema.Column{CheckListItemsColumns[11]},
+				Columns: []*schema.Column{CheckListItemsColumns[12]},
 
 				RefColumns: []*schema.Column{CheckListCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -157,6 +158,7 @@ var (
 		{Name: "title", Type: field.TypeString},
 		{Name: "type", Type: field.TypeString},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
+		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "enum_values", Type: field.TypeString, Nullable: true},
 		{Name: "enum_selection_mode_value", Type: field.TypeEnum, Nullable: true, Enums: []string{"single", "multiple"}},
 		{Name: "help_text", Type: field.TypeString, Nullable: true},
@@ -170,7 +172,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "check_list_item_definitions_check_list_category_definitions_check_list_item_definitions",
-				Columns: []*schema.Column{CheckListItemDefinitionsColumns[9]},
+				Columns: []*schema.Column{CheckListItemDefinitionsColumns[10]},
 
 				RefColumns: []*schema.Column{CheckListCategoryDefinitionsColumns[0]},
 				OnDelete:   schema.SetNull,

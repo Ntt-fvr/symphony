@@ -34,6 +34,7 @@ require (
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
 	github.com/stretchr/testify v1.6.1
 	github.com/uber/jaeger-client-go v2.24.0+incompatible // indirect
+	github.com/ugorji/go v1.1.4
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.opencensus.io v0.22.4
 	go.uber.org/zap v1.15.0
@@ -44,7 +45,7 @@ require (
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200701151220-7cb253f4c4f8 // indirect
-	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
+	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
 	google.golang.org/api v0.28.0 // indirect
 	google.golang.org/genproto v0.0.0-20200701001935-0939c5918c31 // indirect
 	google.golang.org/grpc v1.30.0

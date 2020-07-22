@@ -127,6 +127,7 @@ export type WorkOrderDetails_workOrder = {|
     +checkList: $ReadOnlyArray<{|
       +id: string,
       +index: ?number,
+      +isMandatory: ?boolean,
       +type: CheckListItemType,
       +title: string,
       +helpText: ?string,
@@ -317,29 +318,36 @@ v15 = {
 v16 = {
   "kind": "ScalarField",
   "alias": null,
+  "name": "isMandatory",
+  "args": null,
+  "storageKey": null
+},
+v17 = {
+  "kind": "ScalarField",
+  "alias": null,
   "name": "category",
   "args": null,
   "storageKey": null
 },
-v17 = [
+v18 = [
   (v0/*: any*/),
   (v1/*: any*/)
 ],
-v18 = [
+v19 = [
   {
     "kind": "FragmentSpread",
     "name": "EntityDocumentsTable_files",
     "args": null
   }
 ],
-v19 = {
+v20 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "title",
   "args": null,
   "storageKey": null
 },
-v20 = {
+v21 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "timestamp",
@@ -514,14 +522,8 @@ return {
               "args": null,
               "storageKey": null
             },
-            {
-              "kind": "ScalarField",
-              "alias": null,
-              "name": "isMandatory",
-              "args": null,
-              "storageKey": null
-            },
             (v16/*: any*/),
+            (v17/*: any*/),
             {
               "kind": "ScalarField",
               "alias": null,
@@ -547,7 +549,7 @@ return {
           "args": null,
           "concreteType": null,
           "plural": false,
-          "selections": (v17/*: any*/)
+          "selections": (v18/*: any*/)
         }
       ]
     },
@@ -559,7 +561,7 @@ return {
       "args": null,
       "concreteType": "File",
       "plural": true,
-      "selections": (v18/*: any*/)
+      "selections": (v19/*: any*/)
     },
     {
       "kind": "LinkedField",
@@ -569,7 +571,7 @@ return {
       "args": null,
       "concreteType": "File",
       "plural": true,
-      "selections": (v18/*: any*/)
+      "selections": (v19/*: any*/)
     },
     {
       "kind": "LinkedField",
@@ -638,7 +640,7 @@ return {
           "args": null,
           "concreteType": "ProjectType",
           "plural": false,
-          "selections": (v17/*: any*/)
+          "selections": (v18/*: any*/)
         }
       ]
     },
@@ -652,7 +654,7 @@ return {
       "plural": true,
       "selections": [
         (v0/*: any*/),
-        (v19/*: any*/),
+        (v20/*: any*/),
         (v2/*: any*/),
         {
           "kind": "LinkedField",
@@ -665,8 +667,9 @@ return {
           "selections": [
             (v0/*: any*/),
             (v7/*: any*/),
+            (v16/*: any*/),
             (v6/*: any*/),
-            (v19/*: any*/),
+            (v20/*: any*/),
             {
               "kind": "ScalarField",
               "alias": null,
@@ -762,7 +765,7 @@ return {
                   "args": null,
                   "storageKey": null
                 },
-                (v16/*: any*/),
+                (v17/*: any*/),
                 {
                   "kind": "ScalarField",
                   "alias": null,
@@ -796,7 +799,7 @@ return {
                   "args": null,
                   "storageKey": null
                 },
-                (v20/*: any*/),
+                (v21/*: any*/),
                 {
                   "kind": "ScalarField",
                   "alias": null,
@@ -916,7 +919,7 @@ return {
               "plural": true,
               "selections": [
                 (v0/*: any*/),
-                (v20/*: any*/),
+                (v21/*: any*/),
                 {
                   "kind": "ScalarField",
                   "alias": null,
@@ -990,5 +993,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a88ff2f8c282a68e89219a98db8d19bc';
+(node/*: any*/).hash = 'd7742c2ee385ac5e6a292c5f66746510';
 module.exports = node;

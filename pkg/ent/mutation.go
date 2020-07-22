@@ -2724,6 +2724,7 @@ type CheckListItemMutation struct {
 	_type                      *string
 	index                      *int
 	addindex                   *int
+	is_mandatory               *bool
 	checked                    *bool
 	string_val                 *string
 	enum_values                *string
@@ -2966,6 +2967,56 @@ func (m *CheckListItemMutation) ResetIndex() {
 	m.index = nil
 	m.addindex = nil
 	delete(m.clearedFields, checklistitem.FieldIndex)
+}
+
+// SetIsMandatory sets the is_mandatory field.
+func (m *CheckListItemMutation) SetIsMandatory(b bool) {
+	m.is_mandatory = &b
+}
+
+// IsMandatory returns the is_mandatory value in the mutation.
+func (m *CheckListItemMutation) IsMandatory() (r bool, exists bool) {
+	v := m.is_mandatory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsMandatory returns the old is_mandatory value of the CheckListItem.
+// If the CheckListItem object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckListItemMutation) OldIsMandatory(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIsMandatory is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIsMandatory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsMandatory: %w", err)
+	}
+	return oldValue.IsMandatory, nil
+}
+
+// ClearIsMandatory clears the value of is_mandatory.
+func (m *CheckListItemMutation) ClearIsMandatory() {
+	m.is_mandatory = nil
+	m.clearedFields[checklistitem.FieldIsMandatory] = struct{}{}
+}
+
+// IsMandatoryCleared returns if the field is_mandatory was cleared in this mutation.
+func (m *CheckListItemMutation) IsMandatoryCleared() bool {
+	_, ok := m.clearedFields[checklistitem.FieldIsMandatory]
+	return ok
+}
+
+// ResetIsMandatory reset all changes of the "is_mandatory" field.
+func (m *CheckListItemMutation) ResetIsMandatory() {
+	m.is_mandatory = nil
+	delete(m.clearedFields, checklistitem.FieldIsMandatory)
 }
 
 // SetChecked sets the checked field.
@@ -3497,7 +3548,7 @@ func (m *CheckListItemMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CheckListItemMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.title != nil {
 		fields = append(fields, checklistitem.FieldTitle)
 	}
@@ -3506,6 +3557,9 @@ func (m *CheckListItemMutation) Fields() []string {
 	}
 	if m.index != nil {
 		fields = append(fields, checklistitem.FieldIndex)
+	}
+	if m.is_mandatory != nil {
+		fields = append(fields, checklistitem.FieldIsMandatory)
 	}
 	if m.checked != nil {
 		fields = append(fields, checklistitem.FieldChecked)
@@ -3542,6 +3596,8 @@ func (m *CheckListItemMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case checklistitem.FieldIndex:
 		return m.Index()
+	case checklistitem.FieldIsMandatory:
+		return m.IsMandatory()
 	case checklistitem.FieldChecked:
 		return m.Checked()
 	case checklistitem.FieldStringVal:
@@ -3571,6 +3627,8 @@ func (m *CheckListItemMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldType(ctx)
 	case checklistitem.FieldIndex:
 		return m.OldIndex(ctx)
+	case checklistitem.FieldIsMandatory:
+		return m.OldIsMandatory(ctx)
 	case checklistitem.FieldChecked:
 		return m.OldChecked(ctx)
 	case checklistitem.FieldStringVal:
@@ -3614,6 +3672,13 @@ func (m *CheckListItemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIndex(v)
+		return nil
+	case checklistitem.FieldIsMandatory:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsMandatory(v)
 		return nil
 	case checklistitem.FieldChecked:
 		v, ok := value.(bool)
@@ -3712,6 +3777,9 @@ func (m *CheckListItemMutation) ClearedFields() []string {
 	if m.FieldCleared(checklistitem.FieldIndex) {
 		fields = append(fields, checklistitem.FieldIndex)
 	}
+	if m.FieldCleared(checklistitem.FieldIsMandatory) {
+		fields = append(fields, checklistitem.FieldIsMandatory)
+	}
 	if m.FieldCleared(checklistitem.FieldChecked) {
 		fields = append(fields, checklistitem.FieldChecked)
 	}
@@ -3749,6 +3817,9 @@ func (m *CheckListItemMutation) ClearField(name string) error {
 	switch name {
 	case checklistitem.FieldIndex:
 		m.ClearIndex()
+		return nil
+	case checklistitem.FieldIsMandatory:
+		m.ClearIsMandatory()
 		return nil
 	case checklistitem.FieldChecked:
 		m.ClearChecked()
@@ -3788,6 +3859,9 @@ func (m *CheckListItemMutation) ResetField(name string) error {
 		return nil
 	case checklistitem.FieldIndex:
 		m.ResetIndex()
+		return nil
+	case checklistitem.FieldIsMandatory:
+		m.ResetIsMandatory()
 		return nil
 	case checklistitem.FieldChecked:
 		m.ResetChecked()
@@ -3970,6 +4044,7 @@ type CheckListItemDefinitionMutation struct {
 	_type                                 *string
 	index                                 *int
 	addindex                              *int
+	is_mandatory                          *bool
 	enum_values                           *string
 	enum_selection_mode_value             *checklistitemdefinition.EnumSelectionModeValue
 	help_text                             *string
@@ -4278,6 +4353,56 @@ func (m *CheckListItemDefinitionMutation) ResetIndex() {
 	delete(m.clearedFields, checklistitemdefinition.FieldIndex)
 }
 
+// SetIsMandatory sets the is_mandatory field.
+func (m *CheckListItemDefinitionMutation) SetIsMandatory(b bool) {
+	m.is_mandatory = &b
+}
+
+// IsMandatory returns the is_mandatory value in the mutation.
+func (m *CheckListItemDefinitionMutation) IsMandatory() (r bool, exists bool) {
+	v := m.is_mandatory
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsMandatory returns the old is_mandatory value of the CheckListItemDefinition.
+// If the CheckListItemDefinition object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckListItemDefinitionMutation) OldIsMandatory(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIsMandatory is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIsMandatory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsMandatory: %w", err)
+	}
+	return oldValue.IsMandatory, nil
+}
+
+// ClearIsMandatory clears the value of is_mandatory.
+func (m *CheckListItemDefinitionMutation) ClearIsMandatory() {
+	m.is_mandatory = nil
+	m.clearedFields[checklistitemdefinition.FieldIsMandatory] = struct{}{}
+}
+
+// IsMandatoryCleared returns if the field is_mandatory was cleared in this mutation.
+func (m *CheckListItemDefinitionMutation) IsMandatoryCleared() bool {
+	_, ok := m.clearedFields[checklistitemdefinition.FieldIsMandatory]
+	return ok
+}
+
+// ResetIsMandatory reset all changes of the "is_mandatory" field.
+func (m *CheckListItemDefinitionMutation) ResetIsMandatory() {
+	m.is_mandatory = nil
+	delete(m.clearedFields, checklistitemdefinition.FieldIsMandatory)
+}
+
 // SetEnumValues sets the enum_values field.
 func (m *CheckListItemDefinitionMutation) SetEnumValues(s string) {
 	m.enum_values = &s
@@ -4481,7 +4606,7 @@ func (m *CheckListItemDefinitionMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CheckListItemDefinitionMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, checklistitemdefinition.FieldCreateTime)
 	}
@@ -4496,6 +4621,9 @@ func (m *CheckListItemDefinitionMutation) Fields() []string {
 	}
 	if m.index != nil {
 		fields = append(fields, checklistitemdefinition.FieldIndex)
+	}
+	if m.is_mandatory != nil {
+		fields = append(fields, checklistitemdefinition.FieldIsMandatory)
 	}
 	if m.enum_values != nil {
 		fields = append(fields, checklistitemdefinition.FieldEnumValues)
@@ -4524,6 +4652,8 @@ func (m *CheckListItemDefinitionMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case checklistitemdefinition.FieldIndex:
 		return m.Index()
+	case checklistitemdefinition.FieldIsMandatory:
+		return m.IsMandatory()
 	case checklistitemdefinition.FieldEnumValues:
 		return m.EnumValues()
 	case checklistitemdefinition.FieldEnumSelectionModeValue:
@@ -4549,6 +4679,8 @@ func (m *CheckListItemDefinitionMutation) OldField(ctx context.Context, name str
 		return m.OldType(ctx)
 	case checklistitemdefinition.FieldIndex:
 		return m.OldIndex(ctx)
+	case checklistitemdefinition.FieldIsMandatory:
+		return m.OldIsMandatory(ctx)
 	case checklistitemdefinition.FieldEnumValues:
 		return m.OldEnumValues(ctx)
 	case checklistitemdefinition.FieldEnumSelectionModeValue:
@@ -4598,6 +4730,13 @@ func (m *CheckListItemDefinitionMutation) SetField(name string, value ent.Value)
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIndex(v)
+		return nil
+	case checklistitemdefinition.FieldIsMandatory:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsMandatory(v)
 		return nil
 	case checklistitemdefinition.FieldEnumValues:
 		v, ok := value.(string)
@@ -4668,6 +4807,9 @@ func (m *CheckListItemDefinitionMutation) ClearedFields() []string {
 	if m.FieldCleared(checklistitemdefinition.FieldIndex) {
 		fields = append(fields, checklistitemdefinition.FieldIndex)
 	}
+	if m.FieldCleared(checklistitemdefinition.FieldIsMandatory) {
+		fields = append(fields, checklistitemdefinition.FieldIsMandatory)
+	}
 	if m.FieldCleared(checklistitemdefinition.FieldEnumValues) {
 		fields = append(fields, checklistitemdefinition.FieldEnumValues)
 	}
@@ -4693,6 +4835,9 @@ func (m *CheckListItemDefinitionMutation) ClearField(name string) error {
 	switch name {
 	case checklistitemdefinition.FieldIndex:
 		m.ClearIndex()
+		return nil
+	case checklistitemdefinition.FieldIsMandatory:
+		m.ClearIsMandatory()
 		return nil
 	case checklistitemdefinition.FieldEnumValues:
 		m.ClearEnumValues()
@@ -4726,6 +4871,9 @@ func (m *CheckListItemDefinitionMutation) ResetField(name string) error {
 		return nil
 	case checklistitemdefinition.FieldIndex:
 		m.ResetIndex()
+		return nil
+	case checklistitemdefinition.FieldIsMandatory:
+		m.ResetIsMandatory()
 		return nil
 	case checklistitemdefinition.FieldEnumValues:
 		m.ResetEnumValues()

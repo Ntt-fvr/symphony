@@ -30,6 +30,8 @@ const (
 	FieldType = "type"
 	// FieldIndex holds the string denoting the index field in the database.
 	FieldIndex = "index"
+	// FieldIsMandatory holds the string denoting the is_mandatory field in the database.
+	FieldIsMandatory = "is_mandatory"
 	// FieldEnumValues holds the string denoting the enum_values field in the database.
 	FieldEnumValues = "enum_values"
 	// FieldEnumSelectionModeValue holds the string denoting the enum_selection_mode_value field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldType,
 	FieldIndex,
+	FieldIsMandatory,
 	FieldEnumValues,
 	FieldEnumSelectionModeValue,
 	FieldHelpText,

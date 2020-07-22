@@ -317,6 +317,7 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
           title
           type
           index
+          isMandatory
           enumValues
           enumSelectionMode
           helpText

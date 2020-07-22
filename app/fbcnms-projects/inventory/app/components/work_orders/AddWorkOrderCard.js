@@ -159,6 +159,7 @@ const workOrderTypeQuery = graphql`
             title
             type
             index
+            isMandatory
             enumValues
             enumSelectionMode
             helpText

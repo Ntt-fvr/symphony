@@ -23,6 +23,7 @@ export type CheckListItemDefinition = $ReadOnly<{|
   enumValues?: ?string,
   enumSelectionMode?: ?CheckListItemEnumSelectionMode,
   helpText?: ?string,
+  isMandatory?: ?boolean,
 |}>;
 
 export type CheckListItemBase = $ReadOnly<{|
@@ -31,6 +32,7 @@ export type CheckListItemBase = $ReadOnly<{|
   type: CheckListItemType,
   title: string,
   helpText?: ?string,
+  isMandatory?: ?boolean,
 |}>;
 
 export type BasicCheckListItemData = $ReadOnly<{|

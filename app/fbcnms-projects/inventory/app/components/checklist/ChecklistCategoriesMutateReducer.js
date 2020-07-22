@@ -29,6 +29,7 @@ export function getInitialState(
     checkList: category.checkList.slice().map(item => ({
       id: item.id,
       index: item.index,
+      isMandatory: item.isMandatory,
       type: item.type,
       title: item.title,
       helpText: item.helpText,
@@ -71,6 +72,7 @@ export function getInitialStateFromChecklistDefinitions(
       .map(itemDefinition => ({
         id: generateTempId(),
         index: itemDefinition.index,
+        isMandatory: itemDefinition.isMandatory,
         type: itemDefinition.type,
         title: itemDefinition.title,
         helpText: itemDefinition.helpText,

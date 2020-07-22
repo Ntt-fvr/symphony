@@ -31,6 +31,8 @@ type CheckListItemDefinition struct {
 	Type string `json:"type,omitempty"`
 	// Index holds the value of the "index" field.
 	Index int `json:"index,omitempty"`
+	// IsMandatory holds the value of the "is_mandatory" field.
+	IsMandatory bool `json:"is_mandatory,omitempty"`
 	// EnumValues holds the value of the "enum_values" field.
 	EnumValues *string `json:"enum_values,omitempty" gqlgen:"enumValues"`
 	// EnumSelectionModeValue holds the value of the "enum_selection_mode_value" field.
@@ -75,6 +77,7 @@ func (*CheckListItemDefinition) scanValues() []interface{} {
 		&sql.NullString{}, // title
 		&sql.NullString{}, // type
 		&sql.NullInt64{},  // index
+		&sql.NullBool{},   // is_mandatory
 		&sql.NullString{}, // enum_values
 		&sql.NullString{}, // enum_selection_mode_value
 		&sql.NullString{}, // help_text
@@ -125,24 +128,29 @@ func (clid *CheckListItemDefinition) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		clid.Index = int(value.Int64)
 	}
-	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field enum_values", values[5])
+	if value, ok := values[5].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field is_mandatory", values[5])
+	} else if value.Valid {
+		clid.IsMandatory = value.Bool
+	}
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field enum_values", values[6])
 	} else if value.Valid {
 		clid.EnumValues = new(string)
 		*clid.EnumValues = value.String
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[6])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
 		clid.EnumSelectionModeValue = checklistitemdefinition.EnumSelectionModeValue(value.String)
 	}
-	if value, ok := values[7].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field help_text", values[7])
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field help_text", values[8])
 	} else if value.Valid {
 		clid.HelpText = new(string)
 		*clid.HelpText = value.String
 	}
-	values = values[8:]
+	values = values[9:]
 	if len(values) == len(checklistitemdefinition.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field check_list_category_definition_check_list_item_definitions", value)
@@ -192,6 +200,8 @@ func (clid *CheckListItemDefinition) String() string {
 	builder.WriteString(clid.Type)
 	builder.WriteString(", index=")
 	builder.WriteString(fmt.Sprintf("%v", clid.Index))
+	builder.WriteString(", is_mandatory=")
+	builder.WriteString(fmt.Sprintf("%v", clid.IsMandatory))
 	if v := clid.EnumValues; v != nil {
 		builder.WriteString(", enum_values=")
 		builder.WriteString(*v)

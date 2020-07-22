@@ -75,6 +75,26 @@ func (cliu *CheckListItemUpdate) ClearIndex() *CheckListItemUpdate {
 	return cliu
 }
 
+// SetIsMandatory sets the is_mandatory field.
+func (cliu *CheckListItemUpdate) SetIsMandatory(b bool) *CheckListItemUpdate {
+	cliu.mutation.SetIsMandatory(b)
+	return cliu
+}
+
+// SetNillableIsMandatory sets the is_mandatory field if the given value is not nil.
+func (cliu *CheckListItemUpdate) SetNillableIsMandatory(b *bool) *CheckListItemUpdate {
+	if b != nil {
+		cliu.SetIsMandatory(*b)
+	}
+	return cliu
+}
+
+// ClearIsMandatory clears the value of is_mandatory.
+func (cliu *CheckListItemUpdate) ClearIsMandatory() *CheckListItemUpdate {
+	cliu.mutation.ClearIsMandatory()
+	return cliu
+}
+
 // SetChecked sets the checked field.
 func (cliu *CheckListItemUpdate) SetChecked(b bool) *CheckListItemUpdate {
 	cliu.mutation.SetChecked(b)
@@ -444,6 +464,19 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: checklistitem.FieldIndex,
 		})
 	}
+	if value, ok := cliu.mutation.IsMandatory(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: checklistitem.FieldIsMandatory,
+		})
+	}
+	if cliu.mutation.IsMandatoryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: checklistitem.FieldIsMandatory,
+		})
+	}
 	if value, ok := cliu.mutation.Checked(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
@@ -738,6 +771,26 @@ func (cliuo *CheckListItemUpdateOne) AddIndex(i int) *CheckListItemUpdateOne {
 // ClearIndex clears the value of index.
 func (cliuo *CheckListItemUpdateOne) ClearIndex() *CheckListItemUpdateOne {
 	cliuo.mutation.ClearIndex()
+	return cliuo
+}
+
+// SetIsMandatory sets the is_mandatory field.
+func (cliuo *CheckListItemUpdateOne) SetIsMandatory(b bool) *CheckListItemUpdateOne {
+	cliuo.mutation.SetIsMandatory(b)
+	return cliuo
+}
+
+// SetNillableIsMandatory sets the is_mandatory field if the given value is not nil.
+func (cliuo *CheckListItemUpdateOne) SetNillableIsMandatory(b *bool) *CheckListItemUpdateOne {
+	if b != nil {
+		cliuo.SetIsMandatory(*b)
+	}
+	return cliuo
+}
+
+// ClearIsMandatory clears the value of is_mandatory.
+func (cliuo *CheckListItemUpdateOne) ClearIsMandatory() *CheckListItemUpdateOne {
+	cliuo.mutation.ClearIsMandatory()
 	return cliuo
 }
 
@@ -1106,6 +1159,19 @@ func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckLis
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
 			Column: checklistitem.FieldIndex,
+		})
+	}
+	if value, ok := cliuo.mutation.IsMandatory(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: checklistitem.FieldIsMandatory,
+		})
+	}
+	if cliuo.mutation.IsMandatoryCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: checklistitem.FieldIsMandatory,
 		})
 	}
 	if value, ok := cliuo.mutation.Checked(); ok {

@@ -676,6 +676,7 @@ export default withRouter(
             checkList {
               id
               index
+              isMandatory
               type
               title
               helpText

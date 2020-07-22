@@ -97,6 +97,8 @@ func (CheckListItemDefinition) Fields() []ent.Field {
 		field.String("type"),
 		field.Int("index").
 			Optional(),
+		field.Bool("is_mandatory").
+			Optional(),
 		field.String("enum_values").
 			StructTag(`gqlgen:"enumValues"`).
 			Nillable().
@@ -141,6 +143,8 @@ func (CheckListItem) Fields() []ent.Field {
 		field.String("title"),
 		field.String("type"),
 		field.Int("index").
+			Optional(),
+		field.Bool("is_mandatory").
 			Optional(),
 		field.Bool("checked").
 			Optional(),

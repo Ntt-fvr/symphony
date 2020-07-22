@@ -218,6 +218,7 @@ type ComplexityRoot struct {
 		HelpText           func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		Index              func(childComplexity int) int
+		IsMandatory        func(childComplexity int) int
 		SelectedEnumValues func(childComplexity int) int
 		StringVal          func(childComplexity int) int
 		Title              func(childComplexity int) int
@@ -232,6 +233,7 @@ type ComplexityRoot struct {
 		HelpText          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Index             func(childComplexity int) int
+		IsMandatory       func(childComplexity int) int
 		Title             func(childComplexity int) int
 		Type              func(childComplexity int) int
 	}
@@ -2077,6 +2079,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CheckListItem.Index(childComplexity), true
 
+	case "CheckListItem.isMandatory":
+		if e.complexity.CheckListItem.IsMandatory == nil {
+			break
+		}
+
+		return e.complexity.CheckListItem.IsMandatory(childComplexity), true
+
 	case "CheckListItem.selectedEnumValues":
 		if e.complexity.CheckListItem.SelectedEnumValues == nil {
 			break
@@ -2153,6 +2162,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CheckListItemDefinition.Index(childComplexity), true
+
+	case "CheckListItemDefinition.isMandatory":
+		if e.complexity.CheckListItemDefinition.IsMandatory == nil {
+			break
+		}
+
+		return e.complexity.CheckListItemDefinition.IsMandatory(childComplexity), true
 
 	case "CheckListItemDefinition.title":
 		if e.complexity.CheckListItemDefinition.Title == nil {
@@ -8939,6 +8955,7 @@ type CheckListItemDefinition {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
   helpText: String
@@ -8949,6 +8966,7 @@ input CheckListDefinitionInput {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
   helpText: String
@@ -8973,6 +8991,7 @@ type CheckListItem implements Node {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
@@ -8997,6 +9016,7 @@ input CheckListItemInput {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
@@ -16662,6 +16682,37 @@ func (ec *executionContext) _CheckListItem_index(ctx context.Context, field grap
 	return ec.marshalOInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _CheckListItem_isMandatory(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "CheckListItem",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsMandatory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _CheckListItem_helpText(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17103,6 +17154,37 @@ func (ec *executionContext) _CheckListItemDefinition_index(ctx context.Context, 
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalOInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CheckListItemDefinition_isMandatory(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItemDefinition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "CheckListItemDefinition",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsMandatory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItemDefinition_enumValues(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItemDefinition) (ret graphql.Marshaler) {
@@ -42387,6 +42469,12 @@ func (ec *executionContext) unmarshalInputCheckListDefinitionInput(ctx context.C
 			if err != nil {
 				return it, err
 			}
+		case "isMandatory":
+			var err error
+			it.IsMandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "enumValues":
 			var err error
 			it.EnumValues, err = ec.unmarshalOString2ᚖstring(ctx, v)
@@ -42438,6 +42526,12 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 		case "index":
 			var err error
 			it.Index, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "isMandatory":
+			var err error
+			it.IsMandatory, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46625,6 +46719,8 @@ func (ec *executionContext) _CheckListItem(ctx context.Context, sel ast.Selectio
 			})
 		case "index":
 			out.Values[i] = ec._CheckListItem_index(ctx, field, obj)
+		case "isMandatory":
+			out.Values[i] = ec._CheckListItem_isMandatory(ctx, field, obj)
 		case "helpText":
 			out.Values[i] = ec._CheckListItem_helpText(ctx, field, obj)
 		case "enumValues":
@@ -46738,6 +46834,8 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 			})
 		case "index":
 			out.Values[i] = ec._CheckListItemDefinition_index(ctx, field, obj)
+		case "isMandatory":
+			out.Values[i] = ec._CheckListItemDefinition_isMandatory(ctx, field, obj)
 		case "enumValues":
 			out.Values[i] = ec._CheckListItemDefinition_enumValues(ctx, field, obj)
 		case "enumSelectionMode":

@@ -253,6 +253,7 @@ type CheckListDefinitionInput struct {
 	Title             string                                `json:"title"`
 	Type              CheckListItemType                     `json:"type"`
 	Index             *int                                  `json:"index"`
+	IsMandatory       *bool                                 `json:"isMandatory"`
 	EnumValues        *string                               `json:"enumValues"`
 	EnumSelectionMode *checklistitem.EnumSelectionModeValue `json:"enumSelectionMode"`
 	HelpText          *string                               `json:"helpText"`
@@ -263,6 +264,7 @@ type CheckListItemInput struct {
 	Title              string                                `json:"title"`
 	Type               CheckListItemType                     `json:"type"`
 	Index              *int                                  `json:"index"`
+	IsMandatory        *bool                                 `json:"isMandatory"`
 	HelpText           *string                               `json:"helpText"`
 	EnumValues         *string                               `json:"enumValues"`
 	EnumSelectionMode  *checklistitem.EnumSelectionModeValue `json:"enumSelectionMode"`

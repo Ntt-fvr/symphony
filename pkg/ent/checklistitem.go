@@ -26,6 +26,8 @@ type CheckListItem struct {
 	Type string `json:"type,omitempty"`
 	// Index holds the value of the "index" field.
 	Index int `json:"index,omitempty"`
+	// IsMandatory holds the value of the "is_mandatory" field.
+	IsMandatory bool `json:"is_mandatory,omitempty"`
 	// Checked holds the value of the "checked" field.
 	Checked bool `json:"checked,omitempty"`
 	// StringVal holds the value of the "string_val" field.
@@ -109,6 +111,7 @@ func (*CheckListItem) scanValues() []interface{} {
 		&sql.NullString{}, // title
 		&sql.NullString{}, // type
 		&sql.NullInt64{},  // index
+		&sql.NullBool{},   // is_mandatory
 		&sql.NullBool{},   // checked
 		&sql.NullString{}, // string_val
 		&sql.NullString{}, // enum_values
@@ -154,42 +157,47 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 		cli.Index = int(value.Int64)
 	}
 	if value, ok := values[3].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field checked", values[3])
+		return fmt.Errorf("unexpected type %T for field is_mandatory", values[3])
+	} else if value.Valid {
+		cli.IsMandatory = value.Bool
+	}
+	if value, ok := values[4].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field checked", values[4])
 	} else if value.Valid {
 		cli.Checked = value.Bool
 	}
-	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field string_val", values[4])
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field string_val", values[5])
 	} else if value.Valid {
 		cli.StringVal = value.String
 	}
-	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field enum_values", values[5])
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field enum_values", values[6])
 	} else if value.Valid {
 		cli.EnumValues = value.String
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[6])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
 		cli.EnumSelectionModeValue = checklistitem.EnumSelectionModeValue(value.String)
 	}
-	if value, ok := values[7].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field selected_enum_values", values[7])
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field selected_enum_values", values[8])
 	} else if value.Valid {
 		cli.SelectedEnumValues = value.String
 	}
-	if value, ok := values[8].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field yes_no_val", values[8])
+	if value, ok := values[9].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field yes_no_val", values[9])
 	} else if value.Valid {
 		cli.YesNoVal = checklistitem.YesNoVal(value.String)
 	}
-	if value, ok := values[9].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field help_text", values[9])
+	if value, ok := values[10].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field help_text", values[10])
 	} else if value.Valid {
 		cli.HelpText = new(string)
 		*cli.HelpText = value.String
 	}
-	values = values[10:]
+	values = values[11:]
 	if len(values) == len(checklistitem.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field check_list_category_check_list_items", value)
@@ -250,6 +258,8 @@ func (cli *CheckListItem) String() string {
 	builder.WriteString(cli.Type)
 	builder.WriteString(", index=")
 	builder.WriteString(fmt.Sprintf("%v", cli.Index))
+	builder.WriteString(", is_mandatory=")
+	builder.WriteString(fmt.Sprintf("%v", cli.IsMandatory))
 	builder.WriteString(", checked=")
 	builder.WriteString(fmt.Sprintf("%v", cli.Checked))
 	builder.WriteString(", string_val=")

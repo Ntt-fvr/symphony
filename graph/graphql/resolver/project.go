@@ -303,6 +303,7 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 					Title:             cliDef.Title,
 					Type:              models.CheckListItemType(cliDef.Type),
 					Index:             pointer.ToInt(cliDef.Index),
+					IsMandatory:       pointer.ToBool(cliDef.IsMandatory),
 					HelpText:          cliDef.HelpText,
 					EnumValues:        cliDef.EnumValues,
 					EnumSelectionMode: enumSelectionMode,

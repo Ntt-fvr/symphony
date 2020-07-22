@@ -1476,6 +1476,7 @@ type CheckListItemDefinition {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
   helpText: String
@@ -1486,6 +1487,7 @@ input CheckListDefinitionInput {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
   helpText: String
@@ -1510,6 +1512,7 @@ type CheckListItem implements Node {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
@@ -1534,6 +1537,7 @@ input CheckListItemInput {
   title: String!
   type: CheckListItemType!
   index: Int
+  isMandatory: Boolean
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode

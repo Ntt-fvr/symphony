@@ -1580,9 +1580,10 @@ func TestAddWorkOrderWithCheckListCategory(t *testing.T) {
 
 	indexValue := 1
 	fooCL := models.CheckListItemInput{
-		Title: "Foo",
-		Type:  "simple",
-		Index: &indexValue,
+		Title:       "Foo",
+		Type:        "simple",
+		Index:       &indexValue,
+		IsMandatory: pointer.ToBool(true),
 	}
 	clInputs := []*models.CheckListItemInput{&fooCL}
 
@@ -1604,6 +1605,7 @@ func TestAddWorkOrderWithCheckListCategory(t *testing.T) {
 	barCLCFetched := workOrder.QueryCheckListCategories().Where(checklistcategory.Title("Bar")).OnlyX(ctx)
 	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.Type("simple")).OnlyX(ctx)
 	require.Equal(t, "Foo", fooCLFetched.Title, "verifying checklist name")
+	require.EqualValues(t, true, fooCLFetched.IsMandatory)
 
 	clcs, err := wr.CheckListCategories(ctx, workOrder)
 	require.NoError(t, err)
@@ -1631,9 +1633,10 @@ func TestEditWorkOrderWithCheckListCategory(t *testing.T) {
 	require.NoError(t, err)
 	indexValue := 1
 	fooCL := models.CheckListItemInput{
-		Title: "Foo",
-		Type:  "simple",
-		Index: &indexValue,
+		Title:       "Foo",
+		Type:        "simple",
+		Index:       &indexValue,
+		IsMandatory: pointer.ToBool(true),
 	}
 	clInputs := []*models.CheckListItemInput{&fooCL}
 
@@ -1655,6 +1658,7 @@ func TestEditWorkOrderWithCheckListCategory(t *testing.T) {
 	barCLCFetched := workOrder.QueryCheckListCategories().Where(checklistcategory.Title("Bar")).OnlyX(ctx)
 	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.Type("simple")).OnlyX(ctx)
 	require.Equal(t, "Foo", fooCLFetched.Title, "verifying checklist name")
+	require.Equal(t, true, fooCLFetched.IsMandatory, "verifying isMandatory")
 
 	clcs, err := wr.CheckListCategories(ctx, workOrder)
 	require.NoError(t, err)

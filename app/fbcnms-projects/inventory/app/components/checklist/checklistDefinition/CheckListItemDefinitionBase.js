@@ -13,6 +13,7 @@ import type {CheckListItemType} from '../../work_orders/__generated__/WorkOrderD
 import type {Node} from 'react';
 
 import Button from '@fbcnms/ui/components/design-system/Button';
+import Checkbox from '@fbcnms/ui/components/design-system/Checkbox/Checkbox';
 import ChecklistItemsDialogMutateDispatchContext from '../checkListCategory/ChecklistItemsDialogMutateDispatchContext';
 import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
 import Grid from '@material-ui/core/Grid';
@@ -70,6 +71,9 @@ const useStyles = makeStyles(() => ({
     width: 24,
     height: 24,
     marginRight: 6,
+  },
+  markRequired: {
+    flexGrow: 1,
   },
 }));
 
@@ -152,6 +156,18 @@ const CheckListItemDefinitionBase = ({children, item, onChange}: Props) => {
       {children}
       <div className={classes.divider} />
       <div className={classes.actions}>
+        <Checkbox
+          className={classes.markRequired}
+          checked={item.isMandatory ?? false}
+          onChange={selection =>
+            dispatch({
+              type: 'MARK_ITEM_AS_REQUIRED',
+              itemId: item.id,
+              isMandatory: selection === 'checked',
+            })
+          }
+          title={fbt('Mark as required', '')}
+        />
         <Button
           variant="text"
           skin="gray"

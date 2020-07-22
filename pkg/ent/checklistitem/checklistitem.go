@@ -25,6 +25,8 @@ const (
 	FieldType = "type"
 	// FieldIndex holds the string denoting the index field in the database.
 	FieldIndex = "index"
+	// FieldIsMandatory holds the string denoting the is_mandatory field in the database.
+	FieldIsMandatory = "is_mandatory"
 	// FieldChecked holds the string denoting the checked field in the database.
 	FieldChecked = "checked"
 	// FieldStringVal holds the string denoting the string_val field in the database.
@@ -87,6 +89,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldType,
 	FieldIndex,
+	FieldIsMandatory,
 	FieldChecked,
 	FieldStringVal,
 	FieldEnumValues,

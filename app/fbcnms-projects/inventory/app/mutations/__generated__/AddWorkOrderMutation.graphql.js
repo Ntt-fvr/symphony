@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash c1ddc4c5982a38fd5fc8ada2a6c67675
+ * @relayHash b11705d12df809b88d8531cf466957ee
  */
 
 /* eslint-disable */
@@ -56,6 +56,7 @@ export type CheckListItemInput = {|
   title: string,
   type: CheckListItemType,
   index?: ?number,
+  isMandatory?: ?boolean,
   helpText?: ?string,
   enumValues?: ?string,
   enumSelectionMode?: ?CheckListItemEnumSelectionMode,

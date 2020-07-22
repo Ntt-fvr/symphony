@@ -428,7 +428,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     cli.ID,
 		Type:   "CheckListItem",
-		Fields: make([]*Field, 10),
+		Fields: make([]*Field, 11),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -456,10 +456,18 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "index",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(cli.Checked); err != nil {
+	if buf, err = json.Marshal(cli.IsMandatory); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
+		Type:  "bool",
+		Name:  "is_mandatory",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(cli.Checked); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "checked",
 		Value: string(buf),
@@ -467,7 +475,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.StringVal); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "string",
 		Name:  "string_val",
 		Value: string(buf),
@@ -475,7 +483,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.EnumValues); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "string",
 		Name:  "enum_values",
 		Value: string(buf),
@@ -483,7 +491,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.EnumSelectionModeValue); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "checklistitem.EnumSelectionModeValue",
 		Name:  "enum_selection_mode_value",
 		Value: string(buf),
@@ -491,7 +499,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.SelectedEnumValues); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "string",
 		Name:  "selected_enum_values",
 		Value: string(buf),
@@ -499,7 +507,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.YesNoVal); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "checklistitem.YesNoVal",
 		Name:  "yes_no_val",
 		Value: string(buf),
@@ -507,7 +515,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(cli.HelpText); err != nil {
 		return nil, err
 	}
-	node.Fields[9] = &Field{
+	node.Fields[10] = &Field{
 		Type:  "string",
 		Name:  "help_text",
 		Value: string(buf),
@@ -576,7 +584,7 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 	node = &Node{
 		ID:     clid.ID,
 		Type:   "CheckListItemDefinition",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
@@ -620,10 +628,18 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 		Name:  "index",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(clid.EnumValues); err != nil {
+	if buf, err = json.Marshal(clid.IsMandatory); err != nil {
 		return nil, err
 	}
 	node.Fields[5] = &Field{
+		Type:  "bool",
+		Name:  "is_mandatory",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(clid.EnumValues); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
 		Type:  "string",
 		Name:  "enum_values",
 		Value: string(buf),
@@ -631,7 +647,7 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 	if buf, err = json.Marshal(clid.EnumSelectionModeValue); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "checklistitemdefinition.EnumSelectionModeValue",
 		Name:  "enum_selection_mode_value",
 		Value: string(buf),
@@ -639,7 +655,7 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 	if buf, err = json.Marshal(clid.HelpText); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "string",
 		Name:  "help_text",
 		Value: string(buf),

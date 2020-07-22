@@ -448,6 +448,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 			SetTitle(input.Title).
 			SetType(input.Type.String()).
 			SetNillableIndex(input.Index).
+			SetNillableIsMandatory(input.IsMandatory).
 			SetNillableEnumValues(input.EnumValues).
 			SetNillableHelpText(input.HelpText).
 			SetNillableChecked(input.Checked).
@@ -465,6 +466,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 			SetTitle(input.Title).
 			SetType(input.Type.String()).
 			SetNillableIndex(input.Index).
+			SetNillableIsMandatory(input.IsMandatory).
 			SetNillableEnumValues(input.EnumValues).
 			SetNillableHelpText(input.HelpText).
 			SetNillableChecked(input.Checked).
@@ -601,6 +603,7 @@ func (r mutationResolver) addWorkOrderTypeCategoryDefinitions(ctx context.Contex
 				SetTitle(clInput.Title).
 				SetType(clInput.Type.String()).
 				SetNillableIndex(clInput.Index).
+				SetNillableIsMandatory(clInput.IsMandatory).
 				SetNillableHelpText(clInput.HelpText).
 				SetNillableEnumValues(clInput.EnumValues).
 				SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
@@ -681,6 +684,7 @@ func (r mutationResolver) addWorkOrderTemplate(
 				SetTitle(checkList.Title).
 				SetType(checkList.Type).
 				SetIndex(checkList.Index).
+				SetIsMandatory(checkList.IsMandatory).
 				SetNillableHelpText(checkList.HelpText).
 				SetNillableEnumValues(checkList.EnumValues).
 				SetNillableEnumSelectionModeValue(enumSelectionMode).
@@ -850,6 +854,7 @@ func (r mutationResolver) createOrUpdateCheckListDefinition(
 			SetTitle(clInput.Title).
 			SetType(clInput.Type.String()).
 			SetNillableIndex(clInput.Index).
+			SetNillableIsMandatory(clInput.IsMandatory).
 			SetNillableEnumValues(clInput.EnumValues).
 			SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
 			SetNillableHelpText(clInput.HelpText).
@@ -865,6 +870,7 @@ func (r mutationResolver) createOrUpdateCheckListDefinition(
 		SetTitle(clInput.Title).
 		SetType(clInput.Type.String()).
 		SetNillableIndex(clInput.Index).
+		SetNillableIsMandatory(clInput.IsMandatory).
 		SetNillableEnumValues(clInput.EnumValues).
 		SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
 		SetNillableHelpText(clInput.HelpText).

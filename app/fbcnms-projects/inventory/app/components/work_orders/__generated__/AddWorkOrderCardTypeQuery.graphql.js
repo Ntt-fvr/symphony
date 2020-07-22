@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 4e209d1828a6c3a0e9f61bf996e959c4
+ * @relayHash f8bc2bebcf7794e30bf7658efdb2ea7a
  */
 
 /* eslint-disable */
@@ -56,6 +56,7 @@ export type AddWorkOrderCardTypeQueryResponse = {|
         +title: string,
         +type: CheckListItemType,
         +index: ?number,
+        +isMandatory: ?boolean,
         +enumValues: ?string,
         +enumSelectionMode: ?CheckListItemEnumSelectionMode,
         +helpText: ?string,
@@ -113,6 +114,7 @@ query AddWorkOrderCardTypeQuery(
           title
           type
           index
+          isMandatory
           enumValues
           enumSelectionMode
           helpText
@@ -183,6 +185,13 @@ v7 = {
   "storageKey": null
 },
 v8 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "isMandatory",
+  "args": null,
+  "storageKey": null
+},
+v9 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "propertyTypes",
@@ -265,13 +274,7 @@ v8 = {
       "args": null,
       "storageKey": null
     },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "isMandatory",
-      "args": null,
-      "storageKey": null
-    },
+    (v8/*: any*/),
     {
       "kind": "ScalarField",
       "alias": null,
@@ -295,14 +298,14 @@ v8 = {
     }
   ]
 },
-v9 = {
+v10 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "title",
   "args": null,
   "storageKey": null
 },
-v10 = {
+v11 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "checkListCategoryDefinitions",
@@ -312,7 +315,7 @@ v10 = {
   "plural": true,
   "selections": [
     (v3/*: any*/),
-    (v9/*: any*/),
+    (v10/*: any*/),
     (v5/*: any*/),
     {
       "kind": "LinkedField",
@@ -324,9 +327,10 @@ v10 = {
       "plural": true,
       "selections": [
         (v3/*: any*/),
-        (v9/*: any*/),
+        (v10/*: any*/),
         (v6/*: any*/),
         (v7/*: any*/),
+        (v8/*: any*/),
         {
           "kind": "ScalarField",
           "alias": null,
@@ -378,8 +382,8 @@ return {
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v8/*: any*/),
-              (v10/*: any*/)
+              (v9/*: any*/),
+              (v11/*: any*/)
             ]
           }
         ]
@@ -408,8 +412,8 @@ return {
             "selections": [
               (v4/*: any*/),
               (v5/*: any*/),
-              (v8/*: any*/),
-              (v10/*: any*/)
+              (v9/*: any*/),
+              (v11/*: any*/)
             ]
           }
         ]
@@ -420,11 +424,11 @@ return {
     "operationKind": "query",
     "name": "AddWorkOrderCardTypeQuery",
     "id": null,
-    "text": "query AddWorkOrderCardTypeQuery(\n  $workOrderTypeId: ID!\n) {\n  workOrderType: node(id: $workOrderTypeId) {\n    __typename\n    ... on WorkOrderType {\n      id\n      name\n      description\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n      }\n      checkListCategoryDefinitions {\n        id\n        title\n        description\n        checklistItemDefinitions {\n          id\n          title\n          type\n          index\n          enumValues\n          enumSelectionMode\n          helpText\n        }\n      }\n    }\n    id\n  }\n}\n",
+    "text": "query AddWorkOrderCardTypeQuery(\n  $workOrderTypeId: ID!\n) {\n  workOrderType: node(id: $workOrderTypeId) {\n    __typename\n    ... on WorkOrderType {\n      id\n      name\n      description\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n        isDeleted\n        category\n      }\n      checkListCategoryDefinitions {\n        id\n        title\n        description\n        checklistItemDefinitions {\n          id\n          title\n          type\n          index\n          isMandatory\n          enumValues\n          enumSelectionMode\n          helpText\n        }\n      }\n    }\n    id\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a47796ed5afc91231040ef4c3207e16b';
+(node/*: any*/).hash = '71720ce40481c01032b4209507a3c1bf';
 module.exports = node;

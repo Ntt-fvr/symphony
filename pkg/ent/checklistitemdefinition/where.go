@@ -132,6 +132,13 @@ func Index(v int) predicate.CheckListItemDefinition {
 	})
 }
 
+// IsMandatory applies equality check predicate on the "is_mandatory" field. It's identical to IsMandatoryEQ.
+func IsMandatory(v bool) predicate.CheckListItemDefinition {
+	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsMandatory), v))
+	})
+}
+
 // EnumValues applies equality check predicate on the "enum_values" field. It's identical to EnumValuesEQ.
 func EnumValues(v string) predicate.CheckListItemDefinition {
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
@@ -607,6 +614,34 @@ func IndexIsNil() predicate.CheckListItemDefinition {
 func IndexNotNil() predicate.CheckListItemDefinition {
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldIndex)))
+	})
+}
+
+// IsMandatoryEQ applies the EQ predicate on the "is_mandatory" field.
+func IsMandatoryEQ(v bool) predicate.CheckListItemDefinition {
+	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldIsMandatory), v))
+	})
+}
+
+// IsMandatoryNEQ applies the NEQ predicate on the "is_mandatory" field.
+func IsMandatoryNEQ(v bool) predicate.CheckListItemDefinition {
+	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldIsMandatory), v))
+	})
+}
+
+// IsMandatoryIsNil applies the IsNil predicate on the "is_mandatory" field.
+func IsMandatoryIsNil() predicate.CheckListItemDefinition {
+	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldIsMandatory)))
+	})
+}
+
+// IsMandatoryNotNil applies the NotNil predicate on the "is_mandatory" field.
+func IsMandatoryNotNil() predicate.CheckListItemDefinition {
+	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldIsMandatory)))
 	})
 }
 

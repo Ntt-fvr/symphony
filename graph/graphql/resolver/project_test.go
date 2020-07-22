@@ -97,8 +97,9 @@ func TestProjectWithWorkOrders(t *testing.T) {
 				Title: "Category",
 				CheckList: []*models.CheckListDefinitionInput{
 					{
-						Title: "Item 1",
-						Type:  models.CheckListItemTypeString,
+						Title:       "Item 1",
+						Type:        models.CheckListItemTypeString,
+						IsMandatory: pointer.ToBool(true),
 					},
 				},
 			},
@@ -141,6 +142,7 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	assert.Len(t, clItems, 1)
 	clItem := clItems[0]
 	assert.EqualValues(t, clItem.Title, "Item 1")
+	assert.EqualValues(t, clItem.IsMandatory, true)
 }
 
 func TestEditProjectTypeWorkOrders(t *testing.T) {
