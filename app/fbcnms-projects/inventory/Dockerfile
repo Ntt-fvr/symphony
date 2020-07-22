@@ -1,4 +1,4 @@
-FROM node:12.5.0-alpine AS builder
+FROM node:12.18-alpine AS builder
 
 # Install dependencies required by some node modules
 RUN apk add --no-cache curl python g++ make libx11 glew-dev libxi-dev

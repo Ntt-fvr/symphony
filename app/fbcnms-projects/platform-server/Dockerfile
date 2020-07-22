@@ -1,4 +1,4 @@
-FROM node:12.5.0-alpine
+FROM node:12.18-alpine
 
 # Install runtime dependencies
 RUN apk add --no-cache curl
