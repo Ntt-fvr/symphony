@@ -19,7 +19,6 @@ import type {PermissionHandlingProps} from '@fbcnms/ui/components/design-system/
 import type {UserPermissions} from '../../../MainContext';
 
 import fbt from 'fbt';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {permissionRuleValue2Bool} from '../data/PermissionsPolicies';
 import {useFormAlertsContext} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
 import {useMainContext} from '../../../MainContext';
@@ -252,12 +251,9 @@ const enforcePermissions = (
 export default function usePermissions() {
   const {me} = useMainContext();
   const formAlerts = useFormAlertsContext();
-  const permissionsEnforcementIsOn = useFeatureFlag(
-    'permissions_ui_enforcement',
-  );
 
   const check =
-    permissionsEnforcementIsOn && me != null
+    me != null
       ? enforcePermissions(me.permissions, formAlerts)
       : noEnforcement();
 

@@ -22,7 +22,7 @@ title: Graphql API Breaking Changes
 
 
 ## Deprecated Fields
-
+* `PermissionSettings.canWrite` - Use specific policy in `adminPolicy`, `inventoryPolicy` or `workforcePolicy` instead. Will be removed on 2020-09-01
 
 ## Deprecated Input Fields
 

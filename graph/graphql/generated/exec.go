@@ -7534,7 +7534,9 @@ type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
   ) {
-  canWrite: Boolean!
+  canWrite: Boolean! @deprecated(
+    reason: "Use specific policy in ` + "`" + `adminPolicy` + "`" + `, ` + "`" + `inventoryPolicy` + "`" + ` or ` + "`" + `workforcePolicy` + "`" + ` instead. Will be removed on 2020-09-01"
+  )
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!

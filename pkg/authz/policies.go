@@ -16,9 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
-// WritePermissionGroupName is the name of the group that its member has write permission for all symphony.
-const WritePermissionGroupName = "Write Permission"
-
 var allowedEnums = map[models.PermissionValue]int{
 	models.PermissionValueNo:          1,
 	models.PermissionValueByCondition: 2,
@@ -260,41 +257,22 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 	return inventoryPolicy, workforcePolicy, nil
 }
 
-func userHasWritePermissions(ctx context.Context) (bool, error) {
-	v := viewer.FromContext(ctx)
-	if userHasFullPermissions(v) {
-		return true, nil
-	}
-	if v, ok := v.(*viewer.UserViewer); ok && !v.Features().Enabled(viewer.FeaturePermissionPolicies) {
-		return v.User().QueryGroups().
-			Where(usersgroup.Name(WritePermissionGroupName)).
-			Exist(ctx)
-	}
-	return false, nil
-}
-
 // Permissions builds the aggregated permissions for the given viewer
 func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
-	writePermissions, err := userHasWritePermissions(ctx)
-	if err != nil {
-		return nil, err
-	}
+	var err error
 	v := viewer.FromContext(ctx)
-	policiesEnabled := v.Features().Enabled(viewer.FeaturePermissionPolicies)
-	inventoryPolicy := NewInventoryPolicy(writePermissions)
-	workforcePolicy := NewWorkforcePolicy(true, writePermissions)
-	if policiesEnabled {
-		if u, ok := v.(*viewer.UserViewer); ok && !writePermissions {
-			inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, u)
-			if err != nil {
-				return nil, err
-			}
+	fullPermissions := userHasFullPermissions(v)
+	inventoryPolicy := NewInventoryPolicy(fullPermissions)
+	workforcePolicy := NewWorkforcePolicy(true, fullPermissions)
+	if u, ok := v.(*viewer.UserViewer); ok && !fullPermissions {
+		inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, u)
+		if err != nil {
+			return nil, err
 		}
 	}
 	res := models.PermissionSettings{
-		// TODO(T64743627): Deprecate CanWrite field
-		CanWrite:        writePermissions,
-		AdminPolicy:     NewAdministrativePolicy(userHasFullPermissions(v)),
+		CanWrite:        fullPermissions,
+		AdminPolicy:     NewAdministrativePolicy(fullPermissions),
 		InventoryPolicy: inventoryPolicy,
 		WorkforcePolicy: workforcePolicy,
 	}

@@ -12,7 +12,6 @@ import type {UsersGroup} from '../data/UsersGroups';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
 import * as React from 'react';
-import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@fbcnms/ui/components/design-system/Button';
 import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
@@ -34,7 +33,7 @@ import {PERMISSION_GROUPS_VIEW_NAME} from './PermissionsGroupsView';
 import {addGroup, deleteGroup, editGroup} from '../data/UsersGroups';
 import {generateTempId} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useRouteMatch} from 'react-router-dom';
 import {useUsersGroup} from '../data/UsersGroups';
@@ -69,8 +68,6 @@ function PermissionsGroupCard(props: Props) {
   const {redirectToGroupsView, onClose} = props;
   const classes = useStyles();
   const match = useRouteMatch();
-  const {isFeatureEnabled} = useContext(AppContext);
-  const permissionPoliciesMode = isFeatureEnabled('permission_policies');
 
   const groupId = match.params.id;
   const fetchedGroup = useUsersGroup(groupId || '');
@@ -147,7 +144,7 @@ function PermissionsGroupCard(props: Props) {
         </Button>
       </FormAction>,
     ];
-    if (!isOnNewGroup && permissionPoliciesMode) {
+    if (!isOnNewGroup) {
       actions.unshift(
         <FormAction>
           <IconButton
@@ -180,15 +177,7 @@ function PermissionsGroupCard(props: Props) {
       subtitle: fbt('Manage group details, members and policies', ''),
       actionButtons: actions,
     };
-  }, [
-    group,
-    handleError,
-    isOnNewGroup,
-    onClose,
-    props,
-    redirectToGroupsView,
-    permissionPoliciesMode,
-  ]);
+  }, [group, handleError, isOnNewGroup, onClose, props, redirectToGroupsView]);
 
   if (group == null) {
     return null;

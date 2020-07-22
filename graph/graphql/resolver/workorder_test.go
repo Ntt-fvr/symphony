@@ -235,8 +235,7 @@ func TestAddWorkOrderWithDefaultAutomationOwner(t *testing.T) {
 	v := viewer.NewAutomation(
 		viewertest.DefaultTenant,
 		viewertest.DefaultUser,
-		viewertest.DefaultRole,
-		viewer.WithFeatures(viewer.FeaturePermissionPolicies))
+		viewertest.DefaultRole)
 	ctx = viewer.NewContext(ctx, v)
 	ctx = authz.NewContext(ctx, authz.FullPermissions())
 	mr := r.Mutation()
