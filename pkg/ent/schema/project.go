@@ -9,7 +9,9 @@ import (
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/ent/schema/index"
+	"github.com/facebookincubator/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
 // ProjectType defines the project type schema.
@@ -60,7 +62,10 @@ func (Project) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty().
-			Unique(),
+			Unique().
+			Annotations(entgql.Annotation{
+				OrderField: "NAME",
+			}),
 		field.Text("description").
 			Optional().
 			Nillable(),
@@ -92,10 +97,29 @@ func (Project) Edges() []ent.Edge {
 
 // Indexes return project indexes.
 func (Project) Indexes() []ent.Index {
-	return []ent.Index{
+	indexes := []ent.Index{
 		index.Fields("name").
 			Edges("type").
 			Unique(),
+	}
+	for _, f := range (mixin.UpdateTime{}).Fields() {
+		indexes = append(indexes,
+			index.Fields(f.Descriptor().Name),
+		)
+	}
+	return indexes
+}
+
+// Mixin returns project mixins.
+func (Project) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.CreateTime{},
+		mixin.AnnotateFields(
+			mixin.UpdateTime{},
+			entgql.Annotation{
+				OrderField: "UPDATED_AT",
+			},
+		),
 	}
 }
 

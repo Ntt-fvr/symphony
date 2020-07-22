@@ -705,6 +705,7 @@ func init() {
 		})
 	}
 	projectMixinFields0 := projectMixin[0].Fields()
+	projectMixinFields1 := projectMixin[1].Fields()
 	projectFields := schema.Project{}.Fields()
 	_ = projectFields
 	// projectDescCreateTime is the schema descriptor for create_time field.
@@ -712,7 +713,7 @@ func init() {
 	// project.DefaultCreateTime holds the default value on creation for the create_time field.
 	project.DefaultCreateTime = projectDescCreateTime.Default.(func() time.Time)
 	// projectDescUpdateTime is the schema descriptor for update_time field.
-	projectDescUpdateTime := projectMixinFields0[1].Descriptor()
+	projectDescUpdateTime := projectMixinFields1[0].Descriptor()
 	// project.DefaultUpdateTime holds the default value on creation for the update_time field.
 	project.DefaultUpdateTime = projectDescUpdateTime.Default.(func() time.Time)
 	// project.UpdateDefaultUpdateTime holds the default value on update for the update_time field.

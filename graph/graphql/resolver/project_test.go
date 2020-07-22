@@ -34,7 +34,7 @@ func TestNumOfProjects(t *testing.T) {
 
 	numWO, err := ptr.NumberOfProjects(ctx, pType)
 	require.NoError(t, err)
-	require.Equal(t, 0, numWO)
+	require.Zero(t, numWO)
 
 	workOrder, err := mr.CreateProject(ctx, models.AddProjectInput{
 		Name: "foo", Type: pType.ID,
@@ -50,7 +50,7 @@ func TestNumOfProjects(t *testing.T) {
 
 	numWO, err = ptr.NumberOfProjects(ctx, pType)
 	require.NoError(t, err)
-	require.Equal(t, 0, numWO)
+	require.Zero(t, numWO)
 }
 
 func TestProjectQuery(t *testing.T) {

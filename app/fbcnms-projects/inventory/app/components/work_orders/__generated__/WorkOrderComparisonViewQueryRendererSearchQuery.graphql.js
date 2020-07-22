@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash ec7bf99a0dce9b4ecfee3ec00d26cea5
+ * @relayHash e38267628c300ff7718d3a2c5a2d2702
  */
 
 /* eslint-disable */
@@ -77,7 +77,7 @@ query WorkOrderComparisonViewQueryRendererSearchQuery(
   $limit: Int
   $filters: [WorkOrderFilterInput!]!
 ) {
-  workOrders(first: $limit, filterBy: $filters) {
+  workOrders(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {
     totalCount
     edges {
       node {
@@ -171,6 +171,14 @@ v1 = [
     "kind": "Variable",
     "name": "first",
     "variableName": "limit"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": {
+      "direction": "DESC",
+      "field": "UPDATED_AT"
+    }
   }
 ],
 v2 = {
@@ -419,11 +427,11 @@ return {
     "operationKind": "query",
     "name": "WorkOrderComparisonViewQueryRendererSearchQuery",
     "id": null,
-    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n) {\n  workOrders(first: $limit, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersView_workOrder\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_workOrder on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  assignedTo {\n    id\n    email\n  }\n  location {\n    id\n    name\n  }\n  workOrderType {\n    id\n    name\n  }\n  project {\n    id\n    name\n  }\n  closeDate\n}\n",
+    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n) {\n  workOrders(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersView_workOrder\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_workOrder on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  assignedTo {\n    id\n    email\n  }\n  location {\n    id\n    name\n  }\n  workOrderType {\n    id\n    name\n  }\n  project {\n    id\n    name\n  }\n  closeDate\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a2134c21f3a4ecdab7e0de3d8f8066e9';
+(node/*: any*/).hash = '2225ff9a404c426ff65b9d358f50d973';
 module.exports = node;

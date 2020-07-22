@@ -67,7 +67,11 @@ const projectSearchQuery = graphql`
     $limit: Int
     $filters: [ProjectFilterInput!]!
   ) {
-    projects(first: $limit, filterBy: $filters) {
+    projects(
+      first: $limit
+      orderBy: {direction: DESC, field: UPDATED_AT}
+      filterBy: $filters
+    ) {
       edges {
         node {
           ...ProjectsTableView_projects

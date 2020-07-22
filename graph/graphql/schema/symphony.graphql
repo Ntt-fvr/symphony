@@ -2022,6 +2022,36 @@ type ProjectEdge {
   cursor: Cursor!
 }
 
+"""
+Properties by which project connections can be ordered.
+"""
+enum ProjectOrderField {
+  """
+  Order projects by name.
+  """
+  NAME
+
+  """
+  Order projects by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for project connections.
+"""
+input ProjectOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order projects by.
+  """
+  field: ProjectOrderField
+}
+
 type Project implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
@@ -3103,11 +3133,39 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): ProjectTypeConnection
+
+  """
+  A list of projects.
+  """
   projects(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned projects.
+    """
+    orderBy: ProjectOrder
+
+    """
+    Filtering options for the returned projects.
+    """
     filterBy: [ProjectFilterInput!]
   ): ProjectConnection
   customers(

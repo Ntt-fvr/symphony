@@ -835,7 +835,7 @@ type ComplexityRoot struct {
 		PossibleProperties       func(childComplexity int, entityType models.PropertyEntity) int
 		ProjectSearch            func(childComplexity int, filters []*models.ProjectFilterInput, limit *int) int
 		ProjectTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ProjectFilterInput) int
+		Projects                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) int
 		PythonPackages           func(childComplexity int) int
 		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
 		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1506,7 +1506,7 @@ type QueryResolver interface {
 	NearestSites(ctx context.Context, latitude float64, longitude float64, first int) ([]*ent.Location, error)
 	Vertex(ctx context.Context, id int) (*ent.Node, error)
 	ProjectTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ProjectTypeConnection, error)
-	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
+	Projects(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.ProjectOrder, filterBy []*models.ProjectFilterInput) (*ent.ProjectConnection, error)
 	Customers(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.CustomerConnection, error)
 	ActionsRules(ctx context.Context) (*models.ActionsRulesSearchResult, error)
 	ActionsTriggers(ctx context.Context) (*models.ActionsTriggersSearchResult, error)
@@ -5509,7 +5509,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.ProjectFilterInput)), true
+		return e.complexity.Query.Projects(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput)), true
 
 	case "Query.pythonPackages":
 		if e.complexity.Query.PythonPackages == nil {
@@ -9484,6 +9484,36 @@ type ProjectEdge {
   cursor: Cursor!
 }
 
+"""
+Properties by which project connections can be ordered.
+"""
+enum ProjectOrderField {
+  """
+  Order projects by name.
+  """
+  NAME
+
+  """
+  Order projects by update time.
+  """
+  UPDATED_AT
+}
+
+"""
+Ordering options for project connections.
+"""
+input ProjectOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order projects by.
+  """
+  field: ProjectOrderField
+}
+
 type Project implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
@@ -10565,11 +10595,39 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): ProjectTypeConnection
+
+  """
+  A list of projects.
+  """
   projects(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned projects.
+    """
+    orderBy: ProjectOrder
+
+    """
+    Filtering options for the returned projects.
+    """
     filterBy: [ProjectFilterInput!]
   ): ProjectConnection
   customers(
@@ -13677,14 +13735,22 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*models.ProjectFilterInput
-	if tmp, ok := rawArgs["filterBy"]; ok {
-		arg4, err = ec.unmarshalOProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx, tmp)
+	var arg4 *ent.ProjectOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		arg4, err = ec.unmarshalOProjectOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["filterBy"] = arg4
+	args["orderBy"] = arg4
+	var arg5 []*models.ProjectFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		arg5, err = ec.unmarshalOProjectFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐProjectFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg5
 	return args, nil
 }
 
@@ -31644,7 +31710,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.ProjectFilterInput))
+		return ec.resolvers.Query().Projects(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.ProjectOrder), args["filterBy"].([]*models.ProjectFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43836,6 +43902,30 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 		case "stringValue":
 			var err error
 			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputProjectOrder(ctx context.Context, obj interface{}) (ent.ProjectOrder, error) {
+	var it ent.ProjectOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalOProjectOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60561,6 +60651,42 @@ func (ec *executionContext) unmarshalOProjectFilterInput2ᚕᚖgithubᚗcomᚋfa
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalOProjectOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrder(ctx context.Context, v interface{}) (ent.ProjectOrder, error) {
+	return ec.unmarshalInputProjectOrder(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOProjectOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrder(ctx context.Context, v interface{}) (*ent.ProjectOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOProjectOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrder(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOProjectOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx context.Context, v interface{}) (ent.ProjectOrderField, error) {
+	var res ent.ProjectOrderField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOProjectOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx context.Context, sel ast.SelectionSet, v ent.ProjectOrderField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOProjectOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx context.Context, v interface{}) (*ent.ProjectOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOProjectOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOProjectOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOProjectType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectType(ctx context.Context, sel ast.SelectionSet, v ent.ProjectType) graphql.Marshaler {

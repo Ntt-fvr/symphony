@@ -55,7 +55,11 @@ const workOrderSearchQuery = graphql`
     $limit: Int
     $filters: [WorkOrderFilterInput!]!
   ) {
-    workOrders(first: $limit, filterBy: $filters) {
+    workOrders(
+      first: $limit
+      orderBy: {direction: DESC, field: UPDATED_AT}
+      filterBy: $filters
+    ) {
       totalCount
       edges {
         node {

@@ -199,10 +199,16 @@ func (r queryResolver) Projects(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
+	orderBy *ent.ProjectOrder,
 	_ []*models.ProjectFilterInput,
 ) (*ent.ProjectConnection, error) {
-	query := r.ClientFrom(ctx).Project.Query()
-	return query.Paginate(ctx, after, first, before, last)
+	return r.ClientFrom(ctx).
+		Project.
+		Query().
+		Paginate(
+			ctx, after, first, before, last,
+			ent.WithProjectOrder(orderBy),
+		)
 }
 
 func (r queryResolver) Services(

@@ -829,6 +829,11 @@ var (
 				Unique:  true,
 				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[7]},
 			},
+			{
+				Name:    "project_update_time",
+				Unique:  false,
+				Columns: []*schema.Column{ProjectsColumns[2]},
+			},
 		},
 	}
 	// ProjectTypesColumns holds the columns for the "project_types" table.

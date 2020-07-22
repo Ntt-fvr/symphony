@@ -5957,6 +5957,63 @@ func (pr *ProjectQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// ProjectOrderFieldUpdateTime orders Project by update_time.
+	ProjectOrderFieldUpdateTime = &ProjectOrderField{
+		field: project.FieldUpdateTime,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.UpdateTime,
+			}
+		},
+	}
+	// ProjectOrderFieldName orders Project by name.
+	ProjectOrderFieldName = &ProjectOrderField{
+		field: project.FieldName,
+		toCursor: func(pr *Project) Cursor {
+			return Cursor{
+				ID:    pr.ID,
+				Value: pr.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f ProjectOrderField) String() string {
+	var str string
+	switch f.field {
+	case project.FieldUpdateTime:
+		str = "UPDATED_AT"
+	case project.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f ProjectOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *ProjectOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("ProjectOrderField %T must be a string", v)
+	}
+	switch str {
+	case "UPDATED_AT":
+		*f = *ProjectOrderFieldUpdateTime
+	case "NAME":
+		*f = *ProjectOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid ProjectOrderField", str)
+	}
+	return nil
+}
+
 // ProjectOrderField defines the ordering field of Project.
 type ProjectOrderField struct {
 	field    string

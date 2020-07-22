@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 2bbf1293fd81695f6df55120e08adf47
+ * @relayHash 6710901db057b19d80da278edb71e2ce
  */
 
 /* eslint-disable */
@@ -49,7 +49,7 @@ query ProjectComparisonViewQueryRendererSearchQuery(
   $limit: Int
   $filters: [ProjectFilterInput!]!
 ) {
-  projects(first: $limit, filterBy: $filters) {
+  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {
     edges {
       node {
         ...ProjectsTableView_projects
@@ -115,6 +115,14 @@ v1 = [
     "kind": "Variable",
     "name": "first",
     "variableName": "limit"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": {
+      "direction": "DESC",
+      "field": "UPDATED_AT"
+    }
   }
 ],
 v2 = {
@@ -297,11 +305,11 @@ return {
     "operationKind": "query",
     "name": "ProjectComparisonViewQueryRendererSearchQuery",
     "id": null,
-    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n}\n",
+    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9d60690b87db030abdd9358dc9e48448';
+(node/*: any*/).hash = 'a1f6b1f4e71ebad6a27dac6b7beea9b9';
 module.exports = node;
