@@ -46,7 +46,7 @@ func New() (complexity generated.ComplexityRoot) {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.LocationTypes = PaginationComplexity
-	complexity.Query.Locations = func(childComplexity int, _ *bool, _ []int, _ *string, _ *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.LocationFilterInput) int {
+	complexity.Query.Locations = func(childComplexity int, _ *bool, _ []int, _ *string, _ *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.LocationOrder, _ []*models.LocationFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.PermissionsPolicies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.PermissionsPolicyFilterInput) int {
@@ -94,7 +94,6 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.WorkOrders = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.WorkOrderOrder, _ []*models.WorkOrderFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-
 	return complexity
 }
 

@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/ent/schema/index"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
 // LocationType defines the location type schema.
@@ -66,7 +67,10 @@ type Location struct {
 func (Location) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
-			NotEmpty(),
+			NotEmpty().
+			Annotations(entgql.Annotation{
+				OrderField: "NAME",
+			}),
 		field.String("external_id").
 			Unique().
 			Optional(),

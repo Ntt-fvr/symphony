@@ -61,26 +61,47 @@ func (r queryResolver) Locations(
 	types []int, name *string, needsSiteSurvey *bool,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	filters []*models.LocationFilterInput,
+	orderBy *ent.LocationOrder,
+	filterBy []*models.LocationFilterInput,
 ) (*ent.LocationConnection, error) {
-	query := r.ClientFrom(ctx).Location.Query()
-	query, err := resolverutil.LocationFilter(query, filters)
-	if err != nil {
-		return nil, err
+	filter := func(query *ent.LocationQuery) (*ent.LocationQuery, error) {
+		query, err := resolverutil.LocationFilter(query, filterBy)
+		if err != nil {
+			return nil, err
+		}
+		if pointer.GetBool(onlyTopLevel) {
+			query = query.Where(
+				location.Not(
+					location.HasParent(),
+				),
+			)
+		}
+		if name != nil {
+			query = query.Where(
+				location.NameContainsFold(*name),
+			)
+		}
+		if len(types) > 0 {
+			query = query.Where(
+				location.HasTypeWith(
+					locationtype.IDIn(types...),
+				),
+			)
+		}
+		if needsSiteSurvey != nil {
+			query = query.Where(
+				location.SiteSurveyNeeded(*needsSiteSurvey),
+			)
+		}
+		return query, nil
 	}
-	if pointer.GetBool(onlyTopLevel) {
-		query = query.Where(location.Not(location.HasParent()))
-	}
-	if name != nil {
-		query = query.Where(location.NameContainsFold(*name))
-	}
-	if len(types) > 0 {
-		query = query.Where(location.HasTypeWith(locationtype.IDIn(types...)))
-	}
-	if needsSiteSurvey != nil {
-		query = query.Where(location.SiteSurveyNeeded(*needsSiteSurvey))
-	}
-	return query.Paginate(ctx, after, first, before, last)
+	return r.ClientFrom(ctx).
+		Location.
+		Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithLocationOrder(orderBy),
+			ent.WithLocationFilter(filter),
+		)
 }
 
 func (r queryResolver) NearestSites(ctx context.Context, latitude, longitude float64, first int) ([]*ent.Location, error) {

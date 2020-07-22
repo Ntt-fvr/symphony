@@ -10,52 +10,96 @@ import (
 	"testing"
 	"time"
 
+	"github.com/99designs/gqlgen/client"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/AlekSi/pointer"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAddLocation(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	c := r.GraphClient()
 
-	mr, qr := r.Mutation(), r.Query()
-	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "location_type_name_1"})
+	var typ struct{ AddLocationType struct{ ID, Name string } }
+	err := c.Post(`mutation {
+		addLocationType(input: { name: "Planet" }) {
+			id
+			name
+		}
+	}`, &typ)
 	require.NoError(t, err)
-	require.Equal(t, "location_type_name_1", locationType.Name, "Verifying 'AddLocationType' return value")
+	assert.Equal(t, "Planet", typ.AddLocationType.Name)
 
-	location, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "location_name_1",
-		Type: locationType.ID,
-	})
+	type Location struct {
+		ID           string
+		Name         string
+		LocationType struct {
+			ID string
+		}
+		Latitude  float64
+		Longitude float64
+	}
+	var rsp struct{ AddLocation Location }
+	err = c.Post(`mutation($type: ID!) {
+		addLocation(input: { name: "Earth", type: $type }) {
+			id
+			name
+			locationType {
+				id
+			}
+			longitude
+			latitude	
+		}
+	}`, &rsp, client.Var("type", typ.AddLocationType.ID))
 	require.NoError(t, err)
-	require.Equal(t, locationType.ID, location.QueryType().OnlyIDX(ctx), "Verifying 'AddLocation' return value")
+	assert.Equal(t, typ.AddLocationType.ID, rsp.AddLocation.LocationType.ID)
 
-	fetchedNode, err := qr.Node(ctx, location.ID)
+	var n struct{ Node struct{ Name string } }
+	err = c.Post(`query($id: ID!) {
+		node(id: $id) {
+			... on Location {
+				name
+			}
+		}
+	}`, &n, client.Var("id", rsp.AddLocation.ID))
 	require.NoError(t, err)
-	fetchedLocation, ok := fetchedNode.(*ent.Location)
-	require.True(t, ok)
+	assert.Equal(t, rsp.AddLocation.Name, n.Node.Name)
+	assert.Zero(t, rsp.AddLocation.Latitude)
+	assert.Zero(t, rsp.AddLocation.Longitude)
 
-	l, err := qr.Node(ctx, -1)
-	require.Nil(t, l, "Tried to fetch missing location")
-	require.NoError(t, err, "Missing location is not an error")
-
-	locations, _ := qr.Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-	require.Len(t, locations.Edges, 1, "Verifying 'Locations' return value")
-
-	require.Equal(t, location.ID, fetchedLocation.ID, "Verifying saved location vs fetched location: ID")
-	require.Equal(t, location.Name, fetchedLocation.Name, "Verifying saved location vs fetched location: Name")
-	require.Equal(t, location.QueryType().OnlyIDX(ctx), fetchedLocation.QueryType().OnlyIDX(ctx), "Verifying saved location vs fetched location: locationType")
-	require.Equal(t, location.Longitude, fetchedLocation.Longitude, "Verifying saved location vs fetched location: Longitude")
-	require.Equal(t, location.Latitude, fetchedLocation.Latitude, "Verifying saved location vs fetched location: Latitude")
+	var conn struct {
+		Locations struct {
+			Edges []struct {
+				Node Location
+			}
+		}
+	}
+	err = c.Post(`query {
+		locations {
+			edges {
+				node {
+					id
+					name
+					locationType {
+						id
+					}
+					longitude
+					latitude	
+				}
+			}
+		}
+	}`, &conn)
+	require.NoError(t, err)
+	require.Len(t, conn.Locations.Edges, 1)
+	assert.Equal(t, rsp.AddLocation, conn.Locations.Edges[0].Node)
 }
 
 func TestAddLocationWithExternalID(t *testing.T) {
@@ -75,7 +119,7 @@ func TestAddLocationWithExternalID(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	locations, _ := qr.Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	locations, _ := qr.Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.Len(t, locations.Edges, 1, "Verifying 'Locations' return value")
 
 	require.Equal(t, location.ID, locations.Edges[0].Node.ID, "Verifying saved location vs fetched location: ID")
@@ -125,7 +169,7 @@ func TestAddLocationWithSameName(t *testing.T) {
 
 	onlyTopLevel := true
 	require.Len(t, children, 2, "Parent location has two children")
-	locs, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil)
+	locs, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, locs.Edges, 1, "Only one location with no parents (aka top level)")
 }
@@ -405,7 +449,7 @@ func TestAddMultiLevelLocations(t *testing.T) {
 
 	i := 10
 	onlyTopLevel := true
-	locs, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, &i, nil, nil, nil)
+	locs, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, &i, nil, nil, nil, nil)
 	require.NoError(t, err, "Querying locations")
 
 	require.Len(t, locs.Edges, 1, "Only one location with no parents (aka top level)")
@@ -945,17 +989,17 @@ func TestGetLocationsByType(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	allLocations, err := qr.Locations(ctx, nil, []int{locationType1.ID, locationType2.ID}, nil, nil, nil, nil, nil, nil, nil)
+	allLocations, err := qr.Locations(ctx, nil, []int{locationType1.ID, locationType2.ID}, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, allLocations.Edges, 2)
 
-	locationsType1, err := qr.Locations(ctx, nil, []int{locationType1.ID}, nil, nil, nil, nil, nil, nil, nil)
+	locationsType1, err := qr.Locations(ctx, nil, []int{locationType1.ID}, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	require.NoError(t, err)
 	require.Len(t, locationsType1.Edges, 1, "one location of this type")
 	require.Equal(t, locationsType1.Edges[0].Node.ID, location1.ID)
 
-	locationsType2, err := qr.Locations(ctx, nil, []int{locationType2.ID}, nil, nil, nil, nil, nil, nil, nil)
+	locationsType2, err := qr.Locations(ctx, nil, []int{locationType2.ID}, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, locationsType2.Edges, 1, "one location of this type")
 	require.Equal(t, locationsType2.Edges[0].Node.ID, location2.ID)
@@ -986,13 +1030,13 @@ func TestOnlyTopLevelLocationsFilter(t *testing.T) {
 	require.NoError(t, err)
 
 	onlyTopLevel := true
-	onlyTopLevelLocations, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil)
+	onlyTopLevelLocations, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, onlyTopLevelLocations.Edges, 1, "one top level location")
 	require.Equal(t, onlyTopLevelLocations.Edges[0].Node.ID, location1.ID)
 
 	onlyTopLevel = false
-	allLocations, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil)
+	allLocations, err := qr.Locations(ctx, &onlyTopLevel, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, allLocations.Edges, 2, "two not-only top level locations")
 }
@@ -1000,44 +1044,29 @@ func TestOnlyTopLevelLocationsFilter(t *testing.T) {
 func TestGetLocationsByName(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr, qr := r.Mutation(), r.Query()
+	c := r.GraphClient()
 
-	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
-		Name: "location_type",
-	})
+	var typ struct{ AddLocationType struct{ ID string } }
+	err := c.Post(`mutation { addLocationType(input: { name: "City" }) { id } }`, &typ)
 	require.NoError(t, err)
 
-	location1, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "some_location_1",
-		Type: locationType.ID,
-	})
+	names := []string{"New York", "New Jersey"}
+	for _, name := range names {
+		var rsp struct{ AddLocation struct{ ID string } }
+		err := c.Post(`mutation($name: String!, $type: ID!) { addLocation(input: { name: $name, type: $type }) { id } }`,
+			&rsp, client.Var("name", name), client.Var("type", typ.AddLocationType.ID),
+		)
+		require.NoError(t, err)
+	}
+	const query = `query($name: String!) { locations(name: $name) { totalCount } }`
+	var rsp struct{ Locations struct{ TotalCount int } }
+	err = c.Post(query, &rsp, client.Var("name", "new"))
 	require.NoError(t, err)
+	assert.Equal(t, len(names), rsp.Locations.TotalCount)
 
-	_, err = mr.AddLocation(ctx, models.AddLocationInput{
-		Name:   "some_LOCATION_2",
-		Type:   locationType.ID,
-		Parent: &location1.ID,
-	})
+	err = c.Post(query, &rsp, client.Var("name", "old"))
 	require.NoError(t, err)
-
-	name := "loc"
-	locLocations, err := qr.Locations(ctx, nil, nil, &name, nil, nil, nil, nil, nil, nil)
-	require.NoError(t, err)
-	require.Len(t, locLocations.Edges, 2, "two locations with 'loc' prefix added")
-
-	name = "wow"
-	wowLocations, err := qr.Locations(ctx, nil, nil, &name, nil, nil, nil, nil, nil, nil)
-	require.NoError(t, err)
-	require.Empty(t, wowLocations.Edges, "no locations with 'wow' prefix added")
-}
-
-func TestMarkLocationNeedsSiteSurvey(t *testing.T) {
-	// TODO (T43795723): Add test when unit tests work with ents
-}
-
-func TestGetLocationsForSiteSurvey(t *testing.T) {
-	// TODO (T43795723): Add test when unit tests work with ents
+	assert.Zero(t, rsp.Locations.TotalCount)
 }
 
 func TestMoveLocation(t *testing.T) {

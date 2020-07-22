@@ -5300,6 +5300,49 @@ func (l *LocationQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// LocationOrderFieldName orders Location by name.
+	LocationOrderFieldName = &LocationOrderField{
+		field: location.FieldName,
+		toCursor: func(l *Location) Cursor {
+			return Cursor{
+				ID:    l.ID,
+				Value: l.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f LocationOrderField) String() string {
+	var str string
+	switch f.field {
+	case location.FieldName:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f LocationOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *LocationOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("LocationOrderField %T must be a string", v)
+	}
+	switch str {
+	case "NAME":
+		*f = *LocationOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid LocationOrderField", str)
+	}
+	return nil
+}
+
 // LocationOrderField defines the ordering field of Location.
 type LocationOrderField struct {
 	field    string

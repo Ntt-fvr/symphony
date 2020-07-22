@@ -825,7 +825,7 @@ type ComplexityRoot struct {
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) int
 		LocationSearch           func(childComplexity int, filters []*models.LocationFilterInput, limit *int) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Locations                func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LocationFilterInput) int
+		Locations                func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models.LocationFilterInput) int
 		Me                       func(childComplexity int) int
 		NearestSites             func(childComplexity int, latitude float64, longitude float64, first int) int
 		Node                     func(childComplexity int, id int) int
@@ -1473,7 +1473,7 @@ type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
 	User(ctx context.Context, authID string) (*ent.User, error)
 	LocationTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.LocationTypeConnection, error)
-	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LocationFilterInput) (*ent.LocationConnection, error)
+	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models.LocationFilterInput) (*ent.LocationConnection, error)
 	EquipmentPortTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortTypeConnection, error)
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
 	EquipmentPorts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) (*ent.EquipmentPortConnection, error)
@@ -5394,7 +5394,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Locations(childComplexity, args["onlyTopLevel"].(*bool), args["types"].([]int), args["name"].(*string), args["needsSiteSurvey"].(*bool), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.LocationFilterInput)), true
+		return e.complexity.Query.Locations(childComplexity, args["onlyTopLevel"].(*bool), args["types"].([]int), args["name"].(*string), args["needsSiteSurvey"].(*bool), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.LocationOrder), args["filterBy"].([]*models.LocationFilterInput)), true
 
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
@@ -7534,9 +7534,10 @@ type PermissionSettings
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/authz/models.PermissionSettings"
   ) {
-  canWrite: Boolean! @deprecated(
-    reason: "Use specific policy in ` + "`" + `adminPolicy` + "`" + `, ` + "`" + `inventoryPolicy` + "`" + ` or ` + "`" + `workforcePolicy` + "`" + ` instead. Will be removed on 2020-09-01"
-  )
+  canWrite: Boolean!
+    @deprecated(
+      reason: "Use specific policy in ` + "`" + `adminPolicy` + "`" + `, ` + "`" + `inventoryPolicy` + "`" + ` or ` + "`" + `workforcePolicy` + "`" + ` instead. Will be removed on 2020-09-01"
+    )
   adminPolicy: AdministrativePolicy!
   inventoryPolicy: InventoryPolicy!
   workforcePolicy: WorkforcePolicy!
@@ -8521,6 +8522,31 @@ type LinkConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+}
+
+"""
+Properties by which location connections can be ordered.
+"""
+enum LocationOrderField {
+  """
+  Order locations by name.
+  """
+  NAME
+}
+
+"""
+Ordering options for location connections.
+"""
+input LocationOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order locations by.
+  """
+  field: LocationOrderField
 }
 
 """
@@ -10370,7 +10396,7 @@ type Query {
   """
   node(
     """
-    The ID of an object.
+    ID of the object.
     """
     id: ID!
   ): Node
@@ -10381,15 +10407,59 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
+
+  """
+  A list of locations.
+  """
   locations(
+    """
+    Filter to only root locations.
+    """
     onlyTopLevel: Boolean
+
+    """
+    Filter to only locations under location types.
+    """
     types: [ID!]
+
+    """
+    Filter location containing case insensitive name.
+    """
     name: String
+
+    """
+    Filter by locations needing site survey.
+    """
     needsSiteSurvey: Boolean
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned locations.
+    """
+    orderBy: LocationOrder
+
+    """
+    Filtering options for the returned locations.
+    """
     filterBy: [LocationFilterInput!]
   ): LocationConnection
   equipmentPortTypes(
@@ -13251,14 +13321,22 @@ func (ec *executionContext) field_Query_locations_args(ctx context.Context, rawA
 		}
 	}
 	args["last"] = arg7
-	var arg8 []*models.LocationFilterInput
-	if tmp, ok := rawArgs["filterBy"]; ok {
-		arg8, err = ec.unmarshalOLocationFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationFilterInputᚄ(ctx, tmp)
+	var arg8 *ent.LocationOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		arg8, err = ec.unmarshalOLocationOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrder(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["filterBy"] = arg8
+	args["orderBy"] = arg8
+	var arg9 []*models.LocationFilterInput
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		arg9, err = ec.unmarshalOLocationFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationFilterInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg9
 	return args, nil
 }
 
@@ -30405,7 +30483,7 @@ func (ec *executionContext) _Query_locations(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Locations(rctx, args["onlyTopLevel"].(*bool), args["types"].([]int), args["name"].(*string), args["needsSiteSurvey"].(*bool), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.LocationFilterInput))
+		return ec.resolvers.Query().Locations(rctx, args["onlyTopLevel"].(*bool), args["types"].([]int), args["name"].(*string), args["needsSiteSurvey"].(*bool), args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.LocationOrder), args["filterBy"].([]*models.LocationFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -43720,6 +43798,30 @@ func (ec *executionContext) unmarshalInputLocationFilterInput(ctx context.Contex
 		case "maxDepth":
 			var err error
 			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputLocationOrder(ctx context.Context, obj interface{}) (ent.LocationOrder, error) {
+	var it ent.LocationOrder
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "direction":
+			var err error
+			it.Direction, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "field":
+			var err error
+			it.Field, err = ec.unmarshalOLocationOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60447,6 +60549,42 @@ func (ec *executionContext) unmarshalOLocationFilterInput2ᚕᚖgithubᚗcomᚋf
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalOLocationOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrder(ctx context.Context, v interface{}) (ent.LocationOrder, error) {
+	return ec.unmarshalInputLocationOrder(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOLocationOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrder(ctx context.Context, v interface{}) (*ent.LocationOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOLocationOrder2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrder(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) unmarshalOLocationOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx context.Context, v interface{}) (ent.LocationOrderField, error) {
+	var res ent.LocationOrderField
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOLocationOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx context.Context, sel ast.SelectionSet, v ent.LocationOrderField) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOLocationOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx context.Context, v interface{}) (*ent.LocationOrderField, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOLocationOrderField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOLocationOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocationOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.LocationOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOLocationPermissionRuleInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐLocationPermissionRuleInput(ctx context.Context, v interface{}) (models1.LocationPermissionRuleInput, error) {

@@ -1062,6 +1062,31 @@ type LinkConnection {
 }
 
 """
+Properties by which location connections can be ordered.
+"""
+enum LocationOrderField {
+  """
+  Order locations by name.
+  """
+  NAME
+}
+
+"""
+Ordering options for location connections.
+"""
+input LocationOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection!
+
+  """
+  The field to order locations by.
+  """
+  field: LocationOrderField
+}
+
+"""
 A link edge in a connection.
 """
 type LinkEdge {
@@ -2908,7 +2933,7 @@ type Query {
   """
   node(
     """
-    The ID of an object.
+    ID of the object.
     """
     id: ID!
   ): Node
@@ -2919,15 +2944,59 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): LocationTypeConnection
+
+  """
+  A list of locations.
+  """
   locations(
+    """
+    Filter to only root locations.
+    """
     onlyTopLevel: Boolean
+
+    """
+    Filter to only locations under location types.
+    """
     types: [ID!]
+
+    """
+    Filter location containing case insensitive name.
+    """
     name: String
+
+    """
+    Filter by locations needing site survey.
+    """
     needsSiteSurvey: Boolean
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int @numberValue(min: 0)
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int @numberValue(min: 0)
+
+    """
+    Ordering options for the returned locations.
+    """
+    orderBy: LocationOrder
+
+    """
+    Filtering options for the returned locations.
+    """
     filterBy: [LocationFilterInput!]
   ): LocationConnection
   equipmentPortTypes(
