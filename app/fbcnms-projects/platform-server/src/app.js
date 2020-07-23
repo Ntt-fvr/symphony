@@ -140,12 +140,6 @@ app.use(
   require('./graph/routes'),
 );
 app.use(
-  '/workflows',
-  passport.authenticate(['basic_local', 'session'], {session: false}),
-  access(USER),
-  require('./workflows/routes'),
-);
-app.use(
   '/store',
   passport.authenticate(['basic_local', 'session'], {session: false}),
   access(USER),
