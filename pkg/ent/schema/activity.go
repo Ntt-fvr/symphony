@@ -20,7 +20,13 @@ type Activity struct {
 func (Activity) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("changed_field").
-			Values("STATUS", "PRIORITY", "ASSIGNEE", "CREATION_DATE", "OWNER"),
+			ValueMap(map[string]string{
+				"Status":       "STATUS",
+				"Priority":     "PRIORITY",
+				"Assignee":     "ASSIGNEE",
+				"CreationDate": "CREATION_DATE",
+				"Owner":        "OWNER",
+			}),
 		field.Bool("is_create").
 			Default(false),
 		field.String("old_value").

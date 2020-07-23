@@ -219,24 +219,24 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusPLANNED is the default Status.
-const DefaultStatus = StatusPLANNED
+// StatusPlanned is the default Status.
+const DefaultStatus = StatusPlanned
 
 // Status values.
 const (
-	StatusPENDING Status = "PENDING"
-	StatusPLANNED Status = "PLANNED"
-	StatusDONE    Status = "DONE"
+	StatusDone    Status = "DONE"
+	StatusPending Status = "PENDING"
+	StatusPlanned Status = "PLANNED"
 )
 
 func (s Status) String() string {
 	return string(s)
 }
 
-// StatusValidator is a validator for the "s" field enum values. It is called by the builders before save.
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPENDING, StatusPLANNED, StatusDONE:
+	case StatusDone, StatusPending, StatusPlanned:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for status field: %q", s)
@@ -246,26 +246,26 @@ func StatusValidator(s Status) error {
 // Priority defines the type for the priority enum field.
 type Priority string
 
-// PriorityNONE is the default Priority.
-const DefaultPriority = PriorityNONE
+// PriorityNone is the default Priority.
+const DefaultPriority = PriorityNone
 
 // Priority values.
 const (
-	PriorityURGENT Priority = "URGENT"
-	PriorityHIGH   Priority = "HIGH"
-	PriorityMEDIUM Priority = "MEDIUM"
-	PriorityLOW    Priority = "LOW"
-	PriorityNONE   Priority = "NONE"
+	PriorityHigh   Priority = "HIGH"
+	PriorityLow    Priority = "LOW"
+	PriorityMedium Priority = "MEDIUM"
+	PriorityNone   Priority = "NONE"
+	PriorityUrgent Priority = "URGENT"
 )
 
 func (pr Priority) String() string {
 	return string(pr)
 }
 
-// PriorityValidator is a validator for the "pr" field enum values. It is called by the builders before save.
+// PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
 func PriorityValidator(pr Priority) error {
 	switch pr {
-	case PriorityURGENT, PriorityHIGH, PriorityMEDIUM, PriorityLOW, PriorityNONE:
+	case PriorityHigh, PriorityLow, PriorityMedium, PriorityNone, PriorityUrgent:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for priority field: %q", pr)

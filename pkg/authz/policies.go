@@ -238,7 +238,7 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 			permissionspolicy.IsGlobal(true),
 			permissionspolicy.HasGroupsWith(
 				usersgroup.HasMembersWith(user.ID(userID)),
-				usersgroup.StatusEQ(usersgroup.StatusACTIVE),
+				usersgroup.StatusEQ(usersgroup.StatusActive),
 			))).
 		All(ctx)
 	if err != nil {

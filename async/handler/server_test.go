@@ -73,7 +73,7 @@ func TestServer(t *testing.T) {
 		v := viewer.FromContext(ctx)
 		require.Equal(t, tenantName, v.Tenant())
 		require.Equal(t, serviceName, v.Name())
-		require.Equal(t, user.RoleOWNER, v.Role())
+		require.Equal(t, user.RoleOwner, v.Role())
 		require.EqualValues(t, logEntry, entry)
 		cancel()
 		return nil

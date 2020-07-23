@@ -469,7 +469,7 @@ func TestAddLocationCellScans(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	// TODO(T66882071): Remove owner role
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOWNER))
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 
 	mr, qr := r.Mutation(), r.Query()
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{

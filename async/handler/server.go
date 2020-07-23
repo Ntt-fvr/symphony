@@ -98,7 +98,7 @@ func (s *Server) handleEventLog(handlers []Handler) func(context.Context, string
 			return fmt.Errorf("%s. tenant: %s", msg, tenant)
 		}
 		ctx = ent.NewContext(ctx, client)
-		v := viewer.NewAutomation(tenant, serviceName, user.RoleOWNER)
+		v := viewer.NewAutomation(tenant, serviceName, user.RoleOwner)
 		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 		ctx = viewer.NewContext(ctx, v)
 		permissions, err := authz.Permissions(ctx)

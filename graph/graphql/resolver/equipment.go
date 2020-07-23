@@ -267,11 +267,11 @@ func (equipmentResolver) filesOfType(ctx context.Context, e *ent.Equipment, typ 
 }
 
 func (r equipmentResolver) Images(ctx context.Context, e *ent.Equipment) ([]*ent.File, error) {
-	return r.filesOfType(ctx, e, file.TypeIMAGE)
+	return r.filesOfType(ctx, e, file.TypeImage)
 }
 
 func (r equipmentResolver) Files(ctx context.Context, e *ent.Equipment) ([]*ent.File, error) {
-	return r.filesOfType(ctx, e, file.TypeFILE)
+	return r.filesOfType(ctx, e, file.TypeFile)
 }
 
 func (equipmentResolver) Hyperlinks(ctx context.Context, e *ent.Equipment) ([]*ent.Hyperlink, error) {

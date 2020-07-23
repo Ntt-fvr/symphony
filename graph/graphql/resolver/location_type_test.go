@@ -151,7 +151,7 @@ func TestAddLocationTypeWithSurveyTemplate(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	// TODO(T66882071): Remove owner role
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOWNER))
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 	mr := r.Mutation()
 
 	question := models.SurveyTemplateQuestionInput{
@@ -257,7 +257,7 @@ func TestEditLocationTypeWithSurveyTemplate(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	// TODO(T66882071): Remove owner role
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOWNER))
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 	mr := r.Mutation()
 
 	question := models.SurveyTemplateQuestionInput{

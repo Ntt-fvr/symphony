@@ -45,7 +45,7 @@ func TestViewerHandler(t *testing.T) {
 			prepare: func(req *http.Request) {
 				req.Header.Set(viewer.TenantHeader, "test")
 				req.Header.Set(viewer.UserHeader, "user")
-				req.Header.Set(viewer.RoleHeader, string(user.RoleOWNER))
+				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
 				assert.Equal(t, http.StatusOK, rec.Code)
@@ -75,7 +75,7 @@ func TestViewerHandler(t *testing.T) {
 			prepare: func(req *http.Request) {
 				req.Header.Set(viewer.TenantHeader, "test")
 				req.Header.Set(viewer.UserHeader, "new_user")
-				req.Header.Set(viewer.RoleHeader, string(user.RoleOWNER))
+				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
 				assert.Equal(t, http.StatusOK, rec.Code)
@@ -85,7 +85,7 @@ func TestViewerHandler(t *testing.T) {
 			name: "WithNoUserInViewer",
 			prepare: func(req *http.Request) {
 				req.Header.Set(viewer.TenantHeader, "test")
-				req.Header.Set(viewer.RoleHeader, string(user.RoleOWNER))
+				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
 				assert.Equal(t, http.StatusBadRequest, rec.Code)
@@ -246,7 +246,7 @@ func TestDeactivatedUser(t *testing.T) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	deactivatedUser, err := client.User.Create().
 		SetAuthID("deactivated_user").
-		SetStatus(user.StatusDEACTIVATED).
+		SetStatus(user.StatusDeactivated).
 		Save(ctx)
 	require.NoError(t, err)
 	v := viewer.NewUser("test", deactivatedUser)
@@ -264,7 +264,7 @@ func TestDeactivatedUser(t *testing.T) {
 func TestAutomationViewerIsNotDeactivated(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 	ctx := ent.NewContext(context.Background(), client)
-	v := viewer.NewAutomation("test", "automation", user.RoleADMIN)
+	v := viewer.NewAutomation("test", "automation", user.RoleAdmin)
 	ctx = viewer.NewContext(ctx, v)
 	req := httptest.NewRequest(http.MethodPost, "/", nil)
 	req = req.WithContext(ctx)
@@ -363,7 +363,7 @@ func TestViewerTags(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/", nil)
 	req.Header.Set(viewer.TenantHeader, "test-tenant")
 	req.Header.Set(viewer.UserHeader, "test-user")
-	req.Header.Set(viewer.RoleHeader, string(user.RoleUSER))
+	req.Header.Set(viewer.RoleHeader, string(user.RoleUser))
 	rec := httptest.NewRecorder()
 	client := viewertest.NewTestClient(t)
 	viewer.TenancyHandler(

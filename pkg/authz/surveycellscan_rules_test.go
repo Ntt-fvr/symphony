@@ -20,7 +20,7 @@ import (
 func TestSurveyCellScanWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
@@ -121,7 +121,7 @@ func TestSurveyCellScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyCellScan.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -135,7 +135,7 @@ func TestSurveyCellScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyCellScan.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -148,7 +148,7 @@ func TestSurveyCellScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyCellScan.Query().Count(permissionsContext)
 		require.NoError(t, err)

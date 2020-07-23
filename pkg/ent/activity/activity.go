@@ -97,21 +97,21 @@ type ChangedField string
 
 // ChangedField values.
 const (
-	ChangedFieldSTATUS       ChangedField = "STATUS"
-	ChangedFieldPRIORITY     ChangedField = "PRIORITY"
-	ChangedFieldASSIGNEE     ChangedField = "ASSIGNEE"
-	ChangedFieldCREATIONDATE ChangedField = "CREATION_DATE"
-	ChangedFieldOWNER        ChangedField = "OWNER"
+	ChangedFieldAssignee     ChangedField = "ASSIGNEE"
+	ChangedFieldCreationDate ChangedField = "CREATION_DATE"
+	ChangedFieldOwner        ChangedField = "OWNER"
+	ChangedFieldPriority     ChangedField = "PRIORITY"
+	ChangedFieldStatus       ChangedField = "STATUS"
 )
 
 func (cf ChangedField) String() string {
 	return string(cf)
 }
 
-// ChangedFieldValidator is a validator for the "cf" field enum values. It is called by the builders before save.
+// ChangedFieldValidator is a validator for the "changed_field" field enum values. It is called by the builders before save.
 func ChangedFieldValidator(cf ChangedField) error {
 	switch cf {
-	case ChangedFieldSTATUS, ChangedFieldPRIORITY, ChangedFieldASSIGNEE, ChangedFieldCREATIONDATE, ChangedFieldOWNER:
+	case ChangedFieldAssignee, ChangedFieldCreationDate, ChangedFieldOwner, ChangedFieldPriority, ChangedFieldStatus:
 		return nil
 	default:
 		return fmt.Errorf("activity: invalid enum value for changed_field field: %q", cf)

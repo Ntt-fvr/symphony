@@ -23,7 +23,7 @@ import (
 )
 
 func prepareWorkOrderData(ctx context.Context, c *ent.Client) (*ent.WorkOrderType, *ent.WorkOrder) {
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderTypeName := uuid.New().String()
 	workOrderName := uuid.New().String()
 	workOrderType := c.WorkOrderType.Create().
@@ -43,7 +43,7 @@ func TestNonUserCannotEditWorkOrder(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
 
-	v := viewer.NewAutomation(viewertest.DefaultTenant, "BOT", user.RoleUSER)
+	v := viewer.NewAutomation(viewertest.DefaultTenant, "BOT", user.RoleUser)
 	ctx = viewer.NewContext(ctx, v)
 	ctx = authz.NewContext(ctx, authz.EmptyPermissions())
 	err := c.WorkOrder.UpdateOne(workOrder).
@@ -56,14 +56,14 @@ func TestAssignCanEditWOWithOwnerAndDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "MyAssignee", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "MyAssignee", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetAssignee(u).
 		ExecX(ctx)
 
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("MyAssignee"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetName("NewName").
@@ -82,15 +82,15 @@ func TestOwnerCanEditWOButNotDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUSER)
-	u2 := viewer.MustGetOrCreateUser(ctx, "NewOwner", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "NewOwner", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetOwner(u).
 		ExecX(ctx)
 
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("MyOwner"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetName("NewName").
@@ -102,7 +102,7 @@ func TestOwnerCanEditWOButNotDelete(t *testing.T) {
 	require.NoError(t, err)
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("NewOwner"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err = c.WorkOrder.DeleteOne(workOrder).
 		Exec(ctx)
@@ -231,7 +231,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -245,7 +245,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -258,7 +258,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -273,8 +273,8 @@ func TestWorkOrderTransferOwnershipWritePolicyRule(t *testing.T) {
 	getCud := func(p *models.PermissionSettings) *models.WorkforceCud {
 		return p.WorkforcePolicy.Data
 	}
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
-	u2 := viewer.MustGetOrCreateUser(ctx, "NewUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "NewUser", user.RoleUser)
 	createWorkOrderWithOwner := func(ctx context.Context) error {
 		_, err := c.WorkOrder.Create().
 			SetName("NewWorkOrder").
@@ -351,7 +351,7 @@ func TestWorkOrderUpdateAssignee(t *testing.T) {
 	getCud := func(p *models.PermissionSettings) *models.WorkforceCud {
 		return p.WorkforcePolicy.Data
 	}
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	appendAssign := func(p *models.PermissionSettings) {
 		getCud(p).Assign.IsAllowed = models.PermissionValueYes
 	}
@@ -417,7 +417,7 @@ func TestWorkOrderAssigneeUnchangedWritePolicyRule(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
 	_, workOrder2 := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetAssigneeID(u.ID).
 		ExecX(ctx)
@@ -427,7 +427,7 @@ func TestWorkOrderAssigneeUnchangedWritePolicyRule(t *testing.T) {
 		context.Background(),
 		c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetAssigneeID(u.ID).
@@ -453,7 +453,7 @@ func TestWorkOrderOwnerUnchangedWritePolicyRule(t *testing.T) {
 		context.Background(),
 		c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 	ownerID := workOrder.QueryOwner().OnlyIDX(ctx)
 	err := c.WorkOrder.UpdateOne(workOrder).
@@ -498,7 +498,7 @@ func TestWorkOrderTemplateIsAlwaysEditable(t *testing.T) {
 	ctx := viewertest.NewContext(
 		context.Background(),
 		c,
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	workOrderTemplate, err := c.WorkOrderTemplate.Create().
 		SetName("WorkOrderTemplate").

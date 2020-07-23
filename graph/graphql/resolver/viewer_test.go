@@ -23,7 +23,7 @@ func TestUserViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleUSER).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleUser).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.Equal(t, &models.BasicPermissionRule{IsAllowed: models.PermissionValueNo}, permissions.AdminPolicy.Access)
@@ -37,7 +37,7 @@ func TestAdminViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleADMIN).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleAdmin).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.Equal(t, &models.BasicPermissionRule{IsAllowed: models.PermissionValueYes}, permissions.AdminPolicy.Access)
@@ -51,7 +51,7 @@ func TestOwnerViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleOWNER).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleOwner).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.EqualValues(t, authz.FullPermissions(), permissions)

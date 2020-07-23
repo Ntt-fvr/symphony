@@ -24,14 +24,14 @@ func prepareUserData(ctx context.Context) {
 		SetEmail("sam@workspace.com").
 		SetFirstName("Samuel").
 		SetLastName("Willis").
-		SetRole(user.RoleUSER).
+		SetRole(user.RoleUser).
 		SaveX(ctx)
 	client.Create().
 		SetAuthID("user2").
 		SetEmail("the-monster@workspace.com").
 		SetFirstName("Eli").
 		SetLastName("Cohen").
-		SetRole(user.RoleUSER).
+		SetRole(user.RoleUser).
 		SaveX(ctx)
 
 	client.Create().
@@ -39,7 +39,7 @@ func prepareUserData(ctx context.Context) {
 		SetEmail("funny@workspace.com").
 		SetFirstName("Willis").
 		SetLastName("Rheed").
-		SetRole(user.RoleUSER).
+		SetRole(user.RoleUser).
 		SaveX(ctx)
 
 	client.Create().
@@ -47,7 +47,7 @@ func prepareUserData(ctx context.Context) {
 		SetEmail("danit@workspace.com").
 		SetFirstName("Dana").
 		SetLastName("Cohen").
-		SetRole(user.RoleUSER).
+		SetRole(user.RoleUser).
 		SaveX(ctx)
 
 	client.Create().
@@ -55,8 +55,8 @@ func prepareUserData(ctx context.Context) {
 		SetEmail("user5@test.ing").
 		SetFirstName("Raul").
 		SetLastName("Himemes").
-		SetRole(user.RoleUSER).
-		SetStatus(user.StatusDEACTIVATED).
+		SetRole(user.RoleUser).
+		SetStatus(user.StatusDeactivated).
 		SaveX(ctx)
 }
 
@@ -120,9 +120,9 @@ func TestSearchUsersByName(t *testing.T) {
 	search7 := searchByName(ctx, t, qr, "li he")
 	require.Len(t, search7.Users, 2)
 
-	search8 := searchByStatus(ctx, t, qr, user.StatusACTIVE)
+	search8 := searchByStatus(ctx, t, qr, user.StatusActive)
 	require.Len(t, search8.Users, 5) // including 'tester@example.com'
 
-	search9 := searchByStatus(ctx, t, qr, user.StatusDEACTIVATED)
+	search9 := searchByStatus(ctx, t, qr, user.StatusDeactivated)
 	require.Len(t, search9.Users, 1)
 }

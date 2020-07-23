@@ -56,13 +56,13 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 	s.Run("CreateDoneAndReopen", func() {
 		order, err := s.CreateWorkOrder().
 			SetName("antenna").
-			SetStatus(workorder.StatusDONE).
+			SetStatus(workorder.StatusDone).
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().False(order.CloseDate.IsZero())
 
 		order, err = order.Update().
-			SetStatus(workorder.StatusPENDING).
+			SetStatus(workorder.StatusPending).
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().True(order.CloseDate.IsZero())
@@ -71,14 +71,14 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 		now := time.Now()
 		order, err := s.CreateWorkOrder().
 			SetName("pole").
-			SetStatus(workorder.StatusDONE).
+			SetStatus(workorder.StatusDone).
 			SetCloseDate(now).
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().True(order.CloseDate.Equal(now))
 
 		order, err = order.Update().
-			SetStatus(workorder.StatusDONE).
+			SetStatus(workorder.StatusDone).
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().True(
@@ -89,7 +89,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 	s.Run("CreatePlannedSetCloseDate", func() {
 		order, err := s.CreateWorkOrder().
 			SetName("tower").
-			SetStatus(workorder.StatusPENDING).
+			SetStatus(workorder.StatusPending).
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().True(order.CloseDate.IsZero())
@@ -112,7 +112,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			ids = append(ids, order.ID)
 		}
 		n, err := s.client.Update().
-			SetStatus(workorder.StatusDONE).
+			SetStatus(workorder.StatusDone).
 			Where(workorder.IDIn(ids...)).
 			Save(privacy.DecisionContext(
 				s.ctx, privacy.Allow,
@@ -123,7 +123,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			Query().
 			Where(
 				workorder.IDIn(ids...),
-				workorder.StatusEQ(workorder.StatusDONE),
+				workorder.StatusEQ(workorder.StatusDone),
 				workorder.CloseDateNotNil(),
 			).
 			Count(s.ctx)

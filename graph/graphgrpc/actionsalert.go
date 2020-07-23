@@ -29,7 +29,7 @@ type (
 	ActionsProvider func(ctx context.Context, tenantID string) (*actions.Client, error)
 )
 
-//NewActionsAlertService returns a new ActionsAlertService
+// NewActionsAlertService returns a new ActionsAlertService
 func NewActionsAlertService(provider ActionsProvider) ActionsAlertService {
 	return ActionsAlertService{provider}
 }
@@ -47,7 +47,7 @@ func (s ActionsAlertService) Trigger(ctx context.Context, payload *schema.AlertP
 	if err != nil {
 		return &schema.ExecutionResult{}, status.Error(codes.Internal, "error getting tenant client")
 	}
-	ctx, err = CreateServiceContext(ctx, payload.TenantID, ActionsAlertServiceName, user.RoleOWNER)
+	ctx, err = CreateServiceContext(ctx, payload.TenantID, ActionsAlertServiceName, user.RoleOwner)
 	if err != nil {
 		return &schema.ExecutionResult{}, status.Error(codes.Internal, "error getting service context")
 	}

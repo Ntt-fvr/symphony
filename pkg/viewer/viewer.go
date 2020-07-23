@@ -376,7 +376,7 @@ func MustGetOrCreateUser(ctx context.Context, authID string, role user.Role) *en
 func UserHandler(h http.Handler, logger log.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if v, ok := FromContext(r.Context()).(*UserViewer); ok {
-			if u := v.User(); u.Status == user.StatusDEACTIVATED {
+			if u := v.User(); u.Status == user.StatusDeactivated {
 				logger.For(r.Context()).Debug("blocking deactivated user",
 					zap.String("authid", u.AuthID),
 					zap.String("email", u.Email),

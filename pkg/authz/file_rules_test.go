@@ -20,7 +20,7 @@ import (
 func getFileCudOperations(ctx context.Context, c *ent.Client, setParent func(*ent.FileCreate) *ent.FileCreate) cudOperations {
 	fileQuery := c.File.Create().
 		SetName("name").
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetStoreKey("abc").
 		SetContentType("text/html")
 
@@ -30,7 +30,7 @@ func getFileCudOperations(ctx context.Context, c *ent.Client, setParent func(*en
 	createFile := func(ctx context.Context) error {
 		fileQuery := c.File.Create().
 			SetName("name2").
-			SetType(file.TypeIMAGE).
+			SetType(file.TypeImage).
 			SetStoreKey("abcd").
 			SetContentType("text/html")
 		fileQuery = setParent(fileQuery)
@@ -120,7 +120,7 @@ func TestUserFilePolicyRule(t *testing.T) {
 
 	f := c.File.Create().
 		SetName("name1").
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetStoreKey("abc").
 		SetUser(u).
 		SetContentType("text/html").
@@ -132,7 +132,7 @@ func TestUserFilePolicyRule(t *testing.T) {
 	createFile := func(ctx context.Context) error {
 		_, err := c.File.Create().
 			SetName("name2").
-			SetType(file.TypeIMAGE).
+			SetType(file.TypeImage).
 			SetStoreKey("abcd").
 			SetContentType("text/html").
 			SetUser(u2).
@@ -217,14 +217,14 @@ func TestFileOfWorkOrderReadPolicyRule(t *testing.T) {
 	woType1, wo1 := prepareWorkOrderData(ctx, c)
 	_, wo2 := prepareWorkOrderData(ctx, c)
 	c.File.Create().
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetName("image1.png").
 		SetContentType("image/png").
 		SetStoreKey("1111").
 		SetWorkOrder(wo1).
 		SaveX(ctx)
 	c.File.Create().
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetName("image2.png").
 		SetContentType("image/png").
 		SetStoreKey("2222").
@@ -236,7 +236,7 @@ func TestFileOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -250,7 +250,7 @@ func TestFileOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -263,7 +263,7 @@ func TestFileOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -286,7 +286,7 @@ func TestFileOfCheckListItemReadPolicyRule(t *testing.T) {
 		SetType("simple").
 		SaveX(ctx)
 	c.File.Create().
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetName("image1.png").
 		SetContentType("image/png").
 		SetStoreKey("1111").
@@ -302,7 +302,7 @@ func TestFileOfCheckListItemReadPolicyRule(t *testing.T) {
 		SetType("simple").
 		SaveX(ctx)
 	c.File.Create().
-		SetType(file.TypeIMAGE).
+		SetType(file.TypeImage).
 		SetName("image2.png").
 		SetContentType("image/png").
 		SetStoreKey("2222").
@@ -314,7 +314,7 @@ func TestFileOfCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -328,7 +328,7 @@ func TestFileOfCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -341,7 +341,7 @@ func TestFileOfCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.File.Query().Count(permissionsContext)
 		require.NoError(t, err)

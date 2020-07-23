@@ -34,7 +34,7 @@ type woTestType struct {
 
 func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
 	prepareData(ctx, t, r)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOWNER)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	// Add templates
 	typInput1 := models.AddWorkOrderTypeInput{
@@ -88,8 +88,8 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	}
 	proj, _ := r.Mutation().CreateProject(ctx, projInput)
 
-	st := workorder.StatusDONE
-	priority := workorder.PriorityHIGH
+	st := workorder.StatusDone
+	priority := workorder.PriorityHigh
 	woInput1 := models.AddWorkOrderInput{
 		Name:            "WO1",
 		Description:     pointer.ToString("WO1 - description"),
@@ -112,8 +112,8 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	}
 	wo1, _ := r.Mutation().AddWorkOrder(ctx, woInput1)
 
-	st = workorder.StatusPLANNED
-	priority = workorder.PriorityMEDIUM
+	st = workorder.StatusPlanned
+	priority = workorder.PriorityMedium
 	woInput2 := models.AddWorkOrderInput{
 		Name:            "WO2",
 		Description:     pointer.ToString("WO2 - description"),
@@ -209,10 +209,10 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusDONE.String(),
+				workorder.StatusDone.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
-				workorder.PriorityHIGH.String(),
+				workorder.PriorityHigh.String(),
 				getStringDate(time.Now()),
 				"",
 				grandParentLocation + "; " + parentLocation,
@@ -226,10 +226,10 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO2",
 				"",
-				workorder.StatusPLANNED.String(),
+				workorder.StatusPlanned.String(),
 				"tester2@example.com",
 				viewertest.DefaultUser,
-				workorder.PriorityMEDIUM.String(),
+				workorder.PriorityMedium.String(),
 				getStringDate(time.Now()),
 				"",
 				parentLocation + "; " + childLocation,
@@ -295,10 +295,10 @@ func TestExportWOWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusDONE.String(),
+				workorder.StatusDone.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
-				workorder.PriorityHIGH.String(),
+				workorder.PriorityHigh.String(),
 				getStringDate(time.Now()),
 				"",
 				grandParentLocation + "; " + parentLocation,

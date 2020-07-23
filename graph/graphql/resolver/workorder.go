@@ -136,11 +136,11 @@ func (workOrderResolver) fileOfType(ctx context.Context, workOrder *ent.WorkOrde
 }
 
 func (r workOrderResolver) Images(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error) {
-	return r.fileOfType(ctx, obj, file.TypeIMAGE)
+	return r.fileOfType(ctx, obj, file.TypeImage)
 }
 
 func (r workOrderResolver) Files(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error) {
-	return r.fileOfType(ctx, obj, file.TypeFILE)
+	return r.fileOfType(ctx, obj, file.TypeFile)
 }
 
 func (workOrderResolver) Hyperlinks(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Hyperlink, error) {

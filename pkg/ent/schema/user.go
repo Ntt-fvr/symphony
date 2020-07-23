@@ -36,10 +36,17 @@ func (User) Fields() []ent.Field {
 			NotEmpty().
 			Optional(),
 		field.Enum("status").
-			Values("ACTIVE", "DEACTIVATED").
+			ValueMap(map[string]string{
+				"Active":      "ACTIVE",
+				"Deactivated": "DEACTIVATED",
+			}).
 			Default("ACTIVE"),
 		field.Enum("role").
-			Values("USER", "ADMIN", "OWNER").
+			ValueMap(map[string]string{
+				"User":  "USER",
+				"Admin": "ADMIN",
+				"Owner": "OWNER",
+			}).
 			Default("USER"),
 	}
 }

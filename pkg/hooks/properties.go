@@ -144,7 +144,7 @@ func isWorkOrderClosed(ctx context.Context, client *ent.Client, templateID int) 
 		}
 		return false, fmt.Errorf("failed to query work order: %w", err)
 	}
-	return workOrder.Status == workorder.StatusDONE, nil
+	return workOrder.Status == workorder.StatusDone, nil
 }
 
 func mandatoryPropertyOnClose(ctx context.Context, client *ent.Client, templateID int) error {
@@ -193,13 +193,13 @@ func isClosingWorkOrder(ctx context.Context, m *ent.WorkOrderMutation) (bool, er
 		return false, nil
 	}
 	if m.Op().Is(ent.OpCreate) {
-		return newStatus == workorder.StatusDONE, nil
+		return newStatus == workorder.StatusDone, nil
 	}
 	oldStatus, err := m.OldStatus(ctx)
 	if err != nil {
 		return false, err
 	}
-	return oldStatus != newStatus && newStatus == workorder.StatusDONE, nil
+	return oldStatus != newStatus && newStatus == workorder.StatusDone, nil
 }
 
 func rollbackAndErr(tx *ent.Tx, err error) error {

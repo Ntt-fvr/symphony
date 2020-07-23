@@ -1137,9 +1137,9 @@ func (r mutationResolver) createImage(ctx context.Context, input *models.AddImag
 		SetUploadedAt(time.Now()).
 		SetType(func() file.Type {
 			if strings.HasPrefix(input.ContentType, "image/") {
-				return file.TypeIMAGE
+				return file.TypeImage
 			}
-			return file.TypeFILE
+			return file.TypeFile
 		}()).
 		SetContentType(input.ContentType).
 		SetNillableCategory(input.Category).
@@ -1848,7 +1848,7 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 	if err := r.ClientFrom(ctx).
 		WorkOrder.
 		UpdateOne(wo).
-		SetStatus(workorder.StatusDONE).
+		SetStatus(workorder.StatusDone).
 		Exec(ctx); err != nil {
 		return nil, errors.Wrapf(err, "Installing and removing work order items wo=%q", id)
 	}
@@ -3152,11 +3152,11 @@ func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int
 	if !ok {
 		return nil, gqlerror.Errorf("could not be executed in automation")
 	}
-	if wo.Status != workorder.StatusPLANNED {
+	if wo.Status != workorder.StatusPlanned {
 		return wo, nil
 	}
 	if wo, err = wo.Update().
-		SetStatus(workorder.StatusPENDING).
+		SetStatus(workorder.StatusPending).
 		Save(ctx); err != nil {
 		return nil, fmt.Errorf("updating work order %q status to pending: %w", id, err)
 	}

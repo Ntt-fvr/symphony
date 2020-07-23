@@ -34,7 +34,7 @@ func (m *jobs) syncServices(w http.ResponseWriter, r *http.Request) {
 	log.Info("services sync run. tenant: " + v.Tenant())
 
 	services, err := client.Service.Query().Where(
-		service.HasTypeWith(servicetype.DiscoveryMethodEQ(servicetype.DiscoveryMethodINVENTORY))).
+		service.HasTypeWith(servicetype.DiscoveryMethodEQ(servicetype.DiscoveryMethodInventory))).
 		All(ctx)
 
 	if err != nil {
@@ -69,7 +69,7 @@ func (m *jobs) syncServices(w http.ResponseWriter, r *http.Request) {
 	log.Info("service Sync - Add new services")
 	serviceTypes, err := client.ServiceType.Query().
 		Where(
-			servicetype.DiscoveryMethodEQ(servicetype.DiscoveryMethodINVENTORY),
+			servicetype.DiscoveryMethodEQ(servicetype.DiscoveryMethodInventory),
 			servicetype.IsDeleted(false),
 		).
 		All(ctx)

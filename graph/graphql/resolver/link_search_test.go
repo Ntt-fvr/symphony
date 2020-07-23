@@ -48,7 +48,7 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 	wo2, _ = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
 		ID:     wo2.ID,
 		Name:   "wo2",
-		Status: workOrderStatusPtr(workorder.StatusDONE),
+		Status: workOrderStatusPtr(workorder.StatusDone),
 	})
 	locType1, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "loc_type1",

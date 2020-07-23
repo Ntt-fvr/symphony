@@ -158,7 +158,7 @@ func prepareData(ctx context.Context) (data testData) {
 
 func TestGlobalPolicyIsAppliedForUsers(t *testing.T) {
 	c := viewertest.NewTestClient(t)
-	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUSER))
+	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUser))
 	data := prepareData(ctx)
 	permissions, err := authz.Permissions(ctx)
 	require.NoError(t, err)
@@ -192,7 +192,7 @@ func TestGlobalPolicyIsAppliedForUsers(t *testing.T) {
 
 func TestPoliciesAreAppendedForGroups(t *testing.T) {
 	c := viewertest.NewTestClient(t)
-	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUSER))
+	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUser))
 	data := prepareData(ctx)
 	c.PermissionsPolicy.UpdateOneID(data.locationPolicyID).
 		SetIsGlobal(true).
@@ -229,14 +229,14 @@ func TestPoliciesAreAppendedForGroups(t *testing.T) {
 
 func TestPoliciesAreNotAppendedForDeactivatedGroups(t *testing.T) {
 	c := viewertest.NewTestClient(t)
-	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUSER))
+	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUser))
 	data := prepareData(ctx)
 	c.UsersGroup.UpdateOneID(data.group1ID).
 		AddPolicyIDs(data.catalogPolicyID).
 		ExecX(ctx)
 	c.UsersGroup.UpdateOneID(data.group2ID).
 		AddPolicyIDs(data.workforcePolicyID).
-		SetStatus(usersgroup.StatusDEACTIVATED).
+		SetStatus(usersgroup.StatusDeactivated).
 		ExecX(ctx)
 	permissions, err := authz.Permissions(ctx)
 	require.NoError(t, err)
@@ -257,7 +257,7 @@ func TestPoliciesAreNotAppendedForDeactivatedGroups(t *testing.T) {
 
 func TestPoliciesAppendingOutput(t *testing.T) {
 	c := viewertest.NewTestClient(t)
-	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUSER))
+	ctx := viewertest.NewContext(context.Background(), c, viewertest.WithRole(user.RoleUser))
 	data := prepareData(ctx)
 	c.UsersGroup.UpdateOneID(data.group1ID).
 		AddPolicyIDs(data.workforcePolicyID, data.workforcePolicy2ID).
@@ -305,7 +305,7 @@ func TestAdminUserHasAdminEditPermissions(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	_, err := client.User.Create().
 		SetAuthID(admin).
-		SetRole(user.RoleADMIN).
+		SetRole(user.RoleAdmin).
 		Save(ctx)
 	require.NoError(t, err)
 	ctx = viewertest.NewContext(
@@ -321,7 +321,7 @@ func TestUserHasNoReadonlyPermissions(t *testing.T) {
 	const regular = "regular_user"
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
-	_, err := client.User.Create().SetAuthID(regular).SetRole(user.RoleUSER).Save(ctx)
+	_, err := client.User.Create().SetAuthID(regular).SetRole(user.RoleUser).Save(ctx)
 	require.NoError(t, err)
 	ctx = viewertest.NewContext(context.Background(), client, viewertest.WithUser(regular))
 	permissions, err := authz.Permissions(ctx)
@@ -334,7 +334,7 @@ func TestOwnerHasWritePermissions(t *testing.T) {
 	const owner = "owner_user"
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
-	_, err := client.User.Create().SetAuthID(owner).SetRole(user.RoleOWNER).Save(ctx)
+	_, err := client.User.Create().SetAuthID(owner).SetRole(user.RoleOwner).Save(ctx)
 	require.NoError(t, err)
 	ctx = viewertest.NewContext(context.Background(), client, viewertest.WithUser(owner))
 	permissions, err := authz.Permissions(ctx)

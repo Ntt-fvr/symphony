@@ -79,7 +79,7 @@ func (s *propertiesTestSuite) createPropertyType(
 
 func (s *propertiesTestSuite) closeWorkOrder(ctx context.Context, client *ent.Client) {
 	_, err := client.WorkOrder.UpdateOne(s.workOrder).
-		SetStatus(workorder.StatusDONE).
+		SetStatus(workorder.StatusDone).
 		Save(ctx)
 	s.Require().NoError(err)
 }

@@ -182,18 +182,18 @@ type Type string
 
 // Type values.
 const (
-	TypeIMAGE Type = "IMAGE"
-	TypeFILE  Type = "FILE"
+	TypeFile  Type = "FILE"
+	TypeImage Type = "IMAGE"
 )
 
 func (_type Type) String() string {
 	return string(_type)
 }
 
-// TypeValidator is a validator for the "_type" field enum values. It is called by the builders before save.
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeIMAGE, TypeFILE:
+	case TypeFile, TypeImage:
 		return nil
 	default:
 		return fmt.Errorf("file: invalid enum value for type field: %q", _type)

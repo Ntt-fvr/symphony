@@ -155,11 +155,11 @@ func (locationResolver) filesOfType(ctx context.Context, location *ent.Location,
 }
 
 func (r locationResolver) Images(ctx context.Context, location *ent.Location) ([]*ent.File, error) {
-	return r.filesOfType(ctx, location, file.TypeIMAGE)
+	return r.filesOfType(ctx, location, file.TypeImage)
 }
 
 func (r locationResolver) Files(ctx context.Context, location *ent.Location) ([]*ent.File, error) {
-	return r.filesOfType(ctx, location, file.TypeFILE)
+	return r.filesOfType(ctx, location, file.TypeFile)
 }
 
 func (locationResolver) Hyperlinks(ctx context.Context, location *ent.Location) ([]*ent.Hyperlink, error) {

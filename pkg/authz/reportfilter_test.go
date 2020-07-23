@@ -21,11 +21,11 @@ func TestReportFilterCanAlwaysBeWritten(t *testing.T) {
 	ctx := viewertest.NewContext(
 		context.Background(),
 		c,
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	reportFilter, err := c.ReportFilter.Create().
 		SetName("ReportFilter").
-		SetEntity(reportfilter.EntityWORKORDER).
+		SetEntity(reportfilter.EntityWorkOrder).
 		Save(ctx)
 	require.NoError(t, err)
 	err = c.ReportFilter.UpdateOne(reportFilter).

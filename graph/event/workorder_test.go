@@ -77,7 +77,7 @@ func (s *workOrderTestSuite) TestWorkOrderCreate() {
 		SetType(woType).
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
-		SetStatus(workorder.StatusDONE).
+		SetStatus(workorder.StatusDone).
 		SaveX(s.ctx)
 	wg.Wait()
 }
@@ -85,7 +85,7 @@ func (s *workOrderTestSuite) TestWorkOrderCreate() {
 func (s *workOrderTestSuite) TestWorkOrderUpdate() {
 	s.T().Skip("Flaky test - T69052905")
 	err := s.client.WorkOrder.Update().
-		SetStatus(workorder.StatusDONE).
+		SetStatus(workorder.StatusDone).
 		Exec(s.ctx)
 	s.Require().Error(err)
 	s.Require().Contains(err.Error(), "work order status update to done by predicate not allowed")
@@ -129,7 +129,7 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateOne() {
 	s.Require().NoError(err)
 	ctx = ent.NewTxContext(s.ctx, tx)
 	tx.WorkOrder.UpdateOne(wo).
-		SetStatus(workorder.StatusDONE).
+		SetStatus(workorder.StatusDone).
 		ExecX(ctx)
 	err = tx.Commit()
 	s.Require().NoError(err)

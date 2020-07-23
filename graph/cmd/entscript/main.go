@@ -34,7 +34,6 @@ func main() {
 
 	logger, _, _ := log.ProvideLogger(*logcfg)
 	ctx := context.Background()
-
 	logger.For(ctx).Info("params",
 		zap.Stringp("dsn", dsn),
 		zap.Stringp("tenant", tenantName),
@@ -75,7 +74,7 @@ func main() {
 			)
 		}
 		ctx := ent.NewContext(ctx, client)
-		v := viewer.NewAutomation(tenant, *username, user.RoleOWNER)
+		v := viewer.NewAutomation(tenant, *username, user.RoleOwner)
 		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 		ctx = viewer.NewContext(ctx, v)
 		permissions, err := authz.Permissions(ctx)
@@ -88,41 +87,39 @@ func main() {
 		}
 		ctx = authz.NewContext(ctx, permissions)
 
-		tx, err := client.Tx(ctx)
-		if err != nil {
-			logger.For(ctx).Fatal("cannot begin transaction", zap.Error(err))
-		}
-		defer func() {
-			if r := recover(); r != nil {
+		func() {
+			tx, err := client.Tx(ctx)
+			if err != nil {
+				logger.For(ctx).Fatal("cannot begin transaction", zap.Error(err))
+			}
+			defer func() {
+				if r := recover(); r != nil {
+					if err := tx.Rollback(); err != nil {
+						logger.For(ctx).Error("cannot rollback transaction", zap.Error(err))
+					}
+					logger.For(ctx).Panic("application panic", zap.Reflect("error", r))
+				}
+			}()
+			ctx = ent.NewContext(ctx, tx.Client())
+			// Since the client is already uses transaction we can't have transactions on graphql also
+			r := resolver.New(
+				resolver.Config{
+					Logger:     logger,
+					Subscriber: pubsub.NewNopSubscriber(),
+				},
+				resolver.WithTransaction(false),
+			)
+			if err := utilityFunc(ctx, r, logger, tenant); err != nil {
+				logger.For(ctx).Error("failed to run function", zap.Error(err))
 				if err := tx.Rollback(); err != nil {
 					logger.For(ctx).Error("cannot rollback transaction", zap.Error(err))
 				}
-				logger.For(ctx).Panic("application panic", zap.Reflect("error", r))
+				return
+			}
+			if err := tx.Commit(); err != nil {
+				logger.For(ctx).Error("cannot commit transaction", zap.Error(err))
 			}
 		}()
-
-		ctx = ent.NewContext(ctx, tx.Client())
-		// Since the client is already uses transaction we can't have transactions on graphql also
-		r := resolver.New(
-			resolver.Config{
-				Logger:     logger,
-				Subscriber: pubsub.NewNopSubscriber(),
-			},
-			resolver.WithTransaction(false),
-		)
-
-		if err := utilityFunc(ctx, r, logger, tenant); err != nil {
-			logger.For(ctx).Error("failed to run function", zap.Error(err))
-			if err := tx.Rollback(); err != nil {
-				logger.For(ctx).Error("cannot rollback transaction", zap.Error(err))
-			}
-			return
-		}
-
-		if err := tx.Commit(); err != nil {
-			logger.For(ctx).Error("cannot commit transaction", zap.Error(err))
-			return
-		}
 	}
 }
 
@@ -149,7 +146,7 @@ func getTenantList(ctx context.Context, driver *sql.Driver, tenant *string) ([]s
 	return tenants, nil
 }
 
-func utilityFunc(ctx context.Context, _ generated.ResolverRoot, logger log.Logger, tenant string) error {
+func utilityFunc(_ context.Context, _ generated.ResolverRoot, _ log.Logger, _ string) error {
 	/**
 	Add your Go code in this function
 	You need to run this code from the same version production is at to avoid schema mismatches

@@ -28,13 +28,13 @@ func TestEditUser(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
-	require.Equal(t, user.StatusACTIVE, u.Status)
+	require.Equal(t, user.StatusActive, u.Status)
 	require.Empty(t, u.FirstName)
 
 	mr := r.Mutation()
-	u, err := mr.EditUser(ctx, models.EditUserInput{ID: u.ID, Status: toStatusPointer(user.StatusDEACTIVATED), FirstName: pointer.ToString("John"), LastName: pointer.ToString("Doe")})
+	u, err := mr.EditUser(ctx, models.EditUserInput{ID: u.ID, Status: toStatusPointer(user.StatusDeactivated), FirstName: pointer.ToString("John"), LastName: pointer.ToString("Doe")})
 	require.NoError(t, err)
-	require.Equal(t, user.StatusDEACTIVATED, u.Status)
+	require.Equal(t, user.StatusDeactivated, u.Status)
 	require.Equal(t, "John", u.FirstName)
 	require.Equal(t, "Doe", u.LastName)
 }

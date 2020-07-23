@@ -32,7 +32,7 @@ func (r mutationResolver) AddUsersGroup(ctx context.Context, input models.AddUse
 	mutation := client.UsersGroup.Create().
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
-		SetStatus(usersgroup.StatusACTIVE)
+		SetStatus(usersgroup.StatusActive)
 	if input.Policies != nil {
 		mutation = mutation.AddPolicyIDs(input.Policies...)
 	}

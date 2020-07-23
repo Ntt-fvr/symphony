@@ -30,7 +30,7 @@ func TestUserCannotBeDeleted(t *testing.T) {
 func TestUserWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
 	createUser := func(ctx context.Context) error {
 		_, err := c.User.Create().
 			SetAuthID("AuthID2").

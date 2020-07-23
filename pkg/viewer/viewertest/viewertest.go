@@ -23,13 +23,13 @@ const (
 	UserHeader    = viewer.UserHeader
 	DefaultUser   = "tester@example.com"
 	RoleHeader    = viewer.RoleHeader
-	DefaultRole   = user.RoleUSER
+	DefaultRole   = user.RoleUser
 )
 
 func SetDefaultViewerHeaders(req *http.Request) {
 	req.Header.Set(TenantHeader, DefaultTenant)
 	req.Header.Set(UserHeader, DefaultUser)
-	req.Header.Set(RoleHeader, string(DefaultRole))
+	req.Header.Set(RoleHeader, DefaultRole.String())
 }
 
 func TestHandler(t *testing.T, h http.Handler, client *ent.Client) http.Handler {

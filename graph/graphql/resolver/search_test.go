@@ -145,8 +145,8 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 	woType2, _ := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "wo_type_b"})
 	assigneeName1 := "user1@fb.com"
 	assigneeName2 := "user2@fb.com"
-	assignee1 := viewer.MustGetOrCreateUser(ctx, assigneeName1, user.RoleOWNER)
-	assignee2 := viewer.MustGetOrCreateUser(ctx, assigneeName2, user.RoleOWNER)
+	assignee1 := viewer.MustGetOrCreateUser(ctx, assigneeName1, user.RoleOwner)
+	assignee2 := viewer.MustGetOrCreateUser(ctx, assigneeName2, user.RoleOwner)
 	desc := "random description"
 
 	wo1, _ := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
@@ -177,13 +177,13 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 	})
 
 	ownerName := "owner"
-	owner := viewer.MustGetOrCreateUser(ctx, ownerName, user.RoleOWNER)
+	owner := viewer.MustGetOrCreateUser(ctx, ownerName, user.RoleOwner)
 	_, _ = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
 		ID:         wo1.ID,
 		Name:       wo1.Name,
 		OwnerID:    &owner.ID,
-		Status:     workOrderStatusPtr(workorder.StatusDONE),
-		Priority:   workOrderPriorityPtr(workorder.PriorityHIGH),
+		Status:     workOrderStatusPtr(workorder.StatusDone),
+		Priority:   workOrderPriorityPtr(workorder.PriorityHigh),
 		LocationID: &loc1.ID,
 		AssigneeID: &assignee1.ID,
 	})
@@ -622,7 +622,7 @@ func TestSearchWO(t *testing.T) {
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
 
-	status := workorder.StatusPLANNED.String()
+	status := workorder.StatusPlanned.String()
 	f2 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderStatus,
 		Operator:   models.FilterOperatorIsOneOf,
@@ -757,7 +757,7 @@ func TestSearchWOByPriority(t *testing.T) {
 	f := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderPriority,
 		Operator:   models.FilterOperatorIsOneOf,
-		StringSet:  []string{workorder.PriorityHIGH.String()},
+		StringSet:  []string{workorder.PriorityHigh.String()},
 	}
 	c.MustPost(
 		woAllQuery,
@@ -767,7 +767,7 @@ func TestSearchWOByPriority(t *testing.T) {
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
 
-	f.StringSet = []string{workorder.PriorityLOW.String()}
+	f.StringSet = []string{workorder.PriorityLow.String()}
 	c.MustPost(
 		woAllQuery,
 		&result,

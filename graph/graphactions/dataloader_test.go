@@ -40,9 +40,9 @@ func TestQueryRules(t *testing.T) {
 		context.Background(),
 		viewertest.DefaultTenant,
 		graphgrpc.ActionsAlertServiceName,
-		user.RoleOWNER)
+		user.RoleOwner)
 	require.NoError(t, err)
-	dataLoader := graphactions.EntDataLoader{client}
+	dataLoader := graphactions.EntDataLoader{Client: client}
 
 	_, err = client.
 		ActionsRule.Create().

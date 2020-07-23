@@ -45,21 +45,21 @@ func TestAddWorkOrderActivities(t *testing.T) {
 		require.Equal(t, a.QueryAuthor().OnlyX(ctx).AuthID, u.AuthID)
 		require.Equal(t, a.QueryWorkOrder().OnlyX(ctx).ID, wo.ID)
 		switch a.ChangedField {
-		case activity.ChangedFieldCREATIONDATE:
+		case activity.ChangedFieldCreationDate:
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.FormatInt(now.Unix(), 10))
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldOWNER, activity.ChangedFieldASSIGNEE:
+		case activity.ChangedFieldOwner, activity.ChangedFieldAssignee:
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldSTATUS:
+		case activity.ChangedFieldStatus:
 			require.Empty(t, a.OldValue)
-			require.EqualValues(t, a.NewValue, workorder.StatusPLANNED)
+			require.EqualValues(t, a.NewValue, workorder.StatusPlanned)
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldPRIORITY:
+		case activity.ChangedFieldPriority:
 			require.Empty(t, a.OldValue)
-			require.EqualValues(t, a.NewValue, workorder.PriorityNONE)
+			require.EqualValues(t, a.NewValue, workorder.PriorityNone)
 			require.True(t, a.IsCreate)
 		default:
 			require.Fail(t, "unsupported changed field")
@@ -89,10 +89,10 @@ func TestEditWorkOrderActivities(t *testing.T) {
 	require.Len(t, activities, 5)
 	u2 := c.User.Create().
 		SetAuthID("123").
-		SetRole(user.RoleUSER).SaveX(ctx)
+		SetRole(user.RoleUser).SaveX(ctx)
 	c.WorkOrder.UpdateOne(wo).
 		SetAssignee(u2).
-		SetStatus(workorder.StatusPENDING).
+		SetStatus(workorder.StatusPending).
 		ExecX(ctx)
 
 	activities = wo.QueryActivities().AllX(ctx)
@@ -106,14 +106,14 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		}
 		newCount++
 		switch a.ChangedField {
-		case activity.ChangedFieldASSIGNEE:
+		case activity.ChangedFieldAssignee:
 			require.Equal(t, a.NewValue, strconv.Itoa(u2.ID))
 			require.False(t, a.IsCreate)
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
-		case activity.ChangedFieldSTATUS:
-			require.EqualValues(t, a.NewValue, workorder.StatusPENDING)
+		case activity.ChangedFieldStatus:
+			require.EqualValues(t, a.NewValue, workorder.StatusPending)
 			require.False(t, a.IsCreate)
-			require.EqualValues(t, a.OldValue, workorder.StatusPLANNED)
+			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
 		default:
 			require.Fail(t, "unsupported changed field")
 		}

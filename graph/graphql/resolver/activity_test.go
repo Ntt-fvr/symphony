@@ -34,7 +34,7 @@ func TestAddWorkOrderActivities(t *testing.T) {
 	u := viewer.MustGetOrCreateUser(
 		privacy.DecisionContext(ctx, privacy.Allow),
 		viewertest.DefaultUser,
-		user.RoleOWNER)
+		user.RoleOwner)
 
 	wor, ar := r.WorkOrder(), r.Activity()
 	name := "example_work_order"
@@ -59,28 +59,28 @@ func TestAddWorkOrderActivities(t *testing.T) {
 		require.True(t, a.IsCreate)
 
 		switch a.ChangedField {
-		case activity.ChangedFieldCREATIONDATE:
+		case activity.ChangedFieldCreationDate:
 			timestampInt, err := strconv.ParseInt(a.NewValue, 10, 64)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
 			require.WithinDuration(t, time.Unix(timestampInt, 0), tim, time.Second*3)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldOWNER:
+		case activity.ChangedFieldOwner:
 			fetchedNode, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNode.ID, u.ID)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldSTATUS:
+		case activity.ChangedFieldStatus:
 			require.Empty(t, a.OldValue)
-			require.EqualValues(t, a.NewValue, workorder.StatusPLANNED)
+			require.EqualValues(t, a.NewValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPRIORITY:
+		case activity.ChangedFieldPriority:
 			require.Empty(t, a.OldValue)
-			require.EqualValues(t, a.NewValue, workorder.PriorityNONE)
+			require.EqualValues(t, a.NewValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:
@@ -98,8 +98,8 @@ func TestEditWorkOrderActivities(t *testing.T) {
 	u := viewer.MustGetOrCreateUser(
 		privacy.DecisionContext(ctx, privacy.Allow),
 		viewertest.DefaultUser,
-		user.RoleOWNER)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOWNER)
+		user.RoleOwner)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	mr, wor, ar := r.Mutation(), r.WorkOrder(), r.Activity()
 	name := "example_work_order"
@@ -113,8 +113,8 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		Name:       wo.Name,
 		OwnerID:    &u2.ID,
 		AssigneeID: &u.ID,
-		Status:     workOrderStatusPtr(workorder.StatusPENDING),
-		Priority:   workOrderPriorityPtr(workorder.PriorityHIGH),
+		Status:     workOrderStatusPtr(workorder.StatusPending),
+		Priority:   workOrderPriorityPtr(workorder.PriorityHigh),
 	})
 	require.NoError(t, err)
 	activities, err = wor.Activities(ctx, wo)
@@ -139,7 +139,7 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		}
 		newCount++
 		switch a.ChangedField {
-		case activity.ChangedFieldOWNER:
+		case activity.ChangedFieldOwner:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			fetchedNodeOld, err := oldNode.Node(ctx)
@@ -148,21 +148,21 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNodeNew.ID, u2.ID)
 			require.Equal(t, fetchedNodeOld.ID, u.ID)
-		case activity.ChangedFieldASSIGNEE:
+		case activity.ChangedFieldAssignee:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Nil(t, oldNode)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Empty(t, a.OldValue)
 			require.Equal(t, fetchedNodeNew.ID, u.ID)
-		case activity.ChangedFieldSTATUS:
-			require.EqualValues(t, a.NewValue, workorder.StatusPENDING)
-			require.EqualValues(t, a.OldValue, workorder.StatusPLANNED)
+		case activity.ChangedFieldStatus:
+			require.EqualValues(t, a.NewValue, workorder.StatusPending)
+			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPRIORITY:
-			require.EqualValues(t, a.NewValue, workorder.PriorityHIGH)
-			require.EqualValues(t, a.OldValue, workorder.PriorityNONE)
+		case activity.ChangedFieldPriority:
+			require.EqualValues(t, a.NewValue, workorder.PriorityHigh)
+			require.EqualValues(t, a.OldValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:

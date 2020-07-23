@@ -85,7 +85,7 @@ func cudBasedRule(cud *models.Cud, m ent.Mutation) error {
 }
 
 func userHasFullPermissions(v viewer.Viewer) bool {
-	return v.Role() == user.RoleOWNER || v.Role() == user.RoleADMIN
+	return v.Role() == user.RoleOwner || v.Role() == user.RoleAdmin
 }
 
 func allowWritePermissionsRule() privacy.MutationRule {

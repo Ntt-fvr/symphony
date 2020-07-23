@@ -17,7 +17,7 @@ import (
 func TestUsersGroupWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
 	g := c.UsersGroup.Create().
 		SetName("Group").
 		AddMembers(u).

@@ -375,7 +375,7 @@ func TestWorkOrderPropertyBasedOnOwnerPolicyRule(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 
 	workOrderType, workOrder := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetOwner(u).
 		ExecX(ctx)
@@ -392,11 +392,11 @@ func TestWorkOrderPropertyBasedOnOwnerPolicyRule(t *testing.T) {
 		SaveX(ctx)
 	withPermissionsContext := viewertest.NewContext(ctx, c,
 		viewertest.WithUser("MyOwner"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	noPermissionsContext := viewertest.NewContext(ctx, c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 
 	cudOperations := getPropertyCudOperations(ctx, c, func(ptc *ent.PropertyCreate) *ent.PropertyCreate {
@@ -458,7 +458,7 @@ func TestPropertyOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -472,7 +472,7 @@ func TestPropertyOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -485,7 +485,7 @@ func TestPropertyOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -524,7 +524,7 @@ func TestPropertyOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -538,7 +538,7 @@ func TestPropertyOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -551,7 +551,7 @@ func TestPropertyOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Property.Query().Count(permissionsContext)
 		require.NoError(t, err)

@@ -108,7 +108,7 @@ func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationRe
 		Description: &workOrder.Description,
 		OwnerID:     ownerID,
 		InstallDate: &workOrder.InstallDate,
-		Status:      workOrderStatusPtr(workorder.StatusDONE),
+		Status:      workOrderStatusPtr(workorder.StatusDone),
 		AssigneeID:  assigneeID,
 	})
 	require.NoError(t, err)
@@ -188,7 +188,7 @@ func TestAddWorkOrderWithAssignee(t *testing.T) {
 	description := longWorkOrderDesc
 	location := createLocation(ctx, t, *r)
 	assigneeName := longWorkOrderAssignee
-	assignee := viewer.MustGetOrCreateUser(ctx, assigneeName, user.RoleOWNER)
+	assignee := viewer.MustGetOrCreateUser(ctx, assigneeName, user.RoleOwner)
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type"})
 	require.NoError(t, err)
 	workOrder, err := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
@@ -211,7 +211,7 @@ func TestAddWorkOrderWithAssignee(t *testing.T) {
 		Name:        workOrder.Name,
 		Description: &workOrder.Description,
 		OwnerID:     ownerID,
-		Status:      workOrderStatusPtr(workorder.StatusPENDING),
+		Status:      workOrderStatusPtr(workorder.StatusPending),
 		AssigneeID:  &assignee.ID,
 	})
 	require.NoError(t, err)
@@ -317,7 +317,7 @@ func TestAddWorkOrderWithPriority(t *testing.T) {
 	name := longWorkOrderName
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type"})
 	require.NoError(t, err)
-	priority := workorder.PriorityLOW
+	priority := workorder.PriorityLow
 	workOrder, err := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            name,
 		WorkOrderTypeID: woType.ID,
@@ -338,8 +338,8 @@ func TestAddWorkOrderWithPriority(t *testing.T) {
 		Name:        workOrder.Name,
 		Description: &workOrder.Description,
 		OwnerID:     ownerID,
-		Status:      workOrderStatusPtr(workorder.StatusPENDING),
-		Priority:    workOrderPriorityPtr(workorder.PriorityHIGH),
+		Status:      workOrderStatusPtr(workorder.StatusPending),
+		Priority:    workOrderPriorityPtr(workorder.PriorityHigh),
 		Index:       pointer.ToInt(42),
 	}
 
@@ -467,14 +467,14 @@ func TestAddWorkOrderWithActivity(t *testing.T) {
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
 	act, err := r.client.Activity.Create().
 		SetWorkOrder(w).
-		SetChangedField(activity.ChangedFieldPRIORITY).
-		SetOldValue(workorder.PriorityLOW.String()).
-		SetNewValue(workorder.PriorityHIGH.String()).
+		SetChangedField(activity.ChangedFieldPriority).
+		SetOldValue(workorder.PriorityLow.String()).
+		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(v.User()).
 		Save(ctx)
 
 	require.NoError(t, err)
-	assert.EqualValues(t, workorder.PriorityHIGH, act.NewValue)
+	assert.EqualValues(t, workorder.PriorityHigh, act.NewValue)
 
 	node, err = qr.Node(ctx, w.ID)
 	require.NoError(t, err)
@@ -482,7 +482,7 @@ func TestAddWorkOrderWithActivity(t *testing.T) {
 	activities, err = w.QueryActivities().All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, activities, 1)
-	assert.EqualValues(t, workorder.PriorityLOW, activities[0].OldValue)
+	assert.EqualValues(t, workorder.PriorityLow, activities[0].OldValue)
 }
 
 func TestAddWorkOrderNoDescription(t *testing.T) {
@@ -1523,7 +1523,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	_, err = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            "should_fail",
 		WorkOrderTypeID: woType.ID,
-		Status:          workOrderStatusPtr(workorder.StatusDONE),
+		Status:          workOrderStatusPtr(workorder.StatusDone),
 	})
 	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 	_, err = mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
@@ -1550,7 +1550,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 		Name:            "location_name_3",
 		WorkOrderTypeID: woType.ID,
 		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusDONE),
+		Status:          workOrderStatusPtr(workorder.StatusDone),
 	})
 	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 
@@ -1563,7 +1563,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 		Name:            "location_name_3",
 		WorkOrderTypeID: woType.ID,
 		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusDONE),
+		Status:          workOrderStatusPtr(workorder.StatusDone),
 	})
 	require.NoError(t, err)
 }
@@ -1811,7 +1811,7 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	w, err := mr.TechnicianWorkOrderCheckIn(ctx, w.ID)
 	require.NoError(t, err)
 
-	assert.Equal(t, w.Status, workorder.StatusPENDING)
+	assert.Equal(t, w.Status, workorder.StatusPending)
 	comments, err := w.QueryComments().All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, comments, 1)
@@ -1975,7 +1975,7 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 
 			require.Equal(t, "StoreKeyAlreadyIn", item.Files[0].StoreKey)
 			require.Equal(t, 120, item.Files[0].SizeInBytes)
-			require.Equal(t, file.TypeIMAGE, item.Files[0].FileType)
+			require.Equal(t, file.TypeImage, item.Files[0].FileType)
 
 			require.Equal(t, "StoreKeyToAdd", item.Files[1].StoreKey)
 		}

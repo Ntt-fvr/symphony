@@ -45,11 +45,11 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 		return nil, status.FromContextError(err).Err()
 	}
 
-	role := user.RoleUSER
+	role := user.RoleUser
 	if input.IsOwner {
-		role = user.RoleOWNER
+		role = user.RoleOwner
 	}
-	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleADMIN)
+	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleAdmin)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -59,7 +59,7 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 			u, err = client.User.Create().SetAuthID(input.Id).SetEmail(input.Id).SetRole(role).Save(ctx)
 		}
 	} else {
-		_, err = client.User.UpdateOne(u).SetStatus(user.StatusACTIVE).SetRole(role).Save(ctx)
+		_, err = client.User.UpdateOne(u).SetStatus(user.StatusActive).SetRole(role).Save(ctx)
 	}
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
@@ -82,7 +82,7 @@ func (s UserService) Delete(ctx context.Context, input *schema.UserInput) (*empt
 		return nil, status.FromContextError(err).Err()
 	}
 
-	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleADMIN)
+	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleAdmin)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -91,7 +91,7 @@ func (s UserService) Delete(ctx context.Context, input *schema.UserInput) (*empt
 		return nil, status.FromContextError(err).Err()
 	}
 	err = client.User.UpdateOne(u).
-		SetStatus(user.StatusDEACTIVATED).
+		SetStatus(user.StatusDeactivated).
 		Exec(ctx)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()

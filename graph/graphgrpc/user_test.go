@@ -37,7 +37,7 @@ func newTestClient(t *testing.T) *ent.Client {
 func TestUserService_Create(t *testing.T) {
 	client := newTestClient(t)
 	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleADMIN)
+	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 
 	u, err := us.Create(ctx, &schema.AddUserInput{Tenant: "", Id: "XXX", IsOwner: false})
@@ -52,17 +52,17 @@ func TestUserService_Create(t *testing.T) {
 	require.NoError(t, err)
 	userObject, err := client.User.Get(ctx, int(u.Id))
 	require.NoError(t, err)
-	require.Equal(t, user.StatusACTIVE, userObject.Status)
-	require.Equal(t, user.RoleUSER, userObject.Role)
+	require.Equal(t, user.StatusActive, userObject.Status)
+	require.Equal(t, user.RoleUser, userObject.Role)
 }
 
 func TestUserService_Delete(t *testing.T) {
 	client := newTestClient(t)
 	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleADMIN)
+	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)
-	require.Equal(t, user.StatusACTIVE, u.Status)
+	require.Equal(t, user.StatusActive, u.Status)
 
 	_, err = us.Delete(ctx, &schema.UserInput{Tenant: "", Id: "YYY"})
 	require.IsType(t, codes.InvalidArgument, status.Code(err))
@@ -74,16 +74,16 @@ func TestUserService_Delete(t *testing.T) {
 	require.NoError(t, err)
 	newU, err := client.User.Get(ctx, u.ID)
 	require.NoError(t, err)
-	require.Equal(t, user.StatusDEACTIVATED, newU.Status)
+	require.Equal(t, user.StatusDeactivated, newU.Status)
 }
 
 func TestUserService_CreateAfterDelete(t *testing.T) {
 	client := newTestClient(t)
 	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleADMIN)
+	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)
-	require.Equal(t, user.StatusACTIVE, u.Status)
+	require.Equal(t, user.StatusActive, u.Status)
 
 	_, err = us.Delete(ctx, &schema.UserInput{Tenant: "XXX", Id: "YYY"})
 	require.NoError(t, err)
@@ -92,6 +92,6 @@ func TestUserService_CreateAfterDelete(t *testing.T) {
 	require.NoError(t, err)
 	userObject, err := client.User.Get(ctx, u.ID)
 	require.NoError(t, err)
-	require.Equal(t, user.StatusACTIVE, userObject.Status)
-	require.Equal(t, user.RoleOWNER, userObject.Role)
+	require.Equal(t, user.StatusActive, userObject.Status)
+	require.Equal(t, user.RoleOwner, userObject.Role)
 }

@@ -94,18 +94,18 @@ type EnumSelectionModeValue string
 
 // EnumSelectionModeValue values.
 const (
-	EnumSelectionModeValueSingle   EnumSelectionModeValue = "single"
 	EnumSelectionModeValueMultiple EnumSelectionModeValue = "multiple"
+	EnumSelectionModeValueSingle   EnumSelectionModeValue = "single"
 )
 
 func (esmv EnumSelectionModeValue) String() string {
 	return string(esmv)
 }
 
-// EnumSelectionModeValueValidator is a validator for the "esmv" field enum values. It is called by the builders before save.
+// EnumSelectionModeValueValidator is a validator for the "enum_selection_mode_value" field enum values. It is called by the builders before save.
 func EnumSelectionModeValueValidator(esmv EnumSelectionModeValue) error {
 	switch esmv {
-	case EnumSelectionModeValueSingle, EnumSelectionModeValueMultiple:
+	case EnumSelectionModeValueMultiple, EnumSelectionModeValueSingle:
 		return nil
 	default:
 		return fmt.Errorf("checklistitemdefinition: invalid enum value for enum_selection_mode_value field: %q", esmv)

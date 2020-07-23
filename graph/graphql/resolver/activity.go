@@ -24,9 +24,9 @@ func getNode(ctx context.Context, field activity.ChangedField, val string) (ent.
 		return nil, nil
 	}
 	switch field {
-	case activity.ChangedFieldASSIGNEE:
+	case activity.ChangedFieldAssignee:
 		fallthrough
-	case activity.ChangedFieldOWNER:
+	case activity.ChangedFieldOwner:
 		client := ent.FromContext(ctx)
 		intID, err := strconv.Atoi(val)
 		if err != nil {

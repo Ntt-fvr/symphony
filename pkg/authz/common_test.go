@@ -52,12 +52,12 @@ type cudPolicyTest struct {
 func userContextWithPermissions(ctx context.Context, name string, setter func(p *models.PermissionSettings)) context.Context {
 	permissions := authz.EmptyPermissions()
 	setter(permissions)
-	viewer.MustGetOrCreateUser(ctx, name, user.RoleUSER)
+	viewer.MustGetOrCreateUser(ctx, name, user.RoleUser)
 	return viewertest.NewContext(
 		context.Background(),
 		ent.FromContext(ctx),
 		viewertest.WithUser(name),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 }
 func runPolicyTest(t *testing.T, tests []policyTest) {
@@ -72,7 +72,7 @@ func runPolicyTest(t *testing.T, tests []policyTest) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(noPermissions))
 		withPermissions := authz.EmptyPermissions()
 		if test.initialPermissions != nil {
@@ -83,7 +83,7 @@ func runPolicyTest(t *testing.T, tests []policyTest) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(withPermissions))
 
 		contextBasedTests = append(contextBasedTests, contextBasedPolicyTest{

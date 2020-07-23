@@ -59,11 +59,13 @@ func (ServiceType) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			Unique(),
-		field.Bool("has_customer").Default(false),
-		field.Bool("is_deleted").Default(false),
+		field.Bool("has_customer").
+			Default(false),
+		field.Bool("is_deleted").
+			Default(false),
 		field.Enum("discovery_method").
 			Comment("how will service of this type be discovered? (null means manual adding and not discovery)").
-			Values("INVENTORY").
+			ValueMap(map[string]string{"Inventory": "INVENTORY"}).
 			Optional(),
 	}
 }
