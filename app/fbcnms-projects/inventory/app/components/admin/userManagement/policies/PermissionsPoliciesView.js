@@ -23,7 +23,7 @@ export const PERMISSION_POLICIES_VIEW_NAME = fbt(
 
 const useStyles = makeStyles(() => ({
   root: {
-    maxHeight: '100%',
+    flexGrow: 1,
   },
 }));
 

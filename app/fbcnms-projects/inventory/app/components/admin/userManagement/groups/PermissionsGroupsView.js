@@ -28,7 +28,7 @@ export const PERMISSION_GROUPS_VIEW_NAME = fbt(
 
 const useStyles = makeStyles(() => ({
   root: {
-    maxHeight: '100%',
+    flexGrow: 1,
   },
   narrowColumn: {
     width: '70%',
