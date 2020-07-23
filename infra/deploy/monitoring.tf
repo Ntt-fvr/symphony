@@ -4,7 +4,7 @@ resource "helm_release" "prometheus_operator" {
   namespace  = "monitoring"
   repository = local.helm_repository.stable
   chart      = "prometheus-operator"
-  version    = "9.1.0"
+  version    = "9.2.1"
   keyring    = ""
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {

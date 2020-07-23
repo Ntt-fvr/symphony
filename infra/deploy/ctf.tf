@@ -5,6 +5,19 @@ locals {
   # k8s group name for ctf admins.
   ctf_admin_user  = "ctf:master"
   ctf_admin_group = "ctf:masters"
+  # public domain name.
+  ctf_domain_name = "openctf.io"
+}
+
+# hosted zone for ctf records
+resource "aws_route53_zone" "ctf" {
+  name  = local.ctf_domain_name
+  count = terraform.workspace == "default" ? 1 : 0
+}
+
+# hosted zone for ctf records
+data "aws_route53_zone" "ctf" {
+  name = local.ctf_domain_name
 }
 
 # kubernetes namespace for ctf deployment

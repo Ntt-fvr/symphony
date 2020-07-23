@@ -188,7 +188,7 @@ resource "helm_release" "nginx_ingress" {
   repository = local.helm_repository.stable
   name       = "nginx-ingress"
   namespace  = "kube-system"
-  version    = "1.41.1"
+  version    = "1.41.2"
   keyring    = ""
 
   values = [<<VALUES
@@ -305,6 +305,16 @@ module "external_dns_role" {
   tags                      = local.tags
 }
 
+locals {
+  # managed hosted zones
+  aws_route53_zones = [
+    aws_route53_zone.symphony.id,
+    aws_route53_zone.purpleheadband.id,
+    data.aws_route53_zone.magma.id,
+    data.aws_route53_zone.ctf.id,
+  ]
+}
+
 # policy required by external dns
 data "aws_iam_policy_document" "external_dns" {
   statement {
@@ -312,11 +322,10 @@ data "aws_iam_policy_document" "external_dns" {
       "route53:ChangeResourceRecordSets",
     ]
 
-    resources = [
-      "arn:aws:route53:::hostedzone/${aws_route53_zone.symphony.id}",
-      "arn:aws:route53:::hostedzone/${aws_route53_zone.purpleheadband.id}",
-      "arn:aws:route53:::hostedzone/${local.magma_hosted_zone.id}",
-    ]
+    resources = formatlist(
+      "arn:aws:route53:::hostedzone/%s",
+      local.aws_route53_zones,
+    )
   }
 
   statement {
@@ -345,9 +354,7 @@ resource "helm_release" "external_dns" {
     annotations:
       eks.amazonaws.com/role-arn: ${module.external_dns_role.role_arn}
   zoneIdFilters:
-    - ${aws_route53_zone.symphony.id}
-    - ${aws_route53_zone.purpleheadband.id}
-    - ${local.magma_hosted_zone.id}
+    ${indent(4, yamlencode(local.aws_route53_zones))}
   metrics:
     enabled: true
     serviceMonitor:

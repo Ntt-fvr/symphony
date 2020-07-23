@@ -73,18 +73,13 @@ locals {
 
 # hosted zone for magma records
 resource "aws_route53_zone" "magma" {
-  name  = format("%s.", local.magma_domain_name)
+  name  = local.magma_domain_name
   count = terraform.workspace == "default" ? 1 : 0
 }
 
-# cross workspace reference to magma hosted zone
+# hosted zone for magma records for non default workspaces
 data "aws_route53_zone" "magma" {
-  name  = format("%s.", local.magma_domain_name)
-  count = 1 - length(aws_route53_zone.magma)
-}
-
-locals {
-  magma_hosted_zone = try(aws_route53_zone.magma[0], data.aws_route53_zone.magma[0])
+  name = local.magma_domain_name
 }
 
 resource "aws_route53_record" "symphony_signup" {
