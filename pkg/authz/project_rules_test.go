@@ -313,7 +313,7 @@ func TestProjectTemplateIsAlwaysEditable(t *testing.T) {
 	ctx := viewertest.NewContext(
 		context.Background(),
 		c,
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	projectTemplate, err := c.ProjectTemplate.Create().
 		SetName("ProjectTemplate").
