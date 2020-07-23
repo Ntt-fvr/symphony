@@ -163,6 +163,12 @@ func (c *ProjectClient) Instantiate(pr *Project) *Project {
 }
 
 // Instantiate entity configuration.
+func (c *ProjectTemplateClient) Instantiate(pt *ProjectTemplate) *ProjectTemplate {
+	pt.config = c.config
+	return pt
+}
+
+// Instantiate entity configuration.
 func (c *ProjectTypeClient) Instantiate(pt *ProjectType) *ProjectType {
 	pt.config = c.config
 	return pt

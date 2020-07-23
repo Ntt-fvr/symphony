@@ -119,6 +119,9 @@ func (PropertyType) Edges() []ent.Edge {
 		edge.From("project_type", ProjectType.Type).
 			Ref("properties").
 			Unique(),
+		edge.From("project_template", ProjectTemplate.Type).
+			Ref("properties").
+			Unique(),
 	}
 }
 

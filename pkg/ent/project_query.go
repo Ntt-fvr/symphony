@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -36,6 +37,7 @@ type ProjectQuery struct {
 	predicates []predicate.Project
 	// eager-loading edges.
 	withType       *ProjectTypeQuery
+	withTemplate   *ProjectTemplateQuery
 	withLocation   *LocationQuery
 	withComments   *CommentQuery
 	withWorkOrders *WorkOrderQuery
@@ -82,6 +84,24 @@ func (pq *ProjectQuery) QueryType() *ProjectTypeQuery {
 			sqlgraph.From(project.Table, project.FieldID, pq.sqlQuery()),
 			sqlgraph.To(projecttype.Table, projecttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, project.TypeTable, project.TypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTemplate chains the current query on the template edge.
+func (pq *ProjectQuery) QueryTemplate() *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: pq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, pq.sqlQuery()),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, project.TemplateTable, project.TemplateColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -369,6 +389,17 @@ func (pq *ProjectQuery) WithType(opts ...func(*ProjectTypeQuery)) *ProjectQuery 
 	return pq
 }
 
+//  WithTemplate tells the query-builder to eager-loads the nodes that are connected to
+// the "template" edge. The optional arguments used to configure the query builder of the edge.
+func (pq *ProjectQuery) WithTemplate(opts ...func(*ProjectTemplateQuery)) *ProjectQuery {
+	query := &ProjectTemplateQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withTemplate = query
+	return pq
+}
+
 //  WithLocation tells the query-builder to eager-loads the nodes that are connected to
 // the "location" edge. The optional arguments used to configure the query builder of the edge.
 func (pq *ProjectQuery) WithLocation(opts ...func(*LocationQuery)) *ProjectQuery {
@@ -494,8 +525,9 @@ func (pq *ProjectQuery) sqlAll(ctx context.Context) ([]*Project, error) {
 		nodes       = []*Project{}
 		withFKs     = pq.withFKs
 		_spec       = pq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			pq.withType != nil,
+			pq.withTemplate != nil,
 			pq.withLocation != nil,
 			pq.withComments != nil,
 			pq.withWorkOrders != nil,
@@ -503,7 +535,7 @@ func (pq *ProjectQuery) sqlAll(ctx context.Context) ([]*Project, error) {
 			pq.withCreator != nil,
 		}
 	)
-	if pq.withType != nil || pq.withLocation != nil || pq.withCreator != nil {
+	if pq.withType != nil || pq.withTemplate != nil || pq.withLocation != nil || pq.withCreator != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -554,6 +586,31 @@ func (pq *ProjectQuery) sqlAll(ctx context.Context) ([]*Project, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Type = n
+			}
+		}
+	}
+
+	if query := pq.withTemplate; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Project)
+		for i := range nodes {
+			if fk := nodes[i].project_template; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(projecttemplate.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Template = n
 			}
 		}
 	}

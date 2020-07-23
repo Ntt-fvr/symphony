@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 )
@@ -34,6 +35,7 @@ type Project struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProjectQuery when eager-loading is set.
 	Edges                 ProjectEdges `json:"edges"`
+	project_template      *int
 	project_location      *int
 	project_creator       *int
 	project_type_projects *int
@@ -43,6 +45,8 @@ type Project struct {
 type ProjectEdges struct {
 	// Type holds the value of the type edge.
 	Type *ProjectType `gqlgen:"type"`
+	// Template holds the value of the template edge.
+	Template *ProjectTemplate `gqlgen:"template"`
 	// Location holds the value of the location edge.
 	Location *Location `gqlgen:"location"`
 	// Comments holds the value of the comments edge.
@@ -55,7 +59,7 @@ type ProjectEdges struct {
 	Creator *User `gqlgen:"createdBy"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -72,10 +76,24 @@ func (e ProjectEdges) TypeOrErr() (*ProjectType, error) {
 	return nil, &NotLoadedError{edge: "type"}
 }
 
+// TemplateOrErr returns the Template value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ProjectEdges) TemplateOrErr() (*ProjectTemplate, error) {
+	if e.loadedTypes[1] {
+		if e.Template == nil {
+			// The edge template was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: projecttemplate.Label}
+		}
+		return e.Template, nil
+	}
+	return nil, &NotLoadedError{edge: "template"}
+}
+
 // LocationOrErr returns the Location value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ProjectEdges) LocationOrErr() (*Location, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.Location == nil {
 			// The edge location was loaded in eager-loading,
 			// but was not found.
@@ -89,7 +107,7 @@ func (e ProjectEdges) LocationOrErr() (*Location, error) {
 // CommentsOrErr returns the Comments value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProjectEdges) CommentsOrErr() ([]*Comment, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Comments, nil
 	}
 	return nil, &NotLoadedError{edge: "comments"}
@@ -98,7 +116,7 @@ func (e ProjectEdges) CommentsOrErr() ([]*Comment, error) {
 // WorkOrdersOrErr returns the WorkOrders value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProjectEdges) WorkOrdersOrErr() ([]*WorkOrder, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.WorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "work_orders"}
@@ -107,7 +125,7 @@ func (e ProjectEdges) WorkOrdersOrErr() ([]*WorkOrder, error) {
 // PropertiesOrErr returns the Properties value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProjectEdges) PropertiesOrErr() ([]*Property, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.Properties, nil
 	}
 	return nil, &NotLoadedError{edge: "properties"}
@@ -116,7 +134,7 @@ func (e ProjectEdges) PropertiesOrErr() ([]*Property, error) {
 // CreatorOrErr returns the Creator value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ProjectEdges) CreatorOrErr() (*User, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		if e.Creator == nil {
 			// The edge creator was loaded in eager-loading,
 			// but was not found.
@@ -141,6 +159,7 @@ func (*Project) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Project) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // project_template
 		&sql.NullInt64{}, // project_location
 		&sql.NullInt64{}, // project_creator
 		&sql.NullInt64{}, // project_type_projects
@@ -183,18 +202,24 @@ func (pr *Project) assignValues(values ...interface{}) error {
 	values = values[4:]
 	if len(values) == len(project.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field project_template", value)
+		} else if value.Valid {
+			pr.project_template = new(int)
+			*pr.project_template = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_location", value)
 		} else if value.Valid {
 			pr.project_location = new(int)
 			*pr.project_location = int(value.Int64)
 		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
+		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_creator", value)
 		} else if value.Valid {
 			pr.project_creator = new(int)
 			*pr.project_creator = int(value.Int64)
 		}
-		if value, ok := values[2].(*sql.NullInt64); !ok {
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_type_projects", value)
 		} else if value.Valid {
 			pr.project_type_projects = new(int)
@@ -207,6 +232,11 @@ func (pr *Project) assignValues(values ...interface{}) error {
 // QueryType queries the type edge of the Project.
 func (pr *Project) QueryType() *ProjectTypeQuery {
 	return (&ProjectClient{config: pr.config}).QueryType(pr)
+}
+
+// QueryTemplate queries the template edge of the Project.
+func (pr *Project) QueryTemplate() *ProjectTemplateQuery {
+	return (&ProjectClient{config: pr.config}).QueryTemplate(pr)
 }
 
 // QueryLocation queries the location edge of the Project.

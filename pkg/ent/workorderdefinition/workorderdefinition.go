@@ -28,6 +28,8 @@ const (
 	EdgeType = "type"
 	// EdgeProjectType holds the string denoting the project_type edge name in mutations.
 	EdgeProjectType = "project_type"
+	// EdgeProjectTemplate holds the string denoting the project_template edge name in mutations.
+	EdgeProjectTemplate = "project_template"
 
 	// Table holds the table name of the workorderdefinition in the database.
 	Table = "work_order_definitions"
@@ -45,6 +47,13 @@ const (
 	ProjectTypeInverseTable = "project_types"
 	// ProjectTypeColumn is the table column denoting the project_type relation/edge.
 	ProjectTypeColumn = "project_type_work_orders"
+	// ProjectTemplateTable is the table the holds the project_template relation/edge.
+	ProjectTemplateTable = "work_order_definitions"
+	// ProjectTemplateInverseTable is the table name for the ProjectTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "projecttemplate" package.
+	ProjectTemplateInverseTable = "project_templates"
+	// ProjectTemplateColumn is the table column denoting the project_template relation/edge.
+	ProjectTemplateColumn = "project_template_work_orders"
 )
 
 // Columns holds all SQL columns for workorderdefinition fields.
@@ -57,6 +66,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrderDefinition type.
 var ForeignKeys = []string{
+	"project_template_work_orders",
 	"project_type_work_orders",
 	"work_order_definition_type",
 }

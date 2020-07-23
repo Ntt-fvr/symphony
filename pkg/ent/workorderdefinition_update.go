@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
@@ -98,6 +99,25 @@ func (wodu *WorkOrderDefinitionUpdate) SetProjectType(p *ProjectType) *WorkOrder
 	return wodu.SetProjectTypeID(p.ID)
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (wodu *WorkOrderDefinitionUpdate) SetProjectTemplateID(id int) *WorkOrderDefinitionUpdate {
+	wodu.mutation.SetProjectTemplateID(id)
+	return wodu
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (wodu *WorkOrderDefinitionUpdate) SetNillableProjectTemplateID(id *int) *WorkOrderDefinitionUpdate {
+	if id != nil {
+		wodu = wodu.SetProjectTemplateID(*id)
+	}
+	return wodu
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (wodu *WorkOrderDefinitionUpdate) SetProjectTemplate(p *ProjectTemplate) *WorkOrderDefinitionUpdate {
+	return wodu.SetProjectTemplateID(p.ID)
+}
+
 // Mutation returns the WorkOrderDefinitionMutation object of the builder.
 func (wodu *WorkOrderDefinitionUpdate) Mutation() *WorkOrderDefinitionMutation {
 	return wodu.mutation
@@ -112,6 +132,12 @@ func (wodu *WorkOrderDefinitionUpdate) ClearType() *WorkOrderDefinitionUpdate {
 // ClearProjectType clears the project_type edge to ProjectType.
 func (wodu *WorkOrderDefinitionUpdate) ClearProjectType() *WorkOrderDefinitionUpdate {
 	wodu.mutation.ClearProjectType()
+	return wodu
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (wodu *WorkOrderDefinitionUpdate) ClearProjectTemplate() *WorkOrderDefinitionUpdate {
+	wodu.mutation.ClearProjectTemplate()
 	return wodu
 }
 
@@ -286,6 +312,41 @@ func (wodu *WorkOrderDefinitionUpdate) sqlSave(ctx context.Context) (n int, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if wodu.mutation.ProjectTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorderdefinition.ProjectTemplateTable,
+			Columns: []string{workorderdefinition.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wodu.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorderdefinition.ProjectTemplateTable,
+			Columns: []string{workorderdefinition.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wodu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorderdefinition.Label}
@@ -369,6 +430,25 @@ func (woduo *WorkOrderDefinitionUpdateOne) SetProjectType(p *ProjectType) *WorkO
 	return woduo.SetProjectTypeID(p.ID)
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (woduo *WorkOrderDefinitionUpdateOne) SetProjectTemplateID(id int) *WorkOrderDefinitionUpdateOne {
+	woduo.mutation.SetProjectTemplateID(id)
+	return woduo
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (woduo *WorkOrderDefinitionUpdateOne) SetNillableProjectTemplateID(id *int) *WorkOrderDefinitionUpdateOne {
+	if id != nil {
+		woduo = woduo.SetProjectTemplateID(*id)
+	}
+	return woduo
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (woduo *WorkOrderDefinitionUpdateOne) SetProjectTemplate(p *ProjectTemplate) *WorkOrderDefinitionUpdateOne {
+	return woduo.SetProjectTemplateID(p.ID)
+}
+
 // Mutation returns the WorkOrderDefinitionMutation object of the builder.
 func (woduo *WorkOrderDefinitionUpdateOne) Mutation() *WorkOrderDefinitionMutation {
 	return woduo.mutation
@@ -383,6 +463,12 @@ func (woduo *WorkOrderDefinitionUpdateOne) ClearType() *WorkOrderDefinitionUpdat
 // ClearProjectType clears the project_type edge to ProjectType.
 func (woduo *WorkOrderDefinitionUpdateOne) ClearProjectType() *WorkOrderDefinitionUpdateOne {
 	woduo.mutation.ClearProjectType()
+	return woduo
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (woduo *WorkOrderDefinitionUpdateOne) ClearProjectTemplate() *WorkOrderDefinitionUpdateOne {
+	woduo.mutation.ClearProjectTemplate()
 	return woduo
 }
 
@@ -547,6 +633,41 @@ func (woduo *WorkOrderDefinitionUpdateOne) sqlSave(ctx context.Context) (wod *Wo
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if woduo.mutation.ProjectTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorderdefinition.ProjectTemplateTable,
+			Columns: []string{workorderdefinition.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := woduo.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorderdefinition.ProjectTemplateTable,
+			Columns: []string{workorderdefinition.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

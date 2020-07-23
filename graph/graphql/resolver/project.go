@@ -25,14 +25,31 @@ import (
 )
 
 type (
-	projectTypeResolver struct{}
-	projectResolver     struct{}
+	projectTemplateResolver struct{}
+	projectTypeResolver     struct{}
+	projectResolver         struct{}
 )
 
 var (
 	errNoProjectType = gqlerror.Errorf("project type doesn't exist")
 	errNoProject     = gqlerror.Errorf("project doesn't exist")
 )
+
+func (projectTemplateResolver) Properties(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.PropertyType, error) {
+	properties, err := obj.QueryProperties().All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("querying properties: %w", err)
+	}
+	return properties, nil
+}
+
+func (projectTemplateResolver) WorkOrders(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.WorkOrderDefinition, error) {
+	properties, err := obj.QueryWorkOrders().All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("querying work order definitions: %w", err)
+	}
+	return properties, nil
+}
 
 func (projectTypeResolver) NumberOfProjects(ctx context.Context, obj *ent.ProjectType) (int, error) {
 	return obj.QueryProjects().Count(ctx)
@@ -208,6 +225,14 @@ func (projectResolver) Type(ctx context.Context, obj *ent.Project) (*ent.Project
 		return obj.QueryType().Only(ctx)
 	}
 	return typ, err
+}
+
+func (projectResolver) Template(ctx context.Context, obj *ent.Project) (*ent.ProjectTemplate, error) {
+	t, err := obj.Edges.TemplateOrErr()
+	if ent.IsNotLoaded(err) {
+		return obj.QueryTemplate().Only(ctx)
+	}
+	return t, err
 }
 
 func (projectResolver) Location(ctx context.Context, obj *ent.Project) (*ent.Location, error) {

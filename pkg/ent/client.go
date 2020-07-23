@@ -39,6 +39,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -122,6 +123,8 @@ type Client struct {
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// ProjectTemplate is the client for interacting with the ProjectTemplate builders.
+	ProjectTemplate *ProjectTemplateClient
 	// ProjectType is the client for interacting with the ProjectType builders.
 	ProjectType *ProjectTypeClient
 	// Property is the client for interacting with the Property builders.
@@ -204,6 +207,7 @@ func (c *Client) init() {
 	c.LocationType = NewLocationTypeClient(c.config)
 	c.PermissionsPolicy = NewPermissionsPolicyClient(c.config)
 	c.Project = NewProjectClient(c.config)
+	c.ProjectTemplate = NewProjectTemplateClient(c.config)
 	c.ProjectType = NewProjectTypeClient(c.config)
 	c.Property = NewPropertyClient(c.config)
 	c.PropertyType = NewPropertyTypeClient(c.config)
@@ -282,6 +286,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		LocationType:                NewLocationTypeClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
+		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
@@ -343,6 +348,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		LocationType:                NewLocationTypeClient(cfg),
 		PermissionsPolicy:           NewPermissionsPolicyClient(cfg),
 		Project:                     NewProjectClient(cfg),
+		ProjectTemplate:             NewProjectTemplateClient(cfg),
 		ProjectType:                 NewProjectTypeClient(cfg),
 		Property:                    NewPropertyClient(cfg),
 		PropertyType:                NewPropertyTypeClient(cfg),
@@ -417,6 +423,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.LocationType.Use(hooks...)
 	c.PermissionsPolicy.Use(hooks...)
 	c.Project.Use(hooks...)
+	c.ProjectTemplate.Use(hooks...)
 	c.ProjectType.Use(hooks...)
 	c.Property.Use(hooks...)
 	c.PropertyType.Use(hooks...)
@@ -3993,6 +4000,22 @@ func (c *ProjectClient) QueryType(pr *Project) *ProjectTypeQuery {
 	return query
 }
 
+// QueryTemplate queries the template edge of a Project.
+func (c *ProjectClient) QueryTemplate(pr *Project) *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(project.Table, project.FieldID, id),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, project.TemplateTable, project.TemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryLocation queries the location edge of a Project.
 func (c *ProjectClient) QueryLocation(pr *Project) *LocationQuery {
 	query := &LocationQuery{config: c.config}
@@ -4079,6 +4102,138 @@ func (c *ProjectClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], project.Hooks[:]...)
 }
 
+// ProjectTemplateClient is a client for the ProjectTemplate schema.
+type ProjectTemplateClient struct {
+	config
+}
+
+// NewProjectTemplateClient returns a client for the ProjectTemplate from the given config.
+func NewProjectTemplateClient(c config) *ProjectTemplateClient {
+	return &ProjectTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `projecttemplate.Hooks(f(g(h())))`.
+func (c *ProjectTemplateClient) Use(hooks ...Hook) {
+	c.hooks.ProjectTemplate = append(c.hooks.ProjectTemplate, hooks...)
+}
+
+// Create returns a create builder for ProjectTemplate.
+func (c *ProjectTemplateClient) Create() *ProjectTemplateCreate {
+	mutation := newProjectTemplateMutation(c.config, OpCreate)
+	return &ProjectTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for ProjectTemplate.
+func (c *ProjectTemplateClient) Update() *ProjectTemplateUpdate {
+	mutation := newProjectTemplateMutation(c.config, OpUpdate)
+	return &ProjectTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ProjectTemplateClient) UpdateOne(pt *ProjectTemplate) *ProjectTemplateUpdateOne {
+	mutation := newProjectTemplateMutation(c.config, OpUpdateOne, withProjectTemplate(pt))
+	return &ProjectTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ProjectTemplateClient) UpdateOneID(id int) *ProjectTemplateUpdateOne {
+	mutation := newProjectTemplateMutation(c.config, OpUpdateOne, withProjectTemplateID(id))
+	return &ProjectTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ProjectTemplate.
+func (c *ProjectTemplateClient) Delete() *ProjectTemplateDelete {
+	mutation := newProjectTemplateMutation(c.config, OpDelete)
+	return &ProjectTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ProjectTemplateClient) DeleteOne(pt *ProjectTemplate) *ProjectTemplateDeleteOne {
+	return c.DeleteOneID(pt.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ProjectTemplateClient) DeleteOneID(id int) *ProjectTemplateDeleteOne {
+	builder := c.Delete().Where(projecttemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ProjectTemplateDeleteOne{builder}
+}
+
+// Create returns a query builder for ProjectTemplate.
+func (c *ProjectTemplateClient) Query() *ProjectTemplateQuery {
+	return &ProjectTemplateQuery{config: c.config}
+}
+
+// Get returns a ProjectTemplate entity by its id.
+func (c *ProjectTemplateClient) Get(ctx context.Context, id int) (*ProjectTemplate, error) {
+	return c.Query().Where(projecttemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ProjectTemplateClient) GetX(ctx context.Context, id int) *ProjectTemplate {
+	pt, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return pt
+}
+
+// QueryProperties queries the properties edge of a ProjectTemplate.
+func (c *ProjectTemplateClient) QueryProperties(pt *ProjectTemplate) *PropertyTypeQuery {
+	query := &PropertyTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, id),
+			sqlgraph.To(propertytype.Table, propertytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, projecttemplate.PropertiesTable, projecttemplate.PropertiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWorkOrders queries the work_orders edge of a ProjectTemplate.
+func (c *ProjectTemplateClient) QueryWorkOrders(pt *ProjectTemplate) *WorkOrderDefinitionQuery {
+	query := &WorkOrderDefinitionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, id),
+			sqlgraph.To(workorderdefinition.Table, workorderdefinition.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, projecttemplate.WorkOrdersTable, projecttemplate.WorkOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryType queries the type edge of a ProjectTemplate.
+func (c *ProjectTemplateClient) QueryType(pt *ProjectTemplate) *ProjectTypeQuery {
+	query := &ProjectTypeQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, id),
+			sqlgraph.To(projecttype.Table, projecttype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, projecttemplate.TypeTable, projecttemplate.TypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ProjectTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.ProjectTemplate
+	return append(hooks[:len(hooks):len(hooks)], projecttemplate.Hooks[:]...)
+}
+
 // ProjectTypeClient is a client for the ProjectType schema.
 type ProjectTypeClient struct {
 	config
@@ -4157,22 +4312,6 @@ func (c *ProjectTypeClient) GetX(ctx context.Context, id int) *ProjectType {
 	return pt
 }
 
-// QueryProjects queries the projects edge of a ProjectType.
-func (c *ProjectTypeClient) QueryProjects(pt *ProjectType) *ProjectQuery {
-	query := &ProjectQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := pt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, id),
-			sqlgraph.To(project.Table, project.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.ProjectsTable, projecttype.ProjectsColumn),
-		)
-		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryProperties queries the properties edge of a ProjectType.
 func (c *ProjectTypeClient) QueryProperties(pt *ProjectType) *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: c.config}
@@ -4198,6 +4337,22 @@ func (c *ProjectTypeClient) QueryWorkOrders(pt *ProjectType) *WorkOrderDefinitio
 			sqlgraph.From(projecttype.Table, projecttype.FieldID, id),
 			sqlgraph.To(workorderdefinition.Table, workorderdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.WorkOrdersTable, projecttype.WorkOrdersColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProjects queries the projects edge of a ProjectType.
+func (c *ProjectTypeClient) QueryProjects(pt *ProjectType) *ProjectQuery {
+	query := &ProjectQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(projecttype.Table, projecttype.FieldID, id),
+			sqlgraph.To(project.Table, project.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.ProjectsTable, projecttype.ProjectsColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -4718,6 +4873,22 @@ func (c *PropertyTypeClient) QueryProjectType(pt *PropertyType) *ProjectTypeQuer
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
 			sqlgraph.To(projecttype.Table, projecttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ProjectTypeTable, propertytype.ProjectTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProjectTemplate queries the project_template edge of a PropertyType.
+func (c *PropertyTypeClient) QueryProjectTemplate(pt *PropertyType) *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, id),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ProjectTemplateTable, propertytype.ProjectTemplateColumn),
 		)
 		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
 		return fromV, nil
@@ -6890,6 +7061,22 @@ func (c *WorkOrderDefinitionClient) QueryProjectType(wod *WorkOrderDefinition) *
 			sqlgraph.From(workorderdefinition.Table, workorderdefinition.FieldID, id),
 			sqlgraph.To(projecttype.Table, projecttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, workorderdefinition.ProjectTypeTable, workorderdefinition.ProjectTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(wod.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProjectTemplate queries the project_template edge of a WorkOrderDefinition.
+func (c *WorkOrderDefinitionClient) QueryProjectTemplate(wod *WorkOrderDefinition) *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := wod.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorderdefinition.Table, workorderdefinition.FieldID, id),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorderdefinition.ProjectTemplateTable, workorderdefinition.ProjectTemplateColumn),
 		)
 		fromV = sqlgraph.Neighbors(wod.driver.Dialect(), step)
 		return fromV, nil

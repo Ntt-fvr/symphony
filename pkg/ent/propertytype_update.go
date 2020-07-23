@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -563,6 +564,25 @@ func (ptu *PropertyTypeUpdate) SetProjectType(p *ProjectType) *PropertyTypeUpdat
 	return ptu.SetProjectTypeID(p.ID)
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (ptu *PropertyTypeUpdate) SetProjectTemplateID(id int) *PropertyTypeUpdate {
+	ptu.mutation.SetProjectTemplateID(id)
+	return ptu
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (ptu *PropertyTypeUpdate) SetNillableProjectTemplateID(id *int) *PropertyTypeUpdate {
+	if id != nil {
+		ptu = ptu.SetProjectTemplateID(*id)
+	}
+	return ptu
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (ptu *PropertyTypeUpdate) SetProjectTemplate(p *ProjectTemplate) *PropertyTypeUpdate {
+	return ptu.SetProjectTemplateID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
@@ -628,6 +648,12 @@ func (ptu *PropertyTypeUpdate) ClearWorkOrderTemplate() *PropertyTypeUpdate {
 // ClearProjectType clears the project_type edge to ProjectType.
 func (ptu *PropertyTypeUpdate) ClearProjectType() *PropertyTypeUpdate {
 	ptu.mutation.ClearProjectType()
+	return ptu
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
+	ptu.mutation.ClearProjectTemplate()
 	return ptu
 }
 
@@ -1282,6 +1308,41 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ptu.mutation.ProjectTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ProjectTemplateTable,
+			Columns: []string{propertytype.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ProjectTemplateTable,
+			Columns: []string{propertytype.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -1824,6 +1885,25 @@ func (ptuo *PropertyTypeUpdateOne) SetProjectType(p *ProjectType) *PropertyTypeU
 	return ptuo.SetProjectTypeID(p.ID)
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (ptuo *PropertyTypeUpdateOne) SetProjectTemplateID(id int) *PropertyTypeUpdateOne {
+	ptuo.mutation.SetProjectTemplateID(id)
+	return ptuo
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (ptuo *PropertyTypeUpdateOne) SetNillableProjectTemplateID(id *int) *PropertyTypeUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetProjectTemplateID(*id)
+	}
+	return ptuo
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (ptuo *PropertyTypeUpdateOne) SetProjectTemplate(p *ProjectTemplate) *PropertyTypeUpdateOne {
+	return ptuo.SetProjectTemplateID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
@@ -1889,6 +1969,12 @@ func (ptuo *PropertyTypeUpdateOne) ClearWorkOrderTemplate() *PropertyTypeUpdateO
 // ClearProjectType clears the project_type edge to ProjectType.
 func (ptuo *PropertyTypeUpdateOne) ClearProjectType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearProjectType()
+	return ptuo
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearProjectTemplate()
 	return ptuo
 }
 
@@ -2533,6 +2619,41 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (pt *PropertyTyp
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.ProjectTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ProjectTemplateTable,
+			Columns: []string{propertytype.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ProjectTemplateTable,
+			Columns: []string{propertytype.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

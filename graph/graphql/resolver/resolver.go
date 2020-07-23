@@ -199,6 +199,10 @@ func (resolver) ProjectType() generated.ProjectTypeResolver {
 	return projectTypeResolver{}
 }
 
+func (resolver) ProjectTemplate() generated.ProjectTemplateResolver {
+	return projectTemplateResolver{}
+}
+
 func (resolver) CheckListCategory() generated.CheckListCategoryResolver {
 	return checkListCategoryResolver{}
 }

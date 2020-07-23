@@ -88,6 +88,9 @@ type PermissionsPolicy func(*sql.Selector)
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
 
+// ProjectTemplate is the predicate function for projecttemplate builders.
+type ProjectTemplate func(*sql.Selector)
+
 // ProjectType is the predicate function for projecttype builders.
 type ProjectType func(*sql.Selector)
 

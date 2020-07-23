@@ -308,6 +308,26 @@ func TestProjectTypeWritePolicyRule(t *testing.T) {
 	})
 }
 
+func TestProjectTemplateIsAlwaysEditable(t *testing.T) {
+	c := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(
+		context.Background(),
+		c,
+		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	projectTemplate, err := c.ProjectTemplate.Create().
+		SetName("ProjectTemplate").
+		Save(ctx)
+	require.NoError(t, err)
+	err = c.ProjectTemplate.UpdateOne(projectTemplate).
+		SetName("NewName").
+		Exec(ctx)
+	require.NoError(t, err)
+	err = c.ProjectTemplate.DeleteOne(projectTemplate).
+		Exec(ctx)
+	require.NoError(t, err)
+}
+
 func TestProjectReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)

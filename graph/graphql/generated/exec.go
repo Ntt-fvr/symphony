@@ -76,6 +76,7 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	PermissionsPolicy() PermissionsPolicyResolver
 	Project() ProjectResolver
+	ProjectTemplate() ProjectTemplateResolver
 	ProjectType() ProjectTypeResolver
 	Property() PropertyResolver
 	PropertyType() PropertyTypeResolver
@@ -730,6 +731,7 @@ type ComplexityRoot struct {
 		Name               func(childComplexity int) int
 		NumberOfWorkOrders func(childComplexity int) int
 		Properties         func(childComplexity int) int
+		Template           func(childComplexity int) int
 		Type               func(childComplexity int) int
 		WorkOrders         func(childComplexity int) int
 	}
@@ -743,6 +745,13 @@ type ComplexityRoot struct {
 	ProjectEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	ProjectTemplate struct {
+		Description func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Properties  func(childComplexity int) int
+		WorkOrders  func(childComplexity int) int
 	}
 
 	ProjectType struct {
@@ -1449,11 +1458,16 @@ type PermissionsPolicyResolver interface {
 type ProjectResolver interface {
 	CreatedBy(ctx context.Context, obj *ent.Project) (*ent.User, error)
 	Type(ctx context.Context, obj *ent.Project) (*ent.ProjectType, error)
+	Template(ctx context.Context, obj *ent.Project) (*ent.ProjectTemplate, error)
 	Location(ctx context.Context, obj *ent.Project) (*ent.Location, error)
 	WorkOrders(ctx context.Context, obj *ent.Project) ([]*ent.WorkOrder, error)
 	NumberOfWorkOrders(ctx context.Context, obj *ent.Project) (int, error)
 	Properties(ctx context.Context, obj *ent.Project) ([]*ent.Property, error)
 	Comments(ctx context.Context, obj *ent.Project) ([]*ent.Comment, error)
+}
+type ProjectTemplateResolver interface {
+	Properties(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.PropertyType, error)
+	WorkOrders(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.WorkOrderDefinition, error)
 }
 type ProjectTypeResolver interface {
 	Projects(ctx context.Context, obj *ent.ProjectType) ([]*ent.Project, error)
@@ -4850,6 +4864,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Properties(childComplexity), true
 
+	case "Project.template":
+		if e.complexity.Project.Template == nil {
+			break
+		}
+
+		return e.complexity.Project.Template(childComplexity), true
+
 	case "Project.type":
 		if e.complexity.Project.Type == nil {
 			break
@@ -4898,6 +4919,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectEdge.Node(childComplexity), true
+
+	case "ProjectTemplate.description":
+		if e.complexity.ProjectTemplate.Description == nil {
+			break
+		}
+
+		return e.complexity.ProjectTemplate.Description(childComplexity), true
+
+	case "ProjectTemplate.name":
+		if e.complexity.ProjectTemplate.Name == nil {
+			break
+		}
+
+		return e.complexity.ProjectTemplate.Name(childComplexity), true
+
+	case "ProjectTemplate.properties":
+		if e.complexity.ProjectTemplate.Properties == nil {
+			break
+		}
+
+		return e.complexity.ProjectTemplate.Properties(childComplexity), true
+
+	case "ProjectTemplate.workOrders":
+		if e.complexity.ProjectTemplate.WorkOrders == nil {
+			break
+		}
+
+		return e.complexity.ProjectTemplate.WorkOrders(childComplexity), true
 
 	case "ProjectType.description":
 		if e.complexity.ProjectType.Description == nil {
@@ -9457,6 +9506,13 @@ directive @list(
   uniqueItems: Boolean
 ) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
 
+type ProjectTemplate {
+  name: String!
+  description: String
+  properties: [PropertyType]!
+  workOrders: [WorkOrderDefinition]!
+}
+
 type ProjectType implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
@@ -9596,6 +9652,7 @@ type Project implements Node {
   description: String
   createdBy: User
   type: ProjectType!
+  template: ProjectTemplate
   location: Location
   workOrders: [WorkOrder!]!
   numberOfWorkOrders: Int!
@@ -28559,6 +28616,37 @@ func (ec *executionContext) _Project_type(ctx context.Context, field graphql.Col
 	return ec.marshalNProjectType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectType(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Project_template(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Project",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Project().Template(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.ProjectTemplate)
+	fc.Result = res
+	return ec.marshalOProjectTemplate2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectTemplate(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_location(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -28891,6 +28979,139 @@ func (ec *executionContext) _ProjectEdge_cursor(ctx context.Context, field graph
 	res := resTmp.(ent.Cursor)
 	fc.Result = res
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProjectTemplate_name(ctx context.Context, field graphql.CollectedField, obj *ent.ProjectTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProjectTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProjectTemplate_description(ctx context.Context, field graphql.CollectedField, obj *ent.ProjectTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProjectTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProjectTemplate_properties(ctx context.Context, field graphql.CollectedField, obj *ent.ProjectTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProjectTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ProjectTemplate().Properties(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PropertyType)
+	fc.Result = res
+	return ec.marshalNPropertyType2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProjectTemplate_workOrders(ctx context.Context, field graphql.CollectedField, obj *ent.ProjectTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ProjectTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ProjectTemplate().WorkOrders(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.WorkOrderDefinition)
+	fc.Result = res
+	return ec.marshalNWorkOrderDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderDefinition(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ProjectType_id(ctx context.Context, field graphql.CollectedField, obj *ent.ProjectType) (ret graphql.Marshaler) {
@@ -50147,6 +50368,17 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 				}
 				return res
 			})
+		case "template":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Project_template(ctx, field, obj)
+				return res
+			})
 		case "location":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -50280,6 +50512,63 @@ func (ec *executionContext) _ProjectEdge(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var projectTemplateImplementors = []string{"ProjectTemplate"}
+
+func (ec *executionContext) _ProjectTemplate(ctx context.Context, sel ast.SelectionSet, obj *ent.ProjectTemplate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectTemplateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectTemplate")
+		case "name":
+			out.Values[i] = ec._ProjectTemplate_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "description":
+			out.Values[i] = ec._ProjectTemplate_description(ctx, field, obj)
+		case "properties":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ProjectTemplate_properties(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "workOrders":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ProjectTemplate_workOrders(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -61049,6 +61338,17 @@ func (ec *executionContext) marshalOProjectOrderField2ᚖgithubᚗcomᚋfacebook
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOProjectTemplate2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectTemplate(ctx context.Context, sel ast.SelectionSet, v ent.ProjectTemplate) graphql.Marshaler {
+	return ec._ProjectTemplate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOProjectTemplate2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectTemplate(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectTemplate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectTemplate(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjectType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectType(ctx context.Context, sel ast.SelectionSet, v ent.ProjectType) graphql.Marshaler {

@@ -13,33 +13,33 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
-	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 )
 
-// ProjectTypeCreate is the builder for creating a ProjectType entity.
-type ProjectTypeCreate struct {
+// ProjectTemplateCreate is the builder for creating a ProjectTemplate entity.
+type ProjectTemplateCreate struct {
 	config
-	mutation *ProjectTypeMutation
+	mutation *ProjectTemplateMutation
 	hooks    []Hook
 }
 
 // SetName sets the name field.
-func (ptc *ProjectTypeCreate) SetName(s string) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) SetName(s string) *ProjectTemplateCreate {
 	ptc.mutation.SetName(s)
 	return ptc
 }
 
 // SetDescription sets the description field.
-func (ptc *ProjectTypeCreate) SetDescription(s string) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) SetDescription(s string) *ProjectTemplateCreate {
 	ptc.mutation.SetDescription(s)
 	return ptc
 }
 
 // SetNillableDescription sets the description field if the given value is not nil.
-func (ptc *ProjectTypeCreate) SetNillableDescription(s *string) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) SetNillableDescription(s *string) *ProjectTemplateCreate {
 	if s != nil {
 		ptc.SetDescription(*s)
 	}
@@ -47,13 +47,13 @@ func (ptc *ProjectTypeCreate) SetNillableDescription(s *string) *ProjectTypeCrea
 }
 
 // AddPropertyIDs adds the properties edge to PropertyType by ids.
-func (ptc *ProjectTypeCreate) AddPropertyIDs(ids ...int) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) AddPropertyIDs(ids ...int) *ProjectTemplateCreate {
 	ptc.mutation.AddPropertyIDs(ids...)
 	return ptc
 }
 
 // AddProperties adds the properties edges to PropertyType.
-func (ptc *ProjectTypeCreate) AddProperties(p ...*PropertyType) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) AddProperties(p ...*PropertyType) *ProjectTemplateCreate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -62,13 +62,13 @@ func (ptc *ProjectTypeCreate) AddProperties(p ...*PropertyType) *ProjectTypeCrea
 }
 
 // AddWorkOrderIDs adds the work_orders edge to WorkOrderDefinition by ids.
-func (ptc *ProjectTypeCreate) AddWorkOrderIDs(ids ...int) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) AddWorkOrderIDs(ids ...int) *ProjectTemplateCreate {
 	ptc.mutation.AddWorkOrderIDs(ids...)
 	return ptc
 }
 
 // AddWorkOrders adds the work_orders edges to WorkOrderDefinition.
-func (ptc *ProjectTypeCreate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTypeCreate {
+func (ptc *ProjectTemplateCreate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTemplateCreate {
 	ids := make([]int, len(w))
 	for i := range w {
 		ids[i] = w[i].ID
@@ -76,45 +76,49 @@ func (ptc *ProjectTypeCreate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectT
 	return ptc.AddWorkOrderIDs(ids...)
 }
 
-// AddProjectIDs adds the projects edge to Project by ids.
-func (ptc *ProjectTypeCreate) AddProjectIDs(ids ...int) *ProjectTypeCreate {
-	ptc.mutation.AddProjectIDs(ids...)
+// SetTypeID sets the type edge to ProjectType by id.
+func (ptc *ProjectTemplateCreate) SetTypeID(id int) *ProjectTemplateCreate {
+	ptc.mutation.SetTypeID(id)
 	return ptc
 }
 
-// AddProjects adds the projects edges to Project.
-func (ptc *ProjectTypeCreate) AddProjects(p ...*Project) *ProjectTypeCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// SetNillableTypeID sets the type edge to ProjectType by id if the given value is not nil.
+func (ptc *ProjectTemplateCreate) SetNillableTypeID(id *int) *ProjectTemplateCreate {
+	if id != nil {
+		ptc = ptc.SetTypeID(*id)
 	}
-	return ptc.AddProjectIDs(ids...)
+	return ptc
 }
 
-// Mutation returns the ProjectTypeMutation object of the builder.
-func (ptc *ProjectTypeCreate) Mutation() *ProjectTypeMutation {
+// SetType sets the type edge to ProjectType.
+func (ptc *ProjectTemplateCreate) SetType(p *ProjectType) *ProjectTemplateCreate {
+	return ptc.SetTypeID(p.ID)
+}
+
+// Mutation returns the ProjectTemplateMutation object of the builder.
+func (ptc *ProjectTemplateCreate) Mutation() *ProjectTemplateMutation {
 	return ptc.mutation
 }
 
-// Save creates the ProjectType in the database.
-func (ptc *ProjectTypeCreate) Save(ctx context.Context) (*ProjectType, error) {
+// Save creates the ProjectTemplate in the database.
+func (ptc *ProjectTemplateCreate) Save(ctx context.Context) (*ProjectTemplate, error) {
 	if _, ok := ptc.mutation.Name(); !ok {
 		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
 	if v, ok := ptc.mutation.Name(); ok {
-		if err := projecttype.NameValidator(v); err != nil {
+		if err := projecttemplate.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	var (
 		err  error
-		node *ProjectType
+		node *ProjectTemplate
 	)
 	if len(ptc.hooks) == 0 {
 		node, err = ptc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ProjectTypeMutation)
+			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -134,7 +138,7 @@ func (ptc *ProjectTypeCreate) Save(ctx context.Context) (*ProjectType, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ptc *ProjectTypeCreate) SaveX(ctx context.Context) *ProjectType {
+func (ptc *ProjectTemplateCreate) SaveX(ctx context.Context) *ProjectTemplate {
 	v, err := ptc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -142,7 +146,7 @@ func (ptc *ProjectTypeCreate) SaveX(ctx context.Context) *ProjectType {
 	return v
 }
 
-func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error) {
+func (ptc *ProjectTemplateCreate) sqlSave(ctx context.Context) (*ProjectTemplate, error) {
 	pt, _spec := ptc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
@@ -155,14 +159,14 @@ func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error)
 	return pt, nil
 }
 
-func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) {
+func (ptc *ProjectTemplateCreate) createSpec() (*ProjectTemplate, *sqlgraph.CreateSpec) {
 	var (
-		pt    = &ProjectType{config: ptc.config}
+		pt    = &ProjectTemplate{config: ptc.config}
 		_spec = &sqlgraph.CreateSpec{
-			Table: projecttype.Table,
+			Table: projecttemplate.Table,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: projecttype.FieldID,
+				Column: projecttemplate.FieldID,
 			},
 		}
 	)
@@ -170,7 +174,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldName,
+			Column: projecttemplate.FieldName,
 		})
 		pt.Name = value
 	}
@@ -178,7 +182,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldDescription,
+			Column: projecttemplate.FieldDescription,
 		})
 		pt.Description = &value
 	}
@@ -186,8 +190,8 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.PropertiesTable,
-			Columns: []string{projecttype.PropertiesColumn},
+			Table:   projecttemplate.PropertiesTable,
+			Columns: []string{projecttemplate.PropertiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -205,8 +209,8 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.WorkOrdersTable,
-			Columns: []string{projecttype.WorkOrdersColumn},
+			Table:   projecttemplate.WorkOrdersTable,
+			Columns: []string{projecttemplate.WorkOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -220,17 +224,17 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ptc.mutation.ProjectsIDs(); len(nodes) > 0 {
+	if nodes := ptc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   projecttype.ProjectsTable,
-			Columns: []string{projecttype.ProjectsColumn},
+			Table:   projecttemplate.TypeTable,
+			Columns: []string{projecttemplate.TypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: project.FieldID,
+					Column: projecttype.FieldID,
 				},
 			},
 		}

@@ -4,7 +4,7 @@
 
 // Code generated (@generated) by entc, DO NOT EDIT.
 
-package projecttype
+package projecttemplate
 
 import (
 	"github.com/facebookincubator/ent/dialect/sql"
@@ -13,29 +13,29 @@ import (
 )
 
 // ID filters vertices based on their identifier.
-func ID(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func ID(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDEQ(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldID), id))
 	})
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDNEQ(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldID), id))
 	})
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDIn(ids ...int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(ids) == 0 {
@@ -51,8 +51,8 @@ func IDIn(ids ...int) predicate.ProjectType {
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDNotIn(ids ...int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(ids) == 0 {
@@ -68,68 +68,68 @@ func IDNotIn(ids ...int) predicate.ProjectType {
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDGT(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldID), id))
 	})
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDGTE(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldID), id))
 	})
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDLT(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldID), id))
 	})
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func IDLTE(id int) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldID), id))
 	})
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func Name(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
-func Description(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func Description(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDescription), v))
 	})
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameEQ(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
 // NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameNEQ(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldName), v))
 	})
 }
 
 // NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.ProjectType {
+func NameIn(vs ...string) predicate.ProjectTemplate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.ProjectType(func(s *sql.Selector) {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(v) == 0 {
@@ -141,12 +141,12 @@ func NameIn(vs ...string) predicate.ProjectType {
 }
 
 // NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.ProjectType {
+func NameNotIn(vs ...string) predicate.ProjectTemplate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.ProjectType(func(s *sql.Selector) {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(v) == 0 {
@@ -158,89 +158,89 @@ func NameNotIn(vs ...string) predicate.ProjectType {
 }
 
 // NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameGT(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldName), v))
 	})
 }
 
 // NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameGTE(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldName), v))
 	})
 }
 
 // NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameLT(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldName), v))
 	})
 }
 
 // NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameLTE(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldName), v))
 	})
 }
 
 // NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameContains(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldName), v))
 	})
 }
 
 // NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameHasPrefix(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldName), v))
 	})
 }
 
 // NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameHasSuffix(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldName), v))
 	})
 }
 
 // NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameEqualFold(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldName), v))
 	})
 }
 
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func NameContainsFold(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
 	})
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.
-func DescriptionEQ(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionEQ(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionNEQ applies the NEQ predicate on the "description" field.
-func DescriptionNEQ(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionNEQ(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionIn applies the In predicate on the "description" field.
-func DescriptionIn(vs ...string) predicate.ProjectType {
+func DescriptionIn(vs ...string) predicate.ProjectTemplate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.ProjectType(func(s *sql.Selector) {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(v) == 0 {
@@ -252,12 +252,12 @@ func DescriptionIn(vs ...string) predicate.ProjectType {
 }
 
 // DescriptionNotIn applies the NotIn predicate on the "description" field.
-func DescriptionNotIn(vs ...string) predicate.ProjectType {
+func DescriptionNotIn(vs ...string) predicate.ProjectTemplate {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.ProjectType(func(s *sql.Selector) {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		// if not arguments were provided, append the FALSE constants,
 		// since we can't apply "IN ()". This will make this predicate falsy.
 		if len(v) == 0 {
@@ -269,85 +269,85 @@ func DescriptionNotIn(vs ...string) predicate.ProjectType {
 }
 
 // DescriptionGT applies the GT predicate on the "description" field.
-func DescriptionGT(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionGT(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionGTE applies the GTE predicate on the "description" field.
-func DescriptionGTE(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionGTE(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionLT applies the LT predicate on the "description" field.
-func DescriptionLT(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionLT(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionLTE applies the LTE predicate on the "description" field.
-func DescriptionLTE(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionLTE(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionContains applies the Contains predicate on the "description" field.
-func DescriptionContains(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionContains(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.Contains(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
-func DescriptionHasPrefix(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionHasPrefix(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.HasPrefix(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
-func DescriptionHasSuffix(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionHasSuffix(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.HasSuffix(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionIsNil applies the IsNil predicate on the "description" field.
-func DescriptionIsNil() predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionIsNil() predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.IsNull(s.C(FieldDescription)))
 	})
 }
 
 // DescriptionNotNil applies the NotNil predicate on the "description" field.
-func DescriptionNotNil() predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionNotNil() predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldDescription)))
 	})
 }
 
 // DescriptionEqualFold applies the EqualFold predicate on the "description" field.
-func DescriptionEqualFold(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionEqualFold(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.EqualFold(s.C(FieldDescription), v))
 	})
 }
 
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
-func DescriptionContainsFold(v string) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func DescriptionContainsFold(v string) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDescription), v))
 	})
 }
 
 // HasProperties applies the HasEdge predicate on the "properties" edge.
-func HasProperties() predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func HasProperties() predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PropertiesTable, FieldID),
@@ -358,8 +358,8 @@ func HasProperties() predicate.ProjectType {
 }
 
 // HasPropertiesWith applies the HasEdge predicate on the "properties" edge with a given conditions (other predicates).
-func HasPropertiesWith(preds ...predicate.PropertyType) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func HasPropertiesWith(preds ...predicate.PropertyType) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PropertiesInverseTable, FieldID),
@@ -374,8 +374,8 @@ func HasPropertiesWith(preds ...predicate.PropertyType) predicate.ProjectType {
 }
 
 // HasWorkOrders applies the HasEdge predicate on the "work_orders" edge.
-func HasWorkOrders() predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func HasWorkOrders() predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(WorkOrdersTable, FieldID),
@@ -386,8 +386,8 @@ func HasWorkOrders() predicate.ProjectType {
 }
 
 // HasWorkOrdersWith applies the HasEdge predicate on the "work_orders" edge with a given conditions (other predicates).
-func HasWorkOrdersWith(preds ...predicate.WorkOrderDefinition) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func HasWorkOrdersWith(preds ...predicate.WorkOrderDefinition) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(WorkOrdersInverseTable, FieldID),
@@ -401,25 +401,25 @@ func HasWorkOrdersWith(preds ...predicate.WorkOrderDefinition) predicate.Project
 	})
 }
 
-// HasProjects applies the HasEdge predicate on the "projects" edge.
-func HasProjects() predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+// HasType applies the HasEdge predicate on the "type" edge.
+func HasType() predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ProjectsTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProjectsTable, ProjectsColumn),
+			sqlgraph.To(TypeTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, TypeTable, TypeColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProjectsWith applies the HasEdge predicate on the "projects" edge with a given conditions (other predicates).
-func HasProjectsWith(preds ...predicate.Project) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+// HasTypeWith applies the HasEdge predicate on the "type" edge with a given conditions (other predicates).
+func HasTypeWith(preds ...predicate.ProjectType) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(ProjectsInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProjectsTable, ProjectsColumn),
+			sqlgraph.To(TypeInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, TypeTable, TypeColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -430,8 +430,8 @@ func HasProjectsWith(preds ...predicate.Project) predicate.ProjectType {
 }
 
 // And groups list of predicates with the AND operator between them.
-func And(predicates ...predicate.ProjectType) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func And(predicates ...predicate.ProjectTemplate) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s1 := s.Clone().SetP(nil)
 		for _, p := range predicates {
 			p(s1)
@@ -441,8 +441,8 @@ func And(predicates ...predicate.ProjectType) predicate.ProjectType {
 }
 
 // Or groups list of predicates with the OR operator between them.
-func Or(predicates ...predicate.ProjectType) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func Or(predicates ...predicate.ProjectTemplate) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		s1 := s.Clone().SetP(nil)
 		for i, p := range predicates {
 			if i > 0 {
@@ -455,8 +455,8 @@ func Or(predicates ...predicate.ProjectType) predicate.ProjectType {
 }
 
 // Not applies the not operator on the given predicate.
-func Not(p predicate.ProjectType) predicate.ProjectType {
-	return predicate.ProjectType(func(s *sql.Selector) {
+func Not(p predicate.ProjectTemplate) predicate.ProjectTemplate {
+	return predicate.ProjectTemplate(func(s *sql.Selector) {
 		p(s.Not())
 	})
 }

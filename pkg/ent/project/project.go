@@ -28,6 +28,8 @@ const (
 
 	// EdgeType holds the string denoting the type edge name in mutations.
 	EdgeType = "type"
+	// EdgeTemplate holds the string denoting the template edge name in mutations.
+	EdgeTemplate = "template"
 	// EdgeLocation holds the string denoting the location edge name in mutations.
 	EdgeLocation = "location"
 	// EdgeComments holds the string denoting the comments edge name in mutations.
@@ -48,6 +50,13 @@ const (
 	TypeInverseTable = "project_types"
 	// TypeColumn is the table column denoting the type relation/edge.
 	TypeColumn = "project_type_projects"
+	// TemplateTable is the table the holds the template relation/edge.
+	TemplateTable = "projects"
+	// TemplateInverseTable is the table name for the ProjectTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "projecttemplate" package.
+	TemplateInverseTable = "project_templates"
+	// TemplateColumn is the table column denoting the template relation/edge.
+	TemplateColumn = "project_template"
 	// LocationTable is the table the holds the location relation/edge.
 	LocationTable = "projects"
 	// LocationInverseTable is the table name for the Location entity.
@@ -96,6 +105,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Project type.
 var ForeignKeys = []string{
+	"project_template",
 	"project_location",
 	"project_creator",
 	"project_type_projects",

@@ -793,6 +793,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "project_template", Type: field.TypeInt, Nullable: true},
 		{Name: "project_location", Type: field.TypeInt, Nullable: true},
 		{Name: "project_creator", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_projects", Type: field.TypeInt, Nullable: true},
@@ -804,22 +805,29 @@ var (
 		PrimaryKey: []*schema.Column{ProjectsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "projects_locations_location",
+				Symbol:  "projects_project_templates_template",
 				Columns: []*schema.Column{ProjectsColumns[5]},
+
+				RefColumns: []*schema.Column{ProjectTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "projects_locations_location",
+				Columns: []*schema.Column{ProjectsColumns[6]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_users_creator",
-				Columns: []*schema.Column{ProjectsColumns[6]},
+				Columns: []*schema.Column{ProjectsColumns[7]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "projects_project_types_projects",
-				Columns: []*schema.Column{ProjectsColumns[7]},
+				Columns: []*schema.Column{ProjectsColumns[8]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -829,7 +837,7 @@ var (
 			{
 				Name:    "project_name_project_type_projects",
 				Unique:  true,
-				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[7]},
+				Columns: []*schema.Column{ProjectsColumns[3], ProjectsColumns[8]},
 			},
 			{
 				Name:    "project_update_time",
@@ -838,12 +846,32 @@ var (
 			},
 		},
 	}
+	// ProjectTemplatesColumns holds the columns for the "project_templates" table.
+	ProjectTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "project_template_type", Type: field.TypeInt, Nullable: true},
+	}
+	// ProjectTemplatesTable holds the schema information for the "project_templates" table.
+	ProjectTemplatesTable = &schema.Table{
+		Name:       "project_templates",
+		Columns:    ProjectTemplatesColumns,
+		PrimaryKey: []*schema.Column{ProjectTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "project_templates_project_types_type",
+				Columns: []*schema.Column{ProjectTemplatesColumns[3]},
+
+				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// ProjectTypesColumns holds the columns for the "project_types" table.
 	ProjectTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
 	// ProjectTypesTable holds the schema information for the "project_types" table.
@@ -852,6 +880,13 @@ var (
 		Columns:     ProjectTypesColumns,
 		PrimaryKey:  []*schema.Column{ProjectTypesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
+		Indexes: []*schema.Index{
+			{
+				Name:    "projecttype_name",
+				Unique:  true,
+				Columns: []*schema.Column{ProjectTypesColumns[1]},
+			},
+		},
 	}
 	// PropertiesColumns holds the columns for the "properties" table.
 	PropertiesColumns = []*schema.Column{
@@ -1043,6 +1078,7 @@ var (
 		{Name: "equipment_port_type_link_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "equipment_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "location_type_property_types", Type: field.TypeInt, Nullable: true},
+		{Name: "project_template_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_properties", Type: field.TypeInt, Nullable: true},
 		{Name: "service_type_property_types", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_template_property_types", Type: field.TypeInt, Nullable: true},
@@ -1083,29 +1119,36 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "property_types_project_types_properties",
+				Symbol:  "property_types_project_templates_properties",
 				Columns: []*schema.Column{PropertyTypesColumns[25]},
+
+				RefColumns: []*schema.Column{ProjectTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "property_types_project_types_properties",
+				Columns: []*schema.Column{PropertyTypesColumns[26]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_service_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[26]},
+				Columns: []*schema.Column{PropertyTypesColumns[27]},
 
 				RefColumns: []*schema.Column{ServiceTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_templates_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[27]},
+				Columns: []*schema.Column{PropertyTypesColumns[28]},
 
 				RefColumns: []*schema.Column{WorkOrderTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "property_types_work_order_types_property_types",
-				Columns: []*schema.Column{PropertyTypesColumns[28]},
+				Columns: []*schema.Column{PropertyTypesColumns[29]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1135,7 +1178,7 @@ var (
 			{
 				Name:    "propertytype_name_work_order_type_property_types",
 				Unique:  true,
-				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[28]},
+				Columns: []*schema.Column{PropertyTypesColumns[4], PropertyTypesColumns[29]},
 			},
 		},
 	}
@@ -1658,6 +1701,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
+		{Name: "project_template_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "project_type_work_orders", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_definition_type", Type: field.TypeInt, Nullable: true},
 	}
@@ -1668,15 +1712,22 @@ var (
 		PrimaryKey: []*schema.Column{WorkOrderDefinitionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "work_order_definitions_project_types_work_orders",
+				Symbol:  "work_order_definitions_project_templates_work_orders",
 				Columns: []*schema.Column{WorkOrderDefinitionsColumns[4]},
+
+				RefColumns: []*schema.Column{ProjectTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "work_order_definitions_project_types_work_orders",
+				Columns: []*schema.Column{WorkOrderDefinitionsColumns[5]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "work_order_definitions_work_order_types_type",
-				Columns: []*schema.Column{WorkOrderDefinitionsColumns[5]},
+				Columns: []*schema.Column{WorkOrderDefinitionsColumns[6]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1888,6 +1939,7 @@ var (
 		LocationTypesTable,
 		PermissionsPoliciesTable,
 		ProjectsTable,
+		ProjectTemplatesTable,
 		ProjectTypesTable,
 		PropertiesTable,
 		PropertyTypesTable,
@@ -1958,9 +2010,11 @@ func init() {
 	LinksTable.ForeignKeys[0].RefTable = WorkOrdersTable
 	LocationsTable.ForeignKeys[0].RefTable = LocationTypesTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
-	ProjectsTable.ForeignKeys[0].RefTable = LocationsTable
-	ProjectsTable.ForeignKeys[1].RefTable = UsersTable
-	ProjectsTable.ForeignKeys[2].RefTable = ProjectTypesTable
+	ProjectsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
+	ProjectsTable.ForeignKeys[1].RefTable = LocationsTable
+	ProjectsTable.ForeignKeys[2].RefTable = UsersTable
+	ProjectsTable.ForeignKeys[3].RefTable = ProjectTypesTable
+	ProjectTemplatesTable.ForeignKeys[0].RefTable = ProjectTypesTable
 	PropertiesTable.ForeignKeys[0].RefTable = EquipmentTable
 	PropertiesTable.ForeignKeys[1].RefTable = EquipmentPortsTable
 	PropertiesTable.ForeignKeys[2].RefTable = LinksTable
@@ -1978,10 +2032,11 @@ func init() {
 	PropertyTypesTable.ForeignKeys[1].RefTable = EquipmentPortTypesTable
 	PropertyTypesTable.ForeignKeys[2].RefTable = EquipmentTypesTable
 	PropertyTypesTable.ForeignKeys[3].RefTable = LocationTypesTable
-	PropertyTypesTable.ForeignKeys[4].RefTable = ProjectTypesTable
-	PropertyTypesTable.ForeignKeys[5].RefTable = ServiceTypesTable
-	PropertyTypesTable.ForeignKeys[6].RefTable = WorkOrderTemplatesTable
-	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTypesTable
+	PropertyTypesTable.ForeignKeys[4].RefTable = ProjectTemplatesTable
+	PropertyTypesTable.ForeignKeys[5].RefTable = ProjectTypesTable
+	PropertyTypesTable.ForeignKeys[6].RefTable = ServiceTypesTable
+	PropertyTypesTable.ForeignKeys[7].RefTable = WorkOrderTemplatesTable
+	PropertyTypesTable.ForeignKeys[8].RefTable = WorkOrderTypesTable
 	ServicesTable.ForeignKeys[0].RefTable = ServiceTypesTable
 	ServiceEndpointsTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceEndpointsTable.ForeignKeys[1].RefTable = EquipmentPortsTable
@@ -2005,8 +2060,9 @@ func init() {
 	WorkOrdersTable.ForeignKeys[3].RefTable = LocationsTable
 	WorkOrdersTable.ForeignKeys[4].RefTable = UsersTable
 	WorkOrdersTable.ForeignKeys[5].RefTable = UsersTable
-	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTypesTable
-	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
+	WorkOrderDefinitionsTable.ForeignKeys[0].RefTable = ProjectTemplatesTable
+	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
+	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
 	WorkOrderTemplatesTable.ForeignKeys[0].RefTable = WorkOrderTypesTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable

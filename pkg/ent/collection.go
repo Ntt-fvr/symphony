@@ -539,6 +539,10 @@ func (pr *ProjectQuery) collectField(ctx *graphql.OperationContext, field graphq
 			pr = pr.WithProperties(func(query *PropertyQuery) {
 				query.collectField(ctx, field)
 			})
+		case "template":
+			pr = pr.WithTemplate(func(query *ProjectTemplateQuery) {
+				query.collectField(ctx, field)
+			})
 		case "type":
 			pr = pr.WithType(func(query *ProjectTypeQuery) {
 				query.collectField(ctx, field)
@@ -550,6 +554,30 @@ func (pr *ProjectQuery) collectField(ctx *graphql.OperationContext, field graphq
 		}
 	}
 	return pr
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pt *ProjectTemplateQuery) CollectFields(ctx context.Context, satisfies ...string) *ProjectTemplateQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		pt = pt.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return pt
+}
+
+func (pt *ProjectTemplateQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ProjectTemplateQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "properties":
+			pt = pt.WithProperties(func(query *PropertyTypeQuery) {
+				query.collectField(ctx, field)
+			})
+		case "workOrders":
+			pt = pt.WithWorkOrders(func(query *WorkOrderDefinitionQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return pt
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

@@ -351,6 +351,19 @@ func (f ProjectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return f(ctx, mv)
 }
 
+// The ProjectTemplateFunc type is an adapter to allow the use of ordinary
+// function as ProjectTemplate mutator.
+type ProjectTemplateFunc func(context.Context, *ent.ProjectTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ProjectTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ProjectTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectTemplateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The ProjectTypeFunc type is an adapter to allow the use of ordinary
 // function as ProjectType mutator.
 type ProjectTypeFunc func(context.Context, *ent.ProjectTypeMutation) (ent.Value, error)

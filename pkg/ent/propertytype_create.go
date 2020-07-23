@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -463,6 +464,25 @@ func (ptc *PropertyTypeCreate) SetProjectType(p *ProjectType) *PropertyTypeCreat
 	return ptc.SetProjectTypeID(p.ID)
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (ptc *PropertyTypeCreate) SetProjectTemplateID(id int) *PropertyTypeCreate {
+	ptc.mutation.SetProjectTemplateID(id)
+	return ptc
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (ptc *PropertyTypeCreate) SetNillableProjectTemplateID(id *int) *PropertyTypeCreate {
+	if id != nil {
+		ptc = ptc.SetProjectTemplateID(*id)
+	}
+	return ptc
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (ptc *PropertyTypeCreate) SetProjectTemplate(p *ProjectTemplate) *PropertyTypeCreate {
+	return ptc.SetProjectTemplateID(p.ID)
+}
+
 // Mutation returns the PropertyTypeMutation object of the builder.
 func (ptc *PropertyTypeCreate) Mutation() *PropertyTypeMutation {
 	return ptc.mutation
@@ -888,6 +908,25 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptc.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   propertytype.ProjectTemplateTable,
+			Columns: []string{propertytype.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

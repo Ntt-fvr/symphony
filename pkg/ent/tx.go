@@ -68,6 +68,8 @@ type Tx struct {
 	PermissionsPolicy *PermissionsPolicyClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// ProjectTemplate is the client for interacting with the ProjectTemplate builders.
+	ProjectTemplate *ProjectTemplateClient
 	// ProjectType is the client for interacting with the ProjectType builders.
 	ProjectType *ProjectTypeClient
 	// Property is the client for interacting with the Property builders.
@@ -269,6 +271,7 @@ func (tx *Tx) init() {
 	tx.LocationType = NewLocationTypeClient(tx.config)
 	tx.PermissionsPolicy = NewPermissionsPolicyClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
+	tx.ProjectTemplate = NewProjectTemplateClient(tx.config)
 	tx.ProjectType = NewProjectTypeClient(tx.config)
 	tx.Property = NewPropertyClient(tx.config)
 	tx.PropertyType = NewPropertyTypeClient(tx.config)

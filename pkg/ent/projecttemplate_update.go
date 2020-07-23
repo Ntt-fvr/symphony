@@ -14,40 +14,40 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 )
 
-// ProjectTypeUpdate is the builder for updating ProjectType entities.
-type ProjectTypeUpdate struct {
+// ProjectTemplateUpdate is the builder for updating ProjectTemplate entities.
+type ProjectTemplateUpdate struct {
 	config
 	hooks      []Hook
-	mutation   *ProjectTypeMutation
-	predicates []predicate.ProjectType
+	mutation   *ProjectTemplateMutation
+	predicates []predicate.ProjectTemplate
 }
 
 // Where adds a new predicate for the builder.
-func (ptu *ProjectTypeUpdate) Where(ps ...predicate.ProjectType) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) Where(ps ...predicate.ProjectTemplate) *ProjectTemplateUpdate {
 	ptu.predicates = append(ptu.predicates, ps...)
 	return ptu
 }
 
 // SetName sets the name field.
-func (ptu *ProjectTypeUpdate) SetName(s string) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) SetName(s string) *ProjectTemplateUpdate {
 	ptu.mutation.SetName(s)
 	return ptu
 }
 
 // SetDescription sets the description field.
-func (ptu *ProjectTypeUpdate) SetDescription(s string) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) SetDescription(s string) *ProjectTemplateUpdate {
 	ptu.mutation.SetDescription(s)
 	return ptu
 }
 
 // SetNillableDescription sets the description field if the given value is not nil.
-func (ptu *ProjectTypeUpdate) SetNillableDescription(s *string) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) SetNillableDescription(s *string) *ProjectTemplateUpdate {
 	if s != nil {
 		ptu.SetDescription(*s)
 	}
@@ -55,19 +55,19 @@ func (ptu *ProjectTypeUpdate) SetNillableDescription(s *string) *ProjectTypeUpda
 }
 
 // ClearDescription clears the value of description.
-func (ptu *ProjectTypeUpdate) ClearDescription() *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) ClearDescription() *ProjectTemplateUpdate {
 	ptu.mutation.ClearDescription()
 	return ptu
 }
 
 // AddPropertyIDs adds the properties edge to PropertyType by ids.
-func (ptu *ProjectTypeUpdate) AddPropertyIDs(ids ...int) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) AddPropertyIDs(ids ...int) *ProjectTemplateUpdate {
 	ptu.mutation.AddPropertyIDs(ids...)
 	return ptu
 }
 
 // AddProperties adds the properties edges to PropertyType.
-func (ptu *ProjectTypeUpdate) AddProperties(p ...*PropertyType) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) AddProperties(p ...*PropertyType) *ProjectTemplateUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -76,13 +76,13 @@ func (ptu *ProjectTypeUpdate) AddProperties(p ...*PropertyType) *ProjectTypeUpda
 }
 
 // AddWorkOrderIDs adds the work_orders edge to WorkOrderDefinition by ids.
-func (ptu *ProjectTypeUpdate) AddWorkOrderIDs(ids ...int) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) AddWorkOrderIDs(ids ...int) *ProjectTemplateUpdate {
 	ptu.mutation.AddWorkOrderIDs(ids...)
 	return ptu
 }
 
 // AddWorkOrders adds the work_orders edges to WorkOrderDefinition.
-func (ptu *ProjectTypeUpdate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTemplateUpdate {
 	ids := make([]int, len(w))
 	for i := range w {
 		ids[i] = w[i].ID
@@ -90,34 +90,38 @@ func (ptu *ProjectTypeUpdate) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectT
 	return ptu.AddWorkOrderIDs(ids...)
 }
 
-// AddProjectIDs adds the projects edge to Project by ids.
-func (ptu *ProjectTypeUpdate) AddProjectIDs(ids ...int) *ProjectTypeUpdate {
-	ptu.mutation.AddProjectIDs(ids...)
+// SetTypeID sets the type edge to ProjectType by id.
+func (ptu *ProjectTemplateUpdate) SetTypeID(id int) *ProjectTemplateUpdate {
+	ptu.mutation.SetTypeID(id)
 	return ptu
 }
 
-// AddProjects adds the projects edges to Project.
-func (ptu *ProjectTypeUpdate) AddProjects(p ...*Project) *ProjectTypeUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// SetNillableTypeID sets the type edge to ProjectType by id if the given value is not nil.
+func (ptu *ProjectTemplateUpdate) SetNillableTypeID(id *int) *ProjectTemplateUpdate {
+	if id != nil {
+		ptu = ptu.SetTypeID(*id)
 	}
-	return ptu.AddProjectIDs(ids...)
+	return ptu
 }
 
-// Mutation returns the ProjectTypeMutation object of the builder.
-func (ptu *ProjectTypeUpdate) Mutation() *ProjectTypeMutation {
+// SetType sets the type edge to ProjectType.
+func (ptu *ProjectTemplateUpdate) SetType(p *ProjectType) *ProjectTemplateUpdate {
+	return ptu.SetTypeID(p.ID)
+}
+
+// Mutation returns the ProjectTemplateMutation object of the builder.
+func (ptu *ProjectTemplateUpdate) Mutation() *ProjectTemplateMutation {
 	return ptu.mutation
 }
 
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
-func (ptu *ProjectTypeUpdate) RemovePropertyIDs(ids ...int) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) RemovePropertyIDs(ids ...int) *ProjectTemplateUpdate {
 	ptu.mutation.RemovePropertyIDs(ids...)
 	return ptu
 }
 
 // RemoveProperties removes properties edges to PropertyType.
-func (ptu *ProjectTypeUpdate) RemoveProperties(p ...*PropertyType) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) RemoveProperties(p ...*PropertyType) *ProjectTemplateUpdate {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -126,13 +130,13 @@ func (ptu *ProjectTypeUpdate) RemoveProperties(p ...*PropertyType) *ProjectTypeU
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
-func (ptu *ProjectTypeUpdate) RemoveWorkOrderIDs(ids ...int) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) RemoveWorkOrderIDs(ids ...int) *ProjectTemplateUpdate {
 	ptu.mutation.RemoveWorkOrderIDs(ids...)
 	return ptu
 }
 
 // RemoveWorkOrders removes work_orders edges to WorkOrderDefinition.
-func (ptu *ProjectTypeUpdate) RemoveWorkOrders(w ...*WorkOrderDefinition) *ProjectTypeUpdate {
+func (ptu *ProjectTemplateUpdate) RemoveWorkOrders(w ...*WorkOrderDefinition) *ProjectTemplateUpdate {
 	ids := make([]int, len(w))
 	for i := range w {
 		ids[i] = w[i].ID
@@ -140,25 +144,16 @@ func (ptu *ProjectTypeUpdate) RemoveWorkOrders(w ...*WorkOrderDefinition) *Proje
 	return ptu.RemoveWorkOrderIDs(ids...)
 }
 
-// RemoveProjectIDs removes the projects edge to Project by ids.
-func (ptu *ProjectTypeUpdate) RemoveProjectIDs(ids ...int) *ProjectTypeUpdate {
-	ptu.mutation.RemoveProjectIDs(ids...)
+// ClearType clears the type edge to ProjectType.
+func (ptu *ProjectTemplateUpdate) ClearType() *ProjectTemplateUpdate {
+	ptu.mutation.ClearType()
 	return ptu
 }
 
-// RemoveProjects removes projects edges to Project.
-func (ptu *ProjectTypeUpdate) RemoveProjects(p ...*Project) *ProjectTypeUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return ptu.RemoveProjectIDs(ids...)
-}
-
 // Save executes the query and returns the number of rows/vertices matched by this operation.
-func (ptu *ProjectTypeUpdate) Save(ctx context.Context) (int, error) {
+func (ptu *ProjectTemplateUpdate) Save(ctx context.Context) (int, error) {
 	if v, ok := ptu.mutation.Name(); ok {
-		if err := projecttype.NameValidator(v); err != nil {
+		if err := projecttemplate.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
@@ -171,7 +166,7 @@ func (ptu *ProjectTypeUpdate) Save(ctx context.Context) (int, error) {
 		affected, err = ptu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ProjectTypeMutation)
+			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -191,7 +186,7 @@ func (ptu *ProjectTypeUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ptu *ProjectTypeUpdate) SaveX(ctx context.Context) int {
+func (ptu *ProjectTemplateUpdate) SaveX(ctx context.Context) int {
 	affected, err := ptu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -200,26 +195,26 @@ func (ptu *ProjectTypeUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (ptu *ProjectTypeUpdate) Exec(ctx context.Context) error {
+func (ptu *ProjectTemplateUpdate) Exec(ctx context.Context) error {
 	_, err := ptu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ptu *ProjectTypeUpdate) ExecX(ctx context.Context) {
+func (ptu *ProjectTemplateUpdate) ExecX(ctx context.Context) {
 	if err := ptu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (ptu *ProjectTemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   projecttype.Table,
-			Columns: projecttype.Columns,
+			Table:   projecttemplate.Table,
+			Columns: projecttemplate.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: projecttype.FieldID,
+				Column: projecttemplate.FieldID,
 			},
 		},
 	}
@@ -234,28 +229,28 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldName,
+			Column: projecttemplate.FieldName,
 		})
 	}
 	if value, ok := ptu.mutation.Description(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldDescription,
+			Column: projecttemplate.FieldDescription,
 		})
 	}
 	if ptu.mutation.DescriptionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: projecttype.FieldDescription,
+			Column: projecttemplate.FieldDescription,
 		})
 	}
 	if nodes := ptu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.PropertiesTable,
-			Columns: []string{projecttype.PropertiesColumn},
+			Table:   projecttemplate.PropertiesTable,
+			Columns: []string{projecttemplate.PropertiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -273,8 +268,8 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.PropertiesTable,
-			Columns: []string{projecttype.PropertiesColumn},
+			Table:   projecttemplate.PropertiesTable,
+			Columns: []string{projecttemplate.PropertiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -292,8 +287,8 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.WorkOrdersTable,
-			Columns: []string{projecttype.WorkOrdersColumn},
+			Table:   projecttemplate.WorkOrdersTable,
+			Columns: []string{projecttemplate.WorkOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -311,8 +306,8 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.WorkOrdersTable,
-			Columns: []string{projecttype.WorkOrdersColumn},
+			Table:   projecttemplate.WorkOrdersTable,
+			Columns: []string{projecttemplate.WorkOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -326,36 +321,33 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptu.mutation.RemovedProjectsIDs(); len(nodes) > 0 {
+	if ptu.mutation.TypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   projecttype.ProjectsTable,
-			Columns: []string{projecttype.ProjectsColumn},
+			Table:   projecttemplate.TypeTable,
+			Columns: []string{projecttemplate.TypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: project.FieldID,
+					Column: projecttype.FieldID,
 				},
 			},
 		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptu.mutation.ProjectsIDs(); len(nodes) > 0 {
+	if nodes := ptu.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   projecttype.ProjectsTable,
-			Columns: []string{projecttype.ProjectsColumn},
+			Table:   projecttemplate.TypeTable,
+			Columns: []string{projecttemplate.TypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: project.FieldID,
+					Column: projecttype.FieldID,
 				},
 			},
 		}
@@ -366,7 +358,7 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{projecttype.Label}
+			err = &NotFoundError{projecttemplate.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}
@@ -375,27 +367,27 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// ProjectTypeUpdateOne is the builder for updating a single ProjectType entity.
-type ProjectTypeUpdateOne struct {
+// ProjectTemplateUpdateOne is the builder for updating a single ProjectTemplate entity.
+type ProjectTemplateUpdateOne struct {
 	config
 	hooks    []Hook
-	mutation *ProjectTypeMutation
+	mutation *ProjectTemplateMutation
 }
 
 // SetName sets the name field.
-func (ptuo *ProjectTypeUpdateOne) SetName(s string) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) SetName(s string) *ProjectTemplateUpdateOne {
 	ptuo.mutation.SetName(s)
 	return ptuo
 }
 
 // SetDescription sets the description field.
-func (ptuo *ProjectTypeUpdateOne) SetDescription(s string) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) SetDescription(s string) *ProjectTemplateUpdateOne {
 	ptuo.mutation.SetDescription(s)
 	return ptuo
 }
 
 // SetNillableDescription sets the description field if the given value is not nil.
-func (ptuo *ProjectTypeUpdateOne) SetNillableDescription(s *string) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) SetNillableDescription(s *string) *ProjectTemplateUpdateOne {
 	if s != nil {
 		ptuo.SetDescription(*s)
 	}
@@ -403,19 +395,19 @@ func (ptuo *ProjectTypeUpdateOne) SetNillableDescription(s *string) *ProjectType
 }
 
 // ClearDescription clears the value of description.
-func (ptuo *ProjectTypeUpdateOne) ClearDescription() *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) ClearDescription() *ProjectTemplateUpdateOne {
 	ptuo.mutation.ClearDescription()
 	return ptuo
 }
 
 // AddPropertyIDs adds the properties edge to PropertyType by ids.
-func (ptuo *ProjectTypeUpdateOne) AddPropertyIDs(ids ...int) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) AddPropertyIDs(ids ...int) *ProjectTemplateUpdateOne {
 	ptuo.mutation.AddPropertyIDs(ids...)
 	return ptuo
 }
 
 // AddProperties adds the properties edges to PropertyType.
-func (ptuo *ProjectTypeUpdateOne) AddProperties(p ...*PropertyType) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) AddProperties(p ...*PropertyType) *ProjectTemplateUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -424,13 +416,13 @@ func (ptuo *ProjectTypeUpdateOne) AddProperties(p ...*PropertyType) *ProjectType
 }
 
 // AddWorkOrderIDs adds the work_orders edge to WorkOrderDefinition by ids.
-func (ptuo *ProjectTypeUpdateOne) AddWorkOrderIDs(ids ...int) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) AddWorkOrderIDs(ids ...int) *ProjectTemplateUpdateOne {
 	ptuo.mutation.AddWorkOrderIDs(ids...)
 	return ptuo
 }
 
 // AddWorkOrders adds the work_orders edges to WorkOrderDefinition.
-func (ptuo *ProjectTypeUpdateOne) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) AddWorkOrders(w ...*WorkOrderDefinition) *ProjectTemplateUpdateOne {
 	ids := make([]int, len(w))
 	for i := range w {
 		ids[i] = w[i].ID
@@ -438,34 +430,38 @@ func (ptuo *ProjectTypeUpdateOne) AddWorkOrders(w ...*WorkOrderDefinition) *Proj
 	return ptuo.AddWorkOrderIDs(ids...)
 }
 
-// AddProjectIDs adds the projects edge to Project by ids.
-func (ptuo *ProjectTypeUpdateOne) AddProjectIDs(ids ...int) *ProjectTypeUpdateOne {
-	ptuo.mutation.AddProjectIDs(ids...)
+// SetTypeID sets the type edge to ProjectType by id.
+func (ptuo *ProjectTemplateUpdateOne) SetTypeID(id int) *ProjectTemplateUpdateOne {
+	ptuo.mutation.SetTypeID(id)
 	return ptuo
 }
 
-// AddProjects adds the projects edges to Project.
-func (ptuo *ProjectTypeUpdateOne) AddProjects(p ...*Project) *ProjectTypeUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// SetNillableTypeID sets the type edge to ProjectType by id if the given value is not nil.
+func (ptuo *ProjectTemplateUpdateOne) SetNillableTypeID(id *int) *ProjectTemplateUpdateOne {
+	if id != nil {
+		ptuo = ptuo.SetTypeID(*id)
 	}
-	return ptuo.AddProjectIDs(ids...)
+	return ptuo
 }
 
-// Mutation returns the ProjectTypeMutation object of the builder.
-func (ptuo *ProjectTypeUpdateOne) Mutation() *ProjectTypeMutation {
+// SetType sets the type edge to ProjectType.
+func (ptuo *ProjectTemplateUpdateOne) SetType(p *ProjectType) *ProjectTemplateUpdateOne {
+	return ptuo.SetTypeID(p.ID)
+}
+
+// Mutation returns the ProjectTemplateMutation object of the builder.
+func (ptuo *ProjectTemplateUpdateOne) Mutation() *ProjectTemplateMutation {
 	return ptuo.mutation
 }
 
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
-func (ptuo *ProjectTypeUpdateOne) RemovePropertyIDs(ids ...int) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) RemovePropertyIDs(ids ...int) *ProjectTemplateUpdateOne {
 	ptuo.mutation.RemovePropertyIDs(ids...)
 	return ptuo
 }
 
 // RemoveProperties removes properties edges to PropertyType.
-func (ptuo *ProjectTypeUpdateOne) RemoveProperties(p ...*PropertyType) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) RemoveProperties(p ...*PropertyType) *ProjectTemplateUpdateOne {
 	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -474,13 +470,13 @@ func (ptuo *ProjectTypeUpdateOne) RemoveProperties(p ...*PropertyType) *ProjectT
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
-func (ptuo *ProjectTypeUpdateOne) RemoveWorkOrderIDs(ids ...int) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) RemoveWorkOrderIDs(ids ...int) *ProjectTemplateUpdateOne {
 	ptuo.mutation.RemoveWorkOrderIDs(ids...)
 	return ptuo
 }
 
 // RemoveWorkOrders removes work_orders edges to WorkOrderDefinition.
-func (ptuo *ProjectTypeUpdateOne) RemoveWorkOrders(w ...*WorkOrderDefinition) *ProjectTypeUpdateOne {
+func (ptuo *ProjectTemplateUpdateOne) RemoveWorkOrders(w ...*WorkOrderDefinition) *ProjectTemplateUpdateOne {
 	ids := make([]int, len(w))
 	for i := range w {
 		ids[i] = w[i].ID
@@ -488,38 +484,29 @@ func (ptuo *ProjectTypeUpdateOne) RemoveWorkOrders(w ...*WorkOrderDefinition) *P
 	return ptuo.RemoveWorkOrderIDs(ids...)
 }
 
-// RemoveProjectIDs removes the projects edge to Project by ids.
-func (ptuo *ProjectTypeUpdateOne) RemoveProjectIDs(ids ...int) *ProjectTypeUpdateOne {
-	ptuo.mutation.RemoveProjectIDs(ids...)
+// ClearType clears the type edge to ProjectType.
+func (ptuo *ProjectTemplateUpdateOne) ClearType() *ProjectTemplateUpdateOne {
+	ptuo.mutation.ClearType()
 	return ptuo
 }
 
-// RemoveProjects removes projects edges to Project.
-func (ptuo *ProjectTypeUpdateOne) RemoveProjects(p ...*Project) *ProjectTypeUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return ptuo.RemoveProjectIDs(ids...)
-}
-
 // Save executes the query and returns the updated entity.
-func (ptuo *ProjectTypeUpdateOne) Save(ctx context.Context) (*ProjectType, error) {
+func (ptuo *ProjectTemplateUpdateOne) Save(ctx context.Context) (*ProjectTemplate, error) {
 	if v, ok := ptuo.mutation.Name(); ok {
-		if err := projecttype.NameValidator(v); err != nil {
+		if err := projecttemplate.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 
 	var (
 		err  error
-		node *ProjectType
+		node *ProjectTemplate
 	)
 	if len(ptuo.hooks) == 0 {
 		node, err = ptuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-			mutation, ok := m.(*ProjectTypeMutation)
+			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
 			}
@@ -539,7 +526,7 @@ func (ptuo *ProjectTypeUpdateOne) Save(ctx context.Context) (*ProjectType, error
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ptuo *ProjectTypeUpdateOne) SaveX(ctx context.Context) *ProjectType {
+func (ptuo *ProjectTemplateUpdateOne) SaveX(ctx context.Context) *ProjectTemplate {
 	pt, err := ptuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -548,60 +535,60 @@ func (ptuo *ProjectTypeUpdateOne) SaveX(ctx context.Context) *ProjectType {
 }
 
 // Exec executes the query on the entity.
-func (ptuo *ProjectTypeUpdateOne) Exec(ctx context.Context) error {
+func (ptuo *ProjectTemplateUpdateOne) Exec(ctx context.Context) error {
 	_, err := ptuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ptuo *ProjectTypeUpdateOne) ExecX(ctx context.Context) {
+func (ptuo *ProjectTemplateUpdateOne) ExecX(ctx context.Context) {
 	if err := ptuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType, err error) {
+func (ptuo *ProjectTemplateUpdateOne) sqlSave(ctx context.Context) (pt *ProjectTemplate, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   projecttype.Table,
-			Columns: projecttype.Columns,
+			Table:   projecttemplate.Table,
+			Columns: projecttemplate.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: projecttype.FieldID,
+				Column: projecttemplate.FieldID,
 			},
 		},
 	}
 	id, ok := ptuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing ProjectType.ID for update")}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing ProjectTemplate.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if value, ok := ptuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldName,
+			Column: projecttemplate.FieldName,
 		})
 	}
 	if value, ok := ptuo.mutation.Description(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: projecttype.FieldDescription,
+			Column: projecttemplate.FieldDescription,
 		})
 	}
 	if ptuo.mutation.DescriptionCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
-			Column: projecttype.FieldDescription,
+			Column: projecttemplate.FieldDescription,
 		})
 	}
 	if nodes := ptuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.PropertiesTable,
-			Columns: []string{projecttype.PropertiesColumn},
+			Table:   projecttemplate.PropertiesTable,
+			Columns: []string{projecttemplate.PropertiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -619,8 +606,8 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.PropertiesTable,
-			Columns: []string{projecttype.PropertiesColumn},
+			Table:   projecttemplate.PropertiesTable,
+			Columns: []string{projecttemplate.PropertiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -638,8 +625,8 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.WorkOrdersTable,
-			Columns: []string{projecttype.WorkOrdersColumn},
+			Table:   projecttemplate.WorkOrdersTable,
+			Columns: []string{projecttemplate.WorkOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -657,8 +644,8 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   projecttype.WorkOrdersTable,
-			Columns: []string{projecttype.WorkOrdersColumn},
+			Table:   projecttemplate.WorkOrdersTable,
+			Columns: []string{projecttemplate.WorkOrdersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -672,36 +659,33 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptuo.mutation.RemovedProjectsIDs(); len(nodes) > 0 {
+	if ptuo.mutation.TypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   projecttype.ProjectsTable,
-			Columns: []string{projecttype.ProjectsColumn},
+			Table:   projecttemplate.TypeTable,
+			Columns: []string{projecttemplate.TypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: project.FieldID,
+					Column: projecttype.FieldID,
 				},
 			},
 		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ptuo.mutation.ProjectsIDs(); len(nodes) > 0 {
+	if nodes := ptuo.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   projecttype.ProjectsTable,
-			Columns: []string{projecttype.ProjectsColumn},
+			Table:   projecttemplate.TypeTable,
+			Columns: []string{projecttemplate.TypeColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
-					Column: project.FieldID,
+					Column: projecttype.FieldID,
 				},
 			},
 		}
@@ -710,12 +694,12 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	pt = &ProjectType{config: ptuo.config}
+	pt = &ProjectTemplate{config: ptuo.config}
 	_spec.Assign = pt.assignValues
 	_spec.ScanValues = pt.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ptuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{projecttype.Label}
+			err = &NotFoundError{projecttemplate.Label}
 		} else if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
 		}

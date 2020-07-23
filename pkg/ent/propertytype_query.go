@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -46,6 +47,7 @@ type PropertyTypeQuery struct {
 	withWorkOrderType         *WorkOrderTypeQuery
 	withWorkOrderTemplate     *WorkOrderTemplateQuery
 	withProjectType           *ProjectTypeQuery
+	withProjectTemplate       *ProjectTemplateQuery
 	withFKs                   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -231,6 +233,24 @@ func (ptq *PropertyTypeQuery) QueryProjectType() *ProjectTypeQuery {
 			sqlgraph.From(propertytype.Table, propertytype.FieldID, ptq.sqlQuery()),
 			sqlgraph.To(projecttype.Table, projecttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ProjectTypeTable, propertytype.ProjectTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProjectTemplate chains the current query on the project_template edge.
+func (ptq *PropertyTypeQuery) QueryProjectTemplate() *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: ptq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(propertytype.Table, propertytype.FieldID, ptq.sqlQuery()),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, propertytype.ProjectTemplateTable, propertytype.ProjectTemplateColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -516,6 +536,17 @@ func (ptq *PropertyTypeQuery) WithProjectType(opts ...func(*ProjectTypeQuery)) *
 	return ptq
 }
 
+//  WithProjectTemplate tells the query-builder to eager-loads the nodes that are connected to
+// the "project_template" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *PropertyTypeQuery) WithProjectTemplate(opts ...func(*ProjectTemplateQuery)) *PropertyTypeQuery {
+	query := &ProjectTemplateQuery{config: ptq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withProjectTemplate = query
+	return ptq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -586,7 +617,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		nodes       = []*PropertyType{}
 		withFKs     = ptq.withFKs
 		_spec       = ptq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			ptq.withProperties != nil,
 			ptq.withLocationType != nil,
 			ptq.withEquipmentPortType != nil,
@@ -596,9 +627,10 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			ptq.withWorkOrderType != nil,
 			ptq.withWorkOrderTemplate != nil,
 			ptq.withProjectType != nil,
+			ptq.withProjectTemplate != nil,
 		}
 	)
-	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil {
+	if ptq.withLocationType != nil || ptq.withEquipmentPortType != nil || ptq.withLinkEquipmentPortType != nil || ptq.withEquipmentType != nil || ptq.withServiceType != nil || ptq.withWorkOrderType != nil || ptq.withWorkOrderTemplate != nil || ptq.withProjectType != nil || ptq.withProjectTemplate != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -852,6 +884,31 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 			}
 			for i := range nodes {
 				nodes[i].Edges.ProjectType = n
+			}
+		}
+	}
+
+	if query := ptq.withProjectTemplate; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*PropertyType)
+		for i := range nodes {
+			if fk := nodes[i].project_template_properties; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(projecttemplate.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template_properties" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.ProjectTemplate = n
 			}
 		}
 	}

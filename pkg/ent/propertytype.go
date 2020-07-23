@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -74,6 +75,7 @@ type PropertyType struct {
 	equipment_port_type_link_property_types *int
 	equipment_type_property_types           *int
 	location_type_property_types            *int
+	project_template_properties             *int
 	project_type_properties                 *int
 	service_type_property_types             *int
 	work_order_template_property_types      *int
@@ -100,9 +102,11 @@ type PropertyTypeEdges struct {
 	WorkOrderTemplate *WorkOrderTemplate
 	// ProjectType holds the value of the project_type edge.
 	ProjectType *ProjectType
+	// ProjectTemplate holds the value of the project_template edge.
+	ProjectTemplate *ProjectTemplate
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 }
 
 // PropertiesOrErr returns the Properties value or an error if the edge
@@ -226,6 +230,20 @@ func (e PropertyTypeEdges) ProjectTypeOrErr() (*ProjectType, error) {
 	return nil, &NotLoadedError{edge: "project_type"}
 }
 
+// ProjectTemplateOrErr returns the ProjectTemplate value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PropertyTypeEdges) ProjectTemplateOrErr() (*ProjectTemplate, error) {
+	if e.loadedTypes[9] {
+		if e.ProjectTemplate == nil {
+			// The edge project_template was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: projecttemplate.Label}
+		}
+		return e.ProjectTemplate, nil
+	}
+	return nil, &NotLoadedError{edge: "project_template"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PropertyType) scanValues() []interface{} {
 	return []interface{}{
@@ -260,6 +278,7 @@ func (*PropertyType) fkValues() []interface{} {
 		&sql.NullInt64{}, // equipment_port_type_link_property_types
 		&sql.NullInt64{}, // equipment_type_property_types
 		&sql.NullInt64{}, // location_type_property_types
+		&sql.NullInt64{}, // project_template_properties
 		&sql.NullInt64{}, // project_type_properties
 		&sql.NullInt64{}, // service_type_property_types
 		&sql.NullInt64{}, // work_order_template_property_types
@@ -414,24 +433,30 @@ func (pt *PropertyType) assignValues(values ...interface{}) error {
 			*pt.location_type_property_types = int(value.Int64)
 		}
 		if value, ok := values[4].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field project_template_properties", value)
+		} else if value.Valid {
+			pt.project_template_properties = new(int)
+			*pt.project_template_properties = int(value.Int64)
+		}
+		if value, ok := values[5].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_type_properties", value)
 		} else if value.Valid {
 			pt.project_type_properties = new(int)
 			*pt.project_type_properties = int(value.Int64)
 		}
-		if value, ok := values[5].(*sql.NullInt64); !ok {
+		if value, ok := values[6].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field service_type_property_types", value)
 		} else if value.Valid {
 			pt.service_type_property_types = new(int)
 			*pt.service_type_property_types = int(value.Int64)
 		}
-		if value, ok := values[6].(*sql.NullInt64); !ok {
+		if value, ok := values[7].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_property_types", value)
 		} else if value.Valid {
 			pt.work_order_template_property_types = new(int)
 			*pt.work_order_template_property_types = int(value.Int64)
 		}
-		if value, ok := values[7].(*sql.NullInt64); !ok {
+		if value, ok := values[8].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_type_property_types", value)
 		} else if value.Valid {
 			pt.work_order_type_property_types = new(int)
@@ -484,6 +509,11 @@ func (pt *PropertyType) QueryWorkOrderTemplate() *WorkOrderTemplateQuery {
 // QueryProjectType queries the project_type edge of the PropertyType.
 func (pt *PropertyType) QueryProjectType() *ProjectTypeQuery {
 	return (&PropertyTypeClient{config: pt.config}).QueryProjectType(pt)
+}
+
+// QueryProjectTemplate queries the project_template edge of the PropertyType.
+func (pt *PropertyType) QueryProjectTemplate() *ProjectTemplateQuery {
+	return (&PropertyTypeClient{config: pt.config}).QueryProjectTemplate(pt)
 }
 
 // Update returns a builder for updating this PropertyType.

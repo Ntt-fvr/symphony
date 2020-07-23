@@ -36,6 +36,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -722,6 +723,23 @@ func init() {
 	projectDescName := projectFields[0].Descriptor()
 	// project.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	project.NameValidator = projectDescName.Validators[0].(func(string) error)
+	projecttemplateMixin := schema.ProjectTemplate{}.Mixin()
+	projecttemplate.Policy = schema.ProjectTemplate{}.Policy()
+	projecttemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := projecttemplate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	projecttemplateMixinFields0 := projecttemplateMixin[0].Fields()
+	projecttemplateFields := schema.ProjectTemplate{}.Fields()
+	_ = projecttemplateFields
+	// projecttemplateDescName is the schema descriptor for name field.
+	projecttemplateDescName := projecttemplateMixinFields0[0].Descriptor()
+	// projecttemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	projecttemplate.NameValidator = projecttemplateDescName.Validators[0].(func(string) error)
 	projecttypeMixin := schema.ProjectType{}.Mixin()
 	projecttype.Policy = schema.ProjectType{}.Policy()
 	projecttype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -735,18 +753,8 @@ func init() {
 	projecttypeMixinFields0 := projecttypeMixin[0].Fields()
 	projecttypeFields := schema.ProjectType{}.Fields()
 	_ = projecttypeFields
-	// projecttypeDescCreateTime is the schema descriptor for create_time field.
-	projecttypeDescCreateTime := projecttypeMixinFields0[0].Descriptor()
-	// projecttype.DefaultCreateTime holds the default value on creation for the create_time field.
-	projecttype.DefaultCreateTime = projecttypeDescCreateTime.Default.(func() time.Time)
-	// projecttypeDescUpdateTime is the schema descriptor for update_time field.
-	projecttypeDescUpdateTime := projecttypeMixinFields0[1].Descriptor()
-	// projecttype.DefaultUpdateTime holds the default value on creation for the update_time field.
-	projecttype.DefaultUpdateTime = projecttypeDescUpdateTime.Default.(func() time.Time)
-	// projecttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	projecttype.UpdateDefaultUpdateTime = projecttypeDescUpdateTime.UpdateDefault.(func() time.Time)
 	// projecttypeDescName is the schema descriptor for name field.
-	projecttypeDescName := projecttypeFields[0].Descriptor()
+	projecttypeDescName := projecttypeMixinFields0[0].Descriptor()
 	// projecttype.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	projecttype.NameValidator = projecttypeDescName.Validators[0].(func(string) error)
 	propertyMixin := schema.Property{}.Mixin()

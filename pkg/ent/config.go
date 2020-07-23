@@ -54,6 +54,7 @@ type hooks struct {
 	LocationType                []ent.Hook
 	PermissionsPolicy           []ent.Hook
 	Project                     []ent.Hook
+	ProjectTemplate             []ent.Hook
 	ProjectType                 []ent.Hook
 	Property                    []ent.Hook
 	PropertyType                []ent.Hook

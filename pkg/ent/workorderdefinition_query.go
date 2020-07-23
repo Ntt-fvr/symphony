@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
@@ -30,9 +31,10 @@ type WorkOrderDefinitionQuery struct {
 	unique     []string
 	predicates []predicate.WorkOrderDefinition
 	// eager-loading edges.
-	withType        *WorkOrderTypeQuery
-	withProjectType *ProjectTypeQuery
-	withFKs         bool
+	withType            *WorkOrderTypeQuery
+	withProjectType     *ProjectTypeQuery
+	withProjectTemplate *ProjectTemplateQuery
+	withFKs             bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -91,6 +93,24 @@ func (wodq *WorkOrderDefinitionQuery) QueryProjectType() *ProjectTypeQuery {
 			sqlgraph.From(workorderdefinition.Table, workorderdefinition.FieldID, wodq.sqlQuery()),
 			sqlgraph.To(projecttype.Table, projecttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, workorderdefinition.ProjectTypeTable, workorderdefinition.ProjectTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(wodq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryProjectTemplate chains the current query on the project_template edge.
+func (wodq *WorkOrderDefinitionQuery) QueryProjectTemplate() *ProjectTemplateQuery {
+	query := &ProjectTemplateQuery{config: wodq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := wodq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(workorderdefinition.Table, workorderdefinition.FieldID, wodq.sqlQuery()),
+			sqlgraph.To(projecttemplate.Table, projecttemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, workorderdefinition.ProjectTemplateTable, workorderdefinition.ProjectTemplateColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(wodq.driver.Dialect(), step)
 		return fromU, nil
@@ -299,6 +319,17 @@ func (wodq *WorkOrderDefinitionQuery) WithProjectType(opts ...func(*ProjectTypeQ
 	return wodq
 }
 
+//  WithProjectTemplate tells the query-builder to eager-loads the nodes that are connected to
+// the "project_template" edge. The optional arguments used to configure the query builder of the edge.
+func (wodq *WorkOrderDefinitionQuery) WithProjectTemplate(opts ...func(*ProjectTemplateQuery)) *WorkOrderDefinitionQuery {
+	query := &ProjectTemplateQuery{config: wodq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	wodq.withProjectTemplate = query
+	return wodq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -369,12 +400,13 @@ func (wodq *WorkOrderDefinitionQuery) sqlAll(ctx context.Context) ([]*WorkOrderD
 		nodes       = []*WorkOrderDefinition{}
 		withFKs     = wodq.withFKs
 		_spec       = wodq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			wodq.withType != nil,
 			wodq.withProjectType != nil,
+			wodq.withProjectTemplate != nil,
 		}
 	)
-	if wodq.withType != nil || wodq.withProjectType != nil {
+	if wodq.withType != nil || wodq.withProjectType != nil || wodq.withProjectTemplate != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -450,6 +482,31 @@ func (wodq *WorkOrderDefinitionQuery) sqlAll(ctx context.Context) ([]*WorkOrderD
 			}
 			for i := range nodes {
 				nodes[i].Edges.ProjectType = n
+			}
+		}
+	}
+
+	if query := wodq.withProjectTemplate; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*WorkOrderDefinition)
+		for i := range nodes {
+			if fk := nodes[i].project_template_work_orders; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(projecttemplate.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template_work_orders" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.ProjectTemplate = n
 			}
 		}
 	}

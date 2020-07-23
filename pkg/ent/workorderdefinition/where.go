@@ -416,6 +416,34 @@ func HasProjectTypeWith(preds ...predicate.ProjectType) predicate.WorkOrderDefin
 	})
 }
 
+// HasProjectTemplate applies the HasEdge predicate on the "project_template" edge.
+func HasProjectTemplate() predicate.WorkOrderDefinition {
+	return predicate.WorkOrderDefinition(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ProjectTemplateTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ProjectTemplateTable, ProjectTemplateColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProjectTemplateWith applies the HasEdge predicate on the "project_template" edge with a given conditions (other predicates).
+func HasProjectTemplateWith(preds ...predicate.ProjectTemplate) predicate.WorkOrderDefinition {
+	return predicate.WorkOrderDefinition(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ProjectTemplateInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, ProjectTemplateTable, ProjectTemplateColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.WorkOrderDefinition) predicate.WorkOrderDefinition {
 	return predicate.WorkOrderDefinition(func(s *sql.Selector) {

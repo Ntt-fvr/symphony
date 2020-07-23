@@ -4,15 +4,15 @@
 
 // Code generated (@generated) by entc, DO NOT EDIT.
 
-package projecttype
+package projecttemplate
 
 import (
 	"github.com/facebookincubator/ent"
 )
 
 const (
-	// Label holds the string label denoting the projecttype type in the database.
-	Label = "project_type"
+	// Label holds the string label denoting the projecttemplate type in the database.
+	Label = "project_template"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
@@ -24,39 +24,44 @@ const (
 	EdgeProperties = "properties"
 	// EdgeWorkOrders holds the string denoting the work_orders edge name in mutations.
 	EdgeWorkOrders = "work_orders"
-	// EdgeProjects holds the string denoting the projects edge name in mutations.
-	EdgeProjects = "projects"
+	// EdgeType holds the string denoting the type edge name in mutations.
+	EdgeType = "type"
 
-	// Table holds the table name of the projecttype in the database.
-	Table = "project_types"
+	// Table holds the table name of the projecttemplate in the database.
+	Table = "project_templates"
 	// PropertiesTable is the table the holds the properties relation/edge.
 	PropertiesTable = "property_types"
 	// PropertiesInverseTable is the table name for the PropertyType entity.
 	// It exists in this package in order to avoid circular dependency with the "propertytype" package.
 	PropertiesInverseTable = "property_types"
 	// PropertiesColumn is the table column denoting the properties relation/edge.
-	PropertiesColumn = "project_type_properties"
+	PropertiesColumn = "project_template_properties"
 	// WorkOrdersTable is the table the holds the work_orders relation/edge.
 	WorkOrdersTable = "work_order_definitions"
 	// WorkOrdersInverseTable is the table name for the WorkOrderDefinition entity.
 	// It exists in this package in order to avoid circular dependency with the "workorderdefinition" package.
 	WorkOrdersInverseTable = "work_order_definitions"
 	// WorkOrdersColumn is the table column denoting the work_orders relation/edge.
-	WorkOrdersColumn = "project_type_work_orders"
-	// ProjectsTable is the table the holds the projects relation/edge.
-	ProjectsTable = "projects"
-	// ProjectsInverseTable is the table name for the Project entity.
-	// It exists in this package in order to avoid circular dependency with the "project" package.
-	ProjectsInverseTable = "projects"
-	// ProjectsColumn is the table column denoting the projects relation/edge.
-	ProjectsColumn = "project_type_projects"
+	WorkOrdersColumn = "project_template_work_orders"
+	// TypeTable is the table the holds the type relation/edge.
+	TypeTable = "project_templates"
+	// TypeInverseTable is the table name for the ProjectType entity.
+	// It exists in this package in order to avoid circular dependency with the "projecttype" package.
+	TypeInverseTable = "project_types"
+	// TypeColumn is the table column denoting the type relation/edge.
+	TypeColumn = "project_template_type"
 )
 
-// Columns holds all SQL columns for projecttype fields.
+// Columns holds all SQL columns for projecttemplate fields.
 var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldDescription,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the ProjectTemplate type.
+var ForeignKeys = []string{
+	"project_template_type",
 }
 
 // Note that the variables below are initialized by the runtime

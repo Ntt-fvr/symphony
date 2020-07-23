@@ -40,6 +40,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -99,6 +100,7 @@ const (
 	TypeLocationType                = "LocationType"
 	TypePermissionsPolicy           = "PermissionsPolicy"
 	TypeProject                     = "Project"
+	TypeProjectTemplate             = "ProjectTemplate"
 	TypeProjectType                 = "ProjectType"
 	TypeProperty                    = "Property"
 	TypePropertyType                = "PropertyType"
@@ -20376,6 +20378,8 @@ type ProjectMutation struct {
 	clearedFields      map[string]struct{}
 	_type              *int
 	cleared_type       bool
+	template           *int
+	clearedtemplate    bool
 	location           *int
 	clearedlocation    bool
 	comments           map[int]struct{}
@@ -20667,6 +20671,45 @@ func (m *ProjectMutation) TypeIDs() (ids []int) {
 func (m *ProjectMutation) ResetType() {
 	m._type = nil
 	m.cleared_type = false
+}
+
+// SetTemplateID sets the template edge to ProjectTemplate by id.
+func (m *ProjectMutation) SetTemplateID(id int) {
+	m.template = &id
+}
+
+// ClearTemplate clears the template edge to ProjectTemplate.
+func (m *ProjectMutation) ClearTemplate() {
+	m.clearedtemplate = true
+}
+
+// TemplateCleared returns if the edge template was cleared.
+func (m *ProjectMutation) TemplateCleared() bool {
+	return m.clearedtemplate
+}
+
+// TemplateID returns the template id in the mutation.
+func (m *ProjectMutation) TemplateID() (id int, exists bool) {
+	if m.template != nil {
+		return *m.template, true
+	}
+	return
+}
+
+// TemplateIDs returns the template ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// TemplateID instead. It exists only for internal usage by the builders.
+func (m *ProjectMutation) TemplateIDs() (ids []int) {
+	if id := m.template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTemplate reset all changes of the "template" edge.
+func (m *ProjectMutation) ResetTemplate() {
+	m.template = nil
+	m.clearedtemplate = false
 }
 
 // SetLocationID sets the location edge to Location by id.
@@ -21048,9 +21091,12 @@ func (m *ProjectMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ProjectMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m._type != nil {
 		edges = append(edges, project.EdgeType)
+	}
+	if m.template != nil {
+		edges = append(edges, project.EdgeTemplate)
 	}
 	if m.location != nil {
 		edges = append(edges, project.EdgeLocation)
@@ -21076,6 +21122,10 @@ func (m *ProjectMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case project.EdgeType:
 		if id := m._type; id != nil {
+			return []ent.Value{*id}
+		}
+	case project.EdgeTemplate:
+		if id := m.template; id != nil {
 			return []ent.Value{*id}
 		}
 	case project.EdgeLocation:
@@ -21111,7 +21161,7 @@ func (m *ProjectMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ProjectMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedcomments != nil {
 		edges = append(edges, project.EdgeComments)
 	}
@@ -21153,9 +21203,12 @@ func (m *ProjectMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ProjectMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.cleared_type {
 		edges = append(edges, project.EdgeType)
+	}
+	if m.clearedtemplate {
+		edges = append(edges, project.EdgeTemplate)
 	}
 	if m.clearedlocation {
 		edges = append(edges, project.EdgeLocation)
@@ -21172,6 +21225,8 @@ func (m *ProjectMutation) EdgeCleared(name string) bool {
 	switch name {
 	case project.EdgeType:
 		return m.cleared_type
+	case project.EdgeTemplate:
+		return m.clearedtemplate
 	case project.EdgeLocation:
 		return m.clearedlocation
 	case project.EdgeCreator:
@@ -21186,6 +21241,9 @@ func (m *ProjectMutation) ClearEdge(name string) error {
 	switch name {
 	case project.EdgeType:
 		m.ClearType()
+		return nil
+	case project.EdgeTemplate:
+		m.ClearTemplate()
 		return nil
 	case project.EdgeLocation:
 		m.ClearLocation()
@@ -21204,6 +21262,9 @@ func (m *ProjectMutation) ResetEdge(name string) error {
 	switch name {
 	case project.EdgeType:
 		m.ResetType()
+		return nil
+	case project.EdgeTemplate:
+		m.ResetTemplate()
 		return nil
 	case project.EdgeLocation:
 		m.ResetLocation()
@@ -21224,6 +21285,575 @@ func (m *ProjectMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Project edge %s", name)
 }
 
+// ProjectTemplateMutation represents an operation that mutate the ProjectTemplates
+// nodes in the graph.
+type ProjectTemplateMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int
+	name               *string
+	description        *string
+	clearedFields      map[string]struct{}
+	properties         map[int]struct{}
+	removedproperties  map[int]struct{}
+	work_orders        map[int]struct{}
+	removedwork_orders map[int]struct{}
+	_type              *int
+	cleared_type       bool
+	done               bool
+	oldValue           func(context.Context) (*ProjectTemplate, error)
+}
+
+var _ ent.Mutation = (*ProjectTemplateMutation)(nil)
+
+// projecttemplateOption allows to manage the mutation configuration using functional options.
+type projecttemplateOption func(*ProjectTemplateMutation)
+
+// newProjectTemplateMutation creates new mutation for $n.Name.
+func newProjectTemplateMutation(c config, op Op, opts ...projecttemplateOption) *ProjectTemplateMutation {
+	m := &ProjectTemplateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeProjectTemplate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withProjectTemplateID sets the id field of the mutation.
+func withProjectTemplateID(id int) projecttemplateOption {
+	return func(m *ProjectTemplateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ProjectTemplate
+		)
+		m.oldValue = func(ctx context.Context) (*ProjectTemplate, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ProjectTemplate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withProjectTemplate sets the old ProjectTemplate of the mutation.
+func withProjectTemplate(node *ProjectTemplate) projecttemplateOption {
+	return func(m *ProjectTemplateMutation) {
+		m.oldValue = func(context.Context) (*ProjectTemplate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ProjectTemplateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ProjectTemplateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ProjectTemplateMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the name field.
+func (m *ProjectTemplateMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *ProjectTemplateMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the ProjectTemplate.
+// If the ProjectTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTemplateMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *ProjectTemplateMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the description field.
+func (m *ProjectTemplateMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *ProjectTemplateMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the ProjectTemplate.
+// If the ProjectTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTemplateMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of description.
+func (m *ProjectTemplateMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[projecttemplate.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the field description was cleared in this mutation.
+func (m *ProjectTemplateMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[projecttemplate.FieldDescription]
+	return ok
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *ProjectTemplateMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, projecttemplate.FieldDescription)
+}
+
+// AddPropertyIDs adds the properties edge to PropertyType by ids.
+func (m *ProjectTemplateMutation) AddPropertyIDs(ids ...int) {
+	if m.properties == nil {
+		m.properties = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.properties[ids[i]] = struct{}{}
+	}
+}
+
+// RemovePropertyIDs removes the properties edge to PropertyType by ids.
+func (m *ProjectTemplateMutation) RemovePropertyIDs(ids ...int) {
+	if m.removedproperties == nil {
+		m.removedproperties = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedproperties[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedProperties returns the removed ids of properties.
+func (m *ProjectTemplateMutation) RemovedPropertiesIDs() (ids []int) {
+	for id := range m.removedproperties {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PropertiesIDs returns the properties ids in the mutation.
+func (m *ProjectTemplateMutation) PropertiesIDs() (ids []int) {
+	for id := range m.properties {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetProperties reset all changes of the "properties" edge.
+func (m *ProjectTemplateMutation) ResetProperties() {
+	m.properties = nil
+	m.removedproperties = nil
+}
+
+// AddWorkOrderIDs adds the work_orders edge to WorkOrderDefinition by ids.
+func (m *ProjectTemplateMutation) AddWorkOrderIDs(ids ...int) {
+	if m.work_orders == nil {
+		m.work_orders = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.work_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
+func (m *ProjectTemplateMutation) RemoveWorkOrderIDs(ids ...int) {
+	if m.removedwork_orders == nil {
+		m.removedwork_orders = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedwork_orders[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWorkOrders returns the removed ids of work_orders.
+func (m *ProjectTemplateMutation) RemovedWorkOrdersIDs() (ids []int) {
+	for id := range m.removedwork_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WorkOrdersIDs returns the work_orders ids in the mutation.
+func (m *ProjectTemplateMutation) WorkOrdersIDs() (ids []int) {
+	for id := range m.work_orders {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWorkOrders reset all changes of the "work_orders" edge.
+func (m *ProjectTemplateMutation) ResetWorkOrders() {
+	m.work_orders = nil
+	m.removedwork_orders = nil
+}
+
+// SetTypeID sets the type edge to ProjectType by id.
+func (m *ProjectTemplateMutation) SetTypeID(id int) {
+	m._type = &id
+}
+
+// ClearType clears the type edge to ProjectType.
+func (m *ProjectTemplateMutation) ClearType() {
+	m.cleared_type = true
+}
+
+// TypeCleared returns if the edge type was cleared.
+func (m *ProjectTemplateMutation) TypeCleared() bool {
+	return m.cleared_type
+}
+
+// TypeID returns the type id in the mutation.
+func (m *ProjectTemplateMutation) TypeID() (id int, exists bool) {
+	if m._type != nil {
+		return *m._type, true
+	}
+	return
+}
+
+// TypeIDs returns the type ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// TypeID instead. It exists only for internal usage by the builders.
+func (m *ProjectTemplateMutation) TypeIDs() (ids []int) {
+	if id := m._type; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetType reset all changes of the "type" edge.
+func (m *ProjectTemplateMutation) ResetType() {
+	m._type = nil
+	m.cleared_type = false
+}
+
+// Op returns the operation name.
+func (m *ProjectTemplateMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ProjectTemplate).
+func (m *ProjectTemplateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ProjectTemplateMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.name != nil {
+		fields = append(fields, projecttemplate.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, projecttemplate.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ProjectTemplateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case projecttemplate.FieldName:
+		return m.Name()
+	case projecttemplate.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ProjectTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case projecttemplate.FieldName:
+		return m.OldName(ctx)
+	case projecttemplate.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown ProjectTemplate field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ProjectTemplateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case projecttemplate.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case projecttemplate.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ProjectTemplate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ProjectTemplateMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ProjectTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ProjectTemplateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ProjectTemplate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ProjectTemplateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(projecttemplate.FieldDescription) {
+		fields = append(fields, projecttemplate.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ProjectTemplateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ProjectTemplateMutation) ClearField(name string) error {
+	switch name {
+	case projecttemplate.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ProjectTemplate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ProjectTemplateMutation) ResetField(name string) error {
+	switch name {
+	case projecttemplate.FieldName:
+		m.ResetName()
+		return nil
+	case projecttemplate.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ProjectTemplate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ProjectTemplateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.properties != nil {
+		edges = append(edges, projecttemplate.EdgeProperties)
+	}
+	if m.work_orders != nil {
+		edges = append(edges, projecttemplate.EdgeWorkOrders)
+	}
+	if m._type != nil {
+		edges = append(edges, projecttemplate.EdgeType)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ProjectTemplateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case projecttemplate.EdgeProperties:
+		ids := make([]ent.Value, 0, len(m.properties))
+		for id := range m.properties {
+			ids = append(ids, id)
+		}
+		return ids
+	case projecttemplate.EdgeWorkOrders:
+		ids := make([]ent.Value, 0, len(m.work_orders))
+		for id := range m.work_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case projecttemplate.EdgeType:
+		if id := m._type; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ProjectTemplateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedproperties != nil {
+		edges = append(edges, projecttemplate.EdgeProperties)
+	}
+	if m.removedwork_orders != nil {
+		edges = append(edges, projecttemplate.EdgeWorkOrders)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ProjectTemplateMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case projecttemplate.EdgeProperties:
+		ids := make([]ent.Value, 0, len(m.removedproperties))
+		for id := range m.removedproperties {
+			ids = append(ids, id)
+		}
+		return ids
+	case projecttemplate.EdgeWorkOrders:
+		ids := make([]ent.Value, 0, len(m.removedwork_orders))
+		for id := range m.removedwork_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ProjectTemplateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.cleared_type {
+		edges = append(edges, projecttemplate.EdgeType)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ProjectTemplateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case projecttemplate.EdgeType:
+		return m.cleared_type
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ProjectTemplateMutation) ClearEdge(name string) error {
+	switch name {
+	case projecttemplate.EdgeType:
+		m.ClearType()
+		return nil
+	}
+	return fmt.Errorf("unknown ProjectTemplate unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ProjectTemplateMutation) ResetEdge(name string) error {
+	switch name {
+	case projecttemplate.EdgeProperties:
+		m.ResetProperties()
+		return nil
+	case projecttemplate.EdgeWorkOrders:
+		m.ResetWorkOrders()
+		return nil
+	case projecttemplate.EdgeType:
+		m.ResetType()
+		return nil
+	}
+	return fmt.Errorf("unknown ProjectTemplate edge %s", name)
+}
+
 // ProjectTypeMutation represents an operation that mutate the ProjectTypes
 // nodes in the graph.
 type ProjectTypeMutation struct {
@@ -21231,17 +21861,15 @@ type ProjectTypeMutation struct {
 	op                 Op
 	typ                string
 	id                 *int
-	create_time        *time.Time
-	update_time        *time.Time
 	name               *string
 	description        *string
 	clearedFields      map[string]struct{}
-	projects           map[int]struct{}
-	removedprojects    map[int]struct{}
 	properties         map[int]struct{}
 	removedproperties  map[int]struct{}
 	work_orders        map[int]struct{}
 	removedwork_orders map[int]struct{}
+	projects           map[int]struct{}
+	removedprojects    map[int]struct{}
 	done               bool
 	oldValue           func(context.Context) (*ProjectType, error)
 }
@@ -21323,80 +21951,6 @@ func (m *ProjectTypeMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *ProjectTypeMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *ProjectTypeMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the ProjectType.
-// If the ProjectType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ProjectTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *ProjectTypeMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *ProjectTypeMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *ProjectTypeMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the ProjectType.
-// If the ProjectType object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ProjectTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *ProjectTypeMutation) ResetUpdateTime() {
-	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -21486,48 +22040,6 @@ func (m *ProjectTypeMutation) ResetDescription() {
 	delete(m.clearedFields, projecttype.FieldDescription)
 }
 
-// AddProjectIDs adds the projects edge to Project by ids.
-func (m *ProjectTypeMutation) AddProjectIDs(ids ...int) {
-	if m.projects == nil {
-		m.projects = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.projects[ids[i]] = struct{}{}
-	}
-}
-
-// RemoveProjectIDs removes the projects edge to Project by ids.
-func (m *ProjectTypeMutation) RemoveProjectIDs(ids ...int) {
-	if m.removedprojects == nil {
-		m.removedprojects = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removedprojects[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedProjects returns the removed ids of projects.
-func (m *ProjectTypeMutation) RemovedProjectsIDs() (ids []int) {
-	for id := range m.removedprojects {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ProjectsIDs returns the projects ids in the mutation.
-func (m *ProjectTypeMutation) ProjectsIDs() (ids []int) {
-	for id := range m.projects {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetProjects reset all changes of the "projects" edge.
-func (m *ProjectTypeMutation) ResetProjects() {
-	m.projects = nil
-	m.removedprojects = nil
-}
-
 // AddPropertyIDs adds the properties edge to PropertyType by ids.
 func (m *ProjectTypeMutation) AddPropertyIDs(ids ...int) {
 	if m.properties == nil {
@@ -21612,6 +22124,48 @@ func (m *ProjectTypeMutation) ResetWorkOrders() {
 	m.removedwork_orders = nil
 }
 
+// AddProjectIDs adds the projects edge to Project by ids.
+func (m *ProjectTypeMutation) AddProjectIDs(ids ...int) {
+	if m.projects == nil {
+		m.projects = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.projects[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveProjectIDs removes the projects edge to Project by ids.
+func (m *ProjectTypeMutation) RemoveProjectIDs(ids ...int) {
+	if m.removedprojects == nil {
+		m.removedprojects = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedprojects[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedProjects returns the removed ids of projects.
+func (m *ProjectTypeMutation) RemovedProjectsIDs() (ids []int) {
+	for id := range m.removedprojects {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ProjectsIDs returns the projects ids in the mutation.
+func (m *ProjectTypeMutation) ProjectsIDs() (ids []int) {
+	for id := range m.projects {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetProjects reset all changes of the "projects" edge.
+func (m *ProjectTypeMutation) ResetProjects() {
+	m.projects = nil
+	m.removedprojects = nil
+}
+
 // Op returns the operation name.
 func (m *ProjectTypeMutation) Op() Op {
 	return m.op
@@ -21626,13 +22180,7 @@ func (m *ProjectTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProjectTypeMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.create_time != nil {
-		fields = append(fields, projecttype.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, projecttype.FieldUpdateTime)
-	}
+	fields := make([]string, 0, 2)
 	if m.name != nil {
 		fields = append(fields, projecttype.FieldName)
 	}
@@ -21647,10 +22195,6 @@ func (m *ProjectTypeMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *ProjectTypeMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case projecttype.FieldCreateTime:
-		return m.CreateTime()
-	case projecttype.FieldUpdateTime:
-		return m.UpdateTime()
 	case projecttype.FieldName:
 		return m.Name()
 	case projecttype.FieldDescription:
@@ -21664,10 +22208,6 @@ func (m *ProjectTypeMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *ProjectTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case projecttype.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case projecttype.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
 	case projecttype.FieldName:
 		return m.OldName(ctx)
 	case projecttype.FieldDescription:
@@ -21681,20 +22221,6 @@ func (m *ProjectTypeMutation) OldField(ctx context.Context, name string) (ent.Va
 // type mismatch the field type.
 func (m *ProjectTypeMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case projecttype.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case projecttype.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
 	case projecttype.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -21768,12 +22294,6 @@ func (m *ProjectTypeMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *ProjectTypeMutation) ResetField(name string) error {
 	switch name {
-	case projecttype.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case projecttype.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
 	case projecttype.FieldName:
 		m.ResetName()
 		return nil
@@ -21788,14 +22308,14 @@ func (m *ProjectTypeMutation) ResetField(name string) error {
 // mutation.
 func (m *ProjectTypeMutation) AddedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.projects != nil {
-		edges = append(edges, projecttype.EdgeProjects)
-	}
 	if m.properties != nil {
 		edges = append(edges, projecttype.EdgeProperties)
 	}
 	if m.work_orders != nil {
 		edges = append(edges, projecttype.EdgeWorkOrders)
+	}
+	if m.projects != nil {
+		edges = append(edges, projecttype.EdgeProjects)
 	}
 	return edges
 }
@@ -21804,12 +22324,6 @@ func (m *ProjectTypeMutation) AddedEdges() []string {
 // the given edge name.
 func (m *ProjectTypeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case projecttype.EdgeProjects:
-		ids := make([]ent.Value, 0, len(m.projects))
-		for id := range m.projects {
-			ids = append(ids, id)
-		}
-		return ids
 	case projecttype.EdgeProperties:
 		ids := make([]ent.Value, 0, len(m.properties))
 		for id := range m.properties {
@@ -21822,6 +22336,12 @@ func (m *ProjectTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case projecttype.EdgeProjects:
+		ids := make([]ent.Value, 0, len(m.projects))
+		for id := range m.projects {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -21830,14 +22350,14 @@ func (m *ProjectTypeMutation) AddedIDs(name string) []ent.Value {
 // mutation.
 func (m *ProjectTypeMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedprojects != nil {
-		edges = append(edges, projecttype.EdgeProjects)
-	}
 	if m.removedproperties != nil {
 		edges = append(edges, projecttype.EdgeProperties)
 	}
 	if m.removedwork_orders != nil {
 		edges = append(edges, projecttype.EdgeWorkOrders)
+	}
+	if m.removedprojects != nil {
+		edges = append(edges, projecttype.EdgeProjects)
 	}
 	return edges
 }
@@ -21846,12 +22366,6 @@ func (m *ProjectTypeMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *ProjectTypeMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case projecttype.EdgeProjects:
-		ids := make([]ent.Value, 0, len(m.removedprojects))
-		for id := range m.removedprojects {
-			ids = append(ids, id)
-		}
-		return ids
 	case projecttype.EdgeProperties:
 		ids := make([]ent.Value, 0, len(m.removedproperties))
 		for id := range m.removedproperties {
@@ -21861,6 +22375,12 @@ func (m *ProjectTypeMutation) RemovedIDs(name string) []ent.Value {
 	case projecttype.EdgeWorkOrders:
 		ids := make([]ent.Value, 0, len(m.removedwork_orders))
 		for id := range m.removedwork_orders {
+			ids = append(ids, id)
+		}
+		return ids
+	case projecttype.EdgeProjects:
+		ids := make([]ent.Value, 0, len(m.removedprojects))
+		for id := range m.removedprojects {
 			ids = append(ids, id)
 		}
 		return ids
@@ -21896,14 +22416,14 @@ func (m *ProjectTypeMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ProjectTypeMutation) ResetEdge(name string) error {
 	switch name {
-	case projecttype.EdgeProjects:
-		m.ResetProjects()
-		return nil
 	case projecttype.EdgeProperties:
 		m.ResetProperties()
 		return nil
 	case projecttype.EdgeWorkOrders:
 		m.ResetWorkOrders()
+		return nil
+	case projecttype.EdgeProjects:
+		m.ResetProjects()
 		return nil
 	}
 	return fmt.Errorf("unknown ProjectType edge %s", name)
@@ -23889,6 +24409,8 @@ type PropertyTypeMutation struct {
 	clearedwork_order_template      bool
 	project_type                    *int
 	clearedproject_type             bool
+	project_template                *int
+	clearedproject_template         bool
 	done                            bool
 	oldValue                        func(context.Context) (*PropertyType, error)
 }
@@ -25369,6 +25891,45 @@ func (m *PropertyTypeMutation) ResetProjectType() {
 	m.clearedproject_type = false
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (m *PropertyTypeMutation) SetProjectTemplateID(id int) {
+	m.project_template = &id
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (m *PropertyTypeMutation) ClearProjectTemplate() {
+	m.clearedproject_template = true
+}
+
+// ProjectTemplateCleared returns if the edge project_template was cleared.
+func (m *PropertyTypeMutation) ProjectTemplateCleared() bool {
+	return m.clearedproject_template
+}
+
+// ProjectTemplateID returns the project_template id in the mutation.
+func (m *PropertyTypeMutation) ProjectTemplateID() (id int, exists bool) {
+	if m.project_template != nil {
+		return *m.project_template, true
+	}
+	return
+}
+
+// ProjectTemplateIDs returns the project_template ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ProjectTemplateID instead. It exists only for internal usage by the builders.
+func (m *PropertyTypeMutation) ProjectTemplateIDs() (ids []int) {
+	if id := m.project_template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProjectTemplate reset all changes of the "project_template" edge.
+func (m *PropertyTypeMutation) ResetProjectTemplate() {
+	m.project_template = nil
+	m.clearedproject_template = false
+}
+
 // Op returns the operation name.
 func (m *PropertyTypeMutation) Op() Op {
 	return m.op
@@ -25969,7 +26530,7 @@ func (m *PropertyTypeMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *PropertyTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.properties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -25996,6 +26557,9 @@ func (m *PropertyTypeMutation) AddedEdges() []string {
 	}
 	if m.project_type != nil {
 		edges = append(edges, propertytype.EdgeProjectType)
+	}
+	if m.project_template != nil {
+		edges = append(edges, propertytype.EdgeProjectTemplate)
 	}
 	return edges
 }
@@ -26042,6 +26606,10 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 		if id := m.project_type; id != nil {
 			return []ent.Value{*id}
 		}
+	case propertytype.EdgeProjectTemplate:
+		if id := m.project_template; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -26049,7 +26617,7 @@ func (m *PropertyTypeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *PropertyTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.removedproperties != nil {
 		edges = append(edges, propertytype.EdgeProperties)
 	}
@@ -26073,7 +26641,7 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *PropertyTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedlocation_type {
 		edges = append(edges, propertytype.EdgeLocationType)
 	}
@@ -26098,6 +26666,9 @@ func (m *PropertyTypeMutation) ClearedEdges() []string {
 	if m.clearedproject_type {
 		edges = append(edges, propertytype.EdgeProjectType)
 	}
+	if m.clearedproject_template {
+		edges = append(edges, propertytype.EdgeProjectTemplate)
+	}
 	return edges
 }
 
@@ -26121,6 +26692,8 @@ func (m *PropertyTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedwork_order_template
 	case propertytype.EdgeProjectType:
 		return m.clearedproject_type
+	case propertytype.EdgeProjectTemplate:
+		return m.clearedproject_template
 	}
 	return false
 }
@@ -26152,6 +26725,9 @@ func (m *PropertyTypeMutation) ClearEdge(name string) error {
 		return nil
 	case propertytype.EdgeProjectType:
 		m.ClearProjectType()
+		return nil
+	case propertytype.EdgeProjectTemplate:
+		m.ClearProjectTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType unique edge %s", name)
@@ -26188,6 +26764,9 @@ func (m *PropertyTypeMutation) ResetEdge(name string) error {
 		return nil
 	case propertytype.EdgeProjectType:
 		m.ResetProjectType()
+		return nil
+	case propertytype.EdgeProjectTemplate:
+		m.ResetProjectTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown PropertyType edge %s", name)
@@ -41382,20 +41961,22 @@ func (m *WorkOrderMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type WorkOrderDefinitionMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	create_time         *time.Time
-	update_time         *time.Time
-	index               *int
-	addindex            *int
-	clearedFields       map[string]struct{}
-	_type               *int
-	cleared_type        bool
-	project_type        *int
-	clearedproject_type bool
-	done                bool
-	oldValue            func(context.Context) (*WorkOrderDefinition, error)
+	op                      Op
+	typ                     string
+	id                      *int
+	create_time             *time.Time
+	update_time             *time.Time
+	index                   *int
+	addindex                *int
+	clearedFields           map[string]struct{}
+	_type                   *int
+	cleared_type            bool
+	project_type            *int
+	clearedproject_type     bool
+	project_template        *int
+	clearedproject_template bool
+	done                    bool
+	oldValue                func(context.Context) (*WorkOrderDefinition, error)
 }
 
 var _ ent.Mutation = (*WorkOrderDefinitionMutation)(nil)
@@ -41700,6 +42281,45 @@ func (m *WorkOrderDefinitionMutation) ResetProjectType() {
 	m.clearedproject_type = false
 }
 
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (m *WorkOrderDefinitionMutation) SetProjectTemplateID(id int) {
+	m.project_template = &id
+}
+
+// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+func (m *WorkOrderDefinitionMutation) ClearProjectTemplate() {
+	m.clearedproject_template = true
+}
+
+// ProjectTemplateCleared returns if the edge project_template was cleared.
+func (m *WorkOrderDefinitionMutation) ProjectTemplateCleared() bool {
+	return m.clearedproject_template
+}
+
+// ProjectTemplateID returns the project_template id in the mutation.
+func (m *WorkOrderDefinitionMutation) ProjectTemplateID() (id int, exists bool) {
+	if m.project_template != nil {
+		return *m.project_template, true
+	}
+	return
+}
+
+// ProjectTemplateIDs returns the project_template ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ProjectTemplateID instead. It exists only for internal usage by the builders.
+func (m *WorkOrderDefinitionMutation) ProjectTemplateIDs() (ids []int) {
+	if id := m.project_template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetProjectTemplate reset all changes of the "project_template" edge.
+func (m *WorkOrderDefinitionMutation) ResetProjectTemplate() {
+	m.project_template = nil
+	m.clearedproject_template = false
+}
+
 // Op returns the operation name.
 func (m *WorkOrderDefinitionMutation) Op() Op {
 	return m.op
@@ -41873,12 +42493,15 @@ func (m *WorkOrderDefinitionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *WorkOrderDefinitionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m._type != nil {
 		edges = append(edges, workorderdefinition.EdgeType)
 	}
 	if m.project_type != nil {
 		edges = append(edges, workorderdefinition.EdgeProjectType)
+	}
+	if m.project_template != nil {
+		edges = append(edges, workorderdefinition.EdgeProjectTemplate)
 	}
 	return edges
 }
@@ -41895,6 +42518,10 @@ func (m *WorkOrderDefinitionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.project_type; id != nil {
 			return []ent.Value{*id}
 		}
+	case workorderdefinition.EdgeProjectTemplate:
+		if id := m.project_template; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -41902,7 +42529,7 @@ func (m *WorkOrderDefinitionMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *WorkOrderDefinitionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -41917,12 +42544,15 @@ func (m *WorkOrderDefinitionMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *WorkOrderDefinitionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleared_type {
 		edges = append(edges, workorderdefinition.EdgeType)
 	}
 	if m.clearedproject_type {
 		edges = append(edges, workorderdefinition.EdgeProjectType)
+	}
+	if m.clearedproject_template {
+		edges = append(edges, workorderdefinition.EdgeProjectTemplate)
 	}
 	return edges
 }
@@ -41935,6 +42565,8 @@ func (m *WorkOrderDefinitionMutation) EdgeCleared(name string) bool {
 		return m.cleared_type
 	case workorderdefinition.EdgeProjectType:
 		return m.clearedproject_type
+	case workorderdefinition.EdgeProjectTemplate:
+		return m.clearedproject_template
 	}
 	return false
 }
@@ -41948,6 +42580,9 @@ func (m *WorkOrderDefinitionMutation) ClearEdge(name string) error {
 		return nil
 	case workorderdefinition.EdgeProjectType:
 		m.ClearProjectType()
+		return nil
+	case workorderdefinition.EdgeProjectTemplate:
+		m.ClearProjectTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderDefinition unique edge %s", name)
@@ -41963,6 +42598,9 @@ func (m *WorkOrderDefinitionMutation) ResetEdge(name string) error {
 		return nil
 	case workorderdefinition.EdgeProjectType:
 		m.ResetProjectType()
+		return nil
+	case workorderdefinition.EdgeProjectTemplate:
+		m.ResetProjectTemplate()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderDefinition edge %s", name)

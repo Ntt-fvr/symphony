@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -73,6 +74,25 @@ func (pu *ProjectUpdate) SetTypeID(id int) *ProjectUpdate {
 // SetType sets the type edge to ProjectType.
 func (pu *ProjectUpdate) SetType(p *ProjectType) *ProjectUpdate {
 	return pu.SetTypeID(p.ID)
+}
+
+// SetTemplateID sets the template edge to ProjectTemplate by id.
+func (pu *ProjectUpdate) SetTemplateID(id int) *ProjectUpdate {
+	pu.mutation.SetTemplateID(id)
+	return pu
+}
+
+// SetNillableTemplateID sets the template edge to ProjectTemplate by id if the given value is not nil.
+func (pu *ProjectUpdate) SetNillableTemplateID(id *int) *ProjectUpdate {
+	if id != nil {
+		pu = pu.SetTemplateID(*id)
+	}
+	return pu
+}
+
+// SetTemplate sets the template edge to ProjectTemplate.
+func (pu *ProjectUpdate) SetTemplate(p *ProjectTemplate) *ProjectUpdate {
+	return pu.SetTemplateID(p.ID)
 }
 
 // SetLocationID sets the location edge to Location by id.
@@ -166,6 +186,12 @@ func (pu *ProjectUpdate) Mutation() *ProjectMutation {
 // ClearType clears the type edge to ProjectType.
 func (pu *ProjectUpdate) ClearType() *ProjectUpdate {
 	pu.mutation.ClearType()
+	return pu
+}
+
+// ClearTemplate clears the template edge to ProjectTemplate.
+func (pu *ProjectUpdate) ClearTemplate() *ProjectUpdate {
+	pu.mutation.ClearTemplate()
 	return pu
 }
 
@@ -363,6 +389,41 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pu.mutation.TemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   project.TemplateTable,
+			Columns: []string{project.TemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.TemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   project.TemplateTable,
+			Columns: []string{project.TemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}
@@ -610,6 +671,25 @@ func (puo *ProjectUpdateOne) SetType(p *ProjectType) *ProjectUpdateOne {
 	return puo.SetTypeID(p.ID)
 }
 
+// SetTemplateID sets the template edge to ProjectTemplate by id.
+func (puo *ProjectUpdateOne) SetTemplateID(id int) *ProjectUpdateOne {
+	puo.mutation.SetTemplateID(id)
+	return puo
+}
+
+// SetNillableTemplateID sets the template edge to ProjectTemplate by id if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillableTemplateID(id *int) *ProjectUpdateOne {
+	if id != nil {
+		puo = puo.SetTemplateID(*id)
+	}
+	return puo
+}
+
+// SetTemplate sets the template edge to ProjectTemplate.
+func (puo *ProjectUpdateOne) SetTemplate(p *ProjectTemplate) *ProjectUpdateOne {
+	return puo.SetTemplateID(p.ID)
+}
+
 // SetLocationID sets the location edge to Location by id.
 func (puo *ProjectUpdateOne) SetLocationID(id int) *ProjectUpdateOne {
 	puo.mutation.SetLocationID(id)
@@ -701,6 +781,12 @@ func (puo *ProjectUpdateOne) Mutation() *ProjectMutation {
 // ClearType clears the type edge to ProjectType.
 func (puo *ProjectUpdateOne) ClearType() *ProjectUpdateOne {
 	puo.mutation.ClearType()
+	return puo
+}
+
+// ClearTemplate clears the template edge to ProjectTemplate.
+func (puo *ProjectUpdateOne) ClearTemplate() *ProjectUpdateOne {
+	puo.mutation.ClearTemplate()
 	return puo
 }
 
@@ -896,6 +982,41 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (pr *Project, err erro
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.TemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   project.TemplateTable,
+			Columns: []string{project.TemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.TemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   project.TemplateTable,
+			Columns: []string{project.TemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

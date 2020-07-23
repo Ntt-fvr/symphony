@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -87,6 +88,25 @@ func (pc *ProjectCreate) SetTypeID(id int) *ProjectCreate {
 // SetType sets the type edge to ProjectType.
 func (pc *ProjectCreate) SetType(p *ProjectType) *ProjectCreate {
 	return pc.SetTypeID(p.ID)
+}
+
+// SetTemplateID sets the template edge to ProjectTemplate by id.
+func (pc *ProjectCreate) SetTemplateID(id int) *ProjectCreate {
+	pc.mutation.SetTemplateID(id)
+	return pc
+}
+
+// SetNillableTemplateID sets the template edge to ProjectTemplate by id if the given value is not nil.
+func (pc *ProjectCreate) SetNillableTemplateID(id *int) *ProjectCreate {
+	if id != nil {
+		pc = pc.SetTemplateID(*id)
+	}
+	return pc
+}
+
+// SetTemplate sets the template edge to ProjectTemplate.
+func (pc *ProjectCreate) SetTemplate(p *ProjectTemplate) *ProjectCreate {
+	return pc.SetTemplateID(p.ID)
 }
 
 // SetLocationID sets the location edge to Location by id.
@@ -301,6 +321,25 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.TemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   project.TemplateTable,
+			Columns: []string{project.TemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

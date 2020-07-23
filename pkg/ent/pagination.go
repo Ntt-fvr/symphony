@@ -46,6 +46,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -6133,6 +6134,225 @@ var DefaultProjectOrder = &ProjectOrder{
 		field: project.FieldID,
 		toCursor: func(pr *Project) Cursor {
 			return Cursor{ID: pr.ID}
+		},
+	},
+}
+
+// ProjectTemplateEdge is the edge representation of ProjectTemplate.
+type ProjectTemplateEdge struct {
+	Node   *ProjectTemplate `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// ProjectTemplateConnection is the connection containing edges to ProjectTemplate.
+type ProjectTemplateConnection struct {
+	Edges      []*ProjectTemplateEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+// ProjectTemplatePaginateOption enables pagination customization.
+type ProjectTemplatePaginateOption func(*projectTemplatePager) error
+
+// WithProjectTemplateOrder configures pagination ordering.
+func WithProjectTemplateOrder(order *ProjectTemplateOrder) ProjectTemplatePaginateOption {
+	if order == nil {
+		order = DefaultProjectTemplateOrder
+	}
+	o := *order
+	return func(pager *projectTemplatePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultProjectTemplateOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithProjectTemplateFilter configures pagination filter.
+func WithProjectTemplateFilter(filter func(*ProjectTemplateQuery) (*ProjectTemplateQuery, error)) ProjectTemplatePaginateOption {
+	return func(pager *projectTemplatePager) error {
+		if filter == nil {
+			return errors.New("ProjectTemplateQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type projectTemplatePager struct {
+	order  *ProjectTemplateOrder
+	filter func(*ProjectTemplateQuery) (*ProjectTemplateQuery, error)
+}
+
+func newProjectTemplatePager(opts []ProjectTemplatePaginateOption) (*projectTemplatePager, error) {
+	pager := &projectTemplatePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultProjectTemplateOrder
+	}
+	return pager, nil
+}
+
+func (p *projectTemplatePager) applyFilter(query *ProjectTemplateQuery) (*ProjectTemplateQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *projectTemplatePager) toCursor(pt *ProjectTemplate) Cursor {
+	return p.order.Field.toCursor(pt)
+}
+
+func (p *projectTemplatePager) applyCursors(query *ProjectTemplateQuery, after, before *Cursor) *ProjectTemplateQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultProjectTemplateOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *projectTemplatePager) applyOrder(query *ProjectTemplateQuery, reverse bool) *ProjectTemplateQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultProjectTemplateOrder.Field {
+		query = query.Order(Asc(DefaultProjectTemplateOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to ProjectTemplate.
+func (pt *ProjectTemplateQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ProjectTemplatePaginateOption,
+) (*ProjectTemplateConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newProjectTemplatePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if pt, err = pager.applyFilter(pt); err != nil {
+		return nil, err
+	}
+
+	conn := &ProjectTemplateConnection{Edges: []*ProjectTemplateEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := pt.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := pt.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	pt = pager.applyCursors(pt, after, before)
+	pt = pager.applyOrder(pt, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		pt = pt.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		pt = pt.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := pt.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *ProjectTemplate
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *ProjectTemplate {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *ProjectTemplate {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ProjectTemplateEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ProjectTemplateEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// ProjectTemplateOrderField defines the ordering field of ProjectTemplate.
+type ProjectTemplateOrderField struct {
+	field    string
+	toCursor func(*ProjectTemplate) Cursor
+}
+
+// ProjectTemplateOrder defines the ordering of ProjectTemplate.
+type ProjectTemplateOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *ProjectTemplateOrderField `json:"field"`
+}
+
+// DefaultProjectTemplateOrder is the default ordering of ProjectTemplate.
+var DefaultProjectTemplateOrder = &ProjectTemplateOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ProjectTemplateOrderField{
+		field: projecttemplate.FieldID,
+		toCursor: func(pt *ProjectTemplate) Cursor {
+			return Cursor{ID: pt.ID}
 		},
 	},
 }

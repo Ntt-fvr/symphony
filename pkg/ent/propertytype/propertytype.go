@@ -79,6 +79,8 @@ const (
 	EdgeWorkOrderTemplate = "work_order_template"
 	// EdgeProjectType holds the string denoting the project_type edge name in mutations.
 	EdgeProjectType = "project_type"
+	// EdgeProjectTemplate holds the string denoting the project_template edge name in mutations.
+	EdgeProjectTemplate = "project_template"
 
 	// Table holds the table name of the propertytype in the database.
 	Table = "property_types"
@@ -145,6 +147,13 @@ const (
 	ProjectTypeInverseTable = "project_types"
 	// ProjectTypeColumn is the table column denoting the project_type relation/edge.
 	ProjectTypeColumn = "project_type_properties"
+	// ProjectTemplateTable is the table the holds the project_template relation/edge.
+	ProjectTemplateTable = "property_types"
+	// ProjectTemplateInverseTable is the table name for the ProjectTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "projecttemplate" package.
+	ProjectTemplateInverseTable = "project_templates"
+	// ProjectTemplateColumn is the table column denoting the project_template relation/edge.
+	ProjectTemplateColumn = "project_template_properties"
 )
 
 // Columns holds all SQL columns for propertytype fields.
@@ -178,6 +187,7 @@ var ForeignKeys = []string{
 	"equipment_port_type_link_property_types",
 	"equipment_type_property_types",
 	"location_type_property_types",
+	"project_template_properties",
 	"project_type_properties",
 	"service_type_property_types",
 	"work_order_template_property_types",

@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
@@ -103,6 +104,25 @@ func (wodc *WorkOrderDefinitionCreate) SetNillableProjectTypeID(id *int) *WorkOr
 // SetProjectType sets the project_type edge to ProjectType.
 func (wodc *WorkOrderDefinitionCreate) SetProjectType(p *ProjectType) *WorkOrderDefinitionCreate {
 	return wodc.SetProjectTypeID(p.ID)
+}
+
+// SetProjectTemplateID sets the project_template edge to ProjectTemplate by id.
+func (wodc *WorkOrderDefinitionCreate) SetProjectTemplateID(id int) *WorkOrderDefinitionCreate {
+	wodc.mutation.SetProjectTemplateID(id)
+	return wodc
+}
+
+// SetNillableProjectTemplateID sets the project_template edge to ProjectTemplate by id if the given value is not nil.
+func (wodc *WorkOrderDefinitionCreate) SetNillableProjectTemplateID(id *int) *WorkOrderDefinitionCreate {
+	if id != nil {
+		wodc = wodc.SetProjectTemplateID(*id)
+	}
+	return wodc
+}
+
+// SetProjectTemplate sets the project_template edge to ProjectTemplate.
+func (wodc *WorkOrderDefinitionCreate) SetProjectTemplate(p *ProjectTemplate) *WorkOrderDefinitionCreate {
+	return wodc.SetProjectTemplateID(p.ID)
 }
 
 // Mutation returns the WorkOrderDefinitionMutation object of the builder.
@@ -234,6 +254,25 @@ func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlg
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: projecttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := wodc.mutation.ProjectTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   workorderdefinition.ProjectTemplateTable,
+			Columns: []string{workorderdefinition.ProjectTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: projecttemplate.FieldID,
 				},
 			},
 		}

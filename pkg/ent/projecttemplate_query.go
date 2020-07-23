@@ -17,64 +17,65 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 )
 
-// ProjectTypeQuery is the builder for querying ProjectType entities.
-type ProjectTypeQuery struct {
+// ProjectTemplateQuery is the builder for querying ProjectTemplate entities.
+type ProjectTemplateQuery struct {
 	config
 	limit      *int
 	offset     *int
 	order      []OrderFunc
 	unique     []string
-	predicates []predicate.ProjectType
+	predicates []predicate.ProjectTemplate
 	// eager-loading edges.
 	withProperties *PropertyTypeQuery
 	withWorkOrders *WorkOrderDefinitionQuery
-	withProjects   *ProjectQuery
+	withType       *ProjectTypeQuery
+	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
 // Where adds a new predicate for the builder.
-func (ptq *ProjectTypeQuery) Where(ps ...predicate.ProjectType) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) Where(ps ...predicate.ProjectTemplate) *ProjectTemplateQuery {
 	ptq.predicates = append(ptq.predicates, ps...)
 	return ptq
 }
 
 // Limit adds a limit step to the query.
-func (ptq *ProjectTypeQuery) Limit(limit int) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) Limit(limit int) *ProjectTemplateQuery {
 	ptq.limit = &limit
 	return ptq
 }
 
 // Offset adds an offset step to the query.
-func (ptq *ProjectTypeQuery) Offset(offset int) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) Offset(offset int) *ProjectTemplateQuery {
 	ptq.offset = &offset
 	return ptq
 }
 
 // Order adds an order step to the query.
-func (ptq *ProjectTypeQuery) Order(o ...OrderFunc) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) Order(o ...OrderFunc) *ProjectTemplateQuery {
 	ptq.order = append(ptq.order, o...)
 	return ptq
 }
 
 // QueryProperties chains the current query on the properties edge.
-func (ptq *ProjectTypeQuery) QueryProperties() *PropertyTypeQuery {
+func (ptq *ProjectTemplateQuery) QueryProperties() *PropertyTypeQuery {
 	query := &PropertyTypeQuery{config: ptq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, ptq.sqlQuery()),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.PropertiesTable, projecttype.PropertiesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, projecttemplate.PropertiesTable, projecttemplate.PropertiesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -83,16 +84,16 @@ func (ptq *ProjectTypeQuery) QueryProperties() *PropertyTypeQuery {
 }
 
 // QueryWorkOrders chains the current query on the work_orders edge.
-func (ptq *ProjectTypeQuery) QueryWorkOrders() *WorkOrderDefinitionQuery {
+func (ptq *ProjectTemplateQuery) QueryWorkOrders() *WorkOrderDefinitionQuery {
 	query := &WorkOrderDefinitionQuery{config: ptq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, ptq.sqlQuery()),
 			sqlgraph.To(workorderdefinition.Table, workorderdefinition.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.WorkOrdersTable, projecttype.WorkOrdersColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, projecttemplate.WorkOrdersTable, projecttemplate.WorkOrdersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -100,17 +101,17 @@ func (ptq *ProjectTypeQuery) QueryWorkOrders() *WorkOrderDefinitionQuery {
 	return query
 }
 
-// QueryProjects chains the current query on the projects edge.
-func (ptq *ProjectTypeQuery) QueryProjects() *ProjectQuery {
-	query := &ProjectQuery{config: ptq.config}
+// QueryType chains the current query on the type edge.
+func (ptq *ProjectTemplateQuery) QueryType() *ProjectTypeQuery {
+	query := &ProjectTypeQuery{config: ptq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
-			sqlgraph.To(project.Table, project.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.ProjectsTable, projecttype.ProjectsColumn),
+			sqlgraph.From(projecttemplate.Table, projecttemplate.FieldID, ptq.sqlQuery()),
+			sqlgraph.To(projecttype.Table, projecttype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, projecttemplate.TypeTable, projecttemplate.TypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -118,20 +119,20 @@ func (ptq *ProjectTypeQuery) QueryProjects() *ProjectQuery {
 	return query
 }
 
-// First returns the first ProjectType entity in the query. Returns *NotFoundError when no projecttype was found.
-func (ptq *ProjectTypeQuery) First(ctx context.Context) (*ProjectType, error) {
+// First returns the first ProjectTemplate entity in the query. Returns *NotFoundError when no projecttemplate was found.
+func (ptq *ProjectTemplateQuery) First(ctx context.Context) (*ProjectTemplate, error) {
 	pts, err := ptq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	if len(pts) == 0 {
-		return nil, &NotFoundError{projecttype.Label}
+		return nil, &NotFoundError{projecttemplate.Label}
 	}
 	return pts[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) FirstX(ctx context.Context) *ProjectType {
+func (ptq *ProjectTemplateQuery) FirstX(ctx context.Context) *ProjectTemplate {
 	pt, err := ptq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -139,21 +140,21 @@ func (ptq *ProjectTypeQuery) FirstX(ctx context.Context) *ProjectType {
 	return pt
 }
 
-// FirstID returns the first ProjectType id in the query. Returns *NotFoundError when no id was found.
-func (ptq *ProjectTypeQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first ProjectTemplate id in the query. Returns *NotFoundError when no id was found.
+func (ptq *ProjectTemplateQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = ptq.Limit(1).IDs(ctx); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstXID is like FirstID, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) FirstXID(ctx context.Context) int {
+func (ptq *ProjectTemplateQuery) FirstXID(ctx context.Context) int {
 	id, err := ptq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -161,8 +162,8 @@ func (ptq *ProjectTypeQuery) FirstXID(ctx context.Context) int {
 	return id
 }
 
-// Only returns the only ProjectType entity in the query, returns an error if not exactly one entity was returned.
-func (ptq *ProjectTypeQuery) Only(ctx context.Context) (*ProjectType, error) {
+// Only returns the only ProjectTemplate entity in the query, returns an error if not exactly one entity was returned.
+func (ptq *ProjectTemplateQuery) Only(ctx context.Context) (*ProjectTemplate, error) {
 	pts, err := ptq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
@@ -171,14 +172,14 @@ func (ptq *ProjectTypeQuery) Only(ctx context.Context) (*ProjectType, error) {
 	case 1:
 		return pts[0], nil
 	case 0:
-		return nil, &NotFoundError{projecttype.Label}
+		return nil, &NotFoundError{projecttemplate.Label}
 	default:
-		return nil, &NotSingularError{projecttype.Label}
+		return nil, &NotSingularError{projecttemplate.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) OnlyX(ctx context.Context) *ProjectType {
+func (ptq *ProjectTemplateQuery) OnlyX(ctx context.Context) *ProjectTemplate {
 	pt, err := ptq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -186,8 +187,8 @@ func (ptq *ProjectTypeQuery) OnlyX(ctx context.Context) *ProjectType {
 	return pt
 }
 
-// OnlyID returns the only ProjectType id in the query, returns an error if not exactly one id was returned.
-func (ptq *ProjectTypeQuery) OnlyID(ctx context.Context) (id int, err error) {
+// OnlyID returns the only ProjectTemplate id in the query, returns an error if not exactly one id was returned.
+func (ptq *ProjectTemplateQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = ptq.Limit(2).IDs(ctx); err != nil {
 		return
@@ -196,15 +197,15 @@ func (ptq *ProjectTypeQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = &NotSingularError{projecttype.Label}
+		err = &NotSingularError{projecttemplate.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) OnlyIDX(ctx context.Context) int {
+func (ptq *ProjectTemplateQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ptq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -212,8 +213,8 @@ func (ptq *ProjectTypeQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of ProjectTypes.
-func (ptq *ProjectTypeQuery) All(ctx context.Context) ([]*ProjectType, error) {
+// All executes the query and returns a list of ProjectTemplates.
+func (ptq *ProjectTemplateQuery) All(ctx context.Context) ([]*ProjectTemplate, error) {
 	if err := ptq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -221,7 +222,7 @@ func (ptq *ProjectTypeQuery) All(ctx context.Context) ([]*ProjectType, error) {
 }
 
 // AllX is like All, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) AllX(ctx context.Context) []*ProjectType {
+func (ptq *ProjectTemplateQuery) AllX(ctx context.Context) []*ProjectTemplate {
 	pts, err := ptq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -229,17 +230,17 @@ func (ptq *ProjectTypeQuery) AllX(ctx context.Context) []*ProjectType {
 	return pts
 }
 
-// IDs executes the query and returns a list of ProjectType ids.
-func (ptq *ProjectTypeQuery) IDs(ctx context.Context) ([]int, error) {
+// IDs executes the query and returns a list of ProjectTemplate ids.
+func (ptq *ProjectTemplateQuery) IDs(ctx context.Context) ([]int, error) {
 	var ids []int
-	if err := ptq.Select(projecttype.FieldID).Scan(ctx, &ids); err != nil {
+	if err := ptq.Select(projecttemplate.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) IDsX(ctx context.Context) []int {
+func (ptq *ProjectTemplateQuery) IDsX(ctx context.Context) []int {
 	ids, err := ptq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -248,7 +249,7 @@ func (ptq *ProjectTypeQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (ptq *ProjectTypeQuery) Count(ctx context.Context) (int, error) {
+func (ptq *ProjectTemplateQuery) Count(ctx context.Context) (int, error) {
 	if err := ptq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -256,7 +257,7 @@ func (ptq *ProjectTypeQuery) Count(ctx context.Context) (int, error) {
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) CountX(ctx context.Context) int {
+func (ptq *ProjectTemplateQuery) CountX(ctx context.Context) int {
 	count, err := ptq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -265,7 +266,7 @@ func (ptq *ProjectTypeQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (ptq *ProjectTypeQuery) Exist(ctx context.Context) (bool, error) {
+func (ptq *ProjectTemplateQuery) Exist(ctx context.Context) (bool, error) {
 	if err := ptq.prepareQuery(ctx); err != nil {
 		return false, err
 	}
@@ -273,7 +274,7 @@ func (ptq *ProjectTypeQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) ExistX(ctx context.Context) bool {
+func (ptq *ProjectTemplateQuery) ExistX(ctx context.Context) bool {
 	exist, err := ptq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -283,14 +284,14 @@ func (ptq *ProjectTypeQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the query builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (ptq *ProjectTypeQuery) Clone() *ProjectTypeQuery {
-	return &ProjectTypeQuery{
+func (ptq *ProjectTemplateQuery) Clone() *ProjectTemplateQuery {
+	return &ProjectTemplateQuery{
 		config:     ptq.config,
 		limit:      ptq.limit,
 		offset:     ptq.offset,
 		order:      append([]OrderFunc{}, ptq.order...),
 		unique:     append([]string{}, ptq.unique...),
-		predicates: append([]predicate.ProjectType{}, ptq.predicates...),
+		predicates: append([]predicate.ProjectTemplate{}, ptq.predicates...),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -299,7 +300,7 @@ func (ptq *ProjectTypeQuery) Clone() *ProjectTypeQuery {
 
 //  WithProperties tells the query-builder to eager-loads the nodes that are connected to
 // the "properties" edge. The optional arguments used to configure the query builder of the edge.
-func (ptq *ProjectTypeQuery) WithProperties(opts ...func(*PropertyTypeQuery)) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) WithProperties(opts ...func(*PropertyTypeQuery)) *ProjectTemplateQuery {
 	query := &PropertyTypeQuery{config: ptq.config}
 	for _, opt := range opts {
 		opt(query)
@@ -310,7 +311,7 @@ func (ptq *ProjectTypeQuery) WithProperties(opts ...func(*PropertyTypeQuery)) *P
 
 //  WithWorkOrders tells the query-builder to eager-loads the nodes that are connected to
 // the "work_orders" edge. The optional arguments used to configure the query builder of the edge.
-func (ptq *ProjectTypeQuery) WithWorkOrders(opts ...func(*WorkOrderDefinitionQuery)) *ProjectTypeQuery {
+func (ptq *ProjectTemplateQuery) WithWorkOrders(opts ...func(*WorkOrderDefinitionQuery)) *ProjectTemplateQuery {
 	query := &WorkOrderDefinitionQuery{config: ptq.config}
 	for _, opt := range opts {
 		opt(query)
@@ -319,14 +320,14 @@ func (ptq *ProjectTypeQuery) WithWorkOrders(opts ...func(*WorkOrderDefinitionQue
 	return ptq
 }
 
-//  WithProjects tells the query-builder to eager-loads the nodes that are connected to
-// the "projects" edge. The optional arguments used to configure the query builder of the edge.
-func (ptq *ProjectTypeQuery) WithProjects(opts ...func(*ProjectQuery)) *ProjectTypeQuery {
-	query := &ProjectQuery{config: ptq.config}
+//  WithType tells the query-builder to eager-loads the nodes that are connected to
+// the "type" edge. The optional arguments used to configure the query builder of the edge.
+func (ptq *ProjectTemplateQuery) WithType(opts ...func(*ProjectTypeQuery)) *ProjectTemplateQuery {
+	query := &ProjectTypeQuery{config: ptq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	ptq.withProjects = query
+	ptq.withType = query
 	return ptq
 }
 
@@ -340,13 +341,13 @@ func (ptq *ProjectTypeQuery) WithProjects(opts ...func(*ProjectQuery)) *ProjectT
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.ProjectType.Query().
-//		GroupBy(projecttype.FieldName).
+//	client.ProjectTemplate.Query().
+//		GroupBy(projecttemplate.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
-func (ptq *ProjectTypeQuery) GroupBy(field string, fields ...string) *ProjectTypeGroupBy {
-	group := &ProjectTypeGroupBy{config: ptq.config}
+func (ptq *ProjectTemplateQuery) GroupBy(field string, fields ...string) *ProjectTemplateGroupBy {
+	group := &ProjectTemplateGroupBy{config: ptq.config}
 	group.fields = append([]string{field}, fields...)
 	group.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
@@ -365,12 +366,12 @@ func (ptq *ProjectTypeQuery) GroupBy(field string, fields ...string) *ProjectTyp
 //		Name string `json:"name,omitempty"`
 //	}
 //
-//	client.ProjectType.Query().
-//		Select(projecttype.FieldName).
+//	client.ProjectTemplate.Query().
+//		Select(projecttemplate.FieldName).
 //		Scan(ctx, &v)
 //
-func (ptq *ProjectTypeQuery) Select(field string, fields ...string) *ProjectTypeSelect {
-	selector := &ProjectTypeSelect{config: ptq.config}
+func (ptq *ProjectTemplateQuery) Select(field string, fields ...string) *ProjectTemplateSelect {
+	selector := &ProjectTemplateSelect{config: ptq.config}
 	selector.fields = append([]string{field}, fields...)
 	selector.path = func(ctx context.Context) (prev *sql.Selector, err error) {
 		if err := ptq.prepareQuery(ctx); err != nil {
@@ -381,7 +382,7 @@ func (ptq *ProjectTypeQuery) Select(field string, fields ...string) *ProjectType
 	return selector
 }
 
-func (ptq *ProjectTypeQuery) prepareQuery(ctx context.Context) error {
+func (ptq *ProjectTemplateQuery) prepareQuery(ctx context.Context) error {
 	if ptq.path != nil {
 		prev, err := ptq.path(ctx)
 		if err != nil {
@@ -389,26 +390,36 @@ func (ptq *ProjectTypeQuery) prepareQuery(ctx context.Context) error {
 		}
 		ptq.sql = prev
 	}
-	if err := projecttype.Policy.EvalQuery(ctx, ptq); err != nil {
+	if err := projecttemplate.Policy.EvalQuery(ctx, ptq); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ptq *ProjectTypeQuery) sqlAll(ctx context.Context) ([]*ProjectType, error) {
+func (ptq *ProjectTemplateQuery) sqlAll(ctx context.Context) ([]*ProjectTemplate, error) {
 	var (
-		nodes       = []*ProjectType{}
+		nodes       = []*ProjectTemplate{}
+		withFKs     = ptq.withFKs
 		_spec       = ptq.querySpec()
 		loadedTypes = [3]bool{
 			ptq.withProperties != nil,
 			ptq.withWorkOrders != nil,
-			ptq.withProjects != nil,
+			ptq.withType != nil,
 		}
 	)
+	if ptq.withType != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, projecttemplate.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
-		node := &ProjectType{config: ptq.config}
+		node := &ProjectTemplate{config: ptq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -428,27 +439,27 @@ func (ptq *ProjectTypeQuery) sqlAll(ctx context.Context) ([]*ProjectType, error)
 
 	if query := ptq.withProperties; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ProjectType)
+		nodeids := make(map[int]*ProjectTemplate)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
-			s.Where(sql.InValues(projecttype.PropertiesColumn, fks...))
+			s.Where(sql.InValues(projecttemplate.PropertiesColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.project_type_properties
+			fk := n.project_template_properties
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "project_type_properties" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "project_template_properties" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "project_type_properties" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template_properties" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Properties = append(node.Edges.Properties, n)
 		}
@@ -456,69 +467,66 @@ func (ptq *ProjectTypeQuery) sqlAll(ctx context.Context) ([]*ProjectType, error)
 
 	if query := ptq.withWorkOrders; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ProjectType)
+		nodeids := make(map[int]*ProjectTemplate)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
 		}
 		query.withFKs = true
 		query.Where(predicate.WorkOrderDefinition(func(s *sql.Selector) {
-			s.Where(sql.InValues(projecttype.WorkOrdersColumn, fks...))
+			s.Where(sql.InValues(projecttemplate.WorkOrdersColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.project_type_work_orders
+			fk := n.project_template_work_orders
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "project_type_work_orders" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "project_template_work_orders" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "project_type_work_orders" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template_work_orders" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.WorkOrders = append(node.Edges.WorkOrders, n)
 		}
 	}
 
-	if query := ptq.withProjects; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*ProjectType)
+	if query := ptq.withType; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ProjectTemplate)
 		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
+			if fk := nodes[i].project_template_type; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
 		}
-		query.withFKs = true
-		query.Where(predicate.Project(func(s *sql.Selector) {
-			s.Where(sql.InValues(projecttype.ProjectsColumn, fks...))
-		}))
+		query.Where(projecttype.IDIn(ids...))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.project_type_projects
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "project_type_projects" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "project_type_projects" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "project_template_type" returned %v`, n.ID)
 			}
-			node.Edges.Projects = append(node.Edges.Projects, n)
+			for i := range nodes {
+				nodes[i].Edges.Type = n
+			}
 		}
 	}
 
 	return nodes, nil
 }
 
-func (ptq *ProjectTypeQuery) sqlCount(ctx context.Context) (int, error) {
+func (ptq *ProjectTemplateQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ptq.querySpec()
 	return sqlgraph.CountNodes(ctx, ptq.driver, _spec)
 }
 
-func (ptq *ProjectTypeQuery) sqlExist(ctx context.Context) (bool, error) {
+func (ptq *ProjectTemplateQuery) sqlExist(ctx context.Context) (bool, error) {
 	n, err := ptq.sqlCount(ctx)
 	if err != nil {
 		return false, fmt.Errorf("ent: check existence: %v", err)
@@ -526,14 +534,14 @@ func (ptq *ProjectTypeQuery) sqlExist(ctx context.Context) (bool, error) {
 	return n > 0, nil
 }
 
-func (ptq *ProjectTypeQuery) querySpec() *sqlgraph.QuerySpec {
+func (ptq *ProjectTemplateQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := &sqlgraph.QuerySpec{
 		Node: &sqlgraph.NodeSpec{
-			Table:   projecttype.Table,
-			Columns: projecttype.Columns,
+			Table:   projecttemplate.Table,
+			Columns: projecttemplate.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: projecttype.FieldID,
+				Column: projecttemplate.FieldID,
 			},
 		},
 		From:   ptq.sql,
@@ -562,13 +570,13 @@ func (ptq *ProjectTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (ptq *ProjectTypeQuery) sqlQuery() *sql.Selector {
+func (ptq *ProjectTemplateQuery) sqlQuery() *sql.Selector {
 	builder := sql.Dialect(ptq.driver.Dialect())
-	t1 := builder.Table(projecttype.Table)
-	selector := builder.Select(t1.Columns(projecttype.Columns...)...).From(t1)
+	t1 := builder.Table(projecttemplate.Table)
+	selector := builder.Select(t1.Columns(projecttemplate.Columns...)...).From(t1)
 	if ptq.sql != nil {
 		selector = ptq.sql
-		selector.Select(selector.Columns(projecttype.Columns...)...)
+		selector.Select(selector.Columns(projecttemplate.Columns...)...)
 	}
 	for _, p := range ptq.predicates {
 		p(selector)
@@ -587,8 +595,8 @@ func (ptq *ProjectTypeQuery) sqlQuery() *sql.Selector {
 	return selector
 }
 
-// ProjectTypeGroupBy is the builder for group-by ProjectType entities.
-type ProjectTypeGroupBy struct {
+// ProjectTemplateGroupBy is the builder for group-by ProjectTemplate entities.
+type ProjectTemplateGroupBy struct {
 	config
 	fields []string
 	fns    []AggregateFunc
@@ -598,13 +606,13 @@ type ProjectTypeGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (ptgb *ProjectTypeGroupBy) Aggregate(fns ...AggregateFunc) *ProjectTypeGroupBy {
+func (ptgb *ProjectTemplateGroupBy) Aggregate(fns ...AggregateFunc) *ProjectTemplateGroupBy {
 	ptgb.fns = append(ptgb.fns, fns...)
 	return ptgb
 }
 
 // Scan applies the group-by query and scan the result into the given value.
-func (ptgb *ProjectTypeGroupBy) Scan(ctx context.Context, v interface{}) error {
+func (ptgb *ProjectTemplateGroupBy) Scan(ctx context.Context, v interface{}) error {
 	query, err := ptgb.path(ctx)
 	if err != nil {
 		return err
@@ -614,16 +622,16 @@ func (ptgb *ProjectTypeGroupBy) Scan(ctx context.Context, v interface{}) error {
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) ScanX(ctx context.Context, v interface{}) {
+func (ptgb *ProjectTemplateGroupBy) ScanX(ctx context.Context, v interface{}) {
 	if err := ptgb.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Strings(ctx context.Context) ([]string, error) {
+func (ptgb *ProjectTemplateGroupBy) Strings(ctx context.Context) ([]string, error) {
 	if len(ptgb.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeGroupBy.Strings is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateGroupBy.Strings is not achievable when grouping more than 1 field")
 	}
 	var v []string
 	if err := ptgb.Scan(ctx, &v); err != nil {
@@ -633,7 +641,7 @@ func (ptgb *ProjectTypeGroupBy) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) StringsX(ctx context.Context) []string {
+func (ptgb *ProjectTemplateGroupBy) StringsX(ctx context.Context) []string {
 	v, err := ptgb.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -642,7 +650,7 @@ func (ptgb *ProjectTypeGroupBy) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) String(ctx context.Context) (_ string, err error) {
+func (ptgb *ProjectTemplateGroupBy) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = ptgb.Strings(ctx); err != nil {
 		return
@@ -651,15 +659,15 @@ func (ptgb *ProjectTypeGroupBy) String(ctx context.Context) (_ string, err error
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeGroupBy.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateGroupBy.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) StringX(ctx context.Context) string {
+func (ptgb *ProjectTemplateGroupBy) StringX(ctx context.Context) string {
 	v, err := ptgb.String(ctx)
 	if err != nil {
 		panic(err)
@@ -668,9 +676,9 @@ func (ptgb *ProjectTypeGroupBy) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Ints(ctx context.Context) ([]int, error) {
+func (ptgb *ProjectTemplateGroupBy) Ints(ctx context.Context) ([]int, error) {
 	if len(ptgb.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeGroupBy.Ints is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateGroupBy.Ints is not achievable when grouping more than 1 field")
 	}
 	var v []int
 	if err := ptgb.Scan(ctx, &v); err != nil {
@@ -680,7 +688,7 @@ func (ptgb *ProjectTypeGroupBy) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) IntsX(ctx context.Context) []int {
+func (ptgb *ProjectTemplateGroupBy) IntsX(ctx context.Context) []int {
 	v, err := ptgb.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -689,7 +697,7 @@ func (ptgb *ProjectTypeGroupBy) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Int(ctx context.Context) (_ int, err error) {
+func (ptgb *ProjectTemplateGroupBy) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = ptgb.Ints(ctx); err != nil {
 		return
@@ -698,15 +706,15 @@ func (ptgb *ProjectTypeGroupBy) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeGroupBy.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateGroupBy.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) IntX(ctx context.Context) int {
+func (ptgb *ProjectTemplateGroupBy) IntX(ctx context.Context) int {
 	v, err := ptgb.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -715,9 +723,9 @@ func (ptgb *ProjectTypeGroupBy) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Float64s(ctx context.Context) ([]float64, error) {
+func (ptgb *ProjectTemplateGroupBy) Float64s(ctx context.Context) ([]float64, error) {
 	if len(ptgb.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeGroupBy.Float64s is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateGroupBy.Float64s is not achievable when grouping more than 1 field")
 	}
 	var v []float64
 	if err := ptgb.Scan(ctx, &v); err != nil {
@@ -727,7 +735,7 @@ func (ptgb *ProjectTypeGroupBy) Float64s(ctx context.Context) ([]float64, error)
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) Float64sX(ctx context.Context) []float64 {
+func (ptgb *ProjectTemplateGroupBy) Float64sX(ctx context.Context) []float64 {
 	v, err := ptgb.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -736,7 +744,7 @@ func (ptgb *ProjectTypeGroupBy) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Float64(ctx context.Context) (_ float64, err error) {
+func (ptgb *ProjectTemplateGroupBy) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = ptgb.Float64s(ctx); err != nil {
 		return
@@ -745,15 +753,15 @@ func (ptgb *ProjectTypeGroupBy) Float64(ctx context.Context) (_ float64, err err
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeGroupBy.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateGroupBy.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) Float64X(ctx context.Context) float64 {
+func (ptgb *ProjectTemplateGroupBy) Float64X(ctx context.Context) float64 {
 	v, err := ptgb.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -762,9 +770,9 @@ func (ptgb *ProjectTypeGroupBy) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Bools(ctx context.Context) ([]bool, error) {
+func (ptgb *ProjectTemplateGroupBy) Bools(ctx context.Context) ([]bool, error) {
 	if len(ptgb.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeGroupBy.Bools is not achievable when grouping more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateGroupBy.Bools is not achievable when grouping more than 1 field")
 	}
 	var v []bool
 	if err := ptgb.Scan(ctx, &v); err != nil {
@@ -774,7 +782,7 @@ func (ptgb *ProjectTypeGroupBy) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) BoolsX(ctx context.Context) []bool {
+func (ptgb *ProjectTemplateGroupBy) BoolsX(ctx context.Context) []bool {
 	v, err := ptgb.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -783,7 +791,7 @@ func (ptgb *ProjectTypeGroupBy) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from group-by. It is only allowed when querying group-by with one field.
-func (ptgb *ProjectTypeGroupBy) Bool(ctx context.Context) (_ bool, err error) {
+func (ptgb *ProjectTemplateGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = ptgb.Bools(ctx); err != nil {
 		return
@@ -792,15 +800,15 @@ func (ptgb *ProjectTypeGroupBy) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeGroupBy.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateGroupBy.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (ptgb *ProjectTypeGroupBy) BoolX(ctx context.Context) bool {
+func (ptgb *ProjectTemplateGroupBy) BoolX(ctx context.Context) bool {
 	v, err := ptgb.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -808,7 +816,7 @@ func (ptgb *ProjectTypeGroupBy) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (ptgb *ProjectTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+func (ptgb *ProjectTemplateGroupBy) sqlScan(ctx context.Context, v interface{}) error {
 	rows := &sql.Rows{}
 	query, args := ptgb.sqlQuery().Query()
 	if err := ptgb.driver.Query(ctx, query, args, rows); err != nil {
@@ -818,7 +826,7 @@ func (ptgb *ProjectTypeGroupBy) sqlScan(ctx context.Context, v interface{}) erro
 	return sql.ScanSlice(rows, v)
 }
 
-func (ptgb *ProjectTypeGroupBy) sqlQuery() *sql.Selector {
+func (ptgb *ProjectTemplateGroupBy) sqlQuery() *sql.Selector {
 	selector := ptgb.sql
 	columns := make([]string, 0, len(ptgb.fields)+len(ptgb.fns))
 	columns = append(columns, ptgb.fields...)
@@ -828,8 +836,8 @@ func (ptgb *ProjectTypeGroupBy) sqlQuery() *sql.Selector {
 	return selector.Select(columns...).GroupBy(ptgb.fields...)
 }
 
-// ProjectTypeSelect is the builder for select fields of ProjectType entities.
-type ProjectTypeSelect struct {
+// ProjectTemplateSelect is the builder for select fields of ProjectTemplate entities.
+type ProjectTemplateSelect struct {
 	config
 	fields []string
 	// intermediate query (i.e. traversal path).
@@ -838,7 +846,7 @@ type ProjectTypeSelect struct {
 }
 
 // Scan applies the selector query and scan the result into the given value.
-func (pts *ProjectTypeSelect) Scan(ctx context.Context, v interface{}) error {
+func (pts *ProjectTemplateSelect) Scan(ctx context.Context, v interface{}) error {
 	query, err := pts.path(ctx)
 	if err != nil {
 		return err
@@ -848,16 +856,16 @@ func (pts *ProjectTypeSelect) Scan(ctx context.Context, v interface{}) error {
 }
 
 // ScanX is like Scan, but panics if an error occurs.
-func (pts *ProjectTypeSelect) ScanX(ctx context.Context, v interface{}) {
+func (pts *ProjectTemplateSelect) ScanX(ctx context.Context, v interface{}) {
 	if err := pts.Scan(ctx, v); err != nil {
 		panic(err)
 	}
 }
 
 // Strings returns list of strings from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Strings(ctx context.Context) ([]string, error) {
+func (pts *ProjectTemplateSelect) Strings(ctx context.Context) ([]string, error) {
 	if len(pts.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeSelect.Strings is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateSelect.Strings is not achievable when selecting more than 1 field")
 	}
 	var v []string
 	if err := pts.Scan(ctx, &v); err != nil {
@@ -867,7 +875,7 @@ func (pts *ProjectTypeSelect) Strings(ctx context.Context) ([]string, error) {
 }
 
 // StringsX is like Strings, but panics if an error occurs.
-func (pts *ProjectTypeSelect) StringsX(ctx context.Context) []string {
+func (pts *ProjectTemplateSelect) StringsX(ctx context.Context) []string {
 	v, err := pts.Strings(ctx)
 	if err != nil {
 		panic(err)
@@ -876,7 +884,7 @@ func (pts *ProjectTypeSelect) StringsX(ctx context.Context) []string {
 }
 
 // String returns a single string from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) String(ctx context.Context) (_ string, err error) {
+func (pts *ProjectTemplateSelect) String(ctx context.Context) (_ string, err error) {
 	var v []string
 	if v, err = pts.Strings(ctx); err != nil {
 		return
@@ -885,15 +893,15 @@ func (pts *ProjectTypeSelect) String(ctx context.Context) (_ string, err error) 
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeSelect.Strings returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateSelect.Strings returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // StringX is like String, but panics if an error occurs.
-func (pts *ProjectTypeSelect) StringX(ctx context.Context) string {
+func (pts *ProjectTemplateSelect) StringX(ctx context.Context) string {
 	v, err := pts.String(ctx)
 	if err != nil {
 		panic(err)
@@ -902,9 +910,9 @@ func (pts *ProjectTypeSelect) StringX(ctx context.Context) string {
 }
 
 // Ints returns list of ints from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Ints(ctx context.Context) ([]int, error) {
+func (pts *ProjectTemplateSelect) Ints(ctx context.Context) ([]int, error) {
 	if len(pts.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeSelect.Ints is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateSelect.Ints is not achievable when selecting more than 1 field")
 	}
 	var v []int
 	if err := pts.Scan(ctx, &v); err != nil {
@@ -914,7 +922,7 @@ func (pts *ProjectTypeSelect) Ints(ctx context.Context) ([]int, error) {
 }
 
 // IntsX is like Ints, but panics if an error occurs.
-func (pts *ProjectTypeSelect) IntsX(ctx context.Context) []int {
+func (pts *ProjectTemplateSelect) IntsX(ctx context.Context) []int {
 	v, err := pts.Ints(ctx)
 	if err != nil {
 		panic(err)
@@ -923,7 +931,7 @@ func (pts *ProjectTypeSelect) IntsX(ctx context.Context) []int {
 }
 
 // Int returns a single int from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Int(ctx context.Context) (_ int, err error) {
+func (pts *ProjectTemplateSelect) Int(ctx context.Context) (_ int, err error) {
 	var v []int
 	if v, err = pts.Ints(ctx); err != nil {
 		return
@@ -932,15 +940,15 @@ func (pts *ProjectTypeSelect) Int(ctx context.Context) (_ int, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeSelect.Ints returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateSelect.Ints returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // IntX is like Int, but panics if an error occurs.
-func (pts *ProjectTypeSelect) IntX(ctx context.Context) int {
+func (pts *ProjectTemplateSelect) IntX(ctx context.Context) int {
 	v, err := pts.Int(ctx)
 	if err != nil {
 		panic(err)
@@ -949,9 +957,9 @@ func (pts *ProjectTypeSelect) IntX(ctx context.Context) int {
 }
 
 // Float64s returns list of float64s from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Float64s(ctx context.Context) ([]float64, error) {
+func (pts *ProjectTemplateSelect) Float64s(ctx context.Context) ([]float64, error) {
 	if len(pts.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeSelect.Float64s is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateSelect.Float64s is not achievable when selecting more than 1 field")
 	}
 	var v []float64
 	if err := pts.Scan(ctx, &v); err != nil {
@@ -961,7 +969,7 @@ func (pts *ProjectTypeSelect) Float64s(ctx context.Context) ([]float64, error) {
 }
 
 // Float64sX is like Float64s, but panics if an error occurs.
-func (pts *ProjectTypeSelect) Float64sX(ctx context.Context) []float64 {
+func (pts *ProjectTemplateSelect) Float64sX(ctx context.Context) []float64 {
 	v, err := pts.Float64s(ctx)
 	if err != nil {
 		panic(err)
@@ -970,7 +978,7 @@ func (pts *ProjectTypeSelect) Float64sX(ctx context.Context) []float64 {
 }
 
 // Float64 returns a single float64 from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Float64(ctx context.Context) (_ float64, err error) {
+func (pts *ProjectTemplateSelect) Float64(ctx context.Context) (_ float64, err error) {
 	var v []float64
 	if v, err = pts.Float64s(ctx); err != nil {
 		return
@@ -979,15 +987,15 @@ func (pts *ProjectTypeSelect) Float64(ctx context.Context) (_ float64, err error
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeSelect.Float64s returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateSelect.Float64s returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // Float64X is like Float64, but panics if an error occurs.
-func (pts *ProjectTypeSelect) Float64X(ctx context.Context) float64 {
+func (pts *ProjectTemplateSelect) Float64X(ctx context.Context) float64 {
 	v, err := pts.Float64(ctx)
 	if err != nil {
 		panic(err)
@@ -996,9 +1004,9 @@ func (pts *ProjectTypeSelect) Float64X(ctx context.Context) float64 {
 }
 
 // Bools returns list of bools from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Bools(ctx context.Context) ([]bool, error) {
+func (pts *ProjectTemplateSelect) Bools(ctx context.Context) ([]bool, error) {
 	if len(pts.fields) > 1 {
-		return nil, errors.New("ent: ProjectTypeSelect.Bools is not achievable when selecting more than 1 field")
+		return nil, errors.New("ent: ProjectTemplateSelect.Bools is not achievable when selecting more than 1 field")
 	}
 	var v []bool
 	if err := pts.Scan(ctx, &v); err != nil {
@@ -1008,7 +1016,7 @@ func (pts *ProjectTypeSelect) Bools(ctx context.Context) ([]bool, error) {
 }
 
 // BoolsX is like Bools, but panics if an error occurs.
-func (pts *ProjectTypeSelect) BoolsX(ctx context.Context) []bool {
+func (pts *ProjectTemplateSelect) BoolsX(ctx context.Context) []bool {
 	v, err := pts.Bools(ctx)
 	if err != nil {
 		panic(err)
@@ -1017,7 +1025,7 @@ func (pts *ProjectTypeSelect) BoolsX(ctx context.Context) []bool {
 }
 
 // Bool returns a single bool from selector. It is only allowed when selecting one field.
-func (pts *ProjectTypeSelect) Bool(ctx context.Context) (_ bool, err error) {
+func (pts *ProjectTemplateSelect) Bool(ctx context.Context) (_ bool, err error) {
 	var v []bool
 	if v, err = pts.Bools(ctx); err != nil {
 		return
@@ -1026,15 +1034,15 @@ func (pts *ProjectTypeSelect) Bool(ctx context.Context) (_ bool, err error) {
 	case 1:
 		return v[0], nil
 	case 0:
-		err = &NotFoundError{projecttype.Label}
+		err = &NotFoundError{projecttemplate.Label}
 	default:
-		err = fmt.Errorf("ent: ProjectTypeSelect.Bools returned %d results when one was expected", len(v))
+		err = fmt.Errorf("ent: ProjectTemplateSelect.Bools returned %d results when one was expected", len(v))
 	}
 	return
 }
 
 // BoolX is like Bool, but panics if an error occurs.
-func (pts *ProjectTypeSelect) BoolX(ctx context.Context) bool {
+func (pts *ProjectTemplateSelect) BoolX(ctx context.Context) bool {
 	v, err := pts.Bool(ctx)
 	if err != nil {
 		panic(err)
@@ -1042,7 +1050,7 @@ func (pts *ProjectTypeSelect) BoolX(ctx context.Context) bool {
 	return v
 }
 
-func (pts *ProjectTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+func (pts *ProjectTemplateSelect) sqlScan(ctx context.Context, v interface{}) error {
 	rows := &sql.Rows{}
 	query, args := pts.sqlQuery().Query()
 	if err := pts.driver.Query(ctx, query, args, rows); err != nil {
@@ -1052,7 +1060,7 @@ func (pts *ProjectTypeSelect) sqlScan(ctx context.Context, v interface{}) error 
 	return sql.ScanSlice(rows, v)
 }
 
-func (pts *ProjectTypeSelect) sqlQuery() sql.Querier {
+func (pts *ProjectTemplateSelect) sqlQuery() sql.Querier {
 	selector := pts.sql
 	selector.Select(selector.Columns(pts.fields...)...)
 	return selector

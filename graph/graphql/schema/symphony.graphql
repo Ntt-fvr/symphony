@@ -1978,6 +1978,13 @@ directive @list(
   uniqueItems: Boolean
 ) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION | ARGUMENT_DEFINITION
 
+type ProjectTemplate {
+  name: String!
+  description: String
+  properties: [PropertyType]!
+  workOrders: [WorkOrderDefinition]!
+}
+
 type ProjectType implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
@@ -2117,6 +2124,7 @@ type Project implements Node {
   description: String
   createdBy: User
   type: ProjectType!
+  template: ProjectTemplate
   location: Location
   workOrders: [WorkOrder!]!
   numberOfWorkOrders: Int!

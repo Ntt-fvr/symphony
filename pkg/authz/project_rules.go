@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
+
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -115,6 +117,27 @@ func isCreatorChanged(ctx context.Context, m *ent.ProjectMutation) (bool, error)
 	return false, nil
 }
 
+func allowOrSkipWorkOrderDefinition(ctx context.Context, client *ent.Client, workOrderDefinitionID int) error {
+	workOrderDefinition, err := client.WorkOrderDefinition.Query().
+		Where(workorderdefinition.ID(workOrderDefinitionID)).
+		WithProjectTemplate().
+		WithProjectType().
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return privacy.Denyf("failed to query work order definition: %w", err)
+		}
+		return privacy.Skip
+	}
+	switch {
+	case workOrderDefinition.Edges.ProjectTemplate != nil:
+		return privacy.Allow
+	case workOrderDefinition.Edges.ProjectType != nil:
+		return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+	}
+	return privacy.Skip
+}
+
 // ProjectWritePolicyRule grants write permission to project based on policy.
 func ProjectWritePolicyRule() privacy.MutationRule {
 	return privacy.ProjectMutationRuleFunc(func(ctx context.Context, m *ent.ProjectMutation) error {
@@ -196,7 +219,21 @@ func ProjectTypeWritePolicyRule() privacy.MutationRule {
 
 // WorkOrderDefinitionWritePolicyRule grants write permission to work order definition based on policy.
 func WorkOrderDefinitionWritePolicyRule() privacy.MutationRule {
-	return privacy.MutationRuleFunc(func(ctx context.Context, m ent.Mutation) error {
-		return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+	return privacy.WorkOrderDefinitionMutationRuleFunc(func(ctx context.Context, m *ent.WorkOrderDefinitionMutation) error {
+		if m.Op().Is(ent.OpCreate) {
+			if _, exists := m.ProjectTemplateID(); exists {
+				return privacy.Allow
+			}
+			if _, exists := m.ProjectTypeID(); exists {
+				return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+			}
+		} else {
+			workOrderDefinitionID, exists := m.ID()
+			if !exists {
+				return privacy.Skip
+			}
+			return allowOrSkipWorkOrderDefinition(ctx, m.Client(), workOrderDefinitionID)
+		}
+		return privacy.Skip
 	})
 }

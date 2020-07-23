@@ -11,11 +11,12 @@ import (
 	"strings"
 
 	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 )
 
-// ProjectType is the model entity for the ProjectType schema.
-type ProjectType struct {
+// ProjectTemplate is the model entity for the ProjectTemplate schema.
+type ProjectTemplate struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -24,18 +25,19 @@ type ProjectType struct {
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ProjectTypeQuery when eager-loading is set.
-	Edges ProjectTypeEdges `json:"edges"`
+	// The values are being populated by the ProjectTemplateQuery when eager-loading is set.
+	Edges                 ProjectTemplateEdges `json:"edges"`
+	project_template_type *int
 }
 
-// ProjectTypeEdges holds the relations/edges for other nodes in the graph.
-type ProjectTypeEdges struct {
+// ProjectTemplateEdges holds the relations/edges for other nodes in the graph.
+type ProjectTemplateEdges struct {
 	// Properties holds the value of the properties edge.
 	Properties []*PropertyType `gqlgen:"properties"`
 	// WorkOrders holds the value of the work_orders edge.
 	WorkOrders []*WorkOrderDefinition `gqlgen:"workOrders"`
-	// Projects holds the value of the projects edge.
-	Projects []*Project `gqlgen:"projects"`
+	// Type holds the value of the type edge.
+	Type *ProjectType
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -43,7 +45,7 @@ type ProjectTypeEdges struct {
 
 // PropertiesOrErr returns the Properties value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProjectTypeEdges) PropertiesOrErr() ([]*PropertyType, error) {
+func (e ProjectTemplateEdges) PropertiesOrErr() ([]*PropertyType, error) {
 	if e.loadedTypes[0] {
 		return e.Properties, nil
 	}
@@ -52,24 +54,29 @@ func (e ProjectTypeEdges) PropertiesOrErr() ([]*PropertyType, error) {
 
 // WorkOrdersOrErr returns the WorkOrders value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProjectTypeEdges) WorkOrdersOrErr() ([]*WorkOrderDefinition, error) {
+func (e ProjectTemplateEdges) WorkOrdersOrErr() ([]*WorkOrderDefinition, error) {
 	if e.loadedTypes[1] {
 		return e.WorkOrders, nil
 	}
 	return nil, &NotLoadedError{edge: "work_orders"}
 }
 
-// ProjectsOrErr returns the Projects value or an error if the edge
-// was not loaded in eager-loading.
-func (e ProjectTypeEdges) ProjectsOrErr() ([]*Project, error) {
+// TypeOrErr returns the Type value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ProjectTemplateEdges) TypeOrErr() (*ProjectType, error) {
 	if e.loadedTypes[2] {
-		return e.Projects, nil
+		if e.Type == nil {
+			// The edge type was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: projecttype.Label}
+		}
+		return e.Type, nil
 	}
-	return nil, &NotLoadedError{edge: "projects"}
+	return nil, &NotLoadedError{edge: "type"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ProjectType) scanValues() []interface{} {
+func (*ProjectTemplate) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
@@ -77,10 +84,17 @@ func (*ProjectType) scanValues() []interface{} {
 	}
 }
 
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*ProjectTemplate) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // project_template_type
+	}
+}
+
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ProjectType fields.
-func (pt *ProjectType) assignValues(values ...interface{}) error {
-	if m, n := len(values), len(projecttype.Columns); m < n {
+// to the ProjectTemplate fields.
+func (pt *ProjectTemplate) assignValues(values ...interface{}) error {
+	if m, n := len(values), len(projecttemplate.Columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	value, ok := values[0].(*sql.NullInt64)
@@ -100,46 +114,55 @@ func (pt *ProjectType) assignValues(values ...interface{}) error {
 		pt.Description = new(string)
 		*pt.Description = value.String
 	}
+	values = values[2:]
+	if len(values) == len(projecttemplate.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field project_template_type", value)
+		} else if value.Valid {
+			pt.project_template_type = new(int)
+			*pt.project_template_type = int(value.Int64)
+		}
+	}
 	return nil
 }
 
-// QueryProperties queries the properties edge of the ProjectType.
-func (pt *ProjectType) QueryProperties() *PropertyTypeQuery {
-	return (&ProjectTypeClient{config: pt.config}).QueryProperties(pt)
+// QueryProperties queries the properties edge of the ProjectTemplate.
+func (pt *ProjectTemplate) QueryProperties() *PropertyTypeQuery {
+	return (&ProjectTemplateClient{config: pt.config}).QueryProperties(pt)
 }
 
-// QueryWorkOrders queries the work_orders edge of the ProjectType.
-func (pt *ProjectType) QueryWorkOrders() *WorkOrderDefinitionQuery {
-	return (&ProjectTypeClient{config: pt.config}).QueryWorkOrders(pt)
+// QueryWorkOrders queries the work_orders edge of the ProjectTemplate.
+func (pt *ProjectTemplate) QueryWorkOrders() *WorkOrderDefinitionQuery {
+	return (&ProjectTemplateClient{config: pt.config}).QueryWorkOrders(pt)
 }
 
-// QueryProjects queries the projects edge of the ProjectType.
-func (pt *ProjectType) QueryProjects() *ProjectQuery {
-	return (&ProjectTypeClient{config: pt.config}).QueryProjects(pt)
+// QueryType queries the type edge of the ProjectTemplate.
+func (pt *ProjectTemplate) QueryType() *ProjectTypeQuery {
+	return (&ProjectTemplateClient{config: pt.config}).QueryType(pt)
 }
 
-// Update returns a builder for updating this ProjectType.
-// Note that, you need to call ProjectType.Unwrap() before calling this method, if this ProjectType
+// Update returns a builder for updating this ProjectTemplate.
+// Note that, you need to call ProjectTemplate.Unwrap() before calling this method, if this ProjectTemplate
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (pt *ProjectType) Update() *ProjectTypeUpdateOne {
-	return (&ProjectTypeClient{config: pt.config}).UpdateOne(pt)
+func (pt *ProjectTemplate) Update() *ProjectTemplateUpdateOne {
+	return (&ProjectTemplateClient{config: pt.config}).UpdateOne(pt)
 }
 
 // Unwrap unwraps the entity that was returned from a transaction after it was closed,
 // so that all next queries will be executed through the driver which created the transaction.
-func (pt *ProjectType) Unwrap() *ProjectType {
+func (pt *ProjectTemplate) Unwrap() *ProjectTemplate {
 	tx, ok := pt.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ProjectType is not a transactional entity")
+		panic("ent: ProjectTemplate is not a transactional entity")
 	}
 	pt.config.driver = tx.drv
 	return pt
 }
 
 // String implements the fmt.Stringer.
-func (pt *ProjectType) String() string {
+func (pt *ProjectTemplate) String() string {
 	var builder strings.Builder
-	builder.WriteString("ProjectType(")
+	builder.WriteString("ProjectTemplate(")
 	builder.WriteString(fmt.Sprintf("id=%v", pt.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(pt.Name)
@@ -151,10 +174,10 @@ func (pt *ProjectType) String() string {
 	return builder.String()
 }
 
-// ProjectTypes is a parsable slice of ProjectType.
-type ProjectTypes []*ProjectType
+// ProjectTemplates is a parsable slice of ProjectTemplate.
+type ProjectTemplates []*ProjectTemplate
 
-func (pt ProjectTypes) config(cfg config) {
+func (pt ProjectTemplates) config(cfg config) {
 	for _i := range pt {
 		pt[_i].config = cfg
 	}

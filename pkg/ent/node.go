@@ -41,6 +41,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -2693,7 +2694,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pr.ID,
 		Type:   "Project",
 		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 6),
+		Edges:  make([]*Edge, 7),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pr.CreateTime); err != nil {
@@ -2740,13 +2741,24 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 		Type: "ProjectType",
 		Name: "type",
 	}
+	ids, err = pr.QueryTemplate().
+		Select(projecttemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "ProjectTemplate",
+		Name: "template",
+	}
 	ids, err = pr.QueryLocation().
 		Select(location.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
+	node.Edges[2] = &Edge{
 		IDs:  ids,
 		Type: "Location",
 		Name: "location",
@@ -2757,7 +2769,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
+	node.Edges[3] = &Edge{
 		IDs:  ids,
 		Type: "Comment",
 		Name: "comments",
@@ -2768,7 +2780,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
+	node.Edges[4] = &Edge{
 		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "work_orders",
@@ -2779,7 +2791,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
+	node.Edges[5] = &Edge{
 		IDs:  ids,
 		Type: "Property",
 		Name: "properties",
@@ -2790,7 +2802,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[5] = &Edge{
+	node.Edges[6] = &Edge{
 		IDs:  ids,
 		Type: "User",
 		Name: "creator",
@@ -2810,34 +2822,18 @@ func (pr *ProjectMutation) Node(ctx context.Context) (node *Node, err error) {
 	return ent.Node(ctx)
 }
 
-func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
+func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
-		Type:   "ProjectType",
-		Fields: make([]*Field, 4),
+		Type:   "ProjectTemplate",
+		Fields: make([]*Field, 2),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(pt.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(pt.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(pt.Name); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[0] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -2845,30 +2841,19 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pt.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[1] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
 	}
 	var ids []int
-	ids, err = pt.QueryProjects().
-		Select(project.FieldID).
-		Ints(ctx)
-	if err != nil {
-		return nil, err
-	}
-	node.Edges[0] = &Edge{
-		IDs:  ids,
-		Type: "Project",
-		Name: "projects",
-	}
 	ids, err = pt.QueryProperties().
 		Select(propertytype.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[1] = &Edge{
+	node.Edges[0] = &Edge{
 		IDs:  ids,
 		Type: "PropertyType",
 		Name: "properties",
@@ -2879,10 +2864,94 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[2] = &Edge{
+	node.Edges[1] = &Edge{
 		IDs:  ids,
 		Type: "WorkOrderDefinition",
 		Name: "work_orders",
+	}
+	ids, err = pt.QueryType().
+		Select(projecttype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "ProjectType",
+		Name: "type",
+	}
+	return node, nil
+}
+
+func (pt *ProjectTemplateMutation) Node(ctx context.Context) (node *Node, err error) {
+	id, exists := pt.ID()
+	if !exists {
+		return nil, nil
+	}
+	ent, err := pt.Client().ProjectTemplate.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return ent.Node(ctx)
+}
+
+func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     pt.ID,
+		Type:   "ProjectType",
+		Fields: make([]*Field, 2),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(pt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = pt.QueryProperties().
+		Select(propertytype.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "PropertyType",
+		Name: "properties",
+	}
+	ids, err = pt.QueryWorkOrders().
+		Select(workorderdefinition.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "WorkOrderDefinition",
+		Name: "work_orders",
+	}
+	ids, err = pt.QueryProjects().
+		Select(project.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "Project",
+		Name: "projects",
 	}
 	return node, nil
 }
@@ -3151,7 +3220,7 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		ID:     pt.ID,
 		Type:   "PropertyType",
 		Fields: make([]*Field, 20),
-		Edges:  make([]*Edge, 9),
+		Edges:  make([]*Edge, 10),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(pt.CreateTime); err != nil {
@@ -3413,6 +3482,17 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "ProjectType",
 		Name: "project_type",
+	}
+	ids, err = pt.QueryProjectTemplate().
+		Select(projecttemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[9] = &Edge{
+		IDs:  ids,
+		Type: "ProjectTemplate",
+		Name: "project_template",
 	}
 	return node, nil
 }
@@ -5310,7 +5390,7 @@ func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error
 		ID:     wod.ID,
 		Type:   "WorkOrderDefinition",
 		Fields: make([]*Field, 3),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(wod.CreateTime); err != nil {
@@ -5359,6 +5439,17 @@ func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error
 		IDs:  ids,
 		Type: "ProjectType",
 		Name: "project_type",
+	}
+	ids, err = wod.QueryProjectTemplate().
+		Select(projecttemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "ProjectTemplate",
+		Name: "project_template",
 	}
 	return node, nil
 }
@@ -5783,6 +5874,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.Project.Query().
 			Where(project.ID(id)).
 			CollectFields(ctx, "Project").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case projecttemplate.Table:
+		n, err := c.ProjectTemplate.Query().
+			Where(projecttemplate.ID(id)).
+			CollectFields(ctx, "ProjectTemplate").
 			Only(ctx)
 		if err != nil {
 			return nil, err

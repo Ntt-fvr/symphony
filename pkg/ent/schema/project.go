@@ -12,22 +12,73 @@ import (
 	"github.com/facebookincubator/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
+
+// ProjectTemplateMixin defines the project template mixin schema.
+type ProjectTemplateMixin struct {
+	mixin.Schema
+}
+
+// Fields returns project template mixin fields.
+func (ProjectTemplateMixin) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("name").
+			NotEmpty(),
+		field.Text("description").
+			Optional().
+			Nillable(),
+	}
+}
+
+// Edges returns project template mixin edges.
+func (ProjectTemplateMixin) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("properties", PropertyType.Type).
+			StructTag(`gqlgen:"properties"`),
+		edge.To("work_orders", WorkOrderDefinition.Type).
+			StructTag(`gqlgen:"workOrders"`),
+	}
+}
+
+// ProjectTemplate defines the project template schema.
+type ProjectTemplate struct {
+	schema
+}
+
+// Mixin returns project template mixins.
+func (ProjectTemplate) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		ProjectTemplateMixin{},
+	}
+}
+
+// Edges returns project template edges.
+func (ProjectTemplate) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("type", ProjectType.Type).
+			Unique(),
+	}
+}
+
+// Policy returns work order template policy.
+func (ProjectTemplate) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
+}
 
 // ProjectType defines the project type schema.
 type ProjectType struct {
 	schema
 }
 
-// Fields returns project fields.
-func (ProjectType) Fields() []ent.Field {
-	return []ent.Field{
-		field.String("name").
-			NotEmpty().
-			Unique(),
-		field.Text("description").
-			Optional().
-			Nillable(),
+// Mixin returns work project type mixins.
+func (ProjectType) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		ProjectTemplateMixin{},
 	}
 }
 
@@ -36,10 +87,13 @@ func (ProjectType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("projects", Project.Type).
 			StructTag(`gqlgen:"projects"`),
-		edge.To("properties", PropertyType.Type).
-			StructTag(`gqlgen:"properties"`),
-		edge.To("work_orders", WorkOrderDefinition.Type).
-			StructTag(`gqlgen:"workOrders"`),
+	}
+}
+
+// Indexes returns work project type indexes.
+func (ProjectType) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("name").Unique(),
 	}
 }
 
@@ -80,6 +134,9 @@ func (Project) Edges() []ent.Edge {
 			Unique().
 			Required().
 			StructTag(`gqlgen:"type"`),
+		edge.To("template", ProjectTemplate.Type).
+			Unique().
+			StructTag(`gqlgen:"template"`),
 		edge.To("location", Location.Type).
 			Unique().
 			StructTag(`gqlgen:"location"`),
@@ -156,6 +213,9 @@ func (WorkOrderDefinition) Edges() []ent.Edge {
 			Unique().
 			StructTag(`gqlgen:"type"`),
 		edge.From("project_type", ProjectType.Type).
+			Ref("work_orders").
+			Unique(),
+		edge.From("project_template", ProjectTemplate.Type).
 			Ref("work_orders").
 			Unique(),
 	}
