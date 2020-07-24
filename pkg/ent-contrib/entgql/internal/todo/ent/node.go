@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // Code generated (@generated) by entc, DO NOT EDIT.
 
 package ent
@@ -107,18 +111,6 @@ func (t *Todo) Node(ctx context.Context) (node *Node, err error) {
 		Name: "children",
 	}
 	return node, nil
-}
-
-func (t *TodoMutation) Node(ctx context.Context) (node *Node, err error) {
-	id, exists := t.ID()
-	if !exists {
-		return nil, nil
-	}
-	ent, err := t.Client().Todo.Get(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-	return ent.Node(ctx)
 }
 
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {

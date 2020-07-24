@@ -162,7 +162,7 @@ func (s *todoTestSuite) TestQueryAll() {
 	)
 	for i, edge := range rsp.Todos.Edges {
 		s.Assert().Equal(strconv.Itoa(i+1), edge.Node.ID)
-		s.Assert().EqualValues(todo.StatusCOMPLETED, edge.Node.Status)
+		s.Assert().EqualValues(todo.StatusCompleted, edge.Node.Status)
 		s.Assert().NotEmpty(edge.Cursor)
 	}
 }
@@ -622,7 +622,7 @@ func (s *todoTestSuite) TestConnCollection() {
 
 func (s *todoTestSuite) TestEnumEncoding() {
 	s.Run("Encode", func() {
-		const status = todo.StatusCOMPLETED
+		const status = todo.StatusCompleted
 		s.Assert().Implements((*graphql.Marshaler)(nil), status)
 		var b strings.Builder
 		status.MarshalGQL(&b)
@@ -634,7 +634,7 @@ func (s *todoTestSuite) TestEnumEncoding() {
 		s.Assert().EqualValues(status, str)
 	})
 	s.Run("Decode", func() {
-		const want = todo.StatusINPROGRESS
+		const want = todo.StatusInProgress
 		var got todo.Status
 		s.Assert().Implements((*graphql.Unmarshaler)(nil), &got)
 		err := got.UnmarshalGQL(want.String())

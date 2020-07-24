@@ -6,10 +6,11 @@ package event
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
@@ -17,10 +18,10 @@ import (
 )
 
 func LogHook(handler func(context.Context, LogEntry) error, logger log.Logger) ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
+	hk := func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			v := viewer.FromContext(ctx)
-			if m.Op().Is(ent.OpDelete|ent.OpUpdate) || v == nil {
+			if v == nil {
 				return next.Mutate(ctx, m)
 			}
 			entry := LogEntry{
@@ -32,14 +33,21 @@ func LogHook(handler func(context.Context, LogEntry) error, logger log.Logger) e
 			if v, ok := v.(*viewer.UserViewer); ok {
 				entry.UserID = &v.User().ID
 			}
-			if !m.Op().Is(ent.OpCreate) {
-				if prevNoder, ok := m.(ent.Noder); ok {
-					node, err := prevNoder.Node(privacy.DecisionContext(ctx, privacy.Allow))
-					if err != nil {
-						if !ent.IsNotFound(err) {
-							logger.For(ctx).Error("query mutation previous value", zap.Error(err))
-						}
-						return next.Mutate(ctx, m)
+			if m.Op().Is(ent.OpUpdateOne | ent.OpDeleteOne) {
+				mutation := m.(interface {
+					ID() (int, bool)
+					Client() *ent.Client
+				})
+				if id, exists := mutation.ID(); exists {
+					node, err := mutation.Client().Node(ctx, id)
+					if err != nil && !ent.IsNotFound(err) {
+						logger.For(ctx).
+							Error("cannot get pre mutation node",
+								zap.Stringer("op", m.Op()),
+								zap.Int("id", id),
+								zap.Error(err),
+							)
+						return nil, err
 					}
 					entry.PrevState = node
 				}
@@ -48,21 +56,27 @@ func LogHook(handler func(context.Context, LogEntry) error, logger log.Logger) e
 			if err != nil {
 				return value, err
 			}
-			if !m.Op().Is(ent.OpDeleteOne) {
-				if currNoder, ok := value.(ent.Noder); ok {
-					node, err := currNoder.Node(privacy.DecisionContext(ctx, privacy.Allow))
-					if err != nil {
-						logger.For(ctx).Error("query mutation current value", zap.Error(err))
-						return value, err
-					}
-					entry.CurrState = node
+			if m.Op().Is(ent.OpCreate | ent.OpUpdateOne) {
+				node, err := value.(ent.Noder).Node(ctx)
+				if err != nil {
+					logger.For(ctx).
+						Error("cannot get post mutation node",
+							zap.Stringer("op", m.Op()),
+							zap.Error(err),
+						)
+					return nil, fmt.Errorf("cannot get post mutation node: %w", err)
 				}
+				entry.CurrState = node
 			}
-			err = handler(ctx, entry)
-			if err != nil {
+			if err := handler(ctx, entry); err != nil {
+				logger.For(ctx).
+					Error("event handler failed",
+						zap.Error(err),
+					)
 				return nil, err
 			}
 			return value, nil
 		})
 	}
+	return hook.Unless(hk, ent.OpUpdate|ent.OpDelete)
 }

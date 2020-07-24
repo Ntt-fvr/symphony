@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // Code generated (@generated) by entc, DO NOT EDIT.
 
 package todo
@@ -68,18 +72,18 @@ type Status string
 
 // Status values.
 const (
-	StatusINPROGRESS Status = "IN_PROGRESS"
-	StatusCOMPLETED  Status = "COMPLETED"
+	StatusCompleted  Status = "COMPLETED"
+	StatusInProgress Status = "IN_PROGRESS"
 )
 
 func (s Status) String() string {
 	return string(s)
 }
 
-// StatusValidator is a validator for the "s" field enum values. It is called by the builders before save.
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusINPROGRESS, StatusCOMPLETED:
+	case StatusCompleted, StatusInProgress:
 		return nil
 	default:
 		return fmt.Errorf("todo: invalid enum value for status field: %q", s)

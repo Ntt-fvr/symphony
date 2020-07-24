@@ -17,7 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/event"
-	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -26,8 +26,11 @@ import (
 
 func TestAddWorkOrderActivities(t *testing.T) {
 	r := newTestResolver(t)
-	r.client.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
-	tim := time.Now()
+	r.client.Use(event.LogHook(
+		handler.HandleActivityLog,
+		logtest.NewTestLogger(t),
+	))
+	now := time.Now()
 
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
@@ -63,7 +66,7 @@ func TestAddWorkOrderActivities(t *testing.T) {
 			timestampInt, err := strconv.ParseInt(a.NewValue, 10, 64)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
-			require.WithinDuration(t, time.Unix(timestampInt, 0), tim, time.Second*3)
+			require.WithinDuration(t, time.Unix(timestampInt, 0), now, time.Second*3)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		case activity.ChangedFieldOwner:
@@ -91,7 +94,9 @@ func TestAddWorkOrderActivities(t *testing.T) {
 
 func TestEditWorkOrderActivities(t *testing.T) {
 	r := newTestResolver(t)
-	r.client.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
+	r.client.Use(event.LogHook(
+		handler.HandleActivityLog, logtest.NewTestLogger(t),
+	))
 
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
