@@ -81,23 +81,3 @@ resource "aws_route53_zone" "magma" {
 data "aws_route53_zone" "magma" {
   name = local.magma_domain_name
 }
-
-resource "aws_route53_record" "symphony_signup" {
-  zone_id = aws_route53_zone.symphony.id
-  name    = format("signup.%s", local.symphony_domain_name)
-  type    = "A"
-  ttl     = 300
-  records = [
-    "108.168.157.70",
-  ]
-}
-
-resource "aws_route53_record" "symphony_www_signup" {
-  zone_id = aws_route53_zone.symphony.id
-  name    = format("www.%s", aws_route53_record.symphony_signup.name)
-  type    = "CNAME"
-  ttl     = 300
-  records = [
-    aws_route53_record.symphony_signup.name
-  ]
-}
