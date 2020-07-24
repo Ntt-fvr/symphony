@@ -4,6 +4,11 @@ resource "random_password" "orc8r_db" {
   special = false
 }
 
+resource "random_password" "magmalte_db" {
+  length  = 20
+  special = false
+}
+
 # postgres db for orc8r
 module "orc8r_db" {
   source  = "terraform-aws-modules/rds/aws"
@@ -47,6 +52,42 @@ module "orc8r_db" {
   tags = local.tags
 }
 
+# maria db for magmalte NMS
+module magmalte_db {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "~> 2.0"
+
+  family                     = "mysql5.7"
+  major_engine_version       = "5.7"
+  engine                     = "mysql"
+  engine_version             = "5.7"
+  auto_minor_version_upgrade = true
+  instance_class             = "db.t3.medium"
+  allocated_storage          = 16
+
+  identifier = "magmalte"
+  name       = "magma"
+  username   = "magma"
+  password   = random_password.magmalte_db.result
+  port       = local.mysql_port
+
+  maintenance_window        = "Sun:00:00-Sun:03:00"
+  backup_window             = "03:00-06:00"
+  backup_retention_period   = 30
+  deletion_protection       = true
+  skip_final_snapshot       = false
+  final_snapshot_identifier = "magmalte-snapshot-final"
+
+  monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
+  monitoring_interval = 60
+
+  vpc_security_group_ids = [aws_security_group.eks_rds["mysql"].id]
+  subnet_ids             = module.vpc.database_subnets
+  db_subnet_group_name   = module.vpc.database_subnet_group
+
+  tags = local.tags
+}
+
 # orc8r_db secret for orc8r deployment
 resource "aws_secretsmanager_secret" "orc8r_db" {
   name        = "symphony/orc8rdb"
@@ -62,6 +103,12 @@ resource "aws_secretsmanager_secret_version" "orc8r_db" {
     dbhost = module.orc8r_db.this_db_instance_address
     dbport = module.orc8r_db.this_db_instance_port
     dbname = module.orc8r_db.this_db_instance_name
+
+    nms_dbuser = module.magmalte_db.this_db_instance_username
+    nms_dbpass = module.magmalte_db.this_db_instance_password
+    nms_dbhost = module.magmalte_db.this_db_instance_address
+    nms_dbport = module.magmalte_db.this_db_instance_port
+    nms_dbname = module.magmalte_db.this_db_instance_name
   })
 }
 
