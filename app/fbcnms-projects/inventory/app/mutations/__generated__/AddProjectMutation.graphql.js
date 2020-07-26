@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 37daf57204e64a85752ebba8673449a5
+ * @relayHash 5f45a79de70ee1f8423d794470685fb8
  */
 
 /* eslint-disable */
@@ -79,6 +79,7 @@ fragment ProjectsTableView_projects on Project {
     id
     name
   }
+  numberOfWorkOrders
 }
 */
 
@@ -197,6 +198,13 @@ return {
             "concreteType": "ProjectType",
             "plural": false,
             "selections": (v4/*: any*/)
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "name": "numberOfWorkOrders",
+            "args": null,
+            "storageKey": null
           }
         ]
       }
@@ -206,7 +214,7 @@ return {
     "operationKind": "mutation",
     "name": "AddProjectMutation",
     "id": null,
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n}\n",
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  numberOfWorkOrders\n}\n",
     "metadata": {}
   }
 };

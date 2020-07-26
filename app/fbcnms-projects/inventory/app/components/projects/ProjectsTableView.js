@@ -17,6 +17,14 @@ import React, {useMemo} from 'react';
 import Table from '@fbcnms/ui/components/design-system/Table/Table';
 import fbt from 'fbt';
 import {createFragmentContainer, graphql} from 'react-relay';
+import {makeStyles} from '@material-ui/styles';
+
+const useStyles = makeStyles(() => ({
+  workOrderCell: {
+    borderRadius: '15px',
+    minWidth: '26px',
+  },
+}));
 
 type Props = {
   projects: ProjectsTableView_projects,
@@ -30,6 +38,7 @@ const ProjectsTableView = (props: Props) => {
     () => projects.map(project => ({...project, key: project.id})),
     [projects],
   );
+  const classes = useStyles();
 
   if (projects.length === 0) {
     return null;
@@ -41,13 +50,26 @@ const ProjectsTableView = (props: Props) => {
       columns={[
         {
           key: 'name',
-          title: 'Name',
+          title: 'Project',
           render: row => (
             <Button variant="text" onClick={() => onProjectSelected(row.id)}>
               {row.name}
             </Button>
           ),
           getSortingValue: row => row.name,
+        },
+        {
+          key: 'numberOfWorkOrders',
+          title: 'Work Orders',
+          getSortingValue: row => row?.numberOfWorkOrders,
+          render: row =>
+            row?.numberOfWorkOrders ? (
+              <Button
+                className={classes.workOrderCell}
+                onClick={() => onProjectSelected(row.id)}>
+                {row.numberOfWorkOrders}
+              </Button>
+            ) : null,
         },
         {
           key: 'type',
@@ -93,6 +115,7 @@ export default createFragmentContainer(ProjectsTableView, {
         id
         name
       }
+      numberOfWorkOrders
     }
   `,
 });

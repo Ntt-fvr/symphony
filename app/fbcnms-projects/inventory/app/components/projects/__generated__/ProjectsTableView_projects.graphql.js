@@ -31,6 +31,7 @@ export type ProjectsTableView_projects = $ReadOnlyArray<{|
     +id: string,
     +name: string,
   |},
+  +numberOfWorkOrders: number,
   +$refType: ProjectsTableView_projects$ref,
 |}>;
 export type ProjectsTableView_projects$data = ProjectsTableView_projects;
@@ -109,10 +110,17 @@ return {
       "concreteType": "ProjectType",
       "plural": false,
       "selections": (v2/*: any*/)
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "numberOfWorkOrders",
+      "args": null,
+      "storageKey": null
     }
   ]
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'fd90de9f841444fa7177ad7e440fad84';
+(node/*: any*/).hash = 'eb4c1d98348bfff6ea72ba1326a3a1ad';
 module.exports = node;
