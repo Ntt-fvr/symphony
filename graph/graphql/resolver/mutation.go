@@ -1516,7 +1516,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 			err := client.Equipment.
 				UpdateOne(e).
 				ClearWorkOrder().
-				SetFutureState("").
+				ClearFutureState().
 				Exec(ctx)
 			if err != nil {
 				return id, errors.Wrapf(err, "deleting future remove state from to be removed equipment in work order e=%q, wo=%q", e.ID, id)
@@ -1537,7 +1537,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 			if err := client.Link.
 				UpdateOne(l).
 				ClearWorkOrder().
-				SetFutureState("").
+				ClearFutureState().
 				Exec(ctx); err != nil {
 				return id, errors.Wrapf(err, "deleting future remove state from to be removed link in work order l=%q, wo=%q", l.ID, id)
 			}
@@ -1809,10 +1809,11 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 					return nil, errors.New("work order depend on another work order")
 				}
 			}
-			e, err := r.ClientFrom(ctx).Equipment.
+			e, err := r.ClientFrom(ctx).
+				Equipment.
 				UpdateOne(e).
 				ClearWorkOrder().
-				SetFutureState("").
+				ClearFutureState().
 				Save(ctx)
 			if err != nil {
 				return nil, errors.Wrapf(err, "install work order equipment e=%q, wo=%q", eid, id)
@@ -1833,10 +1834,11 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 			case exist:
 				return nil, errors.Errorf("installing link on equipment to be installed wo=%q", id)
 			}
-			l, err := r.ClientFrom(ctx).Link.
+			l, err := r.ClientFrom(ctx).
+				Link.
 				UpdateOne(l).
 				ClearWorkOrder().
-				SetFutureState("").
+				ClearFutureState().
 				Save(ctx)
 			if err != nil {
 				return nil, errors.Wrapf(err, "install work order link l=%q, wo=%q", lid, id)
