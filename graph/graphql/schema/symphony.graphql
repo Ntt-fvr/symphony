@@ -2515,7 +2515,10 @@ input LocationTypeIndex {
   index: Int!
 }
 
-enum DiscoveryMethod {
+enum DiscoveryMethod
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/servicetype.DiscoveryMethod"
+  ) {
   MANUAL
   INVENTORY
 }

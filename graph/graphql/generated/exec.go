@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -1550,7 +1551,6 @@ type ServiceTypeResolver interface {
 	Services(ctx context.Context, obj *ent.ServiceType) ([]*ent.Service, error)
 	NumberOfServices(ctx context.Context, obj *ent.ServiceType) (int, error)
 	EndpointDefinitions(ctx context.Context, obj *ent.ServiceType) ([]*ent.ServiceEndpointDefinition, error)
-	DiscoveryMethod(ctx context.Context, obj *ent.ServiceType) (models.DiscoveryMethod, error)
 }
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
@@ -10034,7 +10034,10 @@ input LocationTypeIndex {
   index: Int!
 }
 
-enum DiscoveryMethod {
+enum DiscoveryMethod
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/servicetype.DiscoveryMethod"
+  ) {
   MANUAL
   INVENTORY
 }
@@ -34169,13 +34172,13 @@ func (ec *executionContext) _ServiceType_discoveryMethod(ctx context.Context, fi
 		Object:   "ServiceType",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ServiceType().DiscoveryMethod(rctx, obj)
+		return obj.DiscoveryMethod, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34187,9 +34190,9 @@ func (ec *executionContext) _ServiceType_discoveryMethod(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.DiscoveryMethod)
+	res := resTmp.(servicetype.DiscoveryMethod)
 	fc.Result = res
-	return ec.marshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx, field.Selections, res)
+	return ec.marshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ServiceTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.ServiceTypeConnection) (ret graphql.Marshaler) {
@@ -44954,7 +44957,7 @@ func (ec *executionContext) unmarshalInputServiceTypeCreateData(ctx context.Cont
 			}
 		case "discoveryMethod":
 			var err error
-			it.DiscoveryMethod, err = ec.unmarshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx, v)
+			it.DiscoveryMethod, err = ec.unmarshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52129,19 +52132,10 @@ func (ec *executionContext) _ServiceType(ctx context.Context, sel ast.SelectionS
 				return res
 			})
 		case "discoveryMethod":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._ServiceType_discoveryMethod(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._ServiceType_discoveryMethod(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -55299,12 +55293,12 @@ func (ec *executionContext) marshalNCustomerEdge2ᚖgithubᚗcomᚋfacebookincub
 	return ec._CustomerEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, v interface{}) (models.DiscoveryMethod, error) {
-	var res models.DiscoveryMethod
+func (ec *executionContext) unmarshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, v interface{}) (servicetype.DiscoveryMethod, error) {
+	var res servicetype.DiscoveryMethod
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v models.DiscoveryMethod) graphql.Marshaler {
+func (ec *executionContext) marshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v servicetype.DiscoveryMethod) graphql.Marshaler {
 	return v
 }
 
@@ -60406,24 +60400,24 @@ func (ec *executionContext) marshalODevice2ᚖgithubᚗcomᚋfacebookincubator�
 	return ec._Device(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, v interface{}) (models.DiscoveryMethod, error) {
-	var res models.DiscoveryMethod
+func (ec *executionContext) unmarshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, v interface{}) (servicetype.DiscoveryMethod, error) {
+	var res servicetype.DiscoveryMethod
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v models.DiscoveryMethod) graphql.Marshaler {
+func (ec *executionContext) marshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v servicetype.DiscoveryMethod) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, v interface{}) (*models.DiscoveryMethod, error) {
+func (ec *executionContext) unmarshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, v interface{}) (*servicetype.DiscoveryMethod, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx, v)
+	res, err := ec.unmarshalODiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v *models.DiscoveryMethod) graphql.Marshaler {
+func (ec *executionContext) marshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v *servicetype.DiscoveryMethod) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

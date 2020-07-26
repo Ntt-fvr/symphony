@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -142,7 +143,7 @@ func TestRemoveServiceType(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	dm := models.DiscoveryMethodInventory
+	dm := servicetype.DiscoveryMethodInventory
 	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:            "example_type2",
 		HasCustomer:     false,

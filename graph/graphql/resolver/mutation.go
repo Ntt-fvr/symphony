@@ -2056,18 +2056,10 @@ func (r mutationResolver) RemoveServiceLink(ctx context.Context, id, linkID int)
 }
 
 func (r mutationResolver) AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error) {
-	var dm *servicetype.DiscoveryMethod
-	if data.DiscoveryMethod != nil {
-		err := servicetype.DiscoveryMethodValidator((servicetype.DiscoveryMethod)(*data.DiscoveryMethod))
-		if err != nil {
-			return nil, errors.WithMessage(err, "creating service discovery method")
-		}
-		dm = (*servicetype.DiscoveryMethod)(data.DiscoveryMethod)
-	}
 	st, err := r.ClientFrom(ctx).
 		ServiceType.Create().
 		SetName(data.Name).
-		SetNillableDiscoveryMethod(dm).
+		SetNillableDiscoveryMethod(data.DiscoveryMethod).
 		SetHasCustomer(data.HasCustomer).
 		Save(ctx)
 	if err != nil {

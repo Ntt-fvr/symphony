@@ -55,26 +55,24 @@ func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput)
 }
 
 func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
-		var predicateArr []predicate.Service
-
-		for _, dm := range filter.StringSet {
-			if dm == models.DiscoveryMethodManual.String() {
-				predicateArr = append(predicateArr, service.HasTypeWith(servicetype.DiscoveryMethodIsNil()))
-				continue
-			}
-			method := servicetype.DiscoveryMethod(dm)
-			err := servicetype.DiscoveryMethodValidator(method)
-			if err != nil {
-				return nil, err
-			}
-			predicateArr = append(predicateArr, service.HasTypeWith(servicetype.DiscoveryMethodEQ(method)))
-		}
-		return q.Where(service.Or(
-			predicateArr...,
-		)), nil
+	if filter.Operator != models.FilterOperatorIsOneOf {
+		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+	var (
+		methods = make([]servicetype.DiscoveryMethod, 0, len(filter.StringSet))
+		seen    = make(map[servicetype.DiscoveryMethod]struct{}, len(filter.StringSet))
+	)
+	for _, dm := range filter.StringSet {
+		method := servicetype.DiscoveryMethod(dm)
+		if err := servicetype.DiscoveryMethodValidator(method); err != nil {
+			return nil, err
+		}
+		if _, ok := seen[method]; !ok {
+			seen[method] = struct{}{}
+			methods = append(methods, method)
+		}
+	}
+	return q.Where(service.HasTypeWith(servicetype.DiscoveryMethodIn(methods...))), nil
 }
 
 func serviceTypeFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {

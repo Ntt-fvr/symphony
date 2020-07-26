@@ -13,9 +13,6 @@ import (
 	"strings"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/jobs"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -23,7 +20,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 type servicesFilterInput struct {
@@ -134,9 +134,9 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		externalID = *service.ExternalID
 	}
 
-	discoveryMethod := st.DiscoveryMethod.String()
+	discoveryMethod := st.DiscoveryMethod
 	if st.DiscoveryMethod == "" {
-		discoveryMethod = models.DiscoveryMethodManual.String()
+		discoveryMethod = servicetype.DiscoveryMethodManual
 	}
 
 	properties, err := propertiesSlice(ctx, service, propertyTypes, models.PropertyEntityService)
@@ -148,7 +148,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		return nil, err
 	}
 
-	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod, externalID, customerName, customerExternalID, service.Status}
+	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod.String(), externalID, customerName, customerExternalID, service.Status}
 	row = append(row, endpoints...)
 	row = append(row, properties...)
 

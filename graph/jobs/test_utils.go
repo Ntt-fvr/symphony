@@ -8,11 +8,11 @@ import (
 	"context"
 
 	"github.com/AlekSi/pointer"
-
 	"github.com/facebookincubator/ent/dialect"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 )
 
 type (
@@ -50,7 +50,7 @@ type (
 	}
 )
 
-//TestJobsResolver contains data for jobs resolver
+// TestJobsResolver contains data for jobs resolver
 type TestJobsResolver struct {
 	drv        dialect.Driver
 	client     *ent.Client
@@ -142,7 +142,7 @@ func prepareEquipmentData(ctx context.Context, r TestJobsResolver, name string) 
 
 func prepareServiceTypeData(ctx context.Context, r TestJobsResolver, equipData equipmentDataModels) serviceTypeDataModels {
 	mr := r.jobsRunner.r.Mutation()
-	dm := models.DiscoveryMethodInventory
+	dm := servicetype.DiscoveryMethodInventory
 	srvType1, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:            "test service type1",
 		HasCustomer:     false,
@@ -296,7 +296,7 @@ func prepareLongServiceTypeData(ctx context.Context, r TestJobsResolver, equipDa
 			},
 		}})
 
-	dm := models.DiscoveryMethodInventory
+	dm := servicetype.DiscoveryMethodInventory
 	srvType, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:            "long service type",
 		HasCustomer:     false,

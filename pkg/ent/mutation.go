@@ -29958,22 +29958,9 @@ func (m *ServiceTypeMutation) OldDiscoveryMethod(ctx context.Context) (v service
 	return oldValue.DiscoveryMethod, nil
 }
 
-// ClearDiscoveryMethod clears the value of discovery_method.
-func (m *ServiceTypeMutation) ClearDiscoveryMethod() {
-	m.discovery_method = nil
-	m.clearedFields[servicetype.FieldDiscoveryMethod] = struct{}{}
-}
-
-// DiscoveryMethodCleared returns if the field discovery_method was cleared in this mutation.
-func (m *ServiceTypeMutation) DiscoveryMethodCleared() bool {
-	_, ok := m.clearedFields[servicetype.FieldDiscoveryMethod]
-	return ok
-}
-
 // ResetDiscoveryMethod reset all changes of the "discovery_method" field.
 func (m *ServiceTypeMutation) ResetDiscoveryMethod() {
 	m.discovery_method = nil
-	delete(m.clearedFields, servicetype.FieldDiscoveryMethod)
 }
 
 // AddServiceIDs adds the services edge to Service by ids.
@@ -30256,11 +30243,7 @@ func (m *ServiceTypeMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *ServiceTypeMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(servicetype.FieldDiscoveryMethod) {
-		fields = append(fields, servicetype.FieldDiscoveryMethod)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -30273,11 +30256,6 @@ func (m *ServiceTypeMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ServiceTypeMutation) ClearField(name string) error {
-	switch name {
-	case servicetype.FieldDiscoveryMethod:
-		m.ClearDiscoveryMethod()
-		return nil
-	}
 	return fmt.Errorf("unknown ServiceType nullable field %s", name)
 }
 

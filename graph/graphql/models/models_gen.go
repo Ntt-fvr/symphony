@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -696,7 +697,7 @@ type ServiceTypeCreateData struct {
 	HasCustomer     bool                              `json:"hasCustomer"`
 	Properties      []*PropertyTypeInput              `json:"properties"`
 	Endpoints       []*ServiceEndpointDefinitionInput `json:"endpoints"`
-	DiscoveryMethod *DiscoveryMethod                  `json:"discoveryMethod"`
+	DiscoveryMethod *servicetype.DiscoveryMethod      `json:"discoveryMethod"`
 }
 
 type ServiceTypeEditData struct {
@@ -963,47 +964,6 @@ func (e *CommentEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CommentEntity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type DiscoveryMethod string
-
-const (
-	DiscoveryMethodManual    DiscoveryMethod = "MANUAL"
-	DiscoveryMethodInventory DiscoveryMethod = "INVENTORY"
-)
-
-var AllDiscoveryMethod = []DiscoveryMethod{
-	DiscoveryMethodManual,
-	DiscoveryMethodInventory,
-}
-
-func (e DiscoveryMethod) IsValid() bool {
-	switch e {
-	case DiscoveryMethodManual, DiscoveryMethodInventory:
-		return true
-	}
-	return false
-}
-
-func (e DiscoveryMethod) String() string {
-	return string(e)
-}
-
-func (e *DiscoveryMethod) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = DiscoveryMethod(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid DiscoveryMethod", str)
-	}
-	return nil
-}
-
-func (e DiscoveryMethod) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

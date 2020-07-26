@@ -82,12 +82,6 @@ func (stu *ServiceTypeUpdate) SetNillableDiscoveryMethod(sm *servicetype.Discove
 	return stu
 }
 
-// ClearDiscoveryMethod clears the value of discovery_method.
-func (stu *ServiceTypeUpdate) ClearDiscoveryMethod() *ServiceTypeUpdate {
-	stu.mutation.ClearDiscoveryMethod()
-	return stu
-}
-
 // AddServiceIDs adds the services edge to Service by ids.
 func (stu *ServiceTypeUpdate) AddServiceIDs(ids ...int) *ServiceTypeUpdate {
 	stu.mutation.AddServiceIDs(ids...)
@@ -297,12 +291,6 @@ func (stu *ServiceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: servicetype.FieldDiscoveryMethod,
 		})
 	}
-	if stu.mutation.DiscoveryMethodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
-			Column: servicetype.FieldDiscoveryMethod,
-		})
-	}
 	if nodes := stu.mutation.RemovedServicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -480,12 +468,6 @@ func (stuo *ServiceTypeUpdateOne) SetNillableDiscoveryMethod(sm *servicetype.Dis
 	if sm != nil {
 		stuo.SetDiscoveryMethod(*sm)
 	}
-	return stuo
-}
-
-// ClearDiscoveryMethod clears the value of discovery_method.
-func (stuo *ServiceTypeUpdateOne) ClearDiscoveryMethod() *ServiceTypeUpdateOne {
-	stuo.mutation.ClearDiscoveryMethod()
 	return stuo
 }
 
@@ -693,12 +675,6 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: servicetype.FieldDiscoveryMethod,
-		})
-	}
-	if stuo.mutation.DiscoveryMethodCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeEnum,
 			Column: servicetype.FieldDiscoveryMethod,
 		})
 	}

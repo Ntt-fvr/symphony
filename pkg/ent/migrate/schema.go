@@ -1329,7 +1329,7 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "has_customer", Type: field.TypeBool},
 		{Name: "is_deleted", Type: field.TypeBool},
-		{Name: "discovery_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"INVENTORY"}},
+		{Name: "discovery_method", Type: field.TypeEnum, Enums: []string{"INVENTORY", "MANUAL"}, Default: "MANUAL"},
 	}
 	// ServiceTypesTable holds the schema information for the "service_types" table.
 	ServiceTypesTable = &schema.Table{

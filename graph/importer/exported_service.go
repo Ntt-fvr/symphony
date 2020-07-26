@@ -248,7 +248,7 @@ func (m *importer) validateLineForExistingService(ctx context.Context, serviceID
 		return nil, errors.Errorf("wrong service type. should be %v, but %v", typ.Name, importLine.TypeName())
 	}
 
-	if typ.DiscoveryMethod != "" && typ.DiscoveryMethod.String() != models.DiscoveryMethodManual.String() {
+	if typ.DiscoveryMethod != "" && typ.DiscoveryMethod != servicetype.DiscoveryMethodManual {
 		return nil, errors.Errorf("can't add services which are not manually discoverable. %v", typ.Name)
 	}
 	return service, nil

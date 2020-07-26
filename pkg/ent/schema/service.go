@@ -64,9 +64,12 @@ func (ServiceType) Fields() []ent.Field {
 		field.Bool("is_deleted").
 			Default(false),
 		field.Enum("discovery_method").
-			Comment("how will service of this type be discovered? (null means manual adding and not discovery)").
-			ValueMap(map[string]string{"Inventory": "INVENTORY"}).
-			Optional(),
+			Comment("how will service of this type be discovered?").
+			ValueMap(map[string]string{
+				"Manual":    "MANUAL",
+				"Inventory": "INVENTORY",
+			}).
+			Default("MANUAL"),
 	}
 }
 

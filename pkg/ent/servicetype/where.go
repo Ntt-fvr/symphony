@@ -471,20 +471,6 @@ func DiscoveryMethodNotIn(vs ...DiscoveryMethod) predicate.ServiceType {
 	})
 }
 
-// DiscoveryMethodIsNil applies the IsNil predicate on the "discovery_method" field.
-func DiscoveryMethodIsNil() predicate.ServiceType {
-	return predicate.ServiceType(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldDiscoveryMethod)))
-	})
-}
-
-// DiscoveryMethodNotNil applies the NotNil predicate on the "discovery_method" field.
-func DiscoveryMethodNotNil() predicate.ServiceType {
-	return predicate.ServiceType(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldDiscoveryMethod)))
-	})
-}
-
 // HasServices applies the HasEdge predicate on the "services" edge.
 func HasServices() predicate.ServiceType {
 	return predicate.ServiceType(func(s *sql.Selector) {

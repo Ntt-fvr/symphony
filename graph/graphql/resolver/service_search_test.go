@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -72,7 +73,7 @@ func prepareServiceData(ctx context.Context, r *TestResolver) serviceSearchDataM
 		},
 	})
 
-	dm := models.DiscoveryMethodInventory
+	dm := servicetype.DiscoveryMethodInventory
 	st1, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:            "Internet Access",
 		HasCustomer:     false,
@@ -427,7 +428,7 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 	f1 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceDiscoveryMethod,
 		Operator:   models.FilterOperatorIsOneOf,
-		StringSet:  []string{models.DiscoveryMethodInventory.String()},
+		StringSet:  []string{servicetype.DiscoveryMethodInventory.String()},
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
 	require.NoError(t, err)
@@ -437,7 +438,7 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 	f2 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceDiscoveryMethod,
 		Operator:   models.FilterOperatorIsOneOf,
-		StringSet:  []string{models.DiscoveryMethodManual.String()},
+		StringSet:  []string{servicetype.DiscoveryMethodManual.String()},
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
 	require.NoError(t, err)

@@ -214,6 +214,10 @@ func (stc *ServiceTypeCreate) preSave() error {
 		v := servicetype.DefaultIsDeleted
 		stc.mutation.SetIsDeleted(v)
 	}
+	if _, ok := stc.mutation.DiscoveryMethod(); !ok {
+		v := servicetype.DefaultDiscoveryMethod
+		stc.mutation.SetDiscoveryMethod(v)
+	}
 	if v, ok := stc.mutation.DiscoveryMethod(); ok {
 		if err := servicetype.DiscoveryMethodValidator(v); err != nil {
 			return &ValidationError{Name: "discovery_method", err: fmt.Errorf("ent: validator failed for field \"discovery_method\": %w", err)}
