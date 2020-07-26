@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -249,30 +250,30 @@ type CheckListCategoryInput struct {
 }
 
 type CheckListDefinitionInput struct {
-	ID                *int                                  `json:"id"`
-	Title             string                                `json:"title"`
-	Type              CheckListItemType                     `json:"type"`
-	Index             *int                                  `json:"index"`
-	IsMandatory       *bool                                 `json:"isMandatory"`
-	EnumValues        *string                               `json:"enumValues"`
-	EnumSelectionMode *checklistitem.EnumSelectionModeValue `json:"enumSelectionMode"`
-	HelpText          *string                               `json:"helpText"`
+	ID                *int                                 `json:"id"`
+	Title             string                               `json:"title"`
+	Type              enum.CheckListItemType               `json:"type"`
+	Index             *int                                 `json:"index"`
+	IsMandatory       *bool                                `json:"isMandatory"`
+	EnumValues        *string                              `json:"enumValues"`
+	EnumSelectionMode *enum.CheckListItemEnumSelectionMode `json:"enumSelectionMode"`
+	HelpText          *string                              `json:"helpText"`
 }
 
 type CheckListItemInput struct {
-	ID                 *int                                  `json:"id"`
-	Title              string                                `json:"title"`
-	Type               CheckListItemType                     `json:"type"`
-	Index              *int                                  `json:"index"`
-	IsMandatory        *bool                                 `json:"isMandatory"`
-	HelpText           *string                               `json:"helpText"`
-	EnumValues         *string                               `json:"enumValues"`
-	EnumSelectionMode  *checklistitem.EnumSelectionModeValue `json:"enumSelectionMode"`
-	SelectedEnumValues *string                               `json:"selectedEnumValues"`
-	StringValue        *string                               `json:"stringValue"`
-	Checked            *bool                                 `json:"checked"`
-	Files              []*FileInput                          `json:"files"`
-	YesNoResponse      *checklistitem.YesNoVal               `json:"yesNoResponse"`
+	ID                 *int                                 `json:"id"`
+	Title              string                               `json:"title"`
+	Type               enum.CheckListItemType               `json:"type"`
+	Index              *int                                 `json:"index"`
+	IsMandatory        *bool                                `json:"isMandatory"`
+	HelpText           *string                              `json:"helpText"`
+	EnumValues         *string                              `json:"enumValues"`
+	EnumSelectionMode  *enum.CheckListItemEnumSelectionMode `json:"enumSelectionMode"`
+	SelectedEnumValues *string                              `json:"selectedEnumValues"`
+	StringValue        *string                              `json:"stringValue"`
+	Checked            *bool                                `json:"checked"`
+	Files              []*FileInput                         `json:"files"`
+	YesNoResponse      *checklistitem.YesNoVal              `json:"yesNoResponse"`
 }
 
 type CommentInput struct {
@@ -921,57 +922,6 @@ func (e *CellularNetworkType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CellularNetworkType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type CheckListItemType string
-
-const (
-	CheckListItemTypeSimple   CheckListItemType = "simple"
-	CheckListItemTypeString   CheckListItemType = "string"
-	CheckListItemTypeEnum     CheckListItemType = "enum"
-	CheckListItemTypeFiles    CheckListItemType = "files"
-	CheckListItemTypeYesNo    CheckListItemType = "yes_no"
-	CheckListItemTypeCellScan CheckListItemType = "cell_scan"
-	CheckListItemTypeWifiScan CheckListItemType = "wifi_scan"
-)
-
-var AllCheckListItemType = []CheckListItemType{
-	CheckListItemTypeSimple,
-	CheckListItemTypeString,
-	CheckListItemTypeEnum,
-	CheckListItemTypeFiles,
-	CheckListItemTypeYesNo,
-	CheckListItemTypeCellScan,
-	CheckListItemTypeWifiScan,
-}
-
-func (e CheckListItemType) IsValid() bool {
-	switch e {
-	case CheckListItemTypeSimple, CheckListItemTypeString, CheckListItemTypeEnum, CheckListItemTypeFiles, CheckListItemTypeYesNo, CheckListItemTypeCellScan, CheckListItemTypeWifiScan:
-		return true
-	}
-	return false
-}
-
-func (e CheckListItemType) String() string {
-	return string(e)
-}
-
-func (e *CheckListItemType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = CheckListItemType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CheckListItemType", str)
-	}
-	return nil
-}
-
-func (e CheckListItemType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

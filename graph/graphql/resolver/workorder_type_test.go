@@ -9,21 +9,16 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
-
+	"github.com/99designs/gqlgen/client"
+	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
-
-	"github.com/99designs/gqlgen/client"
-
-	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/stretchr/testify/assert"
-
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/AlekSi/pointer"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -157,7 +152,7 @@ func TestAddWorkOrderTypeWithCheckListCategories(t *testing.T) {
 	defer r.Close()
 	c := r.GraphClient()
 
-	selectionMode := checklistitem.EnumSelectionModeValueSingle
+	selectionMode := enum.CheckListItemEnumSelectionModeSingle
 	woTypeInput := models.AddWorkOrderTypeInput{
 		Name: "WO Type",
 		CheckListCategories: []*models.CheckListCategoryDefinitionInput{
@@ -187,9 +182,9 @@ func TestAddWorkOrderTypeWithCheckListCategories(t *testing.T) {
 				ChecklistItemDefinitions []struct {
 					ID                string
 					Title             string
-					Type              models.CheckListItemType
+					Type              enum.CheckListItemType
 					EnumValues        *string
-					EnumSelectionMode *checklistitem.EnumSelectionModeValue
+					EnumSelectionMode *enum.CheckListItemEnumSelectionMode
 				}
 			}
 		}
@@ -222,10 +217,10 @@ func TestAddWorkOrderTypeWithCheckListCategories(t *testing.T) {
 
 	for _, item := range category.ChecklistItemDefinitions {
 		switch item.Type {
-		case models.CheckListItemTypeString:
+		case enum.CheckListItemTypeString:
 			require.Equal(t, item.Title, "String")
-		case models.CheckListItemTypeEnum:
-			require.Equal(t, *item.EnumSelectionMode, checklistitem.EnumSelectionModeValueSingle)
+		case enum.CheckListItemTypeEnum:
+			require.Equal(t, *item.EnumSelectionMode, enum.CheckListItemEnumSelectionModeSingle)
 			require.Equal(t, *item.EnumValues, "1,2,3")
 		}
 	}

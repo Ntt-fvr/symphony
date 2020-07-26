@@ -9,6 +9,7 @@ import (
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // CheckListCategory defines the CheckListCategoryDefinition type schema.
@@ -94,7 +95,8 @@ type CheckListItemDefinition struct {
 func (CheckListItemDefinition) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
-		field.String("type"),
+		field.Enum("type").
+			GoType(enum.CheckListItemType("")),
 		field.Int("index").
 			Optional(),
 		field.Bool("is_mandatory").
@@ -104,7 +106,7 @@ func (CheckListItemDefinition) Fields() []ent.Field {
 			Nillable().
 			Optional(),
 		field.Enum("enum_selection_mode_value").
-			Values("single", "multiple").
+			GoType(enum.CheckListItemEnumSelectionMode("")).
 			Optional(),
 		field.String("help_text").
 			StructTag(`gqlgen:"helpText"`).
@@ -141,7 +143,8 @@ type CheckListItem struct {
 func (CheckListItem) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
-		field.String("type"),
+		field.Enum("type").
+			GoType(enum.CheckListItemType("")),
 		field.Int("index").
 			Optional(),
 		field.Bool("is_mandatory").
@@ -155,7 +158,7 @@ func (CheckListItem) Fields() []ent.Field {
 			StructTag(`gqlgen:"enumValues"`).
 			Optional(),
 		field.Enum("enum_selection_mode_value").
-			Values("single", "multiple").
+			GoType(enum.CheckListItemEnumSelectionMode("")).
 			Optional(),
 		field.String("selected_enum_values").
 			StructTag(`gqlgen:"selectedEnumValues"`).

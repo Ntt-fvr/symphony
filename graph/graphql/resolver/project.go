@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -318,15 +318,14 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 		for _, categoryDef := range clCategoryDefs {
 			var clInputs []*models.CheckListItemInput
 			for _, cliDef := range categoryDef.Edges.CheckListItemDefinitions {
-				var enumSelectionMode *checklistitem.EnumSelectionModeValue
+				var enumSelectionMode *enum.CheckListItemEnumSelectionMode
 				if cliDef.EnumSelectionModeValue != "" {
-					mode := checklistitem.EnumSelectionModeValue(cliDef.EnumSelectionModeValue.String())
-					enumSelectionMode = &mode
+					enumSelectionMode = &cliDef.EnumSelectionModeValue
 				}
 
 				clInputs = append(clInputs, &models.CheckListItemInput{
 					Title:             cliDef.Title,
-					Type:              models.CheckListItemType(cliDef.Type),
+					Type:              cliDef.Type,
 					Index:             pointer.ToInt(cliDef.Index),
 					IsMandatory:       pointer.ToBool(cliDef.IsMandatory),
 					HelpText:          cliDef.HelpText,

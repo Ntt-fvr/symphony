@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -98,7 +99,7 @@ func TestProjectWithWorkOrders(t *testing.T) {
 				CheckList: []*models.CheckListDefinitionInput{
 					{
 						Title:       "Item 1",
-						Type:        models.CheckListItemTypeString,
+						Type:        enum.CheckListItemTypeString,
 						IsMandatory: pointer.ToBool(true),
 					},
 				},

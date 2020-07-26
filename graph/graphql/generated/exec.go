@@ -27,6 +27,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -61,7 +62,6 @@ type ResolverRoot interface {
 	CheckListCategory() CheckListCategoryResolver
 	CheckListCategoryDefinition() CheckListCategoryDefinitionResolver
 	CheckListItem() CheckListItemResolver
-	CheckListItemDefinition() CheckListItemDefinitionResolver
 	Comment() CommentResolver
 	Equipment() EquipmentResolver
 	EquipmentPort() EquipmentPortResolver
@@ -211,32 +211,32 @@ type ComplexityRoot struct {
 	}
 
 	CheckListItem struct {
-		CellData           func(childComplexity int) int
-		Checked            func(childComplexity int) int
-		EnumSelectionMode  func(childComplexity int) int
-		EnumValues         func(childComplexity int) int
-		Files              func(childComplexity int) int
-		HelpText           func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Index              func(childComplexity int) int
-		IsMandatory        func(childComplexity int) int
-		SelectedEnumValues func(childComplexity int) int
-		StringVal          func(childComplexity int) int
-		Title              func(childComplexity int) int
-		Type               func(childComplexity int) int
-		WifiData           func(childComplexity int) int
-		YesNoVal           func(childComplexity int) int
+		CellData               func(childComplexity int) int
+		Checked                func(childComplexity int) int
+		EnumSelectionModeValue func(childComplexity int) int
+		EnumValues             func(childComplexity int) int
+		Files                  func(childComplexity int) int
+		HelpText               func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		Index                  func(childComplexity int) int
+		IsMandatory            func(childComplexity int) int
+		SelectedEnumValues     func(childComplexity int) int
+		StringVal              func(childComplexity int) int
+		Title                  func(childComplexity int) int
+		Type                   func(childComplexity int) int
+		WifiData               func(childComplexity int) int
+		YesNoVal               func(childComplexity int) int
 	}
 
 	CheckListItemDefinition struct {
-		EnumSelectionMode func(childComplexity int) int
-		EnumValues        func(childComplexity int) int
-		HelpText          func(childComplexity int) int
-		ID                func(childComplexity int) int
-		Index             func(childComplexity int) int
-		IsMandatory       func(childComplexity int) int
-		Title             func(childComplexity int) int
-		Type              func(childComplexity int) int
+		EnumSelectionModeValue func(childComplexity int) int
+		EnumValues             func(childComplexity int) int
+		HelpText               func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		Index                  func(childComplexity int) int
+		IsMandatory            func(childComplexity int) int
+		Title                  func(childComplexity int) int
+		Type                   func(childComplexity int) int
 	}
 
 	Comment struct {
@@ -1268,19 +1268,10 @@ type CheckListCategoryDefinitionResolver interface {
 	ChecklistItemDefinitions(ctx context.Context, obj *ent.CheckListCategoryDefinition) ([]*ent.CheckListItemDefinition, error)
 }
 type CheckListItemResolver interface {
-	Type(ctx context.Context, obj *ent.CheckListItem) (models.CheckListItemType, error)
-
-	EnumSelectionMode(ctx context.Context, obj *ent.CheckListItem) (*checklistitem.EnumSelectionModeValue, error)
-
 	Files(ctx context.Context, obj *ent.CheckListItem) ([]*ent.File, error)
 
 	WifiData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyWiFiScan, error)
 	CellData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyCellScan, error)
-}
-type CheckListItemDefinitionResolver interface {
-	Type(ctx context.Context, obj *ent.CheckListItemDefinition) (models.CheckListItemType, error)
-
-	EnumSelectionMode(ctx context.Context, obj *ent.CheckListItemDefinition) (*checklistitem.EnumSelectionModeValue, error)
 }
 type CommentResolver interface {
 	Author(ctx context.Context, obj *ent.Comment) (*ent.User, error)
@@ -2052,11 +2043,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListItem.Checked(childComplexity), true
 
 	case "CheckListItem.enumSelectionMode":
-		if e.complexity.CheckListItem.EnumSelectionMode == nil {
+		if e.complexity.CheckListItem.EnumSelectionModeValue == nil {
 			break
 		}
 
-		return e.complexity.CheckListItem.EnumSelectionMode(childComplexity), true
+		return e.complexity.CheckListItem.EnumSelectionModeValue(childComplexity), true
 
 	case "CheckListItem.enumValues":
 		if e.complexity.CheckListItem.EnumValues == nil {
@@ -2143,11 +2134,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListItem.YesNoVal(childComplexity), true
 
 	case "CheckListItemDefinition.enumSelectionMode":
-		if e.complexity.CheckListItemDefinition.EnumSelectionMode == nil {
+		if e.complexity.CheckListItemDefinition.EnumSelectionModeValue == nil {
 			break
 		}
 
-		return e.complexity.CheckListItemDefinition.EnumSelectionMode(childComplexity), true
+		return e.complexity.CheckListItemDefinition.EnumSelectionModeValue(childComplexity), true
 
 	case "CheckListItemDefinition.enumValues":
 		if e.complexity.CheckListItemDefinition.EnumValues == nil {
@@ -8977,7 +8968,10 @@ enum YesNoResponse
   NO
 }
 
-enum CheckListItemType {
+enum CheckListItemType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.CheckListItemType"
+  ) {
   simple
   string
   enum
@@ -8989,7 +8983,7 @@ enum CheckListItemType {
 
 enum CheckListItemEnumSelectionMode
   @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/checklistitem.EnumSelectionModeValue"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.CheckListItemEnumSelectionMode"
   ) {
   single
   multiple
@@ -9010,6 +9004,7 @@ type CheckListItemDefinition {
   isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
+    @goField(name: "EnumSelectionModeValue")
   helpText: String
 }
 
@@ -9047,6 +9042,7 @@ type CheckListItem implements Node {
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
+    @goField(name: "EnumSelectionModeValue")
   selectedEnumValues: String
   stringValue: String
   checked: Boolean
@@ -16688,13 +16684,13 @@ func (ec *executionContext) _CheckListItem_type(ctx context.Context, field graph
 		Object:   "CheckListItem",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().Type(rctx, obj)
+		return obj.Type, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16706,9 +16702,9 @@ func (ec *executionContext) _CheckListItem_type(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.CheckListItemType)
+	res := resTmp.(enum.CheckListItemType)
 	fc.Result = res
-	return ec.marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx, field.Selections, res)
+	return ec.marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItem_index(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
@@ -16846,13 +16842,13 @@ func (ec *executionContext) _CheckListItem_enumSelectionMode(ctx context.Context
 		Object:   "CheckListItem",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().EnumSelectionMode(rctx, obj)
+		return obj.EnumSelectionModeValue, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16861,9 +16857,9 @@ func (ec *executionContext) _CheckListItem_enumSelectionMode(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*checklistitem.EnumSelectionModeValue)
+	res := resTmp.(enum.CheckListItemEnumSelectionMode)
 	fc.Result = res
-	return ec.marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx, field.Selections, res)
+	return ec.marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItem_selectedEnumValues(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
@@ -17162,13 +17158,13 @@ func (ec *executionContext) _CheckListItemDefinition_type(ctx context.Context, f
 		Object:   "CheckListItemDefinition",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItemDefinition().Type(rctx, obj)
+		return obj.Type, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17180,9 +17176,9 @@ func (ec *executionContext) _CheckListItemDefinition_type(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.CheckListItemType)
+	res := resTmp.(enum.CheckListItemType)
 	fc.Result = res
-	return ec.marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx, field.Selections, res)
+	return ec.marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItemDefinition_index(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItemDefinition) (ret graphql.Marshaler) {
@@ -17289,13 +17285,13 @@ func (ec *executionContext) _CheckListItemDefinition_enumSelectionMode(ctx conte
 		Object:   "CheckListItemDefinition",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItemDefinition().EnumSelectionMode(rctx, obj)
+		return obj.EnumSelectionModeValue, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17304,9 +17300,9 @@ func (ec *executionContext) _CheckListItemDefinition_enumSelectionMode(ctx conte
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*checklistitem.EnumSelectionModeValue)
+	res := resTmp.(enum.CheckListItemEnumSelectionMode)
 	fc.Result = res
-	return ec.marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx, field.Selections, res)
+	return ec.marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItemDefinition_helpText(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItemDefinition) (ret graphql.Marshaler) {
@@ -42683,7 +42679,7 @@ func (ec *executionContext) unmarshalInputCheckListDefinitionInput(ctx context.C
 			}
 		case "type":
 			var err error
-			it.Type, err = ec.unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx, v)
+			it.Type, err = ec.unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42707,7 +42703,7 @@ func (ec *executionContext) unmarshalInputCheckListDefinitionInput(ctx context.C
 			}
 		case "enumSelectionMode":
 			var err error
-			it.EnumSelectionMode, err = ec.unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx, v)
+			it.EnumSelectionMode, err = ec.unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42743,7 +42739,7 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 			}
 		case "type":
 			var err error
-			it.Type, err = ec.unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx, v)
+			it.Type, err = ec.unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42773,7 +42769,7 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 			}
 		case "enumSelectionMode":
 			var err error
-			it.EnumSelectionMode, err = ec.unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx, v)
+			it.EnumSelectionMode, err = ec.unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46928,19 +46924,10 @@ func (ec *executionContext) _CheckListItem(ctx context.Context, sel ast.Selectio
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "type":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CheckListItem_type(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._CheckListItem_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "index":
 			out.Values[i] = ec._CheckListItem_index(ctx, field, obj)
 		case "isMandatory":
@@ -46950,16 +46937,7 @@ func (ec *executionContext) _CheckListItem(ctx context.Context, sel ast.Selectio
 		case "enumValues":
 			out.Values[i] = ec._CheckListItem_enumValues(ctx, field, obj)
 		case "enumSelectionMode":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CheckListItem_enumSelectionMode(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._CheckListItem_enumSelectionMode(ctx, field, obj)
 		case "selectedEnumValues":
 			out.Values[i] = ec._CheckListItem_selectedEnumValues(ctx, field, obj)
 		case "stringValue":
@@ -47026,27 +47004,18 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 		case "id":
 			out.Values[i] = ec._CheckListItemDefinition_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "title":
 			out.Values[i] = ec._CheckListItemDefinition_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "type":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CheckListItemDefinition_type(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._CheckListItemDefinition_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "index":
 			out.Values[i] = ec._CheckListItemDefinition_index(ctx, field, obj)
 		case "isMandatory":
@@ -47054,16 +47023,7 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 		case "enumValues":
 			out.Values[i] = ec._CheckListItemDefinition_enumValues(ctx, field, obj)
 		case "enumSelectionMode":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CheckListItemDefinition_enumSelectionMode(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._CheckListItemDefinition_enumSelectionMode(ctx, field, obj)
 		case "helpText":
 			out.Values[i] = ec._CheckListItemDefinition_helpText(ctx, field, obj)
 		default:
@@ -55155,12 +55115,12 @@ func (ec *executionContext) unmarshalNCheckListItemInput2ᚖgithubᚗcomᚋfaceb
 	return &res, err
 }
 
-func (ec *executionContext) unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx context.Context, v interface{}) (models.CheckListItemType, error) {
-	var res models.CheckListItemType
+func (ec *executionContext) unmarshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx context.Context, v interface{}) (enum.CheckListItemType, error) {
+	var res enum.CheckListItemType
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListItemType(ctx context.Context, sel ast.SelectionSet, v models.CheckListItemType) graphql.Marshaler {
+func (ec *executionContext) marshalNCheckListItemType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemType(ctx context.Context, sel ast.SelectionSet, v enum.CheckListItemType) graphql.Marshaler {
 	return v
 }
 
@@ -60323,24 +60283,24 @@ func (ec *executionContext) unmarshalOCheckListCategoryInput2ᚕᚖgithubᚗcom�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx context.Context, v interface{}) (checklistitem.EnumSelectionModeValue, error) {
-	var res checklistitem.EnumSelectionModeValue
+func (ec *executionContext) unmarshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx context.Context, v interface{}) (enum.CheckListItemEnumSelectionMode, error) {
+	var res enum.CheckListItemEnumSelectionMode
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx context.Context, sel ast.SelectionSet, v checklistitem.EnumSelectionModeValue) graphql.Marshaler {
+func (ec *executionContext) marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx context.Context, sel ast.SelectionSet, v enum.CheckListItemEnumSelectionMode) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx context.Context, v interface{}) (*checklistitem.EnumSelectionModeValue, error) {
+func (ec *executionContext) unmarshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx context.Context, v interface{}) (*enum.CheckListItemEnumSelectionMode, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx, v)
+	res, err := ec.unmarshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐEnumSelectionModeValue(ctx context.Context, sel ast.SelectionSet, v *checklistitem.EnumSelectionModeValue) graphql.Marshaler {
+func (ec *executionContext) marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx context.Context, sel ast.SelectionSet, v *enum.CheckListItemEnumSelectionMode) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

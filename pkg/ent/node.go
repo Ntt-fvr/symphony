@@ -397,7 +397,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[1] = &Field{
-		Type:  "string",
+		Type:  "enum.CheckListItemType",
 		Name:  "type",
 		Value: string(buf),
 	}
@@ -445,7 +445,7 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[7] = &Field{
-		Type:  "checklistitem.EnumSelectionModeValue",
+		Type:  "enum.CheckListItemEnumSelectionMode",
 		Name:  "enum_selection_mode_value",
 		Value: string(buf),
 	}
@@ -557,7 +557,7 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 		return nil, err
 	}
 	node.Fields[3] = &Field{
-		Type:  "string",
+		Type:  "enum.CheckListItemType",
 		Name:  "type",
 		Value: string(buf),
 	}
@@ -589,7 +589,7 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 		return nil, err
 	}
 	node.Fields[7] = &Field{
-		Type:  "checklistitemdefinition.EnumSelectionModeValue",
+		Type:  "enum.CheckListItemEnumSelectionMode",
 		Name:  "enum_selection_mode_value",
 		Value: string(buf),
 	}

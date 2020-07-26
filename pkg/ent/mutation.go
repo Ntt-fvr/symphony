@@ -45,6 +45,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
@@ -2723,14 +2724,14 @@ type CheckListItemMutation struct {
 	typ                        string
 	id                         *int
 	title                      *string
-	_type                      *string
+	_type                      *enum.CheckListItemType
 	index                      *int
 	addindex                   *int
 	is_mandatory               *bool
 	checked                    *bool
 	string_val                 *string
 	enum_values                *string
-	enum_selection_mode_value  *checklistitem.EnumSelectionModeValue
+	enum_selection_mode_value  *enum.CheckListItemEnumSelectionMode
 	selected_enum_values       *string
 	yes_no_val                 *checklistitem.YesNoVal
 	help_text                  *string
@@ -2864,12 +2865,12 @@ func (m *CheckListItemMutation) ResetTitle() {
 }
 
 // SetType sets the type field.
-func (m *CheckListItemMutation) SetType(s string) {
-	m._type = &s
+func (m *CheckListItemMutation) SetType(elit enum.CheckListItemType) {
+	m._type = &elit
 }
 
 // GetType returns the type value in the mutation.
-func (m *CheckListItemMutation) GetType() (r string, exists bool) {
+func (m *CheckListItemMutation) GetType() (r enum.CheckListItemType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -2881,7 +2882,7 @@ func (m *CheckListItemMutation) GetType() (r string, exists bool) {
 // If the CheckListItem object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemMutation) OldType(ctx context.Context) (v string, err error) {
+func (m *CheckListItemMutation) OldType(ctx context.Context) (v enum.CheckListItemType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldType is allowed only on UpdateOne operations")
 	}
@@ -3172,12 +3173,12 @@ func (m *CheckListItemMutation) ResetEnumValues() {
 }
 
 // SetEnumSelectionModeValue sets the enum_selection_mode_value field.
-func (m *CheckListItemMutation) SetEnumSelectionModeValue(csmv checklistitem.EnumSelectionModeValue) {
-	m.enum_selection_mode_value = &csmv
+func (m *CheckListItemMutation) SetEnumSelectionModeValue(eliesm enum.CheckListItemEnumSelectionMode) {
+	m.enum_selection_mode_value = &eliesm
 }
 
 // EnumSelectionModeValue returns the enum_selection_mode_value value in the mutation.
-func (m *CheckListItemMutation) EnumSelectionModeValue() (r checklistitem.EnumSelectionModeValue, exists bool) {
+func (m *CheckListItemMutation) EnumSelectionModeValue() (r enum.CheckListItemEnumSelectionMode, exists bool) {
 	v := m.enum_selection_mode_value
 	if v == nil {
 		return
@@ -3189,7 +3190,7 @@ func (m *CheckListItemMutation) EnumSelectionModeValue() (r checklistitem.EnumSe
 // If the CheckListItem object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemMutation) OldEnumSelectionModeValue(ctx context.Context) (v checklistitem.EnumSelectionModeValue, err error) {
+func (m *CheckListItemMutation) OldEnumSelectionModeValue(ctx context.Context) (v enum.CheckListItemEnumSelectionMode, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldEnumSelectionModeValue is allowed only on UpdateOne operations")
 	}
@@ -3662,7 +3663,7 @@ func (m *CheckListItemMutation) SetField(name string, value ent.Value) error {
 		m.SetTitle(v)
 		return nil
 	case checklistitem.FieldType:
-		v, ok := value.(string)
+		v, ok := value.(enum.CheckListItemType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3704,7 +3705,7 @@ func (m *CheckListItemMutation) SetField(name string, value ent.Value) error {
 		m.SetEnumValues(v)
 		return nil
 	case checklistitem.FieldEnumSelectionModeValue:
-		v, ok := value.(checklistitem.EnumSelectionModeValue)
+		v, ok := value.(enum.CheckListItemEnumSelectionMode)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4043,12 +4044,12 @@ type CheckListItemDefinitionMutation struct {
 	create_time                           *time.Time
 	update_time                           *time.Time
 	title                                 *string
-	_type                                 *string
+	_type                                 *enum.CheckListItemType
 	index                                 *int
 	addindex                              *int
 	is_mandatory                          *bool
 	enum_values                           *string
-	enum_selection_mode_value             *checklistitemdefinition.EnumSelectionModeValue
+	enum_selection_mode_value             *enum.CheckListItemEnumSelectionMode
 	help_text                             *string
 	clearedFields                         map[string]struct{}
 	check_list_category_definition        *int
@@ -4248,12 +4249,12 @@ func (m *CheckListItemDefinitionMutation) ResetTitle() {
 }
 
 // SetType sets the type field.
-func (m *CheckListItemDefinitionMutation) SetType(s string) {
-	m._type = &s
+func (m *CheckListItemDefinitionMutation) SetType(elit enum.CheckListItemType) {
+	m._type = &elit
 }
 
 // GetType returns the type value in the mutation.
-func (m *CheckListItemDefinitionMutation) GetType() (r string, exists bool) {
+func (m *CheckListItemDefinitionMutation) GetType() (r enum.CheckListItemType, exists bool) {
 	v := m._type
 	if v == nil {
 		return
@@ -4265,7 +4266,7 @@ func (m *CheckListItemDefinitionMutation) GetType() (r string, exists bool) {
 // If the CheckListItemDefinition object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemDefinitionMutation) OldType(ctx context.Context) (v string, err error) {
+func (m *CheckListItemDefinitionMutation) OldType(ctx context.Context) (v enum.CheckListItemType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldType is allowed only on UpdateOne operations")
 	}
@@ -4456,12 +4457,12 @@ func (m *CheckListItemDefinitionMutation) ResetEnumValues() {
 }
 
 // SetEnumSelectionModeValue sets the enum_selection_mode_value field.
-func (m *CheckListItemDefinitionMutation) SetEnumSelectionModeValue(csmv checklistitemdefinition.EnumSelectionModeValue) {
-	m.enum_selection_mode_value = &csmv
+func (m *CheckListItemDefinitionMutation) SetEnumSelectionModeValue(eliesm enum.CheckListItemEnumSelectionMode) {
+	m.enum_selection_mode_value = &eliesm
 }
 
 // EnumSelectionModeValue returns the enum_selection_mode_value value in the mutation.
-func (m *CheckListItemDefinitionMutation) EnumSelectionModeValue() (r checklistitemdefinition.EnumSelectionModeValue, exists bool) {
+func (m *CheckListItemDefinitionMutation) EnumSelectionModeValue() (r enum.CheckListItemEnumSelectionMode, exists bool) {
 	v := m.enum_selection_mode_value
 	if v == nil {
 		return
@@ -4473,7 +4474,7 @@ func (m *CheckListItemDefinitionMutation) EnumSelectionModeValue() (r checklisti
 // If the CheckListItemDefinition object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemDefinitionMutation) OldEnumSelectionModeValue(ctx context.Context) (v checklistitemdefinition.EnumSelectionModeValue, err error) {
+func (m *CheckListItemDefinitionMutation) OldEnumSelectionModeValue(ctx context.Context) (v enum.CheckListItemEnumSelectionMode, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldEnumSelectionModeValue is allowed only on UpdateOne operations")
 	}
@@ -4720,7 +4721,7 @@ func (m *CheckListItemDefinitionMutation) SetField(name string, value ent.Value)
 		m.SetTitle(v)
 		return nil
 	case checklistitemdefinition.FieldType:
-		v, ok := value.(string)
+		v, ok := value.(enum.CheckListItemType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4748,7 +4749,7 @@ func (m *CheckListItemDefinitionMutation) SetField(name string, value ent.Value)
 		m.SetEnumValues(v)
 		return nil
 	case checklistitemdefinition.FieldEnumSelectionModeValue:
-		v, ok := value.(checklistitemdefinition.EnumSelectionModeValue)
+		v, ok := value.(enum.CheckListItemEnumSelectionMode)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -8,11 +8,11 @@ package checklistitemdefinition
 
 import (
 	"fmt"
-	"io"
-	"strconv"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 const (
@@ -89,43 +89,36 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 )
 
-// EnumSelectionModeValue defines the type for the enum_selection_mode_value enum field.
-type EnumSelectionModeValue string
-
-// EnumSelectionModeValue values.
-const (
-	EnumSelectionModeValueMultiple EnumSelectionModeValue = "multiple"
-	EnumSelectionModeValueSingle   EnumSelectionModeValue = "single"
-)
-
-func (esmv EnumSelectionModeValue) String() string {
-	return string(esmv)
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type enum.CheckListItemType) error {
+	switch _type {
+	case "cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no":
+		return nil
+	default:
+		return fmt.Errorf("checklistitemdefinition: invalid enum value for type field: %q", _type)
+	}
 }
 
 // EnumSelectionModeValueValidator is a validator for the "enum_selection_mode_value" field enum values. It is called by the builders before save.
-func EnumSelectionModeValueValidator(esmv EnumSelectionModeValue) error {
+func EnumSelectionModeValueValidator(esmv enum.CheckListItemEnumSelectionMode) error {
 	switch esmv {
-	case EnumSelectionModeValueMultiple, EnumSelectionModeValueSingle:
+	case "multiple", "single":
 		return nil
 	default:
 		return fmt.Errorf("checklistitemdefinition: invalid enum value for enum_selection_mode_value field: %q", esmv)
 	}
 }
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (esmv EnumSelectionModeValue) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(esmv.String()))
-}
+var (
+	// enum.CheckListItemType must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.CheckListItemType("")
+	// enum.CheckListItemType must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.CheckListItemType)(nil)
+)
 
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (esmv *EnumSelectionModeValue) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", v)
-	}
-	*esmv = EnumSelectionModeValue(str)
-	if err := EnumSelectionModeValueValidator(*esmv); err != nil {
-		return fmt.Errorf("%s is not a valid EnumSelectionModeValue", str)
-	}
-	return nil
-}
+var (
+	// enum.CheckListItemEnumSelectionMode must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.CheckListItemEnumSelectionMode("")
+	// enum.CheckListItemEnumSelectionMode must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.CheckListItemEnumSelectionMode)(nil)
+)

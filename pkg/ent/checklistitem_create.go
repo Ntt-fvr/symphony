@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 )
@@ -34,8 +35,8 @@ func (clic *CheckListItemCreate) SetTitle(s string) *CheckListItemCreate {
 }
 
 // SetType sets the type field.
-func (clic *CheckListItemCreate) SetType(s string) *CheckListItemCreate {
-	clic.mutation.SetType(s)
+func (clic *CheckListItemCreate) SetType(elit enum.CheckListItemType) *CheckListItemCreate {
+	clic.mutation.SetType(elit)
 	return clic
 }
 
@@ -110,15 +111,15 @@ func (clic *CheckListItemCreate) SetNillableEnumValues(s *string) *CheckListItem
 }
 
 // SetEnumSelectionModeValue sets the enum_selection_mode_value field.
-func (clic *CheckListItemCreate) SetEnumSelectionModeValue(csmv checklistitem.EnumSelectionModeValue) *CheckListItemCreate {
-	clic.mutation.SetEnumSelectionModeValue(csmv)
+func (clic *CheckListItemCreate) SetEnumSelectionModeValue(eliesm enum.CheckListItemEnumSelectionMode) *CheckListItemCreate {
+	clic.mutation.SetEnumSelectionModeValue(eliesm)
 	return clic
 }
 
 // SetNillableEnumSelectionModeValue sets the enum_selection_mode_value field if the given value is not nil.
-func (clic *CheckListItemCreate) SetNillableEnumSelectionModeValue(csmv *checklistitem.EnumSelectionModeValue) *CheckListItemCreate {
-	if csmv != nil {
-		clic.SetEnumSelectionModeValue(*csmv)
+func (clic *CheckListItemCreate) SetNillableEnumSelectionModeValue(eliesm *enum.CheckListItemEnumSelectionMode) *CheckListItemCreate {
+	if eliesm != nil {
+		clic.SetEnumSelectionModeValue(*eliesm)
 	}
 	return clic
 }
@@ -274,6 +275,11 @@ func (clic *CheckListItemCreate) preSave() error {
 	if _, ok := clic.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
 	}
+	if v, ok := clic.mutation.GetType(); ok {
+		if err := checklistitem.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
 	if v, ok := clic.mutation.EnumSelectionModeValue(); ok {
 		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
 			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
@@ -324,7 +330,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 	}
 	if value, ok := clic.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: checklistitem.FieldType,
 		})

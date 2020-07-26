@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // ID filters vertices based on their identifier.
@@ -115,13 +116,6 @@ func UpdateTime(v time.Time) predicate.CheckListItemDefinition {
 func Title(v string) predicate.CheckListItemDefinition {
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldTitle), v))
-	})
-}
-
-// Type applies equality check predicate on the "type" field. It's identical to TypeEQ.
-func Type(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
 	})
 }
 
@@ -417,21 +411,23 @@ func TitleContainsFold(v string) predicate.CheckListItemDefinition {
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v string) predicate.CheckListItemDefinition {
+func TypeEQ(v enum.CheckListItemType) predicate.CheckListItemDefinition {
+	vc := v
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
+		s.Where(sql.EQ(s.C(FieldType), vc))
 	})
 }
 
 // TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v string) predicate.CheckListItemDefinition {
+func TypeNEQ(v enum.CheckListItemType) predicate.CheckListItemDefinition {
+	vc := v
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldType), v))
+		s.Where(sql.NEQ(s.C(FieldType), vc))
 	})
 }
 
 // TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...string) predicate.CheckListItemDefinition {
+func TypeIn(vs ...enum.CheckListItemType) predicate.CheckListItemDefinition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -448,7 +444,7 @@ func TypeIn(vs ...string) predicate.CheckListItemDefinition {
 }
 
 // TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...string) predicate.CheckListItemDefinition {
+func TypeNotIn(vs ...enum.CheckListItemType) predicate.CheckListItemDefinition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -461,69 +457,6 @@ func TypeNotIn(vs ...string) predicate.CheckListItemDefinition {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldType), v...))
-	})
-}
-
-// TypeGT applies the GT predicate on the "type" field.
-func TypeGT(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldType), v))
-	})
-}
-
-// TypeGTE applies the GTE predicate on the "type" field.
-func TypeGTE(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldType), v))
-	})
-}
-
-// TypeLT applies the LT predicate on the "type" field.
-func TypeLT(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldType), v))
-	})
-}
-
-// TypeLTE applies the LTE predicate on the "type" field.
-func TypeLTE(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldType), v))
-	})
-}
-
-// TypeContains applies the Contains predicate on the "type" field.
-func TypeContains(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldType), v))
-	})
-}
-
-// TypeHasPrefix applies the HasPrefix predicate on the "type" field.
-func TypeHasPrefix(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldType), v))
-	})
-}
-
-// TypeHasSuffix applies the HasSuffix predicate on the "type" field.
-func TypeHasSuffix(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldType), v))
-	})
-}
-
-// TypeEqualFold applies the EqualFold predicate on the "type" field.
-func TypeEqualFold(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldType), v))
-	})
-}
-
-// TypeContainsFold applies the ContainsFold predicate on the "type" field.
-func TypeContainsFold(v string) predicate.CheckListItemDefinition {
-	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldType), v))
 	})
 }
 
@@ -771,21 +704,23 @@ func EnumValuesContainsFold(v string) predicate.CheckListItemDefinition {
 }
 
 // EnumSelectionModeValueEQ applies the EQ predicate on the "enum_selection_mode_value" field.
-func EnumSelectionModeValueEQ(v EnumSelectionModeValue) predicate.CheckListItemDefinition {
+func EnumSelectionModeValueEQ(v enum.CheckListItemEnumSelectionMode) predicate.CheckListItemDefinition {
+	vc := v
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldEnumSelectionModeValue), v))
+		s.Where(sql.EQ(s.C(FieldEnumSelectionModeValue), vc))
 	})
 }
 
 // EnumSelectionModeValueNEQ applies the NEQ predicate on the "enum_selection_mode_value" field.
-func EnumSelectionModeValueNEQ(v EnumSelectionModeValue) predicate.CheckListItemDefinition {
+func EnumSelectionModeValueNEQ(v enum.CheckListItemEnumSelectionMode) predicate.CheckListItemDefinition {
+	vc := v
 	return predicate.CheckListItemDefinition(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldEnumSelectionModeValue), v))
+		s.Where(sql.NEQ(s.C(FieldEnumSelectionModeValue), vc))
 	})
 }
 
 // EnumSelectionModeValueIn applies the In predicate on the "enum_selection_mode_value" field.
-func EnumSelectionModeValueIn(vs ...EnumSelectionModeValue) predicate.CheckListItemDefinition {
+func EnumSelectionModeValueIn(vs ...enum.CheckListItemEnumSelectionMode) predicate.CheckListItemDefinition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -802,7 +737,7 @@ func EnumSelectionModeValueIn(vs ...EnumSelectionModeValue) predicate.CheckListI
 }
 
 // EnumSelectionModeValueNotIn applies the NotIn predicate on the "enum_selection_mode_value" field.
-func EnumSelectionModeValueNotIn(vs ...EnumSelectionModeValue) predicate.CheckListItemDefinition {
+func EnumSelectionModeValueNotIn(vs ...enum.CheckListItemEnumSelectionMode) predicate.CheckListItemDefinition {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]

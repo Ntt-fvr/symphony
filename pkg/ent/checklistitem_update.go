@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/surveywifiscan"
 )
@@ -43,8 +44,8 @@ func (cliu *CheckListItemUpdate) SetTitle(s string) *CheckListItemUpdate {
 }
 
 // SetType sets the type field.
-func (cliu *CheckListItemUpdate) SetType(s string) *CheckListItemUpdate {
-	cliu.mutation.SetType(s)
+func (cliu *CheckListItemUpdate) SetType(elit enum.CheckListItemType) *CheckListItemUpdate {
+	cliu.mutation.SetType(elit)
 	return cliu
 }
 
@@ -156,15 +157,15 @@ func (cliu *CheckListItemUpdate) ClearEnumValues() *CheckListItemUpdate {
 }
 
 // SetEnumSelectionModeValue sets the enum_selection_mode_value field.
-func (cliu *CheckListItemUpdate) SetEnumSelectionModeValue(csmv checklistitem.EnumSelectionModeValue) *CheckListItemUpdate {
-	cliu.mutation.SetEnumSelectionModeValue(csmv)
+func (cliu *CheckListItemUpdate) SetEnumSelectionModeValue(eliesm enum.CheckListItemEnumSelectionMode) *CheckListItemUpdate {
+	cliu.mutation.SetEnumSelectionModeValue(eliesm)
 	return cliu
 }
 
 // SetNillableEnumSelectionModeValue sets the enum_selection_mode_value field if the given value is not nil.
-func (cliu *CheckListItemUpdate) SetNillableEnumSelectionModeValue(csmv *checklistitem.EnumSelectionModeValue) *CheckListItemUpdate {
-	if csmv != nil {
-		cliu.SetEnumSelectionModeValue(*csmv)
+func (cliu *CheckListItemUpdate) SetNillableEnumSelectionModeValue(eliesm *enum.CheckListItemEnumSelectionMode) *CheckListItemUpdate {
+	if eliesm != nil {
+		cliu.SetEnumSelectionModeValue(*eliesm)
 	}
 	return cliu
 }
@@ -349,6 +350,11 @@ func (cliu *CheckListItemUpdate) ClearCheckListCategory() *CheckListItemUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (cliu *CheckListItemUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := cliu.mutation.GetType(); ok {
+		if err := checklistitem.TypeValidator(v); err != nil {
+			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
 	if v, ok := cliu.mutation.EnumSelectionModeValue(); ok {
 		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
 			return 0, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
@@ -439,7 +445,7 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := cliu.mutation.GetType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: checklistitem.FieldType,
 		})
@@ -742,8 +748,8 @@ func (cliuo *CheckListItemUpdateOne) SetTitle(s string) *CheckListItemUpdateOne 
 }
 
 // SetType sets the type field.
-func (cliuo *CheckListItemUpdateOne) SetType(s string) *CheckListItemUpdateOne {
-	cliuo.mutation.SetType(s)
+func (cliuo *CheckListItemUpdateOne) SetType(elit enum.CheckListItemType) *CheckListItemUpdateOne {
+	cliuo.mutation.SetType(elit)
 	return cliuo
 }
 
@@ -855,15 +861,15 @@ func (cliuo *CheckListItemUpdateOne) ClearEnumValues() *CheckListItemUpdateOne {
 }
 
 // SetEnumSelectionModeValue sets the enum_selection_mode_value field.
-func (cliuo *CheckListItemUpdateOne) SetEnumSelectionModeValue(csmv checklistitem.EnumSelectionModeValue) *CheckListItemUpdateOne {
-	cliuo.mutation.SetEnumSelectionModeValue(csmv)
+func (cliuo *CheckListItemUpdateOne) SetEnumSelectionModeValue(eliesm enum.CheckListItemEnumSelectionMode) *CheckListItemUpdateOne {
+	cliuo.mutation.SetEnumSelectionModeValue(eliesm)
 	return cliuo
 }
 
 // SetNillableEnumSelectionModeValue sets the enum_selection_mode_value field if the given value is not nil.
-func (cliuo *CheckListItemUpdateOne) SetNillableEnumSelectionModeValue(csmv *checklistitem.EnumSelectionModeValue) *CheckListItemUpdateOne {
-	if csmv != nil {
-		cliuo.SetEnumSelectionModeValue(*csmv)
+func (cliuo *CheckListItemUpdateOne) SetNillableEnumSelectionModeValue(eliesm *enum.CheckListItemEnumSelectionMode) *CheckListItemUpdateOne {
+	if eliesm != nil {
+		cliuo.SetEnumSelectionModeValue(*eliesm)
 	}
 	return cliuo
 }
@@ -1048,6 +1054,11 @@ func (cliuo *CheckListItemUpdateOne) ClearCheckListCategory() *CheckListItemUpda
 
 // Save executes the query and returns the updated entity.
 func (cliuo *CheckListItemUpdateOne) Save(ctx context.Context) (*CheckListItem, error) {
+	if v, ok := cliuo.mutation.GetType(); ok {
+		if err := checklistitem.TypeValidator(v); err != nil {
+			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
 	if v, ok := cliuo.mutation.EnumSelectionModeValue(); ok {
 		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
 			return nil, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
@@ -1136,7 +1147,7 @@ func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckLis
 	}
 	if value, ok := cliuo.mutation.GetType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: checklistitem.FieldType,
 		})

@@ -123,7 +123,7 @@ var (
 	CheckListItemsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString},
-		{Name: "type", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no"}},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "checked", Type: field.TypeBool, Nullable: true},
@@ -156,7 +156,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString},
-		{Name: "type", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no"}},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "enum_values", Type: field.TypeString, Nullable: true},

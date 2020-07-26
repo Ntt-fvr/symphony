@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // CheckListItem is the model entity for the CheckListItem schema.
@@ -23,7 +24,7 @@ type CheckListItem struct {
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Type holds the value of the "type" field.
-	Type string `json:"type,omitempty"`
+	Type enum.CheckListItemType `json:"type,omitempty"`
 	// Index holds the value of the "index" field.
 	Index int `json:"index,omitempty"`
 	// IsMandatory holds the value of the "is_mandatory" field.
@@ -35,7 +36,7 @@ type CheckListItem struct {
 	// EnumValues holds the value of the "enum_values" field.
 	EnumValues string `json:"enum_values,omitempty" gqlgen:"enumValues"`
 	// EnumSelectionModeValue holds the value of the "enum_selection_mode_value" field.
-	EnumSelectionModeValue checklistitem.EnumSelectionModeValue `json:"enum_selection_mode_value,omitempty"`
+	EnumSelectionModeValue enum.CheckListItemEnumSelectionMode `json:"enum_selection_mode_value,omitempty"`
 	// SelectedEnumValues holds the value of the "selected_enum_values" field.
 	SelectedEnumValues string `json:"selected_enum_values,omitempty" gqlgen:"selectedEnumValues"`
 	// YesNoVal holds the value of the "yes_no_val" field.
@@ -149,7 +150,7 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 	if value, ok := values[1].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field type", values[1])
 	} else if value.Valid {
-		cli.Type = value.String
+		cli.Type = enum.CheckListItemType(enum.CheckListItemType(value.String))
 	}
 	if value, ok := values[2].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field index", values[2])
@@ -179,7 +180,7 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 	if value, ok := values[7].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
-		cli.EnumSelectionModeValue = checklistitem.EnumSelectionModeValue(value.String)
+		cli.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field selected_enum_values", values[8])
@@ -255,7 +256,7 @@ func (cli *CheckListItem) String() string {
 	builder.WriteString(", title=")
 	builder.WriteString(cli.Title)
 	builder.WriteString(", type=")
-	builder.WriteString(cli.Type)
+	builder.WriteString(fmt.Sprintf("%v", cli.Type))
 	builder.WriteString(", index=")
 	builder.WriteString(fmt.Sprintf("%v", cli.Index))
 	builder.WriteString(", is_mandatory=")

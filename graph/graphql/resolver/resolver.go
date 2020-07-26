@@ -215,10 +215,6 @@ func (resolver) CheckListCategoryDefinition() generated.CheckListCategoryDefinit
 	return checkListCategoryDefinitionResolver{}
 }
 
-func (resolver) CheckListItemDefinition() generated.CheckListItemDefinitionResolver {
-	return checkListItemDefinitionResolver{}
-}
-
 func (resolver) ActionsRule() generated.ActionsRuleResolver {
 	return actionsRuleResolver{}
 }

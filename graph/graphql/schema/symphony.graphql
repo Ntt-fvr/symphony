@@ -1449,7 +1449,10 @@ enum YesNoResponse
   NO
 }
 
-enum CheckListItemType {
+enum CheckListItemType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.CheckListItemType"
+  ) {
   simple
   string
   enum
@@ -1461,7 +1464,7 @@ enum CheckListItemType {
 
 enum CheckListItemEnumSelectionMode
   @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/checklistitem.EnumSelectionModeValue"
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.CheckListItemEnumSelectionMode"
   ) {
   single
   multiple
@@ -1482,6 +1485,7 @@ type CheckListItemDefinition {
   isMandatory: Boolean
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
+    @goField(name: "EnumSelectionModeValue")
   helpText: String
 }
 
@@ -1519,6 +1523,7 @@ type CheckListItem implements Node {
   helpText: String
   enumValues: String
   enumSelectionMode: CheckListItemEnumSelectionMode
+    @goField(name: "EnumSelectionModeValue")
   selectedEnumValues: String
   stringValue: String
   checked: Boolean

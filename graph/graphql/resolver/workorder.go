@@ -12,12 +12,12 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
@@ -445,7 +445,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 	if input.ID == nil {
 		cli, err = cl.Create().
 			SetTitle(input.Title).
-			SetType(input.Type.String()).
+			SetType(input.Type).
 			SetNillableIndex(input.Index).
 			SetNillableIsMandatory(input.IsMandatory).
 			SetNillableEnumValues(input.EnumValues).
@@ -463,7 +463,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 	} else {
 		cli, err = cl.UpdateOneID(*input.ID).
 			SetTitle(input.Title).
-			SetType(input.Type.String()).
+			SetType(input.Type).
 			SetNillableIndex(input.Index).
 			SetNillableIsMandatory(input.IsMandatory).
 			SetNillableEnumValues(input.EnumValues).
@@ -600,12 +600,12 @@ func (r mutationResolver) addWorkOrderTypeCategoryDefinitions(ctx context.Contex
 		for _, clInput := range categoryInput.CheckList {
 			if _, err = client.CheckListItemDefinition.Create().
 				SetTitle(clInput.Title).
-				SetType(clInput.Type.String()).
+				SetType(clInput.Type).
 				SetNillableIndex(clInput.Index).
 				SetNillableIsMandatory(clInput.IsMandatory).
 				SetNillableHelpText(clInput.HelpText).
 				SetNillableEnumValues(clInput.EnumValues).
-				SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
+				SetNillableEnumSelectionModeValue(clInput.EnumSelectionMode).
 				SetCheckListCategoryDefinitionID(checkListCategoryDefinition.ID).
 				Save(ctx); err != nil {
 				return errors.Wrap(err, "creating check list item definition")
@@ -675,7 +675,7 @@ func (r mutationResolver) addWorkOrderTemplate(
 			return nil, err
 		}
 		for _, checkList := range checkLists {
-			var enumSelectionMode *checklistitemdefinition.EnumSelectionModeValue
+			var enumSelectionMode *enum.CheckListItemEnumSelectionMode
 			if checkList.EnumSelectionModeValue != "" {
 				enumSelectionMode = &checkList.EnumSelectionModeValue
 			}
@@ -851,11 +851,11 @@ func (r mutationResolver) createOrUpdateCheckListDefinition(
 	if clInput.ID == nil {
 		cli, err := cl.Create().
 			SetTitle(clInput.Title).
-			SetType(clInput.Type.String()).
+			SetType(clInput.Type).
 			SetNillableIndex(clInput.Index).
 			SetNillableIsMandatory(clInput.IsMandatory).
 			SetNillableEnumValues(clInput.EnumValues).
-			SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
+			SetNillableEnumSelectionModeValue(clInput.EnumSelectionMode).
 			SetNillableHelpText(clInput.HelpText).
 			SetCheckListCategoryDefinitionID(categoryID).
 			Save(ctx)
@@ -867,11 +867,11 @@ func (r mutationResolver) createOrUpdateCheckListDefinition(
 
 	cli, err := cl.UpdateOneID(*clInput.ID).
 		SetTitle(clInput.Title).
-		SetType(clInput.Type.String()).
+		SetType(clInput.Type).
 		SetNillableIndex(clInput.Index).
 		SetNillableIsMandatory(clInput.IsMandatory).
 		SetNillableEnumValues(clInput.EnumValues).
-		SetNillableEnumSelectionModeValue((*checklistitemdefinition.EnumSelectionModeValue)(clInput.EnumSelectionMode)).
+		SetNillableEnumSelectionModeValue(clInput.EnumSelectionMode).
 		SetNillableHelpText(clInput.HelpText).
 		Save(ctx)
 	if err != nil {

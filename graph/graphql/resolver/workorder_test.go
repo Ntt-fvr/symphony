@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/99designs/gqlgen/client"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/authz"
@@ -19,13 +21,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/99designs/gqlgen/client"
-	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -1603,7 +1603,7 @@ func TestAddWorkOrderWithCheckListCategory(t *testing.T) {
 	require.Len(t, cls, 1)
 
 	barCLCFetched := workOrder.QueryCheckListCategories().Where(checklistcategory.Title("Bar")).OnlyX(ctx)
-	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.Type("simple")).OnlyX(ctx)
+	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeSimple)).OnlyX(ctx)
 	require.Equal(t, "Foo", fooCLFetched.Title, "verifying checklist name")
 	require.EqualValues(t, true, fooCLFetched.IsMandatory)
 
@@ -1634,7 +1634,7 @@ func TestEditWorkOrderWithCheckListCategory(t *testing.T) {
 	indexValue := 1
 	fooCL := models.CheckListItemInput{
 		Title:       "Foo",
-		Type:        "simple",
+		Type:        enum.CheckListItemTypeSimple,
 		Index:       &indexValue,
 		IsMandatory: pointer.ToBool(true),
 	}
@@ -1656,7 +1656,7 @@ func TestEditWorkOrderWithCheckListCategory(t *testing.T) {
 	require.Len(t, cls, 1)
 
 	barCLCFetched := workOrder.QueryCheckListCategories().Where(checklistcategory.Title("Bar")).OnlyX(ctx)
-	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.Type("simple")).OnlyX(ctx)
+	fooCLFetched := barCLCFetched.QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeSimple)).OnlyX(ctx)
 	require.Equal(t, "Foo", fooCLFetched.Title, "verifying checklist name")
 	require.Equal(t, true, fooCLFetched.IsMandatory, "verifying isMandatory")
 
@@ -1835,17 +1835,17 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 			Title: "Bar",
 			CheckList: []*models.CheckListItemInput{{
 				Title:   "Foo",
-				Type:    models.CheckListItemTypeSimple,
+				Type:    enum.CheckListItemTypeSimple,
 				Index:   pointer.ToInt(0),
 				Checked: pointer.ToBool(false),
 			},
 				{
 					Title: "CellScan",
-					Type:  models.CheckListItemTypeCellScan,
+					Type:  enum.CheckListItemTypeCellScan,
 					Index: pointer.ToInt(1),
 				}, {
 					Title: "Files",
-					Type:  models.CheckListItemTypeFiles,
+					Type:  enum.CheckListItemTypeFiles,
 					Index: pointer.ToInt(2),
 					Files: []*models.FileInput{
 						{
@@ -1866,13 +1866,13 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	fooID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ("simple")).OnlyID(ctx)
+	fooID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeSimple)).OnlyID(ctx)
 	require.NoError(t, err)
-	cellScanID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ("cell_scan")).OnlyID(ctx)
+	cellScanID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeCellScan)).OnlyID(ctx)
 	require.NoError(t, err)
-	filesID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ("files")).OnlyID(ctx)
+	filesID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeFiles)).OnlyID(ctx)
 	require.NoError(t, err)
-	fileToKeepID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ("files")).QueryFiles().Where(file.StoreKey("StoreKeyAlreadyIn")).OnlyID(ctx)
+	fileToKeepID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeFiles)).QueryFiles().Where(file.StoreKey("StoreKeyAlreadyIn")).OnlyID(ctx)
 	require.NoError(t, err)
 	techInput := models.TechnicianWorkOrderUploadInput{
 		WorkOrderID: wo.ID,
@@ -1915,7 +1915,7 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 			CheckListCategories []struct {
 				CheckList []struct {
 					ID       string
-					Type     models.CheckListItemType
+					Type     enum.CheckListItemType
 					Checked  *bool
 					CellData []struct {
 						NetworkType    string
@@ -1965,12 +1965,12 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 
 	for _, item := range rsp.TechnicianWorkOrderUploadData.CheckListCategories[0].CheckList {
 		switch item.Type {
-		case models.CheckListItemTypeSimple:
+		case enum.CheckListItemTypeSimple:
 			require.True(t, *item.Checked)
-		case models.CheckListItemTypeCellScan:
+		case enum.CheckListItemTypeCellScan:
 			require.Equal(t, models.CellularNetworkTypeLte.String(), item.CellData[0].NetworkType)
 			require.Equal(t, -93, item.CellData[0].SignalStrength)
-		case models.CheckListItemTypeFiles:
+		case enum.CheckListItemTypeFiles:
 			require.Equal(t, 2, len(item.Files))
 
 			require.Equal(t, "StoreKeyAlreadyIn", item.Files[0].StoreKey)
