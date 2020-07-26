@@ -44,6 +44,8 @@ const OrganizationSamlStrategy = require('@fbcnms/auth/strategies/OrganizationSa
   .default;
 const OrganizationOIDCStrategy = require('@fbcnms/auth/strategies/OrganizationOIDCStrategy')
   .default;
+const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
+  .default;
 
 const {createGraphTenant, deleteGraphTenant} = require('./graphgrpc/tenant');
 const {createGraphUser, deleteGraphUser} = require('./graphgrpc/user');
@@ -114,7 +116,7 @@ passport.use(
     urlPrefix: '/user',
   }),
 );
-
+passport.use('bearer', BearerStrategy());
 app.use(oidcAuthMiddleware());
 
 // Views
@@ -134,7 +136,7 @@ app.use(configureAccess({loginUrl: '/user/login'}));
 // are JSON (no form), so no CSRF is needed
 app.use(
   '/graph',
-  passport.authenticate(['basic_local', 'session'], {session: false}),
+  passport.authenticate(['bearer', 'basic_local', 'session'], {session: false}),
   access(USER),
   insertFeatures,
   require('./graph/routes'),
