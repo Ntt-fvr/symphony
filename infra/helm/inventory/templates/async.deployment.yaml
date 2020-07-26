@@ -50,6 +50,8 @@ spec:
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}
             {{- end }}
+            - name: FEATURES_URL
+              value: "http://{{ template "inventory.front.fullname" . }}:{{ .Values.front.service.internalPort }}/features"
             {{- include "inventory.loggingEnv" .Values.async | nindent 12 }}
             {{- include "inventory.tracingEnv" . | nindent 12 }}
             {{- with .Values.async.spec.extraEnvVars }}

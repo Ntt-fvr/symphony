@@ -13,14 +13,9 @@ services:
       API_HOST: ${MAGMA_API_HOST:-api-staging.magma.etagecom.io}
       API_CERT_FILENAME: /magma_certs/${MAGMA_API_AUTH:-}api_cert
       API_PRIVATE_KEY_FILENAME: /magma_certs/${MAGMA_API_AUTH:-}api_key
-      PORT: 80
-      MYSQL_HOST: mysql
-      MYSQL_DB: auth
-      MYSQL_USER: root
-      MYSQL_PASS: root
-      FB_TEST_USER: fbuser@fb.com
       USER_GRAFANA_ADDRESS: host.docker.internal:3000
     env_file:
+      - conf/front.env
       - conf/telemetry.env
     networks:
       - public
@@ -89,6 +84,7 @@ services:
       - migrate
       - mysql
       - nats
+      - platform-server
     healthcheck:
       test: curl -If localhost/healthz/liveness
     restart: on-failure

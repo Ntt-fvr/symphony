@@ -22,13 +22,8 @@ services:
 
   front:
     image: ${DOCKER_REGISTRY}/front:${TAG}
-    environment:
-      PORT: 80
-      MYSQL_HOST: mysql
-      MYSQL_DB: auth
-      MYSQL_USER: root
-      MYSQL_PASS: root
-      FB_TEST_USER: fbuser@fb.com
+    env_file:
+      - conf/front.env
     depends_on:
       - mysql
     healthcheck:
@@ -57,9 +52,12 @@ services:
     env_file:
       - conf/async.env
       - conf/log.env
+    environment:
+      - FEATURES_URL=http://front:1030/features
     depends_on:
       - mysql
       - nats
+      - front
     healthcheck: *healthcheck
     restart: on-failure
 

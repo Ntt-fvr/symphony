@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
+	"gocloud.dev/runtimevar"
 )
 
 const serviceName = "async"
@@ -39,6 +40,7 @@ func (f Func) Handle(ctx context.Context, entry event.LogEntry) error {
 // NewServer is the events server.
 type Server struct {
 	tenancy    viewer.Tenancy
+	features   *runtimevar.Variable
 	subscriber pubsub.Subscriber
 	logger     log.Logger
 	handlers   []Handler
@@ -47,6 +49,7 @@ type Server struct {
 // Config defines the async server config.
 type Config struct {
 	Tenancy    viewer.Tenancy
+	Features   *runtimevar.Variable
 	Logger     log.Logger
 	Subscriber pubsub.Subscriber
 	Telemetry  *telemetry.Config
@@ -55,6 +58,7 @@ type Config struct {
 func NewServer(cfg Config) *Server {
 	return &Server{
 		tenancy:    cfg.Tenancy,
+		features:   cfg.Features,
 		logger:     cfg.Logger,
 		subscriber: cfg.Subscriber,
 		handlers: []Handler{
@@ -98,7 +102,20 @@ func (s *Server) handleEventLog(handlers []Handler) func(context.Context, string
 			return fmt.Errorf("%s. tenant: %s", msg, tenant)
 		}
 		ctx = ent.NewContext(ctx, client)
-		v := viewer.NewAutomation(tenant, serviceName, user.RoleOwner)
+
+		var featureList []string
+		snapshot, err := s.features.Latest(ctx)
+		if err != nil {
+			return err
+		}
+		if tenantFeatures, ok := snapshot.Value.(viewer.TenantFeatures); ok {
+			if features, ok := tenantFeatures[tenant]; ok {
+				featureList = features
+			}
+		}
+		v := viewer.NewAutomation(tenant, serviceName, user.RoleOwner,
+			viewer.WithFeatures(featureList...),
+		)
 		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 		ctx = viewer.NewContext(ctx, v)
 		permissions, err := authz.Permissions(ctx)

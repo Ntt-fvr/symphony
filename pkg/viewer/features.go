@@ -4,8 +4,49 @@
 
 package viewer
 
+import (
+	"net/http"
+	"time"
+
+	"gocloud.dev/runtimevar"
+	"gocloud.dev/runtimevar/httpvar"
+)
+
 // The following strings are features that can be allowed on for specific tenants\users
 // To query if feature is allowed use FeatureSet.Enabled
 const (
 	FeatureMandatoryPropertiesOnWorkOrderClose = "mandatory_properties_on_work_order_close"
 )
+
+// How frequently the features variable is updated by http calls
+const featuresUpdateFreq = 5 * time.Second
+
+// FeatureSet holds the list of features of the viewer
+type TenantFeatures map[string][]string
+
+// FeatureSet holds the list of features of the viewer
+type FeatureSet map[string]struct{}
+
+// NewFeatureSet create FeatureSet from a list of features.
+func NewFeatureSet(features ...string) FeatureSet {
+	set := make(FeatureSet, len(features))
+	for _, feature := range features {
+		set[feature] = struct{}{}
+	}
+	return set
+}
+
+// SyncFeatures syncs feature flags to variable periodically via http
+func SyncFeatures(cfg Config) (*runtimevar.Variable, func(), error) {
+	decoder := runtimevar.NewDecoder(TenantFeatures{}, runtimevar.JSONDecode)
+	httpClient := http.DefaultClient
+	v, err := httpvar.OpenVariable(httpClient, cfg.FeaturesURL.String(), decoder, &httpvar.Options{
+		WaitDuration: featuresUpdateFreq,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return v, func() {
+		_ = v.Close()
+	}, nil
+}

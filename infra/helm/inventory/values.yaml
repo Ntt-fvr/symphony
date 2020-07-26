@@ -109,6 +109,10 @@ front:
     targetPort: 8080
     # Service type
     type: ClusterIP
+    # Internal Service external port
+    internalPort: 1030
+    # Internal Service target port
+    targetInternalPort: 1030
 
   # Configuration for front service account
   serviceAccount:

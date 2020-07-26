@@ -32,6 +32,10 @@ type options struct {
 // Option enables viewer customization.
 type Option func(*options)
 
+var DefaultFeatures = []string{
+	viewer.FeatureMandatoryPropertiesOnWorkOrderClose,
+}
+
 // WithTenant overrides default tenant name.
 func WithTenant(tenant string) Option {
 	return func(o *options) {
@@ -73,7 +77,7 @@ func NewContext(parent context.Context, c *ent.Client, opts ...Option) context.C
 		tenant:      DefaultTenant,
 		user:        DefaultUser,
 		role:        DefaultRole,
-		features:    []string{viewer.FeatureMandatoryPropertiesOnWorkOrderClose},
+		features:    DefaultFeatures,
 		permissions: authz.FullPermissions(),
 	}
 	for _, opt := range opts {

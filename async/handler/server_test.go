@@ -12,22 +12,23 @@ import (
 	"testing"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/event"
-
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/pubsub"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
-
-	"github.com/facebookincubator/symphony/pkg/ent"
-
-	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/viewer"
+	"gocloud.dev/runtimevar/constantvar"
 )
 
 func newTestServer(t *testing.T, client *ent.Client, subscriber pubsub.Subscriber, handlers []Handler) *Server {
 	return &Server{
-		tenancy:    viewer.NewFixedTenancy(client),
+		tenancy: viewer.NewFixedTenancy(client),
+		features: constantvar.New(viewer.TenantFeatures{
+			viewertest.DefaultTenant: viewertest.DefaultFeatures,
+		}),
 		logger:     logtest.NewTestLogger(t),
 		subscriber: subscriber,
 		handlers:   handlers,

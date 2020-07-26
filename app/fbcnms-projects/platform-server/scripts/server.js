@@ -16,6 +16,7 @@ if (!process.env.NODE_ENV) {
 }
 
 import app from '../src/app';
+import featuresApp from '../src/fetchFeatures';
 import logging from '@fbcnms/logging';
 import tracing from '@opencensus/nodejs';
 import {B3Format} from '@opencensus/propagation-b3';
@@ -29,6 +30,9 @@ import {runMigrations} from './runMigrations';
 const {sequelize} = require('@fbcnms/sequelize-models');
 const logger = logging.getLogger(module);
 const port = parseInt(process.env.PORT || 80);
+const internalPort = process.env.INTERNAL_PORT
+  ? parseInt(process.env.INTERNAL_PORT)
+  : null;
 
 // Configure metrics
 const prometheusExporter = new PrometheusStatsExporter({
@@ -109,6 +113,14 @@ tracing.start({
       logger.info(`Production server started on port ${port}`);
     }
   });
+  if (internalPort) {
+    featuresApp.listen(internalPort, '', err => {
+      if (err) {
+        logger.error(err.toString());
+      }
+      logger.info(`Internal server started on port ${internalPort}`);
+    });
+  }
 })().catch(error => {
   logger.error(error);
 });

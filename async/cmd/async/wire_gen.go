@@ -26,6 +26,8 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/server/health"
 
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	_ "gocloud.dev/pubsub/mempubsub"
@@ -60,10 +62,17 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
+	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	urlSubscriber := pubsub.ProvideSubscriber(pubsubConfig)
 	telemetryConfig := &flags.TelemetryConfig
 	handlerConfig := handler.Config{
 		Tenancy:    tenancy,
+		Features:   variable,
 		Logger:     logger,
 		Subscriber: urlSubscriber,
 		Telemetry:  telemetryConfig,
@@ -75,12 +84,14 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	v2 := provideViews()
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	traceExporter, cleanup4, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -104,6 +115,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	logger2 := log.ProvideZapLogger(logger)
 	mainApplication := newApplication(handlerServer, serverServer, logger2, flags)
 	return mainApplication, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
