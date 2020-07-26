@@ -129,16 +129,8 @@ func (epdc *EquipmentPositionDefinitionCreate) Mutation() *EquipmentPositionDefi
 
 // Save creates the EquipmentPositionDefinition in the database.
 func (epdc *EquipmentPositionDefinitionCreate) Save(ctx context.Context) (*EquipmentPositionDefinition, error) {
-	if _, ok := epdc.mutation.CreateTime(); !ok {
-		v := equipmentpositiondefinition.DefaultCreateTime()
-		epdc.mutation.SetCreateTime(v)
-	}
-	if _, ok := epdc.mutation.UpdateTime(); !ok {
-		v := equipmentpositiondefinition.DefaultUpdateTime()
-		epdc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := epdc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	if err := epdc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -174,6 +166,21 @@ func (epdc *EquipmentPositionDefinitionCreate) SaveX(ctx context.Context) *Equip
 		panic(err)
 	}
 	return v
+}
+
+func (epdc *EquipmentPositionDefinitionCreate) preSave() error {
+	if _, ok := epdc.mutation.CreateTime(); !ok {
+		v := equipmentpositiondefinition.DefaultCreateTime()
+		epdc.mutation.SetCreateTime(v)
+	}
+	if _, ok := epdc.mutation.UpdateTime(); !ok {
+		v := equipmentpositiondefinition.DefaultUpdateTime()
+		epdc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := epdc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	return nil
 }
 
 func (epdc *EquipmentPositionDefinitionCreate) sqlSave(ctx context.Context) (*EquipmentPositionDefinition, error) {
@@ -279,4 +286,68 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return epd, _spec
+}
+
+// EquipmentPositionDefinitionCreateBulk is the builder for creating a bulk of EquipmentPositionDefinition entities.
+type EquipmentPositionDefinitionCreateBulk struct {
+	config
+	builders []*EquipmentPositionDefinitionCreate
+}
+
+// Save creates the EquipmentPositionDefinition entities in the database.
+func (epdcb *EquipmentPositionDefinitionCreateBulk) Save(ctx context.Context) ([]*EquipmentPositionDefinition, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(epdcb.builders))
+	nodes := make([]*EquipmentPositionDefinition, len(epdcb.builders))
+	mutators := make([]Mutator, len(epdcb.builders))
+	for i := range epdcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := epdcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*EquipmentPositionDefinitionMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, epdcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, epdcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(epdcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = epdcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, epdcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (epdcb *EquipmentPositionDefinitionCreateBulk) SaveX(ctx context.Context) []*EquipmentPositionDefinition {
+	v, err := epdcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

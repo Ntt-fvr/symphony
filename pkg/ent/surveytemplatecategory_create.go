@@ -107,19 +107,8 @@ func (stcc *SurveyTemplateCategoryCreate) Mutation() *SurveyTemplateCategoryMuta
 
 // Save creates the SurveyTemplateCategory in the database.
 func (stcc *SurveyTemplateCategoryCreate) Save(ctx context.Context) (*SurveyTemplateCategory, error) {
-	if _, ok := stcc.mutation.CreateTime(); !ok {
-		v := surveytemplatecategory.DefaultCreateTime()
-		stcc.mutation.SetCreateTime(v)
-	}
-	if _, ok := stcc.mutation.UpdateTime(); !ok {
-		v := surveytemplatecategory.DefaultUpdateTime()
-		stcc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := stcc.mutation.CategoryTitle(); !ok {
-		return nil, &ValidationError{Name: "category_title", err: errors.New("ent: missing required field \"category_title\"")}
-	}
-	if _, ok := stcc.mutation.CategoryDescription(); !ok {
-		return nil, &ValidationError{Name: "category_description", err: errors.New("ent: missing required field \"category_description\"")}
+	if err := stcc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -155,6 +144,24 @@ func (stcc *SurveyTemplateCategoryCreate) SaveX(ctx context.Context) *SurveyTemp
 		panic(err)
 	}
 	return v
+}
+
+func (stcc *SurveyTemplateCategoryCreate) preSave() error {
+	if _, ok := stcc.mutation.CreateTime(); !ok {
+		v := surveytemplatecategory.DefaultCreateTime()
+		stcc.mutation.SetCreateTime(v)
+	}
+	if _, ok := stcc.mutation.UpdateTime(); !ok {
+		v := surveytemplatecategory.DefaultUpdateTime()
+		stcc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := stcc.mutation.CategoryTitle(); !ok {
+		return &ValidationError{Name: "category_title", err: errors.New("ent: missing required field \"category_title\"")}
+	}
+	if _, ok := stcc.mutation.CategoryDescription(); !ok {
+		return &ValidationError{Name: "category_description", err: errors.New("ent: missing required field \"category_description\"")}
+	}
+	return nil
 }
 
 func (stcc *SurveyTemplateCategoryCreate) sqlSave(ctx context.Context) (*SurveyTemplateCategory, error) {
@@ -252,4 +259,68 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return stc, _spec
+}
+
+// SurveyTemplateCategoryCreateBulk is the builder for creating a bulk of SurveyTemplateCategory entities.
+type SurveyTemplateCategoryCreateBulk struct {
+	config
+	builders []*SurveyTemplateCategoryCreate
+}
+
+// Save creates the SurveyTemplateCategory entities in the database.
+func (stccb *SurveyTemplateCategoryCreateBulk) Save(ctx context.Context) ([]*SurveyTemplateCategory, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(stccb.builders))
+	nodes := make([]*SurveyTemplateCategory, len(stccb.builders))
+	mutators := make([]Mutator, len(stccb.builders))
+	for i := range stccb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := stccb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*SurveyTemplateCategoryMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, stccb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, stccb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(stccb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = stccb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, stccb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (stccb *SurveyTemplateCategoryCreateBulk) SaveX(ctx context.Context) []*SurveyTemplateCategory {
+	v, err := stccb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

@@ -145,16 +145,8 @@ func (fpc *FloorPlanCreate) Mutation() *FloorPlanMutation {
 
 // Save creates the FloorPlan in the database.
 func (fpc *FloorPlanCreate) Save(ctx context.Context) (*FloorPlan, error) {
-	if _, ok := fpc.mutation.CreateTime(); !ok {
-		v := floorplan.DefaultCreateTime()
-		fpc.mutation.SetCreateTime(v)
-	}
-	if _, ok := fpc.mutation.UpdateTime(); !ok {
-		v := floorplan.DefaultUpdateTime()
-		fpc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := fpc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	if err := fpc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -190,6 +182,21 @@ func (fpc *FloorPlanCreate) SaveX(ctx context.Context) *FloorPlan {
 		panic(err)
 	}
 	return v
+}
+
+func (fpc *FloorPlanCreate) preSave() error {
+	if _, ok := fpc.mutation.CreateTime(); !ok {
+		v := floorplan.DefaultCreateTime()
+		fpc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fpc.mutation.UpdateTime(); !ok {
+		v := floorplan.DefaultUpdateTime()
+		fpc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := fpc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	return nil
 }
 
 func (fpc *FloorPlanCreate) sqlSave(ctx context.Context) (*FloorPlan, error) {
@@ -317,4 +324,68 @@ func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return fp, _spec
+}
+
+// FloorPlanCreateBulk is the builder for creating a bulk of FloorPlan entities.
+type FloorPlanCreateBulk struct {
+	config
+	builders []*FloorPlanCreate
+}
+
+// Save creates the FloorPlan entities in the database.
+func (fpcb *FloorPlanCreateBulk) Save(ctx context.Context) ([]*FloorPlan, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(fpcb.builders))
+	nodes := make([]*FloorPlan, len(fpcb.builders))
+	mutators := make([]Mutator, len(fpcb.builders))
+	for i := range fpcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := fpcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*FloorPlanMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, fpcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, fpcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(fpcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = fpcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, fpcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (fpcb *FloorPlanCreateBulk) SaveX(ctx context.Context) []*FloorPlan {
+	v, err := fpcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

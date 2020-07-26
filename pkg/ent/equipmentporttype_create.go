@@ -112,16 +112,8 @@ func (eptc *EquipmentPortTypeCreate) Mutation() *EquipmentPortTypeMutation {
 
 // Save creates the EquipmentPortType in the database.
 func (eptc *EquipmentPortTypeCreate) Save(ctx context.Context) (*EquipmentPortType, error) {
-	if _, ok := eptc.mutation.CreateTime(); !ok {
-		v := equipmentporttype.DefaultCreateTime()
-		eptc.mutation.SetCreateTime(v)
-	}
-	if _, ok := eptc.mutation.UpdateTime(); !ok {
-		v := equipmentporttype.DefaultUpdateTime()
-		eptc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := eptc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	if err := eptc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -157,6 +149,21 @@ func (eptc *EquipmentPortTypeCreate) SaveX(ctx context.Context) *EquipmentPortTy
 		panic(err)
 	}
 	return v
+}
+
+func (eptc *EquipmentPortTypeCreate) preSave() error {
+	if _, ok := eptc.mutation.CreateTime(); !ok {
+		v := equipmentporttype.DefaultCreateTime()
+		eptc.mutation.SetCreateTime(v)
+	}
+	if _, ok := eptc.mutation.UpdateTime(); !ok {
+		v := equipmentporttype.DefaultUpdateTime()
+		eptc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := eptc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	return nil
 }
 
 func (eptc *EquipmentPortTypeCreate) sqlSave(ctx context.Context) (*EquipmentPortType, error) {
@@ -265,4 +272,68 @@ func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return ept, _spec
+}
+
+// EquipmentPortTypeCreateBulk is the builder for creating a bulk of EquipmentPortType entities.
+type EquipmentPortTypeCreateBulk struct {
+	config
+	builders []*EquipmentPortTypeCreate
+}
+
+// Save creates the EquipmentPortType entities in the database.
+func (eptcb *EquipmentPortTypeCreateBulk) Save(ctx context.Context) ([]*EquipmentPortType, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(eptcb.builders))
+	nodes := make([]*EquipmentPortType, len(eptcb.builders))
+	mutators := make([]Mutator, len(eptcb.builders))
+	for i := range eptcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := eptcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*EquipmentPortTypeMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, eptcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, eptcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(eptcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = eptcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, eptcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (eptcb *EquipmentPortTypeCreateBulk) SaveX(ctx context.Context) []*EquipmentPortType {
+	v, err := eptcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

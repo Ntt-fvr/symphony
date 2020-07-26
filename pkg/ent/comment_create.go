@@ -117,19 +117,8 @@ func (cc *CommentCreate) Mutation() *CommentMutation {
 
 // Save creates the Comment in the database.
 func (cc *CommentCreate) Save(ctx context.Context) (*Comment, error) {
-	if _, ok := cc.mutation.CreateTime(); !ok {
-		v := comment.DefaultCreateTime()
-		cc.mutation.SetCreateTime(v)
-	}
-	if _, ok := cc.mutation.UpdateTime(); !ok {
-		v := comment.DefaultUpdateTime()
-		cc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := cc.mutation.Text(); !ok {
-		return nil, &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
-	}
-	if _, ok := cc.mutation.AuthorID(); !ok {
-		return nil, &ValidationError{Name: "author", err: errors.New("ent: missing required edge \"author\"")}
+	if err := cc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -165,6 +154,24 @@ func (cc *CommentCreate) SaveX(ctx context.Context) *Comment {
 		panic(err)
 	}
 	return v
+}
+
+func (cc *CommentCreate) preSave() error {
+	if _, ok := cc.mutation.CreateTime(); !ok {
+		v := comment.DefaultCreateTime()
+		cc.mutation.SetCreateTime(v)
+	}
+	if _, ok := cc.mutation.UpdateTime(); !ok {
+		v := comment.DefaultUpdateTime()
+		cc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := cc.mutation.Text(); !ok {
+		return &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
+	}
+	if _, ok := cc.mutation.AuthorID(); !ok {
+		return &ValidationError{Name: "author", err: errors.New("ent: missing required edge \"author\"")}
+	}
+	return nil
 }
 
 func (cc *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
@@ -273,4 +280,68 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return c, _spec
+}
+
+// CommentCreateBulk is the builder for creating a bulk of Comment entities.
+type CommentCreateBulk struct {
+	config
+	builders []*CommentCreate
+}
+
+// Save creates the Comment entities in the database.
+func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ccb.builders))
+	nodes := make([]*Comment, len(ccb.builders))
+	mutators := make([]Mutator, len(ccb.builders))
+	for i := range ccb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ccb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*CommentMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ccb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ccb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ccb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ccb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ccb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ccb *CommentCreateBulk) SaveX(ctx context.Context) []*Comment {
+	v, err := ccb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

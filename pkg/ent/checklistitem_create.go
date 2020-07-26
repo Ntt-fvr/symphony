@@ -228,24 +228,8 @@ func (clic *CheckListItemCreate) Mutation() *CheckListItemMutation {
 
 // Save creates the CheckListItem in the database.
 func (clic *CheckListItemCreate) Save(ctx context.Context) (*CheckListItem, error) {
-	if _, ok := clic.mutation.Title(); !ok {
-		return nil, &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
-	}
-	if _, ok := clic.mutation.GetType(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
-	}
-	if v, ok := clic.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
-			return nil, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-	if v, ok := clic.mutation.YesNoVal(); ok {
-		if err := checklistitem.YesNoValValidator(v); err != nil {
-			return nil, &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
-		}
-	}
-	if _, ok := clic.mutation.CheckListCategoryID(); !ok {
-		return nil, &ValidationError{Name: "check_list_category", err: errors.New("ent: missing required edge \"check_list_category\"")}
+	if err := clic.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -281,6 +265,29 @@ func (clic *CheckListItemCreate) SaveX(ctx context.Context) *CheckListItem {
 		panic(err)
 	}
 	return v
+}
+
+func (clic *CheckListItemCreate) preSave() error {
+	if _, ok := clic.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
+	}
+	if _, ok := clic.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
+	}
+	if v, ok := clic.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if v, ok := clic.mutation.YesNoVal(); ok {
+		if err := checklistitem.YesNoValValidator(v); err != nil {
+			return &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
+		}
+	}
+	if _, ok := clic.mutation.CheckListCategoryID(); !ok {
+		return &ValidationError{Name: "check_list_category", err: errors.New("ent: missing required edge \"check_list_category\"")}
+	}
+	return nil
 }
 
 func (clic *CheckListItemCreate) sqlSave(ctx context.Context) (*CheckListItem, error) {
@@ -472,4 +479,68 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return cli, _spec
+}
+
+// CheckListItemCreateBulk is the builder for creating a bulk of CheckListItem entities.
+type CheckListItemCreateBulk struct {
+	config
+	builders []*CheckListItemCreate
+}
+
+// Save creates the CheckListItem entities in the database.
+func (clicb *CheckListItemCreateBulk) Save(ctx context.Context) ([]*CheckListItem, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(clicb.builders))
+	nodes := make([]*CheckListItem, len(clicb.builders))
+	mutators := make([]Mutator, len(clicb.builders))
+	for i := range clicb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := clicb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*CheckListItemMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, clicb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, clicb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(clicb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = clicb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, clicb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (clicb *CheckListItemCreateBulk) SaveX(ctx context.Context) []*CheckListItem {
+	v, err := clicb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

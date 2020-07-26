@@ -147,25 +147,8 @@ func (ac *ActivityCreate) Mutation() *ActivityMutation {
 
 // Save creates the Activity in the database.
 func (ac *ActivityCreate) Save(ctx context.Context) (*Activity, error) {
-	if _, ok := ac.mutation.CreateTime(); !ok {
-		v := activity.DefaultCreateTime()
-		ac.mutation.SetCreateTime(v)
-	}
-	if _, ok := ac.mutation.UpdateTime(); !ok {
-		v := activity.DefaultUpdateTime()
-		ac.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ac.mutation.ChangedField(); !ok {
-		return nil, &ValidationError{Name: "changed_field", err: errors.New("ent: missing required field \"changed_field\"")}
-	}
-	if v, ok := ac.mutation.ChangedField(); ok {
-		if err := activity.ChangedFieldValidator(v); err != nil {
-			return nil, &ValidationError{Name: "changed_field", err: fmt.Errorf("ent: validator failed for field \"changed_field\": %w", err)}
-		}
-	}
-	if _, ok := ac.mutation.IsCreate(); !ok {
-		v := activity.DefaultIsCreate
-		ac.mutation.SetIsCreate(v)
+	if err := ac.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -201,6 +184,30 @@ func (ac *ActivityCreate) SaveX(ctx context.Context) *Activity {
 		panic(err)
 	}
 	return v
+}
+
+func (ac *ActivityCreate) preSave() error {
+	if _, ok := ac.mutation.CreateTime(); !ok {
+		v := activity.DefaultCreateTime()
+		ac.mutation.SetCreateTime(v)
+	}
+	if _, ok := ac.mutation.UpdateTime(); !ok {
+		v := activity.DefaultUpdateTime()
+		ac.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ac.mutation.ChangedField(); !ok {
+		return &ValidationError{Name: "changed_field", err: errors.New("ent: missing required field \"changed_field\"")}
+	}
+	if v, ok := ac.mutation.ChangedField(); ok {
+		if err := activity.ChangedFieldValidator(v); err != nil {
+			return &ValidationError{Name: "changed_field", err: fmt.Errorf("ent: validator failed for field \"changed_field\": %w", err)}
+		}
+	}
+	if _, ok := ac.mutation.IsCreate(); !ok {
+		v := activity.DefaultIsCreate
+		ac.mutation.SetIsCreate(v)
+	}
+	return nil
 }
 
 func (ac *ActivityCreate) sqlSave(ctx context.Context) (*Activity, error) {
@@ -314,4 +321,68 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return a, _spec
+}
+
+// ActivityCreateBulk is the builder for creating a bulk of Activity entities.
+type ActivityCreateBulk struct {
+	config
+	builders []*ActivityCreate
+}
+
+// Save creates the Activity entities in the database.
+func (acb *ActivityCreateBulk) Save(ctx context.Context) ([]*Activity, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(acb.builders))
+	nodes := make([]*Activity, len(acb.builders))
+	mutators := make([]Mutator, len(acb.builders))
+	for i := range acb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := acb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ActivityMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, acb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, acb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(acb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = acb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, acb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (acb *ActivityCreateBulk) SaveX(ctx context.Context) []*Activity {
+	v, err := acb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

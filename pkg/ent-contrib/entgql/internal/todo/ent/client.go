@@ -146,6 +146,11 @@ func (c *TodoClient) Create() *TodoCreate {
 	return &TodoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of Todo entities.
+func (c *TodoClient) CreateBulk(builders ...*TodoCreate) *TodoCreateBulk {
+	return &TodoCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for Todo.
 func (c *TodoClient) Update() *TodoUpdate {
 	mutation := newTodoMutation(c.config, OpUpdate)

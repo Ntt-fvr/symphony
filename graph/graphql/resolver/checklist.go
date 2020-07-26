@@ -21,20 +21,12 @@ func (checkListCategoryResolver) CheckList(ctx context.Context, obj *ent.CheckLi
 
 type checkListItemResolver struct{}
 
-func (checkListItemResolver) Type(ctx context.Context, obj *ent.CheckListItem) (models.CheckListItemType, error) {
+func (checkListItemResolver) Type(_ context.Context, obj *ent.CheckListItem) (models.CheckListItemType, error) {
 	return models.CheckListItemType(obj.Type), nil
 }
 
 func (checkListItemResolver) Files(ctx context.Context, item *ent.CheckListItem) ([]*ent.File, error) {
 	return item.QueryFiles().All(ctx)
-}
-
-func (checkListItemResolver) YesNoResponse(ctx context.Context, item *ent.CheckListItem) (*models.YesNoResponse, error) {
-	yesNoResponse := models.YesNoResponse(item.YesNoVal)
-	if yesNoResponse.IsValid() {
-		return &yesNoResponse, nil
-	}
-	return nil, nil
 }
 
 func (checkListItemResolver) WifiData(ctx context.Context, item *ent.CheckListItem) ([]*ent.SurveyWiFiScan, error) {
@@ -45,7 +37,7 @@ func (checkListItemResolver) CellData(ctx context.Context, item *ent.CheckListIt
 	return item.QueryCellScan().All(ctx)
 }
 
-func (checkListItemResolver) EnumSelectionMode(ctx context.Context, item *ent.CheckListItem) (*checklistitem.EnumSelectionModeValue, error) {
+func (checkListItemResolver) EnumSelectionMode(_ context.Context, item *ent.CheckListItem) (*checklistitem.EnumSelectionModeValue, error) {
 	return &item.EnumSelectionModeValue, nil
 }
 
@@ -57,10 +49,10 @@ func (checkListCategoryDefinitionResolver) ChecklistItemDefinitions(ctx context.
 
 type checkListItemDefinitionResolver struct{}
 
-func (checkListItemDefinitionResolver) Type(ctx context.Context, obj *ent.CheckListItemDefinition) (models.CheckListItemType, error) {
+func (checkListItemDefinitionResolver) Type(_ context.Context, obj *ent.CheckListItemDefinition) (models.CheckListItemType, error) {
 	return models.CheckListItemType(obj.Type), nil
 }
 
-func (checkListItemDefinitionResolver) EnumSelectionMode(ctx context.Context, item *ent.CheckListItemDefinition) (*checklistitem.EnumSelectionModeValue, error) {
+func (checkListItemDefinitionResolver) EnumSelectionMode(_ context.Context, item *ent.CheckListItemDefinition) (*checklistitem.EnumSelectionModeValue, error) {
 	return (*checklistitem.EnumSelectionModeValue)(&item.EnumSelectionModeValue), nil
 }

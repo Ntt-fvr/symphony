@@ -103,25 +103,8 @@ func (stqc *SurveyTemplateQuestionCreate) Mutation() *SurveyTemplateQuestionMuta
 
 // Save creates the SurveyTemplateQuestion in the database.
 func (stqc *SurveyTemplateQuestionCreate) Save(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	if _, ok := stqc.mutation.CreateTime(); !ok {
-		v := surveytemplatequestion.DefaultCreateTime()
-		stqc.mutation.SetCreateTime(v)
-	}
-	if _, ok := stqc.mutation.UpdateTime(); !ok {
-		v := surveytemplatequestion.DefaultUpdateTime()
-		stqc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := stqc.mutation.QuestionTitle(); !ok {
-		return nil, &ValidationError{Name: "question_title", err: errors.New("ent: missing required field \"question_title\"")}
-	}
-	if _, ok := stqc.mutation.QuestionDescription(); !ok {
-		return nil, &ValidationError{Name: "question_description", err: errors.New("ent: missing required field \"question_description\"")}
-	}
-	if _, ok := stqc.mutation.QuestionType(); !ok {
-		return nil, &ValidationError{Name: "question_type", err: errors.New("ent: missing required field \"question_type\"")}
-	}
-	if _, ok := stqc.mutation.Index(); !ok {
-		return nil, &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
+	if err := stqc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -157,6 +140,30 @@ func (stqc *SurveyTemplateQuestionCreate) SaveX(ctx context.Context) *SurveyTemp
 		panic(err)
 	}
 	return v
+}
+
+func (stqc *SurveyTemplateQuestionCreate) preSave() error {
+	if _, ok := stqc.mutation.CreateTime(); !ok {
+		v := surveytemplatequestion.DefaultCreateTime()
+		stqc.mutation.SetCreateTime(v)
+	}
+	if _, ok := stqc.mutation.UpdateTime(); !ok {
+		v := surveytemplatequestion.DefaultUpdateTime()
+		stqc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := stqc.mutation.QuestionTitle(); !ok {
+		return &ValidationError{Name: "question_title", err: errors.New("ent: missing required field \"question_title\"")}
+	}
+	if _, ok := stqc.mutation.QuestionDescription(); !ok {
+		return &ValidationError{Name: "question_description", err: errors.New("ent: missing required field \"question_description\"")}
+	}
+	if _, ok := stqc.mutation.QuestionType(); !ok {
+		return &ValidationError{Name: "question_type", err: errors.New("ent: missing required field \"question_type\"")}
+	}
+	if _, ok := stqc.mutation.Index(); !ok {
+		return &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
+	}
+	return nil
 }
 
 func (stqc *SurveyTemplateQuestionCreate) sqlSave(ctx context.Context) (*SurveyTemplateQuestion, error) {
@@ -251,4 +258,68 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return stq, _spec
+}
+
+// SurveyTemplateQuestionCreateBulk is the builder for creating a bulk of SurveyTemplateQuestion entities.
+type SurveyTemplateQuestionCreateBulk struct {
+	config
+	builders []*SurveyTemplateQuestionCreate
+}
+
+// Save creates the SurveyTemplateQuestion entities in the database.
+func (stqcb *SurveyTemplateQuestionCreateBulk) Save(ctx context.Context) ([]*SurveyTemplateQuestion, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(stqcb.builders))
+	nodes := make([]*SurveyTemplateQuestion, len(stqcb.builders))
+	mutators := make([]Mutator, len(stqcb.builders))
+	for i := range stqcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := stqcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*SurveyTemplateQuestionMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, stqcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, stqcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(stqcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = stqcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, stqcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (stqcb *SurveyTemplateQuestionCreateBulk) SaveX(ctx context.Context) []*SurveyTemplateQuestion {
+	v, err := stqcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

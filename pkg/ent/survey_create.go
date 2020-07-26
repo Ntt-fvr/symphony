@@ -155,19 +155,8 @@ func (sc *SurveyCreate) Mutation() *SurveyMutation {
 
 // Save creates the Survey in the database.
 func (sc *SurveyCreate) Save(ctx context.Context) (*Survey, error) {
-	if _, ok := sc.mutation.CreateTime(); !ok {
-		v := survey.DefaultCreateTime()
-		sc.mutation.SetCreateTime(v)
-	}
-	if _, ok := sc.mutation.UpdateTime(); !ok {
-		v := survey.DefaultUpdateTime()
-		sc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := sc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if _, ok := sc.mutation.CompletionTimestamp(); !ok {
-		return nil, &ValidationError{Name: "completion_timestamp", err: errors.New("ent: missing required field \"completion_timestamp\"")}
+	if err := sc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -203,6 +192,24 @@ func (sc *SurveyCreate) SaveX(ctx context.Context) *Survey {
 		panic(err)
 	}
 	return v
+}
+
+func (sc *SurveyCreate) preSave() error {
+	if _, ok := sc.mutation.CreateTime(); !ok {
+		v := survey.DefaultCreateTime()
+		sc.mutation.SetCreateTime(v)
+	}
+	if _, ok := sc.mutation.UpdateTime(); !ok {
+		v := survey.DefaultUpdateTime()
+		sc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := sc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := sc.mutation.CompletionTimestamp(); !ok {
+		return &ValidationError{Name: "completion_timestamp", err: errors.New("ent: missing required field \"completion_timestamp\"")}
+	}
+	return nil
 }
 
 func (sc *SurveyCreate) sqlSave(ctx context.Context) (*Survey, error) {
@@ -335,4 +342,68 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return s, _spec
+}
+
+// SurveyCreateBulk is the builder for creating a bulk of Survey entities.
+type SurveyCreateBulk struct {
+	config
+	builders []*SurveyCreate
+}
+
+// Save creates the Survey entities in the database.
+func (scb *SurveyCreateBulk) Save(ctx context.Context) ([]*Survey, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(scb.builders))
+	nodes := make([]*Survey, len(scb.builders))
+	mutators := make([]Mutator, len(scb.builders))
+	for i := range scb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := scb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*SurveyMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, scb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, scb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(scb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = scb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, scb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (scb *SurveyCreateBulk) SaveX(ctx context.Context) []*Survey {
+	v, err := scb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

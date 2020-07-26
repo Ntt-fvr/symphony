@@ -105,29 +105,8 @@ func (tc *TodoCreate) Mutation() *TodoMutation {
 
 // Save creates the Todo in the database.
 func (tc *TodoCreate) Save(ctx context.Context) (*Todo, error) {
-	if _, ok := tc.mutation.CreatedAt(); !ok {
-		v := todo.DefaultCreatedAt()
-		tc.mutation.SetCreatedAt(v)
-	}
-	if _, ok := tc.mutation.Status(); !ok {
-		return nil, &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
-	}
-	if v, ok := tc.mutation.Status(); ok {
-		if err := todo.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if _, ok := tc.mutation.Priority(); !ok {
-		v := todo.DefaultPriority
-		tc.mutation.SetPriority(v)
-	}
-	if _, ok := tc.mutation.Text(); !ok {
-		return nil, &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
-	}
-	if v, ok := tc.mutation.Text(); ok {
-		if err := todo.TextValidator(v); err != nil {
-			return nil, &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
-		}
+	if err := tc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -163,6 +142,34 @@ func (tc *TodoCreate) SaveX(ctx context.Context) *Todo {
 		panic(err)
 	}
 	return v
+}
+
+func (tc *TodoCreate) preSave() error {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		v := todo.DefaultCreatedAt()
+		tc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := tc.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
+	}
+	if v, ok := tc.mutation.Status(); ok {
+		if err := todo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := tc.mutation.Priority(); !ok {
+		v := todo.DefaultPriority
+		tc.mutation.SetPriority(v)
+	}
+	if _, ok := tc.mutation.Text(); !ok {
+		return &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
+	}
+	if v, ok := tc.mutation.Text(); ok {
+		if err := todo.TextValidator(v); err != nil {
+			return &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (tc *TodoCreate) sqlSave(ctx context.Context) (*Todo, error) {
@@ -260,4 +267,68 @@ func (tc *TodoCreate) createSpec() (*Todo, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return t, _spec
+}
+
+// TodoCreateBulk is the builder for creating a bulk of Todo entities.
+type TodoCreateBulk struct {
+	config
+	builders []*TodoCreate
+}
+
+// Save creates the Todo entities in the database.
+func (tcb *TodoCreateBulk) Save(ctx context.Context) ([]*Todo, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(tcb.builders))
+	nodes := make([]*Todo, len(tcb.builders))
+	mutators := make([]Mutator, len(tcb.builders))
+	for i := range tcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := tcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*TodoMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, tcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, tcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(tcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = tcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, tcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (tcb *TodoCreateBulk) SaveX(ctx context.Context) []*Todo {
+	v, err := tcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

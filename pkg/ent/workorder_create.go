@@ -394,45 +394,8 @@ func (woc *WorkOrderCreate) Mutation() *WorkOrderMutation {
 
 // Save creates the WorkOrder in the database.
 func (woc *WorkOrderCreate) Save(ctx context.Context) (*WorkOrder, error) {
-	if _, ok := woc.mutation.CreateTime(); !ok {
-		v := workorder.DefaultCreateTime()
-		woc.mutation.SetCreateTime(v)
-	}
-	if _, ok := woc.mutation.UpdateTime(); !ok {
-		v := workorder.DefaultUpdateTime()
-		woc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := woc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := woc.mutation.Name(); ok {
-		if err := workorder.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := woc.mutation.Status(); !ok {
-		v := workorder.DefaultStatus
-		woc.mutation.SetStatus(v)
-	}
-	if v, ok := woc.mutation.Status(); ok {
-		if err := workorder.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if _, ok := woc.mutation.Priority(); !ok {
-		v := workorder.DefaultPriority
-		woc.mutation.SetPriority(v)
-	}
-	if v, ok := woc.mutation.Priority(); ok {
-		if err := workorder.PriorityValidator(v); err != nil {
-			return nil, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
-		}
-	}
-	if _, ok := woc.mutation.CreationDate(); !ok {
-		return nil, &ValidationError{Name: "creation_date", err: errors.New("ent: missing required field \"creation_date\"")}
-	}
-	if _, ok := woc.mutation.OwnerID(); !ok {
-		return nil, &ValidationError{Name: "owner", err: errors.New("ent: missing required edge \"owner\"")}
+	if err := woc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -468,6 +431,50 @@ func (woc *WorkOrderCreate) SaveX(ctx context.Context) *WorkOrder {
 		panic(err)
 	}
 	return v
+}
+
+func (woc *WorkOrderCreate) preSave() error {
+	if _, ok := woc.mutation.CreateTime(); !ok {
+		v := workorder.DefaultCreateTime()
+		woc.mutation.SetCreateTime(v)
+	}
+	if _, ok := woc.mutation.UpdateTime(); !ok {
+		v := workorder.DefaultUpdateTime()
+		woc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := woc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := woc.mutation.Name(); ok {
+		if err := workorder.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := woc.mutation.Status(); !ok {
+		v := workorder.DefaultStatus
+		woc.mutation.SetStatus(v)
+	}
+	if v, ok := woc.mutation.Status(); ok {
+		if err := workorder.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := woc.mutation.Priority(); !ok {
+		v := workorder.DefaultPriority
+		woc.mutation.SetPriority(v)
+	}
+	if v, ok := woc.mutation.Priority(); ok {
+		if err := workorder.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := woc.mutation.CreationDate(); !ok {
+		return &ValidationError{Name: "creation_date", err: errors.New("ent: missing required field \"creation_date\"")}
+	}
+	if _, ok := woc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New("ent: missing required edge \"owner\"")}
+	}
+	return nil
 }
 
 func (woc *WorkOrderCreate) sqlSave(ctx context.Context) (*WorkOrder, error) {
@@ -841,4 +848,68 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return wo, _spec
+}
+
+// WorkOrderCreateBulk is the builder for creating a bulk of WorkOrder entities.
+type WorkOrderCreateBulk struct {
+	config
+	builders []*WorkOrderCreate
+}
+
+// Save creates the WorkOrder entities in the database.
+func (wocb *WorkOrderCreateBulk) Save(ctx context.Context) ([]*WorkOrder, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(wocb.builders))
+	nodes := make([]*WorkOrder, len(wocb.builders))
+	mutators := make([]Mutator, len(wocb.builders))
+	for i := range wocb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := wocb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*WorkOrderMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, wocb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, wocb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(wocb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = wocb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, wocb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (wocb *WorkOrderCreateBulk) SaveX(ctx context.Context) []*WorkOrder {
+	v, err := wocb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

@@ -83,25 +83,8 @@ func (fprpc *FloorPlanReferencePointCreate) Mutation() *FloorPlanReferencePointM
 
 // Save creates the FloorPlanReferencePoint in the database.
 func (fprpc *FloorPlanReferencePointCreate) Save(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	if _, ok := fprpc.mutation.CreateTime(); !ok {
-		v := floorplanreferencepoint.DefaultCreateTime()
-		fprpc.mutation.SetCreateTime(v)
-	}
-	if _, ok := fprpc.mutation.UpdateTime(); !ok {
-		v := floorplanreferencepoint.DefaultUpdateTime()
-		fprpc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := fprpc.mutation.X(); !ok {
-		return nil, &ValidationError{Name: "x", err: errors.New("ent: missing required field \"x\"")}
-	}
-	if _, ok := fprpc.mutation.Y(); !ok {
-		return nil, &ValidationError{Name: "y", err: errors.New("ent: missing required field \"y\"")}
-	}
-	if _, ok := fprpc.mutation.Latitude(); !ok {
-		return nil, &ValidationError{Name: "latitude", err: errors.New("ent: missing required field \"latitude\"")}
-	}
-	if _, ok := fprpc.mutation.Longitude(); !ok {
-		return nil, &ValidationError{Name: "longitude", err: errors.New("ent: missing required field \"longitude\"")}
+	if err := fprpc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -137,6 +120,30 @@ func (fprpc *FloorPlanReferencePointCreate) SaveX(ctx context.Context) *FloorPla
 		panic(err)
 	}
 	return v
+}
+
+func (fprpc *FloorPlanReferencePointCreate) preSave() error {
+	if _, ok := fprpc.mutation.CreateTime(); !ok {
+		v := floorplanreferencepoint.DefaultCreateTime()
+		fprpc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fprpc.mutation.UpdateTime(); !ok {
+		v := floorplanreferencepoint.DefaultUpdateTime()
+		fprpc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := fprpc.mutation.X(); !ok {
+		return &ValidationError{Name: "x", err: errors.New("ent: missing required field \"x\"")}
+	}
+	if _, ok := fprpc.mutation.Y(); !ok {
+		return &ValidationError{Name: "y", err: errors.New("ent: missing required field \"y\"")}
+	}
+	if _, ok := fprpc.mutation.Latitude(); !ok {
+		return &ValidationError{Name: "latitude", err: errors.New("ent: missing required field \"latitude\"")}
+	}
+	if _, ok := fprpc.mutation.Longitude(); !ok {
+		return &ValidationError{Name: "longitude", err: errors.New("ent: missing required field \"longitude\"")}
+	}
+	return nil
 }
 
 func (fprpc *FloorPlanReferencePointCreate) sqlSave(ctx context.Context) (*FloorPlanReferencePoint, error) {
@@ -212,4 +219,68 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 		fprp.Longitude = value
 	}
 	return fprp, _spec
+}
+
+// FloorPlanReferencePointCreateBulk is the builder for creating a bulk of FloorPlanReferencePoint entities.
+type FloorPlanReferencePointCreateBulk struct {
+	config
+	builders []*FloorPlanReferencePointCreate
+}
+
+// Save creates the FloorPlanReferencePoint entities in the database.
+func (fprpcb *FloorPlanReferencePointCreateBulk) Save(ctx context.Context) ([]*FloorPlanReferencePoint, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(fprpcb.builders))
+	nodes := make([]*FloorPlanReferencePoint, len(fprpcb.builders))
+	mutators := make([]Mutator, len(fprpcb.builders))
+	for i := range fprpcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := fprpcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*FloorPlanReferencePointMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, fprpcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, fprpcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(fprpcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = fprpcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, fprpcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (fprpcb *FloorPlanReferencePointCreateBulk) SaveX(ctx context.Context) []*FloorPlanReferencePoint {
+	v, err := fprpcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

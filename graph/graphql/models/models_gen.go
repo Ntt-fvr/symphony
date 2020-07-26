@@ -272,7 +272,7 @@ type CheckListItemInput struct {
 	StringValue        *string                               `json:"stringValue"`
 	Checked            *bool                                 `json:"checked"`
 	Files              []*FileInput                          `json:"files"`
-	YesNoResponse      *YesNoResponse                        `json:"yesNoResponse"`
+	YesNoResponse      *checklistitem.YesNoVal               `json:"yesNoResponse"`
 }
 
 type CommentInput struct {
@@ -793,14 +793,14 @@ type SurveyWiFiScanData struct {
 }
 
 type TechnicianCheckListItemInput struct {
-	ID                 int                   `json:"id"`
-	SelectedEnumValues *string               `json:"selectedEnumValues"`
-	StringValue        *string               `json:"stringValue"`
-	Checked            *bool                 `json:"checked"`
-	YesNoResponse      *YesNoResponse        `json:"yesNoResponse"`
-	WifiData           []*SurveyWiFiScanData `json:"wifiData"`
-	CellData           []*SurveyCellScanData `json:"cellData"`
-	FilesData          []*FileInput          `json:"filesData"`
+	ID                 int                     `json:"id"`
+	SelectedEnumValues *string                 `json:"selectedEnumValues"`
+	StringValue        *string                 `json:"stringValue"`
+	Checked            *bool                   `json:"checked"`
+	YesNoResponse      *checklistitem.YesNoVal `json:"yesNoResponse"`
+	WifiData           []*SurveyWiFiScanData   `json:"wifiData"`
+	CellData           []*SurveyCellScanData   `json:"cellData"`
+	FilesData          []*FileInput            `json:"filesData"`
 }
 
 type TechnicianWorkOrderUploadInput struct {
@@ -1970,46 +1970,5 @@ func (e *WorkOrderFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e WorkOrderFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type YesNoResponse string
-
-const (
-	YesNoResponseYes YesNoResponse = "YES"
-	YesNoResponseNo  YesNoResponse = "NO"
-)
-
-var AllYesNoResponse = []YesNoResponse{
-	YesNoResponseYes,
-	YesNoResponseNo,
-}
-
-func (e YesNoResponse) IsValid() bool {
-	switch e {
-	case YesNoResponseYes, YesNoResponseNo:
-		return true
-	}
-	return false
-}
-
-func (e YesNoResponse) String() string {
-	return string(e)
-}
-
-func (e *YesNoResponse) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = YesNoResponse(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid YesNoResponse", str)
-	}
-	return nil
-}
-
-func (e YesNoResponse) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

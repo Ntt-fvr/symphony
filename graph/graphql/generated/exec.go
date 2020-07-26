@@ -225,7 +225,7 @@ type ComplexityRoot struct {
 		Title              func(childComplexity int) int
 		Type               func(childComplexity int) int
 		WifiData           func(childComplexity int) int
-		YesNoResponse      func(childComplexity int) int
+		YesNoVal           func(childComplexity int) int
 	}
 
 	CheckListItemDefinition struct {
@@ -1273,7 +1273,7 @@ type CheckListItemResolver interface {
 	EnumSelectionMode(ctx context.Context, obj *ent.CheckListItem) (*checklistitem.EnumSelectionModeValue, error)
 
 	Files(ctx context.Context, obj *ent.CheckListItem) ([]*ent.File, error)
-	YesNoResponse(ctx context.Context, obj *ent.CheckListItem) (*models.YesNoResponse, error)
+
 	WifiData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyWiFiScan, error)
 	CellData(ctx context.Context, obj *ent.CheckListItem) ([]*ent.SurveyCellScan, error)
 }
@@ -2136,11 +2136,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.CheckListItem.WifiData(childComplexity), true
 
 	case "CheckListItem.yesNoResponse":
-		if e.complexity.CheckListItem.YesNoResponse == nil {
+		if e.complexity.CheckListItem.YesNoVal == nil {
 			break
 		}
 
-		return e.complexity.CheckListItem.YesNoResponse(childComplexity), true
+		return e.complexity.CheckListItem.YesNoVal(childComplexity), true
 
 	case "CheckListItemDefinition.enumSelectionMode":
 		if e.complexity.CheckListItemDefinition.EnumSelectionMode == nil {
@@ -8969,7 +8969,10 @@ input WorkOrderDefinitionInput {
   type: ID!
 }
 
-enum YesNoResponse {
+enum YesNoResponse
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/checklistitem.YesNoVal"
+  ) {
   YES
   NO
 }
@@ -9048,7 +9051,7 @@ type CheckListItem implements Node {
   stringValue: String
   checked: Boolean
   files: [File!]
-  yesNoResponse: YesNoResponse
+  yesNoResponse: YesNoResponse @goField(name: "YesNoVal")
   wifiData: [SurveyWiFiScan!]
   cellData: [SurveyCellScan!]
 }
@@ -16998,13 +17001,13 @@ func (ec *executionContext) _CheckListItem_yesNoResponse(ctx context.Context, fi
 		Object:   "CheckListItem",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CheckListItem().YesNoResponse(rctx, obj)
+		return obj.YesNoVal, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17013,9 +17016,9 @@ func (ec *executionContext) _CheckListItem_yesNoResponse(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.YesNoResponse)
+	res := resTmp.(checklistitem.YesNoVal)
 	fc.Result = res
-	return ec.marshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx, field.Selections, res)
+	return ec.marshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItem_wifiData(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
@@ -42800,7 +42803,7 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 			}
 		case "yesNoResponse":
 			var err error
-			it.YesNoResponse, err = ec.unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx, v)
+			it.YesNoResponse, err = ec.unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45542,7 +45545,7 @@ func (ec *executionContext) unmarshalInputTechnicianCheckListItemInput(ctx conte
 			}
 		case "yesNoResponse":
 			var err error
-			it.YesNoResponse, err = ec.unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx, v)
+			it.YesNoResponse, err = ec.unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46975,16 +46978,7 @@ func (ec *executionContext) _CheckListItem(ctx context.Context, sel ast.Selectio
 				return res
 			})
 		case "yesNoResponse":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CheckListItem_yesNoResponse(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._CheckListItem_yesNoResponse(ctx, field, obj)
 		case "wifiData":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -62647,24 +62641,24 @@ func (ec *executionContext) unmarshalOWorkforcePolicyInput2ᚖgithubᚗcomᚋfac
 	return &res, err
 }
 
-func (ec *executionContext) unmarshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx context.Context, v interface{}) (models.YesNoResponse, error) {
-	var res models.YesNoResponse
+func (ec *executionContext) unmarshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx context.Context, v interface{}) (checklistitem.YesNoVal, error) {
+	var res checklistitem.YesNoVal
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx context.Context, sel ast.SelectionSet, v models.YesNoResponse) graphql.Marshaler {
+func (ec *executionContext) marshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx context.Context, sel ast.SelectionSet, v checklistitem.YesNoVal) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx context.Context, v interface{}) (*models.YesNoResponse, error) {
+func (ec *executionContext) unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx context.Context, v interface{}) (*checklistitem.YesNoVal, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx, v)
+	res, err := ec.unmarshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐYesNoResponse(ctx context.Context, sel ast.SelectionSet, v *models.YesNoResponse) graphql.Marshaler {
+func (ec *executionContext) marshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx context.Context, sel ast.SelectionSet, v *checklistitem.YesNoVal) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

@@ -140,13 +140,8 @@ func (lc *LinkCreate) Mutation() *LinkMutation {
 
 // Save creates the Link in the database.
 func (lc *LinkCreate) Save(ctx context.Context) (*Link, error) {
-	if _, ok := lc.mutation.CreateTime(); !ok {
-		v := link.DefaultCreateTime()
-		lc.mutation.SetCreateTime(v)
-	}
-	if _, ok := lc.mutation.UpdateTime(); !ok {
-		v := link.DefaultUpdateTime()
-		lc.mutation.SetUpdateTime(v)
+	if err := lc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -182,6 +177,18 @@ func (lc *LinkCreate) SaveX(ctx context.Context) *Link {
 		panic(err)
 	}
 	return v
+}
+
+func (lc *LinkCreate) preSave() error {
+	if _, ok := lc.mutation.CreateTime(); !ok {
+		v := link.DefaultCreateTime()
+		lc.mutation.SetCreateTime(v)
+	}
+	if _, ok := lc.mutation.UpdateTime(); !ok {
+		v := link.DefaultUpdateTime()
+		lc.mutation.SetUpdateTime(v)
+	}
+	return nil
 }
 
 func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
@@ -309,4 +316,68 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return l, _spec
+}
+
+// LinkCreateBulk is the builder for creating a bulk of Link entities.
+type LinkCreateBulk struct {
+	config
+	builders []*LinkCreate
+}
+
+// Save creates the Link entities in the database.
+func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(lcb.builders))
+	nodes := make([]*Link, len(lcb.builders))
+	mutators := make([]Mutator, len(lcb.builders))
+	for i := range lcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := lcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*LinkMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, lcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, lcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(lcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = lcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, lcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (lcb *LinkCreateBulk) SaveX(ctx context.Context) []*Link {
+	v, err := lcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

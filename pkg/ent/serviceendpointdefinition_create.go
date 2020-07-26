@@ -141,24 +141,8 @@ func (sedc *ServiceEndpointDefinitionCreate) Mutation() *ServiceEndpointDefiniti
 
 // Save creates the ServiceEndpointDefinition in the database.
 func (sedc *ServiceEndpointDefinitionCreate) Save(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	if _, ok := sedc.mutation.CreateTime(); !ok {
-		v := serviceendpointdefinition.DefaultCreateTime()
-		sedc.mutation.SetCreateTime(v)
-	}
-	if _, ok := sedc.mutation.UpdateTime(); !ok {
-		v := serviceendpointdefinition.DefaultUpdateTime()
-		sedc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := sedc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := sedc.mutation.Name(); ok {
-		if err := serviceendpointdefinition.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := sedc.mutation.Index(); !ok {
-		return nil, &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
+	if err := sedc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -194,6 +178,29 @@ func (sedc *ServiceEndpointDefinitionCreate) SaveX(ctx context.Context) *Service
 		panic(err)
 	}
 	return v
+}
+
+func (sedc *ServiceEndpointDefinitionCreate) preSave() error {
+	if _, ok := sedc.mutation.CreateTime(); !ok {
+		v := serviceendpointdefinition.DefaultCreateTime()
+		sedc.mutation.SetCreateTime(v)
+	}
+	if _, ok := sedc.mutation.UpdateTime(); !ok {
+		v := serviceendpointdefinition.DefaultUpdateTime()
+		sedc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := sedc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := sedc.mutation.Name(); ok {
+		if err := serviceendpointdefinition.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := sedc.mutation.Index(); !ok {
+		return &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
+	}
+	return nil
 }
 
 func (sedc *ServiceEndpointDefinitionCreate) sqlSave(ctx context.Context) (*ServiceEndpointDefinition, error) {
@@ -318,4 +325,68 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return sed, _spec
+}
+
+// ServiceEndpointDefinitionCreateBulk is the builder for creating a bulk of ServiceEndpointDefinition entities.
+type ServiceEndpointDefinitionCreateBulk struct {
+	config
+	builders []*ServiceEndpointDefinitionCreate
+}
+
+// Save creates the ServiceEndpointDefinition entities in the database.
+func (sedcb *ServiceEndpointDefinitionCreateBulk) Save(ctx context.Context) ([]*ServiceEndpointDefinition, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(sedcb.builders))
+	nodes := make([]*ServiceEndpointDefinition, len(sedcb.builders))
+	mutators := make([]Mutator, len(sedcb.builders))
+	for i := range sedcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := sedcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ServiceEndpointDefinitionMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, sedcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, sedcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(sedcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = sedcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, sedcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (sedcb *ServiceEndpointDefinitionCreateBulk) SaveX(ctx context.Context) []*ServiceEndpointDefinition {
+	v, err := sedcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

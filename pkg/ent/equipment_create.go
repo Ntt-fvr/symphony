@@ -274,29 +274,8 @@ func (ec *EquipmentCreate) Mutation() *EquipmentMutation {
 
 // Save creates the Equipment in the database.
 func (ec *EquipmentCreate) Save(ctx context.Context) (*Equipment, error) {
-	if _, ok := ec.mutation.CreateTime(); !ok {
-		v := equipment.DefaultCreateTime()
-		ec.mutation.SetCreateTime(v)
-	}
-	if _, ok := ec.mutation.UpdateTime(); !ok {
-		v := equipment.DefaultUpdateTime()
-		ec.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ec.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := ec.mutation.Name(); ok {
-		if err := equipment.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := ec.mutation.DeviceID(); ok {
-		if err := equipment.DeviceIDValidator(v); err != nil {
-			return nil, &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
-		}
-	}
-	if _, ok := ec.mutation.TypeID(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	if err := ec.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -332,6 +311,34 @@ func (ec *EquipmentCreate) SaveX(ctx context.Context) *Equipment {
 		panic(err)
 	}
 	return v
+}
+
+func (ec *EquipmentCreate) preSave() error {
+	if _, ok := ec.mutation.CreateTime(); !ok {
+		v := equipment.DefaultCreateTime()
+		ec.mutation.SetCreateTime(v)
+	}
+	if _, ok := ec.mutation.UpdateTime(); !ok {
+		v := equipment.DefaultUpdateTime()
+		ec.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ec.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := ec.mutation.Name(); ok {
+		if err := equipment.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := ec.mutation.DeviceID(); ok {
+		if err := equipment.DeviceIDValidator(v); err != nil {
+			return &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
+		}
+	}
+	if _, ok := ec.mutation.TypeID(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	}
+	return nil
 }
 
 func (ec *EquipmentCreate) sqlSave(ctx context.Context) (*Equipment, error) {
@@ -597,4 +604,68 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return e, _spec
+}
+
+// EquipmentCreateBulk is the builder for creating a bulk of Equipment entities.
+type EquipmentCreateBulk struct {
+	config
+	builders []*EquipmentCreate
+}
+
+// Save creates the Equipment entities in the database.
+func (ecb *EquipmentCreateBulk) Save(ctx context.Context) ([]*Equipment, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ecb.builders))
+	nodes := make([]*Equipment, len(ecb.builders))
+	mutators := make([]Mutator, len(ecb.builders))
+	for i := range ecb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ecb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*EquipmentMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ecb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ecb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ecb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ecb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ecb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ecb *EquipmentCreateBulk) SaveX(ctx context.Context) []*Equipment {
+	v, err := ecb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

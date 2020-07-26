@@ -107,19 +107,8 @@ func (clcc *CheckListCategoryCreate) Mutation() *CheckListCategoryMutation {
 
 // Save creates the CheckListCategory in the database.
 func (clcc *CheckListCategoryCreate) Save(ctx context.Context) (*CheckListCategory, error) {
-	if _, ok := clcc.mutation.CreateTime(); !ok {
-		v := checklistcategory.DefaultCreateTime()
-		clcc.mutation.SetCreateTime(v)
-	}
-	if _, ok := clcc.mutation.UpdateTime(); !ok {
-		v := checklistcategory.DefaultUpdateTime()
-		clcc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := clcc.mutation.Title(); !ok {
-		return nil, &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
-	}
-	if _, ok := clcc.mutation.WorkOrderID(); !ok {
-		return nil, &ValidationError{Name: "work_order", err: errors.New("ent: missing required edge \"work_order\"")}
+	if err := clcc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -155,6 +144,24 @@ func (clcc *CheckListCategoryCreate) SaveX(ctx context.Context) *CheckListCatego
 		panic(err)
 	}
 	return v
+}
+
+func (clcc *CheckListCategoryCreate) preSave() error {
+	if _, ok := clcc.mutation.CreateTime(); !ok {
+		v := checklistcategory.DefaultCreateTime()
+		clcc.mutation.SetCreateTime(v)
+	}
+	if _, ok := clcc.mutation.UpdateTime(); !ok {
+		v := checklistcategory.DefaultUpdateTime()
+		clcc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := clcc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
+	}
+	if _, ok := clcc.mutation.WorkOrderID(); !ok {
+		return &ValidationError{Name: "work_order", err: errors.New("ent: missing required edge \"work_order\"")}
+	}
+	return nil
 }
 
 func (clcc *CheckListCategoryCreate) sqlSave(ctx context.Context) (*CheckListCategory, error) {
@@ -252,4 +259,68 @@ func (clcc *CheckListCategoryCreate) createSpec() (*CheckListCategory, *sqlgraph
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return clc, _spec
+}
+
+// CheckListCategoryCreateBulk is the builder for creating a bulk of CheckListCategory entities.
+type CheckListCategoryCreateBulk struct {
+	config
+	builders []*CheckListCategoryCreate
+}
+
+// Save creates the CheckListCategory entities in the database.
+func (clccb *CheckListCategoryCreateBulk) Save(ctx context.Context) ([]*CheckListCategory, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(clccb.builders))
+	nodes := make([]*CheckListCategory, len(clccb.builders))
+	mutators := make([]Mutator, len(clccb.builders))
+	for i := range clccb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := clccb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*CheckListCategoryMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, clccb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, clccb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(clccb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = clccb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, clccb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (clccb *CheckListCategoryCreateBulk) SaveX(ctx context.Context) []*CheckListCategory {
+	v, err := clccb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

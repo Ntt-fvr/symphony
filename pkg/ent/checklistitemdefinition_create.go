@@ -153,27 +153,8 @@ func (clidc *CheckListItemDefinitionCreate) Mutation() *CheckListItemDefinitionM
 
 // Save creates the CheckListItemDefinition in the database.
 func (clidc *CheckListItemDefinitionCreate) Save(ctx context.Context) (*CheckListItemDefinition, error) {
-	if _, ok := clidc.mutation.CreateTime(); !ok {
-		v := checklistitemdefinition.DefaultCreateTime()
-		clidc.mutation.SetCreateTime(v)
-	}
-	if _, ok := clidc.mutation.UpdateTime(); !ok {
-		v := checklistitemdefinition.DefaultUpdateTime()
-		clidc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := clidc.mutation.Title(); !ok {
-		return nil, &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
-	}
-	if _, ok := clidc.mutation.GetType(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
-	}
-	if v, ok := clidc.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
-			return nil, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-	if _, ok := clidc.mutation.CheckListCategoryDefinitionID(); !ok {
-		return nil, &ValidationError{Name: "check_list_category_definition", err: errors.New("ent: missing required edge \"check_list_category_definition\"")}
+	if err := clidc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -209,6 +190,32 @@ func (clidc *CheckListItemDefinitionCreate) SaveX(ctx context.Context) *CheckLis
 		panic(err)
 	}
 	return v
+}
+
+func (clidc *CheckListItemDefinitionCreate) preSave() error {
+	if _, ok := clidc.mutation.CreateTime(); !ok {
+		v := checklistitemdefinition.DefaultCreateTime()
+		clidc.mutation.SetCreateTime(v)
+	}
+	if _, ok := clidc.mutation.UpdateTime(); !ok {
+		v := checklistitemdefinition.DefaultUpdateTime()
+		clidc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := clidc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
+	}
+	if _, ok := clidc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
+	}
+	if v, ok := clidc.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if _, ok := clidc.mutation.CheckListCategoryDefinitionID(); !ok {
+		return &ValidationError{Name: "check_list_category_definition", err: errors.New("ent: missing required edge \"check_list_category_definition\"")}
+	}
+	return nil
 }
 
 func (clidc *CheckListItemDefinitionCreate) sqlSave(ctx context.Context) (*CheckListItemDefinition, error) {
@@ -327,4 +334,68 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return clid, _spec
+}
+
+// CheckListItemDefinitionCreateBulk is the builder for creating a bulk of CheckListItemDefinition entities.
+type CheckListItemDefinitionCreateBulk struct {
+	config
+	builders []*CheckListItemDefinitionCreate
+}
+
+// Save creates the CheckListItemDefinition entities in the database.
+func (clidcb *CheckListItemDefinitionCreateBulk) Save(ctx context.Context) ([]*CheckListItemDefinition, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(clidcb.builders))
+	nodes := make([]*CheckListItemDefinition, len(clidcb.builders))
+	mutators := make([]Mutator, len(clidcb.builders))
+	for i := range clidcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := clidcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*CheckListItemDefinitionMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, clidcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, clidcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(clidcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = clidcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, clidcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (clidcb *CheckListItemDefinitionCreateBulk) SaveX(ctx context.Context) []*CheckListItemDefinition {
+	v, err := clidcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

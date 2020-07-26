@@ -98,13 +98,8 @@ func (ptc *ProjectTypeCreate) Mutation() *ProjectTypeMutation {
 
 // Save creates the ProjectType in the database.
 func (ptc *ProjectTypeCreate) Save(ctx context.Context) (*ProjectType, error) {
-	if _, ok := ptc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := ptc.mutation.Name(); ok {
-		if err := projecttype.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
+	if err := ptc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -140,6 +135,18 @@ func (ptc *ProjectTypeCreate) SaveX(ctx context.Context) *ProjectType {
 		panic(err)
 	}
 	return v
+}
+
+func (ptc *ProjectTypeCreate) preSave() error {
+	if _, ok := ptc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := ptc.mutation.Name(); ok {
+		if err := projecttype.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error) {
@@ -240,4 +247,68 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return pt, _spec
+}
+
+// ProjectTypeCreateBulk is the builder for creating a bulk of ProjectType entities.
+type ProjectTypeCreateBulk struct {
+	config
+	builders []*ProjectTypeCreate
+}
+
+// Save creates the ProjectType entities in the database.
+func (ptcb *ProjectTypeCreateBulk) Save(ctx context.Context) ([]*ProjectType, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ptcb.builders))
+	nodes := make([]*ProjectType, len(ptcb.builders))
+	mutators := make([]Mutator, len(ptcb.builders))
+	for i := range ptcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ptcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ProjectTypeMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ptcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ptcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ptcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ptcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ptcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ptcb *ProjectTypeCreateBulk) SaveX(ctx context.Context) []*ProjectType {
+	v, err := ptcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

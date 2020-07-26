@@ -84,25 +84,8 @@ func (arc *ActionsRuleCreate) Mutation() *ActionsRuleMutation {
 
 // Save creates the ActionsRule in the database.
 func (arc *ActionsRuleCreate) Save(ctx context.Context) (*ActionsRule, error) {
-	if _, ok := arc.mutation.CreateTime(); !ok {
-		v := actionsrule.DefaultCreateTime()
-		arc.mutation.SetCreateTime(v)
-	}
-	if _, ok := arc.mutation.UpdateTime(); !ok {
-		v := actionsrule.DefaultUpdateTime()
-		arc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := arc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if _, ok := arc.mutation.TriggerID(); !ok {
-		return nil, &ValidationError{Name: "triggerID", err: errors.New("ent: missing required field \"triggerID\"")}
-	}
-	if _, ok := arc.mutation.RuleFilters(); !ok {
-		return nil, &ValidationError{Name: "ruleFilters", err: errors.New("ent: missing required field \"ruleFilters\"")}
-	}
-	if _, ok := arc.mutation.RuleActions(); !ok {
-		return nil, &ValidationError{Name: "ruleActions", err: errors.New("ent: missing required field \"ruleActions\"")}
+	if err := arc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -138,6 +121,30 @@ func (arc *ActionsRuleCreate) SaveX(ctx context.Context) *ActionsRule {
 		panic(err)
 	}
 	return v
+}
+
+func (arc *ActionsRuleCreate) preSave() error {
+	if _, ok := arc.mutation.CreateTime(); !ok {
+		v := actionsrule.DefaultCreateTime()
+		arc.mutation.SetCreateTime(v)
+	}
+	if _, ok := arc.mutation.UpdateTime(); !ok {
+		v := actionsrule.DefaultUpdateTime()
+		arc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := arc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := arc.mutation.TriggerID(); !ok {
+		return &ValidationError{Name: "triggerID", err: errors.New("ent: missing required field \"triggerID\"")}
+	}
+	if _, ok := arc.mutation.RuleFilters(); !ok {
+		return &ValidationError{Name: "ruleFilters", err: errors.New("ent: missing required field \"ruleFilters\"")}
+	}
+	if _, ok := arc.mutation.RuleActions(); !ok {
+		return &ValidationError{Name: "ruleActions", err: errors.New("ent: missing required field \"ruleActions\"")}
+	}
+	return nil
 }
 
 func (arc *ActionsRuleCreate) sqlSave(ctx context.Context) (*ActionsRule, error) {
@@ -213,4 +220,68 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 		ar.RuleActions = value
 	}
 	return ar, _spec
+}
+
+// ActionsRuleCreateBulk is the builder for creating a bulk of ActionsRule entities.
+type ActionsRuleCreateBulk struct {
+	config
+	builders []*ActionsRuleCreate
+}
+
+// Save creates the ActionsRule entities in the database.
+func (arcb *ActionsRuleCreateBulk) Save(ctx context.Context) ([]*ActionsRule, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(arcb.builders))
+	nodes := make([]*ActionsRule, len(arcb.builders))
+	mutators := make([]Mutator, len(arcb.builders))
+	for i := range arcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := arcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ActionsRuleMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, arcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, arcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(arcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = arcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, arcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (arcb *ActionsRuleCreateBulk) SaveX(ctx context.Context) []*ActionsRule {
+	v, err := arcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

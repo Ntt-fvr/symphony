@@ -490,40 +490,8 @@ func (ptc *PropertyTypeCreate) Mutation() *PropertyTypeMutation {
 
 // Save creates the PropertyType in the database.
 func (ptc *PropertyTypeCreate) Save(ctx context.Context) (*PropertyType, error) {
-	if _, ok := ptc.mutation.CreateTime(); !ok {
-		v := propertytype.DefaultCreateTime()
-		ptc.mutation.SetCreateTime(v)
-	}
-	if _, ok := ptc.mutation.UpdateTime(); !ok {
-		v := propertytype.DefaultUpdateTime()
-		ptc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ptc.mutation.GetType(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
-	}
-	if v, ok := ptc.mutation.GetType(); ok {
-		if err := propertytype.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if _, ok := ptc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if _, ok := ptc.mutation.IsInstanceProperty(); !ok {
-		v := propertytype.DefaultIsInstanceProperty
-		ptc.mutation.SetIsInstanceProperty(v)
-	}
-	if _, ok := ptc.mutation.Editable(); !ok {
-		v := propertytype.DefaultEditable
-		ptc.mutation.SetEditable(v)
-	}
-	if _, ok := ptc.mutation.Mandatory(); !ok {
-		v := propertytype.DefaultMandatory
-		ptc.mutation.SetMandatory(v)
-	}
-	if _, ok := ptc.mutation.Deleted(); !ok {
-		v := propertytype.DefaultDeleted
-		ptc.mutation.SetDeleted(v)
+	if err := ptc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -559,6 +527,45 @@ func (ptc *PropertyTypeCreate) SaveX(ctx context.Context) *PropertyType {
 		panic(err)
 	}
 	return v
+}
+
+func (ptc *PropertyTypeCreate) preSave() error {
+	if _, ok := ptc.mutation.CreateTime(); !ok {
+		v := propertytype.DefaultCreateTime()
+		ptc.mutation.SetCreateTime(v)
+	}
+	if _, ok := ptc.mutation.UpdateTime(); !ok {
+		v := propertytype.DefaultUpdateTime()
+		ptc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ptc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
+	}
+	if v, ok := ptc.mutation.GetType(); ok {
+		if err := propertytype.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if _, ok := ptc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := ptc.mutation.IsInstanceProperty(); !ok {
+		v := propertytype.DefaultIsInstanceProperty
+		ptc.mutation.SetIsInstanceProperty(v)
+	}
+	if _, ok := ptc.mutation.Editable(); !ok {
+		v := propertytype.DefaultEditable
+		ptc.mutation.SetEditable(v)
+	}
+	if _, ok := ptc.mutation.Mandatory(); !ok {
+		v := propertytype.DefaultMandatory
+		ptc.mutation.SetMandatory(v)
+	}
+	if _, ok := ptc.mutation.Deleted(); !ok {
+		v := propertytype.DefaultDeleted
+		ptc.mutation.SetDeleted(v)
+	}
+	return nil
 }
 
 func (ptc *PropertyTypeCreate) sqlSave(ctx context.Context) (*PropertyType, error) {
@@ -936,4 +943,68 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return pt, _spec
+}
+
+// PropertyTypeCreateBulk is the builder for creating a bulk of PropertyType entities.
+type PropertyTypeCreateBulk struct {
+	config
+	builders []*PropertyTypeCreate
+}
+
+// Save creates the PropertyType entities in the database.
+func (ptcb *PropertyTypeCreateBulk) Save(ctx context.Context) ([]*PropertyType, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ptcb.builders))
+	nodes := make([]*PropertyType, len(ptcb.builders))
+	mutators := make([]Mutator, len(ptcb.builders))
+	for i := range ptcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ptcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*PropertyTypeMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ptcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ptcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ptcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ptcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ptcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ptcb *PropertyTypeCreateBulk) SaveX(ctx context.Context) []*PropertyType {
+	v, err := ptcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

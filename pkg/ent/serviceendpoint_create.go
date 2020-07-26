@@ -123,19 +123,8 @@ func (sec *ServiceEndpointCreate) Mutation() *ServiceEndpointMutation {
 
 // Save creates the ServiceEndpoint in the database.
 func (sec *ServiceEndpointCreate) Save(ctx context.Context) (*ServiceEndpoint, error) {
-	if _, ok := sec.mutation.CreateTime(); !ok {
-		v := serviceendpoint.DefaultCreateTime()
-		sec.mutation.SetCreateTime(v)
-	}
-	if _, ok := sec.mutation.UpdateTime(); !ok {
-		v := serviceendpoint.DefaultUpdateTime()
-		sec.mutation.SetUpdateTime(v)
-	}
-	if _, ok := sec.mutation.EquipmentID(); !ok {
-		return nil, &ValidationError{Name: "equipment", err: errors.New("ent: missing required edge \"equipment\"")}
-	}
-	if _, ok := sec.mutation.ServiceID(); !ok {
-		return nil, &ValidationError{Name: "service", err: errors.New("ent: missing required edge \"service\"")}
+	if err := sec.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -171,6 +160,24 @@ func (sec *ServiceEndpointCreate) SaveX(ctx context.Context) *ServiceEndpoint {
 		panic(err)
 	}
 	return v
+}
+
+func (sec *ServiceEndpointCreate) preSave() error {
+	if _, ok := sec.mutation.CreateTime(); !ok {
+		v := serviceendpoint.DefaultCreateTime()
+		sec.mutation.SetCreateTime(v)
+	}
+	if _, ok := sec.mutation.UpdateTime(); !ok {
+		v := serviceendpoint.DefaultUpdateTime()
+		sec.mutation.SetUpdateTime(v)
+	}
+	if _, ok := sec.mutation.EquipmentID(); !ok {
+		return &ValidationError{Name: "equipment", err: errors.New("ent: missing required edge \"equipment\"")}
+	}
+	if _, ok := sec.mutation.ServiceID(); !ok {
+		return &ValidationError{Name: "service", err: errors.New("ent: missing required edge \"service\"")}
+	}
+	return nil
 }
 
 func (sec *ServiceEndpointCreate) sqlSave(ctx context.Context) (*ServiceEndpoint, error) {
@@ -290,4 +297,68 @@ func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.Crea
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return se, _spec
+}
+
+// ServiceEndpointCreateBulk is the builder for creating a bulk of ServiceEndpoint entities.
+type ServiceEndpointCreateBulk struct {
+	config
+	builders []*ServiceEndpointCreate
+}
+
+// Save creates the ServiceEndpoint entities in the database.
+func (secb *ServiceEndpointCreateBulk) Save(ctx context.Context) ([]*ServiceEndpoint, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(secb.builders))
+	nodes := make([]*ServiceEndpoint, len(secb.builders))
+	mutators := make([]Mutator, len(secb.builders))
+	for i := range secb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := secb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ServiceEndpointMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, secb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, secb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(secb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = secb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, secb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (secb *ServiceEndpointCreateBulk) SaveX(ctx context.Context) []*ServiceEndpoint {
+	v, err := secb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

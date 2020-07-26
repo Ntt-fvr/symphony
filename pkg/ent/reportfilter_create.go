@@ -85,33 +85,8 @@ func (rfc *ReportFilterCreate) Mutation() *ReportFilterMutation {
 
 // Save creates the ReportFilter in the database.
 func (rfc *ReportFilterCreate) Save(ctx context.Context) (*ReportFilter, error) {
-	if _, ok := rfc.mutation.CreateTime(); !ok {
-		v := reportfilter.DefaultCreateTime()
-		rfc.mutation.SetCreateTime(v)
-	}
-	if _, ok := rfc.mutation.UpdateTime(); !ok {
-		v := reportfilter.DefaultUpdateTime()
-		rfc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := rfc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := rfc.mutation.Name(); ok {
-		if err := reportfilter.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := rfc.mutation.Entity(); !ok {
-		return nil, &ValidationError{Name: "entity", err: errors.New("ent: missing required field \"entity\"")}
-	}
-	if v, ok := rfc.mutation.Entity(); ok {
-		if err := reportfilter.EntityValidator(v); err != nil {
-			return nil, &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
-		}
-	}
-	if _, ok := rfc.mutation.Filters(); !ok {
-		v := reportfilter.DefaultFilters
-		rfc.mutation.SetFilters(v)
+	if err := rfc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -147,6 +122,38 @@ func (rfc *ReportFilterCreate) SaveX(ctx context.Context) *ReportFilter {
 		panic(err)
 	}
 	return v
+}
+
+func (rfc *ReportFilterCreate) preSave() error {
+	if _, ok := rfc.mutation.CreateTime(); !ok {
+		v := reportfilter.DefaultCreateTime()
+		rfc.mutation.SetCreateTime(v)
+	}
+	if _, ok := rfc.mutation.UpdateTime(); !ok {
+		v := reportfilter.DefaultUpdateTime()
+		rfc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := rfc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := rfc.mutation.Name(); ok {
+		if err := reportfilter.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := rfc.mutation.Entity(); !ok {
+		return &ValidationError{Name: "entity", err: errors.New("ent: missing required field \"entity\"")}
+	}
+	if v, ok := rfc.mutation.Entity(); ok {
+		if err := reportfilter.EntityValidator(v); err != nil {
+			return &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
+		}
+	}
+	if _, ok := rfc.mutation.Filters(); !ok {
+		v := reportfilter.DefaultFilters
+		rfc.mutation.SetFilters(v)
+	}
+	return nil
 }
 
 func (rfc *ReportFilterCreate) sqlSave(ctx context.Context) (*ReportFilter, error) {
@@ -214,4 +221,68 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 		rf.Filters = value
 	}
 	return rf, _spec
+}
+
+// ReportFilterCreateBulk is the builder for creating a bulk of ReportFilter entities.
+type ReportFilterCreateBulk struct {
+	config
+	builders []*ReportFilterCreate
+}
+
+// Save creates the ReportFilter entities in the database.
+func (rfcb *ReportFilterCreateBulk) Save(ctx context.Context) ([]*ReportFilter, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(rfcb.builders))
+	nodes := make([]*ReportFilter, len(rfcb.builders))
+	mutators := make([]Mutator, len(rfcb.builders))
+	for i := range rfcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := rfcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ReportFilterMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, rfcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, rfcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(rfcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = rfcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, rfcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (rfcb *ReportFilterCreateBulk) SaveX(ctx context.Context) []*ReportFilter {
+	v, err := rfcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

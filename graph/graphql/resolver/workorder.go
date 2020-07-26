@@ -12,7 +12,6 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -455,7 +454,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 			SetNillableStringVal(input.StringValue).
 			SetNillableEnumSelectionModeValue(input.EnumSelectionMode).
 			SetNillableSelectedEnumValues(input.SelectedEnumValues).
-			SetNillableYesNoVal(convertYesNoResponseToYesNoVal(input.YesNoResponse)).
+			SetNillableYesNoVal(input.YesNoResponse).
 			SetCheckListCategoryID(checklistCategoryID).
 			Save(ctx)
 		if err != nil {
@@ -473,7 +472,7 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 			SetNillableStringVal(input.StringValue).
 			SetNillableEnumSelectionModeValue(input.EnumSelectionMode).
 			SetNillableSelectedEnumValues(input.SelectedEnumValues).
-			SetNillableYesNoVal(convertYesNoResponseToYesNoVal(input.YesNoResponse)).
+			SetNillableYesNoVal(input.YesNoResponse).
 			Save(ctx)
 	}
 	if err != nil {
@@ -922,18 +921,6 @@ func (r mutationResolver) RemoveWorkOrderType(ctx context.Context, id int) (int,
 	}
 }
 
-func convertYesNoResponseToYesNoVal(response *models.YesNoResponse) *checklistitem.YesNoVal {
-	if response == nil {
-		return nil
-	}
-	yesNoVal := checklistitem.YesNoVal(*response)
-	err := checklistitem.YesNoValValidator(yesNoVal)
-	if err != nil {
-		return nil
-	}
-	return &yesNoVal
-}
-
 func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, input models.TechnicianWorkOrderUploadInput) (*ent.WorkOrder, error) {
 	client := r.ClientFrom(ctx)
 	wo, err := client.WorkOrder.Query().Where(workorder.ID(input.WorkOrderID)).WithAssignee().Only(ctx)
@@ -967,7 +954,7 @@ func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, inp
 			SetNillableChecked(clInput.Checked).
 			SetNillableStringVal(clInput.StringValue).
 			SetNillableSelectedEnumValues(clInput.SelectedEnumValues).
-			SetNillableYesNoVal(convertYesNoResponseToYesNoVal(clInput.YesNoResponse)).
+			SetNillableYesNoVal(clInput.YesNoResponse).
 			Save(ctx)
 		if clInput.WifiData != nil && len(clInput.WifiData) > 0 {
 			_, err := r.CreateWiFiScans(ctx, clInput.WifiData, ScanParentIDs{checklistItemID: &clInput.ID})

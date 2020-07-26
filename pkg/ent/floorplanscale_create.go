@@ -89,28 +89,8 @@ func (fpsc *FloorPlanScaleCreate) Mutation() *FloorPlanScaleMutation {
 
 // Save creates the FloorPlanScale in the database.
 func (fpsc *FloorPlanScaleCreate) Save(ctx context.Context) (*FloorPlanScale, error) {
-	if _, ok := fpsc.mutation.CreateTime(); !ok {
-		v := floorplanscale.DefaultCreateTime()
-		fpsc.mutation.SetCreateTime(v)
-	}
-	if _, ok := fpsc.mutation.UpdateTime(); !ok {
-		v := floorplanscale.DefaultUpdateTime()
-		fpsc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := fpsc.mutation.ReferencePoint1X(); !ok {
-		return nil, &ValidationError{Name: "reference_point1_x", err: errors.New("ent: missing required field \"reference_point1_x\"")}
-	}
-	if _, ok := fpsc.mutation.ReferencePoint1Y(); !ok {
-		return nil, &ValidationError{Name: "reference_point1_y", err: errors.New("ent: missing required field \"reference_point1_y\"")}
-	}
-	if _, ok := fpsc.mutation.ReferencePoint2X(); !ok {
-		return nil, &ValidationError{Name: "reference_point2_x", err: errors.New("ent: missing required field \"reference_point2_x\"")}
-	}
-	if _, ok := fpsc.mutation.ReferencePoint2Y(); !ok {
-		return nil, &ValidationError{Name: "reference_point2_y", err: errors.New("ent: missing required field \"reference_point2_y\"")}
-	}
-	if _, ok := fpsc.mutation.ScaleInMeters(); !ok {
-		return nil, &ValidationError{Name: "scale_in_meters", err: errors.New("ent: missing required field \"scale_in_meters\"")}
+	if err := fpsc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -146,6 +126,33 @@ func (fpsc *FloorPlanScaleCreate) SaveX(ctx context.Context) *FloorPlanScale {
 		panic(err)
 	}
 	return v
+}
+
+func (fpsc *FloorPlanScaleCreate) preSave() error {
+	if _, ok := fpsc.mutation.CreateTime(); !ok {
+		v := floorplanscale.DefaultCreateTime()
+		fpsc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fpsc.mutation.UpdateTime(); !ok {
+		v := floorplanscale.DefaultUpdateTime()
+		fpsc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := fpsc.mutation.ReferencePoint1X(); !ok {
+		return &ValidationError{Name: "reference_point1_x", err: errors.New("ent: missing required field \"reference_point1_x\"")}
+	}
+	if _, ok := fpsc.mutation.ReferencePoint1Y(); !ok {
+		return &ValidationError{Name: "reference_point1_y", err: errors.New("ent: missing required field \"reference_point1_y\"")}
+	}
+	if _, ok := fpsc.mutation.ReferencePoint2X(); !ok {
+		return &ValidationError{Name: "reference_point2_x", err: errors.New("ent: missing required field \"reference_point2_x\"")}
+	}
+	if _, ok := fpsc.mutation.ReferencePoint2Y(); !ok {
+		return &ValidationError{Name: "reference_point2_y", err: errors.New("ent: missing required field \"reference_point2_y\"")}
+	}
+	if _, ok := fpsc.mutation.ScaleInMeters(); !ok {
+		return &ValidationError{Name: "scale_in_meters", err: errors.New("ent: missing required field \"scale_in_meters\"")}
+	}
+	return nil
 }
 
 func (fpsc *FloorPlanScaleCreate) sqlSave(ctx context.Context) (*FloorPlanScale, error) {
@@ -229,4 +236,68 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 		fps.ScaleInMeters = value
 	}
 	return fps, _spec
+}
+
+// FloorPlanScaleCreateBulk is the builder for creating a bulk of FloorPlanScale entities.
+type FloorPlanScaleCreateBulk struct {
+	config
+	builders []*FloorPlanScaleCreate
+}
+
+// Save creates the FloorPlanScale entities in the database.
+func (fpscb *FloorPlanScaleCreateBulk) Save(ctx context.Context) ([]*FloorPlanScale, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(fpscb.builders))
+	nodes := make([]*FloorPlanScale, len(fpscb.builders))
+	mutators := make([]Mutator, len(fpscb.builders))
+	for i := range fpscb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := fpscb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*FloorPlanScaleMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, fpscb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, fpscb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(fpscb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = fpscb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, fpscb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (fpscb *FloorPlanScaleCreateBulk) SaveX(ctx context.Context) []*FloorPlanScale {
+	v, err := fpscb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

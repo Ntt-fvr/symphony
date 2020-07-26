@@ -102,8 +102,8 @@ func (wotc *WorkOrderTemplateCreate) Mutation() *WorkOrderTemplateMutation {
 
 // Save creates the WorkOrderTemplate in the database.
 func (wotc *WorkOrderTemplateCreate) Save(ctx context.Context) (*WorkOrderTemplate, error) {
-	if _, ok := wotc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	if err := wotc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -139,6 +139,13 @@ func (wotc *WorkOrderTemplateCreate) SaveX(ctx context.Context) *WorkOrderTempla
 		panic(err)
 	}
 	return v
+}
+
+func (wotc *WorkOrderTemplateCreate) preSave() error {
+	if _, ok := wotc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	return nil
 }
 
 func (wotc *WorkOrderTemplateCreate) sqlSave(ctx context.Context) (*WorkOrderTemplate, error) {
@@ -239,4 +246,68 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return wot, _spec
+}
+
+// WorkOrderTemplateCreateBulk is the builder for creating a bulk of WorkOrderTemplate entities.
+type WorkOrderTemplateCreateBulk struct {
+	config
+	builders []*WorkOrderTemplateCreate
+}
+
+// Save creates the WorkOrderTemplate entities in the database.
+func (wotcb *WorkOrderTemplateCreateBulk) Save(ctx context.Context) ([]*WorkOrderTemplate, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(wotcb.builders))
+	nodes := make([]*WorkOrderTemplate, len(wotcb.builders))
+	mutators := make([]Mutator, len(wotcb.builders))
+	for i := range wotcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := wotcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*WorkOrderTemplateMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, wotcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, wotcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(wotcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = wotcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, wotcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (wotcb *WorkOrderTemplateCreateBulk) SaveX(ctx context.Context) []*WorkOrderTemplate {
+	v, err := wotcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

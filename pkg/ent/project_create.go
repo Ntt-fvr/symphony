@@ -199,24 +199,8 @@ func (pc *ProjectCreate) Mutation() *ProjectMutation {
 
 // Save creates the Project in the database.
 func (pc *ProjectCreate) Save(ctx context.Context) (*Project, error) {
-	if _, ok := pc.mutation.CreateTime(); !ok {
-		v := project.DefaultCreateTime()
-		pc.mutation.SetCreateTime(v)
-	}
-	if _, ok := pc.mutation.UpdateTime(); !ok {
-		v := project.DefaultUpdateTime()
-		pc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := pc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := pc.mutation.Name(); ok {
-		if err := project.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := pc.mutation.TypeID(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	if err := pc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -252,6 +236,29 @@ func (pc *ProjectCreate) SaveX(ctx context.Context) *Project {
 		panic(err)
 	}
 	return v
+}
+
+func (pc *ProjectCreate) preSave() error {
+	if _, ok := pc.mutation.CreateTime(); !ok {
+		v := project.DefaultCreateTime()
+		pc.mutation.SetCreateTime(v)
+	}
+	if _, ok := pc.mutation.UpdateTime(); !ok {
+		v := project.DefaultUpdateTime()
+		pc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := pc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := pc.mutation.Name(); ok {
+		if err := project.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := pc.mutation.TypeID(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	}
+	return nil
 }
 
 func (pc *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
@@ -444,4 +451,68 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return pr, _spec
+}
+
+// ProjectCreateBulk is the builder for creating a bulk of Project entities.
+type ProjectCreateBulk struct {
+	config
+	builders []*ProjectCreate
+}
+
+// Save creates the Project entities in the database.
+func (pcb *ProjectCreateBulk) Save(ctx context.Context) ([]*Project, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(pcb.builders))
+	nodes := make([]*Project, len(pcb.builders))
+	mutators := make([]Mutator, len(pcb.builders))
+	for i := range pcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := pcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*ProjectMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, pcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, pcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(pcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = pcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, pcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (pcb *ProjectCreateBulk) SaveX(ctx context.Context) []*Project {
+	v, err := pcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

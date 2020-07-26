@@ -169,28 +169,8 @@ func (ltc *LocationTypeCreate) Mutation() *LocationTypeMutation {
 
 // Save creates the LocationType in the database.
 func (ltc *LocationTypeCreate) Save(ctx context.Context) (*LocationType, error) {
-	if _, ok := ltc.mutation.CreateTime(); !ok {
-		v := locationtype.DefaultCreateTime()
-		ltc.mutation.SetCreateTime(v)
-	}
-	if _, ok := ltc.mutation.UpdateTime(); !ok {
-		v := locationtype.DefaultUpdateTime()
-		ltc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ltc.mutation.Site(); !ok {
-		v := locationtype.DefaultSite
-		ltc.mutation.SetSite(v)
-	}
-	if _, ok := ltc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if _, ok := ltc.mutation.MapZoomLevel(); !ok {
-		v := locationtype.DefaultMapZoomLevel
-		ltc.mutation.SetMapZoomLevel(v)
-	}
-	if _, ok := ltc.mutation.Index(); !ok {
-		v := locationtype.DefaultIndex
-		ltc.mutation.SetIndex(v)
+	if err := ltc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -226,6 +206,33 @@ func (ltc *LocationTypeCreate) SaveX(ctx context.Context) *LocationType {
 		panic(err)
 	}
 	return v
+}
+
+func (ltc *LocationTypeCreate) preSave() error {
+	if _, ok := ltc.mutation.CreateTime(); !ok {
+		v := locationtype.DefaultCreateTime()
+		ltc.mutation.SetCreateTime(v)
+	}
+	if _, ok := ltc.mutation.UpdateTime(); !ok {
+		v := locationtype.DefaultUpdateTime()
+		ltc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ltc.mutation.Site(); !ok {
+		v := locationtype.DefaultSite
+		ltc.mutation.SetSite(v)
+	}
+	if _, ok := ltc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := ltc.mutation.MapZoomLevel(); !ok {
+		v := locationtype.DefaultMapZoomLevel
+		ltc.mutation.SetMapZoomLevel(v)
+	}
+	if _, ok := ltc.mutation.Index(); !ok {
+		v := locationtype.DefaultIndex
+		ltc.mutation.SetIndex(v)
+	}
+	return nil
 }
 
 func (ltc *LocationTypeCreate) sqlSave(ctx context.Context) (*LocationType, error) {
@@ -366,4 +373,68 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return lt, _spec
+}
+
+// LocationTypeCreateBulk is the builder for creating a bulk of LocationType entities.
+type LocationTypeCreateBulk struct {
+	config
+	builders []*LocationTypeCreate
+}
+
+// Save creates the LocationType entities in the database.
+func (ltcb *LocationTypeCreateBulk) Save(ctx context.Context) ([]*LocationType, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ltcb.builders))
+	nodes := make([]*LocationType, len(ltcb.builders))
+	mutators := make([]Mutator, len(ltcb.builders))
+	for i := range ltcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ltcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*LocationTypeMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ltcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ltcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ltcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ltcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ltcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ltcb *LocationTypeCreateBulk) SaveX(ctx context.Context) []*LocationType {
+	v, err := ltcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

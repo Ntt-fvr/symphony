@@ -311,46 +311,8 @@ func (lc *LocationCreate) Mutation() *LocationMutation {
 
 // Save creates the Location in the database.
 func (lc *LocationCreate) Save(ctx context.Context) (*Location, error) {
-	if _, ok := lc.mutation.CreateTime(); !ok {
-		v := location.DefaultCreateTime()
-		lc.mutation.SetCreateTime(v)
-	}
-	if _, ok := lc.mutation.UpdateTime(); !ok {
-		v := location.DefaultUpdateTime()
-		lc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := lc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := lc.mutation.Name(); ok {
-		if err := location.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := lc.mutation.Latitude(); !ok {
-		v := location.DefaultLatitude
-		lc.mutation.SetLatitude(v)
-	}
-	if v, ok := lc.mutation.Latitude(); ok {
-		if err := location.LatitudeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
-		}
-	}
-	if _, ok := lc.mutation.Longitude(); !ok {
-		v := location.DefaultLongitude
-		lc.mutation.SetLongitude(v)
-	}
-	if v, ok := lc.mutation.Longitude(); ok {
-		if err := location.LongitudeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
-		}
-	}
-	if _, ok := lc.mutation.SiteSurveyNeeded(); !ok {
-		v := location.DefaultSiteSurveyNeeded
-		lc.mutation.SetSiteSurveyNeeded(v)
-	}
-	if _, ok := lc.mutation.TypeID(); !ok {
-		return nil, &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	if err := lc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -386,6 +348,51 @@ func (lc *LocationCreate) SaveX(ctx context.Context) *Location {
 		panic(err)
 	}
 	return v
+}
+
+func (lc *LocationCreate) preSave() error {
+	if _, ok := lc.mutation.CreateTime(); !ok {
+		v := location.DefaultCreateTime()
+		lc.mutation.SetCreateTime(v)
+	}
+	if _, ok := lc.mutation.UpdateTime(); !ok {
+		v := location.DefaultUpdateTime()
+		lc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := lc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := lc.mutation.Name(); ok {
+		if err := location.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := lc.mutation.Latitude(); !ok {
+		v := location.DefaultLatitude
+		lc.mutation.SetLatitude(v)
+	}
+	if v, ok := lc.mutation.Latitude(); ok {
+		if err := location.LatitudeValidator(v); err != nil {
+			return &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
+		}
+	}
+	if _, ok := lc.mutation.Longitude(); !ok {
+		v := location.DefaultLongitude
+		lc.mutation.SetLongitude(v)
+	}
+	if v, ok := lc.mutation.Longitude(); ok {
+		if err := location.LongitudeValidator(v); err != nil {
+			return &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
+		}
+	}
+	if _, ok := lc.mutation.SiteSurveyNeeded(); !ok {
+		v := location.DefaultSiteSurveyNeeded
+		lc.mutation.SetSiteSurveyNeeded(v)
+	}
+	if _, ok := lc.mutation.TypeID(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
+	}
+	return nil
 }
 
 func (lc *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
@@ -697,4 +704,68 @@ func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return l, _spec
+}
+
+// LocationCreateBulk is the builder for creating a bulk of Location entities.
+type LocationCreateBulk struct {
+	config
+	builders []*LocationCreate
+}
+
+// Save creates the Location entities in the database.
+func (lcb *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(lcb.builders))
+	nodes := make([]*Location, len(lcb.builders))
+	mutators := make([]Mutator, len(lcb.builders))
+	for i := range lcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := lcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*LocationMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, lcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, lcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(lcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = lcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, lcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (lcb *LocationCreateBulk) SaveX(ctx context.Context) []*Location {
+	v, err := lcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

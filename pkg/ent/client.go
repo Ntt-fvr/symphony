@@ -468,6 +468,11 @@ func (c *ActionsRuleClient) Create() *ActionsRuleCreate {
 	return &ActionsRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ActionsRule entities.
+func (c *ActionsRuleClient) CreateBulk(builders ...*ActionsRuleCreate) *ActionsRuleCreateBulk {
+	return &ActionsRuleCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ActionsRule.
 func (c *ActionsRuleClient) Update() *ActionsRuleUpdate {
 	mutation := newActionsRuleMutation(c.config, OpUpdate)
@@ -550,6 +555,11 @@ func (c *ActivityClient) Use(hooks ...Hook) {
 func (c *ActivityClient) Create() *ActivityCreate {
 	mutation := newActivityMutation(c.config, OpCreate)
 	return &ActivityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Activity entities.
+func (c *ActivityClient) CreateBulk(builders ...*ActivityCreate) *ActivityCreateBulk {
+	return &ActivityCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Activity.
@@ -668,6 +678,11 @@ func (c *CheckListCategoryClient) Create() *CheckListCategoryCreate {
 	return &CheckListCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of CheckListCategory entities.
+func (c *CheckListCategoryClient) CreateBulk(builders ...*CheckListCategoryCreate) *CheckListCategoryCreateBulk {
+	return &CheckListCategoryCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for CheckListCategory.
 func (c *CheckListCategoryClient) Update() *CheckListCategoryUpdate {
 	mutation := newCheckListCategoryMutation(c.config, OpUpdate)
@@ -782,6 +797,11 @@ func (c *CheckListCategoryDefinitionClient) Use(hooks ...Hook) {
 func (c *CheckListCategoryDefinitionClient) Create() *CheckListCategoryDefinitionCreate {
 	mutation := newCheckListCategoryDefinitionMutation(c.config, OpCreate)
 	return &CheckListCategoryDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of CheckListCategoryDefinition entities.
+func (c *CheckListCategoryDefinitionClient) CreateBulk(builders ...*CheckListCategoryDefinitionCreate) *CheckListCategoryDefinitionCreateBulk {
+	return &CheckListCategoryDefinitionCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for CheckListCategoryDefinition.
@@ -914,6 +934,11 @@ func (c *CheckListItemClient) Use(hooks ...Hook) {
 func (c *CheckListItemClient) Create() *CheckListItemCreate {
 	mutation := newCheckListItemMutation(c.config, OpCreate)
 	return &CheckListItemCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of CheckListItem entities.
+func (c *CheckListItemClient) CreateBulk(builders ...*CheckListItemCreate) *CheckListItemCreateBulk {
+	return &CheckListItemCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for CheckListItem.
@@ -1064,6 +1089,11 @@ func (c *CheckListItemDefinitionClient) Create() *CheckListItemDefinitionCreate 
 	return &CheckListItemDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of CheckListItemDefinition entities.
+func (c *CheckListItemDefinitionClient) CreateBulk(builders ...*CheckListItemDefinitionCreate) *CheckListItemDefinitionCreateBulk {
+	return &CheckListItemDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for CheckListItemDefinition.
 func (c *CheckListItemDefinitionClient) Update() *CheckListItemDefinitionUpdate {
 	mutation := newCheckListItemDefinitionMutation(c.config, OpUpdate)
@@ -1162,6 +1192,11 @@ func (c *CommentClient) Use(hooks ...Hook) {
 func (c *CommentClient) Create() *CommentCreate {
 	mutation := newCommentMutation(c.config, OpCreate)
 	return &CommentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Comment entities.
+func (c *CommentClient) CreateBulk(builders ...*CommentCreate) *CommentCreateBulk {
+	return &CommentCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Comment.
@@ -1296,6 +1331,11 @@ func (c *CustomerClient) Create() *CustomerCreate {
 	return &CustomerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of Customer entities.
+func (c *CustomerClient) CreateBulk(builders ...*CustomerCreate) *CustomerCreateBulk {
+	return &CustomerCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for Customer.
 func (c *CustomerClient) Update() *CustomerUpdate {
 	mutation := newCustomerMutation(c.config, OpUpdate)
@@ -1394,6 +1434,11 @@ func (c *EquipmentClient) Use(hooks ...Hook) {
 func (c *EquipmentClient) Create() *EquipmentCreate {
 	mutation := newEquipmentMutation(c.config, OpCreate)
 	return &EquipmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Equipment entities.
+func (c *EquipmentClient) CreateBulk(builders ...*EquipmentCreate) *EquipmentCreateBulk {
+	return &EquipmentCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Equipment.
@@ -1640,6 +1685,11 @@ func (c *EquipmentCategoryClient) Create() *EquipmentCategoryCreate {
 	return &EquipmentCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of EquipmentCategory entities.
+func (c *EquipmentCategoryClient) CreateBulk(builders ...*EquipmentCategoryCreate) *EquipmentCategoryCreateBulk {
+	return &EquipmentCategoryCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for EquipmentCategory.
 func (c *EquipmentCategoryClient) Update() *EquipmentCategoryUpdate {
 	mutation := newEquipmentCategoryMutation(c.config, OpUpdate)
@@ -1738,6 +1788,11 @@ func (c *EquipmentPortClient) Use(hooks ...Hook) {
 func (c *EquipmentPortClient) Create() *EquipmentPortCreate {
 	mutation := newEquipmentPortMutation(c.config, OpCreate)
 	return &EquipmentPortCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of EquipmentPort entities.
+func (c *EquipmentPortClient) CreateBulk(builders ...*EquipmentPortCreate) *EquipmentPortCreateBulk {
+	return &EquipmentPortCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for EquipmentPort.
@@ -1904,6 +1959,11 @@ func (c *EquipmentPortDefinitionClient) Create() *EquipmentPortDefinitionCreate 
 	return &EquipmentPortDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of EquipmentPortDefinition entities.
+func (c *EquipmentPortDefinitionClient) CreateBulk(builders ...*EquipmentPortDefinitionCreate) *EquipmentPortDefinitionCreateBulk {
+	return &EquipmentPortDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for EquipmentPortDefinition.
 func (c *EquipmentPortDefinitionClient) Update() *EquipmentPortDefinitionUpdate {
 	mutation := newEquipmentPortDefinitionMutation(c.config, OpUpdate)
@@ -2034,6 +2094,11 @@ func (c *EquipmentPortTypeClient) Use(hooks ...Hook) {
 func (c *EquipmentPortTypeClient) Create() *EquipmentPortTypeCreate {
 	mutation := newEquipmentPortTypeMutation(c.config, OpCreate)
 	return &EquipmentPortTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of EquipmentPortType entities.
+func (c *EquipmentPortTypeClient) CreateBulk(builders ...*EquipmentPortTypeCreate) *EquipmentPortTypeCreateBulk {
+	return &EquipmentPortTypeCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for EquipmentPortType.
@@ -2168,6 +2233,11 @@ func (c *EquipmentPositionClient) Create() *EquipmentPositionCreate {
 	return &EquipmentPositionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of EquipmentPosition entities.
+func (c *EquipmentPositionClient) CreateBulk(builders ...*EquipmentPositionCreate) *EquipmentPositionCreateBulk {
+	return &EquipmentPositionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for EquipmentPosition.
 func (c *EquipmentPositionClient) Update() *EquipmentPositionUpdate {
 	mutation := newEquipmentPositionMutation(c.config, OpUpdate)
@@ -2300,6 +2370,11 @@ func (c *EquipmentPositionDefinitionClient) Create() *EquipmentPositionDefinitio
 	return &EquipmentPositionDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of EquipmentPositionDefinition entities.
+func (c *EquipmentPositionDefinitionClient) CreateBulk(builders ...*EquipmentPositionDefinitionCreate) *EquipmentPositionDefinitionCreateBulk {
+	return &EquipmentPositionDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for EquipmentPositionDefinition.
 func (c *EquipmentPositionDefinitionClient) Update() *EquipmentPositionDefinitionUpdate {
 	mutation := newEquipmentPositionDefinitionMutation(c.config, OpUpdate)
@@ -2414,6 +2489,11 @@ func (c *EquipmentTypeClient) Use(hooks ...Hook) {
 func (c *EquipmentTypeClient) Create() *EquipmentTypeCreate {
 	mutation := newEquipmentTypeMutation(c.config, OpCreate)
 	return &EquipmentTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of EquipmentType entities.
+func (c *EquipmentTypeClient) CreateBulk(builders ...*EquipmentTypeCreate) *EquipmentTypeCreateBulk {
+	return &EquipmentTypeCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for EquipmentType.
@@ -2594,6 +2674,11 @@ func (c *FileClient) Use(hooks ...Hook) {
 func (c *FileClient) Create() *FileCreate {
 	mutation := newFileMutation(c.config, OpCreate)
 	return &FileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of File entities.
+func (c *FileClient) CreateBulk(builders ...*FileCreate) *FileCreateBulk {
+	return &FileCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for File.
@@ -2824,6 +2909,11 @@ func (c *FloorPlanClient) Create() *FloorPlanCreate {
 	return &FloorPlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of FloorPlan entities.
+func (c *FloorPlanClient) CreateBulk(builders ...*FloorPlanCreate) *FloorPlanCreateBulk {
+	return &FloorPlanCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for FloorPlan.
 func (c *FloorPlanClient) Update() *FloorPlanUpdate {
 	mutation := newFloorPlanMutation(c.config, OpUpdate)
@@ -2972,6 +3062,11 @@ func (c *FloorPlanReferencePointClient) Create() *FloorPlanReferencePointCreate 
 	return &FloorPlanReferencePointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of FloorPlanReferencePoint entities.
+func (c *FloorPlanReferencePointClient) CreateBulk(builders ...*FloorPlanReferencePointCreate) *FloorPlanReferencePointCreateBulk {
+	return &FloorPlanReferencePointCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for FloorPlanReferencePoint.
 func (c *FloorPlanReferencePointClient) Update() *FloorPlanReferencePointUpdate {
 	mutation := newFloorPlanReferencePointMutation(c.config, OpUpdate)
@@ -3056,6 +3151,11 @@ func (c *FloorPlanScaleClient) Create() *FloorPlanScaleCreate {
 	return &FloorPlanScaleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of FloorPlanScale entities.
+func (c *FloorPlanScaleClient) CreateBulk(builders ...*FloorPlanScaleCreate) *FloorPlanScaleCreateBulk {
+	return &FloorPlanScaleCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for FloorPlanScale.
 func (c *FloorPlanScaleClient) Update() *FloorPlanScaleUpdate {
 	mutation := newFloorPlanScaleMutation(c.config, OpUpdate)
@@ -3138,6 +3238,11 @@ func (c *HyperlinkClient) Use(hooks ...Hook) {
 func (c *HyperlinkClient) Create() *HyperlinkCreate {
 	mutation := newHyperlinkMutation(c.config, OpCreate)
 	return &HyperlinkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Hyperlink entities.
+func (c *HyperlinkClient) CreateBulk(builders ...*HyperlinkCreate) *HyperlinkCreateBulk {
+	return &HyperlinkCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Hyperlink.
@@ -3270,6 +3375,11 @@ func (c *LinkClient) Use(hooks ...Hook) {
 func (c *LinkClient) Create() *LinkCreate {
 	mutation := newLinkMutation(c.config, OpCreate)
 	return &LinkCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Link entities.
+func (c *LinkClient) CreateBulk(builders ...*LinkCreate) *LinkCreateBulk {
+	return &LinkCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Link.
@@ -3418,6 +3528,11 @@ func (c *LocationClient) Use(hooks ...Hook) {
 func (c *LocationClient) Create() *LocationCreate {
 	mutation := newLocationMutation(c.config, OpCreate)
 	return &LocationCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Location entities.
+func (c *LocationClient) CreateBulk(builders ...*LocationCreate) *LocationCreateBulk {
+	return &LocationCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Location.
@@ -3696,6 +3811,11 @@ func (c *LocationTypeClient) Create() *LocationTypeCreate {
 	return &LocationTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of LocationType entities.
+func (c *LocationTypeClient) CreateBulk(builders ...*LocationTypeCreate) *LocationTypeCreateBulk {
+	return &LocationTypeCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for LocationType.
 func (c *LocationTypeClient) Update() *LocationTypeUpdate {
 	mutation := newLocationTypeMutation(c.config, OpUpdate)
@@ -3828,6 +3948,11 @@ func (c *PermissionsPolicyClient) Create() *PermissionsPolicyCreate {
 	return &PermissionsPolicyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of PermissionsPolicy entities.
+func (c *PermissionsPolicyClient) CreateBulk(builders ...*PermissionsPolicyCreate) *PermissionsPolicyCreateBulk {
+	return &PermissionsPolicyCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for PermissionsPolicy.
 func (c *PermissionsPolicyClient) Update() *PermissionsPolicyUpdate {
 	mutation := newPermissionsPolicyMutation(c.config, OpUpdate)
@@ -3926,6 +4051,11 @@ func (c *ProjectClient) Use(hooks ...Hook) {
 func (c *ProjectClient) Create() *ProjectCreate {
 	mutation := newProjectMutation(c.config, OpCreate)
 	return &ProjectCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Project entities.
+func (c *ProjectClient) CreateBulk(builders ...*ProjectCreate) *ProjectCreateBulk {
+	return &ProjectCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Project.
@@ -4124,6 +4254,11 @@ func (c *ProjectTemplateClient) Create() *ProjectTemplateCreate {
 	return &ProjectTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ProjectTemplate entities.
+func (c *ProjectTemplateClient) CreateBulk(builders ...*ProjectTemplateCreate) *ProjectTemplateCreateBulk {
+	return &ProjectTemplateCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ProjectTemplate.
 func (c *ProjectTemplateClient) Update() *ProjectTemplateUpdate {
 	mutation := newProjectTemplateMutation(c.config, OpUpdate)
@@ -4256,6 +4391,11 @@ func (c *ProjectTypeClient) Create() *ProjectTypeCreate {
 	return &ProjectTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ProjectType entities.
+func (c *ProjectTypeClient) CreateBulk(builders ...*ProjectTypeCreate) *ProjectTypeCreateBulk {
+	return &ProjectTypeCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ProjectType.
 func (c *ProjectTypeClient) Update() *ProjectTypeUpdate {
 	mutation := newProjectTypeMutation(c.config, OpUpdate)
@@ -4386,6 +4526,11 @@ func (c *PropertyClient) Use(hooks ...Hook) {
 func (c *PropertyClient) Create() *PropertyCreate {
 	mutation := newPropertyMutation(c.config, OpCreate)
 	return &PropertyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Property entities.
+func (c *PropertyClient) CreateBulk(builders ...*PropertyCreate) *PropertyCreateBulk {
+	return &PropertyCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Property.
@@ -4680,6 +4825,11 @@ func (c *PropertyTypeClient) Create() *PropertyTypeCreate {
 	return &PropertyTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of PropertyType entities.
+func (c *PropertyTypeClient) CreateBulk(builders ...*PropertyTypeCreate) *PropertyTypeCreateBulk {
+	return &PropertyTypeCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for PropertyType.
 func (c *PropertyTypeClient) Update() *PropertyTypeUpdate {
 	mutation := newPropertyTypeMutation(c.config, OpUpdate)
@@ -4924,6 +5074,11 @@ func (c *ReportFilterClient) Create() *ReportFilterCreate {
 	return &ReportFilterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ReportFilter entities.
+func (c *ReportFilterClient) CreateBulk(builders ...*ReportFilterCreate) *ReportFilterCreateBulk {
+	return &ReportFilterCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ReportFilter.
 func (c *ReportFilterClient) Update() *ReportFilterUpdate {
 	mutation := newReportFilterMutation(c.config, OpUpdate)
@@ -5006,6 +5161,11 @@ func (c *ServiceClient) Use(hooks ...Hook) {
 func (c *ServiceClient) Create() *ServiceCreate {
 	mutation := newServiceMutation(c.config, OpCreate)
 	return &ServiceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Service entities.
+func (c *ServiceClient) CreateBulk(builders ...*ServiceCreate) *ServiceCreateBulk {
+	return &ServiceCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for Service.
@@ -5204,6 +5364,11 @@ func (c *ServiceEndpointClient) Create() *ServiceEndpointCreate {
 	return &ServiceEndpointCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ServiceEndpoint entities.
+func (c *ServiceEndpointClient) CreateBulk(builders ...*ServiceEndpointCreate) *ServiceEndpointCreateBulk {
+	return &ServiceEndpointCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ServiceEndpoint.
 func (c *ServiceEndpointClient) Update() *ServiceEndpointUpdate {
 	mutation := newServiceEndpointMutation(c.config, OpUpdate)
@@ -5352,6 +5517,11 @@ func (c *ServiceEndpointDefinitionClient) Create() *ServiceEndpointDefinitionCre
 	return &ServiceEndpointDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of ServiceEndpointDefinition entities.
+func (c *ServiceEndpointDefinitionClient) CreateBulk(builders ...*ServiceEndpointDefinitionCreate) *ServiceEndpointDefinitionCreateBulk {
+	return &ServiceEndpointDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for ServiceEndpointDefinition.
 func (c *ServiceEndpointDefinitionClient) Update() *ServiceEndpointDefinitionUpdate {
 	mutation := newServiceEndpointDefinitionMutation(c.config, OpUpdate)
@@ -5482,6 +5652,11 @@ func (c *ServiceTypeClient) Use(hooks ...Hook) {
 func (c *ServiceTypeClient) Create() *ServiceTypeCreate {
 	mutation := newServiceTypeMutation(c.config, OpCreate)
 	return &ServiceTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of ServiceType entities.
+func (c *ServiceTypeClient) CreateBulk(builders ...*ServiceTypeCreate) *ServiceTypeCreateBulk {
+	return &ServiceTypeCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for ServiceType.
@@ -5616,6 +5791,11 @@ func (c *SurveyClient) Create() *SurveyCreate {
 	return &SurveyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of Survey entities.
+func (c *SurveyClient) CreateBulk(builders ...*SurveyCreate) *SurveyCreateBulk {
+	return &SurveyCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for Survey.
 func (c *SurveyClient) Update() *SurveyUpdate {
 	mutation := newSurveyMutation(c.config, OpUpdate)
@@ -5748,6 +5928,11 @@ func (c *SurveyCellScanClient) Create() *SurveyCellScanCreate {
 	return &SurveyCellScanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of SurveyCellScan entities.
+func (c *SurveyCellScanClient) CreateBulk(builders ...*SurveyCellScanCreate) *SurveyCellScanCreateBulk {
+	return &SurveyCellScanCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for SurveyCellScan.
 func (c *SurveyCellScanClient) Update() *SurveyCellScanUpdate {
 	mutation := newSurveyCellScanMutation(c.config, OpUpdate)
@@ -5878,6 +6063,11 @@ func (c *SurveyQuestionClient) Use(hooks ...Hook) {
 func (c *SurveyQuestionClient) Create() *SurveyQuestionCreate {
 	mutation := newSurveyQuestionMutation(c.config, OpCreate)
 	return &SurveyQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of SurveyQuestion entities.
+func (c *SurveyQuestionClient) CreateBulk(builders ...*SurveyQuestionCreate) *SurveyQuestionCreateBulk {
+	return &SurveyQuestionCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for SurveyQuestion.
@@ -6044,6 +6234,11 @@ func (c *SurveyTemplateCategoryClient) Create() *SurveyTemplateCategoryCreate {
 	return &SurveyTemplateCategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of SurveyTemplateCategory entities.
+func (c *SurveyTemplateCategoryClient) CreateBulk(builders ...*SurveyTemplateCategoryCreate) *SurveyTemplateCategoryCreateBulk {
+	return &SurveyTemplateCategoryCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for SurveyTemplateCategory.
 func (c *SurveyTemplateCategoryClient) Update() *SurveyTemplateCategoryUpdate {
 	mutation := newSurveyTemplateCategoryMutation(c.config, OpUpdate)
@@ -6160,6 +6355,11 @@ func (c *SurveyTemplateQuestionClient) Create() *SurveyTemplateQuestionCreate {
 	return &SurveyTemplateQuestionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of SurveyTemplateQuestion entities.
+func (c *SurveyTemplateQuestionClient) CreateBulk(builders ...*SurveyTemplateQuestionCreate) *SurveyTemplateQuestionCreateBulk {
+	return &SurveyTemplateQuestionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for SurveyTemplateQuestion.
 func (c *SurveyTemplateQuestionClient) Update() *SurveyTemplateQuestionUpdate {
 	mutation := newSurveyTemplateQuestionMutation(c.config, OpUpdate)
@@ -6258,6 +6458,11 @@ func (c *SurveyWiFiScanClient) Use(hooks ...Hook) {
 func (c *SurveyWiFiScanClient) Create() *SurveyWiFiScanCreate {
 	mutation := newSurveyWiFiScanMutation(c.config, OpCreate)
 	return &SurveyWiFiScanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of SurveyWiFiScan entities.
+func (c *SurveyWiFiScanClient) CreateBulk(builders ...*SurveyWiFiScanCreate) *SurveyWiFiScanCreateBulk {
+	return &SurveyWiFiScanCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for SurveyWiFiScan.
@@ -6390,6 +6595,11 @@ func (c *UserClient) Use(hooks ...Hook) {
 func (c *UserClient) Create() *UserCreate {
 	mutation := newUserMutation(c.config, OpCreate)
 	return &UserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of User entities.
+func (c *UserClient) CreateBulk(builders ...*UserCreate) *UserCreateBulk {
+	return &UserCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for User.
@@ -6556,6 +6766,11 @@ func (c *UsersGroupClient) Create() *UsersGroupCreate {
 	return &UsersGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of UsersGroup entities.
+func (c *UsersGroupClient) CreateBulk(builders ...*UsersGroupCreate) *UsersGroupCreateBulk {
+	return &UsersGroupCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for UsersGroup.
 func (c *UsersGroupClient) Update() *UsersGroupUpdate {
 	mutation := newUsersGroupMutation(c.config, OpUpdate)
@@ -6670,6 +6885,11 @@ func (c *WorkOrderClient) Use(hooks ...Hook) {
 func (c *WorkOrderClient) Create() *WorkOrderCreate {
 	mutation := newWorkOrderMutation(c.config, OpCreate)
 	return &WorkOrderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of WorkOrder entities.
+func (c *WorkOrderClient) CreateBulk(builders ...*WorkOrderCreate) *WorkOrderCreateBulk {
+	return &WorkOrderCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for WorkOrder.
@@ -6980,6 +7200,11 @@ func (c *WorkOrderDefinitionClient) Create() *WorkOrderDefinitionCreate {
 	return &WorkOrderDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of WorkOrderDefinition entities.
+func (c *WorkOrderDefinitionClient) CreateBulk(builders ...*WorkOrderDefinitionCreate) *WorkOrderDefinitionCreateBulk {
+	return &WorkOrderDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for WorkOrderDefinition.
 func (c *WorkOrderDefinitionClient) Update() *WorkOrderDefinitionUpdate {
 	mutation := newWorkOrderDefinitionMutation(c.config, OpUpdate)
@@ -7112,6 +7337,11 @@ func (c *WorkOrderTemplateClient) Create() *WorkOrderTemplateCreate {
 	return &WorkOrderTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
+// BulkCreate returns a builder for creating a bulk of WorkOrderTemplate entities.
+func (c *WorkOrderTemplateClient) CreateBulk(builders ...*WorkOrderTemplateCreate) *WorkOrderTemplateCreateBulk {
+	return &WorkOrderTemplateCreateBulk{config: c.config, builders: builders}
+}
+
 // Update returns an update builder for WorkOrderTemplate.
 func (c *WorkOrderTemplateClient) Update() *WorkOrderTemplateUpdate {
 	mutation := newWorkOrderTemplateMutation(c.config, OpUpdate)
@@ -7242,6 +7472,11 @@ func (c *WorkOrderTypeClient) Use(hooks ...Hook) {
 func (c *WorkOrderTypeClient) Create() *WorkOrderTypeCreate {
 	mutation := newWorkOrderTypeMutation(c.config, OpCreate)
 	return &WorkOrderTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of WorkOrderType entities.
+func (c *WorkOrderTypeClient) CreateBulk(builders ...*WorkOrderTypeCreate) *WorkOrderTypeCreateBulk {
+	return &WorkOrderTypeCreateBulk{config: c.config, builders: builders}
 }
 
 // Update returns an update builder for WorkOrderType.

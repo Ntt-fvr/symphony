@@ -125,30 +125,8 @@ func (ugc *UsersGroupCreate) Mutation() *UsersGroupMutation {
 
 // Save creates the UsersGroup in the database.
 func (ugc *UsersGroupCreate) Save(ctx context.Context) (*UsersGroup, error) {
-	if _, ok := ugc.mutation.CreateTime(); !ok {
-		v := usersgroup.DefaultCreateTime()
-		ugc.mutation.SetCreateTime(v)
-	}
-	if _, ok := ugc.mutation.UpdateTime(); !ok {
-		v := usersgroup.DefaultUpdateTime()
-		ugc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ugc.mutation.Name(); !ok {
-		return nil, &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := ugc.mutation.Name(); ok {
-		if err := usersgroup.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if _, ok := ugc.mutation.Status(); !ok {
-		v := usersgroup.DefaultStatus
-		ugc.mutation.SetStatus(v)
-	}
-	if v, ok := ugc.mutation.Status(); ok {
-		if err := usersgroup.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
+	if err := ugc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -184,6 +162,35 @@ func (ugc *UsersGroupCreate) SaveX(ctx context.Context) *UsersGroup {
 		panic(err)
 	}
 	return v
+}
+
+func (ugc *UsersGroupCreate) preSave() error {
+	if _, ok := ugc.mutation.CreateTime(); !ok {
+		v := usersgroup.DefaultCreateTime()
+		ugc.mutation.SetCreateTime(v)
+	}
+	if _, ok := ugc.mutation.UpdateTime(); !ok {
+		v := usersgroup.DefaultUpdateTime()
+		ugc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ugc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if v, ok := ugc.mutation.Name(); ok {
+		if err := usersgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := ugc.mutation.Status(); !ok {
+		v := usersgroup.DefaultStatus
+		ugc.mutation.SetStatus(v)
+	}
+	if v, ok := ugc.mutation.Status(); ok {
+		if err := usersgroup.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ugc *UsersGroupCreate) sqlSave(ctx context.Context) (*UsersGroup, error) {
@@ -289,4 +296,68 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return ug, _spec
+}
+
+// UsersGroupCreateBulk is the builder for creating a bulk of UsersGroup entities.
+type UsersGroupCreateBulk struct {
+	config
+	builders []*UsersGroupCreate
+}
+
+// Save creates the UsersGroup entities in the database.
+func (ugcb *UsersGroupCreateBulk) Save(ctx context.Context) ([]*UsersGroup, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(ugcb.builders))
+	nodes := make([]*UsersGroup, len(ugcb.builders))
+	mutators := make([]Mutator, len(ugcb.builders))
+	for i := range ugcb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := ugcb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*UsersGroupMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, ugcb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, ugcb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(ugcb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = ugcb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, ugcb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (ugcb *UsersGroupCreateBulk) SaveX(ctx context.Context) []*UsersGroup {
+	v, err := ugcb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }

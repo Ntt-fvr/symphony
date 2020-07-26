@@ -383,19 +383,8 @@ func (scsc *SurveyCellScanCreate) Mutation() *SurveyCellScanMutation {
 
 // Save creates the SurveyCellScan in the database.
 func (scsc *SurveyCellScanCreate) Save(ctx context.Context) (*SurveyCellScan, error) {
-	if _, ok := scsc.mutation.CreateTime(); !ok {
-		v := surveycellscan.DefaultCreateTime()
-		scsc.mutation.SetCreateTime(v)
-	}
-	if _, ok := scsc.mutation.UpdateTime(); !ok {
-		v := surveycellscan.DefaultUpdateTime()
-		scsc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := scsc.mutation.NetworkType(); !ok {
-		return nil, &ValidationError{Name: "network_type", err: errors.New("ent: missing required field \"network_type\"")}
-	}
-	if _, ok := scsc.mutation.SignalStrength(); !ok {
-		return nil, &ValidationError{Name: "signal_strength", err: errors.New("ent: missing required field \"signal_strength\"")}
+	if err := scsc.preSave(); err != nil {
+		return nil, err
 	}
 	var (
 		err  error
@@ -431,6 +420,24 @@ func (scsc *SurveyCellScanCreate) SaveX(ctx context.Context) *SurveyCellScan {
 		panic(err)
 	}
 	return v
+}
+
+func (scsc *SurveyCellScanCreate) preSave() error {
+	if _, ok := scsc.mutation.CreateTime(); !ok {
+		v := surveycellscan.DefaultCreateTime()
+		scsc.mutation.SetCreateTime(v)
+	}
+	if _, ok := scsc.mutation.UpdateTime(); !ok {
+		v := surveycellscan.DefaultUpdateTime()
+		scsc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := scsc.mutation.NetworkType(); !ok {
+		return &ValidationError{Name: "network_type", err: errors.New("ent: missing required field \"network_type\"")}
+	}
+	if _, ok := scsc.mutation.SignalStrength(); !ok {
+		return &ValidationError{Name: "signal_strength", err: errors.New("ent: missing required field \"signal_strength\"")}
+	}
+	return nil
 }
 
 func (scsc *SurveyCellScanCreate) sqlSave(ctx context.Context) (*SurveyCellScan, error) {
@@ -691,4 +698,68 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return scs, _spec
+}
+
+// SurveyCellScanCreateBulk is the builder for creating a bulk of SurveyCellScan entities.
+type SurveyCellScanCreateBulk struct {
+	config
+	builders []*SurveyCellScanCreate
+}
+
+// Save creates the SurveyCellScan entities in the database.
+func (scscb *SurveyCellScanCreateBulk) Save(ctx context.Context) ([]*SurveyCellScan, error) {
+	specs := make([]*sqlgraph.CreateSpec, len(scscb.builders))
+	nodes := make([]*SurveyCellScan, len(scscb.builders))
+	mutators := make([]Mutator, len(scscb.builders))
+	for i := range scscb.builders {
+		func(i int, root context.Context) {
+			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
+				builder := scscb.builders[i]
+				if err := builder.preSave(); err != nil {
+					return nil, err
+				}
+				mutation, ok := m.(*SurveyCellScanMutation)
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				builder.mutation = mutation
+				nodes[i], specs[i] = builder.createSpec()
+				var err error
+				if i < len(mutators)-1 {
+					_, err = mutators[i+1].Mutate(root, scscb.builders[i+1].mutation)
+				} else {
+					// Invoke the actual operation on the latest mutation in the chain.
+					if err = sqlgraph.BatchCreate(ctx, scscb.driver, &sqlgraph.BatchCreateSpec{Nodes: specs}); err != nil {
+						if cerr, ok := isSQLConstraintError(err); ok {
+							err = cerr
+						}
+					}
+				}
+				mutation.done = true
+				if err != nil {
+					return nil, err
+				}
+				id := specs[i].ID.Value.(int64)
+				nodes[i].ID = int(id)
+				return nodes[i], nil
+			})
+			for i := len(scscb.builders[i].hooks) - 1; i >= 0; i-- {
+				mut = scscb.builders[i].hooks[i](mut)
+			}
+			mutators[i] = mut
+		}(i, ctx)
+	}
+	if _, err := mutators[0].Mutate(ctx, scscb.builders[0].mutation); err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// SaveX calls Save and panics if Save returns an error.
+func (scscb *SurveyCellScanCreateBulk) SaveX(ctx context.Context) []*SurveyCellScan {
+	v, err := scscb.Save(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return v
 }
