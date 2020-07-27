@@ -596,7 +596,22 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 		defer tr.AssertExpectations(t)
 
 		outputs, err := deprecatedInputField(input, tr.resolve)
-		assert.Equal(t, nil, outputs)
+		assert.Nil(t, outputs)
+		assert.NoError(t, err)
+	})
+	t.Run("OnlyNewFieldWithEmptyDeprecated", func(t *testing.T) {
+		input := map[string]interface{}{
+			"input":  []string{},
+			"input2": "Valid",
+		}
+		var tr testResolver
+		tr.On("resolve", mock.Anything).
+			Return(input["input"], nil).
+			Once()
+		defer tr.AssertExpectations(t)
+
+		outputs, err := deprecatedInputField(input, tr.resolve)
+		assert.Equal(t, []string{}, outputs)
 		assert.NoError(t, err)
 	})
 	t.Run("BothFields", func(t *testing.T) {
@@ -617,6 +632,21 @@ func TestDirectiveDeprecatedInputField(t *testing.T) {
 	t.Run("BothFieldWithDeprecatedEmpty", func(t *testing.T) {
 		input := map[string]interface{}{
 			"input":  "",
+			"input2": "Valid",
+		}
+		var tr testResolver
+		tr.On("resolve", mock.Anything).
+			Return(input["input"], nil).
+			Once()
+		defer tr.AssertExpectations(t)
+
+		outputs, err := deprecatedInputField(input, tr.resolve)
+		assert.Nil(t, outputs)
+		assert.Error(t, err)
+	})
+	t.Run("BothFieldWithDeprecatedNotEmptyList", func(t *testing.T) {
+		input := map[string]interface{}{
+			"input":  []string{"value"},
 			"input2": "Valid",
 		}
 		var tr testResolver

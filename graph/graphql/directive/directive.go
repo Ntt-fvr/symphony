@@ -315,9 +315,19 @@ func (d *directive) isNil(i interface{}) bool {
 	}
 }
 
+func (d *directive) isEmptyList(i interface{}) bool {
+	value := reflect.Indirect(reflect.ValueOf(i))
+	switch value.Kind() {
+	case reflect.Slice, reflect.Array:
+		return value.Len() == 0
+	default:
+		return false
+	}
+}
+
 func (d *directive) DeprecatedInput(ctx context.Context, obj interface{}, next graphql.Resolver, name, duplicateError string, newField *string) (res interface{}, err error) {
 	value, err := next(ctx)
-	if err != nil || d.isNil(value) {
+	if err != nil || d.isNil(value) || d.isEmptyList(value) {
 		return value, err
 	}
 	tags := []tag.Mutator{
