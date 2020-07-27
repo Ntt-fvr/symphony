@@ -704,6 +704,7 @@ workflows:
           requires: &dpreq
             - lint
             - unit
+            - validate-gql-test
           <<: *onlymaster
       - docker-publish:
           name: store/publish
