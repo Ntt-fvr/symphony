@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // ID filters vertices based on their identifier.
@@ -115,13 +116,6 @@ func UpdateTime(v time.Time) predicate.Equipment {
 func Name(v string) predicate.Equipment {
 	return predicate.Equipment(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldName), v))
-	})
-}
-
-// FutureState applies equality check predicate on the "future_state" field. It's identical to FutureStateEQ.
-func FutureState(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFutureState), v))
 	})
 }
 
@@ -403,21 +397,23 @@ func NameContainsFold(v string) predicate.Equipment {
 }
 
 // FutureStateEQ applies the EQ predicate on the "future_state" field.
-func FutureStateEQ(v string) predicate.Equipment {
+func FutureStateEQ(v enum.FutureState) predicate.Equipment {
+	vc := v
 	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFutureState), v))
+		s.Where(sql.EQ(s.C(FieldFutureState), vc))
 	})
 }
 
 // FutureStateNEQ applies the NEQ predicate on the "future_state" field.
-func FutureStateNEQ(v string) predicate.Equipment {
+func FutureStateNEQ(v enum.FutureState) predicate.Equipment {
+	vc := v
 	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFutureState), v))
+		s.Where(sql.NEQ(s.C(FieldFutureState), vc))
 	})
 }
 
 // FutureStateIn applies the In predicate on the "future_state" field.
-func FutureStateIn(vs ...string) predicate.Equipment {
+func FutureStateIn(vs ...enum.FutureState) predicate.Equipment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -434,7 +430,7 @@ func FutureStateIn(vs ...string) predicate.Equipment {
 }
 
 // FutureStateNotIn applies the NotIn predicate on the "future_state" field.
-func FutureStateNotIn(vs ...string) predicate.Equipment {
+func FutureStateNotIn(vs ...enum.FutureState) predicate.Equipment {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -450,55 +446,6 @@ func FutureStateNotIn(vs ...string) predicate.Equipment {
 	})
 }
 
-// FutureStateGT applies the GT predicate on the "future_state" field.
-func FutureStateGT(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateGTE applies the GTE predicate on the "future_state" field.
-func FutureStateGTE(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateLT applies the LT predicate on the "future_state" field.
-func FutureStateLT(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateLTE applies the LTE predicate on the "future_state" field.
-func FutureStateLTE(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateContains applies the Contains predicate on the "future_state" field.
-func FutureStateContains(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateHasPrefix applies the HasPrefix predicate on the "future_state" field.
-func FutureStateHasPrefix(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateHasSuffix applies the HasSuffix predicate on the "future_state" field.
-func FutureStateHasSuffix(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldFutureState), v))
-	})
-}
-
 // FutureStateIsNil applies the IsNil predicate on the "future_state" field.
 func FutureStateIsNil() predicate.Equipment {
 	return predicate.Equipment(func(s *sql.Selector) {
@@ -510,20 +457,6 @@ func FutureStateIsNil() predicate.Equipment {
 func FutureStateNotNil() predicate.Equipment {
 	return predicate.Equipment(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldFutureState)))
-	})
-}
-
-// FutureStateEqualFold applies the EqualFold predicate on the "future_state" field.
-func FutureStateEqualFold(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldFutureState), v))
-	})
-}
-
-// FutureStateContainsFold applies the ContainsFold predicate on the "future_state" field.
-func FutureStateContainsFold(v string) predicate.Equipment {
-	return predicate.Equipment(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldFutureState), v))
 	})
 }
 

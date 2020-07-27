@@ -1370,9 +1370,12 @@ enum ServiceStatus {
 }
 
 """
-Equipment planned status
+FutureState of an equipment.
 """
-enum FutureState {
+enum FutureState
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FutureState"
+  ) {
   INSTALL
   REMOVE
 }

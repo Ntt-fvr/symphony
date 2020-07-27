@@ -237,11 +237,6 @@ func (equipmentResolver) Properties(ctx context.Context, e *ent.Equipment) ([]*e
 	return e.QueryProperties().All(ctx)
 }
 
-func (equipmentResolver) FutureState(_ context.Context, e *ent.Equipment) (*models.FutureState, error) {
-	state := models.FutureState(e.FutureState)
-	return &state, nil
-}
-
 func (equipmentResolver) WorkOrder(ctx context.Context, e *ent.Equipment) (*ent.WorkOrder, error) {
 	wo, err := e.Edges.WorkOrderOrErr()
 	if ent.IsNotLoaded(err) {

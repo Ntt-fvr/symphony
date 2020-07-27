@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -303,7 +304,7 @@ func TestSearchLinksFutureState(t *testing.T) {
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLinkFutureStatus,
 		Operator:   models.FilterOperatorIsOneOf,
-		StringSet:  []string{models.FutureStateRemove.String()},
+		StringSet:  []string{enum.FutureStateRemove.String()},
 		MaxDepth:   &maxDepth,
 	}
 	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)

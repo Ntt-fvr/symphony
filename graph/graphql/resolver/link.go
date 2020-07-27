@@ -7,7 +7,6 @@ package resolver
 import (
 	"context"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 )
 
@@ -15,11 +14,6 @@ type linkResolver struct{}
 
 func (linkResolver) Ports(ctx context.Context, obj *ent.Link) ([]*ent.EquipmentPort, error) {
 	return obj.QueryPorts().All(ctx)
-}
-
-func (linkResolver) FutureState(ctx context.Context, obj *ent.Link) (*models.FutureState, error) {
-	fs := models.FutureState(obj.FutureState)
-	return &fs, nil
 }
 
 func (linkResolver) WorkOrder(ctx context.Context, obj *ent.Link) (*ent.WorkOrder, error) {

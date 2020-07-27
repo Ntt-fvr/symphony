@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
@@ -745,9 +746,9 @@ func (r mutationResolver) addEquipment(
 		SetNillableParentPositionID(positionID).
 		SetNillableLocationID(input.Location).
 		SetNillableWorkOrderID(input.WorkOrder).
-		SetNillableFutureState(func() *string {
+		SetNillableFutureState(func() *enum.FutureState {
 			if input.WorkOrder != nil {
-				state := models.FutureStateInstall.String()
+				state := enum.FutureStateInstall
 				return &state
 			}
 			return nil
@@ -1068,7 +1069,7 @@ func (r mutationResolver) RemoveEquipmentFromPosition(ctx context.Context, posit
 				UpdateOne(e).
 				ClearWorkOrder().
 				SetWorkOrderID(*workOrderID).
-				SetFutureState(models.FutureStateRemove.String()).
+				SetFutureState(enum.FutureStateRemove).
 				Exec(ctx); err != nil {
 				return nil, fmt.Errorf("updating attached equipment %q: %w", e.ID, err)
 			}
@@ -1274,9 +1275,9 @@ func (r mutationResolver) AddLink(
 	l, err := r.ClientFrom(ctx).Link.Create().
 		AddPortIDs(ids...).
 		SetNillableWorkOrderID(input.WorkOrder).
-		SetNillableFutureState(func() *string {
+		SetNillableFutureState(func() *enum.FutureState {
 			if input.WorkOrder != nil {
-				state := models.FutureStateInstall.String()
+				state := enum.FutureStateInstall
 				return &state
 			}
 			return nil
@@ -1396,7 +1397,7 @@ func (r mutationResolver) RemoveLink(ctx context.Context, id int, workOrderID *i
 				UpdateOne(l).
 				ClearWorkOrder().
 				SetWorkOrderID(*workOrderID).
-				SetFutureState(models.FutureStateRemove.String()).
+				SetFutureState(enum.FutureStateRemove).
 				Exec(ctx); err != nil {
 				return nil, err
 			}
@@ -1507,8 +1508,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		return id, errors.Wrapf(err, "query work order equipment: id=%q", id)
 	}
 	for _, e := range equipments {
-		e := e
-		if e.FutureState == models.FutureStateInstall.String() {
+		if e.FutureState != nil && *e.FutureState == enum.FutureStateInstall {
 			if err := r.removeEquipment(ctx, e); err != nil {
 				return id, errors.Wrapf(err, "deleting to be installed equipment in work order e=%q, wo=%q", e.ID, id)
 			}
@@ -1529,7 +1529,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		return id, errors.Wrapf(err, "query work order links: id=%q", id)
 	}
 	for _, l := range links {
-		if l.FutureState == models.FutureStateInstall.String() {
+		if l.FutureState != nil && *l.FutureState == enum.FutureStateInstall {
 			if _, err := r.RemoveLink(ctx, l.ID, nil); err != nil {
 				return id, errors.Wrapf(err, "deleting to be installed link in work order l=%q, wo=%q", l.ID, id)
 			}
@@ -1651,7 +1651,7 @@ func (r mutationResolver) RemoveEquipment(ctx context.Context, id int, workOrder
 			if err := client.Link.UpdateOneID(linkID).
 				ClearWorkOrder().
 				SetWorkOrderID(*workOrderID).
-				SetFutureState(models.FutureStateRemove.String()).
+				SetFutureState(enum.FutureStateRemove).
 				Exec(ctx); err != nil {
 				return id, errors.Wrapf(err, "delete link of equipment l=%q, wo=%q", linkID, *workOrderID)
 			}
@@ -1669,7 +1669,7 @@ func (r mutationResolver) RemoveEquipment(ctx context.Context, id int, workOrder
 		if err := client.Equipment.UpdateOne(e).
 			ClearWorkOrder().
 			SetWorkOrderID(*workOrderID).
-			SetFutureState(models.FutureStateRemove.String()).
+			SetFutureState(enum.FutureStateRemove).
 			Exec(ctx); err != nil {
 			return id, errors.Wrapf(err, "attaching equipment to work order: e=%q, wo=%q", id, *workOrderID)
 		}
@@ -1778,7 +1778,7 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 
 	result := models.WorkOrderExecutionResult{ID: wo.ID, Name: wo.Name}
 	for _, l := range links {
-		if l.FutureState == models.FutureStateRemove.String() {
+		if l.FutureState != nil && *l.FutureState == enum.FutureStateRemove {
 			if err := r.removeLink(ctx, l); err != nil {
 				return nil, errors.Wrapf(err, "remove work order link l=%q, wo=%q", l.ID, id)
 			}
@@ -1787,7 +1787,7 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 	}
 
 	for _, e := range equipments {
-		if e.FutureState == models.FutureStateRemove.String() {
+		if e.FutureState != nil && *e.FutureState == enum.FutureStateRemove {
 			if err := r.removeEquipment(ctx, e); err != nil {
 				return nil, errors.Wrapf(err, "remove work order equipment e=%q, wo=%q", e.ID, id)
 			}
@@ -1796,7 +1796,7 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 	}
 
 	for _, e := range equipments {
-		if e.FutureState == models.FutureStateInstall.String() {
+		if e.FutureState != nil && *e.FutureState == enum.FutureStateInstall {
 			eid := e.ID
 			switch exist, err := e.QueryParentPosition().Exist(ctx); {
 			case err != nil:
@@ -1823,11 +1823,11 @@ func (r mutationResolver) ExecuteWorkOrder(ctx context.Context, id int) (*models
 	}
 
 	for _, l := range links {
-		if l.FutureState == models.FutureStateInstall.String() {
+		if l.FutureState != nil && *l.FutureState == enum.FutureStateInstall {
 			lid := l.ID
 			switch exist, err := l.QueryPorts().
 				QueryParent().
-				Where(equipment.FutureState(models.FutureStateInstall.String())).
+				Where(equipment.FutureStateEQ(enum.FutureStateInstall)).
 				Exist(ctx); {
 			case err != nil:
 				return nil, errors.Wrapf(err, "querying equipment link existence")

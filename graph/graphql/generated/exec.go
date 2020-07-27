@@ -1285,7 +1285,7 @@ type EquipmentResolver interface {
 	Ports(ctx context.Context, obj *ent.Equipment, availableOnly *bool) ([]*ent.EquipmentPort, error)
 	DescendentsIncludingSelf(ctx context.Context, obj *ent.Equipment) ([]*ent.Equipment, error)
 	Properties(ctx context.Context, obj *ent.Equipment) ([]*ent.Property, error)
-	FutureState(ctx context.Context, obj *ent.Equipment) (*models.FutureState, error)
+
 	WorkOrder(ctx context.Context, obj *ent.Equipment) (*ent.WorkOrder, error)
 	LocationHierarchy(ctx context.Context, obj *ent.Equipment) ([]*ent.Location, error)
 	FirstLocation(ctx context.Context, obj *ent.Equipment) (*ent.Location, error)
@@ -1332,7 +1332,7 @@ type FloorPlanResolver interface {
 }
 type LinkResolver interface {
 	Ports(ctx context.Context, obj *ent.Link) ([]*ent.EquipmentPort, error)
-	FutureState(ctx context.Context, obj *ent.Link) (*models.FutureState, error)
+
 	WorkOrder(ctx context.Context, obj *ent.Link) (*ent.WorkOrder, error)
 	Properties(ctx context.Context, obj *ent.Link) ([]*ent.Property, error)
 	Services(ctx context.Context, obj *ent.Link) ([]*ent.Service, error)
@@ -8889,9 +8889,12 @@ enum ServiceStatus {
 }
 
 """
-Equipment planned status
+FutureState of an equipment.
 """
-enum FutureState {
+enum FutureState
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FutureState"
+  ) {
   INSTALL
   REMOVE
 }
@@ -18359,13 +18362,13 @@ func (ec *executionContext) _Equipment_futureState(ctx context.Context, field gr
 		Object:   "Equipment",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Equipment().FutureState(rctx, obj)
+		return obj.FutureState, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18374,9 +18377,9 @@ func (ec *executionContext) _Equipment_futureState(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.FutureState)
+	res := resTmp.(*enum.FutureState)
 	fc.Result = res
-	return ec.marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx, field.Selections, res)
+	return ec.marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Equipment_workOrder(ctx context.Context, field graphql.CollectedField, obj *ent.Equipment) (ret graphql.Marshaler) {
@@ -22405,13 +22408,13 @@ func (ec *executionContext) _Link_futureState(ctx context.Context, field graphql
 		Object:   "Link",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().FutureState(rctx, obj)
+		return obj.FutureState, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22420,9 +22423,9 @@ func (ec *executionContext) _Link_futureState(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*models.FutureState)
+	res := resTmp.(*enum.FutureState)
 	fc.Result = res
-	return ec.marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx, field.Selections, res)
+	return ec.marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Link_workOrder(ctx context.Context, field graphql.CollectedField, obj *ent.Link) (ret graphql.Marshaler) {
@@ -47410,16 +47413,7 @@ func (ec *executionContext) _Equipment(ctx context.Context, sel ast.SelectionSet
 				return res
 			})
 		case "futureState":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Equipment_futureState(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._Equipment_futureState(ctx, field, obj)
 		case "workOrder":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -48809,16 +48803,7 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 				return res
 			})
 		case "futureState":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Link_futureState(ctx, field, obj)
-				return res
-			})
+			out.Values[i] = ec._Link_futureState(ctx, field, obj)
 		case "workOrder":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -60770,24 +60755,24 @@ func (ec *executionContext) marshalOFloorPlan2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._FloorPlan(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx context.Context, v interface{}) (models.FutureState, error) {
-	var res models.FutureState
+func (ec *executionContext) unmarshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, v interface{}) (enum.FutureState, error) {
+	var res enum.FutureState
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx context.Context, sel ast.SelectionSet, v models.FutureState) graphql.Marshaler {
+func (ec *executionContext) marshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, sel ast.SelectionSet, v enum.FutureState) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx context.Context, v interface{}) (*models.FutureState, error) {
+func (ec *executionContext) unmarshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, v interface{}) (*enum.FutureState, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx, v)
+	res, err := ec.unmarshalOFutureState2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFutureState(ctx context.Context, sel ast.SelectionSet, v *models.FutureState) graphql.Marshaler {
+func (ec *executionContext) marshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, sel ast.SelectionSet, v *enum.FutureState) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

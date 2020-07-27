@@ -7,9 +7,12 @@
 package link
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 const (
@@ -97,4 +100,21 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	UpdateDefaultUpdateTime func() time.Time
+)
+
+// FutureStateValidator is a validator for the "future_state" field enum values. It is called by the builders before save.
+func FutureStateValidator(fs enum.FutureState) error {
+	switch fs {
+	case "INSTALL", "REMOVE":
+		return nil
+	default:
+		return fmt.Errorf("link: invalid enum value for future_state field: %q", fs)
+	}
+}
+
+var (
+	// enum.FutureState must implement graphql.Marshaler.
+	_ graphql.Marshaler = enum.FutureState("")
+	// enum.FutureState must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enum.FutureState)(nil)
 )

@@ -103,19 +103,19 @@ func (workOrderResolver) Project(ctx context.Context, obj *ent.WorkOrder) (*ent.
 }
 
 func (workOrderResolver) EquipmentToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error) {
-	return obj.QueryEquipment().Where(equipment.FutureState(models.FutureStateInstall.String())).All(ctx)
+	return obj.QueryEquipment().Where(equipment.FutureStateEQ(enum.FutureStateInstall)).All(ctx)
 }
 
 func (workOrderResolver) EquipmentToRemove(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Equipment, error) {
-	return obj.QueryEquipment().Where(equipment.FutureState(models.FutureStateRemove.String())).All(ctx)
+	return obj.QueryEquipment().Where(equipment.FutureStateEQ(enum.FutureStateRemove)).All(ctx)
 }
 
 func (workOrderResolver) LinksToAdd(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Link, error) {
-	return obj.QueryLinks().Where(link.FutureState(models.FutureStateInstall.String())).All(ctx)
+	return obj.QueryLinks().Where(link.FutureStateEQ(enum.FutureStateInstall)).All(ctx)
 }
 
 func (workOrderResolver) LinksToRemove(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Link, error) {
-	return obj.QueryLinks().Where(link.FutureState(models.FutureStateRemove.String())).All(ctx)
+	return obj.QueryLinks().Where(link.FutureStateEQ(enum.FutureStateRemove)).All(ctx)
 }
 
 func (workOrderResolver) Properties(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Property, error) {

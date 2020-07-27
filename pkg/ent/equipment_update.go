@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
@@ -48,15 +49,15 @@ func (eu *EquipmentUpdate) SetName(s string) *EquipmentUpdate {
 }
 
 // SetFutureState sets the future_state field.
-func (eu *EquipmentUpdate) SetFutureState(s string) *EquipmentUpdate {
-	eu.mutation.SetFutureState(s)
+func (eu *EquipmentUpdate) SetFutureState(es enum.FutureState) *EquipmentUpdate {
+	eu.mutation.SetFutureState(es)
 	return eu
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (eu *EquipmentUpdate) SetNillableFutureState(s *string) *EquipmentUpdate {
-	if s != nil {
-		eu.SetFutureState(*s)
+func (eu *EquipmentUpdate) SetNillableFutureState(es *enum.FutureState) *EquipmentUpdate {
+	if es != nil {
+		eu.SetFutureState(*es)
 	}
 	return eu
 }
@@ -395,6 +396,11 @@ func (eu *EquipmentUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := eu.mutation.FutureState(); ok {
+		if err := equipment.FutureStateValidator(v); err != nil {
+			return 0, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 	if v, ok := eu.mutation.DeviceID(); ok {
 		if err := equipment.DeviceIDValidator(v); err != nil {
 			return 0, &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
@@ -488,14 +494,14 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := eu.mutation.FutureState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: equipment.FieldFutureState,
 		})
 	}
 	if eu.mutation.FutureStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Column: equipment.FieldFutureState,
 		})
 	}
@@ -918,15 +924,15 @@ func (euo *EquipmentUpdateOne) SetName(s string) *EquipmentUpdateOne {
 }
 
 // SetFutureState sets the future_state field.
-func (euo *EquipmentUpdateOne) SetFutureState(s string) *EquipmentUpdateOne {
-	euo.mutation.SetFutureState(s)
+func (euo *EquipmentUpdateOne) SetFutureState(es enum.FutureState) *EquipmentUpdateOne {
+	euo.mutation.SetFutureState(es)
 	return euo
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (euo *EquipmentUpdateOne) SetNillableFutureState(s *string) *EquipmentUpdateOne {
-	if s != nil {
-		euo.SetFutureState(*s)
+func (euo *EquipmentUpdateOne) SetNillableFutureState(es *enum.FutureState) *EquipmentUpdateOne {
+	if es != nil {
+		euo.SetFutureState(*es)
 	}
 	return euo
 }
@@ -1265,6 +1271,11 @@ func (euo *EquipmentUpdateOne) Save(ctx context.Context) (*Equipment, error) {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := euo.mutation.FutureState(); ok {
+		if err := equipment.FutureStateValidator(v); err != nil {
+			return nil, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 	if v, ok := euo.mutation.DeviceID(); ok {
 		if err := equipment.DeviceIDValidator(v); err != nil {
 			return nil, &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
@@ -1356,14 +1367,14 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 	}
 	if value, ok := euo.mutation.FutureState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: equipment.FieldFutureState,
 		})
 	}
 	if euo.mutation.FutureStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Column: equipment.FieldFutureState,
 		})
 	}

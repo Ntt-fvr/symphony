@@ -776,7 +776,7 @@ func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
-		Type:  "string",
+		Type:  "enum.FutureState",
 		Name:  "future_state",
 		Value: string(buf),
 	}
@@ -1957,7 +1957,7 @@ func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
-		Type:  "string",
+		Type:  "enum.FutureState",
 		Name:  "future_state",
 		Value: string(buf),
 	}

@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
@@ -68,15 +69,15 @@ func (ec *EquipmentCreate) SetName(s string) *EquipmentCreate {
 }
 
 // SetFutureState sets the future_state field.
-func (ec *EquipmentCreate) SetFutureState(s string) *EquipmentCreate {
-	ec.mutation.SetFutureState(s)
+func (ec *EquipmentCreate) SetFutureState(es enum.FutureState) *EquipmentCreate {
+	ec.mutation.SetFutureState(es)
 	return ec
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (ec *EquipmentCreate) SetNillableFutureState(s *string) *EquipmentCreate {
-	if s != nil {
-		ec.SetFutureState(*s)
+func (ec *EquipmentCreate) SetNillableFutureState(es *enum.FutureState) *EquipmentCreate {
+	if es != nil {
+		ec.SetFutureState(*es)
 	}
 	return ec
 }
@@ -330,6 +331,11 @@ func (ec *EquipmentCreate) preSave() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := ec.mutation.FutureState(); ok {
+		if err := equipment.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 	if v, ok := ec.mutation.DeviceID(); ok {
 		if err := equipment.DeviceIDValidator(v); err != nil {
 			return &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
@@ -391,11 +397,11 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ec.mutation.FutureState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: equipment.FieldFutureState,
 		})
-		e.FutureState = value
+		e.FutureState = &value
 	}
 	if value, ok := ec.mutation.DeviceID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

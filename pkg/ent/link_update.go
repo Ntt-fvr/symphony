@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
@@ -36,15 +37,15 @@ func (lu *LinkUpdate) Where(ps ...predicate.Link) *LinkUpdate {
 }
 
 // SetFutureState sets the future_state field.
-func (lu *LinkUpdate) SetFutureState(s string) *LinkUpdate {
-	lu.mutation.SetFutureState(s)
+func (lu *LinkUpdate) SetFutureState(es enum.FutureState) *LinkUpdate {
+	lu.mutation.SetFutureState(es)
 	return lu
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (lu *LinkUpdate) SetNillableFutureState(s *string) *LinkUpdate {
-	if s != nil {
-		lu.SetFutureState(*s)
+func (lu *LinkUpdate) SetNillableFutureState(es *enum.FutureState) *LinkUpdate {
+	if es != nil {
+		lu.SetFutureState(*es)
 	}
 	return lu
 }
@@ -181,6 +182,11 @@ func (lu *LinkUpdate) Save(ctx context.Context) (int, error) {
 		v := link.UpdateDefaultUpdateTime()
 		lu.mutation.SetUpdateTime(v)
 	}
+	if v, ok := lu.mutation.FutureState(); ok {
+		if err := link.FutureStateValidator(v); err != nil {
+			return 0, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -258,14 +264,14 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := lu.mutation.FutureState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: link.FieldFutureState,
 		})
 	}
 	if lu.mutation.FutureStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Column: link.FieldFutureState,
 		})
 	}
@@ -437,15 +443,15 @@ type LinkUpdateOne struct {
 }
 
 // SetFutureState sets the future_state field.
-func (luo *LinkUpdateOne) SetFutureState(s string) *LinkUpdateOne {
-	luo.mutation.SetFutureState(s)
+func (luo *LinkUpdateOne) SetFutureState(es enum.FutureState) *LinkUpdateOne {
+	luo.mutation.SetFutureState(es)
 	return luo
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (luo *LinkUpdateOne) SetNillableFutureState(s *string) *LinkUpdateOne {
-	if s != nil {
-		luo.SetFutureState(*s)
+func (luo *LinkUpdateOne) SetNillableFutureState(es *enum.FutureState) *LinkUpdateOne {
+	if es != nil {
+		luo.SetFutureState(*es)
 	}
 	return luo
 }
@@ -582,6 +588,11 @@ func (luo *LinkUpdateOne) Save(ctx context.Context) (*Link, error) {
 		v := link.UpdateDefaultUpdateTime()
 		luo.mutation.SetUpdateTime(v)
 	}
+	if v, ok := luo.mutation.FutureState(); ok {
+		if err := link.FutureStateValidator(v); err != nil {
+			return nil, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -657,14 +668,14 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 	}
 	if value, ok := luo.mutation.FutureState(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: link.FieldFutureState,
 		})
 	}
 	if luo.mutation.FutureStateCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Column: link.FieldFutureState,
 		})
 	}

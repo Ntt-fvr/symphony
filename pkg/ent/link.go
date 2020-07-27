@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
 
@@ -26,7 +27,7 @@ type Link struct {
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// FutureState holds the value of the "future_state" field.
-	FutureState string `json:"future_state,omitempty"`
+	FutureState *enum.FutureState `json:"future_state,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LinkQuery when eager-loading is set.
 	Edges           LinkEdges `json:"edges"`
@@ -131,7 +132,8 @@ func (l *Link) assignValues(values ...interface{}) error {
 	if value, ok := values[2].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field future_state", values[2])
 	} else if value.Valid {
-		l.FutureState = value.String
+		l.FutureState = new(enum.FutureState)
+		*l.FutureState = enum.FutureState(enum.FutureState(value.String))
 	}
 	values = values[3:]
 	if len(values) == len(link.ForeignKeys) {
@@ -192,8 +194,10 @@ func (l *Link) String() string {
 	builder.WriteString(l.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(l.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", future_state=")
-	builder.WriteString(l.FutureState)
+	if v := l.FutureState; v != nil {
+		builder.WriteString(", future_state=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

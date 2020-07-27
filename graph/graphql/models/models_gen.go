@@ -1120,48 +1120,6 @@ func (e FilterOperator) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// Equipment planned status
-type FutureState string
-
-const (
-	FutureStateInstall FutureState = "INSTALL"
-	FutureStateRemove  FutureState = "REMOVE"
-)
-
-var AllFutureState = []FutureState{
-	FutureStateInstall,
-	FutureStateRemove,
-}
-
-func (e FutureState) IsValid() bool {
-	switch e {
-	case FutureStateInstall, FutureStateRemove:
-		return true
-	}
-	return false
-}
-
-func (e FutureState) String() string {
-	return string(e)
-}
-
-func (e *FutureState) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = FutureState(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid FutureState", str)
-	}
-	return nil
-}
-
-func (e FutureState) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type ImageEntity string
 
 const (

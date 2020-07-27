@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/ent/schema/index"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // EquipmentPortType defines the equipment port definition schema.
@@ -298,8 +299,10 @@ func (Equipment) Fields() []ent.Field {
 			Annotations(entgql.Annotation{
 				OrderField: "NAME",
 			}),
-		field.String("future_state").
+		field.Enum("future_state").
+			GoType(enum.FutureState("")).
 			Optional().
+			Nillable().
 			Annotations(entgql.Annotation{
 				OrderField: "FUTURE_STATE",
 			}),

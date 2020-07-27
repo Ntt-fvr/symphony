@@ -6126,7 +6126,7 @@ type EquipmentMutation struct {
 	create_time            *time.Time
 	update_time            *time.Time
 	name                   *string
-	future_state           *string
+	future_state           *enum.FutureState
 	device_id              *string
 	external_id            *string
 	clearedFields          map[string]struct{}
@@ -6345,12 +6345,12 @@ func (m *EquipmentMutation) ResetName() {
 }
 
 // SetFutureState sets the future_state field.
-func (m *EquipmentMutation) SetFutureState(s string) {
-	m.future_state = &s
+func (m *EquipmentMutation) SetFutureState(es enum.FutureState) {
+	m.future_state = &es
 }
 
 // FutureState returns the future_state value in the mutation.
-func (m *EquipmentMutation) FutureState() (r string, exists bool) {
+func (m *EquipmentMutation) FutureState() (r enum.FutureState, exists bool) {
 	v := m.future_state
 	if v == nil {
 		return
@@ -6362,7 +6362,7 @@ func (m *EquipmentMutation) FutureState() (r string, exists bool) {
 // If the Equipment object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *EquipmentMutation) OldFutureState(ctx context.Context) (v string, err error) {
+func (m *EquipmentMutation) OldFutureState(ctx context.Context) (v *enum.FutureState, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldFutureState is allowed only on UpdateOne operations")
 	}
@@ -7007,7 +7007,7 @@ func (m *EquipmentMutation) SetField(name string, value ent.Value) error {
 		m.SetName(v)
 		return nil
 	case equipment.FieldFutureState:
-		v, ok := value.(string)
+		v, ok := value.(enum.FutureState)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -16458,7 +16458,7 @@ type LinkMutation struct {
 	id                *int
 	create_time       *time.Time
 	update_time       *time.Time
-	future_state      *string
+	future_state      *enum.FutureState
 	clearedFields     map[string]struct{}
 	ports             map[int]struct{}
 	removedports      map[int]struct{}
@@ -16626,12 +16626,12 @@ func (m *LinkMutation) ResetUpdateTime() {
 }
 
 // SetFutureState sets the future_state field.
-func (m *LinkMutation) SetFutureState(s string) {
-	m.future_state = &s
+func (m *LinkMutation) SetFutureState(es enum.FutureState) {
+	m.future_state = &es
 }
 
 // FutureState returns the future_state value in the mutation.
-func (m *LinkMutation) FutureState() (r string, exists bool) {
+func (m *LinkMutation) FutureState() (r enum.FutureState, exists bool) {
 	v := m.future_state
 	if v == nil {
 		return
@@ -16643,7 +16643,7 @@ func (m *LinkMutation) FutureState() (r string, exists bool) {
 // If the Link object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *LinkMutation) OldFutureState(ctx context.Context) (v string, err error) {
+func (m *LinkMutation) OldFutureState(ctx context.Context) (v *enum.FutureState, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldFutureState is allowed only on UpdateOne operations")
 	}
@@ -16917,7 +16917,7 @@ func (m *LinkMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdateTime(v)
 		return nil
 	case link.FieldFutureState:
-		v, ok := value.(string)
+		v, ok := value.(enum.FutureState)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

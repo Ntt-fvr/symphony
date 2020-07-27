@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/uuid"
@@ -359,7 +360,7 @@ func (c *client) removeEquipment(id, workOrder graphql.ID) error {
 type queryEquipmentResponse struct {
 	ID    graphql.ID
 	Name  graphql.String
-	State models.FutureState `graphql:"futureState"`
+	State enum.FutureState `graphql:"futureState"`
 }
 
 func (c *client) queryEquipment(id graphql.ID) (*queryEquipmentResponse, error) {
@@ -564,7 +565,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 
 	eq, err := c.queryEquipment(e.ID)
 	require.NoError(t, err)
-	assert.Equal(t, models.FutureStateInstall, eq.State)
+	assert.Equal(t, enum.FutureStateInstall, eq.State)
 
 	err = c.executeWorkOrder(wo)
 	require.NoError(t, err)
@@ -580,7 +581,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 
 	eq, err = c.queryEquipment(e.ID)
 	require.NoError(t, err)
-	assert.EqualValues(t, models.FutureStateRemove, eq.State)
+	assert.Equal(t, enum.FutureStateRemove, eq.State)
 	err = c.executeWorkOrder(wo)
 	require.NoError(t, err)
 }

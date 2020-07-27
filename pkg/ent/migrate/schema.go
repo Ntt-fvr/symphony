@@ -239,7 +239,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "future_state", Type: field.TypeString, Nullable: true},
+		{Name: "future_state", Type: field.TypeEnum, Nullable: true, Enums: []string{"INSTALL", "REMOVE"}},
 		{Name: "device_id", Type: field.TypeString, Nullable: true},
 		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "equipment_type", Type: field.TypeInt, Nullable: true},
@@ -690,7 +690,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "future_state", Type: field.TypeString, Nullable: true},
+		{Name: "future_state", Type: field.TypeEnum, Nullable: true, Enums: []string{"INSTALL", "REMOVE"}},
 		{Name: "link_work_order", Type: field.TypeInt, Nullable: true},
 	}
 	// LinksTable holds the schema information for the "links" table.

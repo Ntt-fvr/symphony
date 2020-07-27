@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
@@ -56,15 +57,15 @@ func (lc *LinkCreate) SetNillableUpdateTime(t *time.Time) *LinkCreate {
 }
 
 // SetFutureState sets the future_state field.
-func (lc *LinkCreate) SetFutureState(s string) *LinkCreate {
-	lc.mutation.SetFutureState(s)
+func (lc *LinkCreate) SetFutureState(es enum.FutureState) *LinkCreate {
+	lc.mutation.SetFutureState(es)
 	return lc
 }
 
 // SetNillableFutureState sets the future_state field if the given value is not nil.
-func (lc *LinkCreate) SetNillableFutureState(s *string) *LinkCreate {
-	if s != nil {
-		lc.SetFutureState(*s)
+func (lc *LinkCreate) SetNillableFutureState(es *enum.FutureState) *LinkCreate {
+	if es != nil {
+		lc.SetFutureState(*es)
 	}
 	return lc
 }
@@ -188,6 +189,11 @@ func (lc *LinkCreate) preSave() error {
 		v := link.DefaultUpdateTime()
 		lc.mutation.SetUpdateTime(v)
 	}
+	if v, ok := lc.mutation.FutureState(); ok {
+		if err := link.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -233,11 +239,11 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := lc.mutation.FutureState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: link.FieldFutureState,
 		})
-		l.FutureState = value
+		l.FutureState = &value
 	}
 	if nodes := lc.mutation.PortsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

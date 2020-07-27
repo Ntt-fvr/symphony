@@ -593,7 +593,7 @@ func TestExecuteWorkOrderInstallEquipment(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	assert.Equal(t, models.FutureStateInstall.String(), workOrderEquipment.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *workOrderEquipment.FutureState)
 	assert.Equal(t, workOrder.ID, workOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -661,7 +661,7 @@ func TestExecuteWorkOrderRemoveEquipment(t *testing.T) {
 	require.NoError(t, err)
 	fetchedWorkOrderEquipment, ok := fetchedWorkOrderNode.(*ent.Equipment)
 	require.True(t, ok)
-	assert.Equal(t, models.FutureStateRemove.String(), fetchedWorkOrderEquipment.FutureState)
+	assert.Equal(t, enum.FutureStateRemove, *fetchedWorkOrderEquipment.FutureState)
 	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -724,7 +724,7 @@ func TestExecuteWorkOrderInstallLink(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	assert.Equal(t, models.FutureStateInstall.String(), createdLink.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -790,7 +790,7 @@ func TestExecuteWorkOrderRemoveLink(t *testing.T) {
 	fetchedLink, err := pr.Link(ctx, fetchedPort)
 	require.NoError(t, err)
 
-	assert.Equal(t, models.FutureStateRemove.String(), fetchedLink.FutureState)
+	assert.Equal(t, enum.FutureStateRemove, *fetchedLink.FutureState)
 	assert.Equal(t, workOrder.ID, fetchedLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -845,7 +845,7 @@ func TestExecuteWorkOrderInstallDependantEquipmentAndLink(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	assert.Equal(t, models.FutureStateInstall.String(), createdLink.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
 	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -1028,7 +1028,7 @@ func TestExecuteWorkOrderInstallChildOnUninstalledParent(t *testing.T) {
 	assert.NoError(t, err)
 	fetchedWorkOrderEquipment, ok := fetchedWorkOrderNode.(*ent.Equipment)
 	assert.True(t, ok)
-	assert.Equal(t, models.FutureStateInstall.String(), fetchedWorkOrderEquipment.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *fetchedWorkOrderEquipment.FutureState)
 	equipmentWorkOrder, err := fetchedWorkOrderEquipment.QueryWorkOrder().Only(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, equipmentWorkOrder.ID)
@@ -1044,7 +1044,7 @@ func TestExecuteWorkOrderInstallChildOnUninstalledParent(t *testing.T) {
 	require.NoError(t, err)
 
 	// the child wasn't installed because the parent isn't installed yet
-	assert.Equal(t, models.FutureStateInstall.String(), fetchedChildEquipment.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *fetchedChildEquipment.FutureState)
 	assert.Equal(t, workOrder.ID, equipmentWorkOrder.ID)
 }
 
@@ -1094,7 +1094,7 @@ func TestExecuteWorkOrderInstallLinkOnUninstalledEquipment(t *testing.T) {
 	createLinkWorkOrder, err := createdLink.QueryWorkOrder().Only(ctx)
 	require.NoError(t, err)
 
-	assert.Equal(t, models.FutureStateInstall.String(), createdLink.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createLinkWorkOrder.ID)
 
 	returnedWorkOrder, _ := executeWorkOrder(ctx, t, mr, *workOrder)
@@ -1115,7 +1115,7 @@ func TestExecuteWorkOrderInstallLinkOnUninstalledEquipment(t *testing.T) {
 	require.NoError(t, err)
 
 	// the link wasn't installed because equipmentB is not installed
-	assert.Equal(t, models.FutureStateInstall.String(), fetchedLink.FutureState)
+	assert.Equal(t, enum.FutureStateInstall, *fetchedLink.FutureState)
 	assert.Equal(t, workOrder.ID, fetchedLinkWorkOrder.ID)
 
 	_, err = fetchedEquipment.QueryWorkOrder().Only(ctx)
@@ -1196,7 +1196,7 @@ func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
 	fetchedWorkOrderEquipment, ok := fetchedWorkOrderNode.(*ent.Equipment)
 	assert.True(t, ok)
 
-	assert.Equal(t, models.FutureStateRemove.String(), fetchedWorkOrderEquipment.FutureState)
+	assert.Equal(t, enum.FutureStateRemove, *fetchedWorkOrderEquipment.FutureState)
 	fetchedWorkOrderEquipmentWorkOrder, err := fetchedWorkOrderEquipment.QueryWorkOrder().Only(ctx)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipmentWorkOrder.ID)

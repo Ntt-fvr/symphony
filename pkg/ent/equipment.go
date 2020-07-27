@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
 
@@ -31,7 +32,7 @@ type Equipment struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// FutureState holds the value of the "future_state" field.
-	FutureState string `json:"future_state,omitempty"`
+	FutureState *enum.FutureState `json:"future_state,omitempty"`
 	// DeviceID holds the value of the "device_id" field.
 	DeviceID string `json:"device_id,omitempty"`
 	// ExternalID holds the value of the "external_id" field.
@@ -235,7 +236,8 @@ func (e *Equipment) assignValues(values ...interface{}) error {
 	if value, ok := values[3].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field future_state", values[3])
 	} else if value.Valid {
-		e.FutureState = value.String
+		e.FutureState = new(enum.FutureState)
+		*e.FutureState = enum.FutureState(enum.FutureState(value.String))
 	}
 	if value, ok := values[4].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field device_id", values[4])
@@ -356,8 +358,10 @@ func (e *Equipment) String() string {
 	builder.WriteString(e.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(e.Name)
-	builder.WriteString(", future_state=")
-	builder.WriteString(e.FutureState)
+	if v := e.FutureState; v != nil {
+		builder.WriteString(", future_state=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", device_id=")
 	builder.WriteString(e.DeviceID)
 	builder.WriteString(", external_id=")

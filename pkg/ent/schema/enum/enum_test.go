@@ -79,6 +79,7 @@ func TestEnum(t *testing.T) {
 	}{
 		enum.CheckListItemType(""),
 		enum.CheckListItemEnumSelectionMode(""),
+		enum.FutureState(""),
 	}
 	for _, e := range enums {
 		e := e

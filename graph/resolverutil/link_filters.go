@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/pkg/errors"
 )
@@ -30,17 +31,26 @@ func handleLinkFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.Li
 }
 
 func stateFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
-		p := link.FutureStateIn(filter.StringSet...)
-		for _, s := range filter.StringSet {
-			if s == models.FutureStateInstall.String() {
-				p = link.Or(p, link.FutureStateIsNil())
-				break
-			}
-		}
-		return q.Where(p), nil
+	if filter.Operator != models.FilterOperatorIsOneOf {
+		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+	states := make([]enum.FutureState, 0, len(filter.StringSet))
+	seen := make(map[enum.FutureState]struct{}, len(filter.StringSet))
+	for _, s := range filter.StringSet {
+		var state enum.FutureState
+		if err := state.UnmarshalGQL(s); err != nil {
+			return nil, err
+		}
+		if _, ok := seen[state]; !ok {
+			seen[state] = struct{}{}
+			states = append(states, state)
+		}
+	}
+	pred := link.FutureStateIn(states...)
+	if _, ok := seen[enum.FutureStateInstall]; ok {
+		pred = link.Or(pred, link.FutureStateIsNil())
+	}
+	return q.Where(pred), nil
 }
 
 func handleLinkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {

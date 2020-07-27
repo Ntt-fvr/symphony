@@ -128,3 +128,41 @@ func (m *CheckListItemEnumSelectionMode) UnmarshalGQL(v interface{}) error {
 func (m CheckListItemEnumSelectionMode) MarshalGQL(w io.Writer) {
 	_ = MarshalGQL(w, m)
 }
+
+// FutureState of an equipment.
+type FutureState string
+
+const (
+	// FutureStateInstall means an equipment is to be installed.
+	FutureStateInstall FutureState = "INSTALL"
+	// FutureStateRemove means an equipment is to be removed.
+	FutureStateRemove FutureState = "REMOVE"
+)
+
+// Values returns future state possible values.
+func (FutureState) Values() []string {
+	return []string{
+		FutureStateInstall.String(),
+		FutureStateRemove.String(),
+	}
+}
+
+// String implements Getter interface.
+func (fs FutureState) String() string {
+	return string(fs)
+}
+
+// Set sets the value stored in future state.
+func (fs *FutureState) Set(s string) {
+	*fs = FutureState(s)
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (fs *FutureState) UnmarshalGQL(v interface{}) error {
+	return UnmarshalGQL(v, fs)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (fs FutureState) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, fs)
+}
