@@ -758,9 +758,6 @@ func (r mutationResolver) EditWorkOrderType(
 		if ent.IsNotFound(err) {
 			return nil, gqlerror.Errorf("A work order template with id=%q does not exist", input.ID)
 		}
-		if ent.IsConstraintError(err) {
-			return nil, gqlerror.Errorf("A work order template with the name %v already exists", input.Name)
-		}
 		return nil, errors.Wrapf(err, "updating work order template: id=%q", input.ID)
 	}
 	for _, p := range input.Properties {
@@ -790,7 +787,11 @@ func (r mutationResolver) EditWorkOrderType(
 	}
 	_, deletedCategoryIds := resolverutil.GetDifferenceBetweenSlices(currentCategories, ids)
 	mutation = mutation.RemoveCheckListCategoryDefinitionIDs(deletedCategoryIds...)
-	return mutation.Save(ctx)
+	wot, err = mutation.Save(ctx)
+	if ent.IsConstraintError(err) {
+		return nil, gqlerror.Errorf("A work order type with the name %v already exists", input.Name)
+	}
+	return wot, err
 }
 
 func (r mutationResolver) createOrUpdateCheckListCategoryDefinition(
