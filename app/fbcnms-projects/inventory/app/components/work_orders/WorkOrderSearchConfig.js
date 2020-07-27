@@ -21,7 +21,7 @@ import PowerSearchWorkOrderTypeFilter from './PowerSearchWorkOrderTypeFilter';
 const WorkOrderSearchConfig: Array<EntityConfig> = [
   {
     type: 'work_order',
-    label: 'work order',
+    label: 'Work Order',
     filters: [
       {
         key: 'work_order_name',
