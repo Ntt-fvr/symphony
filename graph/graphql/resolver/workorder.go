@@ -944,43 +944,54 @@ func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, inp
 			err,
 		)
 	}
-	for _, clInput := range input.Checklist {
-		checkListItem, err := client.CheckListItem.
-			UpdateOneID(clInput.ID).
-			SetNillableChecked(clInput.Checked).
-			SetNillableStringVal(clInput.StringValue).
-			SetNillableSelectedEnumValues(clInput.SelectedEnumValues).
-			SetNillableYesNoVal(clInput.YesNoResponse).
-			Save(ctx)
-		if clInput.WifiData != nil && len(clInput.WifiData) > 0 {
-			_, err := r.CreateWiFiScans(ctx, clInput.WifiData, ScanParentIDs{checklistItemID: &clInput.ID})
+
+	if input.CheckListCategories != nil && len(input.CheckListCategories) > 0 {
+		for _, clInput := range input.CheckListCategories {
+			_, err := r.createOrUpdateCheckListCategory(ctx, clInput, wo.ID)
 			if err != nil {
-				return nil, fmt.Errorf("creating wifi scans, item %q: err %w", clInput.ID, err)
+				return nil, errors.Wrap(err, "updating check list category")
 			}
 		}
-		if clInput.CellData != nil && len(clInput.CellData) > 0 {
-			_, err := r.CreateCellScans(ctx, clInput.CellData, ScanParentIDs{checklistItemID: &clInput.ID})
+	} else {
+		for _, clInput := range input.Checklist {
+			checkListItem, err := client.CheckListItem.
+				UpdateOneID(clInput.ID).
+				SetNillableChecked(clInput.Checked).
+				SetNillableStringVal(clInput.StringValue).
+				SetNillableSelectedEnumValues(clInput.SelectedEnumValues).
+				SetNillableYesNoVal(clInput.YesNoResponse).
+				Save(ctx)
+			if clInput.WifiData != nil && len(clInput.WifiData) > 0 {
+				_, err := r.CreateWiFiScans(ctx, clInput.WifiData, ScanParentIDs{checklistItemID: &clInput.ID})
+				if err != nil {
+					return nil, fmt.Errorf("creating wifi scans, item %q: err %w", clInput.ID, err)
+				}
+			}
+			if clInput.CellData != nil && len(clInput.CellData) > 0 {
+				_, err := r.CreateCellScans(ctx, clInput.CellData, ScanParentIDs{checklistItemID: &clInput.ID})
+				if err != nil {
+					return nil, fmt.Errorf("creating cell scans, item %q: err %w", clInput.ID, err)
+				}
+			}
+			if clInput.FilesData != nil && len(clInput.FilesData) > 0 {
+				_, err := r.createOrUpdateCheckListItemFiles(ctx, checkListItem, clInput.FilesData)
+				if err != nil {
+					return nil, fmt.Errorf("creating and saving images while uploading a work order: %q: err %w", input.WorkOrderID, err)
+				}
+			}
 			if err != nil {
-				return nil, fmt.Errorf("creating cell scans, item %q: err %w", clInput.ID, err)
+				return nil, fmt.Errorf("updating checklist item %q: err %w", clInput.ID, err)
 			}
 		}
-		if clInput.FilesData != nil && len(clInput.FilesData) > 0 {
-			_, err := r.createOrUpdateCheckListItemFiles(ctx, checkListItem, clInput.FilesData)
-			if err != nil {
-				return nil, fmt.Errorf("creating and saving images while uploading a work order: %q: err %w", input.WorkOrderID, err)
-			}
-		}
-		if err != nil {
-			return nil, fmt.Errorf("updating checklist item %q: err %w", clInput.ID, err)
+		if _, err = r.AddComment(ctx, models.CommentInput{
+			EntityType: models.CommentEntityWorkOrder,
+			ID:         input.WorkOrderID,
+			Text:       v.User().Email + " uploaded data",
+		}); err != nil {
+			return nil, fmt.Errorf("adding technician uploaded data comment: %w", err)
 		}
 	}
-	if _, err = r.AddComment(ctx, models.CommentInput{
-		EntityType: models.CommentEntityWorkOrder,
-		ID:         input.WorkOrderID,
-		Text:       v.User().Email + " uploaded data",
-	}); err != nil {
-		return nil, fmt.Errorf("adding technician uploaded data comment: %w", err)
-	}
+
 	return client.WorkOrder.
 		Query().
 		Where(workorder.ID(input.WorkOrderID)).

@@ -8243,7 +8243,13 @@ input TechnicianCheckListItemInput {
 
 input TechnicianWorkOrderUploadInput {
   workOrderId: ID!
+  @deprecatedInput(
+    newField: "checkListCategories"
+    name: "TechnicianWorkOrderUploadInput.checklist"
+    duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-08-26. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
+  )
   checklist: [TechnicianCheckListItemInput!]!
+  checkListCategories: [CheckListCategoryInput!]
 }
 
 type EquipmentPortType implements Node {
@@ -45583,13 +45589,44 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx con
 		switch k {
 		case "workOrderId":
 			var err error
-			it.WorkOrderID, err = ec.unmarshalNID2int(ctx, v)
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNID2int(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				name, err := ec.unmarshalNString2string(ctx, "TechnicianWorkOrderUploadInput.checklist")
+				if err != nil {
+					return nil, err
+				}
+				duplicateError, err := ec.unmarshalNString2string(ctx, "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-08-26. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together")
+				if err != nil {
+					return nil, err
+				}
+				newField, err := ec.unmarshalOString2ᚖstring(ctx, "checkListCategories")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.DeprecatedInput == nil {
+					return nil, errors.New("directive deprecatedInput is not implemented")
+				}
+				return ec.directives.DeprecatedInput(ctx, obj, directive0, name, duplicateError, newField)
+			}
+
+			tmp, err := directive1(ctx)
 			if err != nil {
 				return it, err
+			}
+			if data, ok := tmp.(int); ok {
+				it.WorkOrderID = data
+			} else {
+				return it, fmt.Errorf(`unexpected type %T from directive, should be int`, tmp)
 			}
 		case "checklist":
 			var err error
 			it.Checklist, err = ec.unmarshalNTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checkListCategories":
+			var err error
+			it.CheckListCategories, err = ec.unmarshalOCheckListCategoryInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListCategoryInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
