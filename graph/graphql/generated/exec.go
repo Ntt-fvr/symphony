@@ -8243,12 +8243,11 @@ input TechnicianCheckListItemInput {
 
 input TechnicianWorkOrderUploadInput {
   workOrderId: ID!
-  @deprecatedInput(
+  checklist: [TechnicianCheckListItemInput!] @deprecatedInput(
     newField: "checkListCategories"
     name: "TechnicianWorkOrderUploadInput.checklist"
-    duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-08-26. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
+    duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-09-01. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
   )
-  checklist: [TechnicianCheckListItemInput!]!
   checkListCategories: [CheckListCategoryInput!]
 }
 
@@ -45589,13 +45588,21 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx con
 		switch k {
 		case "workOrderId":
 			var err error
-			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNID2int(ctx, v) }
+			it.WorkOrderID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checklist":
+			var err error
+			directive0 := func(ctx context.Context) (interface{}, error) {
+				return ec.unmarshalOTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx, v)
+			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				name, err := ec.unmarshalNString2string(ctx, "TechnicianWorkOrderUploadInput.checklist")
 				if err != nil {
 					return nil, err
 				}
-				duplicateError, err := ec.unmarshalNString2string(ctx, "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-08-26. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together")
+				duplicateError, err := ec.unmarshalNString2string(ctx, "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together")
 				if err != nil {
 					return nil, err
 				}
@@ -45613,16 +45620,10 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx con
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.(int); ok {
-				it.WorkOrderID = data
+			if data, ok := tmp.([]*models.TechnicianCheckListItemInput); ok {
+				it.Checklist = data
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be int`, tmp)
-			}
-		case "checklist":
-			var err error
-			it.Checklist, err = ec.unmarshalNTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.TechnicianCheckListItemInput`, tmp)
 			}
 		case "checkListCategories":
 			var err error
@@ -58919,26 +58920,6 @@ func (ec *executionContext) unmarshalNTechnicianCheckListItemInput2githubᚗcom�
 	return ec.unmarshalInputTechnicianCheckListItemInput(ctx, v)
 }
 
-func (ec *executionContext) unmarshalNTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx context.Context, v interface{}) ([]*models.TechnicianCheckListItemInput, error) {
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*models.TechnicianCheckListItemInput, len(vSlice))
-	for i := range vSlice {
-		res[i], err = ec.unmarshalNTechnicianCheckListItemInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
 func (ec *executionContext) unmarshalNTechnicianCheckListItemInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInput(ctx context.Context, v interface{}) (*models.TechnicianCheckListItemInput, error) {
 	if v == nil {
 		return nil, nil
@@ -62203,6 +62184,26 @@ func (ec *executionContext) unmarshalOSurveyWiFiScanData2ᚖgithubᚗcomᚋfaceb
 	}
 	res, err := ec.unmarshalOSurveyWiFiScanData2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyWiFiScanData(ctx, v)
 	return &res, err
+}
+
+func (ec *executionContext) unmarshalOTechnicianCheckListItemInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInputᚄ(ctx context.Context, v interface{}) ([]*models.TechnicianCheckListItemInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.TechnicianCheckListItemInput, len(vSlice))
+	for i := range vSlice {
+		res[i], err = ec.unmarshalNTechnicianCheckListItemInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianCheckListItemInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
