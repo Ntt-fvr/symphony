@@ -6,7 +6,6 @@ package todo
 
 import (
 	"context"
-	"errors"
 
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
 )
@@ -21,16 +20,8 @@ func New(client *ent.Client) Config {
 
 type resolvers struct{ client *ent.Client }
 
-func (r *resolvers) Node(ctx context.Context, id int) (ent.Noder, error) {
-	node, err := r.client.Noder(ctx, id)
-	if err == nil {
-		return node, nil
-	}
-	var e *ent.NotFoundError
-	if errors.As(err, &e) {
-		err = nil
-	}
-	return nil, err
+func (r *resolvers) Node(ctx context.Context, id int) (_ ent.Noder, err error) {
+	return r.client.Noder(ctx, id)
 }
 
 func (r *resolvers) Todos(

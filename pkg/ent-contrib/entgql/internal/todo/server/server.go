@@ -11,6 +11,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/migrate"
@@ -35,8 +36,8 @@ func main() {
 	}
 
 	http.Handle("/", playground.Handler("Todo", "/query"))
-	http.Handle("/query", handler.NewDefaultServer(
-		todo.NewExecutableSchema(todo.New(client)),
-	))
+	server := handler.NewDefaultServer(todo.NewExecutableSchema(todo.New(client)))
+	server.SetErrorPresenter(entgql.DefaultErrorPresenter)
+	http.Handle("/query", server)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }

@@ -877,7 +877,7 @@ func TestDeleteLocation(t *testing.T) {
 	require.Equal(t, deletedLocationID, location.ID, "returned id from deletion matched location id")
 
 	fetchedNode, err := qr.Node(ctx, location.ID)
-	require.NoError(t, err)
+	require.True(t, ent.IsNotFound(err))
 	require.Nil(t, fetchedNode, "no location with that id")
 }
 

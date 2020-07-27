@@ -669,7 +669,7 @@ func TestExecuteWorkOrderRemoveEquipment(t *testing.T) {
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
 	fetchedRemovedWorkOrderNode, err := qr.Node(ctx, childEquipment.ID)
-	require.NoError(t, err)
+	require.True(t, ent.IsNotFound(err))
 	assert.Nil(t, fetchedRemovedWorkOrderNode)
 
 	fetchedParentNodeAfterExecution, err := qr.Node(ctx, parentEquipment.ID)
@@ -1205,13 +1205,11 @@ func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
-	fetchedParentWorkOrderNode, err := qr.Node(ctx, parentEquipment.ID)
-
-	assert.Nil(t, err)
-
-	assert.Nil(t, fetchedParentWorkOrderNode)
-	fetchedPChildNode, _ := qr.Node(ctx, childEquipment.ID)
-	assert.Nil(t, fetchedPChildNode)
+	for _, e := range []*ent.Equipment{parentEquipment, childEquipment} {
+		node, err := qr.Node(ctx, e.ID)
+		assert.True(t, ent.IsNotFound(err))
+		assert.Nil(t, node)
+	}
 }
 
 func TestAddAndDeleteWorkOrderHyperlink(t *testing.T) {

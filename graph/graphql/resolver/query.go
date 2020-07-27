@@ -25,7 +25,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.uber.org/zap"
 )
 
 type queryResolver struct{ resolver }
@@ -35,16 +34,7 @@ func (queryResolver) Me(ctx context.Context) (viewer.Viewer, error) {
 }
 
 func (r queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
-	n, err := r.ClientFrom(ctx).Noder(ctx, id)
-	if err == nil {
-		return n, nil
-	}
-	r.logger.For(ctx).
-		Debug("cannot query node",
-			zap.Int("id", id),
-			zap.Error(err),
-		)
-	return nil, ent.MaskNotFound(err)
+	return r.ClientFrom(ctx).Noder(ctx, id)
 }
 
 func (r queryResolver) LocationTypes(

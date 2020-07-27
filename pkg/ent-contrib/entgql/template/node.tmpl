@@ -8,10 +8,16 @@ in the LICENSE file in the root directory of this source tree.
 {{ $pkg := base $.Config.Package }}
 {{ template "header" $ }}
 
+{{- if ne $.Storage.Name "sql" }}
+	{{ fail "node requires SQL storage" }}
+{{- end }}
+
 import (
+	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/schema"
-
+	"github.com/vektah/gqlparser/v2/gqlerror"
+	"github.com/hashicorp/go-multierror"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -95,7 +101,20 @@ func (c *Client) Node(ctx context.Context, id {{ $.IDType }}) (*Node, error) {
 	return n.Node(ctx)
 }
 
-func (c *Client) Noder(ctx context.Context, id {{ $.IDType }}) (Noder, error) {
+func errNodeNotFound(id {{ $.IDType }}) *gqlerror.Error {
+	err := gqlerror.Errorf("Could not resolve to a node with the global id of '%v'", id)
+	errcode.Set(err, "NOT_FOUND")
+	return err
+}
+
+var errNodeInvalidID = &NotFoundError{"node"}
+
+func (c *Client) Noder(ctx context.Context, id {{ $.IDType }}) (_ Noder, err error) {
+	defer func() {
+		if IsNotFound(err) {
+			err = multierror.Append(err, errNodeNotFound(id))
+		}
+	}()
 	tables, err := c.tables.Load(ctx, c.driver)
 	if err != nil {
 		return nil, err
@@ -103,14 +122,14 @@ func (c *Client) Noder(ctx context.Context, id {{ $.IDType }}) (Noder, error) {
 	{{- if not $.IDType.Numeric }}
 		idv, err := strconv.Atoi(id)
 		if err != nil {
-			return nil, fmt.Errorf("%v: %w", err, &NotFoundError{"invalid/unknown"})
+			return nil, multierror.Append(err, errNodeInvalidID)
 		}
 		idx := idv/(1<<32 - 1)
 	{{- else }}
 		idx := id/(1<<32 - 1)
 	{{- end }}
 	if idx < 0 || idx >= len(tables) {
-		return nil, fmt.Errorf("cannot resolve table from id %v: %w", id, &NotFoundError{"invalid/unknown"})
+		return nil, fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
 	}
 	return c.noder(ctx, tables[idx], id)
 }
@@ -131,7 +150,7 @@ func (c *Client) noder(ctx context.Context, tbl string, id {{ $.IDType }}) (Node
 		return n, nil
 	{{- end }}
 	default:
-		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", tbl, &NotFoundError{"invalid/unknown"})
+		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", tbl, errNodeInvalidID)
 	}
 }
 

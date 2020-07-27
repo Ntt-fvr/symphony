@@ -5,6 +5,7 @@
 package todo
 
 import (
+	"encoding/json"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,14 +15,17 @@ import (
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/stretchr/testify/suite"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 type todoTestSuite struct {
@@ -60,11 +64,10 @@ func (s *todoTestSuite) SetupTest() {
 		enttest.WithOptions(ent.Driver(sql.OpenDB(name, db))),
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
 	)
-	s.Client = client.New(
-		handler.NewDefaultServer(
-			NewExecutableSchema(New(ec)),
-		),
-	)
+	srv := handler.New(NewExecutableSchema(New(ec)))
+	srv.AddTransport(transport.POST{})
+	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
+	s.Client = client.New(srv)
 
 	const mutation = `mutation($priority: Int, $text: String!, $parent: ID) {
 		createTodo(todo: {status: COMPLETED, priority: $priority, text: $text, parent: $parent}) {
@@ -489,6 +492,29 @@ func (s *todoTestSuite) TestPaginationOrder() {
 			startCreatedAt, _ = time.Parse(time.RFC3339, start.Node.CreatedAt)
 		}
 	})
+}
+
+func (s *todoTestSuite) TestNode() {
+	const (
+		query = `query($id: ID!) {
+			todo: node(id: $id) {
+				... on Todo {
+					priority
+				}
+			}
+		}`
+	)
+	var rsp struct{ Todo struct{ Priority int } }
+	err := s.Post(query, &rsp, client.Var("id", maxTodos))
+	s.Require().NoError(err)
+	jerr, ok := s.Post(query, &rsp, client.Var("id", -1)).(client.RawJsonError)
+	s.Require().True(ok)
+	var errs gqlerror.List
+	err = json.Unmarshal(jerr.RawMessage, &errs)
+	s.Require().NoError(err)
+	s.Require().Len(errs, 1)
+	s.Assert().Equal("Could not resolve to a node with the global id of '-1'", errs[0].Message)
+	s.Assert().Equal("NOT_FOUND", errs[0].Extensions["code"])
 }
 
 func (s *todoTestSuite) TestNodeCollection() {

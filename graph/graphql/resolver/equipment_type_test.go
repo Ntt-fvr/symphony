@@ -240,11 +240,9 @@ func TestRemoveEquipmentType(t *testing.T) {
 	require.NoError(t, err)
 
 	deletedNode, err := qr.Node(ctx, equipmentType.ID)
-	require.NoError(t, err)
+	assert.True(t, ent.IsNotFound(err))
 	assert.Nil(t, deletedNode)
-
-	propertyTypes := equipmentType.QueryPropertyTypes().AllX(ctx)
-	assert.Empty(t, propertyTypes)
+	assert.Zero(t, equipmentType.QueryPropertyTypes().CountX(ctx))
 }
 
 func TestEditEquipmentType(t *testing.T) {

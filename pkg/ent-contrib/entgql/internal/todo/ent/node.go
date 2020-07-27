@@ -13,10 +13,12 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/schema"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
-
+	"github.com/hashicorp/go-multierror"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -121,14 +123,27 @@ func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	return n.Node(ctx)
 }
 
-func (c *Client) Noder(ctx context.Context, id int) (Noder, error) {
+func errNodeNotFound(id int) *gqlerror.Error {
+	err := gqlerror.Errorf("Could not resolve to a node with the global id of '%v'", id)
+	errcode.Set(err, "NOT_FOUND")
+	return err
+}
+
+var errNodeInvalidID = &NotFoundError{"node"}
+
+func (c *Client) Noder(ctx context.Context, id int) (_ Noder, err error) {
+	defer func() {
+		if IsNotFound(err) {
+			err = multierror.Append(err, errNodeNotFound(id))
+		}
+	}()
 	tables, err := c.tables.Load(ctx, c.driver)
 	if err != nil {
 		return nil, err
 	}
 	idx := id / (1<<32 - 1)
 	if idx < 0 || idx >= len(tables) {
-		return nil, fmt.Errorf("cannot resolve table from id %v: %w", id, &NotFoundError{"invalid/unknown"})
+		return nil, fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
 	}
 	return c.noder(ctx, tables[idx], id)
 }
@@ -145,7 +160,7 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		}
 		return n, nil
 	default:
-		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", tbl, &NotFoundError{"invalid/unknown"})
+		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", tbl, errNodeInvalidID)
 	}
 }
 
