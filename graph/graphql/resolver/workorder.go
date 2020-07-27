@@ -19,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
@@ -637,26 +636,7 @@ func (r mutationResolver) addWorkOrderTemplate(
 		return nil, fmt.Errorf("creating work order template: %w", err)
 	}
 	for _, pt := range workOrderType.Edges.PropertyTypes {
-		_, err = client.PropertyType.Create().
-			SetName(pt.Name).
-			SetType(pt.Type).
-			SetNodeType(pt.NodeType).
-			SetIndex(pt.Index).
-			SetCategory(pt.Category).
-			SetNillableStringVal(pt.StringVal).
-			SetNillableIntVal(pt.IntVal).
-			SetNillableBoolVal(pt.BoolVal).
-			SetNillableFloatVal(pt.FloatVal).
-			SetNillableLatitudeVal(pt.LatitudeVal).
-			SetNillableLongitudeVal(pt.LongitudeVal).
-			SetIsInstanceProperty(pt.IsInstanceProperty).
-			SetNillableRangeFromVal(pt.RangeFromVal).
-			SetNillableRangeToVal(pt.RangeToVal).
-			SetEditable(pt.Editable).
-			SetMandatory(pt.Mandatory).
-			SetDeleted(pt.Deleted).
-			SetWorkOrderTemplateID(workOrderTemplate.ID).
-			Save(ctx)
+		_, err := r.createTemplatePropertyType(ctx, pt, workOrderTemplate.ID, models.PropertyEntityWorkOrder)
 		if err != nil {
 			return nil, fmt.Errorf("creating property type: %w", err)
 		}
@@ -691,36 +671,6 @@ func (r mutationResolver) addWorkOrderTemplate(
 		}
 	}
 	return workOrderTemplate, err
-}
-
-func (r mutationResolver) deleteWorkOrderTemplate(ctx context.Context, id int) (int, error) {
-	client, logger := r.ClientFrom(ctx), r.logger.For(ctx).With(zap.Int("id", id))
-	pTypes, err := client.PropertyType.Query().
-		Where(propertytype.HasWorkOrderTemplateWith(workordertemplate.ID(id))).
-		All(ctx)
-	if err != nil {
-		logger.Error("cannot query properties of work order template", zap.Error(err))
-		return id, fmt.Errorf("querying work order template property types: %w", err)
-	}
-	for _, pType := range pTypes {
-		if err := client.PropertyType.DeleteOne(pType).
-			Exec(ctx); err != nil {
-			logger.Error("cannot delete property of work order template", zap.Error(err))
-			return id, fmt.Errorf("deleting work order template property type: %w", err)
-		}
-	}
-	switch err := client.WorkOrderTemplate.DeleteOneID(id).Exec(ctx); err.(type) {
-	case nil:
-		logger.Info("deleted work order template")
-		return id, nil
-	case *ent.NotFoundError:
-		err := gqlerror.Errorf("work order template not found")
-		logger.Error(err.Message)
-		return id, err
-	default:
-		logger.Error("cannot delete work order template", zap.Error(err))
-		return id, fmt.Errorf("deleting work order template: %w", err)
-	}
 }
 
 func (r mutationResolver) AddWorkOrderType(

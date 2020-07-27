@@ -1548,7 +1548,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		if !ent.IsNotFound(err) {
 			return id, errors.Wrapf(err, "query work order template: id=%q", wot.ID)
 		}
-	} else if _, err := r.deleteWorkOrderTemplate(ctx, wot.ID); err != nil {
+	} else if _, err := r.deleteTemplate(ctx, wot.ID, models.PropertyEntityWorkOrder); err != nil {
 		return id, errors.Wrapf(err, "deleting work order template id=%q", wot.ID)
 	}
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
