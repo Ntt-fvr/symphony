@@ -99,7 +99,7 @@ func TestAddWorkOrderTypeWithDescription(t *testing.T) {
 	require.NoError(t, err)
 	typ, ok := node.(*ent.WorkOrderType)
 	require.True(t, ok)
-	assert.Equal(t, typ.Description, "wo_type_desc", "verifying work order type description")
+	assert.Equal(t, *typ.Description, "wo_type_desc", "verifying work order type description")
 }
 
 func TestAddWorkOrderTypeWithProperties(t *testing.T) {

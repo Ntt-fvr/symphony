@@ -186,7 +186,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldDescription,
 		})
-		wot.Description = value
+		wot.Description = &value
 	}
 	if nodes := wotc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -40481,7 +40481,7 @@ func (m *WorkOrderMutation) Description() (r string, exists bool) {
 // If the WorkOrder object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *WorkOrderMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *WorkOrderMutation) OldDescription(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
 	}
@@ -40531,7 +40531,7 @@ func (m *WorkOrderMutation) InstallDate() (r time.Time, exists bool) {
 // If the WorkOrder object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *WorkOrderMutation) OldInstallDate(ctx context.Context) (v time.Time, err error) {
+func (m *WorkOrderMutation) OldInstallDate(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldInstallDate is allowed only on UpdateOne operations")
 	}
@@ -40689,7 +40689,7 @@ func (m *WorkOrderMutation) CloseDate() (r time.Time, exists bool) {
 // If the WorkOrder object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *WorkOrderMutation) OldCloseDate(ctx context.Context) (v time.Time, err error) {
+func (m *WorkOrderMutation) OldCloseDate(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCloseDate is allowed only on UpdateOne operations")
 	}
@@ -42739,7 +42739,7 @@ func (m *WorkOrderTemplateMutation) Description() (r string, exists bool) {
 // If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *WorkOrderTemplateMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *WorkOrderTemplateMutation) OldDescription(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
 	}
@@ -43310,7 +43310,7 @@ func (m *WorkOrderTypeMutation) Description() (r string, exists bool) {
 // If the WorkOrderType object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *WorkOrderTypeMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *WorkOrderTypeMutation) OldDescription(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
 	}

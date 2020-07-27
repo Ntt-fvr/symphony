@@ -122,7 +122,7 @@ func (clid *CheckListItemDefinition) assignValues(values ...interface{}) error {
 	if value, ok := values[3].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field type", values[3])
 	} else if value.Valid {
-		clid.Type = enum.CheckListItemType(enum.CheckListItemType(value.String))
+		clid.Type = enum.CheckListItemType(value.String)
 	}
 	if value, ok := values[4].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field index", values[4])
@@ -144,7 +144,7 @@ func (clid *CheckListItemDefinition) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
 		clid.EnumSelectionModeValue = new(enum.CheckListItemEnumSelectionMode)
-		*clid.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
+		*clid.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(value.String)
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field help_text", values[8])

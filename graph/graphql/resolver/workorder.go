@@ -631,7 +631,7 @@ func (r mutationResolver) addWorkOrderTemplate(
 	workOrderTemplate, err := client.WorkOrderTemplate.
 		Create().
 		SetName(workOrderType.Name).
-		SetDescription(workOrderType.Description).
+		SetNillableDescription(workOrderType.Description).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("creating work order template: %w", err)

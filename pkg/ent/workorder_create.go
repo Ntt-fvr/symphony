@@ -547,7 +547,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldDescription,
 		})
-		wo.Description = value
+		wo.Description = &value
 	}
 	if value, ok := woc.mutation.InstallDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -555,7 +555,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldInstallDate,
 		})
-		wo.InstallDate = value
+		wo.InstallDate = &value
 	}
 	if value, ok := woc.mutation.CreationDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -579,7 +579,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldCloseDate,
 		})
-		wo.CloseDate = value
+		wo.CloseDate = &value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

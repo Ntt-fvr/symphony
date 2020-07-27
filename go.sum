@@ -224,8 +224,8 @@ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymF
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/facebookincubator/ent v0.2.8-0.20200725144851-01a04dbe24e9 h1:dk8885IPOlAtK56ia6w6IT0wd2eJx0tjnvUkD4GXSJE=
-github.com/facebookincubator/ent v0.2.8-0.20200725144851-01a04dbe24e9/go.mod h1:noGzn9BnGMCL29LvA0ywFv8oeTXPiA2gYym1ZEYDEvI=
+github.com/facebookincubator/ent v0.2.8-0.20200726173043-ff6163f1a068 h1:00F6lNRbD2U7dC/sZR89uK0eFolOpNVKMd3oVgi0bLw=
+github.com/facebookincubator/ent v0.2.8-0.20200726173043-ff6163f1a068/go.mod h1:noGzn9BnGMCL29LvA0ywFv8oeTXPiA2gYym1ZEYDEvI=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/set v0.2.1 h1:nn2CaJyknWE/6txyUDGwysr3G5QC6xWB/PtVjPBbeaA=
 github.com/fatih/set v0.2.1/go.mod h1:+RKtMCH+favT2+3YecHGxcc0b4KyVWA1QWWJUs4E0CI=

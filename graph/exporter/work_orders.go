@@ -145,7 +145,7 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 
 	row := []string{
 		strconv.Itoa(wo.ID), wo.Name, projName, wo.Status.String(), assigneeName,
-		ownerName, wo.Priority.String(), getStringDate(wo.CreationDate),
+		ownerName, wo.Priority.String(), getStringDate(&wo.CreationDate),
 		getStringDate(wo.InstallDate), locName,
 	}
 	row = append(row, properties...)
@@ -153,7 +153,10 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 	return row, nil
 }
 
-func getStringDate(t time.Time) string {
+func getStringDate(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
 	y, m, d := t.Date()
 	if y != 1 || m != time.January || d != 1 {
 		return fmt.Sprintf("%d %v %d", d, m.String(), y)

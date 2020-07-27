@@ -133,7 +133,7 @@ func (l *Link) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field future_state", values[2])
 	} else if value.Valid {
 		l.FutureState = new(enum.FutureState)
-		*l.FutureState = enum.FutureState(enum.FutureState(value.String))
+		*l.FutureState = enum.FutureState(value.String)
 	}
 	values = values[3:]
 	if len(values) == len(link.ForeignKeys) {

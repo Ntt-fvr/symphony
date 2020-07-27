@@ -198,7 +198,7 @@ func (wotc *WorkOrderTypeCreate) createSpec() (*WorkOrderType, *sqlgraph.CreateS
 			Value:  value,
 			Column: workordertype.FieldDescription,
 		})
-		wot.Description = value
+		wot.Description = &value
 	}
 	if nodes := wotc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

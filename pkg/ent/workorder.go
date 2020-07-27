@@ -36,15 +36,15 @@ type WorkOrder struct {
 	// Priority holds the value of the "priority" field.
 	Priority workorder.Priority `json:"priority,omitempty"`
 	// Description holds the value of the "description" field.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 	// InstallDate holds the value of the "install_date" field.
-	InstallDate time.Time `json:"install_date,omitempty"`
+	InstallDate *time.Time `json:"install_date,omitempty"`
 	// CreationDate holds the value of the "creation_date" field.
 	CreationDate time.Time `json:"creation_date,omitempty"`
 	// Index holds the value of the "index" field.
 	Index int `json:"index,omitempty"`
 	// CloseDate holds the value of the "close_date" field.
-	CloseDate time.Time `json:"close_date,omitempty"`
+	CloseDate *time.Time `json:"close_date,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderQuery when eager-loading is set.
 	Edges               WorkOrderEdges `json:"edges"`
@@ -316,12 +316,14 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 	if value, ok := values[5].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field description", values[5])
 	} else if value.Valid {
-		wo.Description = value.String
+		wo.Description = new(string)
+		*wo.Description = value.String
 	}
 	if value, ok := values[6].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field install_date", values[6])
 	} else if value.Valid {
-		wo.InstallDate = value.Time
+		wo.InstallDate = new(time.Time)
+		*wo.InstallDate = value.Time
 	}
 	if value, ok := values[7].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field creation_date", values[7])
@@ -336,7 +338,8 @@ func (wo *WorkOrder) assignValues(values ...interface{}) error {
 	if value, ok := values[9].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field close_date", values[9])
 	} else if value.Valid {
-		wo.CloseDate = value.Time
+		wo.CloseDate = new(time.Time)
+		*wo.CloseDate = value.Time
 	}
 	values = values[10:]
 	if len(values) == len(workorder.ForeignKeys) {
@@ -483,16 +486,22 @@ func (wo *WorkOrder) String() string {
 	builder.WriteString(fmt.Sprintf("%v", wo.Status))
 	builder.WriteString(", priority=")
 	builder.WriteString(fmt.Sprintf("%v", wo.Priority))
-	builder.WriteString(", description=")
-	builder.WriteString(wo.Description)
-	builder.WriteString(", install_date=")
-	builder.WriteString(wo.InstallDate.Format(time.ANSIC))
+	if v := wo.Description; v != nil {
+		builder.WriteString(", description=")
+		builder.WriteString(*v)
+	}
+	if v := wo.InstallDate; v != nil {
+		builder.WriteString(", install_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", creation_date=")
 	builder.WriteString(wo.CreationDate.Format(time.ANSIC))
 	builder.WriteString(", index=")
 	builder.WriteString(fmt.Sprintf("%v", wo.Index))
-	builder.WriteString(", close_date=")
-	builder.WriteString(wo.CloseDate.Format(time.ANSIC))
+	if v := wo.CloseDate; v != nil {
+		builder.WriteString(", close_date=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

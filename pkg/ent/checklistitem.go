@@ -150,7 +150,7 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 	if value, ok := values[1].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field type", values[1])
 	} else if value.Valid {
-		cli.Type = enum.CheckListItemType(enum.CheckListItemType(value.String))
+		cli.Type = enum.CheckListItemType(value.String)
 	}
 	if value, ok := values[2].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field index", values[2])
@@ -181,7 +181,7 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
 		cli.EnumSelectionModeValue = new(enum.CheckListItemEnumSelectionMode)
-		*cli.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
+		*cli.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(value.String)
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field selected_enum_values", values[8])

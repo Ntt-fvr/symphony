@@ -65,7 +65,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			SetStatus(workorder.StatusPending).
 			Save(s.ctx)
 		s.Require().NoError(err)
-		s.Assert().True(order.CloseDate.IsZero())
+		s.Assert().Nil(order.CloseDate)
 	})
 	s.Run("CreateDoneWithCloseDate", func() {
 		now := time.Now()
@@ -82,7 +82,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			Save(s.ctx)
 		s.Require().NoError(err)
 		s.Assert().True(
-			now.Equal(order.CloseDate),
+			now.Equal(*order.CloseDate),
 			"close date modified on status reapply",
 		)
 	})
@@ -92,7 +92,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			SetStatus(workorder.StatusPending).
 			Save(s.ctx)
 		s.Require().NoError(err)
-		s.Assert().True(order.CloseDate.IsZero())
+		s.Assert().Nil(order.CloseDate)
 
 		now := time.Now()
 		order, err = order.Update().
@@ -108,7 +108,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 				SetName(name).
 				Save(s.ctx)
 			s.Require().NoError(err)
-			s.Assert().True(order.CloseDate.IsZero())
+			s.Assert().Nil(order.CloseDate)
 			ids = append(ids, order.ID)
 		}
 		n, err := s.client.Update().

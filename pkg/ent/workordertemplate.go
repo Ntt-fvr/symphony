@@ -23,7 +23,7 @@ type WorkOrderTemplate struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderTemplateQuery when eager-loading is set.
 	Edges                    WorkOrderTemplateEdges `json:"edges"`
@@ -111,7 +111,8 @@ func (wot *WorkOrderTemplate) assignValues(values ...interface{}) error {
 	if value, ok := values[1].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field description", values[1])
 	} else if value.Valid {
-		wot.Description = value.String
+		wot.Description = new(string)
+		*wot.Description = value.String
 	}
 	values = values[2:]
 	if len(values) == len(workordertemplate.ForeignKeys) {
@@ -165,8 +166,10 @@ func (wot *WorkOrderTemplate) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", wot.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(wot.Name)
-	builder.WriteString(", description=")
-	builder.WriteString(wot.Description)
+	if v := wot.Description; v != nil {
+		builder.WriteString(", description=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

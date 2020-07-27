@@ -336,7 +336,7 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 
 		_, err = r.internalAddWorkOrder(ctx, models.AddWorkOrderInput{
 			Name:                wot.Name,
-			Description:         &wot.Description,
+			Description:         wot.Description,
 			WorkOrderTypeID:     wot.ID,
 			ProjectID:           &proj.ID,
 			LocationID:          input.Location,

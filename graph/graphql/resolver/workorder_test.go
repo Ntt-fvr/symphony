@@ -105,9 +105,9 @@ func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationRe
 	_, err := mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
 		ID:          workOrder.ID,
 		Name:        workOrder.Name,
-		Description: &workOrder.Description,
+		Description: workOrder.Description,
 		OwnerID:     ownerID,
-		InstallDate: &workOrder.InstallDate,
+		InstallDate: workOrder.InstallDate,
 		Status:      workOrderStatusPtr(workorder.StatusDone),
 		AssigneeID:  assigneeID,
 	})
@@ -209,7 +209,7 @@ func TestAddWorkOrderWithAssignee(t *testing.T) {
 	workOrder, err = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
 		ID:          workOrder.ID,
 		Name:        workOrder.Name,
-		Description: &workOrder.Description,
+		Description: workOrder.Description,
 		OwnerID:     ownerID,
 		Status:      workOrderStatusPtr(workorder.StatusPending),
 		AssigneeID:  &assignee.ID,
@@ -305,7 +305,7 @@ func TestAddWorkOrderWithDescription(t *testing.T) {
 	require.True(t, ok)
 
 	assert.Equal(t, fetchedWorkOrder.Name, name)
-	assert.Equal(t, fetchedWorkOrder.Description, description)
+	assert.Equal(t, *fetchedWorkOrder.Description, description)
 	assert.Equal(t, location.ID, workOrder.QueryLocation().OnlyX(ctx).ID)
 }
 
@@ -336,7 +336,7 @@ func TestAddWorkOrderWithPriority(t *testing.T) {
 	input := models.EditWorkOrderInput{
 		ID:          workOrder.ID,
 		Name:        workOrder.Name,
-		Description: &workOrder.Description,
+		Description: workOrder.Description,
 		OwnerID:     ownerID,
 		Status:      workOrderStatusPtr(workorder.StatusPending),
 		Priority:    workOrderPriorityPtr(workorder.PriorityHigh),

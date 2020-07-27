@@ -26,7 +26,8 @@ func (WorkOrderTemplateMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
 		field.Text("description").
-			Optional(),
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -136,9 +137,11 @@ func (WorkOrder) Fields() []ent.Field {
 				}).
 			Default("NONE"),
 		field.Text("description").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Time("install_date").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Time("creation_date").
 			Annotations(entgql.Annotation{
 				OrderField: "CREATED_AT",
@@ -147,6 +150,7 @@ func (WorkOrder) Fields() []ent.Field {
 			Optional(),
 		field.Time("close_date").
 			Optional().
+			Nillable().
 			Annotations(entgql.Annotation{
 				OrderField: "CLOSED_AT",
 			}),

@@ -237,7 +237,7 @@ func (e *Equipment) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field future_state", values[3])
 	} else if value.Valid {
 		e.FutureState = new(enum.FutureState)
-		*e.FutureState = enum.FutureState(enum.FutureState(value.String))
+		*e.FutureState = enum.FutureState(value.String)
 	}
 	if value, ok := values[4].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field device_id", values[4])
