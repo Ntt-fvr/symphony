@@ -36,11 +36,11 @@ type CheckListItem struct {
 	// EnumValues holds the value of the "enum_values" field.
 	EnumValues string `json:"enum_values,omitempty" gqlgen:"enumValues"`
 	// EnumSelectionModeValue holds the value of the "enum_selection_mode_value" field.
-	EnumSelectionModeValue enum.CheckListItemEnumSelectionMode `json:"enum_selection_mode_value,omitempty"`
+	EnumSelectionModeValue *enum.CheckListItemEnumSelectionMode `json:"enum_selection_mode_value,omitempty"`
 	// SelectedEnumValues holds the value of the "selected_enum_values" field.
 	SelectedEnumValues string `json:"selected_enum_values,omitempty" gqlgen:"selectedEnumValues"`
 	// YesNoVal holds the value of the "yes_no_val" field.
-	YesNoVal checklistitem.YesNoVal `json:"yes_no_val,omitempty"`
+	YesNoVal *checklistitem.YesNoVal `json:"yes_no_val,omitempty"`
 	// HelpText holds the value of the "help_text" field.
 	HelpText *string `json:"help_text,omitempty" gqlgen:"helpText"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -180,7 +180,8 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 	if value, ok := values[7].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
-		cli.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
+		cli.EnumSelectionModeValue = new(enum.CheckListItemEnumSelectionMode)
+		*cli.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field selected_enum_values", values[8])
@@ -190,7 +191,8 @@ func (cli *CheckListItem) assignValues(values ...interface{}) error {
 	if value, ok := values[9].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field yes_no_val", values[9])
 	} else if value.Valid {
-		cli.YesNoVal = checklistitem.YesNoVal(value.String)
+		cli.YesNoVal = new(checklistitem.YesNoVal)
+		*cli.YesNoVal = checklistitem.YesNoVal(value.String)
 	}
 	if value, ok := values[10].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field help_text", values[10])
@@ -267,12 +269,16 @@ func (cli *CheckListItem) String() string {
 	builder.WriteString(cli.StringVal)
 	builder.WriteString(", enum_values=")
 	builder.WriteString(cli.EnumValues)
-	builder.WriteString(", enum_selection_mode_value=")
-	builder.WriteString(fmt.Sprintf("%v", cli.EnumSelectionModeValue))
+	if v := cli.EnumSelectionModeValue; v != nil {
+		builder.WriteString(", enum_selection_mode_value=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteString(", selected_enum_values=")
 	builder.WriteString(cli.SelectedEnumValues)
-	builder.WriteString(", yes_no_val=")
-	builder.WriteString(fmt.Sprintf("%v", cli.YesNoVal))
+	if v := cli.YesNoVal; v != nil {
+		builder.WriteString(", yes_no_val=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	if v := cli.HelpText; v != nil {
 		builder.WriteString(", help_text=")
 		builder.WriteString(*v)

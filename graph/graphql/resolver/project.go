@@ -8,8 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -318,11 +316,6 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 		for _, categoryDef := range clCategoryDefs {
 			var clInputs []*models.CheckListItemInput
 			for _, cliDef := range categoryDef.Edges.CheckListItemDefinitions {
-				var enumSelectionMode *enum.CheckListItemEnumSelectionMode
-				if cliDef.EnumSelectionModeValue != "" {
-					enumSelectionMode = &cliDef.EnumSelectionModeValue
-				}
-
 				clInputs = append(clInputs, &models.CheckListItemInput{
 					Title:             cliDef.Title,
 					Type:              cliDef.Type,
@@ -330,7 +323,7 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 					IsMandatory:       pointer.ToBool(cliDef.IsMandatory),
 					HelpText:          cliDef.HelpText,
 					EnumValues:        cliDef.EnumValues,
-					EnumSelectionMode: enumSelectionMode,
+					EnumSelectionMode: cliDef.EnumSelectionModeValue,
 				})
 			}
 

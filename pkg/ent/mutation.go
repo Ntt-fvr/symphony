@@ -3190,7 +3190,7 @@ func (m *CheckListItemMutation) EnumSelectionModeValue() (r enum.CheckListItemEn
 // If the CheckListItem object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemMutation) OldEnumSelectionModeValue(ctx context.Context) (v enum.CheckListItemEnumSelectionMode, err error) {
+func (m *CheckListItemMutation) OldEnumSelectionModeValue(ctx context.Context) (v *enum.CheckListItemEnumSelectionMode, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldEnumSelectionModeValue is allowed only on UpdateOne operations")
 	}
@@ -3290,7 +3290,7 @@ func (m *CheckListItemMutation) YesNoVal() (r checklistitem.YesNoVal, exists boo
 // If the CheckListItem object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemMutation) OldYesNoVal(ctx context.Context) (v checklistitem.YesNoVal, err error) {
+func (m *CheckListItemMutation) OldYesNoVal(ctx context.Context) (v *checklistitem.YesNoVal, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldYesNoVal is allowed only on UpdateOne operations")
 	}
@@ -4474,7 +4474,7 @@ func (m *CheckListItemDefinitionMutation) EnumSelectionModeValue() (r enum.Check
 // If the CheckListItemDefinition object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *CheckListItemDefinitionMutation) OldEnumSelectionModeValue(ctx context.Context) (v enum.CheckListItemEnumSelectionMode, err error) {
+func (m *CheckListItemDefinitionMutation) OldEnumSelectionModeValue(ctx context.Context) (v *enum.CheckListItemEnumSelectionMode, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldEnumSelectionModeValue is allowed only on UpdateOne operations")
 	}

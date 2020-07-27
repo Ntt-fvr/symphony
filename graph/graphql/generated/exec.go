@@ -16863,9 +16863,9 @@ func (ec *executionContext) _CheckListItem_enumSelectionMode(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(enum.CheckListItemEnumSelectionMode)
+	res := resTmp.(*enum.CheckListItemEnumSelectionMode)
 	fc.Result = res
-	return ec.marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
+	return ec.marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItem_selectedEnumValues(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
@@ -17018,9 +17018,9 @@ func (ec *executionContext) _CheckListItem_yesNoResponse(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(checklistitem.YesNoVal)
+	res := resTmp.(*checklistitem.YesNoVal)
 	fc.Result = res
-	return ec.marshalOYesNoResponse2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, field.Selections, res)
+	return ec.marshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItem_wifiData(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItem) (ret graphql.Marshaler) {
@@ -17306,9 +17306,9 @@ func (ec *executionContext) _CheckListItemDefinition_enumSelectionMode(ctx conte
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(enum.CheckListItemEnumSelectionMode)
+	res := resTmp.(*enum.CheckListItemEnumSelectionMode)
 	fc.Result = res
-	return ec.marshalOCheckListItemEnumSelectionMode2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
+	return ec.marshalOCheckListItemEnumSelectionMode2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐCheckListItemEnumSelectionMode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CheckListItemDefinition_helpText(ctx context.Context, field graphql.CollectedField, obj *ent.CheckListItemDefinition) (ret graphql.Marshaler) {

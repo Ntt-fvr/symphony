@@ -675,10 +675,6 @@ func (r mutationResolver) addWorkOrderTemplate(
 			return nil, err
 		}
 		for _, checkList := range checkLists {
-			var enumSelectionMode *enum.CheckListItemEnumSelectionMode
-			if checkList.EnumSelectionModeValue != "" {
-				enumSelectionMode = &checkList.EnumSelectionModeValue
-			}
 			_, err := client.CheckListItemDefinition.Create().
 				SetTitle(checkList.Title).
 				SetType(checkList.Type).
@@ -686,7 +682,7 @@ func (r mutationResolver) addWorkOrderTemplate(
 				SetIsMandatory(checkList.IsMandatory).
 				SetNillableHelpText(checkList.HelpText).
 				SetNillableEnumValues(checkList.EnumValues).
-				SetNillableEnumSelectionModeValue(enumSelectionMode).
+				SetNillableEnumSelectionModeValue(checkList.EnumSelectionModeValue).
 				SetCheckListCategoryDefinitionID(cd.ID).
 				Save(ctx)
 			if err != nil {

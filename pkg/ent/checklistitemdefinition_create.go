@@ -310,7 +310,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldEnumSelectionModeValue,
 		})
-		clid.EnumSelectionModeValue = value
+		clid.EnumSelectionModeValue = &value
 	}
 	if value, ok := clidc.mutation.HelpText(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

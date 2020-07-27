@@ -107,7 +107,8 @@ func (CheckListItemDefinition) Fields() []ent.Field {
 			Optional(),
 		field.Enum("enum_selection_mode_value").
 			GoType(enum.CheckListItemEnumSelectionMode("")).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("help_text").
 			StructTag(`gqlgen:"helpText"`).
 			Nillable().
@@ -159,7 +160,8 @@ func (CheckListItem) Fields() []ent.Field {
 			Optional(),
 		field.Enum("enum_selection_mode_value").
 			GoType(enum.CheckListItemEnumSelectionMode("")).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("selected_enum_values").
 			StructTag(`gqlgen:"selectedEnumValues"`).
 			Optional(),
@@ -168,7 +170,8 @@ func (CheckListItem) Fields() []ent.Field {
 				"Yes": "YES",
 				"No":  "NO",
 			}).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("help_text").
 			StructTag(`gqlgen:"helpText"`).
 			Nillable().

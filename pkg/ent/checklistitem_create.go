@@ -382,7 +382,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldEnumSelectionModeValue,
 		})
-		cli.EnumSelectionModeValue = value
+		cli.EnumSelectionModeValue = &value
 	}
 	if value, ok := clic.mutation.SelectedEnumValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -398,7 +398,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldYesNoVal,
 		})
-		cli.YesNoVal = value
+		cli.YesNoVal = &value
 	}
 	if value, ok := clic.mutation.HelpText(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

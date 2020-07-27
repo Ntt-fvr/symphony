@@ -37,7 +37,7 @@ type CheckListItemDefinition struct {
 	// EnumValues holds the value of the "enum_values" field.
 	EnumValues *string `json:"enum_values,omitempty" gqlgen:"enumValues"`
 	// EnumSelectionModeValue holds the value of the "enum_selection_mode_value" field.
-	EnumSelectionModeValue enum.CheckListItemEnumSelectionMode `json:"enum_selection_mode_value,omitempty"`
+	EnumSelectionModeValue *enum.CheckListItemEnumSelectionMode `json:"enum_selection_mode_value,omitempty"`
 	// HelpText holds the value of the "help_text" field.
 	HelpText *string `json:"help_text,omitempty" gqlgen:"helpText"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -143,7 +143,8 @@ func (clid *CheckListItemDefinition) assignValues(values ...interface{}) error {
 	if value, ok := values[7].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field enum_selection_mode_value", values[7])
 	} else if value.Valid {
-		clid.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
+		clid.EnumSelectionModeValue = new(enum.CheckListItemEnumSelectionMode)
+		*clid.EnumSelectionModeValue = enum.CheckListItemEnumSelectionMode(enum.CheckListItemEnumSelectionMode(value.String))
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field help_text", values[8])
@@ -207,8 +208,10 @@ func (clid *CheckListItemDefinition) String() string {
 		builder.WriteString(", enum_values=")
 		builder.WriteString(*v)
 	}
-	builder.WriteString(", enum_selection_mode_value=")
-	builder.WriteString(fmt.Sprintf("%v", clid.EnumSelectionModeValue))
+	if v := clid.EnumSelectionModeValue; v != nil {
+		builder.WriteString(", enum_selection_mode_value=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	if v := clid.HelpText; v != nil {
 		builder.WriteString(", help_text=")
 		builder.WriteString(*v)
