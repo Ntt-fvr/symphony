@@ -6,7 +6,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-body-size: 10m
   hosts:
-    - ${host}
+    - "${host}"
   paths:
     - /
 serviceMonitor:
