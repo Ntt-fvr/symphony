@@ -6,16 +6,13 @@ package resolver
 
 import (
 	"context"
-	"errors"
 	"testing"
-
-	"github.com/facebookincubator/symphony/pkg/ent/privacy"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -256,7 +253,7 @@ func TestProjectMutation(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, deleted)
 	deleted, err = mutation.DeleteProject(ctx, project.ID)
-	assert.True(t, errors.Is(err, privacy.Deny))
+	assert.Error(t, err)
 	assert.False(t, deleted)
 
 	deleted, err = mutation.DeleteProjectType(ctx, typ.ID)
@@ -404,23 +401,33 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.NoError(t, err, "querying project node")
 	fetchedProj, ok := node.(*ent.Project)
 	require.True(t, ok, "casting project instance")
+	fetchedProjectTemplate, err := fetchedProj.QueryTemplate().Only(ctx)
+	require.NoError(t, err)
 
 	intFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("int_prop"))).OnlyX(ctx)
+	tIntFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("int_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetInt(intFetchProp.IntVal), pointer.GetInt(intProp.IntValue), "Comparing properties: int value")
-	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), tIntFetchProp.ID, "Comparing properties: PropertyType value")
 
 	strFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
+	tStrFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), tStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fixedStrFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_fixed_prop"))).OnlyX(ctx)
+	tFixedStrFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(fixedStrFetchProp.StringVal), pointer.GetString(strFixedProp.StringValue), "Comparing properties: fixed string value")
-	require.Equal(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), tFixedStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	rngFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("rng_prop"))).OnlyX(ctx)
+	tRngFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeFromVal), pointer.GetFloat64(rngProp.RangeFromValue), "Comparing properties: range value")
 	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeToVal), pointer.GetFloat64(rngProp.RangeToValue), "Comparing properties: range value")
-	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.NotEqual(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fetchedProps, err := pr.Properties(ctx, fetchedProj)
 	require.NoError(t, err)
@@ -465,15 +472,17 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.NoError(t, err, "querying updated project node")
 	updatedProj, ok := updatedNode.(*ent.Project)
 	require.True(t, ok, "casting updated project instance")
-
 	require.Equal(t, updatedProj.Name, newProjectName, "Comparing updated project name")
-
+	fetchedProjectTemplate, err = updatedProj.QueryTemplate().Only(ctx)
+	require.NoError(t, err)
 	fetchedProps, _ = pr.Properties(ctx, updatedProj)
 	require.Equal(t, len(propInputs), len(fetchedProps), "number of properties should remain he same")
 
 	updatedProp := updatedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
+	tRngFetchProp = fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_prop")).OnlyX(ctx)
 	require.Equal(t, pointer.GetString(updatedProp.StringVal), pointer.GetString(prop.StringValue), "Comparing updated properties: string value")
-	require.Equal(t, updatedProp.QueryType().OnlyIDX(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.NotEqual(t, updatedProp.QueryType().OnlyIDX(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.Equal(t, updatedProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing updated properties: PropertyType value")
 }
 
 func TestEditProjectType(t *testing.T) {
@@ -556,6 +565,6 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	wos, err := proj.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, wos, 1)
-	props := wos[0].QueryProperties().AllX(ctx)
+	props := wos[0].QueryProperties().Where().AllX(ctx)
 	require.Len(t, props, 2)
 }

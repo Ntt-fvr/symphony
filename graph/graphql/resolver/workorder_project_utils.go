@@ -8,11 +8,132 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/vektah/gqlparser/v2/gqlerror"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"go.uber.org/zap"
 )
+
+func (r mutationResolver) createTemplatePropertyType(
+	ctx context.Context,
+	pt *ent.PropertyType,
+	id int,
+	entity models.PropertyEntity,
+) (*ent.PropertyType, error) {
+	mutation := r.ClientFrom(ctx).PropertyType.Create().
+		SetName(pt.Name).
+		SetType(pt.Type).
+		SetNodeType(pt.NodeType).
+		SetIndex(pt.Index).
+		SetCategory(pt.Category).
+		SetNillableStringVal(pt.StringVal).
+		SetNillableIntVal(pt.IntVal).
+		SetNillableBoolVal(pt.BoolVal).
+		SetNillableFloatVal(pt.FloatVal).
+		SetNillableLatitudeVal(pt.LatitudeVal).
+		SetNillableLongitudeVal(pt.LongitudeVal).
+		SetIsInstanceProperty(pt.IsInstanceProperty).
+		SetNillableRangeFromVal(pt.RangeFromVal).
+		SetNillableRangeToVal(pt.RangeToVal).
+		SetEditable(pt.Editable).
+		SetMandatory(pt.Mandatory).
+		SetDeleted(pt.Deleted)
+	switch entity {
+	case models.PropertyEntityWorkOrder:
+		mutation = mutation.SetWorkOrderTemplateID(id)
+	case models.PropertyEntityProject:
+		mutation = mutation.SetProjectTemplateID(id)
+	}
+	result, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("creating property type: %w", err)
+	}
+	return result, nil
+}
+
+func (r mutationResolver) deleteTemplatePropertyTypes(
+	ctx context.Context,
+	id int,
+	entity models.PropertyEntity,
+) (int, error) {
+	client, logger := r.ClientFrom(ctx), r.logger.For(ctx).With(zap.Int("id", id))
+	var (
+		pTypes []*ent.PropertyType
+		err    error
+	)
+	switch entity {
+	case models.PropertyEntityWorkOrder:
+		var template *ent.WorkOrderTemplate
+		if template, err = r.ClientFrom(ctx).WorkOrderTemplate.Get(ctx, id); err != nil {
+			return id, fmt.Errorf("can't read work order template: %w", err)
+		}
+		if pTypes, err = template.QueryPropertyTypes().All(ctx); err != nil {
+			logger.Error("cannot query property types of work order template", zap.Error(err))
+			return id, fmt.Errorf("querying work order template property types: %w", err)
+		}
+	case models.PropertyEntityProject:
+		var template *ent.ProjectTemplate
+		if template, err = r.ClientFrom(ctx).ProjectTemplate.Get(ctx, id); err != nil {
+			return id, fmt.Errorf("can't read project template: %w", err)
+		}
+		if pTypes, err = template.QueryProperties().All(ctx); err != nil {
+			logger.Error("cannot query property types of project template", zap.Error(err))
+			return id, fmt.Errorf("querying project template property types: %w", err)
+		}
+	default:
+		logger.Error("cannot query property types of template", zap.Error(err))
+		return id, fmt.Errorf("querying template property types: %w", err)
+	}
+
+	for _, pType := range pTypes {
+		if err := client.PropertyType.DeleteOne(pType).
+			Exec(ctx); err != nil {
+			logger.Error("cannot delete property type of template", zap.Error(err))
+			return id, fmt.Errorf("deleting template property type: %w", err)
+		}
+	}
+	return id, nil
+}
+
+func (r mutationResolver) deleteTemplate(
+	ctx context.Context,
+	id int,
+	entity models.PropertyEntity,
+) (int, error) {
+	client, logger := r.ClientFrom(ctx), r.logger.For(ctx).With(zap.Int("id", id))
+	var (
+		err error
+	)
+	_, err = r.deleteTemplatePropertyTypes(ctx, id, entity)
+	if err != nil {
+		return id, err
+	}
+
+	switch entity {
+	case models.PropertyEntityWorkOrder:
+		err = client.WorkOrderTemplate.DeleteOneID(id).Exec(ctx)
+	case models.PropertyEntityProject:
+		err = client.ProjectTemplate.DeleteOneID(id).Exec(ctx)
+	default:
+		logger.Error("cannot delete template", zap.Error(err))
+		return id, fmt.Errorf("deleting template: %w", err)
+	}
+	switch err.(type) {
+	case nil:
+		logger.Info("deleted template")
+		return id, nil
+	case *ent.NotFoundError:
+		err := gqlerror.Errorf("template not found")
+		logger.Error(err.Message)
+		return id, err
+	default:
+		logger.Error("cannot delete template", zap.Error(err))
+		return id, fmt.Errorf("deleting template: %w", err)
+	}
+}
 
 func (r mutationResolver) validatedPropertyInputsFromTemplate(
 	ctx context.Context,
@@ -30,15 +151,15 @@ func (r mutationResolver) validatedPropertyInputsFromTemplate(
 	case models.PropertyEntityWorkOrder:
 		var template *ent.WorkOrderTemplate
 		if template, err = r.ClientFrom(ctx).WorkOrderTemplate.Get(ctx, tmplID); err != nil {
-			return nil, fmt.Errorf("can't read work order type: %w", err)
+			return nil, fmt.Errorf("can't read work order template: %w", err)
 		}
 		types, err = template.QueryPropertyTypes().
 			Where(propertytype.Deleted(false)).
 			All(ctx)
 	case models.PropertyEntityProject:
-		var template *ent.ProjectType
-		if template, err = r.ClientFrom(ctx).ProjectType.Get(ctx, tmplID); err != nil {
-			return nil, fmt.Errorf("can't read project type: %w", err)
+		var template *ent.ProjectTemplate
+		if template, err = r.ClientFrom(ctx).ProjectTemplate.Get(ctx, tmplID); err != nil {
+			return nil, fmt.Errorf("can't read project template: %w", err)
 		}
 		types, err = template.QueryProperties().
 			Where(propertytype.Deleted(false)).
