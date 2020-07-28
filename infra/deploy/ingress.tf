@@ -377,7 +377,7 @@ data "aws_iam_policy_document" "cert_manager" {
 
   statement {
     actions = [
-      "route53:ChangeResourceRecordSet",
+      "route53:ChangeResourceRecordSets",
       "route53:ListResourceRecordSets",
     ]
 
@@ -425,6 +425,10 @@ resource "helm_release" "cert_manager" {
     name: ${module.cert_manager_role.service_account_name}
     annotations:
       eks.amazonaws.com/role-arn: ${module.cert_manager_role.role_arn}
+  securityContext:
+    fsGroup: 1001
+  extraArgs:
+    - --issuer-ambient-credentials
   prometheus:
     servicemonitor:
       enabled: true
