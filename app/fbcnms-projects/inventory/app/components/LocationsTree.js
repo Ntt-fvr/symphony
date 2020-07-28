@@ -16,6 +16,7 @@ import InventoryQueryRenderer from '../components/InventoryQueryRenderer';
 import InventoryTreeView from './InventoryTreeView';
 import React, {useContext} from 'react';
 import classNames from 'classnames';
+import fbt from 'fbt';
 import withInventoryErrorBoundary from '../common/withInventoryErrorBoundary';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
@@ -99,7 +100,11 @@ const LocationsTree = ({
         render={props => {
           return (
             <InventoryTreeView
-              title="Locations"
+              title={fbt('Locations', 'Locations header')}
+              subtitle={fbt(
+                'Add and find equipment, documentation and other details for each location.',
+                'Locations subheader',
+              )}
               selectedId={selectedLocationId}
               dummyRootTitle="Add top-level location"
               tree={

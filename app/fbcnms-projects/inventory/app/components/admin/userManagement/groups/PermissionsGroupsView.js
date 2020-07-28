@@ -22,8 +22,13 @@ import {useRouter} from '@fbcnms/ui/hooks';
 import {useUsersGroups} from '../data/UsersGroups';
 
 export const PERMISSION_GROUPS_VIEW_NAME = fbt(
-  'Groups',
+  'Permission Groups',
   'Header for view showing system permissions groups settings',
+);
+
+export const PERMISSION_GROUPS_VIEW_SUBHEADER = fbt(
+  "Create groups of users, choose which data they have access to, and what theyֿ're allowed to do with it.",
+  'Subheader for view showing system permissions groups settings',
 );
 
 const useStyles = makeStyles(() => ({

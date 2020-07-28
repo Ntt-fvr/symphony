@@ -180,7 +180,11 @@ const WorkOrderComparisonView = () => {
   }
 
   const header = {
-    title: 'Work Orders',
+    title: fbt('Work Orders', 'Work order header'),
+    subtitle: fbt(
+      'Find and create work orders, assign them to team members and track their status.',
+      'Work order subheader',
+    ),
     searchBar: (
       <div className={classes.powerSearchBarWrapper}>
         <PowerSearchBar

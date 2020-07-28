@@ -22,6 +22,7 @@ import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import LocationTypeItem from './LocationTypeItem';
 import React, {useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
+import fbt from 'fbt';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'relay-runtime';
@@ -210,10 +211,11 @@ const LocationTypes = () => {
         <div className={classes.firstRow}>
           <ConfigueTitle
             className={classes.title}
-            title={'Location Types'}
-            subtitle={
-              'Drag and drop location types to arrange them by size, from largest to smallest'
-            }
+            title={fbt('Location Types', 'Location Types header')}
+            subtitle={fbt(
+              'Create the different types of locations where your equipment will be placed, such as "City", "Neighborhood" or "Building". Drag and drop location types to arrange them by size, from largest to smallest.',
+              'Location Types subheader',
+            )}
           />
           <div className={classes.addButtonContainer}>
             {isSaving ? (

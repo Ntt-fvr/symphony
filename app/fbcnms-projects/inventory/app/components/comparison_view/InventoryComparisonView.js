@@ -15,6 +15,8 @@ import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import PowerSearchBarRouter from './PowerSearchBarRouter';
 import PowerSearchFilterSubjectDropDown from '../power_search/PowerSearchFilterSubjectDropDown';
 import React, {useState} from 'react';
+import ViewHeader from '@fbcnms/ui/components/design-system/View/ViewHeader';
+import fbt from 'fbt';
 import {EntityTypeMap} from './ComparisonViewTypes';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
@@ -41,7 +43,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.common.white,
     height: '100%',
   },
   searchResults: {
@@ -51,6 +52,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'row',
     boxShadow: '0px 2px 2px 0px rgba(0, 0, 0, 0.1)',
+  },
+  searchArea: {
+    padding: '16px 24px',
   },
 }));
 
@@ -124,24 +128,33 @@ const InventoryComparisonView = () => {
       <div className={classes.root}>
         <div className={classes.searchResults}>
           <div className={classes.root}>
-            <div className={classes.searchBar}>
-              <PowerSearchFilterSubjectDropDown
-                subject={subject}
-                onSubjectChange={onSubjectChange}
-              />
-              <Divider orientation="vertical" />
-              <PowerSearchBarRouter
-                filters={filters}
-                subject={subject}
-                onFiltersChanged={onFiltersChange}
-                footer={
-                  count != null
-                    ? count > QUERY_LIMIT
-                      ? `1 to ${QUERY_LIMIT} of ${count}`
-                      : `1 to ${count}`
-                    : null
-                }
-              />
+            <ViewHeader
+              title={fbt('Search', 'Search header')}
+              subtitle={fbt(
+                'Filter to see information about equipment, links, ports and locations based on data from your inventory.',
+                'Search subheader',
+              )}
+            />
+            <div className={classes.searchArea}>
+              <div className={classes.searchBar}>
+                <PowerSearchFilterSubjectDropDown
+                  subject={subject}
+                  onSubjectChange={onSubjectChange}
+                />
+                <Divider orientation="vertical" />
+                <PowerSearchBarRouter
+                  filters={filters}
+                  subject={subject}
+                  onFiltersChanged={onFiltersChange}
+                  footer={
+                    count != null
+                      ? count > QUERY_LIMIT
+                        ? `1 to ${QUERY_LIMIT} of ${count}`
+                        : `1 to ${count}`
+                      : null
+                  }
+                />
+              </div>
             </div>
             <InventoryComparisonViewRouter
               filters={filters}

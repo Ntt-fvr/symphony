@@ -83,7 +83,11 @@ const ProjectComparisonView = () => {
     );
   }
   const header = {
-    title: 'Projects',
+    title: fbt('Projects', 'Projects header'),
+    subtitle: fbt(
+      'Manage and create new projects, which include multiple work orders.',
+      'Projects subheader',
+    ),
     actionButtons: [
       <FormActionWithPermissions
         permissions={{

@@ -17,6 +17,7 @@ import NewUserDialog from './users/NewUserDialog';
 import PermissionsGroupCard from './groups/PermissionsGroupCard';
 import PermissionsGroupsView, {
   PERMISSION_GROUPS_VIEW_NAME,
+  PERMISSION_GROUPS_VIEW_SUBHEADER,
 } from './groups/PermissionsGroupsView';
 import PermissionsPoliciesView, {
   PERMISSION_POLICIES_VIEW_NAME,
@@ -34,8 +35,13 @@ import {useCallback, useMemo, useState} from 'react';
 import {useHistory, useRouteMatch} from 'react-router-dom';
 
 const USERS_HEADER = fbt(
-  'Users and Roles',
+  'Users & Roles',
   'Header for view showing system users settings',
+);
+
+const USERS_SUBHEADER = fbt(
+  "Add and manage your organization's users by entering their details and selecting a role.",
+  'Subheader for view showing system users settings',
 );
 
 const UserManaementForm = () => {
@@ -64,8 +70,7 @@ const UserManaementForm = () => {
         component: {
           header: {
             title: `${USERS_HEADER}`,
-            subtitle:
-              'Add and manage users by entering their details and selecting a role.',
+            subtitle: `${USERS_SUBHEADER}`,
             actionButtons: [
               <Button onClick={() => setAddingNewUser(true)}>
                 <fbt desc="">Add User</fbt>
@@ -84,7 +89,7 @@ const UserManaementForm = () => {
         component: {
           header: {
             title: `${PERMISSION_GROUPS_VIEW_NAME}`,
-            subtitle: 'Create and manage groups and apply policies to them.',
+            subtitle: `${PERMISSION_GROUPS_VIEW_SUBHEADER}`,
             actionButtons: [
               <Button onClick={() => history.push(`group/${NEW_DIALOG_PARAM}`)}>
                 <fbt desc="">Create Group</fbt>

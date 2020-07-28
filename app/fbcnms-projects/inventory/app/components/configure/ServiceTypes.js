@@ -19,6 +19,7 @@ import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import React from 'react';
 import ServiceTypeItem from './ServiceTypeItem';
+import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
@@ -135,8 +136,11 @@ class ServiceTypes extends React.Component<Props, State> {
                 <div className={classes.firstRow}>
                   <ConfigueTitle
                     className={classes.title}
-                    title={'Service Types'}
-                    subtitle={'Manage the types of services in your inventory'}
+                    title={fbt('Service Types', 'Service Types header')}
+                    subtitle={fbt(
+                      'Add and manage the types of services that are used in your network topology.',
+                      'Service Types subheader',
+                    )}
                   />
                   <div className={classes.addButtonContainer}>
                     <FormActionWithPermissions

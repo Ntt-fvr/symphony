@@ -46,23 +46,18 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '6px',
     paddingBottom: '6px',
     paddingLeft: '24px',
-    '& $headerContainer': {
-      marginLeft: '10px',
-    },
   },
   titleContainer: {
-    display: 'flex',
-    alignItems: 'center',
     paddingRight: '24px',
-    marginBottom: '16px',
     marginLeft: '24px',
   },
   title: {
-    lineHeight: '100%',
-    flexGrow: 1,
+    display: 'block',
     fontWeight: 'bold',
     fontSize: '16px',
-    lineHeight: '19px',
+  },
+  subtitle: {
+    color: theme.palette.gray13,
   },
   panel: {
     width: '100%',
@@ -107,6 +102,8 @@ type Props = $ReadOnly<{|
   tree: Location[],
   /** Title to be displayed **/
   title?: string,
+  /** Subtitle to be displayed **/
+  subtitle?: string,
   /** Content to the right on the title **/
   dummyRootTitle?: ?string,
   /** Callback function fired when a tree leaf is clicked. */
@@ -117,7 +114,14 @@ type Props = $ReadOnly<{|
 |}>;
 
 const InventoryTreeView = (props: Props) => {
-  const {tree, title, dummyRootTitle, selectedId, getHoverRightContent} = props;
+  const {
+    tree,
+    title,
+    subtitle,
+    dummyRootTitle,
+    selectedId,
+    getHoverRightContent,
+  } = props;
   const classes = useStyles();
   const [locationHierarchy, setLocationHierarchy] = useState([]);
 
@@ -154,6 +158,9 @@ const InventoryTreeView = (props: Props) => {
     <div className={classes.root}>
       <div className={classes.titleContainer}>
         <Text className={classes.title}>{title}</Text>
+        <Text className={classes.subtitle} variant="subtitle2">
+          {subtitle}
+        </Text>
       </div>
       <div className={classes.treeContainer}>
         <PerfectScrollbar>
