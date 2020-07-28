@@ -362,3 +362,72 @@ resource "helm_release" "external_dns" {
   VALUES
   ]
 }
+
+# policy required by cert manager
+data "aws_iam_policy_document" "cert_manager" {
+  statement {
+    actions = [
+      "route53:GetChange",
+    ]
+
+    resources = [
+      "arn:aws:route53:::change/*",
+    ]
+  }
+
+  statement {
+    actions = [
+      "route53:ChangeResourceRecordSet",
+      "route53:ListResourceRecordSets",
+    ]
+
+    resources = [
+      format(
+        "arn:aws:route53:::hostedzone/%s",
+        data.aws_route53_zone.ctf.id,
+      ),
+    ]
+  }
+
+  statement {
+    actions = [
+      "route53:ListHostedZonesByName",
+    ]
+
+    resources = ["*"]
+  }
+}
+
+# iam role for cert manager
+module "cert_manager_role" {
+  source                    = "./modules/irsa"
+  role_name_prefix          = "CertManagerRole"
+  role_path                 = local.eks_sa_role_path
+  role_policy               = data.aws_iam_policy_document.cert_manager.json
+  service_account_name      = "cert-manager"
+  service_account_namespace = "cert-manager"
+  oidc_provider_arn         = module.eks.oidc_provider_arn
+  tags                      = local.tags
+}
+
+# cert manager is a certificate management controller.
+resource "helm_release" "cert_manager" {
+  name             = "cert-manager"
+  repository       = local.helm_repository.jetstack
+  chart            = "cert-manager"
+  version          = "0.16.0"
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  values = [<<VALUES
+  installCRDs: true
+  serviceAccount:
+    name: ${module.cert_manager_role.service_account_name}
+    annotations:
+      eks.amazonaws.com/role-arn: ${module.cert_manager_role.role_arn}
+  prometheus:
+    servicemonitor:
+      enabled: true
+  VALUES
+  ]
+}
