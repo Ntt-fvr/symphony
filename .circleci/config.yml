@@ -664,9 +664,9 @@ jobs:
           name: Run Relay Build Check
           <<: *invdir
           command: |
-            yarn relay_oss
+            yarn relay
             if ! git status | grep 'nothing to commit'; then
-              echo "'yarn relay_oss' modified changes. Please run 'yarn relay_oss' from /fbcnms-projects/inventory" >&2
+              echo "'yarn relay' modified changes. Please run 'yarn relay' from /fbcnms-projects/inventory" >&2
               echo "'git status' output is:"
               git status
               exit 1
