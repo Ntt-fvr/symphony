@@ -169,7 +169,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolv
 		Name:          serviceName,
 		ServiceTypeID: serviceType1.ID,
 		Properties:    service1PropInput,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -182,7 +182,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolv
 		Name:          service2Name,
 		ServiceTypeID: serviceType2.ID,
 		Properties:    service2PropInput,
-		Status:        pointerToServiceStatus(models.ServiceStatusInService),
+		Status:        service.StatusInService,
 	})
 	require.NoError(t, err)
 
@@ -195,7 +195,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolv
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          service3Name,
 		ServiceTypeID: serviceType3.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 }
@@ -220,7 +220,7 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 	require.NoError(t, err)
 
 	require.Equal(t, "D243", *s1.ExternalID)
-	require.Equal(t, models.ServiceStatusPending.String(), s1.Status)
+	require.Equal(t, service.StatusPending, s1.Status)
 
 	prop1, err := s1.QueryProperties().Where(property.HasTypeWith(propertytype.TypeEQ(propertytype.TypeString))).Only(ctx)
 	require.NoError(t, err)
@@ -237,7 +237,7 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 
 	require.Equal(t, "Donald", customer.Name)
 	require.Equal(t, "U333", *customer.ExternalID)
-	require.Equal(t, models.ServiceStatusInService.String(), s2.Status)
+	require.Equal(t, service.StatusInService, s2.Status)
 
 	prop3, err := s2.QueryProperties().Where(property.HasTypeWith(propertytype.TypeEQ(propertytype.TypeFloat))).Only(ctx)
 	require.NoError(t, err)
@@ -250,7 +250,7 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 	s3, err := r.client.Service.Query().Where(service.Name("newServiceName")).Only(ctx)
 	require.NoError(t, err)
 	require.Equal(t, "D24345", *s3.ExternalID)
-	require.Equal(t, models.ServiceStatusPending.String(), s3.Status)
+	require.Equal(t, service.StatusPending, s3.Status)
 }
 
 func exportServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) bytes.Buffer {

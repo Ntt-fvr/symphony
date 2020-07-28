@@ -64,7 +64,7 @@ func (su *ServiceUpdate) ClearExternalID() *ServiceUpdate {
 }
 
 // SetStatus sets the status field.
-func (su *ServiceUpdate) SetStatus(s string) *ServiceUpdate {
+func (su *ServiceUpdate) SetStatus(s service.Status) *ServiceUpdate {
 	su.mutation.SetStatus(s)
 	return su
 }
@@ -287,6 +287,11 @@ func (su *ServiceUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
 		}
 	}
+	if v, ok := su.mutation.Status(); ok {
+		if err := service.StatusValidator(v); err != nil {
+			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
 
 	if _, ok := su.mutation.TypeID(); su.mutation.TypeCleared() && !ok {
 		return 0, errors.New("ent: clearing a unique edge \"type\"")
@@ -388,7 +393,7 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: service.FieldStatus,
 		})
@@ -701,7 +706,7 @@ func (suo *ServiceUpdateOne) ClearExternalID() *ServiceUpdateOne {
 }
 
 // SetStatus sets the status field.
-func (suo *ServiceUpdateOne) SetStatus(s string) *ServiceUpdateOne {
+func (suo *ServiceUpdateOne) SetStatus(s service.Status) *ServiceUpdateOne {
 	suo.mutation.SetStatus(s)
 	return suo
 }
@@ -924,6 +929,11 @@ func (suo *ServiceUpdateOne) Save(ctx context.Context) (*Service, error) {
 			return nil, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
 		}
 	}
+	if v, ok := suo.mutation.Status(); ok {
+		if err := service.StatusValidator(v); err != nil {
+			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
 
 	if _, ok := suo.mutation.TypeID(); suo.mutation.TypeCleared() && !ok {
 		return nil, errors.New("ent: clearing a unique edge \"type\"")
@@ -1023,7 +1033,7 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 	}
 	if value, ok := suo.mutation.Status(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: service.FieldStatus,
 		})

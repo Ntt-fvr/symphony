@@ -30,7 +30,7 @@ type Service struct {
 	// ExternalID holds the value of the "external_id" field.
 	ExternalID *string `json:"external_id,omitempty"`
 	// Status holds the value of the "status" field.
-	Status string `json:"status,omitempty"`
+	Status service.Status `json:"status,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ServiceQuery when eager-loading is set.
 	Edges        ServiceEdges `json:"edges"`
@@ -181,7 +181,7 @@ func (s *Service) assignValues(values ...interface{}) error {
 	if value, ok := values[4].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field status", values[4])
 	} else if value.Valid {
-		s.Status = value.String
+		s.Status = service.Status(value.String)
 	}
 	values = values[5:]
 	if len(values) == len(service.ForeignKeys) {
@@ -264,7 +264,7 @@ func (s *Service) String() string {
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", status=")
-	builder.WriteString(s.Status)
+	builder.WriteString(fmt.Sprintf("%v", s.Status))
 	builder.WriteByte(')')
 	return builder.String()
 }

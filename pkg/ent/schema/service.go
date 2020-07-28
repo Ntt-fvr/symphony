@@ -181,7 +181,13 @@ func (Service) Fields() []ent.Field {
 			Nillable().
 			NotEmpty().
 			Unique(),
-		field.String("status"),
+		field.Enum("status").
+			ValueMap(map[string]string{
+				"Pending":      "PENDING",
+				"InService":    "IN_SERVICE",
+				"Maintenance":  "MAINTENANCE",
+				"Disconnected": "DISCONNECTED",
+			}),
 	}
 }
 

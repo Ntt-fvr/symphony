@@ -48,10 +48,6 @@ func (serviceResolver) ServiceType(ctx context.Context, obj *ent.Service) (*ent.
 	return obj.QueryType().Only(ctx)
 }
 
-func (serviceResolver) Status(_ context.Context, obj *ent.Service) (models.ServiceStatus, error) {
-	return models.ServiceStatus(obj.Status), nil
-}
-
 func (serviceResolver) Upstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error) {
 	return obj.QueryUpstream().All(ctx)
 }

@@ -148,7 +148,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		return nil, err
 	}
 
-	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod.String(), externalID, customerName, customerExternalID, service.Status}
+	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod.String(), externalID, customerName, customerExternalID, service.Status.String()}
 	row = append(row, endpoints...)
 	row = append(row, properties...)
 

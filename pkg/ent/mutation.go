@@ -27297,7 +27297,7 @@ type ServiceMutation struct {
 	update_time       *time.Time
 	name              *string
 	external_id       *string
-	status            *string
+	status            *service.Status
 	clearedFields     map[string]struct{}
 	_type             *int
 	cleared_type      bool
@@ -27558,12 +27558,12 @@ func (m *ServiceMutation) ResetExternalID() {
 }
 
 // SetStatus sets the status field.
-func (m *ServiceMutation) SetStatus(s string) {
+func (m *ServiceMutation) SetStatus(s service.Status) {
 	m.status = &s
 }
 
 // Status returns the status value in the mutation.
-func (m *ServiceMutation) Status() (r string, exists bool) {
+func (m *ServiceMutation) Status() (r service.Status, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -27575,7 +27575,7 @@ func (m *ServiceMutation) Status() (r string, exists bool) {
 // If the Service object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ServiceMutation) OldStatus(ctx context.Context) (v string, err error) {
+func (m *ServiceMutation) OldStatus(ctx context.Context) (v service.Status, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
 	}
@@ -27990,7 +27990,7 @@ func (m *ServiceMutation) SetField(name string, value ent.Value) error {
 		m.SetExternalID(v)
 		return nil
 	case service.FieldStatus:
-		v, ok := value.(string)
+		v, ok := value.(service.Status)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

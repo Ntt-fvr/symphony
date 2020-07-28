@@ -724,11 +724,12 @@ input TechnicianCheckListItemInput {
 
 input TechnicianWorkOrderUploadInput {
   workOrderId: ID!
-  checklist: [TechnicianCheckListItemInput!] @deprecatedInput(
-    newField: "checkListCategories"
-    name: "TechnicianWorkOrderUploadInput.checklist"
-    duplicateError: "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together"
-  )
+  checklist: [TechnicianCheckListItemInput!]
+    @deprecatedInput(
+      newField: "checkListCategories"
+      name: "TechnicianWorkOrderUploadInput.checklist"
+      duplicateError: "Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together"
+    )
   checkListCategories: [CheckListCategoryInput!]
 }
 
@@ -1367,7 +1368,10 @@ enum WorkOrderStatus
   DONE
 }
 
-enum ServiceStatus {
+enum ServiceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/service.Status"
+  ) {
   PENDING
   IN_SERVICE
   MAINTENANCE
@@ -2552,7 +2556,7 @@ input ServiceTypeEditData {
 input ServiceCreateData {
   name: String!
   externalId: String
-  status: ServiceStatus = PENDING
+  status: ServiceStatus! = PENDING
   serviceTypeId: ID!
   customerId: ID
   upstreamServiceIds: [ID!]!

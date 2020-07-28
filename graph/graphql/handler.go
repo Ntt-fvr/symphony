@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/facebookincubator/symphony/graph/graphql/complexity"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
@@ -101,6 +102,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	)
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
 	srv.SetRecoverFunc(recoverFunc(cfg.Logger))
+	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))
 	srv.Use(ocgql.Tracer{})
 	srv.Use(ocgql.Metrics{})
 

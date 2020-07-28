@@ -1897,9 +1897,6 @@ func (r mutationResolver) MarkSiteSurveyNeeded(ctx context.Context, locationID i
 }
 
 func (r mutationResolver) AddService(ctx context.Context, data models.ServiceCreateData) (*ent.Service, error) {
-	if data.Status == nil {
-		return nil, errors.New("status is a mandatory param")
-	}
 	client := r.ClientFrom(ctx)
 	err := resolverutil.CheckServiceNameNotExist(ctx, client, data.Name)
 	if err != nil {
@@ -1913,7 +1910,7 @@ func (r mutationResolver) AddService(ctx context.Context, data models.ServiceCre
 	}
 	mutation := client.Service.Create().
 		SetName(data.Name).
-		SetStatus(data.Status.String()).
+		SetStatus(data.Status).
 		SetNillableExternalID(data.ExternalID).
 		SetTypeID(data.ServiceTypeID).
 		AddUpstreamIDs(data.UpstreamServiceIds...)
@@ -1965,7 +1962,7 @@ func (r mutationResolver) EditService(ctx context.Context, data models.ServiceEd
 	}
 
 	if data.Status != nil {
-		query.SetStatus(data.Status.String())
+		query.SetStatus(*data.Status)
 	}
 
 	if data.UpstreamServiceIds != nil {

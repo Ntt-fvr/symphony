@@ -3246,7 +3246,7 @@ func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[4] = &Field{
-		Type:  "string",
+		Type:  "service.Status",
 		Name:  "status",
 		Value: string(buf),
 	}

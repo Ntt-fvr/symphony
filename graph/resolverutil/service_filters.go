@@ -48,10 +48,22 @@ func serviceNameFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (
 }
 
 func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
-		return q.Where(service.StatusIn(filter.StringSet...)), nil
+	if filter.Operator != models.FilterOperatorIsOneOf {
+		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+	statuses := make([]service.Status, 0, len(filter.StringSet))
+	seen := make(map[service.Status]struct{}, len(filter.StringSet))
+	for _, s := range filter.StringSet {
+		status := service.Status(s)
+		if err := service.StatusValidator(status); err != nil {
+			return nil, err
+		}
+		if _, ok := seen[status]; !ok {
+			seen[status] = struct{}{}
+			statuses = append(statuses, status)
+		}
+	}
+	return q.Where(service.StatusIn(statuses...)), nil
 }
 
 func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {

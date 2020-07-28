@@ -21,6 +21,7 @@ class CheckListDefinitionInput(DataClassJsonMixin):
     enumSelectionMode: Optional[CheckListItemEnumSelectionMode] = None
     id: Optional[str] = None
     index: Optional[int] = None
+    isMandatory: Optional[bool] = None
     enumValues: Optional[str] = None
     helpText: Optional[str] = None
 

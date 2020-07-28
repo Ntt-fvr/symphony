@@ -25,6 +25,7 @@ class CheckListItemInput(DataClassJsonMixin):
     yesNoResponse: Optional[YesNoResponse] = None
     id: Optional[str] = None
     index: Optional[int] = None
+    isMandatory: Optional[bool] = None
     helpText: Optional[str] = None
     enumValues: Optional[str] = None
     selectedEnumValues: Optional[str] = None

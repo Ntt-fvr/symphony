@@ -28,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
@@ -1525,7 +1526,6 @@ type ReportFilterResolver interface {
 	Filters(ctx context.Context, obj *ent.ReportFilter) ([]*models.GeneralFilter, error)
 }
 type ServiceResolver interface {
-	Status(ctx context.Context, obj *ent.Service) (models.ServiceStatus, error)
 	Customer(ctx context.Context, obj *ent.Service) (*ent.Customer, error)
 	ServiceType(ctx context.Context, obj *ent.Service) (*ent.ServiceType, error)
 	Upstream(ctx context.Context, obj *ent.Service) ([]*ent.Service, error)
@@ -8243,11 +8243,12 @@ input TechnicianCheckListItemInput {
 
 input TechnicianWorkOrderUploadInput {
   workOrderId: ID!
-  checklist: [TechnicianCheckListItemInput!] @deprecatedInput(
-    newField: "checkListCategories"
-    name: "TechnicianWorkOrderUploadInput.checklist"
-    duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-09-01. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
-  )
+  checklist: [TechnicianCheckListItemInput!]
+    @deprecatedInput(
+      newField: "checkListCategories"
+      name: "TechnicianWorkOrderUploadInput.checklist"
+      duplicateError: "Use ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` instead. Will be removed on 2020-09-01. You cannot use ` + "`" + `TechnicianWorkOrderUploadInput.checklist` + "`" + ` and ` + "`" + `TechnicianWorkOrderUploadInput.checkListCategories` + "`" + ` together"
+    )
   checkListCategories: [CheckListCategoryInput!]
 }
 
@@ -8886,7 +8887,10 @@ enum WorkOrderStatus
   DONE
 }
 
-enum ServiceStatus {
+enum ServiceStatus
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/service.Status"
+  ) {
   PENDING
   IN_SERVICE
   MAINTENANCE
@@ -10071,7 +10075,7 @@ input ServiceTypeEditData {
 input ServiceCreateData {
   name: String!
   externalId: String
-  status: ServiceStatus = PENDING
+  status: ServiceStatus! = PENDING
   serviceTypeId: ID!
   customerId: ID
   upstreamServiceIds: [ID!]!
@@ -32968,13 +32972,13 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 		Object:   "Service",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Service().Status(rctx, obj)
+		return obj.Status, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32986,9 +32990,9 @@ func (ec *executionContext) _Service_status(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.ServiceStatus)
+	res := resTmp.(service.Status)
 	fc.Result = res
-	return ec.marshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx, field.Selections, res)
+	return ec.marshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Service_customer(ctx context.Context, field graphql.CollectedField, obj *ent.Service) (ret graphql.Marshaler) {
@@ -44722,7 +44726,7 @@ func (ec *executionContext) unmarshalInputServiceCreateData(ctx context.Context,
 			}
 		case "status":
 			var err error
-			it.Status, err = ec.unmarshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx, v)
+			it.Status, err = ec.unmarshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -44782,7 +44786,7 @@ func (ec *executionContext) unmarshalInputServiceEditData(ctx context.Context, o
 			}
 		case "status":
 			var err error
-			it.Status, err = ec.unmarshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx, v)
+			it.Status, err = ec.unmarshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -51675,19 +51679,10 @@ func (ec *executionContext) _Service(ctx context.Context, sel ast.SelectionSet, 
 		case "externalId":
 			out.Values[i] = ec._Service_externalId(ctx, field, obj)
 		case "status":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Service_status(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._Service_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "customer":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -58428,12 +58423,12 @@ func (ec *executionContext) marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebo
 	return ec._ServiceSearchResult(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, v interface{}) (models.ServiceStatus, error) {
-	var res models.ServiceStatus
+func (ec *executionContext) unmarshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, v interface{}) (service.Status, error) {
+	var res service.Status
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, sel ast.SelectionSet, v models.ServiceStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, sel ast.SelectionSet, v service.Status) graphql.Marshaler {
 	return v
 }
 
@@ -61575,24 +61570,24 @@ func (ec *executionContext) unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfa
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, v interface{}) (models.ServiceStatus, error) {
-	var res models.ServiceStatus
+func (ec *executionContext) unmarshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, v interface{}) (service.Status, error) {
+	var res service.Status
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, sel ast.SelectionSet, v models.ServiceStatus) graphql.Marshaler {
+func (ec *executionContext) marshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, sel ast.SelectionSet, v service.Status) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, v interface{}) (*models.ServiceStatus, error) {
+func (ec *executionContext) unmarshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, v interface{}) (*service.Status, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx, v)
+	res, err := ec.unmarshalOServiceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx, v)
 	return &res, err
 }
 
-func (ec *executionContext) marshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceStatus(ctx context.Context, sel ast.SelectionSet, v *models.ServiceStatus) graphql.Marshaler {
+func (ec *executionContext) marshalOServiceStatus2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋserviceᚐStatus(ctx context.Context, sel ast.SelectionSet, v *service.Status) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

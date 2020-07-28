@@ -27,10 +27,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func pointerToServiceStatus(status models.ServiceStatus) *models.ServiceStatus {
-	return &status
-}
-
 func (m *importer) getOrCreateEquipmentType(
 	ctx context.Context, name string, positionsCount int,
 	positionPrefix string, portsCount int,
@@ -231,7 +227,7 @@ func (m *importer) getServiceIfExist(ctx context.Context, name string, serviceTy
 func (m *importer) getOrCreateService(
 	ctx context.Context, mr generated.MutationResolver, name string,
 	serviceType *ent.ServiceType, props []*models.PropertyInput,
-	customerID *int, externalID *string, status models.ServiceStatus,
+	customerID *int, externalID *string, status service.Status,
 ) (*ent.Service, bool, error) {
 	log := m.logger.For(ctx)
 	svc, err := m.getServiceIfExist(ctx, name, serviceType)
@@ -243,7 +239,7 @@ func (m *importer) getOrCreateService(
 		Name:          name,
 		ServiceTypeID: serviceType.ID,
 		Properties:    props,
-		Status:        pointerToServiceStatus(status),
+		Status:        status,
 		CustomerID:    customerID,
 		ExternalID:    externalID,
 	})

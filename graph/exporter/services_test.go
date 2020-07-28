@@ -16,6 +16,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -38,10 +39,6 @@ const (
 var endpointHeader = [...]string{"Endpoint Definition 1", "Location 1", "Equipment 1",
 	"Endpoint Definition 2", "Location 2", "Equipment 2", "Endpoint Definition 3", "Location 3", "Equipment 3",
 	"Endpoint Definition 4", "Location 4", "Equipment 4", "Endpoint Definition 5", "Location 5", "Equipment 5",
-}
-
-func pointerToServiceStatus(status models.ServiceStatus) *models.ServiceStatus {
-	return &status
 }
 
 func preparePropertyTypes() []*models.PropertyTypeInput {
@@ -144,7 +141,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 		Name:          "L2 S1",
 		ExternalID:    pointer.ToString("XS542"),
 		ServiceTypeID: serviceType1.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusInService),
+		Status:        service.StatusInService,
 	})
 	require.NoError(t, err)
 
@@ -172,7 +169,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 		ServiceTypeID: serviceType2.ID,
 		CustomerID:    &customer1.ID,
 		Properties:    []*models.PropertyInput{&strProp, &intProp, &boolProp},
-		Status:        pointerToServiceStatus(models.ServiceStatusMaintenance),
+		Status:        service.StatusMaintenance,
 	})
 	require.NoError(t, err)
 
@@ -181,7 +178,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 		ServiceTypeID: serviceType2.ID,
 		CustomerID:    &customer2.ID,
 		Properties:    []*models.PropertyInput{&floatProp},
-		Status:        pointerToServiceStatus(models.ServiceStatusDisconnected),
+		Status:        service.StatusDisconnected,
 	})
 	require.NoError(t, err)
 	e1, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
@@ -304,7 +301,7 @@ func TestServicesExport(t *testing.T) {
 				"XS542",
 				"",
 				"",
-				models.ServiceStatusInService.String(),
+				service.StatusInService.String(),
 			})
 		case ln[1] == "L3 S1":
 			require.EqualValues(t, ln[1:], []string{
@@ -314,7 +311,7 @@ func TestServicesExport(t *testing.T) {
 				"",
 				"Customer 1",
 				"AD123",
-				models.ServiceStatusMaintenance.String(),
+				service.StatusMaintenance.String(),
 				"",
 				"",
 				"",
@@ -343,7 +340,7 @@ func TestServicesExport(t *testing.T) {
 				"",
 				"Customer 2",
 				"",
-				models.ServiceStatusDisconnected.String(),
+				service.StatusDisconnected.String(),
 				"endpoint type1",
 				"loc1",
 				"e1",
@@ -437,7 +434,7 @@ func TestServiceWithFilters(t *testing.T) {
 						"",
 						"Customer 1",
 						"AD123",
-						models.ServiceStatusMaintenance.String(),
+						service.StatusMaintenance.String(),
 						"",
 						"",
 						"",
@@ -469,7 +466,7 @@ func TestServiceWithFilters(t *testing.T) {
 						"XS542",
 						"",
 						"",
-						models.ServiceStatusInService.String(),
+						service.StatusInService.String(),
 						"",
 						"",
 						"",

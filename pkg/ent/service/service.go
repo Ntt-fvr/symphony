@@ -7,6 +7,9 @@
 package service
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -132,3 +135,46 @@ var (
 	// ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	ExternalIDValidator func(string) error
 )
+
+// Status defines the type for the status enum field.
+type Status string
+
+// Status values.
+const (
+	StatusDisconnected Status = "DISCONNECTED"
+	StatusInService    Status = "IN_SERVICE"
+	StatusMaintenance  Status = "MAINTENANCE"
+	StatusPending      Status = "PENDING"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusDisconnected, StatusInService, StatusMaintenance, StatusPending:
+		return nil
+	default:
+		return fmt.Errorf("service: invalid enum value for status field: %q", s)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (s Status) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(s.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (s *Status) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", v)
+	}
+	*s = Status(str)
+	if err := StatusValidator(*s); err != nil {
+		return fmt.Errorf("%s is not a valid Status", str)
+	}
+	return nil
+}

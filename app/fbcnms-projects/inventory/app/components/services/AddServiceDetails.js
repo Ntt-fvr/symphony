@@ -189,6 +189,7 @@ const AddServiceDetails = (props: Props) => {
       data: {
         name,
         externalId: externalId != null && externalId !== '' ? externalId : null,
+        status: 'PENDING',
         serviceTypeId,
         customerId: customer?.id,
         properties: toPropertyInput(properties),

@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -139,8 +140,8 @@ func TestRemoveServiceType(t *testing.T) {
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "s1",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending)},
-	)
+		Status:        service.StatusPending,
+	})
 	require.NoError(t, err)
 
 	dm := servicetype.DiscoveryMethodInventory
@@ -154,7 +155,7 @@ func TestRemoveServiceType(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "s2",
 		ServiceTypeID: serviceType2.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	require.NotNil(t, s2)

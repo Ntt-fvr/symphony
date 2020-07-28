@@ -78,7 +78,7 @@ func (sc *ServiceCreate) SetNillableExternalID(s *string) *ServiceCreate {
 }
 
 // SetStatus sets the status field.
-func (sc *ServiceCreate) SetStatus(s string) *ServiceCreate {
+func (sc *ServiceCreate) SetStatus(s service.Status) *ServiceCreate {
 	sc.mutation.SetStatus(s)
 	return sc
 }
@@ -255,6 +255,11 @@ func (sc *ServiceCreate) preSave() error {
 	if _, ok := sc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
+	if v, ok := sc.mutation.Status(); ok {
+		if err := service.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
 	if _, ok := sc.mutation.TypeID(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
 	}
@@ -319,7 +324,7 @@ func (sc *ServiceCreate) createSpec() (*Service, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := sc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: service.FieldStatus,
 		})

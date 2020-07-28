@@ -10,6 +10,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -151,12 +152,12 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 	s1, _ := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "S1",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	_, _ = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "S2",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 
 	_, _ = mr.AddServiceLink(ctx, s1.ID, l1.ID)
@@ -556,7 +557,7 @@ func TestSearchLinksByService(t *testing.T) {
 	s1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2a",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s1.ID, data.l1)
@@ -565,7 +566,7 @@ func TestSearchLinksByService(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2b",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s2.ID, data.l1)

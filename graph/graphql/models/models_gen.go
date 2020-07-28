@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
@@ -652,7 +653,7 @@ type SearchNodesConnection struct {
 type ServiceCreateData struct {
 	Name               string           `json:"name"`
 	ExternalID         *string          `json:"externalId"`
-	Status             *ServiceStatus   `json:"status"`
+	Status             service.Status   `json:"status"`
 	ServiceTypeID      int              `json:"serviceTypeId"`
 	CustomerID         *int             `json:"customerId"`
 	UpstreamServiceIds []int            `json:"upstreamServiceIds"`
@@ -663,7 +664,7 @@ type ServiceEditData struct {
 	ID                 int              `json:"id"`
 	Name               *string          `json:"name"`
 	ExternalID         *string          `json:"externalId"`
-	Status             *ServiceStatus   `json:"status"`
+	Status             *service.Status  `json:"status"`
 	CustomerID         *int             `json:"customerId"`
 	UpstreamServiceIds []int            `json:"upstreamServiceIds"`
 	Properties         []*PropertyInput `json:"properties"`
@@ -1509,51 +1510,6 @@ func (e *ServiceFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ServiceFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ServiceStatus string
-
-const (
-	ServiceStatusPending      ServiceStatus = "PENDING"
-	ServiceStatusInService    ServiceStatus = "IN_SERVICE"
-	ServiceStatusMaintenance  ServiceStatus = "MAINTENANCE"
-	ServiceStatusDisconnected ServiceStatus = "DISCONNECTED"
-)
-
-var AllServiceStatus = []ServiceStatus{
-	ServiceStatusPending,
-	ServiceStatusInService,
-	ServiceStatusMaintenance,
-	ServiceStatusDisconnected,
-}
-
-func (e ServiceStatus) IsValid() bool {
-	switch e {
-	case ServiceStatusPending, ServiceStatusInService, ServiceStatusMaintenance, ServiceStatusDisconnected:
-		return true
-	}
-	return false
-}
-
-func (e ServiceStatus) String() string {
-	return string(e)
-}
-
-func (e *ServiceStatus) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ServiceStatus(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ServiceStatus", str)
-	}
-	return nil
-}
-
-func (e ServiceStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
