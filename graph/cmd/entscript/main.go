@@ -8,13 +8,11 @@ import (
 	"context"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"go.uber.org/zap"
@@ -111,15 +109,7 @@ func main() {
 				}
 			}()
 			ctx = ent.NewContext(ctx, tx.Client())
-			// Since the client is already uses transaction we can't have transactions on graphql also
-			r := resolver.New(
-				resolver.Config{
-					Logger:     logger,
-					Subscriber: pubsub.NewNopSubscriber(),
-				},
-				resolver.WithTransaction(false),
-			)
-			if err := migration(ctx, r, logger); err != nil {
+			if err := migration(ctx, logger); err != nil {
 				logger.For(ctx).Error("failed to run function", zap.Error(err))
 				if err := tx.Rollback(); err != nil {
 					logger.For(ctx).Error("cannot rollback transaction", zap.Error(err))

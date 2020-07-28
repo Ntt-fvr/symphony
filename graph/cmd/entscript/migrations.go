@@ -4,11 +4,10 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/graph/cmd/entscript/migrations"
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
-type migrationFunc func(ctx context.Context, r generated.ResolverRoot, logger log.Logger) error
+type migrationFunc func(ctx context.Context, logger log.Logger) error
 
 var migrationMap = map[string]migrationFunc{
 	"sample": migrations.MigrateSample,
