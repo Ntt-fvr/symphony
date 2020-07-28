@@ -25,7 +25,7 @@ title: Graphql API Breaking Changes
 * `PermissionSettings.canWrite` - Use specific policy in `adminPolicy`, `inventoryPolicy` or `workforcePolicy` instead. Will be removed on 2020-09-01
 
 ## Deprecated Input Fields
-
+* `TechnicianWorkOrderUploadInput.checklist` - Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together
 
 ## Deprecated Enums
 

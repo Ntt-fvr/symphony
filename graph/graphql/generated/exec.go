@@ -9085,6 +9085,8 @@ input CheckListItemInput {
   checked: Boolean
   files: [FileInput!]
   yesNoResponse: YesNoResponse
+  wifiData: [SurveyWiFiScanData!]
+  cellData: [SurveyCellScanData!]
 }
 
 enum FilterEntity {
@@ -42815,6 +42817,18 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 		case "yesNoResponse":
 			var err error
 			it.YesNoResponse, err = ec.unmarshalOYesNoResponse2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋchecklistitemᚐYesNoVal(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "wifiData":
+			var err error
+			it.WifiData, err = ec.unmarshalOSurveyWiFiScanData2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyWiFiScanDataᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cellData":
+			var err error
+			it.CellData, err = ec.unmarshalOSurveyCellScanData2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyCellScanDataᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

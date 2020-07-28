@@ -1831,12 +1831,13 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 		AssigneeID: &u.ID,
 		CheckListCategories: []*models.CheckListCategoryInput{{
 			Title: "Bar",
-			CheckList: []*models.CheckListItemInput{{
-				Title:   "Foo",
-				Type:    enum.CheckListItemTypeSimple,
-				Index:   pointer.ToInt(0),
-				Checked: pointer.ToBool(false),
-			},
+			CheckList: []*models.CheckListItemInput{
+				{
+					Title:   "Foo",
+					Type:    enum.CheckListItemTypeSimple,
+					Index:   pointer.ToInt(0),
+					Checked: pointer.ToBool(false),
+				},
 				{
 					Title: "CellScan",
 					Type:  enum.CheckListItemTypeCellScan,
@@ -1864,6 +1865,8 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 	})
 	require.NoError(t, err)
 
+	category, err := wo.QueryCheckListCategories().Only(ctx)
+	require.NoError(t, err)
 	fooID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeSimple)).OnlyID(ctx)
 	require.NoError(t, err)
 	cellScanID, err := wo.QueryCheckListCategories().QueryCheckListItems().Where(checklistitem.TypeEQ(enum.CheckListItemTypeCellScan)).OnlyID(ctx)
@@ -1874,44 +1877,54 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 	require.NoError(t, err)
 	techInput := models.TechnicianWorkOrderUploadInput{
 		WorkOrderID: wo.ID,
-		Checklist: []*models.TechnicianCheckListItemInput{
-			{
-				ID:      fooID,
-				Checked: pointer.ToBool(true),
-			},
-			{
-				ID: cellScanID,
-				CellData: []*models.SurveyCellScanData{{
-					NetworkType:    models.CellularNetworkTypeLte,
-					SignalStrength: -93,
-				}},
-			},
-			{
-				ID: filesID,
-				FilesData: []*models.FileInput{ // Adding one new file, updating an existing file, deleting a file
-					{
-						StoreKey:    "StoreKeyToAdd",
-						FileName:    "FileNameToAdd",
-						SizeInBytes: &sizeInBytes,
-						MimeType:    &mimeType,
-					},
-					{
-						ID:          &fileToKeepID,
-						StoreKey:    "StoreKeyAlreadyIn",
-						FileName:    "FileAlreadyInWorkOrder",
-						SizeInBytes: &sizeInBytes,
-						MimeType:    &mimeType,
+		CheckListCategories: []*models.CheckListCategoryInput{{
+			ID:          pointer.ToInt(category.ID),
+			Title:       category.Title,
+			Description: pointer.ToString("Desc"),
+			CheckList: []*models.CheckListItemInput{
+				{
+					ID:      pointer.ToInt(fooID),
+					Type:    enum.CheckListItemTypeSimple,
+					Checked: pointer.ToBool(true),
+				},
+				{
+					ID:   pointer.ToInt(cellScanID),
+					Type: enum.CheckListItemTypeCellScan,
+					CellData: []*models.SurveyCellScanData{{
+						NetworkType:    models.CellularNetworkTypeLte,
+						SignalStrength: -93,
+					}},
+				},
+				{
+					ID:   pointer.ToInt(filesID),
+					Type: enum.CheckListItemTypeFiles,
+					Files: []*models.FileInput{ // Adding one new file, updating an existing file, deleting a file
+						{
+							StoreKey:    "StoreKeyToAdd",
+							FileName:    "FileNameToAdd",
+							SizeInBytes: &sizeInBytes,
+							MimeType:    &mimeType,
+						},
+						{
+							ID:          &fileToKeepID,
+							StoreKey:    "StoreKeyAlreadyIn",
+							FileName:    "FileAlreadyInWorkOrder",
+							SizeInBytes: &sizeInBytes,
+							MimeType:    &mimeType,
+						},
 					},
 				},
 			},
-		},
+		}},
 	}
 
 	var rsp struct {
 		TechnicianWorkOrderUploadData struct {
 			ID                  string
 			CheckListCategories []struct {
-				CheckList []struct {
+				Title       string
+				Description *string
+				CheckList   []struct {
 					ID       string
 					Type     enum.CheckListItemType
 					Checked  *bool
@@ -1935,6 +1948,8 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 			technicianWorkOrderUploadData(input: $input) {
 				id
 				checkListCategories {
+					title
+					description
 					checkList {
 						id
 						type
@@ -1959,6 +1974,8 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 	)
 
 	require.Len(t, rsp.TechnicianWorkOrderUploadData.CheckListCategories, 1)
+	require.Equal(t, rsp.TechnicianWorkOrderUploadData.CheckListCategories[0].Title, "Bar")
+	require.Equal(t, *rsp.TechnicianWorkOrderUploadData.CheckListCategories[0].Description, "Desc")
 	require.Len(t, rsp.TechnicianWorkOrderUploadData.CheckListCategories[0].CheckList, 3)
 
 	for _, item := range rsp.TechnicianWorkOrderUploadData.CheckListCategories[0].CheckList {

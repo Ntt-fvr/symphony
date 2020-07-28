@@ -1566,6 +1566,8 @@ input CheckListItemInput {
   checked: Boolean
   files: [FileInput!]
   yesNoResponse: YesNoResponse
+  wifiData: [SurveyWiFiScanData!]
+  cellData: [SurveyCellScanData!]
 }
 
 enum FilterEntity {

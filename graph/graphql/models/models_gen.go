@@ -276,6 +276,8 @@ type CheckListItemInput struct {
 	Checked            *bool                                `json:"checked"`
 	Files              []*FileInput                         `json:"files"`
 	YesNoResponse      *checklistitem.YesNoVal              `json:"yesNoResponse"`
+	WifiData           []*SurveyWiFiScanData                `json:"wifiData"`
+	CellData           []*SurveyCellScanData                `json:"cellData"`
 }
 
 type CommentInput struct {
