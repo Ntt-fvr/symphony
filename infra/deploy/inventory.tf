@@ -87,7 +87,7 @@ resource "helm_release" "inventory" {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "inventory"
-  version             = "1.6.0"
+  version             = "1.6.1"
   keyring             = ""
   max_history         = 100
 
@@ -100,6 +100,7 @@ resource "helm_release" "inventory" {
       name      = local.inventory_name
       namespace = local.inventory_namespace
     })
+    host = format("*.%s", local.domains.symphony.name)
     front_logger_host = format("%s-http.%s.svc.cluster.local:9880",
       helm_release.fluentd_elasticsearch.name,
       helm_release.fluentd_elasticsearch.namespace,
