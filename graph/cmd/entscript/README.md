@@ -37,14 +37,6 @@ $ /bin/entscript --tenant=fb-test --user=fbuser@fb.com
 
 ### Prepare and make the changes locally
 
-First we'll need to get the repository locally in order to modify it:
-```$ cd ~ && git clone git@github.com:facebookincubator/symphony.git``` (or git pull)
-- If this step fails you'll need to [add an SSH key to your github account]([https://github.com/settings/keys](https://github.com/settings/keys))
-  - Do this by running ```ssh-keygen``` on your laptop and copying the key resulted in ```cat .ssh/id_rsa.pub``` to github.
- 
-
-```$ cd symphony/graph``` 
-
 - Find the github revision that is currently in production. It can be found in the output of the ```kubectl describe```  command, by finding the "Image" field and copying the suffix. for example:
   -  For an output that looks like this :  ```Image:          facebookconnectivity-symphony-docker.jfrog.io/graph:ddfd4f11851c02961d38b9036057887e0cb087f5```
   - The github revision is **ddfd4f11851c02961d38b9036057887e0cb087f5**
@@ -56,12 +48,13 @@ $ kubectl describe pod {graph_pod_name} # from previous steps
 ```
 $ git reset --hard {github_revision}
 ```
-- Now make the desired changes to entscript/main.go file.
+- Now make the desired changes to `graph/cmd/entscript/main.go` file.
 
 ### Upload your changes
 
 Compile and upload the script to the relevant kubernetes container
 ```
+$ cd symphony/graph
 $ mkdir build && GOOS=linux go build -o ./build ./cmd/entscript # builds the binary
 $ kubectl cp build/entscript {graph_pod_name}:/bin # copy binary to relevant pod
 ```
@@ -74,3 +67,8 @@ From kubernetes instance
 ```
 $ /bin/entscript --tenant=fb-test --user=fbuser@fb.com
 ```
+
+## Migrations
+
+A lot of times we run EntScript to migrate our data from new structures.
+All these migrations should be saved in files with the format `entscript\migrations\{migration-name}-{migration-date}.go`
