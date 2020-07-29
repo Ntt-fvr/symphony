@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 4c300d212ba891c9c73cf9aca9265ee5
+ * @relayHash d77280542ce086162cb0cd67a17d3040
  */
 
 /* eslint-disable */
@@ -18,11 +18,13 @@ import type { ConcreteRequest } from 'relay-runtime';
 type ProjectsMap_projects$ref = any;
 type ProjectsTableView_projects$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ProjectFilterType = "PROJECT_NAME" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_TYPE" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
   stringValue?: ?string,
+  idSet?: ?$ReadOnlyArray<string>,
+  maxDepth?: ?number,
 |};
 export type ProjectComparisonViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,

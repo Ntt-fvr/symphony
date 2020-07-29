@@ -147,6 +147,7 @@ func (Project) Edges() []ent.Edge {
 		edge.To("properties", Property.Type).
 			StructTag(`gqlgen:"properties"`),
 		edge.To("creator", User.Type).
+			Comment("Being used as Owner in the UI").
 			Unique().
 			StructTag(`gqlgen:"createdBy"`),
 	}

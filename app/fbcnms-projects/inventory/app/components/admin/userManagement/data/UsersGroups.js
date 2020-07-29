@@ -162,6 +162,7 @@ export function addGroup(
           name: newGroupValue.name,
           description: newGroupValue.description,
           members: newGroupValue.members.map(m => m.id),
+          policies: newGroupValue.policies.map(p => p.id),
         },
       },
       callbacks,

@@ -6,18 +6,29 @@ locals {
   ctf_admin_user  = "ctf:master"
   ctf_admin_group = "ctf:masters"
   # public domain name.
-  ctf_domain_name = "openctf.io"
+  ctf_root_domain_name = "openctf.io"
+  ctf_domain_name      = terraform.workspace != "default" ? "${terraform.workspace}.${local.ctf_root_domain_name}" : local.ctf_root_domain_name
 }
 
 # hosted zone for ctf records
 resource "aws_route53_zone" "ctf" {
-  name  = local.ctf_domain_name
-  count = terraform.workspace == "default" ? 1 : 0
+  name = local.ctf_domain_name
 }
 
-# hosted zone for ctf records
+# access root zone for ctf records
 data "aws_route53_zone" "ctf" {
-  name = local.ctf_domain_name
+  name  = local.ctf_root_domain_name
+  count = local.subdomain_count
+}
+
+# dns record from parent hosted zone to subdomain name servers
+resource "aws_route53_record" "ctf_subdomain" {
+  name    = aws_route53_zone.ctf.name
+  type    = "NS"
+  zone_id = data.aws_route53_zone.ctf[count.index].id
+  records = aws_route53_zone.ctf.name_servers
+  ttl     = 300
+  count   = local.subdomain_count
 }
 
 # kubernetes namespace for ctf deployment
@@ -110,7 +121,7 @@ resource "helm_release" "ctf_cert_issuer" {
             - dns01:
                 route53:
                   region: ${data.aws_region.current.name}
-                  hostedZoneID: ${data.aws_route53_zone.ctf.id}
+                  hostedZoneID: ${aws_route53_zone.ctf.id}
               selector:
                 dnsZones:
                   - ${local.ctf_domain_name}

@@ -19,6 +19,7 @@ export const EntityTypeMap = Object.freeze({
   port: 'port',
   properties: 'properties',
   work_order: 'work_order',
+  project: 'project',
   cell_scan: 'cell_scan',
   wifi_scan: 'wifi_scan',
   service: 'service',

@@ -23,6 +23,7 @@ import (
 
 // Injectors from wire.go:
 
+// NewServer creates a server from config.
 func NewServer(cfg Config) (*grpc.Server, func(), error) {
 	tenancy := cfg.Tenancy
 	db := cfg.DB
