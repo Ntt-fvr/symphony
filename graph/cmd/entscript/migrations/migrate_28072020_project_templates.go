@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -43,7 +44,7 @@ func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
 			return fmt.Errorf("failed to attach template to project: %w", err)
 		}
 		properties, err := client.Project.Query().
-			Where(project.ID(workOrderID)).
+			Where(project.ID(projectID)).
 			QueryProperties().
 			WithType().
 			All(ctx)

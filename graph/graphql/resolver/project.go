@@ -265,7 +265,7 @@ func (projectResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.Project)
 	return obj.QueryWorkOrders().Count(ctx)
 }
 
-func AddProjectTemplate(
+func (r mutationResolver) AddProjectTemplate(
 	ctx context.Context,
 	client *ent.Client,
 	projectTypeID int,
@@ -339,7 +339,7 @@ func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 
 func (r mutationResolver) CreateProject(ctx context.Context, input models.AddProjectInput) (*ent.Project, error) {
 	client := r.ClientFrom(ctx)
-	pTemplate, _, err := AddProjectTemplate(ctx, client, input.Type)
+	pTemplate, _, err := r.AddProjectTemplate(ctx, client, input.Type)
 	if err != nil {
 		return nil, err
 	}
