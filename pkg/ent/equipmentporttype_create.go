@@ -287,8 +287,8 @@ func (eptcb *EquipmentPortTypeCreateBulk) Save(ctx context.Context) ([]*Equipmen
 	mutators := make([]Mutator, len(eptcb.builders))
 	for i := range eptcb.builders {
 		func(i int, root context.Context) {
+			builder := eptcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := eptcb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -317,14 +317,16 @@ func (eptcb *EquipmentPortTypeCreateBulk) Save(ctx context.Context) ([]*Equipmen
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(eptcb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = eptcb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, eptcb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, eptcb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

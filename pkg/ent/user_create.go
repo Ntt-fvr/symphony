@@ -509,8 +509,8 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 	mutators := make([]Mutator, len(ucb.builders))
 	for i := range ucb.builders {
 		func(i int, root context.Context) {
+			builder := ucb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := ucb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -539,14 +539,16 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(ucb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = ucb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, ucb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, ucb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

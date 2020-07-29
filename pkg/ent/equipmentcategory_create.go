@@ -218,8 +218,8 @@ func (eccb *EquipmentCategoryCreateBulk) Save(ctx context.Context) ([]*Equipment
 	mutators := make([]Mutator, len(eccb.builders))
 	for i := range eccb.builders {
 		func(i int, root context.Context) {
+			builder := eccb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := eccb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -248,14 +248,16 @@ func (eccb *EquipmentCategoryCreateBulk) Save(ctx context.Context) ([]*Equipment
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(eccb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = eccb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, eccb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, eccb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

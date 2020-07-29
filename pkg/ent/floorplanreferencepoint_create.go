@@ -234,8 +234,8 @@ func (fprpcb *FloorPlanReferencePointCreateBulk) Save(ctx context.Context) ([]*F
 	mutators := make([]Mutator, len(fprpcb.builders))
 	for i := range fprpcb.builders {
 		func(i int, root context.Context) {
+			builder := fprpcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := fprpcb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -264,14 +264,16 @@ func (fprpcb *FloorPlanReferencePointCreateBulk) Save(ctx context.Context) ([]*F
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(fprpcb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = fprpcb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, fprpcb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, fprpcb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

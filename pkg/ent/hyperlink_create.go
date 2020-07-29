@@ -344,8 +344,8 @@ func (hcb *HyperlinkCreateBulk) Save(ctx context.Context) ([]*Hyperlink, error) 
 	mutators := make([]Mutator, len(hcb.builders))
 	for i := range hcb.builders {
 		func(i int, root context.Context) {
+			builder := hcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := hcb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -374,14 +374,16 @@ func (hcb *HyperlinkCreateBulk) Save(ctx context.Context) ([]*Hyperlink, error) 
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(hcb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = hcb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, hcb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, hcb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

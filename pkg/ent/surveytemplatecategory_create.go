@@ -274,8 +274,8 @@ func (stccb *SurveyTemplateCategoryCreateBulk) Save(ctx context.Context) ([]*Sur
 	mutators := make([]Mutator, len(stccb.builders))
 	for i := range stccb.builders {
 		func(i int, root context.Context) {
+			builder := stccb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := stccb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -304,14 +304,16 @@ func (stccb *SurveyTemplateCategoryCreateBulk) Save(ctx context.Context) ([]*Sur
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(stccb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = stccb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, stccb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, stccb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

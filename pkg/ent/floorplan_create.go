@@ -339,8 +339,8 @@ func (fpcb *FloorPlanCreateBulk) Save(ctx context.Context) ([]*FloorPlan, error)
 	mutators := make([]Mutator, len(fpcb.builders))
 	for i := range fpcb.builders {
 		func(i int, root context.Context) {
+			builder := fpcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := fpcb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -369,14 +369,16 @@ func (fpcb *FloorPlanCreateBulk) Save(ctx context.Context) ([]*FloorPlan, error)
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(fpcb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = fpcb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, fpcb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, fpcb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

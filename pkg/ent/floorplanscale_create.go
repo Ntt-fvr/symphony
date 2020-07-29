@@ -251,8 +251,8 @@ func (fpscb *FloorPlanScaleCreateBulk) Save(ctx context.Context) ([]*FloorPlanSc
 	mutators := make([]Mutator, len(fpscb.builders))
 	for i := range fpscb.builders {
 		func(i int, root context.Context) {
+			builder := fpscb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := fpscb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -281,14 +281,16 @@ func (fpscb *FloorPlanScaleCreateBulk) Save(ctx context.Context) ([]*FloorPlanSc
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(fpscb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = fpscb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, fpscb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, fpscb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

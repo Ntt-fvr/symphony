@@ -300,8 +300,8 @@ func (ppcb *PermissionsPolicyCreateBulk) Save(ctx context.Context) ([]*Permissio
 	mutators := make([]Mutator, len(ppcb.builders))
 	for i := range ppcb.builders {
 		func(i int, root context.Context) {
+			builder := ppcb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := ppcb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -330,14 +330,16 @@ func (ppcb *PermissionsPolicyCreateBulk) Save(ctx context.Context) ([]*Permissio
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(ppcb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = ppcb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, ppcb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, ppcb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

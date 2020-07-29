@@ -274,8 +274,8 @@ func (clccb *CheckListCategoryCreateBulk) Save(ctx context.Context) ([]*CheckLis
 	mutators := make([]Mutator, len(clccb.builders))
 	for i := range clccb.builders {
 		func(i int, root context.Context) {
+			builder := clccb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := clccb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -304,14 +304,16 @@ func (clccb *CheckListCategoryCreateBulk) Save(ctx context.Context) ([]*CheckLis
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(clccb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = clccb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, clccb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, clccb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

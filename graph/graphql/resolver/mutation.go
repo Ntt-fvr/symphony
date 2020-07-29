@@ -225,10 +225,10 @@ func (r mutationResolver) AddPropertyTypes(
 ) error {
 	var (
 		client = r.ClientFrom(ctx).PropertyType
-		err    error
+		types  = make([]*ent.PropertyTypeCreate, len(inputs))
 	)
-	for _, input := range inputs {
-		query := client.Create().
+	for i, input := range inputs {
+		types[i] = client.Create().
 			SetName(input.Name).
 			SetType(input.Type).
 			SetNillableNodeType(input.NodeType).
@@ -247,11 +247,10 @@ func (r mutationResolver) AddPropertyTypes(
 			SetNillableEditable(input.IsEditable).
 			SetNillableMandatory(input.IsMandatory).
 			SetNillableDeleted(input.IsDeleted)
-		parentSetter(query)
-		_, err = query.Save(ctx)
-		if err != nil {
-			return fmt.Errorf("creating property type: %w", err)
-		}
+		parentSetter(types[i])
+	}
+	if _, err := client.CreateBulk(types...).Save(ctx); err != nil {
+		return fmt.Errorf("creating property types: %w", err)
 	}
 	return nil
 }

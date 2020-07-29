@@ -500,8 +500,8 @@ func (swfscb *SurveyWiFiScanCreateBulk) Save(ctx context.Context) ([]*SurveyWiFi
 	mutators := make([]Mutator, len(swfscb.builders))
 	for i := range swfscb.builders {
 		func(i int, root context.Context) {
+			builder := swfscb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				builder := swfscb.builders[i]
 				if err := builder.preSave(); err != nil {
 					return nil, err
 				}
@@ -530,14 +530,16 @@ func (swfscb *SurveyWiFiScanCreateBulk) Save(ctx context.Context) ([]*SurveyWiFi
 				nodes[i].ID = int(id)
 				return nodes[i], nil
 			})
-			for i := len(swfscb.builders[i].hooks) - 1; i >= 0; i-- {
-				mut = swfscb.builders[i].hooks[i](mut)
+			for i := len(builder.hooks) - 1; i >= 0; i-- {
+				mut = builder.hooks[i](mut)
 			}
 			mutators[i] = mut
 		}(i, ctx)
 	}
-	if _, err := mutators[0].Mutate(ctx, swfscb.builders[0].mutation); err != nil {
-		return nil, err
+	if len(mutators) > 0 {
+		if _, err := mutators[0].Mutate(ctx, swfscb.builders[0].mutation); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }
