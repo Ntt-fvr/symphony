@@ -264,6 +264,16 @@ func (s *propertiesTestSuite) TestEmptyNodePropertyExists() {
 	s.Require().Error(err)
 }
 
+func (s *propertiesTestSuite) TestDeletedStringPropertyNotExists() {
+	_ = s.createPropertyType(propertytype.TypeString, "string", func(create *ent.PropertyTypeCreate) {
+		create.SetDeleted(true)
+	})
+	err := s.withTransaction(func(ctx context.Context, client *ent.Client) {
+		s.closeWorkOrder(ctx, client)
+	})
+	s.Require().NoError(err)
+}
+
 func TestPropertiesHooks(t *testing.T) {
 	suite.Run(t, &propertiesTestSuite{})
 }
