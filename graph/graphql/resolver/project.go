@@ -337,7 +337,7 @@ func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 
 func (r mutationResolver) CreateProject(ctx context.Context, input models.AddProjectInput) (*ent.Project, error) {
 	client := r.ClientFrom(ctx)
-	pTemplate, _, err := r.addProjectTemplate(ctx, input.Type)
+	pTemplate, err := r.addProjectTemplate(ctx, input.Type)
 	if err != nil {
 		return nil, err
 	}
