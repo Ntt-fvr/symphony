@@ -14,6 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type WorkOrderStatus = "DONE" | "PENDING" | "PLANNED" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type WorkOrdersView_workOrder$ref: FragmentReference;
@@ -46,6 +47,7 @@ export type WorkOrdersView_workOrder = $ReadOnlyArray<{|
     +name: string,
   |},
   +closeDate: ?any,
+  +priority: WorkOrderPriority,
   +$refType: WorkOrdersView_workOrder$ref,
 |}>;
 export type WorkOrdersView_workOrder$data = WorkOrdersView_workOrder;
@@ -181,10 +183,17 @@ return {
       "name": "closeDate",
       "args": null,
       "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "priority",
+      "args": null,
+      "storageKey": null
     }
   ]
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'b2ccb9d030961222fe67956ddfdefd2b';
+(node/*: any*/).hash = '7c7c1a73a39706db0bd7c6ff9320b21a';
 module.exports = node;
