@@ -265,11 +265,11 @@ func (projectResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.Project)
 	return obj.QueryWorkOrders().Count(ctx)
 }
 
-func (r mutationResolver) AddProjectTemplate(
+func (r mutationResolver) addProjectTemplate(
 	ctx context.Context,
-	client *ent.Client,
 	projectTypeID int,
-) (*ent.ProjectTemplate, map[int]int, error) {
+) (*ent.ProjectTemplate, error) {
+	client := r.ClientFrom(ctx)
 	projectType, err := client.ProjectType.Query().
 		Where(projecttype.ID(projectTypeID)).
 		WithProperties().
@@ -278,21 +278,19 @@ func (r mutationResolver) AddProjectTemplate(
 	if err != nil {
 		return nil, nil, fmt.Errorf("querying project type: %w", err)
 	}
-	typeToType := make(map[int]int, len(projectType.Edges.Properties))
 	tem, err := client.ProjectTemplate.
 		Create().
 		SetName(projectType.Name).
 		SetNillableDescription(projectType.Description).
 		Save(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("creating project template: %w", err)
+		return nil, fmt.Errorf("creating project template: %w", err)
 	}
 	for _, pt := range projectType.Edges.Properties {
-		npt, err := r.createTemplatePropertyType(ctx, pt, tem.ID, models.PropertyEntityProject)
+		_, err := r.createTemplatePropertyType(ctx, pt, tem.ID, models.PropertyEntityProject)
 		if err != nil {
-			return nil, nil, fmt.Errorf("creating property type: %w", err)
+			return nil, fmt.Errorf("creating property type: %w", err)
 		}
-		typeToType[pt.ID] = npt.ID
 	}
 	for _, wo := range projectType.Edges.WorkOrders {
 		wot, err := wo.QueryType().Only(ctx)
@@ -306,10 +304,10 @@ func (r mutationResolver) AddProjectTemplate(
 			SetProjectTemplate(tem).
 			Save(ctx)
 		if err != nil {
-			return nil, nil, fmt.Errorf("updating work orders: %w", err)
+			return nil, fmt.Errorf("updating work orders: %w", err)
 		}
 	}
-	return tem, typeToType, nil
+	return tem, nil
 }
 
 func (r mutationResolver) convertToProjectTemplatePropertyInputs(
@@ -339,7 +337,7 @@ func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 
 func (r mutationResolver) CreateProject(ctx context.Context, input models.AddProjectInput) (*ent.Project, error) {
 	client := r.ClientFrom(ctx)
-	pTemplate, _, err := r.AddProjectTemplate(ctx, client, input.Type)
+	pTemplate, _, err := r.addProjectTemplate(ctx, input.Type)
 	if err != nil {
 		return nil, err
 	}

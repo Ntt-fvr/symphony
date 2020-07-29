@@ -8,7 +8,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphql/resolver"
+	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -16,6 +17,93 @@ import (
 	"go.uber.org/zap"
 )
 
+func createTemplatePropertyType(
+	ctx context.Context,
+	client *ent.Client,
+	pt *ent.PropertyType,
+	id int,
+	entity models.PropertyEntity,
+) (*ent.PropertyType, error) {
+	mutation := client.PropertyType.Create().
+		SetName(pt.Name).
+		SetType(pt.Type).
+		SetNodeType(pt.NodeType).
+		SetIndex(pt.Index).
+		SetCategory(pt.Category).
+		SetNillableStringVal(pt.StringVal).
+		SetNillableIntVal(pt.IntVal).
+		SetNillableBoolVal(pt.BoolVal).
+		SetNillableFloatVal(pt.FloatVal).
+		SetNillableLatitudeVal(pt.LatitudeVal).
+		SetNillableLongitudeVal(pt.LongitudeVal).
+		SetIsInstanceProperty(pt.IsInstanceProperty).
+		SetNillableRangeFromVal(pt.RangeFromVal).
+		SetNillableRangeToVal(pt.RangeToVal).
+		SetEditable(pt.Editable).
+		SetMandatory(pt.Mandatory).
+		SetDeleted(pt.Deleted)
+	switch entity {
+	case models.PropertyEntityWorkOrder:
+		mutation = mutation.SetWorkOrderTemplateID(id)
+	case models.PropertyEntityProject:
+		mutation = mutation.SetProjectTemplateID(id)
+	}
+	result, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("creating property type: %w", err)
+	}
+	return result, nil
+}
+
+// AddProjectTemplate adds project template to existing project
+func addProjectTemplate(
+	ctx context.Context,
+	client *ent.Client,
+	projectTypeID int,
+) (*ent.ProjectTemplate, map[int]int, error) {
+	projectType, err := client.ProjectType.Query().
+		Where(projecttype.ID(projectTypeID)).
+		WithProperties().
+		WithWorkOrders().
+		Only(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("querying project type: %w", err)
+	}
+	typeToType := make(map[int]int, len(projectType.Edges.Properties))
+	tem, err := client.ProjectTemplate.
+		Create().
+		SetName(projectType.Name).
+		SetNillableDescription(projectType.Description).
+		Save(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("creating project template: %w", err)
+	}
+	for _, pt := range projectType.Edges.Properties {
+		npt, err := createTemplatePropertyType(ctx, client, pt, tem.ID, models.PropertyEntityProject)
+		if err != nil {
+			return nil, nil, fmt.Errorf("creating property type: %w", err)
+		}
+		typeToType[pt.ID] = npt.ID
+	}
+	for _, wo := range projectType.Edges.WorkOrders {
+		wot, err := wo.QueryType().Only(ctx)
+		if err != nil {
+			return nil, nil, fmt.Errorf("querying work order type: %w", err)
+		}
+		_, err = client.WorkOrderDefinition.
+			Create().
+			SetNillableIndex(pointer.ToInt(wo.Index)).
+			SetTypeID(wot.ID).
+			SetProjectTemplate(tem).
+			Save(ctx)
+		if err != nil {
+			return nil, nil, fmt.Errorf("updating work orders: %w", err)
+		}
+	}
+	return tem, typeToType, nil
+}
+
+// Migrate Project Template
 func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
 
 	client := ent.FromContext(ctx)
@@ -33,7 +121,7 @@ func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
 		if err != nil {
 			return fmt.Errorf("failed to query project type: %w", err)
 		}
-		projectTemplate, typeToType, err := resolver.AddProjectTemplate(ctx, client, projectTypeID)
+		projectTemplate, typeToType, err := addProjectTemplate(ctx, client, projectTypeID)
 		if err != nil {
 			return fmt.Errorf("failed to create project template: %w", err)
 		}
