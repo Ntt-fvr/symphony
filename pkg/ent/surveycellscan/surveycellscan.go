@@ -7,6 +7,9 @@
 package surveycellscan
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -144,3 +147,46 @@ var (
 	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	UpdateDefaultUpdateTime func() time.Time
 )
+
+// NetworkType defines the type for the network_type enum field.
+type NetworkType string
+
+// NetworkType values.
+const (
+	NetworkTypeCDMA  NetworkType = "CDMA"
+	NetworkTypeGSM   NetworkType = "GSM"
+	NetworkTypeLTE   NetworkType = "LTE"
+	NetworkTypeWCDMA NetworkType = "WCDMA"
+)
+
+func (nt NetworkType) String() string {
+	return string(nt)
+}
+
+// NetworkTypeValidator is a validator for the "network_type" field enum values. It is called by the builders before save.
+func NetworkTypeValidator(nt NetworkType) error {
+	switch nt {
+	case NetworkTypeCDMA, NetworkTypeGSM, NetworkTypeLTE, NetworkTypeWCDMA:
+		return nil
+	default:
+		return fmt.Errorf("surveycellscan: invalid enum value for network_type field: %q", nt)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (nt NetworkType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(nt.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (nt *NetworkType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", v)
+	}
+	*nt = NetworkType(str)
+	if err := NetworkTypeValidator(*nt); err != nil {
+		return fmt.Errorf("%s is not a valid NetworkType", str)
+	}
+	return nil
+}

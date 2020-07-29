@@ -7,7 +7,6 @@ package resolver
 import (
 	"context"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 )
 
@@ -39,10 +38,6 @@ func (surveyResolver) SourceFile(ctx context.Context, obj *ent.Survey) (*ent.Fil
 }
 
 type surveyCellScanResolver struct{}
-
-func (surveyCellScanResolver) NetworkType(_ context.Context, obj *ent.SurveyCellScan) (models.CellularNetworkType, error) {
-	return models.CellularNetworkType(obj.NetworkType), nil
-}
 
 func (surveyCellScanResolver) Timestamp(_ context.Context, obj *ent.SurveyCellScan) (*int, error) {
 	timestamp := int(obj.Timestamp.Unix())

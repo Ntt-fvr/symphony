@@ -3702,7 +3702,7 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
-		Type:  "string",
+		Type:  "surveycellscan.NetworkType",
 		Name:  "network_type",
 		Value: string(buf),
 	}

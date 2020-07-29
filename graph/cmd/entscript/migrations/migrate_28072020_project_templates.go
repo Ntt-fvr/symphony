@@ -9,6 +9,8 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
+	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"go.uber.org/zap"
 )
@@ -30,7 +32,7 @@ func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
 		if err != nil {
 			return fmt.Errorf("failed to query project type: %w", err)
 		}
-		projectTemplate, typeToType, err := resolver.AddWorkOrderTemplate(ctx, client, projectTypeID)
+		projectTemplate, typeToType, err := resolver.AddProjectTemplate(ctx, client, projectTypeID)
 		if err != nil {
 			return fmt.Errorf("failed to create project template: %w", err)
 		}

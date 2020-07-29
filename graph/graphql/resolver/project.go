@@ -265,38 +265,39 @@ func (projectResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.Project)
 	return obj.QueryWorkOrders().Count(ctx)
 }
 
-func (r mutationResolver) addProjectTemplate(
+func AddProjectTemplate(
 	ctx context.Context,
+	client *ent.Client,
 	projectTypeID int,
-) (*ent.ProjectTemplate, error) {
-	client := r.ClientFrom(ctx)
+) (*ent.ProjectTemplate, map[int]int, error) {
 	projectType, err := client.ProjectType.Query().
 		Where(projecttype.ID(projectTypeID)).
 		WithProperties().
 		WithWorkOrders().
 		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("querying project type: %w", err)
+		return nil, nil, fmt.Errorf("querying project type: %w", err)
 	}
-	tem, err := client.
-		ProjectTemplate.
+	typeToType := make(map[int]int, len(projectType.Edges.Properties))
+	tem, err := client.ProjectTemplate.
 		Create().
 		SetName(projectType.Name).
 		SetNillableDescription(projectType.Description).
 		Save(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("creating project template: %w", err)
+		return nil, nil, fmt.Errorf("creating project template: %w", err)
 	}
 	for _, pt := range projectType.Edges.Properties {
-		_, err := r.createTemplatePropertyType(ctx, pt, tem.ID, models.PropertyEntityProject)
+		npt, err := r.createTemplatePropertyType(ctx, pt, tem.ID, models.PropertyEntityProject)
 		if err != nil {
-			return nil, fmt.Errorf("creating property type: %w", err)
+			return nil, nil, fmt.Errorf("creating property type: %w", err)
 		}
+		typeToType[pt.ID] = npt.ID
 	}
 	for _, wo := range projectType.Edges.WorkOrders {
 		wot, err := wo.QueryType().Only(ctx)
 		if err != nil {
-			return nil, fmt.Errorf("querying work order type: %w", err)
+			return nil, nil, fmt.Errorf("querying work order type: %w", err)
 		}
 		_, err = client.WorkOrderDefinition.
 			Create().
@@ -305,10 +306,10 @@ func (r mutationResolver) addProjectTemplate(
 			SetProjectTemplate(tem).
 			Save(ctx)
 		if err != nil {
-			return nil, fmt.Errorf("updating work orders: %w", err)
+			return nil, nil, fmt.Errorf("updating work orders: %w", err)
 		}
 	}
-	return tem, nil
+	return tem, typeToType, nil
 }
 
 func (r mutationResolver) convertToProjectTemplatePropertyInputs(
@@ -338,7 +339,7 @@ func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 
 func (r mutationResolver) CreateProject(ctx context.Context, input models.AddProjectInput) (*ent.Project, error) {
 	client := r.ClientFrom(ctx)
-	pTemplate, err := r.addProjectTemplate(ctx, input.Type)
+	pTemplate, _, err := AddProjectTemplate(ctx, client, input.Type)
 	if err != nil {
 		return nil, err
 	}

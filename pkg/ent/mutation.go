@@ -31222,7 +31222,7 @@ type SurveyCellScanMutation struct {
 	id                      *int
 	create_time             *time.Time
 	update_time             *time.Time
-	network_type            *string
+	network_type            *surveycellscan.NetworkType
 	signal_strength         *int
 	addsignal_strength      *int
 	timestamp               *time.Time
@@ -31414,12 +31414,12 @@ func (m *SurveyCellScanMutation) ResetUpdateTime() {
 }
 
 // SetNetworkType sets the network_type field.
-func (m *SurveyCellScanMutation) SetNetworkType(s string) {
-	m.network_type = &s
+func (m *SurveyCellScanMutation) SetNetworkType(st surveycellscan.NetworkType) {
+	m.network_type = &st
 }
 
 // NetworkType returns the network_type value in the mutation.
-func (m *SurveyCellScanMutation) NetworkType() (r string, exists bool) {
+func (m *SurveyCellScanMutation) NetworkType() (r surveycellscan.NetworkType, exists bool) {
 	v := m.network_type
 	if v == nil {
 		return
@@ -31431,7 +31431,7 @@ func (m *SurveyCellScanMutation) NetworkType() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldNetworkType(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldNetworkType(ctx context.Context) (v surveycellscan.NetworkType, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldNetworkType is allowed only on UpdateOne operations")
 	}
@@ -31525,7 +31525,7 @@ func (m *SurveyCellScanMutation) Timestamp() (r time.Time, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldTimestamp(ctx context.Context) (v time.Time, err error) {
+func (m *SurveyCellScanMutation) OldTimestamp(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTimestamp is allowed only on UpdateOne operations")
 	}
@@ -31575,7 +31575,7 @@ func (m *SurveyCellScanMutation) BaseStationID() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldBaseStationID(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldBaseStationID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldBaseStationID is allowed only on UpdateOne operations")
 	}
@@ -31625,7 +31625,7 @@ func (m *SurveyCellScanMutation) NetworkID() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldNetworkID(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldNetworkID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldNetworkID is allowed only on UpdateOne operations")
 	}
@@ -31675,7 +31675,7 @@ func (m *SurveyCellScanMutation) SystemID() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldSystemID(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldSystemID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldSystemID is allowed only on UpdateOne operations")
 	}
@@ -31725,7 +31725,7 @@ func (m *SurveyCellScanMutation) CellID() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldCellID(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldCellID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCellID is allowed only on UpdateOne operations")
 	}
@@ -31775,7 +31775,7 @@ func (m *SurveyCellScanMutation) LocationAreaCode() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldLocationAreaCode(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldLocationAreaCode(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLocationAreaCode is allowed only on UpdateOne operations")
 	}
@@ -31825,7 +31825,7 @@ func (m *SurveyCellScanMutation) MobileCountryCode() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldMobileCountryCode(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldMobileCountryCode(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldMobileCountryCode is allowed only on UpdateOne operations")
 	}
@@ -31875,7 +31875,7 @@ func (m *SurveyCellScanMutation) MobileNetworkCode() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldMobileNetworkCode(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldMobileNetworkCode(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldMobileNetworkCode is allowed only on UpdateOne operations")
 	}
@@ -31925,7 +31925,7 @@ func (m *SurveyCellScanMutation) PrimaryScramblingCode() (r string, exists bool)
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldPrimaryScramblingCode(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldPrimaryScramblingCode(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPrimaryScramblingCode is allowed only on UpdateOne operations")
 	}
@@ -31975,7 +31975,7 @@ func (m *SurveyCellScanMutation) Operator() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldOperator(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldOperator(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldOperator is allowed only on UpdateOne operations")
 	}
@@ -32026,7 +32026,7 @@ func (m *SurveyCellScanMutation) Arfcn() (r int, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldArfcn(ctx context.Context) (v int, err error) {
+func (m *SurveyCellScanMutation) OldArfcn(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldArfcn is allowed only on UpdateOne operations")
 	}
@@ -32096,7 +32096,7 @@ func (m *SurveyCellScanMutation) PhysicalCellID() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldPhysicalCellID(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldPhysicalCellID(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPhysicalCellID is allowed only on UpdateOne operations")
 	}
@@ -32146,7 +32146,7 @@ func (m *SurveyCellScanMutation) TrackingAreaCode() (r string, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldTrackingAreaCode(ctx context.Context) (v string, err error) {
+func (m *SurveyCellScanMutation) OldTrackingAreaCode(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTrackingAreaCode is allowed only on UpdateOne operations")
 	}
@@ -32197,7 +32197,7 @@ func (m *SurveyCellScanMutation) TimingAdvance() (r int, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldTimingAdvance(ctx context.Context) (v int, err error) {
+func (m *SurveyCellScanMutation) OldTimingAdvance(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldTimingAdvance is allowed only on UpdateOne operations")
 	}
@@ -32268,7 +32268,7 @@ func (m *SurveyCellScanMutation) Earfcn() (r int, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldEarfcn(ctx context.Context) (v int, err error) {
+func (m *SurveyCellScanMutation) OldEarfcn(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldEarfcn is allowed only on UpdateOne operations")
 	}
@@ -32339,7 +32339,7 @@ func (m *SurveyCellScanMutation) Uarfcn() (r int, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldUarfcn(ctx context.Context) (v int, err error) {
+func (m *SurveyCellScanMutation) OldUarfcn(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUarfcn is allowed only on UpdateOne operations")
 	}
@@ -32410,7 +32410,7 @@ func (m *SurveyCellScanMutation) Latitude() (r float64, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldLatitude(ctx context.Context) (v float64, err error) {
+func (m *SurveyCellScanMutation) OldLatitude(ctx context.Context) (v *float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLatitude is allowed only on UpdateOne operations")
 	}
@@ -32481,7 +32481,7 @@ func (m *SurveyCellScanMutation) Longitude() (r float64, exists bool) {
 // If the SurveyCellScan object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyCellScanMutation) OldLongitude(ctx context.Context) (v float64, err error) {
+func (m *SurveyCellScanMutation) OldLongitude(ctx context.Context) (v *float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLongitude is allowed only on UpdateOne operations")
 	}
@@ -32860,7 +32860,7 @@ func (m *SurveyCellScanMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdateTime(v)
 		return nil
 	case surveycellscan.FieldNetworkType:
-		v, ok := value.(string)
+		v, ok := value.(surveycellscan.NetworkType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

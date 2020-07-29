@@ -30,6 +30,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -1564,8 +1565,6 @@ type SurveyResolver interface {
 	SurveyResponses(ctx context.Context, obj *ent.Survey) ([]*ent.SurveyQuestion, error)
 }
 type SurveyCellScanResolver interface {
-	NetworkType(ctx context.Context, obj *ent.SurveyCellScan) (models.CellularNetworkType, error)
-
 	Timestamp(ctx context.Context, obj *ent.SurveyCellScan) (*int, error)
 }
 type SurveyQuestionResolver interface {
@@ -9085,6 +9084,8 @@ input CheckListItemInput {
   checked: Boolean
   files: [FileInput!]
   yesNoResponse: YesNoResponse
+  wifiData: [SurveyWiFiScanData!]
+  cellData: [SurveyCellScanData!]
 }
 
 enum FilterEntity {
@@ -10360,7 +10361,10 @@ type EquipmentSearchResult {
   count: Int!
 }
 
-enum CellularNetworkType {
+enum CellularNetworkType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/surveycellscan.NetworkType"
+  ) {
   CDMA
   GSM
   LTE
@@ -34764,13 +34768,13 @@ func (ec *executionContext) _SurveyCellScan_networkType(ctx context.Context, fie
 		Object:   "SurveyCellScan",
 		Field:    field,
 		Args:     nil,
-		IsMethod: true,
+		IsMethod: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.SurveyCellScan().NetworkType(rctx, obj)
+		return obj.NetworkType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34782,9 +34786,9 @@ func (ec *executionContext) _SurveyCellScan_networkType(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.CellularNetworkType)
+	res := resTmp.(surveycellscan.NetworkType)
 	fc.Result = res
-	return ec.marshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCellularNetworkType(ctx, field.Selections, res)
+	return ec.marshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋsurveycellscanᚐNetworkType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_signalStrength(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -34878,9 +34882,9 @@ func (ec *executionContext) _SurveyCellScan_baseStationID(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_networkID(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -34909,9 +34913,9 @@ func (ec *executionContext) _SurveyCellScan_networkID(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_systemID(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -34940,9 +34944,9 @@ func (ec *executionContext) _SurveyCellScan_systemID(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_cellID(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -34971,9 +34975,9 @@ func (ec *executionContext) _SurveyCellScan_cellID(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_locationAreaCode(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35002,9 +35006,9 @@ func (ec *executionContext) _SurveyCellScan_locationAreaCode(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_mobileCountryCode(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35033,9 +35037,9 @@ func (ec *executionContext) _SurveyCellScan_mobileCountryCode(ctx context.Contex
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_mobileNetworkCode(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35064,9 +35068,9 @@ func (ec *executionContext) _SurveyCellScan_mobileNetworkCode(ctx context.Contex
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_primaryScramblingCode(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35095,9 +35099,9 @@ func (ec *executionContext) _SurveyCellScan_primaryScramblingCode(ctx context.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_operator(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35126,9 +35130,9 @@ func (ec *executionContext) _SurveyCellScan_operator(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_arfcn(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35157,9 +35161,9 @@ func (ec *executionContext) _SurveyCellScan_arfcn(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_physicalCellID(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35188,9 +35192,9 @@ func (ec *executionContext) _SurveyCellScan_physicalCellID(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_trackingAreaCode(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35219,9 +35223,9 @@ func (ec *executionContext) _SurveyCellScan_trackingAreaCode(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_timingAdvance(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35250,9 +35254,9 @@ func (ec *executionContext) _SurveyCellScan_timingAdvance(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_earfcn(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35281,9 +35285,9 @@ func (ec *executionContext) _SurveyCellScan_earfcn(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_uarfcn(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35312,9 +35316,9 @@ func (ec *executionContext) _SurveyCellScan_uarfcn(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(*int)
 	fc.Result = res
-	return ec.marshalOInt2int(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_latitude(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35343,9 +35347,9 @@ func (ec *executionContext) _SurveyCellScan_latitude(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyCellScan_longitude(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
@@ -35374,9 +35378,9 @@ func (ec *executionContext) _SurveyCellScan_longitude(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SurveyQuestion_id(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyQuestion) (ret graphql.Marshaler) {
@@ -42818,6 +42822,18 @@ func (ec *executionContext) unmarshalInputCheckListItemInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "wifiData":
+			var err error
+			it.WifiData, err = ec.unmarshalOSurveyWiFiScanData2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyWiFiScanDataᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cellData":
+			var err error
+			it.CellData, err = ec.unmarshalOSurveyCellScanData2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyCellScanDataᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -45052,7 +45068,7 @@ func (ec *executionContext) unmarshalInputSurveyCellScanData(ctx context.Context
 		switch k {
 		case "networkType":
 			var err error
-			it.NetworkType, err = ec.unmarshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCellularNetworkType(ctx, v)
+			it.NetworkType, err = ec.unmarshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋsurveycellscanᚐNetworkType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52368,19 +52384,10 @@ func (ec *executionContext) _SurveyCellScan(ctx context.Context, sel ast.Selecti
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "networkType":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._SurveyCellScan_networkType(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._SurveyCellScan_networkType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "signalStrength":
 			out.Values[i] = ec._SurveyCellScan_signalStrength(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -54846,12 +54853,12 @@ func (ec *executionContext) marshalNCUD2ᚖgithubᚗcomᚋfacebookincubatorᚋsy
 	return ec._CUD(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCellularNetworkType(ctx context.Context, v interface{}) (models.CellularNetworkType, error) {
-	var res models.CellularNetworkType
+func (ec *executionContext) unmarshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋsurveycellscanᚐNetworkType(ctx context.Context, v interface{}) (surveycellscan.NetworkType, error) {
+	var res surveycellscan.NetworkType
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCellularNetworkType(ctx context.Context, sel ast.SelectionSet, v models.CellularNetworkType) graphql.Marshaler {
+func (ec *executionContext) marshalNCellularNetworkType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋsurveycellscanᚐNetworkType(ctx context.Context, sel ast.SelectionSet, v surveycellscan.NetworkType) graphql.Marshaler {
 	return v
 }
 

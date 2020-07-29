@@ -477,6 +477,12 @@ func (r mutationResolver) createOrUpdateCheckListItem(
 	if err != nil {
 		return nil, errors.Wrap(err, "updating check list item")
 	}
+
+	err = r.createCheckListItemScans(ctx, cli, input.WifiData, input.CellData)
+	if err != nil {
+		return nil, fmt.Errorf("creating scans, item %q: err %w", cli.ID, err)
+	}
+
 	return r.createOrUpdateCheckListItemFiles(ctx, cli, input.Files)
 }
 
@@ -540,6 +546,23 @@ func (r mutationResolver) createAddedCheckListItemFiles(ctx context.Context, ite
 		}
 	}
 	return item, nil
+}
+
+func (r mutationResolver) createCheckListItemScans(ctx context.Context, item *ent.CheckListItem, wifiData []*models.SurveyWiFiScanData, cellData []*models.SurveyCellScanData) error {
+	if len(wifiData) > 0 {
+		_, err := r.CreateWiFiScans(ctx, wifiData, ScanParentIDs{checklistItemID: &item.ID})
+		if err != nil {
+			return fmt.Errorf("creating wifi scans, item %q: err %w", item.ID, err)
+		}
+	}
+	if len(cellData) > 0 {
+		_, err := r.CreateCellScans(ctx, cellData, ScanParentIDs{checklistItemID: &item.ID})
+		if err != nil {
+			return fmt.Errorf("creating cell scans, item %q: err %w", item.ID, err)
+		}
+	}
+
+	return nil
 }
 
 func (r mutationResolver) createOrUpdateCheckListItemFiles(ctx context.Context, item *ent.CheckListItem, fileInputs []*models.FileInput) (*ent.CheckListItem, error) {

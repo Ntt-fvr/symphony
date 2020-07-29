@@ -615,13 +615,13 @@ jobs:
           <<: *clidir
           command: python3 -m mypy
 
-  blacktest:
+  py_formatting:
     executor: python
     steps:
       - checkout
       - pyinventory-setup
       - run:
-          name: black check
+          name: python formatting check
           <<: *clidir
           command: black . --exclude "(./graphql/.|.rpc_pb2.py|.rpc_pb2_grpc.py)" --check
 
@@ -686,7 +686,7 @@ workflows:
       - lint
       - validate-gql-test
       - mypytest
-      - blacktest
+      - py_formatting
       - flake8test
       - test-relay-build
       - eslint:

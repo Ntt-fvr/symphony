@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash b11705d12df809b88d8531cf466957ee
+ * @relayHash fe1ef5e161b85b1193e1358cb5e3b5ad
  */
 
 /* eslint-disable */
@@ -15,6 +15,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
 export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
 export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
 export type FileType = "FILE" | "IMAGE" | "%future added value";
@@ -65,6 +66,8 @@ export type CheckListItemInput = {|
   checked?: ?boolean,
   files?: ?$ReadOnlyArray<FileInput>,
   yesNoResponse?: ?YesNoResponse,
+  wifiData?: ?$ReadOnlyArray<SurveyWiFiScanData>,
+  cellData?: ?$ReadOnlyArray<SurveyCellScanData>,
 |};
 export type FileInput = {|
   id?: ?string,
@@ -76,6 +79,41 @@ export type FileInput = {|
   mimeType?: ?string,
   storeKey: string,
   annotation?: ?string,
+|};
+export type SurveyWiFiScanData = {|
+  timestamp: number,
+  frequency: number,
+  channel: number,
+  bssid: string,
+  strength: number,
+  ssid?: ?string,
+  band?: ?string,
+  channelWidth?: ?number,
+  capabilities?: ?string,
+  latitude?: ?number,
+  longitude?: ?number,
+|};
+export type SurveyCellScanData = {|
+  networkType: CellularNetworkType,
+  signalStrength: number,
+  timestamp?: ?number,
+  baseStationID?: ?string,
+  networkID?: ?string,
+  systemID?: ?string,
+  cellID?: ?string,
+  locationAreaCode?: ?string,
+  mobileCountryCode?: ?string,
+  mobileNetworkCode?: ?string,
+  primaryScramblingCode?: ?string,
+  operator?: ?string,
+  arfcn?: ?number,
+  physicalCellID?: ?string,
+  trackingAreaCode?: ?string,
+  timingAdvance?: ?number,
+  earfcn?: ?number,
+  uarfcn?: ?number,
+  latitude?: ?number,
+  longitude?: ?number,
 |};
 export type CheckListCategoryInput = {|
   id?: ?string,
