@@ -11,6 +11,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -45,14 +46,14 @@ func TestSurveyCellScanWritePolicyRule(t *testing.T) {
 
 	surveyCellScan := c.SurveyCellScan.Create().
 		SetChecklistItem(checkListItem).
-		SetNetworkType("5G").
+		SetNetworkType(surveycellscan.NetworkTypeLTE).
 		SetSignalStrength(10).
 		SaveX(ctx)
 
 	createSurveyCellScan := func(ctx context.Context) error {
 		_, err := c.SurveyCellScan.Create().
 			SetChecklistItem(checkListItem).
-			SetNetworkType("5G").
+			SetNetworkType(surveycellscan.NetworkTypeLTE).
 			SetSignalStrength(10).
 			Save(ctx)
 		return err
@@ -97,7 +98,7 @@ func TestSurveyCellScanReadPolicyRule(t *testing.T) {
 		SaveX(ctx)
 	c.SurveyCellScan.Create().
 		SetChecklistItem(checkListItem1).
-		SetNetworkType("5G").
+		SetNetworkType(surveycellscan.NetworkTypeLTE).
 		SetSignalStrength(10).
 		SaveX(ctx)
 
@@ -112,7 +113,7 @@ func TestSurveyCellScanReadPolicyRule(t *testing.T) {
 		SaveX(ctx)
 	c.SurveyCellScan.Create().
 		SetChecklistItem(checkListItem2).
-		SetNetworkType("5G").
+		SetNetworkType(surveycellscan.NetworkTypeLTE).
 		SetSignalStrength(10).
 		SaveX(ctx)
 	t.Run("EmptyPermissions", func(t *testing.T) {

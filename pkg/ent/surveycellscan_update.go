@@ -36,8 +36,8 @@ func (scsu *SurveyCellScanUpdate) Where(ps ...predicate.SurveyCellScan) *SurveyC
 }
 
 // SetNetworkType sets the network_type field.
-func (scsu *SurveyCellScanUpdate) SetNetworkType(s string) *SurveyCellScanUpdate {
-	scsu.mutation.SetNetworkType(s)
+func (scsu *SurveyCellScanUpdate) SetNetworkType(st surveycellscan.NetworkType) *SurveyCellScanUpdate {
+	scsu.mutation.SetNetworkType(st)
 	return scsu
 }
 
@@ -542,6 +542,11 @@ func (scsu *SurveyCellScanUpdate) Save(ctx context.Context) (int, error) {
 		v := surveycellscan.UpdateDefaultUpdateTime()
 		scsu.mutation.SetUpdateTime(v)
 	}
+	if v, ok := scsu.mutation.NetworkType(); ok {
+		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
+			return 0, &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -619,7 +624,7 @@ func (scsu *SurveyCellScanUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := scsu.mutation.NetworkType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: surveycellscan.FieldNetworkType,
 		})
@@ -1038,8 +1043,8 @@ type SurveyCellScanUpdateOne struct {
 }
 
 // SetNetworkType sets the network_type field.
-func (scsuo *SurveyCellScanUpdateOne) SetNetworkType(s string) *SurveyCellScanUpdateOne {
-	scsuo.mutation.SetNetworkType(s)
+func (scsuo *SurveyCellScanUpdateOne) SetNetworkType(st surveycellscan.NetworkType) *SurveyCellScanUpdateOne {
+	scsuo.mutation.SetNetworkType(st)
 	return scsuo
 }
 
@@ -1544,6 +1549,11 @@ func (scsuo *SurveyCellScanUpdateOne) Save(ctx context.Context) (*SurveyCellScan
 		v := surveycellscan.UpdateDefaultUpdateTime()
 		scsuo.mutation.SetUpdateTime(v)
 	}
+	if v, ok := scsuo.mutation.NetworkType(); ok {
+		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
+			return nil, &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -1619,7 +1629,7 @@ func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyC
 	}
 	if value, ok := scsuo.mutation.NetworkType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeEnum,
 			Value:  value,
 			Column: surveycellscan.FieldNetworkType,
 		})

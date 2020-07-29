@@ -369,7 +369,7 @@ func (r mutationResolver) CreateCellScans(ctx context.Context, inputs []*models.
 			timestamp = &inputTime
 		}
 		if scans[i], err = client.Create().
-			SetNetworkType(input.NetworkType.String()).
+			SetNetworkType(input.NetworkType).
 			SetSignalStrength(input.SignalStrength).
 			SetNillableTimestamp(timestamp).
 			SetNillableBaseStationID(input.BaseStationID).

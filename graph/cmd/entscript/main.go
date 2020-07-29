@@ -8,14 +8,11 @@ import (
 	"context"
 
 	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"go.uber.org/zap"
@@ -29,6 +26,7 @@ func main() {
 	dsn := kingpin.Flag("db-dsn", "data source name").Envar("MYSQL_DSN").Required().String()
 	tenantName := kingpin.Flag("tenant", "tenant name to target. \"ALL\" for running on all tenants").Required().String()
 	username := kingpin.Flag("user", "who is running the script (for logging purposes)").Required().String()
+	migrationName := kingpin.Flag("migration", "migration script name to run").Required().String()
 	logcfg := log.AddFlags(kingpin.CommandLine)
 	kingpin.Parse()
 
@@ -47,6 +45,16 @@ func main() {
 		)
 	}
 	mysql.SetLogger(logger)
+
+	var migration migrationFunc
+
+	if res, ok := migrationMap[*migrationName]; ok {
+		migration = res
+	} else {
+		logger.For(ctx).Fatal("cannot find migration function",
+			zap.Stringp("name", migrationName),
+		)
+	}
 
 	driver, err := sql.Open("mysql", *dsn)
 	if err != nil {
@@ -101,15 +109,7 @@ func main() {
 				}
 			}()
 			ctx = ent.NewContext(ctx, tx.Client())
-			// Since the client is already uses transaction we can't have transactions on graphql also
-			r := resolver.New(
-				resolver.Config{
-					Logger:     logger,
-					Subscriber: pubsub.NewNopSubscriber(),
-				},
-				resolver.WithTransaction(false),
-			)
-			if err := utilityFunc(ctx, r, logger, tenant); err != nil {
+			if err := migration(ctx, logger); err != nil {
 				logger.For(ctx).Error("failed to run function", zap.Error(err))
 				if err := tx.Rollback(); err != nil {
 					logger.For(ctx).Error("cannot rollback transaction", zap.Error(err))
@@ -144,26 +144,4 @@ func getTenantList(ctx context.Context, driver *sql.Driver, tenant *string) ([]s
 		tenants = append(tenants, name)
 	}
 	return tenants, nil
-}
-
-func utilityFunc(_ context.Context, _ generated.ResolverRoot, _ log.Logger, _ string) error {
-	/**
-	Add your Go code in this function
-	You need to run this code from the same version production is at to avoid schema mismatches
-	DO NOT LAND THE CODE AFTER THIS COMMENT
-	*/
-	/*
-		Example code:
-		client := ent.FromContext(ctx)
-		eqt, err := r.Mutation().AddEquipmentType(ctx, models.AddEquipmentTypeInput{Name: "My new type"})
-		if err != nil {
-			return fmt.Errorf("cannot create equipment type: %w", err)
-		}
-		logger.For(ctx).Info("equipment created", zap.Int("ID", eqt.ID))
-		client.EquipmentType.UpdateOneID(eqt.ID).SetName("My new type 2").ExecX(ctx)
-		if err != nil {
-			return fmt.Errorf("cannot update equipment type: id=%q, %w", eqt.ID, err)
-		}
-	*/
-	return nil
 }

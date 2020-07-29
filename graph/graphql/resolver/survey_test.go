@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -41,7 +42,7 @@ func TestAddRemoveSurvey(t *testing.T) {
 	bsID := "BSID-1"
 	timestamp := 1564523995
 	cellData := models.SurveyCellScanData{
-		NetworkType:    models.CellularNetworkTypeGsm,
+		NetworkType:    surveycellscan.NetworkTypeGSM,
 		SignalStrength: 1,
 		BaseStationID:  &bsID,
 		Timestamp:      &timestamp,
@@ -135,11 +136,11 @@ func TestAddRemoveSurvey(t *testing.T) {
 	cellQ := fetchedSurvey.QueryQuestions().Where(surveyquestion.QuestionFormat(models.SurveyQuestionTypeCellular.String())).OnlyX(ctx)
 	wfQ := fetchedSurvey.QueryQuestions().Where(surveyquestion.QuestionFormat(models.SurveyQuestionTypeWifi.String())).OnlyX(ctx)
 
-	nt, err := cellr.NetworkType(ctx, cellQ.QueryCellScan().OnlyX(ctx))
+	nt := cellQ.QueryCellScan().OnlyX(ctx)
 	require.NoError(t, err)
 	require.Equal(t, 0, cellQ.FormIndex, "Verifying saved survey vs fetched survey: FormIndex")
 	require.Equal(t, 0, cellQ.QuestionIndex, "Verifying saved survey vs fetched survey: QuestionIndex")
-	require.Equal(t, models.CellularNetworkTypeGsm, nt, "Verifying fetched survey cell scan's network type")
+	require.Equal(t, surveycellscan.NetworkTypeGSM, nt.NetworkType, "Verifying fetched survey cell scan's network type")
 
 	cellTmstmp, err := cellr.Timestamp(ctx, cellQ.QueryCellScan().OnlyX(ctx))
 	require.NoError(t, err)

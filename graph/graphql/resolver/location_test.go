@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/google/uuid"
@@ -488,13 +489,13 @@ func TestAddLocationCellScans(t *testing.T) {
 	bsID := "BSID-1"
 	timestamp := 1564523995
 	cellDataGsm := models.SurveyCellScanData{
-		NetworkType:    models.CellularNetworkTypeGsm,
+		NetworkType:    surveycellscan.NetworkTypeGSM,
 		SignalStrength: -60,
 		BaseStationID:  &bsID,
 		Timestamp:      &timestamp,
 	}
 	cellDataLte := models.SurveyCellScanData{
-		NetworkType:    models.CellularNetworkTypeLte,
+		NetworkType:    surveycellscan.NetworkTypeLTE,
 		SignalStrength: -70,
 		BaseStationID:  &bsID,
 		Timestamp:      &timestamp,
