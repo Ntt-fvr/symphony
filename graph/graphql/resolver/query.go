@@ -215,14 +215,18 @@ func (r queryResolver) Projects(
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
 	orderBy *ent.ProjectOrder,
-	_ []*models.ProjectFilterInput,
+	filterBy []*models.ProjectFilterInput,
 ) (*ent.ProjectConnection, error) {
 	return r.ClientFrom(ctx).
 		Project.
 		Query().
-		Paginate(
-			ctx, after, first, before, last,
+		Paginate(ctx, after, first, before, last,
 			ent.WithProjectOrder(orderBy),
+			ent.WithProjectFilter(
+				func(query *ent.ProjectQuery) (*ent.ProjectQuery, error) {
+					return resolverutil.ProjectFilter(query, filterBy)
+				},
+			),
 		)
 }
 
