@@ -276,7 +276,7 @@ func (r mutationResolver) addProjectTemplate(
 		WithWorkOrders().
 		Only(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("querying project type: %w", err)
+		return nil, fmt.Errorf("querying project type: %w", err)
 	}
 	tem, err := client.ProjectTemplate.
 		Create().
@@ -295,7 +295,7 @@ func (r mutationResolver) addProjectTemplate(
 	for _, wo := range projectType.Edges.WorkOrders {
 		wot, err := wo.QueryType().Only(ctx)
 		if err != nil {
-			return nil, nil, fmt.Errorf("querying work order type: %w", err)
+			return nil, fmt.Errorf("querying work order type: %w", err)
 		}
 		_, err = client.WorkOrderDefinition.
 			Create().
