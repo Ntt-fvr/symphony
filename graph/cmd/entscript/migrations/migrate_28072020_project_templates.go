@@ -105,7 +105,6 @@ func addProjectTemplate(
 
 // Migrate Project Template
 func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
-
 	client := ent.FromContext(ctx)
 	projectIds, err := client.Project.Query().
 		Where(project.Not(project.HasTemplate())).
