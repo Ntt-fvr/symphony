@@ -2422,12 +2422,17 @@ input WorkOrderFilterInput {
 
 enum ProjectFilterType {
   PROJECT_NAME
+  PROJECT_OWNED_BY
+  PROJECT_TYPE
+  LOCATION_INST
 }
 
 input ProjectFilterInput {
   filterType: ProjectFilterType!
   operator: FilterOperator!
   stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
 }
 
 """

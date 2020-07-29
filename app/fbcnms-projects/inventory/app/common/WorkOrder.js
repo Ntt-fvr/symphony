@@ -27,7 +27,7 @@ import {isTempId} from './EntUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 export type WorkOrderStatus = 'PENDING' | 'PLANNED' | 'DONE';
-export type WorkOrderPriority = 'URGENT' | 'HIGH' | 'LOW' | 'NONE';
+export type WorkOrderPriority = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 
 export type WorkOrderType = {
   id: string,
@@ -97,6 +97,14 @@ export const priorityValues = [
     label: 'None',
   },
 ];
+
+export const prioritySortingValues = {
+  URGENT: 0,
+  HIGH: 1,
+  MEDIUM: 2,
+  LOW: 3,
+  NONE: 4,
+};
 
 export const doneStatus = {
   key: 'done',

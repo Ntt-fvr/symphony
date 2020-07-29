@@ -574,6 +574,8 @@ type ProjectFilterInput struct {
 	FilterType  ProjectFilterType `json:"filterType"`
 	Operator    FilterOperator    `json:"operator"`
 	StringValue *string           `json:"stringValue"`
+	IDSet       []int             `json:"idSet"`
+	MaxDepth    *int              `json:"maxDepth"`
 }
 
 type PropertyInput struct {
@@ -1326,16 +1328,22 @@ func (e PortFilterType) MarshalGQL(w io.Writer) {
 type ProjectFilterType string
 
 const (
-	ProjectFilterTypeProjectName ProjectFilterType = "PROJECT_NAME"
+	ProjectFilterTypeProjectName    ProjectFilterType = "PROJECT_NAME"
+	ProjectFilterTypeProjectOwnedBy ProjectFilterType = "PROJECT_OWNED_BY"
+	ProjectFilterTypeProjectType    ProjectFilterType = "PROJECT_TYPE"
+	ProjectFilterTypeLocationInst   ProjectFilterType = "LOCATION_INST"
 )
 
 var AllProjectFilterType = []ProjectFilterType{
 	ProjectFilterTypeProjectName,
+	ProjectFilterTypeProjectOwnedBy,
+	ProjectFilterTypeProjectType,
+	ProjectFilterTypeLocationInst,
 }
 
 func (e ProjectFilterType) IsValid() bool {
 	switch e {
-	case ProjectFilterTypeProjectName:
+	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst:
 		return true
 	}
 	return false

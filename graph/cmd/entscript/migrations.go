@@ -15,5 +15,5 @@ type migrationFunc func(ctx context.Context, logger log.Logger) error
 
 var migrationMap = map[string]migrationFunc{
 	"sample": migrations.MigrateSample,
-	"28072020": migrations.MigrateProjectTemplates,
+	"migrate_project_templates": migrations.MigrateProjectTemplates,
 }

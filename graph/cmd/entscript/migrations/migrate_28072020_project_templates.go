@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -22,9 +21,8 @@ func createTemplatePropertyType(
 	client *ent.Client,
 	pt *ent.PropertyType,
 	id int,
-	entity models.PropertyEntity,
 ) (*ent.PropertyType, error) {
-	mutation := client.PropertyType.Create().
+	result, err := client.PropertyType.Create().
 		SetName(pt.Name).
 		SetType(pt.Type).
 		SetNodeType(pt.NodeType).
@@ -41,14 +39,9 @@ func createTemplatePropertyType(
 		SetNillableRangeToVal(pt.RangeToVal).
 		SetEditable(pt.Editable).
 		SetMandatory(pt.Mandatory).
-		SetDeleted(pt.Deleted)
-	switch entity {
-	case models.PropertyEntityWorkOrder:
-		mutation = mutation.SetWorkOrderTemplateID(id)
-	case models.PropertyEntityProject:
-		mutation = mutation.SetProjectTemplateID(id)
-	}
-	result, err := mutation.Save(ctx)
+		SetDeleted(pt.Deleted).
+		SetProjectTemplateID(id).
+		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("creating property type: %w", err)
 	}
@@ -79,7 +72,7 @@ func addProjectTemplate(
 		return nil, nil, fmt.Errorf("creating project template: %w", err)
 	}
 	for _, pt := range projectType.Edges.Properties {
-		npt, err := createTemplatePropertyType(ctx, client, pt, tem.ID, models.PropertyEntityProject)
+		npt, err := createTemplatePropertyType(ctx, client, pt, tem.ID)
 		if err != nil {
 			return nil, nil, fmt.Errorf("creating property type: %w", err)
 		}

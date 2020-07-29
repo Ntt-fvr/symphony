@@ -9940,12 +9940,17 @@ input WorkOrderFilterInput {
 
 enum ProjectFilterType {
   PROJECT_NAME
+  PROJECT_OWNED_BY
+  PROJECT_TYPE
+  LOCATION_INST
 }
 
 input ProjectFilterInput {
   filterType: ProjectFilterType!
   operator: FilterOperator!
   stringValue: String
+  idSet: [ID!]
+  maxDepth: Int = 5
 }
 
 """
@@ -44422,6 +44427,10 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 	var it models.ProjectFilterInput
 	var asMap = obj.(map[string]interface{})
 
+	if _, present := asMap["maxDepth"]; !present {
+		asMap["maxDepth"] = 5
+	}
+
 	for k, v := range asMap {
 		switch k {
 		case "filterType":
@@ -44439,6 +44448,18 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 		case "stringValue":
 			var err error
 			it.StringValue, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "idSet":
+			var err error
+			it.IDSet, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "maxDepth":
+			var err error
+			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
