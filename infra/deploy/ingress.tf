@@ -201,6 +201,7 @@ resource "helm_release" "nginx_ingress" {
         service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
         service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        external-dns.alpha.kubernetes.io/hostname: ${local.ctf_domain_name}
       externalTrafficPolicy: Local
     config:
       proxy-buffer-size: "32k"
@@ -315,7 +316,7 @@ locals {
     aws_route53_zone.symphony.id,
     aws_route53_zone.purpleheadband.id,
     data.aws_route53_zone.magma.id,
-    data.aws_route53_zone.ctf.id,
+    aws_route53_zone.ctf.id,
   ]
 }
 
@@ -388,7 +389,7 @@ data "aws_iam_policy_document" "cert_manager" {
     resources = [
       format(
         "arn:aws:route53:::hostedzone/%s",
-        data.aws_route53_zone.ctf.id,
+        aws_route53_zone.ctf.id,
       ),
     ]
   }
