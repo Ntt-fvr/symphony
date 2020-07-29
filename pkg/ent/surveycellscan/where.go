@@ -111,13 +111,6 @@ func UpdateTime(v time.Time) predicate.SurveyCellScan {
 	})
 }
 
-// NetworkType applies equality check predicate on the "network_type" field. It's identical to NetworkTypeEQ.
-func NetworkType(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldNetworkType), v))
-	})
-}
-
 // SignalStrength applies equality check predicate on the "signal_strength" field. It's identical to SignalStrengthEQ.
 func SignalStrength(v int) predicate.SurveyCellScan {
 	return predicate.SurveyCellScan(func(s *sql.Selector) {
@@ -404,21 +397,21 @@ func UpdateTimeLTE(v time.Time) predicate.SurveyCellScan {
 }
 
 // NetworkTypeEQ applies the EQ predicate on the "network_type" field.
-func NetworkTypeEQ(v string) predicate.SurveyCellScan {
+func NetworkTypeEQ(v NetworkType) predicate.SurveyCellScan {
 	return predicate.SurveyCellScan(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldNetworkType), v))
 	})
 }
 
 // NetworkTypeNEQ applies the NEQ predicate on the "network_type" field.
-func NetworkTypeNEQ(v string) predicate.SurveyCellScan {
+func NetworkTypeNEQ(v NetworkType) predicate.SurveyCellScan {
 	return predicate.SurveyCellScan(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldNetworkType), v))
 	})
 }
 
 // NetworkTypeIn applies the In predicate on the "network_type" field.
-func NetworkTypeIn(vs ...string) predicate.SurveyCellScan {
+func NetworkTypeIn(vs ...NetworkType) predicate.SurveyCellScan {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -435,7 +428,7 @@ func NetworkTypeIn(vs ...string) predicate.SurveyCellScan {
 }
 
 // NetworkTypeNotIn applies the NotIn predicate on the "network_type" field.
-func NetworkTypeNotIn(vs ...string) predicate.SurveyCellScan {
+func NetworkTypeNotIn(vs ...NetworkType) predicate.SurveyCellScan {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -448,69 +441,6 @@ func NetworkTypeNotIn(vs ...string) predicate.SurveyCellScan {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldNetworkType), v...))
-	})
-}
-
-// NetworkTypeGT applies the GT predicate on the "network_type" field.
-func NetworkTypeGT(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeGTE applies the GTE predicate on the "network_type" field.
-func NetworkTypeGTE(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeLT applies the LT predicate on the "network_type" field.
-func NetworkTypeLT(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeLTE applies the LTE predicate on the "network_type" field.
-func NetworkTypeLTE(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeContains applies the Contains predicate on the "network_type" field.
-func NetworkTypeContains(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeHasPrefix applies the HasPrefix predicate on the "network_type" field.
-func NetworkTypeHasPrefix(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeHasSuffix applies the HasSuffix predicate on the "network_type" field.
-func NetworkTypeHasSuffix(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeEqualFold applies the EqualFold predicate on the "network_type" field.
-func NetworkTypeEqualFold(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldNetworkType), v))
-	})
-}
-
-// NetworkTypeContainsFold applies the ContainsFold predicate on the "network_type" field.
-func NetworkTypeContainsFold(v string) predicate.SurveyCellScan {
-	return predicate.SurveyCellScan(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldNetworkType), v))
 	})
 }
 

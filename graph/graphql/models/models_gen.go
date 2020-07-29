@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -712,26 +713,26 @@ type ServiceTypeEditData struct {
 }
 
 type SurveyCellScanData struct {
-	NetworkType           CellularNetworkType `json:"networkType"`
-	SignalStrength        int                 `json:"signalStrength"`
-	Timestamp             *int                `json:"timestamp"`
-	BaseStationID         *string             `json:"baseStationID"`
-	NetworkID             *string             `json:"networkID"`
-	SystemID              *string             `json:"systemID"`
-	CellID                *string             `json:"cellID"`
-	LocationAreaCode      *string             `json:"locationAreaCode"`
-	MobileCountryCode     *string             `json:"mobileCountryCode"`
-	MobileNetworkCode     *string             `json:"mobileNetworkCode"`
-	PrimaryScramblingCode *string             `json:"primaryScramblingCode"`
-	Operator              *string             `json:"operator"`
-	Arfcn                 *int                `json:"arfcn"`
-	PhysicalCellID        *string             `json:"physicalCellID"`
-	TrackingAreaCode      *string             `json:"trackingAreaCode"`
-	TimingAdvance         *int                `json:"timingAdvance"`
-	Earfcn                *int                `json:"earfcn"`
-	Uarfcn                *int                `json:"uarfcn"`
-	Latitude              *float64            `json:"latitude"`
-	Longitude             *float64            `json:"longitude"`
+	NetworkType           surveycellscan.NetworkType `json:"networkType"`
+	SignalStrength        int                        `json:"signalStrength"`
+	Timestamp             *int                       `json:"timestamp"`
+	BaseStationID         *string                    `json:"baseStationID"`
+	NetworkID             *string                    `json:"networkID"`
+	SystemID              *string                    `json:"systemID"`
+	CellID                *string                    `json:"cellID"`
+	LocationAreaCode      *string                    `json:"locationAreaCode"`
+	MobileCountryCode     *string                    `json:"mobileCountryCode"`
+	MobileNetworkCode     *string                    `json:"mobileNetworkCode"`
+	PrimaryScramblingCode *string                    `json:"primaryScramblingCode"`
+	Operator              *string                    `json:"operator"`
+	Arfcn                 *int                       `json:"arfcn"`
+	PhysicalCellID        *string                    `json:"physicalCellID"`
+	TrackingAreaCode      *string                    `json:"trackingAreaCode"`
+	TimingAdvance         *int                       `json:"timingAdvance"`
+	Earfcn                *int                       `json:"earfcn"`
+	Uarfcn                *int                       `json:"uarfcn"`
+	Latitude              *float64                   `json:"latitude"`
+	Longitude             *float64                   `json:"longitude"`
 }
 
 type SurveyCreateData struct {
@@ -883,51 +884,6 @@ type WorkOrderFilterInput struct {
 type WorkOrderSearchResult struct {
 	WorkOrders []*ent.WorkOrder `json:"workOrders"`
 	Count      int              `json:"count"`
-}
-
-type CellularNetworkType string
-
-const (
-	CellularNetworkTypeCdma  CellularNetworkType = "CDMA"
-	CellularNetworkTypeGsm   CellularNetworkType = "GSM"
-	CellularNetworkTypeLte   CellularNetworkType = "LTE"
-	CellularNetworkTypeWcdma CellularNetworkType = "WCDMA"
-)
-
-var AllCellularNetworkType = []CellularNetworkType{
-	CellularNetworkTypeCdma,
-	CellularNetworkTypeGsm,
-	CellularNetworkTypeLte,
-	CellularNetworkTypeWcdma,
-}
-
-func (e CellularNetworkType) IsValid() bool {
-	switch e {
-	case CellularNetworkTypeCdma, CellularNetworkTypeGsm, CellularNetworkTypeLte, CellularNetworkTypeWcdma:
-		return true
-	}
-	return false
-}
-
-func (e CellularNetworkType) String() string {
-	return string(e)
-}
-
-func (e *CellularNetworkType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = CellularNetworkType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CellularNetworkType", str)
-	}
-	return nil
-}
-
-func (e CellularNetworkType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type CommentEntity string

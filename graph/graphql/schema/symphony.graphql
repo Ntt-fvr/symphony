@@ -2843,7 +2843,10 @@ type EquipmentSearchResult {
   count: Int!
 }
 
-enum CellularNetworkType {
+enum CellularNetworkType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/surveycellscan.NetworkType"
+  ) {
   CDMA
   GSM
   LTE

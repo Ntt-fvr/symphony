@@ -28,45 +28,45 @@ type SurveyCellScan struct {
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// NetworkType holds the value of the "network_type" field.
-	NetworkType string `json:"network_type,omitempty"`
+	NetworkType surveycellscan.NetworkType `json:"network_type,omitempty"`
 	// SignalStrength holds the value of the "signal_strength" field.
 	SignalStrength int `json:"signal_strength,omitempty"`
 	// Timestamp holds the value of the "timestamp" field.
-	Timestamp time.Time `json:"timestamp,omitempty"`
+	Timestamp *time.Time `json:"timestamp,omitempty"`
 	// BaseStationID holds the value of the "base_station_id" field.
-	BaseStationID string `json:"base_station_id,omitempty"`
+	BaseStationID *string `json:"base_station_id,omitempty"`
 	// NetworkID holds the value of the "network_id" field.
-	NetworkID string `json:"network_id,omitempty"`
+	NetworkID *string `json:"network_id,omitempty"`
 	// SystemID holds the value of the "system_id" field.
-	SystemID string `json:"system_id,omitempty"`
+	SystemID *string `json:"system_id,omitempty"`
 	// CellID holds the value of the "cell_id" field.
-	CellID string `json:"cell_id,omitempty"`
+	CellID *string `json:"cell_id,omitempty"`
 	// LocationAreaCode holds the value of the "location_area_code" field.
-	LocationAreaCode string `json:"location_area_code,omitempty"`
+	LocationAreaCode *string `json:"location_area_code,omitempty"`
 	// MobileCountryCode holds the value of the "mobile_country_code" field.
-	MobileCountryCode string `json:"mobile_country_code,omitempty"`
+	MobileCountryCode *string `json:"mobile_country_code,omitempty"`
 	// MobileNetworkCode holds the value of the "mobile_network_code" field.
-	MobileNetworkCode string `json:"mobile_network_code,omitempty"`
+	MobileNetworkCode *string `json:"mobile_network_code,omitempty"`
 	// PrimaryScramblingCode holds the value of the "primary_scrambling_code" field.
-	PrimaryScramblingCode string `json:"primary_scrambling_code,omitempty"`
+	PrimaryScramblingCode *string `json:"primary_scrambling_code,omitempty"`
 	// Operator holds the value of the "operator" field.
-	Operator string `json:"operator,omitempty"`
+	Operator *string `json:"operator,omitempty"`
 	// Arfcn holds the value of the "arfcn" field.
-	Arfcn int `json:"arfcn,omitempty"`
+	Arfcn *int `json:"arfcn,omitempty"`
 	// PhysicalCellID holds the value of the "physical_cell_id" field.
-	PhysicalCellID string `json:"physical_cell_id,omitempty"`
+	PhysicalCellID *string `json:"physical_cell_id,omitempty"`
 	// TrackingAreaCode holds the value of the "tracking_area_code" field.
-	TrackingAreaCode string `json:"tracking_area_code,omitempty"`
+	TrackingAreaCode *string `json:"tracking_area_code,omitempty"`
 	// TimingAdvance holds the value of the "timing_advance" field.
-	TimingAdvance int `json:"timing_advance,omitempty"`
+	TimingAdvance *int `json:"timing_advance,omitempty"`
 	// Earfcn holds the value of the "earfcn" field.
-	Earfcn int `json:"earfcn,omitempty"`
+	Earfcn *int `json:"earfcn,omitempty"`
 	// Uarfcn holds the value of the "uarfcn" field.
-	Uarfcn int `json:"uarfcn,omitempty"`
+	Uarfcn *int `json:"uarfcn,omitempty"`
 	// Latitude holds the value of the "latitude" field.
-	Latitude float64 `json:"latitude,omitempty"`
+	Latitude *float64 `json:"latitude,omitempty"`
 	// Longitude holds the value of the "longitude" field.
-	Longitude float64 `json:"longitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyCellScanQuery when eager-loading is set.
 	Edges                            SurveyCellScanEdges `json:"edges"`
@@ -193,7 +193,7 @@ func (scs *SurveyCellScan) assignValues(values ...interface{}) error {
 	if value, ok := values[2].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field network_type", values[2])
 	} else if value.Valid {
-		scs.NetworkType = value.String
+		scs.NetworkType = surveycellscan.NetworkType(value.String)
 	}
 	if value, ok := values[3].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field signal_strength", values[3])
@@ -203,92 +203,110 @@ func (scs *SurveyCellScan) assignValues(values ...interface{}) error {
 	if value, ok := values[4].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field timestamp", values[4])
 	} else if value.Valid {
-		scs.Timestamp = value.Time
+		scs.Timestamp = new(time.Time)
+		*scs.Timestamp = value.Time
 	}
 	if value, ok := values[5].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field base_station_id", values[5])
 	} else if value.Valid {
-		scs.BaseStationID = value.String
+		scs.BaseStationID = new(string)
+		*scs.BaseStationID = value.String
 	}
 	if value, ok := values[6].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field network_id", values[6])
 	} else if value.Valid {
-		scs.NetworkID = value.String
+		scs.NetworkID = new(string)
+		*scs.NetworkID = value.String
 	}
 	if value, ok := values[7].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field system_id", values[7])
 	} else if value.Valid {
-		scs.SystemID = value.String
+		scs.SystemID = new(string)
+		*scs.SystemID = value.String
 	}
 	if value, ok := values[8].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field cell_id", values[8])
 	} else if value.Valid {
-		scs.CellID = value.String
+		scs.CellID = new(string)
+		*scs.CellID = value.String
 	}
 	if value, ok := values[9].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field location_area_code", values[9])
 	} else if value.Valid {
-		scs.LocationAreaCode = value.String
+		scs.LocationAreaCode = new(string)
+		*scs.LocationAreaCode = value.String
 	}
 	if value, ok := values[10].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field mobile_country_code", values[10])
 	} else if value.Valid {
-		scs.MobileCountryCode = value.String
+		scs.MobileCountryCode = new(string)
+		*scs.MobileCountryCode = value.String
 	}
 	if value, ok := values[11].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field mobile_network_code", values[11])
 	} else if value.Valid {
-		scs.MobileNetworkCode = value.String
+		scs.MobileNetworkCode = new(string)
+		*scs.MobileNetworkCode = value.String
 	}
 	if value, ok := values[12].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field primary_scrambling_code", values[12])
 	} else if value.Valid {
-		scs.PrimaryScramblingCode = value.String
+		scs.PrimaryScramblingCode = new(string)
+		*scs.PrimaryScramblingCode = value.String
 	}
 	if value, ok := values[13].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field operator", values[13])
 	} else if value.Valid {
-		scs.Operator = value.String
+		scs.Operator = new(string)
+		*scs.Operator = value.String
 	}
 	if value, ok := values[14].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field arfcn", values[14])
 	} else if value.Valid {
-		scs.Arfcn = int(value.Int64)
+		scs.Arfcn = new(int)
+		*scs.Arfcn = int(value.Int64)
 	}
 	if value, ok := values[15].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field physical_cell_id", values[15])
 	} else if value.Valid {
-		scs.PhysicalCellID = value.String
+		scs.PhysicalCellID = new(string)
+		*scs.PhysicalCellID = value.String
 	}
 	if value, ok := values[16].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field tracking_area_code", values[16])
 	} else if value.Valid {
-		scs.TrackingAreaCode = value.String
+		scs.TrackingAreaCode = new(string)
+		*scs.TrackingAreaCode = value.String
 	}
 	if value, ok := values[17].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field timing_advance", values[17])
 	} else if value.Valid {
-		scs.TimingAdvance = int(value.Int64)
+		scs.TimingAdvance = new(int)
+		*scs.TimingAdvance = int(value.Int64)
 	}
 	if value, ok := values[18].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field earfcn", values[18])
 	} else if value.Valid {
-		scs.Earfcn = int(value.Int64)
+		scs.Earfcn = new(int)
+		*scs.Earfcn = int(value.Int64)
 	}
 	if value, ok := values[19].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field uarfcn", values[19])
 	} else if value.Valid {
-		scs.Uarfcn = int(value.Int64)
+		scs.Uarfcn = new(int)
+		*scs.Uarfcn = int(value.Int64)
 	}
 	if value, ok := values[20].(*sql.NullFloat64); !ok {
 		return fmt.Errorf("unexpected type %T for field latitude", values[20])
 	} else if value.Valid {
-		scs.Latitude = value.Float64
+		scs.Latitude = new(float64)
+		*scs.Latitude = value.Float64
 	}
 	if value, ok := values[21].(*sql.NullFloat64); !ok {
 		return fmt.Errorf("unexpected type %T for field longitude", values[21])
 	} else if value.Valid {
-		scs.Longitude = value.Float64
+		scs.Longitude = new(float64)
+		*scs.Longitude = value.Float64
 	}
 	values = values[22:]
 	if len(values) == len(surveycellscan.ForeignKeys) {
@@ -357,45 +375,81 @@ func (scs *SurveyCellScan) String() string {
 	builder.WriteString(", update_time=")
 	builder.WriteString(scs.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", network_type=")
-	builder.WriteString(scs.NetworkType)
+	builder.WriteString(fmt.Sprintf("%v", scs.NetworkType))
 	builder.WriteString(", signal_strength=")
 	builder.WriteString(fmt.Sprintf("%v", scs.SignalStrength))
-	builder.WriteString(", timestamp=")
-	builder.WriteString(scs.Timestamp.Format(time.ANSIC))
-	builder.WriteString(", base_station_id=")
-	builder.WriteString(scs.BaseStationID)
-	builder.WriteString(", network_id=")
-	builder.WriteString(scs.NetworkID)
-	builder.WriteString(", system_id=")
-	builder.WriteString(scs.SystemID)
-	builder.WriteString(", cell_id=")
-	builder.WriteString(scs.CellID)
-	builder.WriteString(", location_area_code=")
-	builder.WriteString(scs.LocationAreaCode)
-	builder.WriteString(", mobile_country_code=")
-	builder.WriteString(scs.MobileCountryCode)
-	builder.WriteString(", mobile_network_code=")
-	builder.WriteString(scs.MobileNetworkCode)
-	builder.WriteString(", primary_scrambling_code=")
-	builder.WriteString(scs.PrimaryScramblingCode)
-	builder.WriteString(", operator=")
-	builder.WriteString(scs.Operator)
-	builder.WriteString(", arfcn=")
-	builder.WriteString(fmt.Sprintf("%v", scs.Arfcn))
-	builder.WriteString(", physical_cell_id=")
-	builder.WriteString(scs.PhysicalCellID)
-	builder.WriteString(", tracking_area_code=")
-	builder.WriteString(scs.TrackingAreaCode)
-	builder.WriteString(", timing_advance=")
-	builder.WriteString(fmt.Sprintf("%v", scs.TimingAdvance))
-	builder.WriteString(", earfcn=")
-	builder.WriteString(fmt.Sprintf("%v", scs.Earfcn))
-	builder.WriteString(", uarfcn=")
-	builder.WriteString(fmt.Sprintf("%v", scs.Uarfcn))
-	builder.WriteString(", latitude=")
-	builder.WriteString(fmt.Sprintf("%v", scs.Latitude))
-	builder.WriteString(", longitude=")
-	builder.WriteString(fmt.Sprintf("%v", scs.Longitude))
+	if v := scs.Timestamp; v != nil {
+		builder.WriteString(", timestamp=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	if v := scs.BaseStationID; v != nil {
+		builder.WriteString(", base_station_id=")
+		builder.WriteString(*v)
+	}
+	if v := scs.NetworkID; v != nil {
+		builder.WriteString(", network_id=")
+		builder.WriteString(*v)
+	}
+	if v := scs.SystemID; v != nil {
+		builder.WriteString(", system_id=")
+		builder.WriteString(*v)
+	}
+	if v := scs.CellID; v != nil {
+		builder.WriteString(", cell_id=")
+		builder.WriteString(*v)
+	}
+	if v := scs.LocationAreaCode; v != nil {
+		builder.WriteString(", location_area_code=")
+		builder.WriteString(*v)
+	}
+	if v := scs.MobileCountryCode; v != nil {
+		builder.WriteString(", mobile_country_code=")
+		builder.WriteString(*v)
+	}
+	if v := scs.MobileNetworkCode; v != nil {
+		builder.WriteString(", mobile_network_code=")
+		builder.WriteString(*v)
+	}
+	if v := scs.PrimaryScramblingCode; v != nil {
+		builder.WriteString(", primary_scrambling_code=")
+		builder.WriteString(*v)
+	}
+	if v := scs.Operator; v != nil {
+		builder.WriteString(", operator=")
+		builder.WriteString(*v)
+	}
+	if v := scs.Arfcn; v != nil {
+		builder.WriteString(", arfcn=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.PhysicalCellID; v != nil {
+		builder.WriteString(", physical_cell_id=")
+		builder.WriteString(*v)
+	}
+	if v := scs.TrackingAreaCode; v != nil {
+		builder.WriteString(", tracking_area_code=")
+		builder.WriteString(*v)
+	}
+	if v := scs.TimingAdvance; v != nil {
+		builder.WriteString(", timing_advance=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Earfcn; v != nil {
+		builder.WriteString(", earfcn=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Uarfcn; v != nil {
+		builder.WriteString(", uarfcn=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Latitude; v != nil {
+		builder.WriteString(", latitude=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Longitude; v != nil {
+		builder.WriteString(", longitude=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

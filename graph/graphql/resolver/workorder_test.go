@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -1891,7 +1892,7 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 					ID:   pointer.ToInt(cellScanID),
 					Type: enum.CheckListItemTypeCellScan,
 					CellData: []*models.SurveyCellScanData{{
-						NetworkType:    models.CellularNetworkTypeLte,
+						NetworkType:    surveycellscan.NetworkTypeLTE,
 						SignalStrength: -93,
 					}},
 				},
@@ -1983,7 +1984,7 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 		case enum.CheckListItemTypeSimple:
 			require.True(t, *item.Checked)
 		case enum.CheckListItemTypeCellScan:
-			require.Equal(t, models.CellularNetworkTypeLte.String(), item.CellData[0].NetworkType)
+			require.EqualValues(t, surveycellscan.NetworkTypeLTE, item.CellData[0].NetworkType)
 			require.Equal(t, -93, item.CellData[0].SignalStrength)
 		case enum.CheckListItemTypeFiles:
 			require.Equal(t, 2, len(item.Files))

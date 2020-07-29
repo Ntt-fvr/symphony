@@ -1369,7 +1369,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "network_type", Type: field.TypeString},
+		{Name: "network_type", Type: field.TypeEnum, Enums: []string{"CDMA", "GSM", "LTE", "WCDMA"}},
 		{Name: "signal_strength", Type: field.TypeInt},
 		{Name: "timestamp", Type: field.TypeTime, Nullable: true},
 		{Name: "base_station_id", Type: field.TypeString, Nullable: true},

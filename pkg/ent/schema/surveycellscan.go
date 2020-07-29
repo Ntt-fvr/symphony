@@ -19,70 +19,83 @@ type SurveyCellScan struct {
 // Fields of the SurveyCellScan.
 func (SurveyCellScan) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("network_type").
+		field.Enum("network_type").
+			Values("CDMA", "GSM", "LTE", "WCDMA").
 			Comment("The type of the cellular network"),
 		field.Int("signal_strength").
 			Comment("The strength of the cellular network in dBm"),
-
 		field.Time("timestamp").
 			Comment("Time at which cellular network was scanned").
-			Optional(),
-
+			Optional().
+			Nillable(),
 		field.String("base_station_id").
 			Comment("Base Station Identity Code").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("network_id").
 			Comment("CDMA Network ID").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("system_id").
 			Comment("CDMA System ID").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("cell_id").
 			Comment("The Cell Identity (cid) of the tower as described in TS 27.007").
-			Optional(),
-
+			Optional().
+			Nillable(),
 		field.String("location_area_code").
 			Comment("GSM 16-bit Location Area Code (lac)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("mobile_country_code").
 			Comment("3-digit Mobile Country Code (mcc)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("mobile_network_code").
 			Comment("2 or 3-digit Mobile Network Code (mnc)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("primary_scrambling_code").
 			Comment("UMTS Primary Scrambling Code described in TS 25.331").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("operator").
 			Comment("Operator name of the cellular network").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("arfcn").
 			Comment("GSM Absolute RF Channel Number (arfcn)").
-			Optional(),
-
+			Optional().
+			Nillable(),
 		field.String("physical_cell_id").
 			Comment("LTE Physical Cell Id (pci)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("tracking_area_code").
 			Comment("LTE 16-bit Tracking Area Code (tac)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("timing_advance").
 			Comment("LTE timing advance described in 3GPP 36.213 Sec 4.2.3").
-			Optional(),
-
+			Optional().
+			Nillable(),
 		field.Int("earfcn").
 			Comment("LTE Absolute RF Channel Number (earfcn)").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Int("uarfcn").
 			Comment("UMTS Absolute RF Channel Number described in TS 25.101 sec. 5.4.4 (uarfcn)s").
-			Optional(),
-
+			Optional().
+			Nillable(),
 		field.Float("latitude").
 			Comment("Latitude of where cell data was collected").
-			Optional(),
+			Optional().
+			Nillable(),
 		field.Float("longitude").
 			Comment("Longitude of where cell data was collected").
-			Optional(),
+			Optional().
+			Nillable(),
 	}
 }
 
