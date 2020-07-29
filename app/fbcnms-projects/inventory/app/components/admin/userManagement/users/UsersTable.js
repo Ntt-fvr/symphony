@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: '4px',
   },
   table: {
-    height: 'unset',
+    height: '100%',
   },
   field: {
     margin: '2px',
