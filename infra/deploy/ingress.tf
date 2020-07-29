@@ -196,8 +196,12 @@ resource "helm_release" "nginx_ingress" {
     replicaCount: 3
     minAvailable: 2
     service:
-      type: ClusterIP
-      enableHttps: false
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      externalTrafficPolicy: Local
     config:
       proxy-buffer-size: "32k"
       use-forwarded-headers: "true"
