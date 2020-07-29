@@ -420,7 +420,6 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
 
   values = [<<VALUES
-  installCRDs: true
   serviceAccount:
     name: ${module.cert_manager_role.service_account_name}
     annotations:

@@ -86,6 +86,40 @@ resource "aws_iam_group_policy" "ctf" {
   count  = local.ctf_count
 }
 
+# certificate issuer for openctf.io
+resource "helm_release" "ctf_cert_issuer" {
+  name       = "ctf-cert-issuer"
+  namespace  = kubernetes_namespace.ctf[count.index].id
+  repository = local.helm_repository.kiwigrid
+  chart      = "any-resource"
+
+  values = [<<VALUES
+  anyResources:
+    CertIssuer: |-
+      apiVersion: cert-manager.io/v1alpha2
+      kind: Issuer
+      metadata:
+        name: letsencrypt
+      spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: alexsn@fb.com
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+            - dns01:
+                route53:
+                  region: ${data.aws_region.current.name}
+                  hostedZoneID: ${data.aws_route53_zone.ctf.id}
+              selector:
+                dnsZones:
+                  - ${local.ctf_domain_name}
+  VALUES
+  ]
+
+  count = local.ctf_count
+}
+
 # ctf database password
 resource "random_password" "ctf_db" {
   length  = 50
