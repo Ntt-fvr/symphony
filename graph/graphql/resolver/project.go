@@ -278,8 +278,7 @@ func (r mutationResolver) addProjectTemplate(
 	if err != nil {
 		return nil, fmt.Errorf("querying project type: %w", err)
 	}
-	tem, err := client.
-		ProjectTemplate.
+	tem, err := client.ProjectTemplate.
 		Create().
 		SetName(projectType.Name).
 		SetNillableDescription(projectType.Description).
