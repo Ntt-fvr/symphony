@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -79,24 +78,28 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		SaveX(ctx)
 	wo := c.WorkOrder.Create().
 		SetName("wo2").
+		SetDescription("descr").
 		SetType(typ).
 		SetCreationDate(now).
 		SetAssignee(u).
 		SetOwner(u).
 		SaveX(ctx)
 	require.Equal(t, wo.Name, "wo2")
+	require.Equal(t, *wo.Description, "descr")
 	activities := wo.QueryActivities().AllX(ctx)
 	require.Len(t, activities, 5)
 	u2 := c.User.Create().
 		SetAuthID("123").
 		SetRole(user.RoleUser).SaveX(ctx)
 	c.WorkOrder.UpdateOne(wo).
+		SetName("wo2_").
+		SetDescription("descr_").
 		SetAssignee(u2).
 		SetStatus(workorder.StatusPending).
 		ExecX(ctx)
 
 	activities = wo.QueryActivities().AllX(ctx)
-	require.Len(t, activities, 7)
+	require.Len(t, activities, 9)
 	newCount := 0
 	for _, a := range activities {
 		require.Equal(t, a.QueryAuthor().OnlyX(ctx).AuthID, u.AuthID)
@@ -114,9 +117,17 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			require.EqualValues(t, a.NewValue, workorder.StatusPending)
 			require.False(t, a.IsCreate)
 			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
+		case activity.ChangedFieldName:
+			require.EqualValues(t, a.NewValue, "wo2_")
+			require.False(t, a.IsCreate)
+			require.EqualValues(t, a.OldValue, "wo2")
+		case activity.ChangedFieldDescription:
+			require.EqualValues(t, a.NewValue, "descr_")
+			require.False(t, a.IsCreate)
+			require.EqualValues(t, a.OldValue, "descr")
 		default:
 			require.Fail(t, "unsupported changed field")
 		}
 	}
-	require.Equal(t, 2, newCount)
+	require.Equal(t, 4, newCount)
 }

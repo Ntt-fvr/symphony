@@ -26,6 +26,8 @@ func (Activity) Fields() []ent.Field {
 				"Assignee":     "ASSIGNEE",
 				"CreationDate": "CREATION_DATE",
 				"Owner":        "OWNER",
+				"Name":         "NAME",
+				"Description":  "DESCRIPTION",
 			}),
 		field.Bool("is_create").
 			Default(false),

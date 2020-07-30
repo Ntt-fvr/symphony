@@ -34,7 +34,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CREATION_DATE", "OWNER", "PRIORITY", "STATUS"}},
+		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
 		{Name: "is_create", Type: field.TypeBool},
 		{Name: "old_value", Type: field.TypeString, Nullable: true},
 		{Name: "new_value", Type: field.TypeString, Nullable: true},

@@ -8049,6 +8049,8 @@ enum ActivityField
   ASSIGNEE
   CREATION_DATE
   OWNER
+  NAME
+  DESCRIPTION
 }
 
 type Activity implements Node {

@@ -138,6 +138,25 @@ const ActivityPost = (props: Props) => {
         </span>
       );
     }
+    if (activity.changedField === 'DESCRIPTION') {
+      return (
+        <span>
+          <fbt desc="">changed the description</fbt>
+        </span>
+      );
+    }
+    if (activity.changedField === 'NAME') {
+      return (
+        <span>
+          <fbt desc="">
+            changed work order name to{' '}
+            <fbt:param name="new value">
+              {genActivityValueComponent(newVal)}
+            </fbt:param>
+          </fbt>
+        </span>
+      );
+    }
     return (
       <span>
         <fbt desc="">

@@ -152,6 +152,37 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 			return err
 		}
 	}
+
+	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldName)
+	if shouldUpdate {
+		_, err := client.Activity.Create().
+			SetChangedField(activity.ChangedFieldName).
+			SetIsCreate(false).
+			SetNillableAuthorID(userID).
+			SetWorkOrderID(entry.CurrState.ID).
+			SetNillableOldValue(oldVal).
+			SetNillableNewValue(newVal).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldDescription)
+	if shouldUpdate {
+		_, err := client.Activity.Create().
+			SetChangedField(activity.ChangedFieldDescription).
+			SetIsCreate(false).
+			SetNillableAuthorID(userID).
+			SetWorkOrderID(entry.CurrState.ID).
+			SetNillableOldValue(oldVal).
+			SetNillableNewValue(newVal).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
