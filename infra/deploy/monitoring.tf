@@ -25,56 +25,43 @@ resource "helm_release" "prometheus_operator" {
   depends_on = [helm_release.efs_provisioner]
 }
 
+# publicly available grafana dashboards
+# https://grafana.com/grafana/dashboards/<gnetId>
 locals {
-  # publicly available grafana dashboards
-  # https://grafana.com/grafana/dashboards/<gnetId>
-  grafana_dashboards = {
-    aws-s3 = {
-      gnetId     = 575,
-      revision   = 5,
+  aws_dashboards = {
+    for d in [
+      { name = "s3", id = 575, rev = 6 },
+      { name = "ec2", id = 617, rev = 4 },
+      { name = "elb", id = 644, rev = 4 },
+      { name = "alb", id = 650, rev = 8 },
+      { name = "efs", id = 653, rev = 4 },
+      { name = "rds", id = 707, rev = 4 },
+    ] :
+    format("aws-%s", d.name) => {
+      gnetId     = d.id,
+      revision   = d.rev,
       datasource = "CloudWatch"
-    },
-    aws-ec2 = {
-      gnetId     = 617,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-elb = {
-      gnetId     = 644,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-alb = {
-      gnetId     = 650,
-      revision   = 7,
-      datasource = "CloudWatch"
-    },
-    aws-efs = {
-      gnetId     = 653,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-rds = {
-      gnetId     = 707,
-      revision   = 2,
-      datasource = "CloudWatch"
-    },
-    go-processes = {
-      gnetId     = 6671,
-      revision   = 2,
-      datasource = "Prometheus",
-    },
-    helm-exporter = {
-      gnetId     = 9367,
-      revision   = 2,
-      datasource = "Prometheus",
-    },
-    nginx-ingress = {
-      gnetId     = 9789,
-      revision   = 5,
-      datasource = "Prometheus",
-    },
+    }
   }
+
+  misc_dashboards = {
+    for d in [
+      { name = "go-processes", id = 6671, rev = 2 },
+      { name = "helm-exporter", id = 9367, rev = 2 },
+      { name = "nginx-ingress", id = 9789, rev = 5 },
+      { name = "nats-server", id = 2279, rev = 1 },
+    ] :
+    d.name => {
+      gnetId     = d.id,
+      revision   = d.rev,
+      datasource = "Prometheus"
+    }
+  }
+
+  grafana_dashboards = merge(
+    local.aws_dashboards,
+    local.misc_dashboards,
+  )
 }
 
 # random password generator for grafana
