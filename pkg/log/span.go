@@ -24,6 +24,14 @@ type (
 	attributes []trace.Attribute
 )
 
+// NewSpanCore writes log entries to trace span as attributes.
+func NewSpanCore(span *trace.Span, enabler zapcore.LevelEnabler) zapcore.Core {
+	return spanCore{
+		span:         span,
+		LevelEnabler: enabler,
+	}
+}
+
 func (sc spanCore) Check(ent zapcore.Entry, ce *zapcore.CheckedEntry) *zapcore.CheckedEntry {
 	if sc.Enabled(ent.Level) && sc.span.IsRecordingEvents() {
 		return ce.AddCore(ent, sc)

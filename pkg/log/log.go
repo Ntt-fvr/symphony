@@ -38,7 +38,7 @@ func (l DefaultLogger) For(ctx context.Context) *zap.Logger {
 	logger := l.Background()
 	if span := trace.FromContext(ctx); span != nil {
 		logger = logger.WithOptions(zap.WrapCore(func(core zapcore.Core) zapcore.Core {
-			return zapcore.NewTee(core, spanCore{LevelEnabler: core, span: span})
+			return zapcore.NewTee(core, NewSpanCore(span, core))
 		}))
 	}
 	return logger.With(FieldsFromContext(ctx)...)

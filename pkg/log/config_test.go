@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log
+package log_test
 
 import (
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -15,7 +16,7 @@ import (
 func TestConfigParse(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		app := kingpin.New(t.Name(), "")
-		config := AddFlags(app)
+		config := log.AddFlags(app)
 		_, err := app.Parse(nil)
 		assert.NoError(t, err)
 		assert.Equal(t, "info", config.Level.String())
@@ -23,10 +24,10 @@ func TestConfigParse(t *testing.T) {
 	})
 	t.Run("OK", func(t *testing.T) {
 		app := kingpin.New(t.Name(), "")
-		config := AddFlags(app)
+		config := log.AddFlags(app)
 		_, err := app.Parse([]string{
-			"--" + LevelFlagName, "error",
-			"--" + FormatFlagName, "json",
+			"--" + log.LevelFlagName, "error",
+			"--" + log.FormatFlagName, "json",
 		})
 		assert.NoError(t, err)
 		assert.Equal(t, "error", config.Level.String())
@@ -34,17 +35,17 @@ func TestConfigParse(t *testing.T) {
 	})
 	t.Run("BadLevel", func(t *testing.T) {
 		app := kingpin.New(t.Name(), "")
-		_ = AddFlags(app)
+		_ = log.AddFlags(app)
 		_, err := app.Parse([]string{
-			"--" + LevelFlagName, "foo",
+			"--" + log.LevelFlagName, "foo",
 		})
 		assert.Error(t, err)
 	})
 	t.Run("BadFormat", func(t *testing.T) {
 		app := kingpin.New(t.Name(), "")
-		_ = AddFlags(app)
+		_ = log.AddFlags(app)
 		_, err := app.Parse([]string{
-			"--" + FormatFlagName, "bar",
+			"--" + log.FormatFlagName, "bar",
 		})
 		assert.Error(t, err)
 	})
@@ -53,30 +54,29 @@ func TestConfigParse(t *testing.T) {
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name    string
-		config  Config
+		config  log.Config
 		wantErr bool
 	}{
 		{
 			name: "Production",
-			config: Config{
-				Level:  AllowedLevel(zap.InfoLevel),
+			config: log.Config{
+				Level:  log.AllowedLevel(zap.InfoLevel),
 				Format: "json",
 			},
 		},
 		{
 			name: "Development",
-			config: Config{
-				Level:  AllowedLevel(zap.DebugLevel),
+			config: log.Config{
+				Level:  log.AllowedLevel(zap.DebugLevel),
 				Format: "console",
 			},
 		},
 		{
-			name:   "Nop",
-			config: Config{},
+			name: "Nop",
 		},
 		{
 			name: "BadFormat",
-			config: Config{
+			config: log.Config{
 				Format: "fmt",
 			},
 			wantErr: true,
@@ -86,7 +86,7 @@ func TestNew(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			logger, err := New(tc.config)
+			logger, err := log.New(tc.config)
 			if !tc.wantErr {
 				assert.NotNil(t, logger)
 				assert.NoError(t, err)
@@ -98,8 +98,8 @@ func TestNew(t *testing.T) {
 }
 
 func TestMustNew(t *testing.T) {
-	var config Config
-	assert.NotPanics(t, func() { _ = MustNew(config) })
+	var config log.Config
+	assert.NotPanics(t, func() { _ = log.MustNew(config) })
 	config.Format = "baz"
-	assert.Panics(t, func() { _ = MustNew(config) })
+	assert.Panics(t, func() { _ = log.MustNew(config) })
 }

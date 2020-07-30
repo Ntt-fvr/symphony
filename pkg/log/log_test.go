@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log
+package log_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
@@ -17,8 +18,8 @@ import (
 
 func TestDefaultLogger(t *testing.T) {
 	core, o := observer.New(zap.InfoLevel)
-	logger := NewDefaultLogger(zap.New(core))
-	assert.Implements(t, (*Logger)(nil), logger)
+	logger := log.NewDefaultLogger(zap.New(core))
+	assert.Implements(t, (*log.Logger)(nil), logger)
 
 	msg := "context-less"
 	logger.Background().Info(msg)
@@ -49,8 +50,8 @@ func TestDefaultLogger(t *testing.T) {
 }
 
 func TestNopFactory(t *testing.T) {
-	logger := NewNopLogger()
-	assert.Implements(t, (*Logger)(nil), logger)
+	logger := log.NewNopLogger()
+	assert.Implements(t, (*log.Logger)(nil), logger)
 	assert.EqualValues(t, zap.NewNop(), logger.Background())
 	assert.EqualValues(t, zap.NewNop(), logger.For(context.Background()))
 }
