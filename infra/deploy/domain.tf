@@ -45,27 +45,6 @@ resource "aws_route53_record" "symphony_subdomain" {
   count   = local.subdomain_count
 }
 
-# hosted zone for dns records
-resource "aws_route53_zone" "purpleheadband" {
-  name = format("%s.", local.domains.purpleheadband.name)
-}
-
-# access root hosted zone
-data "aws_route53_zone" "purpleheadband" {
-  name  = replace(aws_route53_zone.purpleheadband.name, format("%s.", terraform.workspace), "")
-  count = local.subdomain_count
-}
-
-# dns record from parent hosted zone to subdomain name servers
-resource "aws_route53_record" "purpleheadband_subdomain" {
-  name    = aws_route53_zone.purpleheadband.name
-  type    = "NS"
-  zone_id = data.aws_route53_zone.purpleheadband[count.index].id
-  records = aws_route53_zone.purpleheadband.name_servers
-  ttl     = 300
-  count   = local.subdomain_count
-}
-
 locals {
   # domain name for magma records
   magma_domain_name = "magma.etagecom.io"

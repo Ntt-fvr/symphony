@@ -208,10 +208,6 @@ resource "helm_release" "nginx_ingress" {
       use-forwarded-headers: "true"
       log-format-escape-json: "true"
       log-format-upstream: '{"time": "$time_iso8601", "remote_addr": "$remote_addr", "request_id": "$req_id", "user": "$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status": $status, "host": "$host", "proto": "$server_protocol", "path": "$uri", "request_length": $request_length, "duration": $request_time, "method": "$request_method", "referrer": "$http_referer", "user_agent": "$http_user_agent", "proxy_upstream_name": "$proxy_upstream_name", "upstream_addr": "$upstream_addr", "upstream_response_length": "$upstream_response_length", "upstream_response_time": "$upstream_response_time", "upstream_status": "$upstream_status"}'
-      server-snippet: |
-        if ($host ~* ^(.*)${local.domains.purpleheadband.name}$) {
-          return 301 https://$1${local.domains.symphony.name}$request_uri;
-        }
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
@@ -264,7 +260,7 @@ resource "kubernetes_ingress" "gateway" {
       "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
       "alb.ingress.kubernetes.io/target-type"          = "ip"
       "alb.ingress.kubernetes.io/healthcheck-path"     = "/healthz"
-      "alb.ingress.kubernetes.io/certificate-arn"      = aws_acm_certificate.cert.arn
+      "alb.ingress.kubernetes.io/certificate-arn"      = aws_acm_certificate.symphony.arn
       "alb.ingress.kubernetes.io/ssl-policy"           = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
       "alb.ingress.kubernetes.io/waf-acl-id"           = each.value.waf_acl_id
       "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTP = 80 }, { HTTPS = 443 }])
