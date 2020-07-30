@@ -67,20 +67,9 @@ export default function WorkOrderConfigure() {
         <InventorySuspense>
           <NavigatableViews
             header={
-              <div>
-                <Text className={classes.title}>
-                  {<fbt desc="">Templates</fbt>}
-                </Text>
-                <Text className={classes.subtitle} variant="subtitle2">
-                  {
-                    <fbt desc="">
-                      Create reusable templates for your most common work order
-                      and project types. Project templates are created from more
-                      than one work order template.
-                    </fbt>
-                  }
-                </Text>
-              </div>
+              <Text className={classes.title}>
+                {<fbt desc="">Templates</fbt>}
+              </Text>
             }
             views={menuItems}
             routingBasePath="/workorders/configure"
