@@ -314,7 +314,6 @@ locals {
   # managed hosted zones
   aws_route53_zones = [
     aws_route53_zone.symphony.id,
-    aws_route53_zone.purpleheadband.id,
     data.aws_route53_zone.magma.id,
     aws_route53_zone.ctf.id,
   ]
