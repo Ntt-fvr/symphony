@@ -68,6 +68,9 @@ const useStyles = makeStyles(_ => ({
   },
   searchArea: {
     padding: '16px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
   },
 }));
 
