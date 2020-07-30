@@ -1,11 +1,11 @@
 # generate random password for keycloak database
-resource "random_string" "keycloak_dbpass" {
+resource random_string keycloak_dbpass {
   length  = 16
   special = false
 }
 
 # keycloak database
-module "keycloak_db" {
+module keycloak_db {
   identifier = "keycloak"
   source     = "terraform-aws-modules/rds/aws"
   version    = "~> 2.0"
@@ -40,7 +40,7 @@ module "keycloak_db" {
 }
 
 # keycloak is a identity and access manager
-resource "helm_release" "keycloak" {
+resource helm_release keycloak {
   name       = "keycloak"
   repository = local.helm_repository.codecentric
   chart      = "keycloak"

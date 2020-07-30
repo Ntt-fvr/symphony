@@ -1,9 +1,9 @@
-resource "aws_wafregional_regex_pattern_set" "blocked_uris" {
+resource aws_wafregional_regex_pattern_set blocked_uris {
   name                  = "blockeduris"
   regex_pattern_strings = ["/debug/"]
 }
 
-resource "aws_wafregional_regex_match_set" "blocked_uris" {
+resource aws_wafregional_regex_match_set blocked_uris {
   name = "blockeduris"
 
   regex_match_tuple {
@@ -16,7 +16,7 @@ resource "aws_wafregional_regex_match_set" "blocked_uris" {
   }
 }
 
-resource "aws_wafregional_regex_pattern_set" "keycloak_blocked_uris" {
+resource aws_wafregional_regex_pattern_set keycloak_blocked_uris {
   name = "keycloakblockeduris"
   regex_pattern_strings = [
     "^/auth/admin/",
@@ -25,7 +25,7 @@ resource "aws_wafregional_regex_pattern_set" "keycloak_blocked_uris" {
   ]
 }
 
-resource "aws_wafregional_regex_match_set" "keycloak_blocked_uris" {
+resource aws_wafregional_regex_match_set keycloak_blocked_uris {
   name = "keycloakblockeduris"
 
   regex_match_tuple {
@@ -38,7 +38,7 @@ resource "aws_wafregional_regex_match_set" "keycloak_blocked_uris" {
   }
 }
 
-resource "aws_wafregional_byte_match_set" "keycloak_host" {
+resource aws_wafregional_byte_match_set keycloak_host {
   name = "keycloak"
 
   byte_match_tuples {
@@ -53,7 +53,7 @@ resource "aws_wafregional_byte_match_set" "keycloak_host" {
   }
 }
 
-resource "aws_wafregional_rule" "blocked_uris" {
+resource aws_wafregional_rule blocked_uris {
   metric_name = "blockeduris"
   name        = "blockeduris"
 
@@ -64,7 +64,7 @@ resource "aws_wafregional_rule" "blocked_uris" {
   }
 }
 
-resource "aws_wafregional_byte_match_set" "master" {
+resource aws_wafregional_byte_match_set master {
   name = "master"
 
   byte_match_tuples {
@@ -79,7 +79,7 @@ resource "aws_wafregional_byte_match_set" "master" {
   }
 }
 
-resource "aws_wafregional_rule" "master" {
+resource aws_wafregional_rule master {
   metric_name = "master"
   name        = "master"
 
@@ -96,7 +96,7 @@ resource "aws_wafregional_rule" "master" {
   }
 }
 
-resource "aws_wafregional_rule" "keycloak" {
+resource aws_wafregional_rule keycloak {
   metric_name = "keycloakblockeduris"
   name        = "keycloakblockeduris"
 
@@ -128,7 +128,7 @@ locals {
   ]
 }
 
-resource "aws_wafregional_web_acl" "wafacl" {
+resource aws_wafregional_web_acl wafacl {
   metric_name = "wafacl"
   name        = "wafacl"
 
@@ -150,7 +150,7 @@ resource "aws_wafregional_web_acl" "wafacl" {
   }
 }
 
-resource "aws_wafregional_ipset" "fb_ips" {
+resource aws_wafregional_ipset fb_ips {
   name = "fbips"
 
   dynamic "ip_set_descriptor" {
@@ -165,7 +165,7 @@ resource "aws_wafregional_ipset" "fb_ips" {
   }
 }
 
-resource "aws_wafregional_rule" "fb_ips" {
+resource aws_wafregional_rule fb_ips {
   metric_name = "fbips"
   name        = "fbips"
 
@@ -176,7 +176,7 @@ resource "aws_wafregional_rule" "fb_ips" {
   }
 }
 
-resource "aws_wafregional_web_acl" "internacl" {
+resource aws_wafregional_web_acl internacl {
   metric_name = "internacl"
   name        = "internacl"
 

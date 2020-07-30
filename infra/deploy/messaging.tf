@@ -1,5 +1,5 @@
 # An open-source, cloud-native messaging system
-resource "helm_release" "nats" {
+resource helm_release nats {
   name             = "nats"
   namespace        = "messaging"
   create_namespace = true
@@ -21,7 +21,7 @@ resource "helm_release" "nats" {
 }
 
 # exports nats stats to prometheus
-resource "helm_release" "prometheus_nats_exporter" {
+resource helm_release prometheus_nats_exporter {
   name       = "prometheus-nats-exporter"
   namespace  = helm_release.nats.namespace
   repository = local.helm_repository.stable

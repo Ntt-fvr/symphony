@@ -11,18 +11,18 @@ locals {
 }
 
 # hosted zone for ctf records
-resource "aws_route53_zone" "ctf" {
+resource aws_route53_zone ctf {
   name = local.ctf_domain_name
 }
 
 # access root zone for ctf records
-data "aws_route53_zone" "ctf" {
+data aws_route53_zone ctf {
   name  = local.ctf_root_domain_name
   count = local.subdomain_count
 }
 
 # dns record from parent hosted zone to subdomain name servers
-resource "aws_route53_record" "ctf_subdomain" {
+resource aws_route53_record ctf_subdomain {
   name    = aws_route53_zone.ctf.name
   type    = "NS"
   zone_id = data.aws_route53_zone.ctf[count.index].id
@@ -32,7 +32,7 @@ resource "aws_route53_record" "ctf_subdomain" {
 }
 
 # kubernetes namespace for ctf deployment
-resource "kubernetes_namespace" "ctf" {
+resource kubernetes_namespace ctf {
   metadata {
     name = "ctf"
   }
@@ -41,7 +41,7 @@ resource "kubernetes_namespace" "ctf" {
 }
 
 # kubernetes role bindings for ctf admins
-resource "kubernetes_role_binding" "ctf_admins" {
+resource kubernetes_role_binding ctf_admins {
   metadata {
     name      = "admins"
     namespace = kubernetes_namespace.ctf[count.index].id
@@ -63,20 +63,20 @@ resource "kubernetes_role_binding" "ctf_admins" {
 }
 
 # aws iam role for admins in ctf namespace.
-resource "aws_iam_role" "ctf_admin" {
+resource aws_iam_role ctf_admin {
   name               = "CTFAdmin"
   assume_role_policy = data.aws_iam_policy_document.root_delegate.json
   count              = local.ctf_count
 }
 
 # IAM group for CTF team.
-resource "aws_iam_group" "ctf" {
+resource aws_iam_group ctf {
   name  = "CTF"
   count = local.ctf_count
 }
 
 # aws iam policy document granting ctf admin assume role
-data "aws_iam_policy_document" "ctf_admin_role" {
+data aws_iam_policy_document ctf_admin_role {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -91,14 +91,14 @@ data "aws_iam_policy_document" "ctf_admin_role" {
 }
 
 # aws iam group policy for above policy document
-resource "aws_iam_group_policy" "ctf" {
+resource aws_iam_group_policy ctf {
   group  = aws_iam_group.ctf[count.index].id
   policy = data.aws_iam_policy_document.ctf_admin_role[count.index].json
   count  = local.ctf_count
 }
 
 # certificate issuer for openctf.io
-resource "helm_release" "ctf_cert_issuer" {
+resource helm_release ctf_cert_issuer {
   name       = "ctf-cert-issuer"
   namespace  = kubernetes_namespace.ctf[count.index].id
   repository = local.helm_repository.kiwigrid
@@ -132,14 +132,14 @@ resource "helm_release" "ctf_cert_issuer" {
 }
 
 # ctf database password
-resource "random_password" "ctf_db" {
+resource random_password ctf_db {
   length  = 50
   special = false
   count   = local.ctf_count
 }
 
 # postgres db for ctf
-module "ctf_db" {
+module ctf_db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -178,7 +178,7 @@ module "ctf_db" {
 }
 
 # kubernetes secret for ctf database
-resource "kubernetes_secret" "ctf_db" {
+resource kubernetes_secret ctf_db {
   metadata {
     name      = "ctf-database"
     namespace = kubernetes_namespace.ctf[count.index].id

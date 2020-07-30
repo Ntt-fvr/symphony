@@ -14,7 +14,7 @@ locals {
 }
 
 # grant RDS to EKS nodes
-resource "aws_security_group" "eks_rds" {
+resource aws_security_group eks_rds {
   for_each = {
     mysql = {
       name = "MySQL"
@@ -44,20 +44,20 @@ resource "aws_security_group" "eks_rds" {
 }
 
 # role allowing enhanced monitoring
-data "aws_iam_role" "rds_enhanced_monitoring" {
+data aws_iam_role rds_enhanced_monitoring {
   name = "rds-monitoring-role"
 }
 
 # generate random database password
-resource "random_string" "rds_password" {
+resource random_string rds_password {
   length  = 16
   special = false
 }
 
 # generate random database identifier
-resource "random_pet" "rds_identifier" {}
+resource random_pet rds_identifier {}
 
-module "db" {
+module db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -92,10 +92,10 @@ module "db" {
 }
 
 # generate random graph database identifier
-resource "random_pet" "graph_db_identifier" {}
+resource random_pet graph_db_identifier {}
 
 # rds database for inventory graph
-module "graph_db" {
+module graph_db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -148,10 +148,10 @@ module "graph_db" {
 }
 
 # generate random provisioner name
-resource "random_pet" "rds_provisioner" {}
+resource random_pet rds_provisioner {}
 
 # provision required databases
-resource "null_resource" "rds_provisioner" {
+resource null_resource rds_provisioner {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
 

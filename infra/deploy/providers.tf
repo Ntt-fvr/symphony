@@ -1,9 +1,9 @@
-provider "aws" {
+provider aws {
   region  = var.region[terraform.workspace]
   version = "~> 2.0"
 }
 
-provider "aws" {
+provider aws {
   region  = var.region[terraform.workspace]
   version = "~> 2.0"
   alias   = "eks_admin"
@@ -13,37 +13,37 @@ provider "aws" {
   }
 }
 
-provider "aws" {
+provider aws {
   region  = "us-east-1"
   version = "~> 2.0"
   alias   = "us-east-1"
 }
 
-provider "random" {
+provider random {
   version = "~> 2.0"
 }
 
-provider "local" {
+provider local {
   version = "~> 1.0"
 }
 
-provider "null" {
+provider null {
   version = "~> 2.0"
 }
 
-provider "template" {
+provider template {
   version = "~> 2.0"
 }
 
-provider "http" {
+provider http {
   version = "~> 1.1"
 }
 
-provider "tls" {
+provider tls {
   version = "~> 2.0"
 }
 
-provider "kubernetes" {
+provider kubernetes {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   token                  = data.aws_eks_cluster_auth.eks.token
@@ -51,7 +51,7 @@ provider "kubernetes" {
   version                = "~> 1.0"
 }
 
-provider "helm" {
+provider helm {
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)

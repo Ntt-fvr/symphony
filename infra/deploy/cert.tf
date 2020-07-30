@@ -1,5 +1,5 @@
 # acm certificate for application load balancers.
-resource "aws_acm_certificate" "symphony" {
+resource aws_acm_certificate symphony {
   domain_name       = local.domains.symphony.name
   validation_method = "DNS"
 
@@ -21,7 +21,7 @@ resource "aws_acm_certificate" "symphony" {
 }
 
 # dns record for symphony certificate validation
-resource "aws_route53_record" "symphony_cert_validation" {
+resource aws_route53_record symphony_cert_validation {
   for_each = {
     for dvo in aws_acm_certificate.symphony.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
@@ -38,7 +38,7 @@ resource "aws_route53_record" "symphony_cert_validation" {
 }
 
 # validate symphony certificate against dns record
-resource "aws_acm_certificate_validation" "symphony" {
+resource aws_acm_certificate_validation symphony {
   certificate_arn = aws_acm_certificate.symphony.arn
   validation_record_fqdns = [
     for record in aws_route53_record.symphony_cert_validation : record.fqdn

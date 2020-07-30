@@ -8,7 +8,7 @@ locals {
 }
 
 # inventory service data store
-resource "aws_s3_bucket" "inventory_store" {
+resource aws_s3_bucket inventory_store {
   bucket_prefix = "${var.project}-${terraform.workspace}-"
   region        = data.aws_region.current.id
 
@@ -44,7 +44,7 @@ resource "aws_s3_bucket" "inventory_store" {
 }
 
 # limit public access to inventory data store
-resource "aws_s3_bucket_public_access_block" "inventory_store" {
+resource aws_s3_bucket_public_access_block inventory_store {
   bucket                  = aws_s3_bucket.inventory_store.id
   block_public_acls       = true
   block_public_policy     = true
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_public_access_block" "inventory_store" {
 }
 
 # iam role for inventory store
-module "inventory_store_role" {
+module inventory_store_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "InventoryStoreRole"
   role_path                 = local.eks_sa_role_path
@@ -65,7 +65,7 @@ module "inventory_store_role" {
 }
 
 # policy required by inventory store service
-data "aws_iam_policy_document" "inventory_store" {
+data aws_iam_policy_document inventory_store {
   statement {
     actions = [
       "s3:GetObject",
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "inventory_store" {
 }
 
 # inventory application
-resource "helm_release" "inventory" {
+resource helm_release inventory {
   name                = local.inventory_name
   namespace           = local.inventory_namespace
   repository          = local.helm_repository.symphony.url
@@ -154,7 +154,7 @@ resource "helm_release" "inventory" {
 }
 
 # cron job periodically cleaning test tenant data
-resource "kubernetes_cron_job" "tenant_cleaner" {
+resource kubernetes_cron_job tenant_cleaner {
   for_each = terraform.workspace == "staging" ? {
     testimio = {
       schedule = "25,55 * * * *"

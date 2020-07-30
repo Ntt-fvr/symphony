@@ -1,4 +1,4 @@
-resource "aws_wafregional_ipset" "cellcom" {
+resource aws_wafregional_ipset cellcom {
   name = "cellcom"
 
   dynamic "ip_set_descriptor" {
@@ -13,7 +13,7 @@ resource "aws_wafregional_ipset" "cellcom" {
   }
 }
 
-resource "aws_wafregional_regex_pattern_set" "cellcom" {
+resource aws_wafregional_regex_pattern_set cellcom {
   name = "cellcom"
 
   regex_pattern_strings = [
@@ -21,7 +21,7 @@ resource "aws_wafregional_regex_pattern_set" "cellcom" {
   ]
 }
 
-resource "aws_wafregional_regex_match_set" "cellcom" {
+resource aws_wafregional_regex_match_set cellcom {
   name = "cellcom"
 
   regex_match_tuple {
@@ -35,7 +35,7 @@ resource "aws_wafregional_regex_match_set" "cellcom" {
   }
 }
 
-resource "aws_wafregional_rule" "cellcom" {
+resource aws_wafregional_rule cellcom {
   name        = "cellcom"
   metric_name = "cellcom"
 

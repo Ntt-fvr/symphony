@@ -1,5 +1,5 @@
 # jaeger is an end-to-end distributed tracing system
-resource "helm_release" "jaeger_operator" {
+resource helm_release jaeger_operator {
   chart      = "jaeger-operator"
   repository = local.helm_repository.jaegertracing
   name       = "jaeger-operator"

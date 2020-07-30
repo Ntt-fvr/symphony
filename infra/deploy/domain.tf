@@ -25,18 +25,18 @@ locals {
 }
 
 # hosted zone for dns records
-resource "aws_route53_zone" "symphony" {
+resource aws_route53_zone symphony {
   name = format("%s.", local.domains.symphony.name)
 }
 
 # access root hosted zone
-data "aws_route53_zone" "symphony" {
+data aws_route53_zone symphony {
   name  = replace(aws_route53_zone.symphony.name, format("%s.", terraform.workspace), "")
   count = local.subdomain_count
 }
 
 # dns record from parent hosted zone to subdomain name servers
-resource "aws_route53_record" "symphony_subdomain" {
+resource aws_route53_record symphony_subdomain {
   name    = aws_route53_zone.symphony.name
   type    = "NS"
   zone_id = data.aws_route53_zone.symphony[count.index].id
@@ -51,12 +51,12 @@ locals {
 }
 
 # hosted zone for magma records
-resource "aws_route53_zone" "magma" {
+resource aws_route53_zone magma {
   name  = local.magma_domain_name
   count = terraform.workspace == "default" ? 1 : 0
 }
 
 # hosted zone for magma records for non default workspaces
-data "aws_route53_zone" "magma" {
+data aws_route53_zone magma {
   name = local.magma_domain_name
 }

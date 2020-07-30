@@ -1,11 +1,11 @@
 # create iam user for deployer
-resource "aws_iam_user" "deployer" {
+resource aws_iam_user deployer {
   name  = var.deployer_name
   count = terraform.workspace == "default" ? 1 : 0
 }
 
 # service deployer iam policy
-data "aws_iam_policy_document" "deployer" {
+data aws_iam_policy_document deployer {
   # provide secret read access to allow injection
   statement {
     actions = [
@@ -70,26 +70,26 @@ data "aws_iam_policy_document" "deployer" {
 }
 
 # attach deployer user policy
-resource "aws_iam_user_policy" "deployer" {
+resource aws_iam_user_policy deployer {
   policy = data.aws_iam_policy_document.deployer.json
   user   = aws_iam_user.deployer[count.index].name
   count  = terraform.workspace == "default" ? 1 : 0
 }
 
 # attach deployer read only policy
-resource "aws_iam_user_policy_attachment" "deployer_read_only" {
+resource aws_iam_user_policy_attachment deployer_read_only {
   policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
   user       = aws_iam_user.deployer[count.index].name
   count      = terraform.workspace == "default" ? 1 : 0
 }
 
 # reference deployer user
-data "aws_iam_user" "deployer" {
+data aws_iam_user deployer {
   user_name = var.deployer_name
 }
 
 # attach deployer eks admin policy
-resource "aws_iam_user_policy_attachment" "deployer_eks_admin" {
+resource aws_iam_user_policy_attachment deployer_eks_admin {
   policy_arn = aws_iam_policy.eks_admin.arn
   user       = data.aws_iam_user.deployer.user_name
   count      = contains(["default", "staging"], terraform.workspace) ? 1 : 0

@@ -1,5 +1,5 @@
 # prometheus is a monitoring system and time series database
-resource "helm_release" "prometheus_operator" {
+resource helm_release prometheus_operator {
   name       = "prometheus-operator"
   namespace  = "monitoring"
   repository = local.helm_repository.stable
@@ -65,13 +65,13 @@ locals {
 }
 
 # random password generator for grafana
-resource "random_string" "grafana_admin_password" {
+resource random_string grafana_admin_password {
   length  = 10
   special = false
 }
 
 # iam role for grafana
-module "grafana_role" {
+module grafana_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "GrafanaRole"
   role_path                 = local.eks_sa_role_path
@@ -83,7 +83,7 @@ module "grafana_role" {
 }
 
 # policy required by grafana cloudwatch datasource
-data "aws_iam_policy_document" "grafana" {
+data aws_iam_policy_document grafana {
   statement {
     sid = "AllowReadingMetricsFromCloudWatch"
 
@@ -121,7 +121,7 @@ data "aws_iam_policy_document" "grafana" {
 }
 
 # grafana dashboards are passed as config map.
-resource "kubernetes_config_map" "grafana_extra_dashboards" {
+resource kubernetes_config_map grafana_extra_dashboards {
   metadata {
     name      = "grafana-extra-dashboards"
     namespace = "monitoring"
@@ -138,7 +138,7 @@ resource "kubernetes_config_map" "grafana_extra_dashboards" {
 }
 
 # exports helm release stats to prometheus
-resource "helm_release" "helm_exporter" {
+resource helm_release helm_exporter {
   name       = "helm-exporter"
   repository = local.helm_repository.sstarcher
   chart      = "helm-exporter"
@@ -156,7 +156,7 @@ resource "helm_release" "helm_exporter" {
 
 # The blackbox exporter allows blackbox probing of endpoints
 # over HTTP, HTTPS, DNS, TCP and ICMP.
-resource "helm_release" "blackbox_exporter" {
+resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.stable
   chart      = "prometheus-blackbox-exporter"
