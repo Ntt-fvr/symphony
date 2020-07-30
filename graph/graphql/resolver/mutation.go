@@ -814,18 +814,18 @@ func (r mutationResolver) AddEquipmentPositionDefinitions(
 	}
 	var (
 		client = r.ClientFrom(ctx).EquipmentPositionDefinition
-		defs   = make([]*ent.EquipmentPositionDefinition, len(inputs))
-		err    error
+		create = make([]*ent.EquipmentPositionDefinitionCreate, len(inputs))
 	)
 	for i, input := range inputs {
-		if defs[i], err = client.Create().
+		create[i] = client.Create().
 			SetName(input.Name).
 			SetNillableIndex(input.Index).
 			SetNillableVisibilityLabel(input.VisibleLabel).
-			SetNillableEquipmentTypeID(equipmentTypeID).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating equipment position definition: %w", err)
-		}
+			SetNillableEquipmentTypeID(equipmentTypeID)
+	}
+	defs, err := client.CreateBulk(create...).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("creating bulk of equipment position definition: %w", err)
 	}
 	return defs, nil
 }
@@ -859,20 +859,20 @@ func (r mutationResolver) AddEquipmentPortDefinitions(
 	}
 	var (
 		client = r.ClientFrom(ctx).EquipmentPortDefinition
-		defs   = make([]*ent.EquipmentPortDefinition, len(inputs))
-		err    error
+		create = make([]*ent.EquipmentPortDefinitionCreate, len(inputs))
 	)
 	for i, input := range inputs {
-		if defs[i], err = client.Create().
+		create[i] = client.Create().
 			SetName(input.Name).
 			SetNillableIndex(input.Index).
 			SetNillableBandwidth(input.Bandwidth).
 			SetNillableVisibilityLabel(input.VisibleLabel).
 			SetNillableEquipmentPortTypeID(input.PortTypeID).
-			SetNillableEquipmentTypeID(equipmentTypeID).
-			Save(ctx); err != nil {
-			return nil, fmt.Errorf("creating equipment port definition: %w", err)
-		}
+			SetNillableEquipmentTypeID(equipmentTypeID)
+	}
+	defs, err := client.CreateBulk(create...).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("creating bulk of equipment port definition: %w", err)
 	}
 	return defs, nil
 }
