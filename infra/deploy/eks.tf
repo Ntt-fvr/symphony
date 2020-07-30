@@ -57,8 +57,8 @@ module eks {
   worker_groups = [
     {
       instance_type        = "t3.xlarge"
-      asg_desired_capacity = 3
-      asg_min_size         = 3
+      asg_desired_capacity = 5
+      asg_min_size         = 5
       asg_max_size         = 9
       autoscaling_enabled  = true
       tags = [

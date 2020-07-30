@@ -161,6 +161,7 @@ data aws_iam_policy_document orc8r_admin {
     ]
 
     resources = [
+      data.aws_secretsmanager_secret.mapbox.arn,
       data.aws_secretsmanager_secret.artifactory.arn,
       format(
         "arn:aws:secretsmanager:*:%s:secret:%s*",
