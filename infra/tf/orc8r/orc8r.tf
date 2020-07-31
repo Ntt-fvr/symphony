@@ -47,11 +47,20 @@ resource "helm_release" "orc8r" {
       terraform.workspace != "production" ? format("-%s", terraform.workspace) : "",
       local.domain_name,
     )
+    nms_hostname = format(
+      "*.nms%s.%s",
+      terraform.workspace != "production" ? format("-%s", terraform.workspace) : "",
+      local.domain_name,
+    )
 
     controller_db_name = local.orc8r_db["dbname"]
     controller_db_host = local.orc8r_db["dbhost"]
     controller_db_port = local.orc8r_db["dbport"]
     controller_db_user = local.orc8r_db["dbuser"]
+
+    nms_db_name = local.orc8r_db["nms_dbname"]
+    nms_db_host = local.orc8r_db["nms_dbhost"]
+    nms_db_user = local.orc8r_db["nms_dbuser"]
 
     metrics_pvc_promcfg  = kubernetes_persistent_volume_claim.storage["promcfg"].metadata.0.name
     metrics_pvc_promdata = kubernetes_persistent_volume_claim.storage["promdata"].metadata.0.name
@@ -63,11 +72,21 @@ resource "helm_release" "orc8r" {
     grafana_pvc_grafanaDatasources = kubernetes_persistent_volume_claim.storage["grafanadatasources"].metadata.0.name
     grafana_pvc_grafanaProviders   = kubernetes_persistent_volume_claim.storage["grafanaproviders"].metadata.0.name
     grafana_pvc_grafanaDashboards  = kubernetes_persistent_volume_claim.storage["grafanadashboards"].metadata.0.name
+
+    deploy_nms            = local.env[terraform.workspace].deploy_nms
+    nms_certs_secret      = kubernetes_secret.orc8r["certs"].metadata.0.name
+    user_grafana_hostname = "orc8r-user-grafana.${local.kubernetes_namespace}:3000"
+    mapbox_access_token   = jsondecode(data.aws_secretsmanager_secret_version.mapbox.secret_string)["access_token"]
   })]
 
   set_sensitive {
     name  = "controller.spec.database.pass"
     value = local.orc8r_db["dbpass"]
+  }
+
+  set_sensitive {
+    name  = "nms.magmalte.env.mysql_pass"
+    value = local.orc8r_db["nms_dbpass"]
   }
 
   lifecycle {

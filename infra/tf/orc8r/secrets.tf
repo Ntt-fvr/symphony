@@ -59,3 +59,14 @@ data "aws_secretsmanager_secret" "orc8r_db" {
 data "aws_secretsmanager_secret_version" "orc8r_db" {
   secret_id = data.aws_secretsmanager_secret.orc8r_db.id
 }
+
+data "aws_secretsmanager_secret" "mapbox" {
+  name     = "phb/mapbox"
+  provider = aws.us-east-1
+}
+
+data "aws_secretsmanager_secret_version" "mapbox" {
+  secret_id = data.aws_secretsmanager_secret.mapbox.id
+  provider  = aws.us-east-1
+}
+

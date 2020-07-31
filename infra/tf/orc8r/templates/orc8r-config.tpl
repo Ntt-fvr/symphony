@@ -109,6 +109,39 @@ metrics:
           claimName: ${grafana_pvc_grafanaData}
 
 nms:
-  enabled: false
+  enabled: ${deploy_nms}
+  imagePullSecrets:
+    - name: ${image_pull_secret}
+  secret:
+    certs: ${nms_certs_secret}
+
+  magmalte:
+    create: true
+    image:
+      repository: ${docker_registry}/magmalte
+      tag: "${docker_tag}"
+    deployment:
+      spec:
+        operator_cert_name: nms_operator.pem
+        operator_key_name: nms_operator.key.pem
+    env:
+      api_host: ${api_hostname}
+      mysql_db: ${nms_db_name}
+      mysql_host: ${nms_db_host}
+      mysql_user: ${nms_db_user}
+      grafana_address: ${user_grafana_hostname}
+      mapbox_access_token: ${mapbox_access_token}
+
+  nginx:
+    deployment:
+      spec:
+        ssl_cert_name: controller.crt
+        ssl_cert_key_name: controller.key
+
+    service:
+      type: LoadBalancer
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "${nms_hostname}"
+
 logging:
   enabled: false
