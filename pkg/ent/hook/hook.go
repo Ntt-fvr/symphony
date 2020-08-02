@@ -221,6 +221,19 @@ func (f EquipmentTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return f(ctx, mv)
 }
 
+// The ExportTaskFunc type is an adapter to allow the use of ordinary
+// function as ExportTask mutator.
+type ExportTaskFunc func(context.Context, *ent.ExportTaskMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExportTaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ExportTaskMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExportTaskMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The FileFunc type is an adapter to allow the use of ordinary
 // function as File mutator.
 type FileFunc func(context.Context, *ent.FileMutation) (ent.Value, error)

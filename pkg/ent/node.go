@@ -32,6 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -1437,6 +1438,57 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "ServiceEndpointDefinition",
 		Name: "service_endpoint_definitions",
+	}
+	return node, nil
+}
+
+func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     et.ID,
+		Type:   "ExportTask",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 0),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(et.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "exporttask.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "exporttask.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.Progress); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "float64",
+		Name:  "progress",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.Filters); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "filters",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.StoreKey); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "store_key",
+		Value: string(buf),
 	}
 	return node, nil
 }
@@ -5243,6 +5295,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.EquipmentType.Query().
 			Where(equipmenttype.ID(id)).
 			CollectFields(ctx, "EquipmentType").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case exporttask.Table:
+		n, err := c.ExportTask.Query().
+			Where(exporttask.ID(id)).
+			CollectFields(ctx, "ExportTask").
 			Only(ctx)
 		if err != nil {
 			return nil, err

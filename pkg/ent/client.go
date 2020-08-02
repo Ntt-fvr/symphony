@@ -29,6 +29,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -103,6 +104,8 @@ type Client struct {
 	EquipmentPositionDefinition *EquipmentPositionDefinitionClient
 	// EquipmentType is the client for interacting with the EquipmentType builders.
 	EquipmentType *EquipmentTypeClient
+	// ExportTask is the client for interacting with the ExportTask builders.
+	ExportTask *ExportTaskClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
@@ -197,6 +200,7 @@ func (c *Client) init() {
 	c.EquipmentPosition = NewEquipmentPositionClient(c.config)
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
+	c.ExportTask = NewExportTaskClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
@@ -276,6 +280,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		ExportTask:                  NewExportTaskClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
@@ -338,6 +343,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		ExportTask:                  NewExportTaskClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
@@ -413,6 +419,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPosition.Use(hooks...)
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
+	c.ExportTask.Use(hooks...)
 	c.File.Use(hooks...)
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
@@ -2652,6 +2659,95 @@ func (c *EquipmentTypeClient) QueryServiceEndpointDefinitions(et *EquipmentType)
 func (c *EquipmentTypeClient) Hooks() []Hook {
 	hooks := c.hooks.EquipmentType
 	return append(hooks[:len(hooks):len(hooks)], equipmenttype.Hooks[:]...)
+}
+
+// ExportTaskClient is a client for the ExportTask schema.
+type ExportTaskClient struct {
+	config
+}
+
+// NewExportTaskClient returns a client for the ExportTask from the given config.
+func NewExportTaskClient(c config) *ExportTaskClient {
+	return &ExportTaskClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `exporttask.Hooks(f(g(h())))`.
+func (c *ExportTaskClient) Use(hooks ...Hook) {
+	c.hooks.ExportTask = append(c.hooks.ExportTask, hooks...)
+}
+
+// Create returns a create builder for ExportTask.
+func (c *ExportTaskClient) Create() *ExportTaskCreate {
+	mutation := newExportTaskMutation(c.config, OpCreate)
+	return &ExportTaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of ExportTask entities.
+func (c *ExportTaskClient) CreateBulk(builders ...*ExportTaskCreate) *ExportTaskCreateBulk {
+	return &ExportTaskCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExportTask.
+func (c *ExportTaskClient) Update() *ExportTaskUpdate {
+	mutation := newExportTaskMutation(c.config, OpUpdate)
+	return &ExportTaskUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExportTaskClient) UpdateOne(et *ExportTask) *ExportTaskUpdateOne {
+	mutation := newExportTaskMutation(c.config, OpUpdateOne, withExportTask(et))
+	return &ExportTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExportTaskClient) UpdateOneID(id int) *ExportTaskUpdateOne {
+	mutation := newExportTaskMutation(c.config, OpUpdateOne, withExportTaskID(id))
+	return &ExportTaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExportTask.
+func (c *ExportTaskClient) Delete() *ExportTaskDelete {
+	mutation := newExportTaskMutation(c.config, OpDelete)
+	return &ExportTaskDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *ExportTaskClient) DeleteOne(et *ExportTask) *ExportTaskDeleteOne {
+	return c.DeleteOneID(et.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *ExportTaskClient) DeleteOneID(id int) *ExportTaskDeleteOne {
+	builder := c.Delete().Where(exporttask.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExportTaskDeleteOne{builder}
+}
+
+// Create returns a query builder for ExportTask.
+func (c *ExportTaskClient) Query() *ExportTaskQuery {
+	return &ExportTaskQuery{config: c.config}
+}
+
+// Get returns a ExportTask entity by its id.
+func (c *ExportTaskClient) Get(ctx context.Context, id int) (*ExportTask, error) {
+	return c.Query().Where(exporttask.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExportTaskClient) GetX(ctx context.Context, id int) *ExportTask {
+	et, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return et
+}
+
+// Hooks returns the client hooks.
+func (c *ExportTaskClient) Hooks() []Hook {
+	hooks := c.hooks.ExportTask
+	return append(hooks[:len(hooks):len(hooks)], exporttask.Hooks[:]...)
 }
 
 // FileClient is a client for the File schema.

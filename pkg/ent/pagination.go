@@ -36,6 +36,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -3843,6 +3844,225 @@ var DefaultEquipmentTypeOrder = &EquipmentTypeOrder{
 	Field: &EquipmentTypeOrderField{
 		field: equipmenttype.FieldID,
 		toCursor: func(et *EquipmentType) Cursor {
+			return Cursor{ID: et.ID}
+		},
+	},
+}
+
+// ExportTaskEdge is the edge representation of ExportTask.
+type ExportTaskEdge struct {
+	Node   *ExportTask `json:"node"`
+	Cursor Cursor      `json:"cursor"`
+}
+
+// ExportTaskConnection is the connection containing edges to ExportTask.
+type ExportTaskConnection struct {
+	Edges      []*ExportTaskEdge `json:"edges"`
+	PageInfo   PageInfo          `json:"pageInfo"`
+	TotalCount int               `json:"totalCount"`
+}
+
+// ExportTaskPaginateOption enables pagination customization.
+type ExportTaskPaginateOption func(*exportTaskPager) error
+
+// WithExportTaskOrder configures pagination ordering.
+func WithExportTaskOrder(order *ExportTaskOrder) ExportTaskPaginateOption {
+	if order == nil {
+		order = DefaultExportTaskOrder
+	}
+	o := *order
+	return func(pager *exportTaskPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultExportTaskOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithExportTaskFilter configures pagination filter.
+func WithExportTaskFilter(filter func(*ExportTaskQuery) (*ExportTaskQuery, error)) ExportTaskPaginateOption {
+	return func(pager *exportTaskPager) error {
+		if filter == nil {
+			return errors.New("ExportTaskQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type exportTaskPager struct {
+	order  *ExportTaskOrder
+	filter func(*ExportTaskQuery) (*ExportTaskQuery, error)
+}
+
+func newExportTaskPager(opts []ExportTaskPaginateOption) (*exportTaskPager, error) {
+	pager := &exportTaskPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultExportTaskOrder
+	}
+	return pager, nil
+}
+
+func (p *exportTaskPager) applyFilter(query *ExportTaskQuery) (*ExportTaskQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *exportTaskPager) toCursor(et *ExportTask) Cursor {
+	return p.order.Field.toCursor(et)
+}
+
+func (p *exportTaskPager) applyCursors(query *ExportTaskQuery, after, before *Cursor) *ExportTaskQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultExportTaskOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *exportTaskPager) applyOrder(query *ExportTaskQuery, reverse bool) *ExportTaskQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultExportTaskOrder.Field {
+		query = query.Order(Asc(DefaultExportTaskOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to ExportTask.
+func (et *ExportTaskQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ExportTaskPaginateOption,
+) (*ExportTaskConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newExportTaskPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if et, err = pager.applyFilter(et); err != nil {
+		return nil, err
+	}
+
+	conn := &ExportTaskConnection{Edges: []*ExportTaskEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := et.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := et.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	et = pager.applyCursors(et, after, before)
+	et = pager.applyOrder(et, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		et = et.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		et = et.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := et.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *ExportTask
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *ExportTask {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *ExportTask {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ExportTaskEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ExportTaskEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// ExportTaskOrderField defines the ordering field of ExportTask.
+type ExportTaskOrderField struct {
+	field    string
+	toCursor func(*ExportTask) Cursor
+}
+
+// ExportTaskOrder defines the ordering of ExportTask.
+type ExportTaskOrder struct {
+	Direction OrderDirection        `json:"direction"`
+	Field     *ExportTaskOrderField `json:"field"`
+}
+
+// DefaultExportTaskOrder is the default ordering of ExportTask.
+var DefaultExportTaskOrder = &ExportTaskOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ExportTaskOrderField{
+		field: exporttask.FieldID,
+		toCursor: func(et *ExportTask) Cursor {
 			return Cursor{ID: et.ID}
 		},
 	},

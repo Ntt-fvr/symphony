@@ -44,6 +44,7 @@ type hooks struct {
 	EquipmentPosition           []ent.Hook
 	EquipmentPositionDefinition []ent.Hook
 	EquipmentType               []ent.Hook
+	ExportTask                  []ent.Hook
 	File                        []ent.Hook
 	FloorPlan                   []ent.Hook
 	FloorPlanReferencePoint     []ent.Hook

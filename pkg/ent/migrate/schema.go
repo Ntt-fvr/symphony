@@ -475,6 +475,22 @@ var (
 			},
 		},
 	}
+	// ExportTasksColumns holds the columns for the "export_tasks" table.
+	ExportTasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"FAILED", "IN_PROGRESS", "PENDING", "SUCCEEDED"}},
+		{Name: "progress", Type: field.TypeFloat64},
+		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
+		{Name: "store_key", Type: field.TypeString, Nullable: true},
+	}
+	// ExportTasksTable holds the schema information for the "export_tasks" table.
+	ExportTasksTable = &schema.Table{
+		Name:        "export_tasks",
+		Columns:     ExportTasksColumns,
+		PrimaryKey:  []*schema.Column{ExportTasksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1930,6 +1946,7 @@ var (
 		EquipmentPositionsTable,
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
+		ExportTasksTable,
 		FilesTable,
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,

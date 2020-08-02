@@ -26,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -444,6 +445,27 @@ func init() {
 	equipmenttype.DefaultUpdateTime = equipmenttypeDescUpdateTime.Default.(func() time.Time)
 	// equipmenttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmenttype.UpdateDefaultUpdateTime = equipmenttypeDescUpdateTime.UpdateDefault.(func() time.Time)
+	exporttask.Policy = schema.ExportTask{}.Policy()
+	exporttask.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := exporttask.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	exporttaskFields := schema.ExportTask{}.Fields()
+	_ = exporttaskFields
+	// exporttaskDescProgress is the schema descriptor for progress field.
+	exporttaskDescProgress := exporttaskFields[2].Descriptor()
+	// exporttask.DefaultProgress holds the default value on creation for the progress field.
+	exporttask.DefaultProgress = exporttaskDescProgress.Default.(float64)
+	// exporttask.ProgressValidator is a validator for the "progress" field. It is called by the builders before save.
+	exporttask.ProgressValidator = exporttaskDescProgress.Validators[0].(func(float64) error)
+	// exporttaskDescFilters is the schema descriptor for filters field.
+	exporttaskDescFilters := exporttaskFields[3].Descriptor()
+	// exporttask.DefaultFilters holds the default value on creation for the filters field.
+	exporttask.DefaultFilters = exporttaskDescFilters.Default.(string)
 	fileMixin := schema.File{}.Mixin()
 	file.Policy = schema.File{}.Policy()
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {

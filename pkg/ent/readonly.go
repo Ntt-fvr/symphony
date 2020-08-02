@@ -38,6 +38,7 @@ func (c *Client) ReadOnly() *Client {
 		EquipmentPosition:           NewEquipmentPositionClient(cfg),
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
+		ExportTask:                  NewExportTaskClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),

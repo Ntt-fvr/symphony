@@ -58,6 +58,9 @@ type EquipmentPositionDefinition func(*sql.Selector)
 // EquipmentType is the predicate function for equipmenttype builders.
 type EquipmentType func(*sql.Selector)
 
+// ExportTask is the predicate function for exporttask builders.
+type ExportTask func(*sql.Selector)
+
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 

@@ -30,6 +30,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -91,6 +92,7 @@ const (
 	TypeEquipmentPosition           = "EquipmentPosition"
 	TypeEquipmentPositionDefinition = "EquipmentPositionDefinition"
 	TypeEquipmentType               = "EquipmentType"
+	TypeExportTask                  = "ExportTask"
 	TypeFile                        = "File"
 	TypeFloorPlan                   = "FloorPlan"
 	TypeFloorPlanReferencePoint     = "FloorPlanReferencePoint"
@@ -12044,6 +12046,577 @@ func (m *EquipmentTypeMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown EquipmentType edge %s", name)
+}
+
+// ExportTaskMutation represents an operation that mutate the ExportTasks
+// nodes in the graph.
+type ExportTaskMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	_type         *exporttask.Type
+	status        *exporttask.Status
+	progress      *float64
+	addprogress   *float64
+	filters       *string
+	store_key     *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ExportTask, error)
+}
+
+var _ ent.Mutation = (*ExportTaskMutation)(nil)
+
+// exporttaskOption allows to manage the mutation configuration using functional options.
+type exporttaskOption func(*ExportTaskMutation)
+
+// newExportTaskMutation creates new mutation for $n.Name.
+func newExportTaskMutation(c config, op Op, opts ...exporttaskOption) *ExportTaskMutation {
+	m := &ExportTaskMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeExportTask,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withExportTaskID sets the id field of the mutation.
+func withExportTaskID(id int) exporttaskOption {
+	return func(m *ExportTaskMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ExportTask
+		)
+		m.oldValue = func(ctx context.Context) (*ExportTask, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ExportTask.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withExportTask sets the old ExportTask of the mutation.
+func withExportTask(node *ExportTask) exporttaskOption {
+	return func(m *ExportTaskMutation) {
+		m.oldValue = func(context.Context) (*ExportTask, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ExportTaskMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ExportTaskMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *ExportTaskMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetType sets the type field.
+func (m *ExportTaskMutation) SetType(e exporttask.Type) {
+	m._type = &e
+}
+
+// GetType returns the type value in the mutation.
+func (m *ExportTaskMutation) GetType() (r exporttask.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old type value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldType(ctx context.Context) (v exporttask.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType reset all changes of the "type" field.
+func (m *ExportTaskMutation) ResetType() {
+	m._type = nil
+}
+
+// SetStatus sets the status field.
+func (m *ExportTaskMutation) SetStatus(e exporttask.Status) {
+	m.status = &e
+}
+
+// Status returns the status value in the mutation.
+func (m *ExportTaskMutation) Status() (r exporttask.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldStatus(ctx context.Context) (v exporttask.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *ExportTaskMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetProgress sets the progress field.
+func (m *ExportTaskMutation) SetProgress(f float64) {
+	m.progress = &f
+	m.addprogress = nil
+}
+
+// Progress returns the progress value in the mutation.
+func (m *ExportTaskMutation) Progress() (r float64, exists bool) {
+	v := m.progress
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProgress returns the old progress value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldProgress(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldProgress is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldProgress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProgress: %w", err)
+	}
+	return oldValue.Progress, nil
+}
+
+// AddProgress adds f to progress.
+func (m *ExportTaskMutation) AddProgress(f float64) {
+	if m.addprogress != nil {
+		*m.addprogress += f
+	} else {
+		m.addprogress = &f
+	}
+}
+
+// AddedProgress returns the value that was added to the progress field in this mutation.
+func (m *ExportTaskMutation) AddedProgress() (r float64, exists bool) {
+	v := m.addprogress
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetProgress reset all changes of the "progress" field.
+func (m *ExportTaskMutation) ResetProgress() {
+	m.progress = nil
+	m.addprogress = nil
+}
+
+// SetFilters sets the filters field.
+func (m *ExportTaskMutation) SetFilters(s string) {
+	m.filters = &s
+}
+
+// Filters returns the filters value in the mutation.
+func (m *ExportTaskMutation) Filters() (r string, exists bool) {
+	v := m.filters
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFilters returns the old filters value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldFilters(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFilters is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFilters requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFilters: %w", err)
+	}
+	return oldValue.Filters, nil
+}
+
+// ResetFilters reset all changes of the "filters" field.
+func (m *ExportTaskMutation) ResetFilters() {
+	m.filters = nil
+}
+
+// SetStoreKey sets the store_key field.
+func (m *ExportTaskMutation) SetStoreKey(s string) {
+	m.store_key = &s
+}
+
+// StoreKey returns the store_key value in the mutation.
+func (m *ExportTaskMutation) StoreKey() (r string, exists bool) {
+	v := m.store_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStoreKey returns the old store_key value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldStoreKey(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStoreKey is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStoreKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStoreKey: %w", err)
+	}
+	return oldValue.StoreKey, nil
+}
+
+// ClearStoreKey clears the value of store_key.
+func (m *ExportTaskMutation) ClearStoreKey() {
+	m.store_key = nil
+	m.clearedFields[exporttask.FieldStoreKey] = struct{}{}
+}
+
+// StoreKeyCleared returns if the field store_key was cleared in this mutation.
+func (m *ExportTaskMutation) StoreKeyCleared() bool {
+	_, ok := m.clearedFields[exporttask.FieldStoreKey]
+	return ok
+}
+
+// ResetStoreKey reset all changes of the "store_key" field.
+func (m *ExportTaskMutation) ResetStoreKey() {
+	m.store_key = nil
+	delete(m.clearedFields, exporttask.FieldStoreKey)
+}
+
+// Op returns the operation name.
+func (m *ExportTaskMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (ExportTask).
+func (m *ExportTaskMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *ExportTaskMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m._type != nil {
+		fields = append(fields, exporttask.FieldType)
+	}
+	if m.status != nil {
+		fields = append(fields, exporttask.FieldStatus)
+	}
+	if m.progress != nil {
+		fields = append(fields, exporttask.FieldProgress)
+	}
+	if m.filters != nil {
+		fields = append(fields, exporttask.FieldFilters)
+	}
+	if m.store_key != nil {
+		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *ExportTaskMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case exporttask.FieldType:
+		return m.GetType()
+	case exporttask.FieldStatus:
+		return m.Status()
+	case exporttask.FieldProgress:
+		return m.Progress()
+	case exporttask.FieldFilters:
+		return m.Filters()
+	case exporttask.FieldStoreKey:
+		return m.StoreKey()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *ExportTaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case exporttask.FieldType:
+		return m.OldType(ctx)
+	case exporttask.FieldStatus:
+		return m.OldStatus(ctx)
+	case exporttask.FieldProgress:
+		return m.OldProgress(ctx)
+	case exporttask.FieldFilters:
+		return m.OldFilters(ctx)
+	case exporttask.FieldStoreKey:
+		return m.OldStoreKey(ctx)
+	}
+	return nil, fmt.Errorf("unknown ExportTask field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExportTaskMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case exporttask.FieldType:
+		v, ok := value.(exporttask.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case exporttask.FieldStatus:
+		v, ok := value.(exporttask.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case exporttask.FieldProgress:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProgress(v)
+		return nil
+	case exporttask.FieldFilters:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFilters(v)
+		return nil
+	case exporttask.FieldStoreKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStoreKey(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExportTask field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *ExportTaskMutation) AddedFields() []string {
+	var fields []string
+	if m.addprogress != nil {
+		fields = append(fields, exporttask.FieldProgress)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *ExportTaskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case exporttask.FieldProgress:
+		return m.AddedProgress()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *ExportTaskMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case exporttask.FieldProgress:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProgress(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ExportTask numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *ExportTaskMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(exporttask.FieldStoreKey) {
+		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *ExportTaskMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ExportTaskMutation) ClearField(name string) error {
+	switch name {
+	case exporttask.FieldStoreKey:
+		m.ClearStoreKey()
+		return nil
+	}
+	return fmt.Errorf("unknown ExportTask nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *ExportTaskMutation) ResetField(name string) error {
+	switch name {
+	case exporttask.FieldType:
+		m.ResetType()
+		return nil
+	case exporttask.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case exporttask.FieldProgress:
+		m.ResetProgress()
+		return nil
+	case exporttask.FieldFilters:
+		m.ResetFilters()
+		return nil
+	case exporttask.FieldStoreKey:
+		m.ResetStoreKey()
+		return nil
+	}
+	return fmt.Errorf("unknown ExportTask field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *ExportTaskMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *ExportTaskMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *ExportTaskMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *ExportTaskMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *ExportTaskMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *ExportTaskMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *ExportTaskMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ExportTask unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *ExportTaskMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ExportTask edge %s", name)
 }
 
 // FileMutation represents an operation that mutate the Files
