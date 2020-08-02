@@ -30698,7 +30698,7 @@ func (m *SurveyMutation) OwnerName() (r string, exists bool) {
 // If the Survey object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyMutation) OldOwnerName(ctx context.Context) (v string, err error) {
+func (m *SurveyMutation) OldOwnerName(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldOwnerName is allowed only on UpdateOne operations")
 	}
@@ -30748,7 +30748,7 @@ func (m *SurveyMutation) CreationTimestamp() (r time.Time, exists bool) {
 // If the Survey object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *SurveyMutation) OldCreationTimestamp(ctx context.Context) (v time.Time, err error) {
+func (m *SurveyMutation) OldCreationTimestamp(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCreationTimestamp is allowed only on UpdateOne operations")
 	}

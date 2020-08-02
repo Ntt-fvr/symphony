@@ -266,7 +266,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldOwnerName,
 		})
-		s.OwnerName = value
+		s.OwnerName = &value
 	}
 	if value, ok := sc.mutation.CreationTimestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -274,7 +274,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldCreationTimestamp,
 		})
-		s.CreationTimestamp = value
+		s.CreationTimestamp = &value
 	}
 	if value, ok := sc.mutation.CompletionTimestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

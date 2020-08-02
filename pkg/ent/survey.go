@@ -29,9 +29,9 @@ type Survey struct {
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// OwnerName holds the value of the "owner_name" field.
-	OwnerName string `json:"owner_name,omitempty"`
+	OwnerName *string `json:"owner_name,omitempty"`
 	// CreationTimestamp holds the value of the "creation_timestamp" field.
-	CreationTimestamp time.Time `json:"creation_timestamp,omitempty" gqlgen:"creationTimestamp"`
+	CreationTimestamp *time.Time `json:"creation_timestamp,omitempty" gqlgen:"creationTimestamp"`
 	// CompletionTimestamp holds the value of the "completion_timestamp" field.
 	CompletionTimestamp time.Time `json:"completion_timestamp,omitempty" gqlgen:"completionTimestamp"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -140,12 +140,14 @@ func (s *Survey) assignValues(values ...interface{}) error {
 	if value, ok := values[3].(*sql.NullString); !ok {
 		return fmt.Errorf("unexpected type %T for field owner_name", values[3])
 	} else if value.Valid {
-		s.OwnerName = value.String
+		s.OwnerName = new(string)
+		*s.OwnerName = value.String
 	}
 	if value, ok := values[4].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field creation_timestamp", values[4])
 	} else if value.Valid {
-		s.CreationTimestamp = value.Time
+		s.CreationTimestamp = new(time.Time)
+		*s.CreationTimestamp = value.Time
 	}
 	if value, ok := values[5].(*sql.NullTime); !ok {
 		return fmt.Errorf("unexpected type %T for field completion_timestamp", values[5])
@@ -208,10 +210,14 @@ func (s *Survey) String() string {
 	builder.WriteString(s.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(s.Name)
-	builder.WriteString(", owner_name=")
-	builder.WriteString(s.OwnerName)
-	builder.WriteString(", creation_timestamp=")
-	builder.WriteString(s.CreationTimestamp.Format(time.ANSIC))
+	if v := s.OwnerName; v != nil {
+		builder.WriteString(", owner_name=")
+		builder.WriteString(*v)
+	}
+	if v := s.CreationTimestamp; v != nil {
+		builder.WriteString(", creation_timestamp=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", completion_timestamp=")
 	builder.WriteString(s.CompletionTimestamp.Format(time.ANSIC))
 	builder.WriteByte(')')

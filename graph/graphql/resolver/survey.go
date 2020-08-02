@@ -6,22 +6,31 @@ package resolver
 
 import (
 	"context"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 )
 
 type surveyResolver struct{}
 
-func (surveyResolver) CreationTimestamp(_ context.Context, obj *ent.Survey) (*int, error) {
-	timestamp := int(obj.CreationTimestamp.Unix())
-	if timestamp < 0 {
-		return nil, nil
-	}
-	return &timestamp, nil
+func ts2int(t time.Time) int {
+	return int(t.Unix())
 }
 
-func (surveyResolver) CompletionTimestamp(_ context.Context, obj *ent.Survey) (int, error) {
-	return int(obj.CompletionTimestamp.Unix()), nil
+func tsptr2intptr(t *time.Time) *int {
+	if t != nil {
+		ts := ts2int(*t)
+		return &ts
+	}
+	return nil
+}
+
+func (surveyResolver) CreationTimestamp(_ context.Context, s *ent.Survey) (*int, error) {
+	return tsptr2intptr(s.CreationTimestamp), nil
+}
+
+func (surveyResolver) CompletionTimestamp(_ context.Context, s *ent.Survey) (int, error) {
+	return ts2int(s.CompletionTimestamp), nil
 }
 
 func (surveyResolver) LocationID(ctx context.Context, obj *ent.Survey) (int, error) {
@@ -39,16 +48,12 @@ func (surveyResolver) SourceFile(ctx context.Context, obj *ent.Survey) (*ent.Fil
 
 type surveyCellScanResolver struct{}
 
-func (surveyCellScanResolver) Timestamp(_ context.Context, obj *ent.SurveyCellScan) (*int, error) {
-	timestamp := int(obj.Timestamp.Unix())
-	if timestamp < 0 {
-		return nil, nil
-	}
-	return &timestamp, nil
+func (surveyCellScanResolver) Timestamp(_ context.Context, scs *ent.SurveyCellScan) (ts *int, _ error) {
+	return tsptr2intptr(scs.Timestamp), nil
 }
 
 type surveyWiFiScanResolver struct{}
 
-func (surveyWiFiScanResolver) Timestamp(_ context.Context, obj *ent.SurveyWiFiScan) (int, error) {
-	return int(obj.Timestamp.Unix()), nil
+func (surveyWiFiScanResolver) Timestamp(_ context.Context, sws *ent.SurveyWiFiScan) (int, error) {
+	return ts2int(sws.Timestamp), nil
 }
