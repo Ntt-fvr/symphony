@@ -20376,6 +20376,7 @@ type ProjectMutation struct {
 	update_time        *time.Time
 	name               *string
 	description        *string
+	priority           *project.Priority
 	clearedFields      map[string]struct{}
 	_type              *int
 	cleared_type       bool
@@ -20633,6 +20634,43 @@ func (m *ProjectMutation) DescriptionCleared() bool {
 func (m *ProjectMutation) ResetDescription() {
 	m.description = nil
 	delete(m.clearedFields, project.FieldDescription)
+}
+
+// SetPriority sets the priority field.
+func (m *ProjectMutation) SetPriority(pr project.Priority) {
+	m.priority = &pr
+}
+
+// Priority returns the priority value in the mutation.
+func (m *ProjectMutation) Priority() (r project.Priority, exists bool) {
+	v := m.priority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPriority returns the old priority value of the Project.
+// If the Project object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectMutation) OldPriority(ctx context.Context) (v project.Priority, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPriority is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPriority requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
+	}
+	return oldValue.Priority, nil
+}
+
+// ResetPriority reset all changes of the "priority" field.
+func (m *ProjectMutation) ResetPriority() {
+	m.priority = nil
 }
 
 // SetTypeID sets the type edge to ProjectType by id.
@@ -20931,7 +20969,7 @@ func (m *ProjectMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProjectMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, project.FieldCreateTime)
 	}
@@ -20943,6 +20981,9 @@ func (m *ProjectMutation) Fields() []string {
 	}
 	if m.description != nil {
 		fields = append(fields, project.FieldDescription)
+	}
+	if m.priority != nil {
+		fields = append(fields, project.FieldPriority)
 	}
 	return fields
 }
@@ -20960,6 +21001,8 @@ func (m *ProjectMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case project.FieldDescription:
 		return m.Description()
+	case project.FieldPriority:
+		return m.Priority()
 	}
 	return nil, false
 }
@@ -20977,6 +21020,8 @@ func (m *ProjectMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case project.FieldDescription:
 		return m.OldDescription(ctx)
+	case project.FieldPriority:
+		return m.OldPriority(ctx)
 	}
 	return nil, fmt.Errorf("unknown Project field %s", name)
 }
@@ -21013,6 +21058,13 @@ func (m *ProjectMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case project.FieldPriority:
+		v, ok := value.(project.Priority)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPriority(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Project field %s", name)
@@ -21084,6 +21136,9 @@ func (m *ProjectMutation) ResetField(name string) error {
 		return nil
 	case project.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case project.FieldPriority:
+		m.ResetPriority()
 		return nil
 	}
 	return fmt.Errorf("unknown Project field %s", name)

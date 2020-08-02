@@ -26,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -733,6 +734,7 @@ type ComplexityRoot struct {
 		Location           func(childComplexity int) int
 		Name               func(childComplexity int) int
 		NumberOfWorkOrders func(childComplexity int) int
+		Priority           func(childComplexity int) int
 		Properties         func(childComplexity int) int
 		Template           func(childComplexity int) int
 		Type               func(childComplexity int) int
@@ -4846,6 +4848,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.NumberOfWorkOrders(childComplexity), true
+
+	case "Project.priority":
+		if e.complexity.Project.Priority == nil {
+			break
+		}
+
+		return e.complexity.Project.Priority(childComplexity), true
 
 	case "Project.properties":
 		if e.complexity.Project.Properties == nil {
@@ -9660,10 +9669,22 @@ input ProjectOrder {
   field: ProjectOrderField
 }
 
+enum ProjectPriority
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
+  ) {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+  NONE
+}
+
 type Project implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority!
   createdBy: User
   type: ProjectType!
   template: ProjectTemplate
@@ -9677,6 +9698,7 @@ type Project implements Node {
 input AddProjectInput {
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority
   creatorId: ID
   type: ID!
   location: ID
@@ -9687,6 +9709,7 @@ input EditProjectInput {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority
   creatorId: ID
   type: ID!
   location: ID
@@ -28576,6 +28599,40 @@ func (ec *executionContext) _Project_description(ctx context.Context, field grap
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Project_priority(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Project",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Priority, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(project.Priority)
+	fc.Result = res
+	return ec.marshalNProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Project_createdBy(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -42238,6 +42295,12 @@ func (ec *executionContext) unmarshalInputAddProjectInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "priority":
+			var err error
+			it.Priority, err = ec.unmarshalOProjectPriority2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "creatorId":
 			var err error
 			it.CreatorID, err = ec.unmarshalOID2ᚖint(ctx, v)
@@ -43337,6 +43400,12 @@ func (ec *executionContext) unmarshalInputEditProjectInput(ctx context.Context, 
 		case "description":
 			var err error
 			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "priority":
+			var err error
+			it.Priority, err = ec.unmarshalOProjectPriority2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -50366,6 +50435,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "description":
 			out.Values[i] = ec._Project_description(ctx, field, obj)
+		case "priority":
+			out.Values[i] = ec._Project_priority(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "createdBy":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -57718,6 +57792,15 @@ func (ec *executionContext) marshalNProjectFilterType2githubᚗcomᚋfacebookinc
 	return v
 }
 
+func (ec *executionContext) unmarshalNProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, v interface{}) (project.Priority, error) {
+	var res project.Priority
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, sel ast.SelectionSet, v project.Priority) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNProjectType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectType(ctx context.Context, sel ast.SelectionSet, v ent.ProjectType) graphql.Marshaler {
 	return ec._ProjectType(ctx, sel, &v)
 }
@@ -61310,6 +61393,30 @@ func (ec *executionContext) unmarshalOProjectOrderField2ᚖgithubᚗcomᚋfacebo
 }
 
 func (ec *executionContext) marshalOProjectOrderField2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐProjectOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.ProjectOrderField) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, v interface{}) (project.Priority, error) {
+	var res project.Priority
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalOProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, sel ast.SelectionSet, v project.Priority) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOProjectPriority2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, v interface{}) (*project.Priority, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOProjectPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalOProjectPriority2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋprojectᚐPriority(ctx context.Context, sel ast.SelectionSet, v *project.Priority) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

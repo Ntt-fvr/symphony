@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 5f45a79de70ee1f8423d794470685fb8
+ * @relayHash 547b6bc9590f3e9a806d0958b20d5429
  */
 
 /* eslint-disable */
@@ -16,9 +16,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type ProjectsTableView_projects$ref = any;
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type AddProjectInput = {|
   name: string,
   description?: ?string,
+  priority?: ?ProjectPriority,
   creatorId?: ?string,
   type: string,
   location?: ?string,

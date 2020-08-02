@@ -2142,10 +2142,22 @@ input ProjectOrder {
   field: ProjectOrderField
 }
 
+enum ProjectPriority
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/project.Priority"
+  ) {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+  NONE
+}
+
 type Project implements Node {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority!
   createdBy: User
   type: ProjectType!
   template: ProjectTemplate
@@ -2159,6 +2171,7 @@ type Project implements Node {
 input AddProjectInput {
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority
   creatorId: ID
   type: ID!
   location: ID
@@ -2169,6 +2182,7 @@ input EditProjectInput {
   id: ID!
   name: String! @stringValue(minLength: 1)
   description: String
+  priority: ProjectPriority
   creatorId: ID
   type: ID!
   location: ID

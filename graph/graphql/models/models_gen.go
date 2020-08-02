@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -186,12 +187,13 @@ type AddPermissionsPolicyInput struct {
 }
 
 type AddProjectInput struct {
-	Name        string           `json:"name"`
-	Description *string          `json:"description"`
-	CreatorID   *int             `json:"creatorId"`
-	Type        int              `json:"type"`
-	Location    *int             `json:"location"`
-	Properties  []*PropertyInput `json:"properties"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Priority    *project.Priority `json:"priority"`
+	CreatorID   *int              `json:"creatorId"`
+	Type        int               `json:"type"`
+	Location    *int              `json:"location"`
+	Properties  []*PropertyInput  `json:"properties"`
 }
 
 type AddProjectTypeInput struct {
@@ -362,13 +364,14 @@ type EditPermissionsPolicyInput struct {
 }
 
 type EditProjectInput struct {
-	ID          int              `json:"id"`
-	Name        string           `json:"name"`
-	Description *string          `json:"description"`
-	CreatorID   *int             `json:"creatorId"`
-	Type        int              `json:"type"`
-	Location    *int             `json:"location"`
-	Properties  []*PropertyInput `json:"properties"`
+	ID          int               `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Priority    *project.Priority `json:"priority"`
+	CreatorID   *int              `json:"creatorId"`
+	Type        int               `json:"type"`
+	Location    *int              `json:"location"`
+	Properties  []*PropertyInput  `json:"properties"`
 }
 
 type EditProjectTypeInput struct {

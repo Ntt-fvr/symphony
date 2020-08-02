@@ -79,6 +79,20 @@ func (pc *ProjectCreate) SetNillableDescription(s *string) *ProjectCreate {
 	return pc
 }
 
+// SetPriority sets the priority field.
+func (pc *ProjectCreate) SetPriority(pr project.Priority) *ProjectCreate {
+	pc.mutation.SetPriority(pr)
+	return pc
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (pc *ProjectCreate) SetNillablePriority(pr *project.Priority) *ProjectCreate {
+	if pr != nil {
+		pc.SetPriority(*pr)
+	}
+	return pc
+}
+
 // SetTypeID sets the type edge to ProjectType by id.
 func (pc *ProjectCreate) SetTypeID(id int) *ProjectCreate {
 	pc.mutation.SetTypeID(id)
@@ -255,6 +269,15 @@ func (pc *ProjectCreate) preSave() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := pc.mutation.Priority(); !ok {
+		v := project.DefaultPriority
+		pc.mutation.SetPriority(v)
+	}
+	if v, ok := pc.mutation.Priority(); ok {
+		if err := project.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
 	if _, ok := pc.mutation.TypeID(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
 	}
@@ -316,6 +339,14 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Column: project.FieldDescription,
 		})
 		pr.Description = &value
+	}
+	if value, ok := pc.mutation.Priority(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: project.FieldPriority,
+		})
+		pr.Priority = value
 	}
 	if nodes := pc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

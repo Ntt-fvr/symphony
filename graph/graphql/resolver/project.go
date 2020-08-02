@@ -344,6 +344,7 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 	proj, err := client.
 		Project.Create().
 		SetName(input.Name).
+		SetNillablePriority(input.Priority).
 		SetNillableDescription(input.Description).
 		SetTypeID(input.Type).
 		SetTemplateID(pTemplate.ID).
@@ -469,6 +470,7 @@ func (r mutationResolver) EditProject(ctx context.Context, input models.EditProj
 	mutation := client.Project.
 		UpdateOne(proj).
 		SetName(input.Name).
+		SetNillablePriority(input.Priority).
 		SetNillableDescription(input.Description)
 
 	if input.CreatorID != nil {

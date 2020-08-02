@@ -2395,7 +2395,7 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pr.ID,
 		Type:   "Project",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 7),
 	}
 	var buf []byte
@@ -2429,6 +2429,14 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pr.Priority); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "project.Priority",
+		Name:  "priority",
 		Value: string(buf),
 	}
 	var ids []int

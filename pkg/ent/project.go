@@ -32,6 +32,8 @@ type Project struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
+	// Priority holds the value of the "priority" field.
+	Priority project.Priority `json:"priority,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProjectQuery when eager-loading is set.
 	Edges                 ProjectEdges `json:"edges"`
@@ -153,6 +155,7 @@ func (*Project) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&sql.NullString{}, // priority
 	}
 }
 
@@ -199,7 +202,12 @@ func (pr *Project) assignValues(values ...interface{}) error {
 		pr.Description = new(string)
 		*pr.Description = value.String
 	}
-	values = values[4:]
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field priority", values[4])
+	} else if value.Valid {
+		pr.Priority = project.Priority(value.String)
+	}
+	values = values[5:]
 	if len(values) == len(project.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field project_template", value)
@@ -297,6 +305,8 @@ func (pr *Project) String() string {
 		builder.WriteString(", description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", priority=")
+	builder.WriteString(fmt.Sprintf("%v", pr.Priority))
 	builder.WriteByte(')')
 	return builder.String()
 }

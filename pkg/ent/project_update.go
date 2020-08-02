@@ -65,6 +65,20 @@ func (pu *ProjectUpdate) ClearDescription() *ProjectUpdate {
 	return pu
 }
 
+// SetPriority sets the priority field.
+func (pu *ProjectUpdate) SetPriority(pr project.Priority) *ProjectUpdate {
+	pu.mutation.SetPriority(pr)
+	return pu
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (pu *ProjectUpdate) SetNillablePriority(pr *project.Priority) *ProjectUpdate {
+	if pr != nil {
+		pu.SetPriority(*pr)
+	}
+	return pu
+}
+
 // SetTypeID sets the type edge to ProjectType by id.
 func (pu *ProjectUpdate) SetTypeID(id int) *ProjectUpdate {
 	pu.mutation.SetTypeID(id)
@@ -263,6 +277,11 @@ func (pu *ProjectUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := pu.mutation.Priority(); ok {
+		if err := project.PriorityValidator(v); err != nil {
+			return 0, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
 
 	if _, ok := pu.mutation.TypeID(); pu.mutation.TypeCleared() && !ok {
 		return 0, errors.New("ent: clearing a unique edge \"type\"")
@@ -360,6 +379,13 @@ func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: project.FieldDescription,
+		})
+	}
+	if value, ok := pu.mutation.Priority(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: project.FieldPriority,
 		})
 	}
 	if pu.mutation.TypeCleared() {
@@ -660,6 +686,20 @@ func (puo *ProjectUpdateOne) ClearDescription() *ProjectUpdateOne {
 	return puo
 }
 
+// SetPriority sets the priority field.
+func (puo *ProjectUpdateOne) SetPriority(pr project.Priority) *ProjectUpdateOne {
+	puo.mutation.SetPriority(pr)
+	return puo
+}
+
+// SetNillablePriority sets the priority field if the given value is not nil.
+func (puo *ProjectUpdateOne) SetNillablePriority(pr *project.Priority) *ProjectUpdateOne {
+	if pr != nil {
+		puo.SetPriority(*pr)
+	}
+	return puo
+}
+
 // SetTypeID sets the type edge to ProjectType by id.
 func (puo *ProjectUpdateOne) SetTypeID(id int) *ProjectUpdateOne {
 	puo.mutation.SetTypeID(id)
@@ -858,6 +898,11 @@ func (puo *ProjectUpdateOne) Save(ctx context.Context) (*Project, error) {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := puo.mutation.Priority(); ok {
+		if err := project.PriorityValidator(v); err != nil {
+			return nil, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
 
 	if _, ok := puo.mutation.TypeID(); puo.mutation.TypeCleared() && !ok {
 		return nil, errors.New("ent: clearing a unique edge \"type\"")
@@ -953,6 +998,13 @@ func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (pr *Project, err erro
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: project.FieldDescription,
+		})
+	}
+	if value, ok := puo.mutation.Priority(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: project.FieldPriority,
 		})
 	}
 	if puo.mutation.TypeCleared() {

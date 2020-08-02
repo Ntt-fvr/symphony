@@ -7,6 +7,9 @@
 package project
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/facebookincubator/ent"
@@ -25,6 +28,8 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldPriority holds the string denoting the priority field in the database.
+	FieldPriority = "priority"
 
 	// EdgeType holds the string denoting the type edge name in mutations.
 	EdgeType = "type"
@@ -101,6 +106,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldDescription,
+	FieldPriority,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Project type.
@@ -129,3 +135,50 @@ var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 )
+
+// Priority defines the type for the priority enum field.
+type Priority string
+
+// PriorityNone is the default Priority.
+const DefaultPriority = PriorityNone
+
+// Priority values.
+const (
+	PriorityHigh   Priority = "HIGH"
+	PriorityLow    Priority = "LOW"
+	PriorityMedium Priority = "MEDIUM"
+	PriorityNone   Priority = "NONE"
+	PriorityUrgent Priority = "URGENT"
+)
+
+func (pr Priority) String() string {
+	return string(pr)
+}
+
+// PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
+func PriorityValidator(pr Priority) error {
+	switch pr {
+	case PriorityHigh, PriorityLow, PriorityMedium, PriorityNone, PriorityUrgent:
+		return nil
+	default:
+		return fmt.Errorf("project: invalid enum value for priority field: %q", pr)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (pr Priority) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(pr.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (pr *Priority) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", v)
+	}
+	*pr = Priority(str)
+	if err := PriorityValidator(*pr); err != nil {
+		return fmt.Errorf("%s is not a valid Priority", str)
+	}
+	return nil
+}

@@ -513,6 +513,54 @@ func DescriptionContainsFold(v string) predicate.Project {
 	})
 }
 
+// PriorityEQ applies the EQ predicate on the "priority" field.
+func PriorityEQ(v Priority) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPriority), v))
+	})
+}
+
+// PriorityNEQ applies the NEQ predicate on the "priority" field.
+func PriorityNEQ(v Priority) predicate.Project {
+	return predicate.Project(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPriority), v))
+	})
+}
+
+// PriorityIn applies the In predicate on the "priority" field.
+func PriorityIn(vs ...Priority) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPriority), v...))
+	})
+}
+
+// PriorityNotIn applies the NotIn predicate on the "priority" field.
+func PriorityNotIn(vs ...Priority) predicate.Project {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Project(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPriority), v...))
+	})
+}
+
 // HasType applies the HasEdge predicate on the "type" edge.
 func HasType() predicate.Project {
 	return predicate.Project(func(s *sql.Selector) {
