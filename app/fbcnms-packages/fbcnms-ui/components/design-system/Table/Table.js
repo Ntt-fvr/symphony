@@ -227,7 +227,10 @@ const Table = <T>(props: Props<T>) => {
     </div>
   );
 
-  const allIds = useMemo(() => data.map((d, i) => d.key ?? i), [data]);
+  const allIds = useMemo(
+    () => data.filter(d => !d.disabled).map((d, i) => d.key ?? i),
+    [data],
+  );
   const contextValue: TableSettings = useMemo(
     () => ({
       showSelection: showSelection ?? false,
