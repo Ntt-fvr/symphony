@@ -510,7 +510,7 @@ func (c *ActionsRuleClient) DeleteOneID(id int) *ActionsRuleDeleteOne {
 	return &ActionsRuleDeleteOne{builder}
 }
 
-// Create returns a query builder for ActionsRule.
+// Query returns a query builder for ActionsRule.
 func (c *ActionsRuleClient) Query() *ActionsRuleQuery {
 	return &ActionsRuleQuery{config: c.config}
 }
@@ -599,7 +599,7 @@ func (c *ActivityClient) DeleteOneID(id int) *ActivityDeleteOne {
 	return &ActivityDeleteOne{builder}
 }
 
-// Create returns a query builder for Activity.
+// Query returns a query builder for Activity.
 func (c *ActivityClient) Query() *ActivityQuery {
 	return &ActivityQuery{config: c.config}
 }
@@ -720,7 +720,7 @@ func (c *CheckListCategoryClient) DeleteOneID(id int) *CheckListCategoryDeleteOn
 	return &CheckListCategoryDeleteOne{builder}
 }
 
-// Create returns a query builder for CheckListCategory.
+// Query returns a query builder for CheckListCategory.
 func (c *CheckListCategoryClient) Query() *CheckListCategoryQuery {
 	return &CheckListCategoryQuery{config: c.config}
 }
@@ -841,7 +841,7 @@ func (c *CheckListCategoryDefinitionClient) DeleteOneID(id int) *CheckListCatego
 	return &CheckListCategoryDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for CheckListCategoryDefinition.
+// Query returns a query builder for CheckListCategoryDefinition.
 func (c *CheckListCategoryDefinitionClient) Query() *CheckListCategoryDefinitionQuery {
 	return &CheckListCategoryDefinitionQuery{config: c.config}
 }
@@ -978,7 +978,7 @@ func (c *CheckListItemClient) DeleteOneID(id int) *CheckListItemDeleteOne {
 	return &CheckListItemDeleteOne{builder}
 }
 
-// Create returns a query builder for CheckListItem.
+// Query returns a query builder for CheckListItem.
 func (c *CheckListItemClient) Query() *CheckListItemQuery {
 	return &CheckListItemQuery{config: c.config}
 }
@@ -1131,7 +1131,7 @@ func (c *CheckListItemDefinitionClient) DeleteOneID(id int) *CheckListItemDefini
 	return &CheckListItemDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for CheckListItemDefinition.
+// Query returns a query builder for CheckListItemDefinition.
 func (c *CheckListItemDefinitionClient) Query() *CheckListItemDefinitionQuery {
 	return &CheckListItemDefinitionQuery{config: c.config}
 }
@@ -1236,7 +1236,7 @@ func (c *CommentClient) DeleteOneID(id int) *CommentDeleteOne {
 	return &CommentDeleteOne{builder}
 }
 
-// Create returns a query builder for Comment.
+// Query returns a query builder for Comment.
 func (c *CommentClient) Query() *CommentQuery {
 	return &CommentQuery{config: c.config}
 }
@@ -1373,7 +1373,7 @@ func (c *CustomerClient) DeleteOneID(id int) *CustomerDeleteOne {
 	return &CustomerDeleteOne{builder}
 }
 
-// Create returns a query builder for Customer.
+// Query returns a query builder for Customer.
 func (c *CustomerClient) Query() *CustomerQuery {
 	return &CustomerQuery{config: c.config}
 }
@@ -1478,7 +1478,7 @@ func (c *EquipmentClient) DeleteOneID(id int) *EquipmentDeleteOne {
 	return &EquipmentDeleteOne{builder}
 }
 
-// Create returns a query builder for Equipment.
+// Query returns a query builder for Equipment.
 func (c *EquipmentClient) Query() *EquipmentQuery {
 	return &EquipmentQuery{config: c.config}
 }
@@ -1727,7 +1727,7 @@ func (c *EquipmentCategoryClient) DeleteOneID(id int) *EquipmentCategoryDeleteOn
 	return &EquipmentCategoryDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentCategory.
+// Query returns a query builder for EquipmentCategory.
 func (c *EquipmentCategoryClient) Query() *EquipmentCategoryQuery {
 	return &EquipmentCategoryQuery{config: c.config}
 }
@@ -1832,7 +1832,7 @@ func (c *EquipmentPortClient) DeleteOneID(id int) *EquipmentPortDeleteOne {
 	return &EquipmentPortDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentPort.
+// Query returns a query builder for EquipmentPort.
 func (c *EquipmentPortClient) Query() *EquipmentPortQuery {
 	return &EquipmentPortQuery{config: c.config}
 }
@@ -2001,7 +2001,7 @@ func (c *EquipmentPortDefinitionClient) DeleteOneID(id int) *EquipmentPortDefini
 	return &EquipmentPortDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentPortDefinition.
+// Query returns a query builder for EquipmentPortDefinition.
 func (c *EquipmentPortDefinitionClient) Query() *EquipmentPortDefinitionQuery {
 	return &EquipmentPortDefinitionQuery{config: c.config}
 }
@@ -2138,7 +2138,7 @@ func (c *EquipmentPortTypeClient) DeleteOneID(id int) *EquipmentPortTypeDeleteOn
 	return &EquipmentPortTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentPortType.
+// Query returns a query builder for EquipmentPortType.
 func (c *EquipmentPortTypeClient) Query() *EquipmentPortTypeQuery {
 	return &EquipmentPortTypeQuery{config: c.config}
 }
@@ -2275,7 +2275,7 @@ func (c *EquipmentPositionClient) DeleteOneID(id int) *EquipmentPositionDeleteOn
 	return &EquipmentPositionDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentPosition.
+// Query returns a query builder for EquipmentPosition.
 func (c *EquipmentPositionClient) Query() *EquipmentPositionQuery {
 	return &EquipmentPositionQuery{config: c.config}
 }
@@ -2412,7 +2412,7 @@ func (c *EquipmentPositionDefinitionClient) DeleteOneID(id int) *EquipmentPositi
 	return &EquipmentPositionDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentPositionDefinition.
+// Query returns a query builder for EquipmentPositionDefinition.
 func (c *EquipmentPositionDefinitionClient) Query() *EquipmentPositionDefinitionQuery {
 	return &EquipmentPositionDefinitionQuery{config: c.config}
 }
@@ -2533,7 +2533,7 @@ func (c *EquipmentTypeClient) DeleteOneID(id int) *EquipmentTypeDeleteOne {
 	return &EquipmentTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for EquipmentType.
+// Query returns a query builder for EquipmentType.
 func (c *EquipmentTypeClient) Query() *EquipmentTypeQuery {
 	return &EquipmentTypeQuery{config: c.config}
 }
@@ -2718,7 +2718,7 @@ func (c *FileClient) DeleteOneID(id int) *FileDeleteOne {
 	return &FileDeleteOne{builder}
 }
 
-// Create returns a query builder for File.
+// Query returns a query builder for File.
 func (c *FileClient) Query() *FileQuery {
 	return &FileQuery{config: c.config}
 }
@@ -2951,7 +2951,7 @@ func (c *FloorPlanClient) DeleteOneID(id int) *FloorPlanDeleteOne {
 	return &FloorPlanDeleteOne{builder}
 }
 
-// Create returns a query builder for FloorPlan.
+// Query returns a query builder for FloorPlan.
 func (c *FloorPlanClient) Query() *FloorPlanQuery {
 	return &FloorPlanQuery{config: c.config}
 }
@@ -3104,7 +3104,7 @@ func (c *FloorPlanReferencePointClient) DeleteOneID(id int) *FloorPlanReferenceP
 	return &FloorPlanReferencePointDeleteOne{builder}
 }
 
-// Create returns a query builder for FloorPlanReferencePoint.
+// Query returns a query builder for FloorPlanReferencePoint.
 func (c *FloorPlanReferencePointClient) Query() *FloorPlanReferencePointQuery {
 	return &FloorPlanReferencePointQuery{config: c.config}
 }
@@ -3193,7 +3193,7 @@ func (c *FloorPlanScaleClient) DeleteOneID(id int) *FloorPlanScaleDeleteOne {
 	return &FloorPlanScaleDeleteOne{builder}
 }
 
-// Create returns a query builder for FloorPlanScale.
+// Query returns a query builder for FloorPlanScale.
 func (c *FloorPlanScaleClient) Query() *FloorPlanScaleQuery {
 	return &FloorPlanScaleQuery{config: c.config}
 }
@@ -3282,7 +3282,7 @@ func (c *HyperlinkClient) DeleteOneID(id int) *HyperlinkDeleteOne {
 	return &HyperlinkDeleteOne{builder}
 }
 
-// Create returns a query builder for Hyperlink.
+// Query returns a query builder for Hyperlink.
 func (c *HyperlinkClient) Query() *HyperlinkQuery {
 	return &HyperlinkQuery{config: c.config}
 }
@@ -3419,7 +3419,7 @@ func (c *LinkClient) DeleteOneID(id int) *LinkDeleteOne {
 	return &LinkDeleteOne{builder}
 }
 
-// Create returns a query builder for Link.
+// Query returns a query builder for Link.
 func (c *LinkClient) Query() *LinkQuery {
 	return &LinkQuery{config: c.config}
 }
@@ -3572,7 +3572,7 @@ func (c *LocationClient) DeleteOneID(id int) *LocationDeleteOne {
 	return &LocationDeleteOne{builder}
 }
 
-// Create returns a query builder for Location.
+// Query returns a query builder for Location.
 func (c *LocationClient) Query() *LocationQuery {
 	return &LocationQuery{config: c.config}
 }
@@ -3853,7 +3853,7 @@ func (c *LocationTypeClient) DeleteOneID(id int) *LocationTypeDeleteOne {
 	return &LocationTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for LocationType.
+// Query returns a query builder for LocationType.
 func (c *LocationTypeClient) Query() *LocationTypeQuery {
 	return &LocationTypeQuery{config: c.config}
 }
@@ -3990,7 +3990,7 @@ func (c *PermissionsPolicyClient) DeleteOneID(id int) *PermissionsPolicyDeleteOn
 	return &PermissionsPolicyDeleteOne{builder}
 }
 
-// Create returns a query builder for PermissionsPolicy.
+// Query returns a query builder for PermissionsPolicy.
 func (c *PermissionsPolicyClient) Query() *PermissionsPolicyQuery {
 	return &PermissionsPolicyQuery{config: c.config}
 }
@@ -4095,7 +4095,7 @@ func (c *ProjectClient) DeleteOneID(id int) *ProjectDeleteOne {
 	return &ProjectDeleteOne{builder}
 }
 
-// Create returns a query builder for Project.
+// Query returns a query builder for Project.
 func (c *ProjectClient) Query() *ProjectQuery {
 	return &ProjectQuery{config: c.config}
 }
@@ -4296,7 +4296,7 @@ func (c *ProjectTemplateClient) DeleteOneID(id int) *ProjectTemplateDeleteOne {
 	return &ProjectTemplateDeleteOne{builder}
 }
 
-// Create returns a query builder for ProjectTemplate.
+// Query returns a query builder for ProjectTemplate.
 func (c *ProjectTemplateClient) Query() *ProjectTemplateQuery {
 	return &ProjectTemplateQuery{config: c.config}
 }
@@ -4433,7 +4433,7 @@ func (c *ProjectTypeClient) DeleteOneID(id int) *ProjectTypeDeleteOne {
 	return &ProjectTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for ProjectType.
+// Query returns a query builder for ProjectType.
 func (c *ProjectTypeClient) Query() *ProjectTypeQuery {
 	return &ProjectTypeQuery{config: c.config}
 }
@@ -4570,7 +4570,7 @@ func (c *PropertyClient) DeleteOneID(id int) *PropertyDeleteOne {
 	return &PropertyDeleteOne{builder}
 }
 
-// Create returns a query builder for Property.
+// Query returns a query builder for Property.
 func (c *PropertyClient) Query() *PropertyQuery {
 	return &PropertyQuery{config: c.config}
 }
@@ -4867,7 +4867,7 @@ func (c *PropertyTypeClient) DeleteOneID(id int) *PropertyTypeDeleteOne {
 	return &PropertyTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for PropertyType.
+// Query returns a query builder for PropertyType.
 func (c *PropertyTypeClient) Query() *PropertyTypeQuery {
 	return &PropertyTypeQuery{config: c.config}
 }
@@ -5116,7 +5116,7 @@ func (c *ReportFilterClient) DeleteOneID(id int) *ReportFilterDeleteOne {
 	return &ReportFilterDeleteOne{builder}
 }
 
-// Create returns a query builder for ReportFilter.
+// Query returns a query builder for ReportFilter.
 func (c *ReportFilterClient) Query() *ReportFilterQuery {
 	return &ReportFilterQuery{config: c.config}
 }
@@ -5205,7 +5205,7 @@ func (c *ServiceClient) DeleteOneID(id int) *ServiceDeleteOne {
 	return &ServiceDeleteOne{builder}
 }
 
-// Create returns a query builder for Service.
+// Query returns a query builder for Service.
 func (c *ServiceClient) Query() *ServiceQuery {
 	return &ServiceQuery{config: c.config}
 }
@@ -5406,7 +5406,7 @@ func (c *ServiceEndpointClient) DeleteOneID(id int) *ServiceEndpointDeleteOne {
 	return &ServiceEndpointDeleteOne{builder}
 }
 
-// Create returns a query builder for ServiceEndpoint.
+// Query returns a query builder for ServiceEndpoint.
 func (c *ServiceEndpointClient) Query() *ServiceEndpointQuery {
 	return &ServiceEndpointQuery{config: c.config}
 }
@@ -5559,7 +5559,7 @@ func (c *ServiceEndpointDefinitionClient) DeleteOneID(id int) *ServiceEndpointDe
 	return &ServiceEndpointDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for ServiceEndpointDefinition.
+// Query returns a query builder for ServiceEndpointDefinition.
 func (c *ServiceEndpointDefinitionClient) Query() *ServiceEndpointDefinitionQuery {
 	return &ServiceEndpointDefinitionQuery{config: c.config}
 }
@@ -5696,7 +5696,7 @@ func (c *ServiceTypeClient) DeleteOneID(id int) *ServiceTypeDeleteOne {
 	return &ServiceTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for ServiceType.
+// Query returns a query builder for ServiceType.
 func (c *ServiceTypeClient) Query() *ServiceTypeQuery {
 	return &ServiceTypeQuery{config: c.config}
 }
@@ -5833,7 +5833,7 @@ func (c *SurveyClient) DeleteOneID(id int) *SurveyDeleteOne {
 	return &SurveyDeleteOne{builder}
 }
 
-// Create returns a query builder for Survey.
+// Query returns a query builder for Survey.
 func (c *SurveyClient) Query() *SurveyQuery {
 	return &SurveyQuery{config: c.config}
 }
@@ -5970,7 +5970,7 @@ func (c *SurveyCellScanClient) DeleteOneID(id int) *SurveyCellScanDeleteOne {
 	return &SurveyCellScanDeleteOne{builder}
 }
 
-// Create returns a query builder for SurveyCellScan.
+// Query returns a query builder for SurveyCellScan.
 func (c *SurveyCellScanClient) Query() *SurveyCellScanQuery {
 	return &SurveyCellScanQuery{config: c.config}
 }
@@ -6107,7 +6107,7 @@ func (c *SurveyQuestionClient) DeleteOneID(id int) *SurveyQuestionDeleteOne {
 	return &SurveyQuestionDeleteOne{builder}
 }
 
-// Create returns a query builder for SurveyQuestion.
+// Query returns a query builder for SurveyQuestion.
 func (c *SurveyQuestionClient) Query() *SurveyQuestionQuery {
 	return &SurveyQuestionQuery{config: c.config}
 }
@@ -6276,7 +6276,7 @@ func (c *SurveyTemplateCategoryClient) DeleteOneID(id int) *SurveyTemplateCatego
 	return &SurveyTemplateCategoryDeleteOne{builder}
 }
 
-// Create returns a query builder for SurveyTemplateCategory.
+// Query returns a query builder for SurveyTemplateCategory.
 func (c *SurveyTemplateCategoryClient) Query() *SurveyTemplateCategoryQuery {
 	return &SurveyTemplateCategoryQuery{config: c.config}
 }
@@ -6397,7 +6397,7 @@ func (c *SurveyTemplateQuestionClient) DeleteOneID(id int) *SurveyTemplateQuesti
 	return &SurveyTemplateQuestionDeleteOne{builder}
 }
 
-// Create returns a query builder for SurveyTemplateQuestion.
+// Query returns a query builder for SurveyTemplateQuestion.
 func (c *SurveyTemplateQuestionClient) Query() *SurveyTemplateQuestionQuery {
 	return &SurveyTemplateQuestionQuery{config: c.config}
 }
@@ -6502,7 +6502,7 @@ func (c *SurveyWiFiScanClient) DeleteOneID(id int) *SurveyWiFiScanDeleteOne {
 	return &SurveyWiFiScanDeleteOne{builder}
 }
 
-// Create returns a query builder for SurveyWiFiScan.
+// Query returns a query builder for SurveyWiFiScan.
 func (c *SurveyWiFiScanClient) Query() *SurveyWiFiScanQuery {
 	return &SurveyWiFiScanQuery{config: c.config}
 }
@@ -6639,7 +6639,7 @@ func (c *UserClient) DeleteOneID(id int) *UserDeleteOne {
 	return &UserDeleteOne{builder}
 }
 
-// Create returns a query builder for User.
+// Query returns a query builder for User.
 func (c *UserClient) Query() *UserQuery {
 	return &UserQuery{config: c.config}
 }
@@ -6808,7 +6808,7 @@ func (c *UsersGroupClient) DeleteOneID(id int) *UsersGroupDeleteOne {
 	return &UsersGroupDeleteOne{builder}
 }
 
-// Create returns a query builder for UsersGroup.
+// Query returns a query builder for UsersGroup.
 func (c *UsersGroupClient) Query() *UsersGroupQuery {
 	return &UsersGroupQuery{config: c.config}
 }
@@ -6929,7 +6929,7 @@ func (c *WorkOrderClient) DeleteOneID(id int) *WorkOrderDeleteOne {
 	return &WorkOrderDeleteOne{builder}
 }
 
-// Create returns a query builder for WorkOrder.
+// Query returns a query builder for WorkOrder.
 func (c *WorkOrderClient) Query() *WorkOrderQuery {
 	return &WorkOrderQuery{config: c.config}
 }
@@ -7242,7 +7242,7 @@ func (c *WorkOrderDefinitionClient) DeleteOneID(id int) *WorkOrderDefinitionDele
 	return &WorkOrderDefinitionDeleteOne{builder}
 }
 
-// Create returns a query builder for WorkOrderDefinition.
+// Query returns a query builder for WorkOrderDefinition.
 func (c *WorkOrderDefinitionClient) Query() *WorkOrderDefinitionQuery {
 	return &WorkOrderDefinitionQuery{config: c.config}
 }
@@ -7379,7 +7379,7 @@ func (c *WorkOrderTemplateClient) DeleteOneID(id int) *WorkOrderTemplateDeleteOn
 	return &WorkOrderTemplateDeleteOne{builder}
 }
 
-// Create returns a query builder for WorkOrderTemplate.
+// Query returns a query builder for WorkOrderTemplate.
 func (c *WorkOrderTemplateClient) Query() *WorkOrderTemplateQuery {
 	return &WorkOrderTemplateQuery{config: c.config}
 }
@@ -7516,7 +7516,7 @@ func (c *WorkOrderTypeClient) DeleteOneID(id int) *WorkOrderTypeDeleteOne {
 	return &WorkOrderTypeDeleteOne{builder}
 }
 
-// Create returns a query builder for WorkOrderType.
+// Query returns a query builder for WorkOrderType.
 func (c *WorkOrderTypeClient) Query() *WorkOrderTypeQuery {
 	return &WorkOrderTypeQuery{config: c.config}
 }

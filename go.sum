@@ -238,6 +238,8 @@ github.com/facebookincubator/ent v0.2.8-0.20200726173043-ff6163f1a068 h1:00F6lNR
 github.com/facebookincubator/ent v0.2.8-0.20200726173043-ff6163f1a068/go.mod h1:noGzn9BnGMCL29LvA0ywFv8oeTXPiA2gYym1ZEYDEvI=
 github.com/facebookincubator/ent v0.2.8-0.20200729153521-e71a6de39bc2 h1:YnKO16Y9BWs8nMIZEKhn/2XaXWmbpYIDTtPdMrWaQl4=
 github.com/facebookincubator/ent v0.2.8-0.20200729153521-e71a6de39bc2/go.mod h1:0PIsj0mNbnwufO/bqBiQmA1WEdxcYkU+ONxf7PRM9q4=
+github.com/facebookincubator/ent v0.2.8-0.20200802120605-b5a9c662901b h1:AGDEdixB/OK5jmCZWyGxQH0sJokhS1hFgLt5bZMvYWA=
+github.com/facebookincubator/ent v0.2.8-0.20200802120605-b5a9c662901b/go.mod h1:0PIsj0mNbnwufO/bqBiQmA1WEdxcYkU+ONxf7PRM9q4=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/set v0.2.1 h1:nn2CaJyknWE/6txyUDGwysr3G5QC6xWB/PtVjPBbeaA=
 github.com/fatih/set v0.2.1/go.mod h1:+RKtMCH+favT2+3YecHGxcc0b4KyVWA1QWWJUs4E0CI=
