@@ -7,17 +7,23 @@ in the LICENSE file in the root directory of this source tree.
 {{ define "collection" }}
 {{ template "header" $ }}
 
-{{ range $node := $.Nodes -}}
+import (
+	"context"
 
-{{- $taggedEdges := dict }}
+	"github.com/99designs/gqlgen/graphql"
+)
+
+{{ range $node := $.Nodes }}
+
+{{ $taggedEdges := dict }}
 {{- range $edge := $node.Edges }}
 	{{- with $tags := tagLookup $edge.StructTag "gqlgen" }}
 		{{- $taggedEdges = set $taggedEdges $edge.Name (list $edge.Type.Name $tags) }}
 	{{- end }}
 {{- end }}
 
-{{ $receiver := $node.Receiver -}}
-{{ $query := print $node.QueryName -}}
+{{ $receiver := $node.Receiver }}
+{{ $query := $node.QueryName }}
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func ({{ $receiver }} *{{ $query }}) CollectFields(ctx context.Context, satisfies ...string) *{{ $query }} {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
