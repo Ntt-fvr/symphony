@@ -1518,20 +1518,7 @@
     nearley "^2.19.0"
     notistack "^0.8.5"
 
-"@fbcnms/auth@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@fbcnms/auth/-/auth-0.1.0.tgz#5f64926f4d4c40b736f998f19736ab9152d0d1a9"
-  integrity sha512-GgptKjkQWiyypMvgAE6Qy4B6qj992gPtiiersMzmQ1t9+UWLDMe2q8GAsuOZSep1tAI54fP6T9ko8UruE0WB2Q==
-  dependencies:
-    "@fbcnms/webpack-config" "^0.1.0"
-    email-validator "^2.0.4"
-    openid-client "2.4.5"
-    passport "^0.4.0"
-    passport-http "^0.3.0"
-    passport-local "^1.0.0"
-    passport-saml "^1.0.0"
-
-"@fbcnms/auth@^0.1.1":
+"@fbcnms/auth@^0.1.0", "@fbcnms/auth@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@fbcnms/auth/-/auth-0.1.1.tgz#2bf5e8cd8b1db1d26ea0b77eaefa0654df720143"
   integrity sha512-qyP806SDR1pw57/Rc62XVypevsdwyKR23flrqMcnABS6DQ4P3a8WTiWON3kEE28Xu6evD+FEqeuystux6qfjDg==
@@ -1574,10 +1561,10 @@
   dependencies:
     qrcode "^1.4.2"
 
-"@fbcnms/platform-server@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.4.tgz#81df9b5d9321265d17a66edb10e4267e48b8d474"
-  integrity sha512-qGdusCjHG/I5bCpF2LMK0My3w3kGfpDSZK8qUyYY3E68fKuBUNBY+2QSA9t9CpbyOxTFwlsQi7fhNvnTVIxrhA==
+"@fbcnms/platform-server@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.5.tgz#a17ebb54e4ca5f0bdf8db2927f816318faa99ab7"
+  integrity sha512-bRFire6pkZlihcPuANHIDxRvLpt+fxkmEWW/EYPfKUkOxZgfkgUEkS+baF7sYAmy2HU6Wu1BOQ+VE8m23+jI3g==
   dependencies:
     "@fbcnms/auth" "^0.1.0"
     "@fbcnms/babel-register" "^0.1.0"
@@ -12176,12 +12163,7 @@ lodash.uniq@4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-lodash@4, "lodash@>=3.5 <5", lodash@^4.0.1, lodash@^4.11.1, lodash@^4.17.10, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.4, lodash@^4.17.5:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
-
-lodash@^4.17.11, lodash@^4.17.15, lodash@^4.17.19, lodash@~4.17.19:
+lodash@4, "lodash@>=3.5 <5", lodash@^4.0.1, lodash@^4.11.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4, lodash@^4.17.5, lodash@~4.17.19:
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
