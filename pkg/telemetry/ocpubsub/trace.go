@@ -40,7 +40,8 @@ func (t *traceTopic) Send(ctx context.Context, msg *pubsub.Message) (err error) 
 				0, msgLen(msg), -1,
 			)
 		}
-		t.end(span, err)
+		span.SetStatus(traceStatus(err))
+		span.End()
 	}()
 	t.propagation.SpanContextToMessage(
 		span.SpanContext(), msg,
@@ -65,22 +66,30 @@ type traceSubscription struct {
 }
 
 func (s *traceSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
+	msg, err := s.ReceiveMessage(ctx)
+	if err != nil {
+		return nil, err
+	}
+	msg.end()
+	return msg.Message, nil
+}
+
+func (s *traceSubscription) ReceiveMessage(ctx context.Context) (Message, error) {
 	msg, err := s.Subscription.Receive(ctx)
+	if err != nil {
+		return Message{}, err
+	}
 	if sc, ok := s.propagation.SpanContextFromMessage(msg); ok {
 		var span *trace.Span
 		ctx, span = trace.StartSpanWithRemoteParent(ctx,
 			s.formatSpanName(ctx, msg), sc, s.startOptions...,
 		)
-		// TODO: propagate context
-		_ = ctx
-		if err == nil {
-			span.AddMessageReceiveEvent(
-				0, msgLen(msg), -1,
-			)
-		}
-		defer s.end(span, err)
+		span.AddMessageReceiveEvent(
+			0, msgLen(msg), -1,
+		)
 	}
-	return msg, err
+
+	return NewMessage(ctx, msg), nil
 }
 
 // TraceOption configures pubsub tracing.
@@ -128,12 +137,6 @@ func newTracer(defaultSpanName string, opts []TraceOption) tracer {
 		}
 	}
 	return t
-}
-
-// end sets span status and ends the span.
-func (tracer) end(span *trace.Span, err error) {
-	span.SetStatus(traceStatus(err))
-	span.End()
 }
 
 func traceStatus(err error) trace.Status {

@@ -61,5 +61,6 @@ func TestNewTopicSubscription(t *testing.T) {
 		mempubsub.NewSubscription(pstopic, time.Millisecond), opt,
 	)
 	require.NotNil(t, subscription)
+	require.Implements(t, (*ocpubsub.MessageReceiver)(nil), subscription)
 	require.Panics(t, func() { ocpubsub.NewSubscription(nil) })
 }

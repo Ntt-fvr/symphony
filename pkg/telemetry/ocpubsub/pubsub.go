@@ -26,6 +26,11 @@ type (
 		Receive(context.Context) (*pubsub.Message, error)
 		Shutdown(context.Context) error
 	}
+
+	// MessageReceiver is the interface for receiving extended pubsub messages.
+	MessageReceiver interface {
+		ReceiveMessage(context.Context) (Message, error)
+	}
 )
 
 // NewTopic wraps the given topic with a topic

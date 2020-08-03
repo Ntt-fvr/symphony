@@ -6,6 +6,7 @@ package ocpubsub
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -68,4 +69,11 @@ func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, erro
 	)
 
 	return msg, err
+}
+
+func (s metricsSubscription) ReceiveMessage(ctx context.Context) (Message, error) {
+	if r, ok := s.Subscription.(MessageReceiver); ok {
+		return r.ReceiveMessage(ctx)
+	}
+	return Message{}, errors.New("underlying Subscription is not a MessageReceiver")
 }
