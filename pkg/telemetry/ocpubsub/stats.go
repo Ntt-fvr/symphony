@@ -46,7 +46,9 @@ var (
 )
 
 // The following tags are applied to stats recorded by this package.
-var Error = tag.MustNewKey("error")
+var (
+	Error = tag.MustNewKey("error")
+)
 
 // Package ocpubsub provides some convenience views for server measures.
 // You still need to register these views for data to actually be collected.

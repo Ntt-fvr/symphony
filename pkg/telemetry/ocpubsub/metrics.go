@@ -62,7 +62,7 @@ func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, erro
 	msg, err := s.Subscription.Receive(ctx)
 
 	tags := []tag.Mutator{tag.Upsert(Error, strconv.FormatBool(err != nil))}
-	stats.RecordWithTags(ctx, tags,
+	_ = stats.RecordWithTags(ctx, tags,
 		MessagesReceivedTotal.M(1),
 		MessagesReceivedBytes.M(msgLen(msg)),
 	)
