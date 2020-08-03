@@ -29,8 +29,7 @@ export default function builder({config}: BuilderParams): WebpackOptions {
       rules: [
         {
           test: /\.(js|jsx|mjs)$/,
-          include: [paths.appSrc, paths.packagesDir],
-          exclude: /node_modules/,
+          include: [paths.appSrc, paths.packagesDir, paths.nodeModulesDir],
           loader: require.resolve('babel-loader'),
           options: {
             configFile: '../../babel.config.js',
