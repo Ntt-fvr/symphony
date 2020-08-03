@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import emptyFunction from '../../../../../fbcnms-packages/fbcnms-util/emptyFunction';
+import emptyFunction from '@fbcnms/util/emptyFunction';
 
 export type Bookmark = {
   id: string,

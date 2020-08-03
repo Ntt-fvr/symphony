@@ -22,7 +22,7 @@ import EditWorkOrderMutation from '../../mutations/EditWorkOrderMutation';
 import FormAction from '../../../../../fbcnms-packages/fbcnms-ui/components/design-system/Form/FormAction';
 import React, {useCallback} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Strings from '../../../../../fbcnms-packages/fbcnms-strings/Strings';
+import Strings from '@fbcnms/strings/Strings';
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {convertChecklistCategoriesStateToInput} from '../checklist/ChecklistUtils';
