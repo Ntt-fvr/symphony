@@ -34,4 +34,5 @@ func TestMessage(t *testing.T) {
 	message := ocpubsub.NewMessage(ctx, msg)
 	message.Ack()
 	require.Len(t, te.spans, 1)
+	require.True(t, te.spans[0].Attributes["acked"].(bool))
 }

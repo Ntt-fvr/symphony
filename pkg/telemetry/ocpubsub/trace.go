@@ -70,7 +70,7 @@ func (s *traceSubscription) Receive(ctx context.Context) (*pubsub.Message, error
 	if err != nil {
 		return nil, err
 	}
-	msg.end()
+	trace.FromContext(msg.Context()).End()
 	return msg.Message, nil
 }
 

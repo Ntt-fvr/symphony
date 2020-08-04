@@ -28,18 +28,23 @@ func (m Message) Context() context.Context {
 }
 
 // end the span stored in message context.
-func (m Message) end() {
-	trace.FromContext(m.ctx).End()
+func (m Message) end(isAck bool) {
+	if span := trace.FromContext(m.ctx); span != nil {
+		span.AddAttributes(
+			trace.BoolAttribute("acked", isAck),
+		)
+		span.End()
+	}
 }
 
 // Ack acknowledges the message.
 func (m Message) Ack() {
-	defer m.end()
+	defer m.end(true)
 	m.Message.Ack()
 }
 
 // Nack negatively acknowledges the message.
 func (m Message) Nack() {
-	defer m.end()
+	defer m.end(false)
 	m.Message.Nack()
 }
