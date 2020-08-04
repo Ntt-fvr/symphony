@@ -235,8 +235,7 @@ resource helm_release nginx_ingress {
           service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
           service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
           service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
-          service.beta.kubernetes.io/aws-load-balancer-type: nlb
-          service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: ${aws_security_group.intern_sg.name}
+          service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: ${aws_security_group.intern_sg.id}
     config:
       proxy-buffer-size: "32k"
       use-forwarded-headers: "true"
