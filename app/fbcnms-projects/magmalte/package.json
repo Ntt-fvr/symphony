@@ -14,7 +14,7 @@
     "mockserver": "node scripts/mockServer.js"
   },
   "dependencies": {
-    "@date-io/moment": "1.x",
+    "@date-io/moment": "2.x",
     "@fbcnms/auth": "^0.1.1",
     "@fbcnms/babel-register": "^0.1.0",
     "@fbcnms/magma-api": "^0.1.0",
