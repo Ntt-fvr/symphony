@@ -26,7 +26,7 @@
     "@fbcnms/relay": "^0.1.0",
     "@fbcnms/sequelize-models": "^0.1.0",
     "@fbcnms/strings": "^0.1.0",
-    "@fbcnms/types": "^0.1.0",
+    "@fbcnms/types": "^0.1.1",
     "@fbcnms/util": "^0.1.0",
     "babel-plugin-fbt": "^0.10.4",
     "babel-plugin-fbt-runtime": "^0.9.9",
