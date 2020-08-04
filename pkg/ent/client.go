@@ -2725,7 +2725,7 @@ func (c *ExportTaskClient) DeleteOneID(id int) *ExportTaskDeleteOne {
 	return &ExportTaskDeleteOne{builder}
 }
 
-// Create returns a query builder for ExportTask.
+// Query returns a query builder for ExportTask.
 func (c *ExportTaskClient) Query() *ExportTaskQuery {
 	return &ExportTaskQuery{config: c.config}
 }

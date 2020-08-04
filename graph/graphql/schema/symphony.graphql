@@ -1621,6 +1621,31 @@ input ReportFilterInput {
   filters: [GeneralFilterInput]
 }
 
+enum ExportType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
+){
+  EQUIPMENT
+  LOCATION
+}
+enum ExportStatus
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
+){
+  PENDING
+  IN_PROGRESS
+  SUCCEEDED
+  FAILED
+}
+type ExportTask implements Node {
+  id: ID!
+  type: ExportType!
+  status: ExportStatus!
+  progress: Float!
+  filters: [GeneralFilter!]!
+  storeKey: String!
+}
+
 type WorkOrderTemplate {
   name: String!
   description: String

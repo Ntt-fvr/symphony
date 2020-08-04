@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -73,6 +74,7 @@ type ResolverRoot interface {
 	EquipmentPortType() EquipmentPortTypeResolver
 	EquipmentPosition() EquipmentPositionResolver
 	EquipmentType() EquipmentTypeResolver
+	ExportTask() ExportTaskResolver
 	FloorPlan() FloorPlanResolver
 	Link() LinkResolver
 	Location() LocationResolver
@@ -416,6 +418,15 @@ type ComplexityRoot struct {
 	EquipmentTypeEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	ExportTask struct {
+		Filters  func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Progress func(childComplexity int) int
+		Status   func(childComplexity int) int
+		StoreKey func(childComplexity int) int
+		Type     func(childComplexity int) int
 	}
 
 	Field struct {
@@ -1327,6 +1338,9 @@ type EquipmentTypeResolver interface {
 	PropertyTypes(ctx context.Context, obj *ent.EquipmentType) ([]*ent.PropertyType, error)
 	Equipments(ctx context.Context, obj *ent.EquipmentType) ([]*ent.Equipment, error)
 	NumberOfEquipment(ctx context.Context, obj *ent.EquipmentType) (int, error)
+}
+type ExportTaskResolver interface {
+	Filters(ctx context.Context, obj *ent.ExportTask) ([]*models.GeneralFilter, error)
 }
 type FloorPlanResolver interface {
 	LocationID(ctx context.Context, obj *ent.FloorPlan) (int, error)
@@ -2894,6 +2908,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EquipmentTypeEdge.Node(childComplexity), true
+
+	case "ExportTask.filters":
+		if e.complexity.ExportTask.Filters == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.Filters(childComplexity), true
+
+	case "ExportTask.id":
+		if e.complexity.ExportTask.ID == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.ID(childComplexity), true
+
+	case "ExportTask.progress":
+		if e.complexity.ExportTask.Progress == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.Progress(childComplexity), true
+
+	case "ExportTask.status":
+		if e.complexity.ExportTask.Status == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.Status(childComplexity), true
+
+	case "ExportTask.storeKey":
+		if e.complexity.ExportTask.StoreKey == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.StoreKey(childComplexity), true
+
+	case "ExportTask.type":
+		if e.complexity.ExportTask.Type == nil {
+			break
+		}
+
+		return e.complexity.ExportTask.Type(childComplexity), true
 
 	case "Field.name":
 		if e.complexity.Field.Name == nil {
@@ -9146,6 +9202,31 @@ input ReportFilterInput {
   name: String!
   entity: FilterEntity!
   filters: [GeneralFilterInput]
+}
+
+enum ExportType
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
+){
+  EQUIPMENT
+  LOCATION
+}
+enum ExportStatus
+@goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
+){
+  PENDING
+  IN_PROGRESS
+  SUCCEEDED
+  FAILED
+}
+type ExportTask implements Node {
+  id: ID!
+  type: ExportType!
+  status: ExportStatus!
+  progress: Float!
+  filters: [GeneralFilter!]!
+  storeKey: String!
 }
 
 type WorkOrderTemplate {
@@ -20721,6 +20802,210 @@ func (ec *executionContext) _EquipmentTypeEdge_cursor(ctx context.Context, field
 	res := resTmp.(ent.Cursor)
 	fc.Result = res
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_id(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_type(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(exporttask.Type)
+	fc.Result = res
+	return ec.marshalNExportType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_status(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(exporttask.Status)
+	fc.Result = res
+	return ec.marshalNExportStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_progress(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Progress, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_filters(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ExportTask().Filters(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.GeneralFilter)
+	fc.Result = res
+	return ec.marshalNGeneralFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGeneralFilterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExportTask_storeKey(ctx context.Context, field graphql.CollectedField, obj *ent.ExportTask) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ExportTask",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StoreKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalNString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Field_name(ctx context.Context, field graphql.CollectedField, obj *ent.Field) (ret graphql.Marshaler) {
@@ -46260,6 +46545,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._ReportFilter(ctx, sel, obj)
+	case *ent.ExportTask:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._ExportTask(ctx, sel, obj)
 	case *ent.WorkOrderType:
 		if obj == nil {
 			return graphql.Null
@@ -48477,6 +48767,67 @@ func (ec *executionContext) _EquipmentTypeEdge(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._EquipmentTypeEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var exportTaskImplementors = []string{"ExportTask", "Node"}
+
+func (ec *executionContext) _ExportTask(ctx context.Context, sel ast.SelectionSet, obj *ent.ExportTask) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, exportTaskImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExportTask")
+		case "id":
+			out.Values[i] = ec._ExportTask_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "type":
+			out.Values[i] = ec._ExportTask_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "status":
+			out.Values[i] = ec._ExportTask_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "progress":
+			out.Values[i] = ec._ExportTask_progress(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "filters":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ExportTask_filters(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "storeKey":
+			out.Values[i] = ec._ExportTask_storeKey(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -56296,6 +56647,24 @@ func (ec *executionContext) marshalNEquipmentTypeEdge2ᚖgithubᚗcomᚋfacebook
 	return ec._EquipmentTypeEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNExportStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐStatus(ctx context.Context, v interface{}) (exporttask.Status, error) {
+	var res exporttask.Status
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNExportStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐStatus(ctx context.Context, sel ast.SelectionSet, v exporttask.Status) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNExportType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐType(ctx context.Context, v interface{}) (exporttask.Type, error) {
+	var res exporttask.Type
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalNExportType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋexporttaskᚐType(ctx context.Context, sel ast.SelectionSet, v exporttask.Type) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐField(ctx context.Context, sel ast.SelectionSet, v ent.Field) graphql.Marshaler {
 	return ec._Field(ctx, sel, &v)
 }
@@ -58630,6 +58999,24 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNString2string(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalNString2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec.marshalNString2string(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalNSurvey2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐSurvey(ctx context.Context, sel ast.SelectionSet, v ent.Survey) graphql.Marshaler {

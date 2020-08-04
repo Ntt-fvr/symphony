@@ -239,6 +239,10 @@ func (r resolver) ReportFilter() generated.ReportFilterResolver {
 	return reportFilterResolver{}
 }
 
+func (r resolver) ExportTask() generated.ExportTaskResolver {
+	return exportTaskResolver{}
+}
+
 func (r resolver) Comment() generated.CommentResolver {
 	return commentResolver{}
 }

@@ -188,7 +188,7 @@ func (c *TodoClient) DeleteOneID(id int) *TodoDeleteOne {
 	return &TodoDeleteOne{builder}
 }
 
-// Create returns a query builder for Todo.
+// Query returns a query builder for Todo.
 func (c *TodoClient) Query() *TodoQuery {
 	return &TodoQuery{config: c.config}
 }
