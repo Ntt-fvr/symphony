@@ -5260,10 +5260,10 @@ bcryptjs@^2.4.3:
   resolved "https://registry.yarnpkg.com/bcryptjs/-/bcryptjs-2.4.3.tgz#9ab5627b93e60621ff7cdac5da9733027df1d0cb"
   integrity sha1-mrVie5PmBiH/fNrF2pczAn3x0Ms=
 
-beaver-logger@^4.0.12:
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/beaver-logger/-/beaver-logger-4.0.14.tgz#d7e6adc4c6cc98cb07d45033ca9cc261f0bd2a8b"
-  integrity sha512-Qic2cLz98t4EPNPqvW+Yk4hIIxclDzMipVEWvL4a9BnusRZ+HNRyypZdK3XNlPMgEaBOr3TOjxC0F+hrITNveA==
+beaver-logger@^4.0.15:
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/beaver-logger/-/beaver-logger-4.0.15.tgz#741eec52dba67603f86f898980e8c174101120b5"
+  integrity sha512-VtBche5Nd0uWd5AuXmXuRqTwlhR6pHQJaqvLS5+7xDyLTftfJcl/KCqY1HRPntcjJ/9FYH0em04HBeor6oei5Q==
   dependencies:
     belter "^1.0.17"
     zalgo-promise "^1.0.26"
