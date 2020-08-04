@@ -6,7 +6,6 @@ package ocpubsub
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"go.opencensus.io/stats"
@@ -61,6 +60,17 @@ type metricsSubscription struct{ Subscription }
 
 func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
 	msg, err := s.Subscription.Receive(ctx)
+	s.record(ctx, msg, err)
+	return msg, err
+}
+
+func (s metricsSubscription) ReceiveMessage(ctx context.Context) (context.Context, *pubsub.Message, error) {
+	ctx, msg, err := s.Subscription.ReceiveMessage(ctx)
+	s.record(ctx, msg, err)
+	return ctx, msg, err
+}
+
+func (s metricsSubscription) record(ctx context.Context, msg *pubsub.Message, err error) {
 	if err == nil {
 		stats.Record(ctx,
 			MessagesReceivedTotal.M(1),
@@ -71,12 +81,4 @@ func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, erro
 			MessagesReceivedErrorTotal.M(1),
 		)
 	}
-	return msg, err
-}
-
-func (s metricsSubscription) ReceiveMessage(ctx context.Context) (Message, error) {
-	if r, ok := s.Subscription.(MessageReceiver); ok {
-		return r.ReceiveMessage(ctx)
-	}
-	return Message{}, errors.New("underlying Subscription is not a MessageReceiver")
 }

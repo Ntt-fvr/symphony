@@ -30,7 +30,7 @@ func TestCDKInterfaces(t *testing.T) {
 		{
 			name:          "Subscription",
 			interfaceType: (*ocpubsub.Subscription)(nil),
-			structType:    (*pubsub.Subscription)(nil),
+			structType:    ocpubsub.AddReceiveMessage((*pubsub.Subscription)(nil)),
 		},
 	}
 	for _, tc := range tests {
@@ -61,6 +61,5 @@ func TestNewTopicSubscription(t *testing.T) {
 		mempubsub.NewSubscription(pstopic, time.Millisecond), opt,
 	)
 	require.NotNil(t, subscription)
-	require.Implements(t, (*ocpubsub.MessageReceiver)(nil), subscription)
 	require.Panics(t, func() { ocpubsub.NewSubscription(nil) })
 }

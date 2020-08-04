@@ -61,7 +61,9 @@ func TestTraces(t *testing.T) {
 	)
 	const subscriptionSpanName = "test.SubscriptionReceive"
 	subscription := ocpubsub.NewTraceSubscription(
-		mempubsub.NewSubscription(pstopic, time.Second),
+		ocpubsub.AddReceiveMessage(
+			mempubsub.NewSubscription(pstopic, time.Second),
+		),
 		append(opts,
 			ocpubsub.WithNameFormatter(
 				func(context.Context, *pubsub.Message) string {

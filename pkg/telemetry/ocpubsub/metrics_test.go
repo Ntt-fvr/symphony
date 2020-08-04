@@ -26,7 +26,9 @@ func TestMetrics(t *testing.T) {
 	pstopic := mempubsub.NewTopic()
 	topic := ocpubsub.NewMetricsTopic(pstopic)
 	subscription := ocpubsub.NewMetricsSubscription(
-		mempubsub.NewSubscription(pstopic, time.Second),
+		ocpubsub.AddReceiveMessage(
+			mempubsub.NewSubscription(pstopic, time.Second),
+		),
 	)
 
 	ctx := context.Background()

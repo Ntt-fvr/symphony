@@ -66,18 +66,26 @@ type traceSubscription struct {
 }
 
 func (s *traceSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
-	msg, err := s.ReceiveMessage(ctx)
+	msg, err := s.Subscription.Receive(ctx)
 	if err != nil {
 		return nil, err
 	}
-	trace.FromContext(msg.Context()).End()
-	return msg.Message, nil
+	if sc, ok := s.propagation.SpanContextFromMessage(msg); ok {
+		_, span := trace.StartSpanWithRemoteParent(ctx,
+			s.formatSpanName(ctx, msg), sc, s.startOptions...,
+		)
+		span.AddMessageReceiveEvent(
+			0, msgLen(msg), -1,
+		)
+		span.End()
+	}
+	return msg, err
 }
 
-func (s *traceSubscription) ReceiveMessage(ctx context.Context) (Message, error) {
-	msg, err := s.Subscription.Receive(ctx)
+func (s *traceSubscription) ReceiveMessage(ctx context.Context) (context.Context, *pubsub.Message, error) {
+	ctx, msg, err := s.Subscription.ReceiveMessage(ctx)
 	if err != nil {
-		return Message{}, err
+		return nil, nil, err
 	}
 	if sc, ok := s.propagation.SpanContextFromMessage(msg); ok {
 		var span *trace.Span
@@ -88,8 +96,7 @@ func (s *traceSubscription) ReceiveMessage(ctx context.Context) (Message, error)
 			0, msgLen(msg), -1,
 		)
 	}
-
-	return NewMessage(ctx, msg), nil
+	return ctx, msg, err
 }
 
 // TraceOption configures pubsub tracing.
