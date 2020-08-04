@@ -8,7 +8,6 @@ import (
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
-	"go.opencensus.io/tag"
 )
 
 // The following measures are supported for use in custom views.
@@ -43,11 +42,11 @@ var (
 		"Number of bytes received",
 		stats.UnitBytes,
 	)
-)
-
-// The following tags are applied to stats recorded by this package.
-var (
-	Error = tag.MustNewKey("error")
+	MessagesReceivedErrorTotal = stats.Int64(
+		"pubsub/messages_received_errors_total",
+		"Number of receive errors",
+		stats.UnitDimensionless,
+	)
 )
 
 // Package ocpubsub provides some convenience views for server measures.
@@ -80,7 +79,6 @@ var (
 	MessagesReceivedTotalView = &view.View{
 		Name:        "pubsub/messages_received_total",
 		Description: "Number of messages received",
-		TagKeys:     []tag.Key{Error},
 		Measure:     MessagesReceivedTotal,
 		Aggregation: view.Count(),
 	}
@@ -89,6 +87,12 @@ var (
 		Description: "Number of bytes received",
 		Measure:     MessagesReceivedBytes,
 		Aggregation: ocgrpc.DefaultBytesDistribution,
+	}
+	MessagesReceivedErrorTotalView = &view.View{
+		Name:        "pubsub/messages_received_errors_total",
+		Description: "Number of receive errors",
+		Measure:     MessagesReceivedErrorTotal,
+		Aggregation: view.Count(),
 	}
 )
 
@@ -100,4 +104,5 @@ var DefaultViews = []*view.View{
 	MessagesSentBytesView,
 	MessagesReceivedTotalView,
 	MessagesReceivedBytesView,
+	MessagesReceivedErrorTotalView,
 }

@@ -7,11 +7,9 @@ package ocpubsub
 import (
 	"context"
 	"errors"
-	"strconv"
 	"time"
 
 	"go.opencensus.io/stats"
-	"go.opencensus.io/tag"
 	"gocloud.dev/pubsub"
 )
 
@@ -63,20 +61,16 @@ type metricsSubscription struct{ Subscription }
 
 func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
 	msg, err := s.Subscription.Receive(ctx)
-
-	tags := []tag.Mutator{
-		tag.Upsert(Error, strconv.FormatBool(err != nil)),
-	}
-	measurements := []stats.Measurement{
-		MessagesReceivedTotal.M(1),
-	}
 	if err == nil {
-		measurements = append(measurements,
+		stats.Record(ctx,
+			MessagesReceivedTotal.M(1),
 			MessagesReceivedBytes.M(msgLen(msg)),
 		)
+	} else {
+		stats.Record(ctx,
+			MessagesReceivedErrorTotal.M(1),
+		)
 	}
-	_ = stats.RecordWithTags(ctx, tags, measurements...)
-
 	return msg, err
 }
 

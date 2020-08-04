@@ -6,6 +6,7 @@ package ocpubsub_test
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -41,7 +42,7 @@ func TestMetrics(t *testing.T) {
 
 		rows, err := view.RetrieveData(v.Name)
 		require.NoError(t, err)
-		if v.Name == ocpubsub.MessagesErrorTotalView.Name {
+		if strings.Contains(v.Name, "_errors_") {
 			continue
 		}
 		require.NotEmpty(t, rows, "no data on view %q", v.Name)
