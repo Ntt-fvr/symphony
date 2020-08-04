@@ -182,6 +182,32 @@ resource helm_release alb_ingress_controller {
   ]
 }
 
+# security groups allowing http/https access to intern.
+resource "aws_security_group" "intern_sg" {
+  name_prefix = "${local.eks_cluster_name}-intern-"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = [80, 443]
+
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+      protocol  = "tcp"
+      cidr_blocks = jsondecode(
+        jsondecode(data.aws_secretsmanager_secret_version.cidrs.secret_string)["facebook"]
+      )
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # nginx ingress manages ingress resources
 resource helm_release nginx_ingress {
   chart      = "nginx-ingress"
@@ -203,6 +229,14 @@ resource helm_release nginx_ingress {
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
         external-dns.alpha.kubernetes.io/hostname: ${local.ctf_domain_name}
       externalTrafficPolicy: Local
+      internal:
+        enabled: true
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+          service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+          service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+          service.beta.kubernetes.io/aws-load-balancer-type: nlb
+          service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: ${aws_security_group.intern_sg.name}
     config:
       proxy-buffer-size: "32k"
       use-forwarded-headers: "true"
@@ -434,3 +468,42 @@ resource helm_release cert_manager {
   VALUES
   ]
 }
+
+locals {
+  cert_issuer = {
+    intern = "cert-issuer-intern"
+  }
+}
+
+# cluster certificate issuer for intern.
+resource "helm_release" "intern_cert_issuer" {
+  name       = "intern-cert-issuer"
+  namespace  = helm_release.cert_manager.namespace
+  repository = local.helm_repository.kiwigrid
+  chart      = "any-resource"
+
+  values = [<<VALUES
+  anyResources:
+    InternIssuer: |-
+      apiVersion: cert-manager.io/v1alpha2
+      kind: ClusterIssuer
+      metadata:
+        name: ${local.cert_issuer.intern}
+      spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: alexsn@fb.com
+          privateKeySecretRef:
+            name: ${local.cert_issuer.intern}-account-key
+          solvers:
+            - dns01:
+                route53:
+                  region: ${data.aws_region.current.name}
+                  hostedZoneID: ${aws_route53_zone.symphony.id}
+              selector:
+                dnsZones:
+                  - ${local.domains.symphony.intern_name}
+  VALUES
+  ]
+}
+
