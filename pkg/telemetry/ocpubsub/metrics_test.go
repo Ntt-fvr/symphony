@@ -44,7 +44,7 @@ func TestMetrics(t *testing.T) {
 		if v.Name == ocpubsub.MessagesErrorTotalView.Name {
 			continue
 		}
-		require.NotEmpty(t, rows)
+		require.NotEmpty(t, rows, "no data on view %q", v.Name)
 
 		switch data := rows[0].Data.(type) {
 		case *view.CountData:

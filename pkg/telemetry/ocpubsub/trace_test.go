@@ -82,7 +82,7 @@ func TestTraces(t *testing.T) {
 	msg, err := subscription.Receive(ctx)
 	require.NoError(t, err)
 	require.Equal(t, []byte("foobar"), msg.Body)
-	require.GreaterOrEqual(t, len(te.spans), 3)
+	require.GreaterOrEqual(t, len(te.spans), 3, "expecting root, send and receive spans")
 
 	parent := te.spanByName(t.Name())
 	require.NotNil(t, parent)

@@ -27,22 +27,24 @@ type metricsTopic struct{ Topic }
 // Send delegates the actual send to underlying topic and
 // record metrics for the message.
 func (t metricsTopic) Send(ctx context.Context, msg *pubsub.Message) error {
-	stats.Record(ctx,
-		MessagesSentTotal.M(1),
-		MessagesSentBytes.M(msgLen(msg)),
-	)
+	stats.Record(ctx, MessagesSentTotal.M(1))
 
 	start := time.Now()
 	err := t.Topic.Send(ctx, msg)
 	elapsed := time.Since(start)
 
 	latency := float64(elapsed) / float64(time.Millisecond)
-	measurements := []stats.Measurement{
+	measurements := make([]stats.Measurement, 0, 2)
+	measurements = append(measurements,
 		MessagesSentLatency.M(latency),
-	}
+	)
 	if err != nil {
 		measurements = append(measurements,
 			MessagesErrorTotal.M(1),
+		)
+	} else {
+		measurements = append(measurements,
+			MessagesSentBytes.M(msgLen(msg)),
 		)
 	}
 	stats.Record(ctx, measurements...)
@@ -62,11 +64,18 @@ type metricsSubscription struct{ Subscription }
 func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
 	msg, err := s.Subscription.Receive(ctx)
 
-	tags := []tag.Mutator{tag.Upsert(Error, strconv.FormatBool(err != nil))}
-	_ = stats.RecordWithTags(ctx, tags,
+	tags := []tag.Mutator{
+		tag.Upsert(Error, strconv.FormatBool(err != nil)),
+	}
+	measurements := []stats.Measurement{
 		MessagesReceivedTotal.M(1),
-		MessagesReceivedBytes.M(msgLen(msg)),
-	)
+	}
+	if err == nil {
+		measurements = append(measurements,
+			MessagesReceivedBytes.M(msgLen(msg)),
+		)
+	}
+	_ = stats.RecordWithTags(ctx, tags, measurements...)
 
 	return msg, err
 }
