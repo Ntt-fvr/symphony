@@ -28,7 +28,7 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
-	github.com/prometheus/common v0.10.0
+	github.com/prometheus/common v0.11.1
 	github.com/prometheus/statsd_exporter v0.17.0 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
@@ -40,7 +40,6 @@ require (
 	gocloud.dev/pubsub/natspubsub v0.20.0
 	golang.org/x/net v0.0.0-20200625001655-4c5254603344
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
 	golang.org/x/text v0.3.3
 	golang.org/x/tools v0.0.0-20200701151220-7cb253f4c4f8 // indirect
 	google.golang.org/genproto v0.0.0-20200701001935-0939c5918c31 // indirect
