@@ -11,7 +11,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/stretchr/testify/require"
-	"go.opencensus.io/trace"
 	"gocloud.dev/pubsub"
 	"gocloud.dev/pubsub/mempubsub"
 )
@@ -30,7 +29,7 @@ func TestCDKInterfaces(t *testing.T) {
 		{
 			name:          "Subscription",
 			interfaceType: (*ocpubsub.Subscription)(nil),
-			structType:    ocpubsub.AddReceiveMessage((*pubsub.Subscription)(nil)),
+			structType:    (*pubsub.Subscription)(nil),
 		},
 	}
 	for _, tc := range tests {
@@ -49,17 +48,16 @@ func TestCDKInterfaces(t *testing.T) {
 	}
 }
 
-func TestNewTopicSubscription(t *testing.T) {
+func TestWrapper(t *testing.T) {
 	pstopic := mempubsub.NewTopic()
-	opt := ocpubsub.WithStartOptions(
-		trace.WithSampler(trace.NeverSample()),
-	)
-	topic := ocpubsub.NewTopic(pstopic, opt)
-	require.NotNil(t, topic)
-	require.Panics(t, func() { ocpubsub.NewTopic(nil) })
-	subscription := ocpubsub.NewSubscription(
-		mempubsub.NewSubscription(pstopic, time.Millisecond), opt,
-	)
-	require.NotNil(t, subscription)
-	require.Panics(t, func() { ocpubsub.NewSubscription(nil) })
+	t.Run("Topic", func(t *testing.T) {
+		topic := ocpubsub.WrapTopic(pstopic)
+		require.NotNil(t, topic)
+		require.Panics(t, func() { ocpubsub.WrapTopic(nil) })
+	})
+	t.Run("Subscription", func(t *testing.T) {
+		subscription := mempubsub.NewSubscription(pstopic, time.Second)
+		require.NotNil(t, subscription)
+		require.Panics(t, func() { ocpubsub.WrapSubscription(nil) })
+	})
 }

@@ -11,80 +11,39 @@ import (
 )
 
 type (
-	// CDKTopic is the interface extracted from gocloud.dev/pubsub.Topic.
-	CDKTopic interface {
+	// Topic is the interface extracted from gocloud.dev/pubsub.Topic.
+	Topic interface {
 		As(interface{}) bool
 		ErrorAs(error, interface{}) bool
 		Send(context.Context, *pubsub.Message) error
 		Shutdown(context.Context) error
 	}
 
-	// CDKSubscription is the interface extracted from gocloud.dev/pubsub.Subscription.
-	CDKSubscription interface {
+	// Subscription is the interface extracted from gocloud.dev/pubsub.Subscription.
+	Subscription interface {
 		As(interface{}) bool
 		ErrorAs(error, interface{}) bool
 		Receive(context.Context) (*pubsub.Message, error)
 		Shutdown(context.Context) error
 	}
-
-	// Topic is an alias to CDKTopic.
-	Topic = CDKTopic
-
-	// Subscription extends gocloud.dev/pubsub.Subscription
-	// with a ReceiveMessage method.
-	Subscription interface {
-		CDKSubscription
-		ReceiveMessage(context.Context) (context.Context, *pubsub.Message, error)
-	}
 )
 
-// NewTopic wraps the given topic with a topic
-// that instruments outgoing messages.
-func NewTopic(topic CDKTopic, opts ...TraceOption) Topic {
+// WrapTopic wraps a given topic with a topic that
+// collects telemetry for the outgoing messages.
+func WrapTopic(topic Topic) Topic {
 	if topic == nil {
 		panic("topic is nil")
 	}
-	topic = NewTraceTopic(topic, opts...)
-	topic = NewMetricsTopic(topic)
-	return topic
+	return MetricsTopic{
+		TraceTopic{topic},
+	}
 }
 
-// NewSubscription wraps the given subscription with a
-// subscription that instruments incoming messages.
-func NewSubscription(cdksub CDKSubscription, opts ...TraceOption) Subscription {
-	if cdksub == nil {
+// WrapSubscription wraps a given subscription with a subscription that
+// collects telemetry for the incoming messages.
+func WrapSubscription(sub Subscription) Subscription {
+	if sub == nil {
 		panic("subscription is nil")
 	}
-	sub, ok := cdksub.(Subscription)
-	if !ok {
-		sub = AddReceiveMessage(cdksub)
-	}
-	sub = NewTraceSubscription(sub, opts...)
-	sub = NewMetricsSubscription(sub)
-	return sub
-}
-
-// AddReceiveMessage converts a cdk subscription into a subscription.
-func AddReceiveMessage(sub CDKSubscription) Subscription {
-	return messageReceiver{sub}
-}
-
-type messageReceiver struct {
-	CDKSubscription
-}
-
-func (m messageReceiver) ReceiveMessage(ctx context.Context) (context.Context, *pubsub.Message, error) {
-	msg, err := m.Receive(ctx)
-	return ctx, msg, err
-}
-
-func msgLen(msg *pubsub.Message) int64 {
-	if msg == nil {
-		return 0
-	}
-	var l int
-	for k, v := range msg.Metadata {
-		l += len(k) + len(v)
-	}
-	return int64(l + len(msg.Body))
+	return MetricsSubscription{sub}
 }

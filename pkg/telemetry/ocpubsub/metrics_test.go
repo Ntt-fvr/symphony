@@ -24,12 +24,12 @@ func TestMetrics(t *testing.T) {
 	defer view.Unregister(views...)
 
 	pstopic := mempubsub.NewTopic()
-	topic := ocpubsub.NewMetricsTopic(pstopic)
-	subscription := ocpubsub.NewMetricsSubscription(
-		ocpubsub.AddReceiveMessage(
-			mempubsub.NewSubscription(pstopic, time.Second),
+	topic := ocpubsub.MetricsTopic{Topic: pstopic}
+	subscription := ocpubsub.MetricsSubscription{
+		Subscription: mempubsub.NewSubscription(
+			pstopic, time.Second,
 		),
-	)
+	}
 
 	ctx := context.Background()
 	err = topic.Send(ctx, &pubsub.Message{Body: []byte("foobar")})
@@ -37,6 +37,7 @@ func TestMetrics(t *testing.T) {
 	msg, err := subscription.Receive(ctx)
 	require.NoError(t, err)
 	require.Equal(t, []byte("foobar"), msg.Body)
+	msg.Ack()
 
 	for _, v := range views {
 		v := view.Find(v.Name)

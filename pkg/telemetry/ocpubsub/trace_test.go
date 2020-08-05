@@ -20,15 +20,6 @@ type testExporter struct {
 	spans []*trace.SpanData
 }
 
-func (t *testExporter) spanByName(name string) *trace.SpanData {
-	for _, span := range t.spans {
-		if span.Name == name {
-			return span
-		}
-	}
-	return nil
-}
-
 func (t *testExporter) ExportSpan(s *trace.SpanData) {
 	t.spans = append(t.spans, s)
 }
@@ -38,71 +29,25 @@ func TestTraces(t *testing.T) {
 	trace.RegisterExporter(te)
 	defer trace.UnregisterExporter(te)
 
-	opts := []ocpubsub.TraceOption{
-		ocpubsub.WithStartOptions(
-			trace.WithSampler(
-				trace.AlwaysSample(),
-			),
-		),
-		ocpubsub.WithPropagation(
-			ocpubsub.MetadataPropagation{},
-		),
-	}
 	pstopic := mempubsub.NewTopic()
-	const topicSpanName = "test.TopicSend"
-	topic := ocpubsub.NewTraceTopic(pstopic,
-		append(opts,
-			ocpubsub.WithNameFormatter(
-				func(context.Context, *pubsub.Message) string {
-					return topicSpanName
-				},
-			),
-		)...,
-	)
-	const subscriptionSpanName = "test.SubscriptionReceive"
-	subscription := ocpubsub.NewTraceSubscription(
-		ocpubsub.AddReceiveMessage(
-			mempubsub.NewSubscription(pstopic, time.Second),
-		),
-		append(opts,
-			ocpubsub.WithNameFormatter(
-				func(context.Context, *pubsub.Message) string {
-					return subscriptionSpanName
-				},
-			),
-		)...,
-	)
+	topic := ocpubsub.TraceTopic{Topic: pstopic}
+	subscription := mempubsub.NewSubscription(pstopic, time.Second)
 
-	ctx, spn := trace.StartSpan(context.Background(),
+	ctx, span := trace.StartSpan(context.Background(),
 		t.Name(), trace.WithSampler(trace.AlwaysSample()),
 	)
 	body := []byte("foobar")
 	err := topic.Send(ctx, &pubsub.Message{Body: body})
 	require.NoError(t, err)
-	spn.End()
+	span.End()
 
 	msg, err := subscription.Receive(ctx)
 	require.NoError(t, err)
 	require.Equal(t, []byte("foobar"), msg.Body)
-	require.GreaterOrEqual(t, len(te.spans), 3, "expecting root, send and receive spans")
+	require.Len(t, te.spans, 3)
+	msg.Ack()
 
-	parent := te.spanByName(t.Name())
-	require.NotNil(t, parent)
-
-	topicSpan := te.spanByName(topicSpanName)
-	require.NotNil(t, topicSpan)
-	require.Equal(t, topicSpan.Status, trace.Status{Code: trace.StatusCodeOK})
-	require.Equal(t, parent.SpanID, topicSpan.ParentSpanID)
-	require.Len(t, topicSpan.MessageEvents, 1)
-	require.Equal(t, topicSpan.MessageEvents[0].EventType, trace.MessageEventTypeSent)
-	require.GreaterOrEqual(t, topicSpan.MessageEvents[0].UncompressedByteSize, int64(len(body)))
-
-	subscriptionSpan := te.spanByName(subscriptionSpanName)
-	require.NotNil(t, subscriptionSpan)
-	require.Equal(t, subscriptionSpan.Status, trace.Status{Code: trace.StatusCodeOK})
-	require.True(t, subscriptionSpan.HasRemoteParent)
-	require.Equal(t, topicSpan.SpanID, subscriptionSpan.ParentSpanID)
-	require.Len(t, subscriptionSpan.MessageEvents, 1)
-	require.Equal(t, subscriptionSpan.MessageEvents[0].EventType, trace.MessageEventTypeRecv)
-	require.Equal(t, topicSpan.MessageEvents[0].UncompressedByteSize, subscriptionSpan.MessageEvents[0].UncompressedByteSize)
+	sc, ok := ocpubsub.SpanContextFromMessage(msg)
+	require.True(t, ok)
+	require.Equal(t, span.SpanContext(), sc)
 }

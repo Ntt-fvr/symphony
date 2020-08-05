@@ -12,18 +12,15 @@ import (
 	"gocloud.dev/pubsub"
 )
 
-// NewMetricsTopic wraps the given topic with a topic that collects
-// metrics for the outgoing messages.
-func NewMetricsTopic(topic Topic) Topic {
-	return metricsTopic{topic}
+// MetricsTopic is an topic that collects metrics for the outgoing messages.
+type MetricsTopic struct {
+	// Topic to collect metrics for.
+	Topic
 }
 
-// metricsTopic is an topic that collects metrics for the outgoing messages.
-type metricsTopic struct{ Topic }
-
 // Send delegates the actual send to underlying topic and
-// record metrics for the message.
-func (t metricsTopic) Send(ctx context.Context, msg *pubsub.Message) error {
+// record metrics for the outgoing message.
+func (t MetricsTopic) Send(ctx context.Context, msg *pubsub.Message) error {
 	stats.Record(ctx, MessagesSentTotal.M(1))
 
 	start := time.Now()
@@ -49,36 +46,38 @@ func (t metricsTopic) Send(ctx context.Context, msg *pubsub.Message) error {
 	return err
 }
 
-// NewMetricsSubscription wraps the given subscription with a subscription
-// that collects metrics for the incoming messages.
-func NewMetricsSubscription(subscription Subscription) Subscription {
-	return metricsSubscription{subscription}
+// MetricsSubscription is a subscription that collects metrics for the incoming messages.
+type MetricsSubscription struct {
+	// Subscription to collects metrics for.
+	Subscription
 }
 
-// metricsSubscription is a subscription that collects metrics for the incoming messages.
-type metricsSubscription struct{ Subscription }
+// Receive delegates the actual receives to underlying subscription and
+// record metrics for the incoming message.
+func (s MetricsSubscription) Receive(ctx context.Context) (msg *pubsub.Message, err error) {
+	defer func() {
+		if err == nil {
+			stats.Record(ctx,
+				MessagesReceivedTotal.M(1),
+				MessagesReceivedBytes.M(msgLen(msg)),
+			)
+		} else {
+			stats.Record(ctx,
+				MessagesReceivedErrorTotal.M(1),
+			)
+		}
+	}()
 
-func (s metricsSubscription) Receive(ctx context.Context) (*pubsub.Message, error) {
-	msg, err := s.Subscription.Receive(ctx)
-	s.record(ctx, msg, err)
-	return msg, err
+	return s.Subscription.Receive(ctx)
 }
 
-func (s metricsSubscription) ReceiveMessage(ctx context.Context) (context.Context, *pubsub.Message, error) {
-	ctx, msg, err := s.Subscription.ReceiveMessage(ctx)
-	s.record(ctx, msg, err)
-	return ctx, msg, err
-}
-
-func (s metricsSubscription) record(ctx context.Context, msg *pubsub.Message, err error) {
-	if err == nil {
-		stats.Record(ctx,
-			MessagesReceivedTotal.M(1),
-			MessagesReceivedBytes.M(msgLen(msg)),
-		)
-	} else {
-		stats.Record(ctx,
-			MessagesReceivedErrorTotal.M(1),
-		)
+func msgLen(msg *pubsub.Message) int64 {
+	if msg == nil {
+		return 0
 	}
+	length := len(msg.Body)
+	for k, v := range msg.Metadata {
+		length += len(k) + len(v)
+	}
+	return int64(length)
 }
