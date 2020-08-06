@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@fbcnms/babel-register": "^0.1.0",
-    "@fbcnms/platform-server": "^0.1.5",
+    "@fbcnms/platform-server": "^0.1.6",
     "@fbcnms/projects": "^0.1.0",
     "@opencensus/core": "^0.0.22",
     "@opencensus/exporter-jaeger": "^0.0.22",

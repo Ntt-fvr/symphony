@@ -1597,10 +1597,10 @@
   dependencies:
     qrcode "^1.4.2"
 
-"@fbcnms/platform-server@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.5.tgz#a17ebb54e4ca5f0bdf8db2927f816318faa99ab7"
-  integrity sha512-bRFire6pkZlihcPuANHIDxRvLpt+fxkmEWW/EYPfKUkOxZgfkgUEkS+baF7sYAmy2HU6Wu1BOQ+VE8m23+jI3g==
+"@fbcnms/platform-server@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.6.tgz#3ff641b34deabb63fe86b11a2a22e493732e3b25"
+  integrity sha512-8n9pA9fkEdt/zgl9BEdS+Q50QSaJTyH/7up8kqgf4ExwKevWvBDFQy3N6W7WbOvKZi6EsdBYd3rWh2vj8cVOag==
   dependencies:
     "@fbcnms/auth" "^0.1.0"
     "@fbcnms/babel-register" "^0.1.0"
