@@ -131,8 +131,8 @@ const LocationDetailsCard = (props: Props) => {
             location={{
               id: location.id,
               name: location.name,
-              latitude: location.latitude,
-              longitude: location.longitude,
+              latitude: latDetails.value,
+              longitude: longDetails.value,
               locationType: {
                 mapType: location.locationType.mapType,
                 mapZoomLevel: location.locationType.mapZoomLevel,
