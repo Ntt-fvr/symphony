@@ -33,10 +33,7 @@ func (m *jobs) collectProperties(ctx context.Context) error {
 	client := ent.FromContext(ctx)
 	m.logger.For(ctx).Info("running properties garbage collect")
 	propertyTypes, err := client.PropertyType.Query().
-		Where(
-			propertytype.Deleted(true),
-			propertytype.Not(propertytype.HasWorkOrderType()),
-			propertytype.Not(propertytype.HasProjectType())).
+		Where(propertytype.Deleted(true)).
 		All(ctx)
 	if err != nil {
 		return fmt.Errorf("query property type: %w", err)

@@ -38,9 +38,6 @@ func TestGarbageCollectProperties(t *testing.T) {
 		SetName("Location2").
 		SetType(locationType).
 		SaveX(ctx)
-	projectType := client.ProjectType.Create().
-		SetName("ProjectType").
-		SaveX(ctx)
 	propTypeToDelete := client.PropertyType.Create().
 		SetName("PropToDelete").
 		SetLocationType(locationType).
@@ -51,12 +48,6 @@ func TestGarbageCollectProperties(t *testing.T) {
 		SetName("PropToDelete2").
 		SetLocationType(locationType).
 		SetType(propertytype.TypeBool).
-		SetDeleted(true).
-		SaveX(ctx)
-	propTypeNotToDelete := client.PropertyType.Create().
-		SetName("PropTypeNotToDelete").
-		SetProjectType(projectType).
-		SetType(propertytype.TypeInt).
 		SetDeleted(true).
 		SaveX(ctx)
 	propType := client.PropertyType.Create().
@@ -96,7 +87,6 @@ func TestGarbageCollectProperties(t *testing.T) {
 	require.False(t, client.Property.Query().Where(property.ID(propToDelete3.ID)).ExistX(ctx))
 	require.True(t, client.PropertyType.Query().Where(propertytype.ID(propType.ID)).ExistX(ctx))
 	require.True(t, client.Property.Query().Where(property.ID(prop.ID)).ExistX(ctx))
-	require.True(t, client.PropertyType.Query().Where(propertytype.ID(propTypeNotToDelete.ID)).ExistX(ctx))
 }
 
 func TestGarbageCollectServices(t *testing.T) {

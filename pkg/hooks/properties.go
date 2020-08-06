@@ -154,6 +154,7 @@ func mandatoryPropertyOnClose(ctx context.Context, client *ent.Client, templateI
 		Where(propertytype.And(
 			propertytype.Mandatory(true),
 			propertytype.IsInstanceProperty(true),
+			propertytype.Deleted(false),
 		)).
 		WithProperties().
 		All(ctx)
