@@ -30,7 +30,7 @@ import {
   WORK_ORDER_FILTERS,
   WorkOrderSearchConfig,
 } from './WorkOrderSearchConfig';
-import {doneStatus, statusValues} from '../../common/WorkOrder';
+import {doneStatus, statusValues} from '../../common/FilterTypes';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
 import {
   getInitialFilterValue,

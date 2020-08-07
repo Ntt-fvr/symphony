@@ -10,9 +10,11 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -567,4 +569,46 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	assert.Len(t, wos, 1)
 	props := wos[0].QueryProperties().Where().AllX(ctx)
 	require.Len(t, props, 2)
+}
+
+func TestAddProjectWithPriority(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr, qr := r.Mutation(), r.Query()
+	name := "Project Name"
+	typ, err := mr.CreateProjectType(
+		ctx, models.AddProjectTypeInput{Name: "type_1_" + name, Description: pointer.ToString("foobar")},
+	)
+	require.NoError(t, err)
+	priorityLow := project.PriorityLow
+	priorityHigh := project.PriorityHigh
+
+	project, err := mr.CreateProject(ctx, models.AddProjectInput{
+		Name:     name,
+		Type:     typ.ID,
+		Priority: &priorityLow,
+	})
+	require.NoError(t, err)
+	require.Equal(t, priorityLow, project.Priority)
+
+	creator := viewer.MustGetOrCreateUser(ctx, "John", user.RoleOwner)
+
+	input := models.EditProjectInput{
+		ID:          project.ID,
+		Name:        project.Name,
+		Description: project.Description,
+		CreatorID:   &creator.ID,
+		Priority:    &priorityHigh,
+	}
+
+	project, err = mr.EditProject(ctx, input)
+	require.NoError(t, err)
+	require.Equal(t, priorityHigh, project.Priority)
+
+	node, err := qr.Node(ctx, project.ID)
+	require.NoError(t, err)
+	project, ok := node.(*ent.Project)
+	require.True(t, ok)
+	require.Equal(t, priorityHigh, project.Priority)
 }

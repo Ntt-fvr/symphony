@@ -28,6 +28,9 @@ func handleProjectFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput)
 	if filter.FilterType == models.ProjectFilterTypeProjectType {
 		return projectTypeFilter(q, filter)
 	}
+	if filter.FilterType == models.ProjectFilterTypeProjectPriority {
+		return projectPriorityFilter(q, filter)
+	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
@@ -78,4 +81,19 @@ func projectTypeFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (
 		return q.Where(project.HasTypeWith(projecttype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+func projectPriorityFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
+	if filter.Operator != models.FilterOperatorIsOneOf {
+		return nil, errors.Errorf("operation %q is not supported", filter.Operator)
+	}
+	priorities := make([]project.Priority, 0, len(filter.StringSet))
+	for _, str := range filter.StringSet {
+		priority := project.Priority(str)
+		if err := project.PriorityValidator(priority); err != nil {
+			return nil, errors.Errorf("%s is not a valid work order priority", str)
+		}
+		priorities = append(priorities, priority)
+	}
+	return q.Where(project.PriorityIn(priorities...)), nil
 }

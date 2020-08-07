@@ -14,6 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type ProjectsTableView_projects$ref: FragmentReference;
 declare export opaque type ProjectsTableView_projects$fragmentType: ProjectsTableView_projects$ref;
@@ -31,6 +32,7 @@ export type ProjectsTableView_projects = $ReadOnlyArray<{|
     +id: string,
     +name: string,
   |},
+  +priority: ProjectPriority,
   +numberOfWorkOrders: number,
   +$refType: ProjectsTableView_projects$ref,
 |}>;
@@ -114,6 +116,13 @@ return {
     {
       "kind": "ScalarField",
       "alias": null,
+      "name": "priority",
+      "args": null,
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
       "name": "numberOfWorkOrders",
       "args": null,
       "storageKey": null
@@ -122,5 +131,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eb4c1d98348bfff6ea72ba1326a3a1ad';
+(node/*: any*/).hash = '3c5cdac7da5dcdb9c638764e19361524';
 module.exports = node;

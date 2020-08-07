@@ -13,11 +13,13 @@ import type {ProjectsTableView_projects} from './__generated__/ProjectsTableView
 
 import Button from '@fbcnms/ui/components/design-system/Button';
 import LocationLink from '../location/LocationLink';
+import PriorityTag from '../work_orders/PriorityTag';
 import React, {useMemo} from 'react';
 import Table from '@fbcnms/ui/components/design-system/Table/Table';
 import fbt from 'fbt';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {prioritySortingValues} from '../../common/FilterTypes';
 
 const useStyles = makeStyles(() => ({
   workOrderCell: {
@@ -94,6 +96,12 @@ const ProjectsTableView = (props: Props) => {
           getSortingValue: row => row?.createdBy?.email,
           render: row => row?.createdBy?.email ?? '',
         },
+        {
+          key: 'priority',
+          title: 'Priority',
+          getSortingValue: row => prioritySortingValues[row.priority],
+          render: row => <PriorityTag priority={row.priority} />,
+        },
       ]}
     />
   );
@@ -115,6 +123,7 @@ export default createFragmentContainer(ProjectsTableView, {
         id
         name
       }
+      priority
       numberOfWorkOrders
     }
   `,

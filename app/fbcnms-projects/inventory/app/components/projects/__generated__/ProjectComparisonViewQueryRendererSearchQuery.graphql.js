@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash d77280542ce086162cb0cd67a17d3040
+ * @relayHash eccdeb0a78433f27d7e9c17962b7c52b
  */
 
 /* eslint-disable */
@@ -18,13 +18,14 @@ import type { ConcreteRequest } from 'relay-runtime';
 type ProjectsMap_projects$ref = any;
 type ProjectsTableView_projects$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
-export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_TYPE" | "%future added value";
+export type ProjectFilterType = "LOCATION_INST" | "PROJECT_NAME" | "PROJECT_OWNED_BY" | "PROJECT_PRIORITY" | "PROJECT_TYPE" | "%future added value";
 export type ProjectFilterInput = {|
   filterType: ProjectFilterType,
   operator: FilterOperator,
   stringValue?: ?string,
   idSet?: ?$ReadOnlyArray<string>,
   maxDepth?: ?number,
+  stringSet?: ?$ReadOnlyArray<string>,
 |};
 export type ProjectComparisonViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
@@ -89,6 +90,7 @@ fragment ProjectsTableView_projects on Project {
     id
     name
   }
+  priority
   numberOfWorkOrders
 }
 */
@@ -292,6 +294,13 @@ return {
                   {
                     "kind": "ScalarField",
                     "alias": null,
+                    "name": "priority",
+                    "args": null,
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
                     "name": "numberOfWorkOrders",
                     "args": null,
                     "storageKey": null
@@ -308,7 +317,7 @@ return {
     "operationKind": "query",
     "name": "ProjectComparisonViewQueryRendererSearchQuery",
     "id": null,
-    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  numberOfWorkOrders\n}\n",
+    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n",
     "metadata": {}
   }
 };

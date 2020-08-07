@@ -54,7 +54,11 @@ import symphony from '@fbcnms/ui/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {doneStatus, priorityValues, statusValues} from '../../common/WorkOrder';
+import {
+  doneStatus,
+  priorityValues,
+  statusValues,
+} from '../../common/FilterTypes';
 import {formatDateForTextInput} from '@fbcnms/ui/utils/displayUtils';
 import {
   getInitialState,

@@ -10049,6 +10049,7 @@ enum ProjectFilterType {
   PROJECT_OWNED_BY
   PROJECT_TYPE
   LOCATION_INST
+  PROJECT_PRIORITY
 }
 
 input ProjectFilterInput {
@@ -10057,6 +10058,7 @@ input ProjectFilterInput {
   stringValue: String
   idSet: [ID!]
   maxDepth: Int = 5
+  stringSet: [String!]
 }
 
 """
@@ -44816,6 +44818,12 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 		case "maxDepth":
 			var err error
 			it.MaxDepth, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stringSet":
+			var err error
+			it.StringSet, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

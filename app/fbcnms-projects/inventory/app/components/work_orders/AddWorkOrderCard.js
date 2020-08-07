@@ -55,7 +55,7 @@ import {
 } from '../checklist/ChecklistCategoriesMutateReducer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/WorkOrder';
+import {priorityValues, statusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';

@@ -579,6 +579,7 @@ type ProjectFilterInput struct {
 	StringValue *string           `json:"stringValue"`
 	IDSet       []int             `json:"idSet"`
 	MaxDepth    *int              `json:"maxDepth"`
+	StringSet   []string          `json:"stringSet"`
 }
 
 type PropertyInput struct {
@@ -1331,10 +1332,11 @@ func (e PortFilterType) MarshalGQL(w io.Writer) {
 type ProjectFilterType string
 
 const (
-	ProjectFilterTypeProjectName    ProjectFilterType = "PROJECT_NAME"
-	ProjectFilterTypeProjectOwnedBy ProjectFilterType = "PROJECT_OWNED_BY"
-	ProjectFilterTypeProjectType    ProjectFilterType = "PROJECT_TYPE"
-	ProjectFilterTypeLocationInst   ProjectFilterType = "LOCATION_INST"
+	ProjectFilterTypeProjectName     ProjectFilterType = "PROJECT_NAME"
+	ProjectFilterTypeProjectOwnedBy  ProjectFilterType = "PROJECT_OWNED_BY"
+	ProjectFilterTypeProjectType     ProjectFilterType = "PROJECT_TYPE"
+	ProjectFilterTypeLocationInst    ProjectFilterType = "LOCATION_INST"
+	ProjectFilterTypeProjectPriority ProjectFilterType = "PROJECT_PRIORITY"
 )
 
 var AllProjectFilterType = []ProjectFilterType{
@@ -1342,11 +1344,12 @@ var AllProjectFilterType = []ProjectFilterType{
 	ProjectFilterTypeProjectOwnedBy,
 	ProjectFilterTypeProjectType,
 	ProjectFilterTypeLocationInst,
+	ProjectFilterTypeProjectPriority,
 }
 
 func (e ProjectFilterType) IsValid() bool {
 	switch e {
-	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst:
+	case ProjectFilterTypeProjectName, ProjectFilterTypeProjectOwnedBy, ProjectFilterTypeProjectType, ProjectFilterTypeLocationInst, ProjectFilterTypeProjectPriority:
 		return true
 	}
 	return false

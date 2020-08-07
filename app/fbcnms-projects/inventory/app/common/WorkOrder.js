@@ -16,6 +16,7 @@ import type {FileAttachmentType} from './FileAttachment.js';
 import type {ImageAttachmentType} from './ImageAttachment.js';
 import type {Location} from './Location';
 import type {NamedNode} from './EntUtils';
+import type {PriorityType, StatusType} from './FilterTypes';
 import type {Property} from './Property';
 import type {PropertyType} from './PropertyType';
 import type {ShortUser} from './EntUtils';
@@ -25,9 +26,6 @@ import {convertPropertyTypeToMutationInput} from './PropertyType';
 import {graphql} from 'relay-runtime';
 import {isTempId} from './EntUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-
-export type WorkOrderStatus = 'PENDING' | 'PLANNED' | 'DONE';
-export type WorkOrderPriority = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 
 export type WorkOrderType = {
   id: string,
@@ -49,8 +47,8 @@ export type WorkOrder = {
   owner: ShortUser,
   creationDate: string,
   installDate: ?string,
-  status: WorkOrderStatus,
-  priority: WorkOrderPriority,
+  status: StatusType,
+  priority: PriorityType,
   equipmentToAdd: Array<Equipment>,
   equipmentToRemove: Array<Equipment>,
   linksToAdd: Array<Link>,
@@ -69,62 +67,6 @@ export type WorkOrderIdentifier = {
   +id: string,
   +name: string,
 };
-
-export const priorityValues = [
-  {
-    key: 'urgent',
-    value: 'URGENT',
-    label: 'Urgent',
-  },
-  {
-    key: 'high',
-    value: 'HIGH',
-    label: 'High',
-  },
-  {
-    key: 'medium',
-    value: 'MEDIUM',
-    label: 'Medium',
-  },
-  {
-    key: 'low',
-    value: 'LOW',
-    label: 'Low',
-  },
-  {
-    key: 'none',
-    value: 'NONE',
-    label: 'None',
-  },
-];
-
-export const prioritySortingValues = {
-  URGENT: 0,
-  HIGH: 1,
-  MEDIUM: 2,
-  LOW: 3,
-  NONE: 4,
-};
-
-export const doneStatus = {
-  key: 'done',
-  value: 'DONE',
-  label: 'Done',
-};
-
-export const statusValues = [
-  {
-    key: 'planned',
-    value: 'PLANNED',
-    label: 'Planned',
-  },
-  {
-    key: 'pending',
-    value: 'PENDING',
-    label: 'Pending',
-  },
-  doneStatus,
-];
 
 export type FutureState = 'INSTALL' | 'REMOVE';
 

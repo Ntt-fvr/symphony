@@ -15,7 +15,7 @@ import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
 import {priorityValues} from '../../common/FilterTypes';
 
-const PowerSearchWorkOrderPriorityFilter = (props: FilterProps) => {
+const PowerSearchProjectPriorityFilter = (props: FilterProps) => {
   const {
     value,
     onInputBlurred,
@@ -56,4 +56,4 @@ const PowerSearchWorkOrderPriorityFilter = (props: FilterProps) => {
   );
 };
 
-export default PowerSearchWorkOrderPriorityFilter;
+export default PowerSearchProjectPriorityFilter;

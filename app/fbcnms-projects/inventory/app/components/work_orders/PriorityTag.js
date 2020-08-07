@@ -8,15 +8,15 @@
  * @format
  */
 
-import type {WorkOrderPriority} from '../../common/WorkOrder';
+import type {PriorityType} from '../../common/FilterTypes';
 
 import React from 'react';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues} from '../../common/WorkOrder';
+import {priorityValues} from '../../common/FilterTypes';
 
 type Props = $ReadOnly<{|
-  priority: WorkOrderPriority,
+  priority: PriorityType,
 |}>;
 
 const useStyles = makeStyles(() => ({
@@ -29,10 +29,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const WorkOrderPriorityTag = (props: Props) => {
+const PriorityTag = (props: Props) => {
   const {priority} = props;
-  const label = priorityValues.find(woPriority => woPriority.value === priority)
-    ?.label;
+  const label = priorityValues.find(
+    priorityValue => priorityValue.value === priority,
+  )?.label;
   const classes = useStyles();
 
   return priority !== 'NONE' ? (
@@ -40,4 +41,4 @@ const WorkOrderPriorityTag = (props: Props) => {
   ) : null;
 };
 
-export default WorkOrderPriorityTag;
+export default PriorityTag;

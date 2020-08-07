@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 547b6bc9590f3e9a806d0958b20d5429
+ * @relayHash 7d00d6cedfaf1204427d410cdd3f3588
  */
 
 /* eslint-disable */
@@ -81,6 +81,7 @@ fragment ProjectsTableView_projects on Project {
     id
     name
   }
+  priority
   numberOfWorkOrders
 }
 */
@@ -204,6 +205,13 @@ return {
           {
             "kind": "ScalarField",
             "alias": null,
+            "name": "priority",
+            "args": null,
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
             "name": "numberOfWorkOrders",
             "args": null,
             "storageKey": null
@@ -216,7 +224,7 @@ return {
     "operationKind": "mutation",
     "name": "AddProjectMutation",
     "id": null,
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  numberOfWorkOrders\n}\n",
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n",
     "metadata": {}
   }
 };

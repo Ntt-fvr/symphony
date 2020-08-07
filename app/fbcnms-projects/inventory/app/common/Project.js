@@ -10,6 +10,7 @@
 
 import type {Location} from './Location';
 import type {NamedNode} from './EntUtils';
+import type {PriorityType} from './FilterTypes';
 import type {ProjectTemplateNodesQuery} from './__generated__/ProjectTemplateNodesQuery.graphql';
 import type {Property} from './Property';
 import type {PropertyType} from './PropertyType';
@@ -31,6 +32,7 @@ export type Project = {
   description: ?string,
   location: ?Location,
   creatorId: ?string,
+  priority: PriorityType,
   properties: Array<Property>,
   workOrders: Array<WorkOrder>,
   numberOfWorkOrders: number,

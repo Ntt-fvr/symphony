@@ -10,6 +10,7 @@
 
 import PowerSearchProjectNameFilter from './PowerSearchProjectNameFilter';
 import PowerSearchProjectOwnerFilter from './PowerSearchProjectOwnerFilter';
+import PowerSearchProjectPriorityFilter from './PowerSearchProjectPriorityFilter';
 import PowerSearchProjectTypeFilter from './PowerSearchProjectTypeFilter';
 import type {EntityConfig} from '../comparison_view/ComparisonViewTypes';
 
@@ -40,6 +41,14 @@ const ProjectSearchConfig: Array<EntityConfig> = [
         entityType: 'project',
         label: 'Template',
         component: PowerSearchProjectTypeFilter,
+        defaultOperator: 'is_one_of',
+      },
+      {
+        key: 'project_priority',
+        name: 'project_priority',
+        entityType: 'project',
+        label: 'Priority',
+        component: PowerSearchProjectPriorityFilter,
         defaultOperator: 'is_one_of',
       },
     ],
