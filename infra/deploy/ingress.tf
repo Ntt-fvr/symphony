@@ -376,7 +376,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.2.5"
+  version    = "3.2.6"
   namespace  = "kube-system"
   keyring    = ""
 
@@ -448,7 +448,7 @@ resource helm_release cert_manager {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"
-  version          = "0.16.0"
+  version          = "0.16.1"
   namespace        = "cert-manager"
   create_namespace = true
 

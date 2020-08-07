@@ -5,7 +5,7 @@ resource helm_release nats {
   create_namespace = true
   repository       = local.helm_repository.bitnami
   chart            = "nats"
-  version          = "4.5.1"
+  version          = "4.5.2"
   keyring          = ""
 
   values = [<<VALUES

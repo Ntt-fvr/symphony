@@ -102,7 +102,7 @@ resource helm_release elasticsearch_curator {
   repository = local.helm_repository.stable
   chart      = "elasticsearch-curator"
   namespace  = "monitoring"
-  version    = "2.1.5"
+  version    = "2.2.1"
   keyring    = ""
 
   values = [<<EOT

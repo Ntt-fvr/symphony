@@ -4,7 +4,7 @@ resource helm_release prometheus_operator {
   namespace  = "monitoring"
   repository = local.helm_repository.stable
   chart      = "prometheus-operator"
-  version    = "9.2.2"
+  version    = "9.3.1"
   keyring    = ""
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
@@ -142,7 +142,7 @@ resource helm_release helm_exporter {
   name       = "helm-exporter"
   repository = local.helm_repository.sstarcher
   chart      = "helm-exporter"
-  version    = "0.5.6"
+  version    = "0.6.0"
   namespace  = "monitoring"
   keyring    = ""
 
@@ -160,7 +160,7 @@ resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.stable
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.2.0"
+  version    = "4.3.0"
   namespace  = "monitoring"
   keyring    = ""
 
