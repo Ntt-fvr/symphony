@@ -37,35 +37,17 @@ func (filters Filters) Filter(ctx context.Context, evt *Event) bool {
 	return true
 }
 
-// FilterReceiverOpener creates filter receivers.
-type FilterReceiverOpener struct {
-	ReceiverOpener
-	Filter Filterer
-}
-
-// OpenReceiver returns a receiver that filters incoming events.
-func (o FilterReceiverOpener) OpenReceiver(ctx context.Context) (Receiver, error) {
-	receiver, err := o.ReceiverOpener.OpenReceiver(ctx)
-	if err == nil {
-		receiver = FilterReceiver{
-			Receiver: receiver,
-			Filterer: o.Filter,
-		}
-	}
-	return receiver, err
-}
-
 // FilterReceiver is a Receiver wrapper that filters incoming events.
 type FilterReceiver struct {
 	Receiver
-	Filterer
+	Filter Filterer
 }
 
 // Receive returns the next incoming message passing filter.
 func (f FilterReceiver) Receive(ctx context.Context) (*Event, error) {
 	for {
 		evt, err := f.Receiver.Receive(ctx)
-		if err != nil || f.Filter(ctx, evt) {
+		if err != nil || f.Filter.Filter(ctx, evt) {
 			return evt, err
 		}
 		_ = stats.RecordWithTags(ctx, evt.tags(),

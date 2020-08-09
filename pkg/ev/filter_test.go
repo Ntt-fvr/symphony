@@ -25,14 +25,14 @@ func TestFilterReceiver(t *testing.T) {
 	foo := &ev.Event{Tenant: t.Name(), Name: "foo"}
 	bar := &ev.Event{Tenant: t.Name(), Name: "bar"}
 
-	var filterer mocks.Filterer
-	filterer.On("Filter", ctx, foo).
+	var filter mocks.Filterer
+	filter.On("Filter", ctx, foo).
 		Return(false).
 		Once()
-	filterer.On("Filter", ctx, bar).
+	filter.On("Filter", ctx, bar).
 		Return(true).
 		Once()
-	defer filterer.AssertExpectations(t)
+	defer filter.AssertExpectations(t)
 
 	var receiver mocks.Receiver
 	receiver.On("Receive", ctx).
@@ -46,18 +46,10 @@ func TestFilterReceiver(t *testing.T) {
 		Once()
 	defer receiver.AssertExpectations(t)
 
-	var opener mocks.ReceiverOpener
-	opener.On("OpenReceiver", ctx).
-		Return(&receiver, nil).
-		Once()
-	defer opener.AssertExpectations(t)
-
-	fro := ev.FilterReceiverOpener{
-		ReceiverOpener: &opener,
-		Filter:         &filterer,
+	r := ev.FilterReceiver{
+		Receiver: &receiver,
+		Filter:   &filter,
 	}
-	r, err := fro.OpenReceiver(ctx)
-	require.NoError(t, err)
 	evt, err := r.Receive(ctx)
 	require.NoError(t, err)
 	require.Equal(t, t.Name(), evt.Tenant)

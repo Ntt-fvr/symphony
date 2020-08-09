@@ -99,3 +99,13 @@ var (
 		Aggregation: view.Count(),
 	}
 )
+
+// OpenCensusViews are the views provided by this package.
+var OpenCensusViews = []*view.View{
+	EventEmittedTotalView,
+	EventEmitErrorTotalView,
+	EventOpenReceiverTotalView,
+	EventReceivedTotalView,
+	EventReceiveErrorTotalView,
+	EventReceiveFilteredTotalView,
+}

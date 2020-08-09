@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/ev/mocks"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -29,10 +30,9 @@ func TestEventsOverTopic(t *testing.T) {
 		ctx, url, ev.JSONEncoder,
 	)
 	require.NoError(t, err)
-	subscriber := ev.NewTopicSubscriber(
-		url, ev.NewDecoder(&payload{}, ev.JSONDecode),
+	receiver, err := ev.NewTopicReceiver(
+		ctx, url, ev.NewDecoder(&payload{}, ev.JSONDecode),
 	)
-	receiver, err := subscriber.OpenReceiver(ctx)
 	require.NoError(t, err)
 
 	want := &ev.Event{
@@ -90,29 +90,23 @@ func TestEventTelemetry(t *testing.T) {
 	trace.RegisterExporter(te)
 	defer trace.UnregisterExporter(te)
 
-	views := []*view.View{
-		ev.EventOpenReceiverTotalView,
-		ev.EventEmittedTotalView,
-		ev.EventEmitErrorTotalView,
-		ev.EventReceivedTotalView,
-		ev.EventReceiveErrorTotalView,
-	}
-	err := view.Register(views...)
-	defer view.Unregister(views...)
+	err := view.Register(ev.OpenCensusViews...)
+	defer view.Unregister(ev.OpenCensusViews...)
 
 	ctx := context.Background()
-	url := mempubsub.Scheme + "://" + t.Name()
+	factory := ev.TopicFactory(
+		mempubsub.Scheme + "://" + t.Name(),
+	)
+	require.Implements(t, (*ev.Factory)(nil), factory)
 
-	emitter, err := ev.NewTopicEmitter(ctx, url, nil)
+	emitter, err := factory.NewEmitter(ctx)
 	require.NoError(t, err)
 	defer emitter.Shutdown(ctx)
 
-	subscriber := ev.NewTopicSubscriber(url, nil)
-	require.NotNil(t, subscriber)
-	receiver, err := subscriber.OpenReceiver(ctx)
+	receiver, err := factory.NewReceiver(ctx, nil)
 	require.NoError(t, err)
 	defer receiver.Shutdown(ctx)
-	receiver, err = subscriber.OpenReceiver(ctx)
+	receiver, err = factory.NewReceiver(ctx, nil)
 	require.NoError(t, err)
 	defer receiver.Shutdown(ctx)
 
@@ -210,4 +204,56 @@ func TestEventTelemetry(t *testing.T) {
 			require.Contains(t, events, span.Attributes["name"])
 		}
 	}
+}
+
+func TestProviders(t *testing.T) {
+	ctx := context.Background()
+
+	var emitter mocks.Emitter
+	emitter.On("Shutdown", ctx).
+		Return(nil).
+		Twice()
+	defer emitter.AssertExpectations(t)
+
+	var receiver mocks.Receiver
+	receiver.On("Shutdown", ctx).
+		Return(nil).
+		Twice()
+	defer receiver.AssertExpectations(t)
+
+	var factory mocks.Factory
+	factory.On("NewEmitter", ctx).
+		Return(&emitter, nil).
+		Once()
+	factory.On("NewReceiver", ctx, nil).
+		Return(&receiver, nil).
+		Once()
+	defer factory.AssertExpectations(t)
+
+	{
+		emitter, cleanup, err := ev.ProvideEmitter(ctx, &factory)
+		require.NoError(t, err)
+		cleanup()
+		err = emitter.Shutdown(ctx)
+		require.NoError(t, err)
+	}
+	{
+		receiver, cleanup, err := ev.ProvideReceiver(ctx, &factory, nil)
+		require.NoError(t, err)
+		cleanup()
+		err = receiver.Shutdown(ctx)
+		require.NoError(t, err)
+	}
+}
+
+func TestErrFactory(t *testing.T) {
+	var factory ev.ErrFactory
+	require.Implements(t, (*ev.Factory)(nil), factory)
+	require.Implements(t, (*error)(nil), factory)
+
+	ctx := context.Background()
+	_, err := factory.NewEmitter(ctx)
+	require.Error(t, err)
+	_, err = factory.NewReceiver(ctx, "")
+	require.Error(t, err)
 }
