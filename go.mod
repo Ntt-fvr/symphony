@@ -34,6 +34,7 @@ require (
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
 	github.com/stretchr/testify v1.6.1
 	github.com/vektah/gqlparser/v2 v2.0.1
+	github.com/vektra/mockery v1.1.2 // indirect
 	go.opencensus.io v0.22.4
 	go.uber.org/zap v1.15.0
 	gocloud.dev v0.20.0

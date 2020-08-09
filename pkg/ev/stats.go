@@ -37,6 +37,11 @@ var (
 		"Number of receive errors",
 		stats.UnitDimensionless,
 	)
+	EventReceiveFilteredTotal = stats.Int64(
+		"ev/event_receive_filtered_total",
+		"Number of filtered events",
+		stats.UnitDimensionless,
+	)
 )
 
 // Event atomic counters.
@@ -85,6 +90,12 @@ var (
 		Name:        EventReceiveErrorTotal.Name(),
 		Description: EventReceiveErrorTotal.Description(),
 		Measure:     EventReceiveErrorTotal,
+		Aggregation: view.Count(),
+	}
+	EventReceiveFilteredTotalView = &view.View{
+		Name:        EventReceiveFilteredTotal.Name(),
+		Description: EventReceiveFilteredTotal.Description(),
+		Measure:     EventReceiveFilteredTotal,
 		Aggregation: view.Count(),
 	}
 )
