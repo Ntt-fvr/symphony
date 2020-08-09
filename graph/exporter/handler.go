@@ -7,9 +7,17 @@ package exporter
 import (
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
+
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/pkg/errors"
+
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebookincubator/symphony/pkg/log"
 
@@ -27,31 +35,95 @@ type rower interface {
 	rows(context.Context, *url.URL) ([][]string, error)
 }
 
+func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
+	var (
+		logger = m.log.For(ctx)
+		err    error
+		etType exporttask.Type
+	)
+	logger.Debug("entered async export")
+	filtersParam := url.Query().Get("filters")
+	client := ent.FromContext(ctx)
+
+	filtersInput, err := json.Marshal(filtersParam)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot use filters")
+	}
+	switch url.Path {
+	case "/locations":
+		etType = exporttask.TypeLocation
+	default:
+		return nil, errors.New("not supported entity for async export")
+	}
+
+	t, err := client.ExportTask.
+		Create().
+		SetType(etType).
+		SetStatus(exporttask.StatusPending).
+		SetFilters(string(filtersInput)).
+		Save(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "cannot create export task")
+	}
+
+	return t, nil
+}
+
+func (m *exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int) {
+	log := m.log.For(ctx)
+	taskID := struct {
+		TaskID string
+	}{
+		strconv.Itoa(id),
+	}
+
+	output, err := json.Marshal(taskID)
+	if err != nil {
+		log.Error("error in async export", zap.Error(err))
+		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(output)
+	if err != nil {
+		log.Error("error in writing output", zap.Error(err))
+		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+	}
+}
+
 // ServerHTTP handles requests to returns an export CSV file
 func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	filename := "export"
-	rout := mux.CurrentRoute(r)
-	if rout != nil {
-		filename = rout.GetName()
-	}
-
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename+".csv")
-	w.Header().Set("Content-Type", "text/csv")
-	w.Header().Set("Transfer-Encoding", "chunked")
-
-	writer := csv.NewWriter(w)
 	log := m.log.For(ctx)
+	if viewer.FromContext(ctx).Features().Enabled("async_export") {
+		et, err := m.createExportTask(ctx, r.URL)
+		if err != nil {
+			log.Error("error in async export", zap.Error(err))
+			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+		}
+		m.writeExportTaskID(ctx, w, et.ID)
+	} else {
+		filename := "export"
+		rout := mux.CurrentRoute(r)
+		if rout != nil {
+			filename = rout.GetName()
+		}
+		w.Header().Set("Content-Disposition", "attachment; filename="+filename+".csv")
+		w.Header().Set("Content-Type", "text/csv")
+		w.Header().Set("Transfer-Encoding", "chunked")
 
-	rows, err := m.rows(ctx, r.URL)
-	if err != nil {
-		log.Error("error in export", zap.Error(err))
-		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
-	}
+		writer := csv.NewWriter(w)
 
-	err = writer.WriteAll(rows)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
+		rows, err := m.rows(ctx, r.URL)
+		if err != nil {
+			log.Error("error in export", zap.Error(err))
+			http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		}
+
+		err = writer.WriteAll(rows)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
+		}
 	}
 }
 
