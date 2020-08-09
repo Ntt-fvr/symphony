@@ -7,9 +7,8 @@ from typing import Generator, Optional
 
 from pysymphony import SymphonyClient
 from pysymphony.api.image import add_image, delete_image
+from pysymphony.common.data_class import Document, Location
 from pysymphony.graphql.enum.image_entity import ImageEntity
-
-from ..common.data_class import Document, Location
 
 
 def list_dir(directory_path: str) -> Generator[str, None, None]:

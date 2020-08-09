@@ -10,10 +10,10 @@ from pyinventory.api.port_type import (
     edit_equipment_port_type,
     get_equipment_port_type,
 )
-from pyinventory.common.cache import PORT_TYPES
-from pyinventory.common.data_class import PropertyDefinition
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import PORT_TYPES
+from pysymphony.common.data_class import PropertyDefinition
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub

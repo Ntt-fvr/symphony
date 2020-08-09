@@ -6,8 +6,8 @@
 from typing import List
 
 from pysymphony import SymphonyClient
+from pysymphony.common.constant import GET_FEATURES_URL, SET_FEATURE_URL
 
-from ..common.constant import GET_FEATURES_URL, SET_FEATURE_URL
 from ..exceptions import assert_ok
 
 

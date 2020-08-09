@@ -3,16 +3,16 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+from pyinventory.graphql.input.add_work_order_type import AddWorkOrderTypeInput
+from pyinventory.graphql.mutation.add_work_order_type import AddWorkOrderTypeMutation
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import WorkOrder, WorkOrderType
 
-from ..common.data_class import WorkOrder, WorkOrderType
 from ..graphql.input.add_work_order import AddWorkOrderInput
-from ..graphql.input.add_work_order_type import AddWorkOrderTypeInput
-from ..graphql.mutation.add_workorder import AddWorkOrderMutation
-from ..graphql.mutation.add_workorder_type import AddWorkOrderTypeMutation
+from ..graphql.mutation.add_work_order import AddWorkOrderMutation
 
 
-def add_workorder_type(client: SymphonyClient, name: str) -> WorkOrderType:
+def add_work_order_type(client: SymphonyClient, name: str) -> WorkOrderType:
     """This function creates work order type with the given name
 
         Args:
@@ -23,7 +23,7 @@ def add_workorder_type(client: SymphonyClient, name: str) -> WorkOrderType:
 
         Example:
             ```
-            client.add_workorder_type("Deployment work order")
+            client.add_work_order_type("Deployment work order")
             ```
     """
     result = AddWorkOrderTypeMutation.execute(
@@ -32,29 +32,29 @@ def add_workorder_type(client: SymphonyClient, name: str) -> WorkOrderType:
     return WorkOrderType(id=result.id)
 
 
-def add_workorder(
-    client: SymphonyClient, name: str, workorder_type: WorkOrderType
+def add_work_order(
+    client: SymphonyClient, name: str, work_order_type: WorkOrderType
 ) -> WorkOrder:
     """This function creates work order of with the given name and type
 
         Args:
             name (str): work order name
-            workorder_type (`pyworkforce.common.data_class.WorkOrderType`): work order type
+            work_order_type (`pyworkforce.common.data_class.WorkOrderType`): work order type
 
         Returns:
             `pyworkforce.common.data_class.WorkOrder`
 
         Example:
             ```
-            workorder_type = client.add_workorder_type("Deployment work order")
-            client.add_workorder_type("new work order", workorder_type)
+            work_order_type = client.add_work_order_type("Deployment work order")
+            client.add_work_order_type("new work order", work_order_type)
             ```
     """
     result = AddWorkOrderMutation.execute(
         client,
         AddWorkOrderInput(
             name=name,
-            workOrderTypeId=workorder_type.id,
+            workOrderTypeId=work_order_type.id,
             properties=[],
             checkList=[],
             checkListCategories=[],

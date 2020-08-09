@@ -6,9 +6,9 @@
 from typing import Dict, List, Tuple
 
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import Equipment, Location
+from pysymphony.common.data_enum import Entity
 
-from ..common.data_class import Equipment, Location
-from ..common.data_enum import Entity
 from ..exceptions import EntityNotFoundError
 from ..graphql.query.equipment_positions import EquipmentPositionsQuery
 from ..graphql.query.location_equipments import LocationEquipmentsQuery

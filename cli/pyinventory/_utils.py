@@ -8,15 +8,15 @@ from datetime import datetime
 from typing import Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
 from dacite import Config, from_dict
-
-from .common.data_class import (
+from pysymphony.common.data_class import (
     TYPE_AND_FIELD_NAME,
     DataTypeName,
     PropertyDefinition,
     PropertyValue,
     ReturnType,
 )
-from .common.data_enum import Entity
+from pysymphony.common.data_enum import Entity
+
 from .exceptions import EntityNotFoundError
 from .graphql.enum.property_kind import PropertyKind
 from .graphql.fragment.equipment_port_definition import EquipmentPortDefinitionFragment
@@ -90,10 +90,8 @@ def get_graphql_property_type_inputs(
     """
     properties = []
     property_type_names = {}
-
     for property_type in property_types:
         property_type_names[property_type.property_name] = property_type
-
     for name, value in properties_dict.items():
         if name not in property_type_names:
             raise EntityNotFoundError(entity=Entity.PropertyType, entity_name=name)

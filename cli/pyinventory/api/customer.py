@@ -6,8 +6,8 @@
 from typing import Iterator, Optional
 
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import Customer
 
-from ..common.data_class import Customer
 from ..graphql.input.add_customer import AddCustomerInput
 from ..graphql.mutation.add_customer import AddCustomerMutation
 from ..graphql.mutation.remove_customer import RemoveCustomerMutation

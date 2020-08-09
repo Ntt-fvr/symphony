@@ -6,10 +6,10 @@
 from typing import Any, Dict, Iterator, List, Optional
 
 from pysymphony import SymphonyClient
+from pysymphony.common.constant import SUPERUSER_ROLE, USER_ROLE
+from pysymphony.common.data_class import User
+from pysymphony.common.data_enum import Entity
 
-from ..common.constant import SUPERUSER_ROLE, USER_ROLE
-from ..common.data_class import User
-from ..common.data_enum import Entity
 from ..exceptions import EntityNotFoundError, assert_ok
 from ..graphql.enum.user_role import UserRole
 from ..graphql.enum.user_status import UserStatus

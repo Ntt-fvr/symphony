@@ -6,14 +6,14 @@
 from typing import List
 
 from pysymphony import SymphonyClient
-
-from ..common.cache import LOCATION_TYPES
-from ..common.data_class import Location, LocationType, PropertyDefinition
-from ..common.data_enum import Entity
-from ..common.data_format import (
+from pysymphony.common.cache import LOCATION_TYPES
+from pysymphony.common.data_class import Location, LocationType, PropertyDefinition
+from pysymphony.common.data_enum import Entity
+from pysymphony.common.data_format import (
     format_to_property_definitions,
     format_to_property_type_inputs,
 )
+
 from ..exceptions import EntityNotFoundError
 from ..graphql.input.add_location_type import AddLocationTypeInput
 from ..graphql.mutation.add_location_type import AddLocationTypeMutation

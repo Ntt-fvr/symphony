@@ -10806,7 +10806,7 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
-  ): WorkOrderTypeConnection
+  ): WorkOrderTypeConnection!
   links(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -31550,11 +31550,14 @@ func (ec *executionContext) _Query_workOrderTypes(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*ent.WorkOrderTypeConnection)
 	fc.Result = res
-	return ec.marshalOWorkOrderTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx, field.Selections, res)
+	return ec.marshalNWorkOrderTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_links(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -51567,6 +51570,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_workOrderTypes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "links":
@@ -60240,6 +60246,20 @@ func (ec *executionContext) marshalNWorkOrderType2ᚖgithubᚗcomᚋfacebookincu
 	return ec._WorkOrderType(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNWorkOrderTypeConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderTypeConnection) graphql.Marshaler {
+	return ec._WorkOrderTypeConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWorkOrderTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx context.Context, sel ast.SelectionSet, v *ent.WorkOrderTypeConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._WorkOrderTypeConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNWorkOrderTypeEdge2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeEdge(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderTypeEdge) graphql.Marshaler {
 	return ec._WorkOrderTypeEdge(ctx, sel, &v)
 }
@@ -63096,17 +63116,6 @@ func (ec *executionContext) marshalOWorkOrderType2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._WorkOrderType(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOWorkOrderTypeConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx context.Context, sel ast.SelectionSet, v ent.WorkOrderTypeConnection) graphql.Marshaler {
-	return ec._WorkOrderTypeConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalOWorkOrderTypeConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrderTypeConnection(ctx context.Context, sel ast.SelectionSet, v *ent.WorkOrderTypeConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WorkOrderTypeConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOWorkforceCUDInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐWorkforceCUDInput(ctx context.Context, v interface{}) (models1.WorkforceCUDInput, error) {

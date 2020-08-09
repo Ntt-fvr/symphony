@@ -6,8 +6,9 @@
 from numbers import Number
 from typing import List, Sequence, cast
 
-from ..graphql.fragment.property_type import PropertyTypeFragment
-from ..graphql.input.property_type import PropertyTypeInput
+from pyinventory.graphql.fragment.property_type import PropertyTypeFragment
+from pyinventory.graphql.input.property_type import PropertyTypeInput
+
 from .data_class import PropertyDefinition
 
 

@@ -24,3 +24,5 @@ class Entity(Enum):
     PropertyType = "PropertyType"
     Property = "Property"
     User = "User"
+    WorkOrder = "WorkOrder"
+    WorkOrderType = "WorkOrderType"

@@ -5,9 +5,8 @@
 
 from typing import Optional
 
+from pysymphony.common.data_enum import Entity
 from requests.models import Response
-
-from .common.data_enum import Entity
 
 
 def assert_ok(resp: Response) -> None:

@@ -3223,7 +3223,7 @@ type Query {
     first: Int @numberValue(min: 0)
     before: Cursor
     last: Int @numberValue(min: 0)
-  ): WorkOrderTypeConnection
+  ): WorkOrderTypeConnection!
   links(
     after: Cursor
     first: Int @numberValue(min: 0)

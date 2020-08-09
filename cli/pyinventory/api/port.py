@@ -6,18 +6,18 @@
 from typing import Dict, Iterator
 
 from pysymphony import SymphonyClient
-
-from .._utils import get_graphql_property_inputs
-from ..common.cache import PORT_TYPES
-from ..common.constant import PAGINATION_STEP
-from ..common.data_class import (
+from pysymphony.common.cache import PORT_TYPES
+from pysymphony.common.constant import PAGINATION_STEP
+from pysymphony.common.data_class import (
     Equipment,
     EquipmentPort,
     EquipmentPortDefinition,
     Link,
     PropertyValue,
 )
-from ..common.data_enum import Entity
+from pysymphony.common.data_enum import Entity
+
+from .._utils import get_graphql_property_inputs
 from ..exceptions import EntityNotFoundError, EquipmentPortIsNotUniqueException
 from ..graphql.input.edit_equipment_port import EditEquipmentPortInput
 from ..graphql.input.link_side import LinkSide

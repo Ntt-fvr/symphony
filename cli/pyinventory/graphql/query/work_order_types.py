@@ -13,35 +13,46 @@ from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
-from ..input.add_work_order_type import AddWorkOrderTypeInput
+from ..fragment.work_order_type import WorkOrderTypeFragment, QUERY as WorkOrderTypeFragmentQuery
 
-
-QUERY: List[str] = ["""
-mutation AddWorkOrderTypeMutation($input: AddWorkOrderTypeInput!) {
-  addWorkOrderType(input: $input) {
-    id
+QUERY: List[str] = WorkOrderTypeFragmentQuery + ["""
+query WorkOrderTypesQuery {
+  workOrderTypes {
+    edges {
+      node {
+        ...WorkOrderTypeFragment
+      }
+    }
   }
 }
 
 """]
 
 @dataclass
-class AddWorkOrderTypeMutation(DataClassJsonMixin):
+class WorkOrderTypesQuery(DataClassJsonMixin):
     @dataclass
-    class AddWorkOrderTypeMutationData(DataClassJsonMixin):
+    class WorkOrderTypesQueryData(DataClassJsonMixin):
         @dataclass
-        class WorkOrderType(DataClassJsonMixin):
-            id: str
+        class WorkOrderTypeConnection(DataClassJsonMixin):
+            @dataclass
+            class WorkOrderTypeEdge(DataClassJsonMixin):
+                @dataclass
+                class WorkOrderType(WorkOrderTypeFragment):
+                    pass
 
-        addWorkOrderType: WorkOrderType
+                node: Optional[WorkOrderType]
 
-    data: AddWorkOrderTypeMutationData
+            edges: List[WorkOrderTypeEdge]
+
+        workOrderTypes: WorkOrderTypeConnection
+
+    data: WorkOrderTypesQueryData
 
     @classmethod
     # fmt: off
-    def execute(cls, client: GraphqlClient, input: AddWorkOrderTypeInput) -> AddWorkOrderTypeMutationData.WorkOrderType:
+    def execute(cls, client: GraphqlClient) -> WorkOrderTypesQueryData.WorkOrderTypeConnection:
         # fmt: off
-        variables: Dict[str, Any] = {"input": input}
+        variables: Dict[str, Any] = {}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
@@ -49,13 +60,13 @@ class AddWorkOrderTypeMutation(DataClassJsonMixin):
             res = cls.from_json(response_text).data
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
-            client.reporter.log_successful_operation("AddWorkOrderTypeMutation", variables, network_time, decode_time)
-            return res.addWorkOrderType
+            client.reporter.log_successful_operation("WorkOrderTypesQuery", variables, network_time, decode_time)
+            return res.workOrderTypes
         except OperationException as e:
             raise FailedOperationException(
                 client.reporter,
                 e.err_msg,
                 e.err_id,
-                "AddWorkOrderTypeMutation",
+                "WorkOrderTypesQuery",
                 variables,
             )

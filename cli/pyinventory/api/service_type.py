@@ -6,20 +6,20 @@
 from typing import List, Mapping, Optional
 
 from pysymphony import SymphonyClient
-
-from .._utils import get_graphql_property_type_inputs
-from ..common.cache import SERVICE_TYPES
-from ..common.data_class import (
+from pysymphony.common.cache import SERVICE_TYPES
+from pysymphony.common.data_class import (
     PropertyDefinition,
     PropertyValue,
     ServiceEndpointDefinition,
     ServiceType,
 )
-from ..common.data_enum import Entity
-from ..common.data_format import (
+from pysymphony.common.data_enum import Entity
+from pysymphony.common.data_format import (
     format_to_property_definitions,
     format_to_property_type_inputs,
 )
+
+from .._utils import get_graphql_property_type_inputs
 from ..exceptions import EntityNotFoundError
 from ..graphql.input.service_type_create_data import ServiceTypeCreateData
 from ..graphql.input.service_type_edit_data import (

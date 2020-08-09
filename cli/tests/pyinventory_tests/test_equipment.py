@@ -19,10 +19,10 @@ from pyinventory.api.location import add_location
 from pyinventory.api.location_type import add_location_type
 from pyinventory.api.port import edit_port_properties, get_port, get_ports
 from pyinventory.api.port_type import add_equipment_port_type
-from pyinventory.common.cache import EQUIPMENT_TYPES
-from pyinventory.common.data_class import PropertyDefinition
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import EQUIPMENT_TYPES
+from pysymphony.common.data_class import PropertyDefinition
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub

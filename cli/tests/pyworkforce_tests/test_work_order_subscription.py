@@ -7,8 +7,11 @@
 import time
 from typing import Any, Dict, List
 
+from pyinventory.api.work_order_type import add_work_order_type
+from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
-from pyworkforce.api.workorder import add_workorder, add_workorder_type
+from pysymphony.common.data_class import PropertyDefinition
+from pyworkforce.api.work_order import add_work_order
 
 from ..utils.base_test import BaseTest
 from ..utils.constant import TEST_USER_EMAIL, TestMode
@@ -24,7 +27,19 @@ class TestWorkOrderSubscription(BaseTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.type = add_workorder_type(self.client, "Work Order Template")
+        self.type = add_work_order_type(
+            self.client,
+            name="Work Order Template",
+            description="Test work order type",
+            properties=[
+                PropertyDefinition(
+                    property_name="work order type property",
+                    property_kind=PropertyKind.string,
+                    default_raw_value="test string value",
+                    is_fixed=False,
+                )
+            ],
+        )
 
     def test_subscribe_to_work_order_added(self) -> None:
         from ..utils import TEST_MODE
@@ -34,10 +49,10 @@ class TestWorkOrderSubscription(BaseTest):
             url = "wss://fb-test.thesymphony.cloud/graph/query"
 
         sub_client = SubscriptionClient(url, TEST_USER_EMAIL, TEST_USER_EMAIL)
-        workorders_added: List[Dict[str, str]] = []
+        work_orders_added: List[Dict[str, str]] = []
 
         def callback(_id: str, data: Dict[str, Any]) -> None:
-            workorders_added.append(data["payload"]["data"]["workOrderAdded"])
+            work_orders_added.append(data["payload"]["data"]["workOrderAdded"])
 
         query = """
             subscription {
@@ -50,19 +65,19 @@ class TestWorkOrderSubscription(BaseTest):
 
         sub_id = sub_client.subscribe(query, callback=callback)
 
-        workorder = add_workorder(
-            self.client, name="My Work Order", workorder_type=self.type
+        work_order = add_work_order(
+            self.client, name="My Work Order", work_order_type=self.type
         )
         i = 0
-        while len(workorders_added) == 0:
+        while len(work_orders_added) == 0:
             time.sleep(1)
             i = i + 1
             if i == 3:
                 break
 
-        self.assertEqual(1, len(workorders_added))
-        self.assertEqual(workorder.id, workorders_added[0]["id"])
-        self.assertEqual(workorder.name, workorders_added[0]["name"])
+        self.assertEqual(1, len(work_orders_added))
+        self.assertEqual(work_order.id, work_orders_added[0]["id"])
+        self.assertEqual(work_order.name, work_orders_added[0]["name"])
 
         sub_client.stop_subscribe(sub_id)
         sub_client.close()

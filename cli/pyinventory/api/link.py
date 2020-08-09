@@ -6,10 +6,10 @@
 from typing import Iterator, Tuple
 
 from pysymphony import SymphonyClient
+from pysymphony.common.constant import PAGINATION_STEP
+from pysymphony.common.data_class import Equipment, Link
+from pysymphony.common.data_enum import Entity
 
-from ..common.constant import PAGINATION_STEP
-from ..common.data_class import Equipment, Link
-from ..common.data_enum import Entity
 from ..exceptions import (
     EntityNotFoundError,
     LinkNotFoundException,

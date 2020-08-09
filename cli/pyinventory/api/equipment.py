@@ -6,13 +6,13 @@
 from typing import Dict, Iterator, Mapping, Optional, Tuple, cast
 
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import EQUIPMENT_TYPES
+from pysymphony.common.constant import EQUIPMENTS_TO_SEARCH, PAGINATION_STEP
+from pysymphony.common.data_class import Equipment, EquipmentType, Location
+from pysymphony.common.data_enum import Entity
 from tqdm import tqdm
 
 from .._utils import PropertyValue, _get_property_value, get_graphql_property_inputs
-from ..common.cache import EQUIPMENT_TYPES
-from ..common.constant import EQUIPMENTS_TO_SEARCH, PAGINATION_STEP
-from ..common.data_class import Equipment, EquipmentType, Location
-from ..common.data_enum import Entity
 from ..exceptions import (
     EntityNotFoundError,
     EquipmentIsNotUniqueException,

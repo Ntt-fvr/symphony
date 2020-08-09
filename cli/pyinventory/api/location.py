@@ -7,12 +7,12 @@ from numbers import Number
 from typing import Dict, Iterator, List, Optional, Sequence, Tuple, cast
 
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import LOCATION_TYPES
+from pysymphony.common.constant import LOCATIONS_TO_SEARCH, PAGINATION_STEP
+from pysymphony.common.data_class import Document, ImageEntity, Location, PropertyValue
+from pysymphony.common.data_enum import Entity
 
 from .._utils import get_graphql_property_inputs
-from ..common.cache import LOCATION_TYPES
-from ..common.constant import LOCATIONS_TO_SEARCH, PAGINATION_STEP
-from ..common.data_class import Document, ImageEntity, Location, PropertyValue
-from ..common.data_enum import Entity
 from ..exceptions import (
     EntityNotFoundError,
     LocationCannotBeDeletedWithDependency,

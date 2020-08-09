@@ -25,6 +25,7 @@ def load_tests(
     from .test_service import TestService
     from .test_service_type import TestServiceType
     from .test_user import TestUser
+    from .test_work_order_type import TestWorkOrderType
     from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
     TESTS = [
@@ -36,6 +37,7 @@ def load_tests(
         TestService,
         TestServiceType,
         TestUser,
+        TestWorkOrderType,
     ]
 
     print("Waiting for symphony to be ready")

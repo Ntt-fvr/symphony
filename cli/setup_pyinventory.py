@@ -27,7 +27,7 @@ PYINVENTORY_PACKAGES = ["pyinventory", "pyinventory.*"]
 
 setuptools.setup(
     name="pyinventory",
-    version=find_version("pyinventory", "common", "constant.py"),
+    version=find_version("pysymphony", "common", "constant.py"),
     author="Facebook Inc.",
     description="Tool for accessing and modifying FBC Platform Inventory database",
     packages=setuptools.find_packages(

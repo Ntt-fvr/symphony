@@ -3,20 +3,33 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from datetime import date
+from datetime import date, datetime
 from numbers import Number
-from typing import List, NamedTuple, Optional, Sequence, Tuple, Type, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
-from pysymphony.graphql.enum.image_entity import ImageEntity
-
-from ..graphql.enum.property_kind import PropertyKind
-from ..graphql.enum.user_role import UserRole
-from ..graphql.enum.user_status import UserStatus
-from ..graphql.fragment.equipment_port_definition import EquipmentPortDefinitionFragment
-from ..graphql.fragment.equipment_position_definition import (
+from pyinventory.graphql.enum.property_kind import PropertyKind
+from pyinventory.graphql.enum.user_role import UserRole
+from pyinventory.graphql.enum.user_status import UserStatus
+from pyinventory.graphql.fragment.equipment_port_definition import (
+    EquipmentPortDefinitionFragment,
+)
+from pyinventory.graphql.fragment.equipment_position_definition import (
     EquipmentPositionDefinitionFragment,
 )
-from ..graphql.fragment.property import PropertyFragment
+from pyinventory.graphql.fragment.property import PropertyFragment
+
+from ..graphql.enum.image_entity import ImageEntity
 
 
 ReturnType = TypeVar("ReturnType")
@@ -381,3 +394,60 @@ class User(NamedTuple):
     email: str
     status: UserStatus
     role: UserRole
+
+
+class SiteSurvey(NamedTuple):
+    """
+        :param name: Name
+        :type name: str
+        :param survey_id: ID
+        :type survey_id: str
+        :param completionTime: Complition time
+        :type completionTime: datetime
+        :param sourceFileId: Source file ID
+        :type sourceFileId: str, optional
+        :param sourceFileName: Source file name
+        :type sourceFileName: str, optional
+        :param sourceFileKey: Source file key
+        :type sourceFileKey: str, optional
+        :param id: Forms
+        :type id: Dict[str, Dict[str, Any]]
+    """
+
+    name: str
+    survey_id: str
+    completionTime: datetime
+    sourceFileId: Optional[str]
+    sourceFileName: Optional[str]
+    sourceFileKey: Optional[str]
+    forms: Dict[str, Dict[str, Any]]
+
+
+class WorkOrderType(NamedTuple):
+    """
+        :param id: ID
+        :type id: str
+        :param name: Work order type name
+        :type name: str
+        :param description: Work order type description
+        :type description: str, optional
+        :param property_types: PropertyTypes list
+        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+    """
+
+    id: str
+    name: str
+    description: Optional[str]
+    property_types: Sequence[PropertyDefinition]
+
+
+class WorkOrder(NamedTuple):
+    """
+        :param id: ID
+        :type id: str
+        :param name: Name
+        :type name: str
+    """
+
+    id: str
+    name: str

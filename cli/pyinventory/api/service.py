@@ -6,11 +6,11 @@
 from typing import List, Mapping, Optional
 
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import SERVICE_TYPES
+from pysymphony.common.data_class import Customer, Link, Service, ServiceEndpoint
+from pysymphony.common.data_enum import Entity
 
 from .._utils import PropertyValue, get_graphql_property_inputs
-from ..common.cache import SERVICE_TYPES
-from ..common.data_class import Customer, Link, Service, ServiceEndpoint
-from ..common.data_enum import Entity
 from ..exceptions import EntityNotFoundError
 from ..graphql.enum.service_status import ServiceStatus
 from ..graphql.input.add_service_endpoint import AddServiceEndpointInput

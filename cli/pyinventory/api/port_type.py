@@ -6,15 +6,19 @@
 from typing import Dict, List, Optional
 
 from pysymphony import SymphonyClient
-
-from .._utils import get_graphql_property_type_inputs
-from ..common.cache import PORT_TYPES
-from ..common.data_class import EquipmentPortType, PropertyDefinition, PropertyValue
-from ..common.data_enum import Entity
-from ..common.data_format import (
+from pysymphony.common.cache import PORT_TYPES
+from pysymphony.common.data_class import (
+    EquipmentPortType,
+    PropertyDefinition,
+    PropertyValue,
+)
+from pysymphony.common.data_enum import Entity
+from pysymphony.common.data_format import (
     format_to_property_definitions,
     format_to_property_type_inputs,
 )
+
+from .._utils import get_graphql_property_type_inputs
 from ..exceptions import EntityNotFoundError
 from ..graphql.input.add_equipment_port_type import AddEquipmentPortTypeInput
 from ..graphql.input.edit_equipment_port_type import EditEquipmentPortTypeInput

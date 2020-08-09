@@ -19,10 +19,10 @@ from pyinventory.api.service import (
     get_service_links,
 )
 from pyinventory.api.service_type import add_service_type, edit_service_type
-from pyinventory.common.cache import SERVICE_TYPES
-from pyinventory.common.data_class import PropertyDefinition, ServiceEndpointDefinition
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import SERVICE_TYPES
+from pysymphony.common.data_class import PropertyDefinition, ServiceEndpointDefinition
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub

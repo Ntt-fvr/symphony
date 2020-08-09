@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 from colorama import Fore
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
 from pysymphony import SymphonyClient
+from pysymphony.common.constant import __version__
 
 from .api.equipment_type import (
     _populate_equipment_port_types,
@@ -13,7 +14,7 @@ from .api.equipment_type import (
 )
 from .api.location_type import _populate_location_types
 from .api.service_type import _populate_service_types
-from .common.constant import __version__
+from .api.work_order_type import _populate_work_order_types
 from .graphql.query.latest_python_package import LatestPythonPackageQuery
 
 
@@ -164,6 +165,13 @@ class InventoryClient(SymphonyClient):
     from .api.property_type import get_property_type_id
 
     from .api.features import get_enabled_features, set_feature
+    from .api.work_order_type import (
+        get_work_order_type_by_name,
+        get_work_order_type_by_id,
+        get_work_order_types,
+        add_work_order_type,
+        delete_work_order_type,
+    )
 
     def __init__(
         self,
@@ -259,3 +267,4 @@ class InventoryClient(SymphonyClient):
         _populate_equipment_types(self)
         _populate_service_types(self)
         _populate_equipment_port_types(self)
+        _populate_work_order_types(self)

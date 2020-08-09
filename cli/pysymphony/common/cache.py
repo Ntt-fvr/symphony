@@ -5,8 +5,15 @@
 
 from typing import Dict, Iterator, MutableMapping, TypeVar
 
-from ..exceptions import EntityNotFoundError
-from .data_class import EquipmentPortType, EquipmentType, LocationType, ServiceType
+from pyinventory.exceptions import EntityNotFoundError
+
+from .data_class import (
+    EquipmentPortType,
+    EquipmentType,
+    LocationType,
+    ServiceType,
+    WorkOrderType,
+)
 from .data_enum import Entity
 
 
@@ -46,6 +53,7 @@ LOCATION_TYPES = Cache[LocationType](Entity.LocationType)
 EQUIPMENT_TYPES = Cache[EquipmentType](Entity.EquipmentType)
 SERVICE_TYPES = Cache[ServiceType](Entity.ServiceType)
 PORT_TYPES = Cache[EquipmentPortType](Entity.EquipmentPortType)
+WORK_ORDER_TYPES = Cache[WorkOrderType](Entity.WorkOrderType)
 
 
 def clear_types() -> None:
@@ -53,3 +61,4 @@ def clear_types() -> None:
     EQUIPMENT_TYPES.clear()
     SERVICE_TYPES.clear()
     PORT_TYPES.clear()
+    WORK_ORDER_TYPES.clear()

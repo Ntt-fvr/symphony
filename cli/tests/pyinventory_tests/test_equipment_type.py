@@ -10,11 +10,11 @@ from pyinventory.api.equipment_type import (
     get_or_create_equipment_type,
 )
 from pyinventory.api.property_type import get_property_type_id, get_property_types
-from pyinventory.common.data_class import PropertyDefinition
-from pyinventory.common.data_enum import Entity
-from pyinventory.common.data_format import format_to_property_type_input
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import PropertyDefinition
+from pysymphony.common.data_enum import Entity
+from pysymphony.common.data_format import format_to_property_type_input
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
