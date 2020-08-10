@@ -36,15 +36,28 @@ resource kubernetes_namespace ctf {
   metadata {
     name = "ctf"
   }
+}
 
-  count = local.ctf_count
+# kubernetes resource quota for ctf deployment
+resource kubernetes_resource_quota ctf {
+  metadata {
+    name      = "default"
+    namespace = kubernetes_namespace.ctf.id
+  }
+
+  spec {
+    hard = {
+      "limits.cpu"    = "8"
+      "limits.memory" = "16Gi"
+    }
+  }
 }
 
 # kubernetes role bindings for ctf admins
 resource kubernetes_role_binding ctf_admins {
   metadata {
     name      = "admins"
-    namespace = kubernetes_namespace.ctf[count.index].id
+    namespace = kubernetes_namespace.ctf.id
   }
 
   role_ref {
@@ -58,8 +71,6 @@ resource kubernetes_role_binding ctf_admins {
     name      = local.ctf_admin_group
     api_group = "rbac.authorization.k8s.io"
   }
-
-  count = local.ctf_count
 }
 
 # aws iam role for admins in ctf namespace.
@@ -100,7 +111,7 @@ resource aws_iam_group_policy ctf {
 # certificate issuer for openctf.io
 resource helm_release ctf_cert_issuer {
   name       = "ctf-cert-issuer"
-  namespace  = kubernetes_namespace.ctf[count.index].id
+  namespace  = kubernetes_namespace.ctf.id
   repository = local.helm_repository.kiwigrid
   chart      = "any-resource"
 
@@ -127,8 +138,6 @@ resource helm_release ctf_cert_issuer {
                   - ${local.ctf_domain_name}
   VALUES
   ]
-
-  count = local.ctf_count
 }
 
 # ctf database password
@@ -181,7 +190,7 @@ module ctf_db {
 resource kubernetes_secret ctf_db {
   metadata {
     name      = "ctf-database"
-    namespace = kubernetes_namespace.ctf[count.index].id
+    namespace = kubernetes_namespace.ctf.id
   }
 
   data = {
