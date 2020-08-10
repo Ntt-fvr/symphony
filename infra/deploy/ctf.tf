@@ -53,6 +53,28 @@ resource kubernetes_resource_quota ctf {
   }
 }
 
+# kubernetes limit range for ctf deployment
+resource kubernetes_limit_range ctf {
+  metadata {
+    name      = "default"
+    namespace = kubernetes_namespace.ctf.id
+  }
+
+  spec {
+    limit {
+      default = {
+        cpu    = "1"
+        memory = "2Gi"
+      }
+      default_request = {
+        cpu    = "500m"
+        memory = "1Gi"
+      }
+      type = "Container"
+    }
+  }
+}
+
 # kubernetes role bindings for ctf admins
 resource kubernetes_role_binding ctf_admins {
   metadata {
