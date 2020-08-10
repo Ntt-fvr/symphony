@@ -28,11 +28,14 @@ type Event struct {
 	Name string
 
 	// Object is the event object.
-	Object interface{}
+	Object EventObject
 
 	// SpanContext of the event.
 	SpanContext trace.SpanContext
 }
+
+// EventObject is the event object type.
+type EventObject interface{}
 
 // MarshalLogObject implement zapcore.ObjectMarshaler interface.
 func (e *Event) MarshalLogObject(enc zapcore.ObjectEncoder) error {
@@ -222,7 +225,7 @@ func (r *TopicReceiver) receive(ctx context.Context) (*Event, error) {
 	if !ok {
 		return nil, errors.New("message without name")
 	}
-	var obj interface{}
+	var obj EventObject
 	if msg.Body != nil {
 		if obj, err = r.decoder.Decode(ctx, msg.Body); err != nil {
 			return nil, fmt.Errorf("cannot decode message body: %w", err)
@@ -267,11 +270,11 @@ func ProvideEmitter(ctx context.Context, factory EmitterFactory) (Emitter, func(
 
 // ReceiverFactory represents types than can create receivers.
 type ReceiverFactory interface {
-	NewReceiver(context.Context, interface{}) (Receiver, error)
+	NewReceiver(context.Context, EventObject) (Receiver, error)
 }
 
 // ProvideReceiver is a wire provide which produces a receiver.
-func ProvideReceiver(ctx context.Context, factory ReceiverFactory, obj interface{}) (Receiver, func(), error) {
+func ProvideReceiver(ctx context.Context, factory ReceiverFactory, obj EventObject) (Receiver, func(), error) {
 	receiver, err := factory.NewReceiver(ctx, obj)
 	if err != nil {
 		return nil, nil, err
@@ -294,7 +297,7 @@ func (f TopicFactory) NewEmitter(ctx context.Context) (Emitter, error) {
 }
 
 // NewReceiver creates a topic receiver.
-func (f TopicFactory) NewReceiver(ctx context.Context, obj interface{}) (Receiver, error) {
+func (f TopicFactory) NewReceiver(ctx context.Context, obj EventObject) (Receiver, error) {
 	return NewTopicReceiver(ctx, f.String(), NewDecoder(obj, JSONDecode))
 }
 
@@ -327,6 +330,6 @@ func (e ErrFactory) NewEmitter(context.Context) (Emitter, error) {
 }
 
 // NewReceiver always fails to create receivers.
-func (e ErrFactory) NewReceiver(context.Context, interface{}) (Receiver, error) {
+func (e ErrFactory) NewReceiver(context.Context, EventObject) (Receiver, error) {
 	return nil, e
 }
