@@ -5,12 +5,15 @@
 package resolver
 
 import (
+	"context"
 	"strings"
 	"sync"
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
-	"github.com/stretchr/testify/assert"
+	"github.com/facebookincubator/symphony/pkg/ev"
+	evmocks "github.com/facebookincubator/symphony/pkg/ev/mocks"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,17 +33,45 @@ func websocket(client *client.Client, query string) *client.Subscription {
 }
 
 func TestSubscriptionWorkOrder(t *testing.T) {
-	resolver := newTestResolver(t)
+	ctx := context.Background()
+	var mf ev.MemFactory
+	defer func() { _ = mf.Shutdown(ctx) }()
+
+	var (
+		factory   evmocks.Factory
+		receiving = make(chan struct{}, 2)
+	)
+	factory.On("NewEmitter", mock.Anything).
+		Return(func(ctx context.Context) ev.Emitter {
+			emitter, err := mf.NewEmitter(ctx)
+			require.NoError(t, err)
+			return emitter
+		}, nil).
+		Once()
+	factory.On("NewReceiver", mock.Anything, mock.Anything).
+		Return(func(ctx context.Context, obj ev.EventObject) ev.Receiver {
+			receiver, err := mf.NewReceiver(ctx, obj)
+			require.NoError(t, err)
+			receiving <- struct{}{}
+			return receiver
+		}, nil).
+		Twice()
+	defer factory.AssertExpectations(t)
+
+	resolver := newTestResolver(t,
+		withEventFactory(&factory),
+	)
 	defer resolver.Close()
 	c := resolver.GraphClient()
 
 	var typ string
 	{
 		var rsp struct{ AddWorkOrderType struct{ ID string } }
-		c.MustPost(
+		err := c.Post(
 			`mutation { addWorkOrderType(input: { name: "chore" }) { id } }`,
 			&rsp,
 		)
+		require.NoError(t, err)
 		typ = rsp.AddWorkOrderType.ID
 	}
 
@@ -65,24 +96,26 @@ func TestSubscriptionWorkOrder(t *testing.T) {
 		require.NoError(t, err)
 		sid = rsp.WorkOrderAdded.ID
 		require.NotEmpty(t, sid)
-		assert.Equal(t, "clean", rsp.WorkOrderAdded.Name)
-		assert.Equal(t, "chore", rsp.WorkOrderAdded.WorkOrderType.Name)
+		require.Equal(t, "clean", rsp.WorkOrderAdded.Name)
+		require.Equal(t, "chore", rsp.WorkOrderAdded.WorkOrderType.Name)
 		err = sub.Close()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
+	<-receiving
 
 	var id string
 	{
 		var rsp struct{ AddWorkOrder struct{ ID string } }
-		c.MustPost(
+		err := c.Post(
 			`mutation($type: ID!) { addWorkOrder(input: { name: "clean", workOrderTypeId: $type }) { id } }`,
 			&rsp,
 			client.Var("type", typ),
 		)
+		require.NoError(t, err)
 		id = rsp.AddWorkOrder.ID
 	}
 	wg.Wait()
-	assert.Equal(t, id, sid)
+	require.Equal(t, id, sid)
 
 	sub = websocket(c, `subscription { workOrderDone { id } }`)
 	wg.Add(1)
@@ -94,17 +127,19 @@ func TestSubscriptionWorkOrder(t *testing.T) {
 		sid = rsp.WorkOrderDone.ID
 		require.NotEmpty(t, sid)
 		err = sub.Close()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}()
+	<-receiving
 
 	{
 		var rsp struct{ EditWorkOrder struct{ ID string } }
-		c.MustPost(`mutation($id: ID!) { editWorkOrder(input: { id: $id, name: "foo", status: DONE }) { id } }`,
+		err := c.Post(`mutation($id: ID!) { editWorkOrder(input: { id: $id, name: "foo", status: DONE }) { id } }`,
 			&rsp,
 			client.Var("id", id),
 		)
+		require.NoError(t, err)
 		id = rsp.EditWorkOrder.ID
 	}
 	wg.Wait()
-	assert.Equal(t, id, sid)
+	require.Equal(t, id, sid)
 }

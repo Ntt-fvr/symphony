@@ -354,7 +354,9 @@ func TestOrc8rStatusEquipment(t *testing.T) {
 		Base: orc8rClient.Transport,
 		Host: uri.Host,
 	}
-	r := newTestResolver(t, WithOrc8rClient(orc8rClient))
+	r := newTestResolver(t, withResolverOptions(
+		WithOrc8rClient(orc8rClient),
+	))
 	defer r.Close()
 
 	ctx := viewertest.NewContext(context.Background(), r.client)

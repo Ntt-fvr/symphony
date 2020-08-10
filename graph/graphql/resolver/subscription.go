@@ -8,54 +8,73 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
-
 	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 )
 
 type subscriptionResolver struct{ resolver }
 
-func (r subscriptionResolver) subscribeAndListen(ctx context.Context, name string, handler pubsub.Handler) {
-	logger := r.logger.For(ctx)
-	err := pubsub.SubscribeAndListen(ctx, pubsub.ListenerConfig{
-		Subscriber: r.event.Subscriber,
-		Logger:     logger,
-		Tenant:     pointer.ToString(viewer.FromContext(ctx).Tenant()),
-		Events:     []string{name},
-		Handler:    handler,
-	})
-	logger.Info("subscription termination", zap.Error(err))
-}
-
-func (r subscriptionResolver) workOrderAddedDone(ctx context.Context, name string) (<-chan *ent.WorkOrder, error) {
-	var (
-		client = r.ClientFrom(ctx).WorkOrder
-		events = make(chan *ent.WorkOrder, 1)
+func (r subscriptionResolver) workOrderSubscribe(ctx context.Context, event string) (<-chan *ent.WorkOrder, error) {
+	client := r.ClientFrom(ctx).WorkOrder
+	current := viewer.FromContext(ctx)
+	logger := r.logger.For(ctx).With(
+		zap.Object("viewer", current),
+		zap.String("event", event),
 	)
-	go func() {
-		defer close(events)
-		r.subscribeAndListen(ctx, name,
-			pubsub.HandlerFunc(func(_ context.Context, _, _ string, body []byte) error {
-				var wo *ent.WorkOrder
-				if err := pubsub.Unmarshal(body, &wo); err != nil {
-					return fmt.Errorf("cannot unmarshal work order: %w", err)
+	subscription := make(chan *ent.WorkOrder, 1)
+
+	receiver, err := r.event.NewReceiver(ctx, &ent.WorkOrder{})
+	if err != nil {
+		logger.Error("cannot create event receiver",
+			zap.Error(err),
+		)
+		return nil, err
+	}
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: receiver,
+			Handler: ev.EventHandlerFunc(func(_ context.Context, evt *ev.Event) error {
+				workOrder, ok := evt.Object.(*ent.WorkOrder)
+				if !ok {
+					typ := fmt.Sprintf("%T", evt.Object)
+					logger.Error("event object is not a work order",
+						zap.String("type", typ),
+					)
+					return fmt.Errorf("event object %s must be a work order", typ)
 				}
-				events <- client.Instantiate(wo)
+				subscription <- client.Instantiate(workOrder)
+				logger.Debug("wrote to work order subscription",
+					zap.Int("id", workOrder.ID),
+					zap.String("name", workOrder.Name),
+				)
 				return nil
 			}),
-		)
+		},
+		ev.WithTenant(current.Tenant()),
+		ev.WithEvent(event),
+		ev.WithMaxConcurrency(1),
+	)
+	if err != nil {
+		logger.Error("cannot create event service", zap.Error(err))
+		return nil, err
+	}
+
+	go func() {
+		defer svc.Stop(context.Background())
+		err := svc.Run(ctx)
+		logger.Debug("subscription terminated", zap.Error(err))
 	}()
-	return events, nil
+
+	return subscription, nil
 }
 
 func (r subscriptionResolver) WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error) {
-	return r.workOrderAddedDone(ctx, event.WorkOrderAdded)
+	return r.workOrderSubscribe(ctx, event.WorkOrderAdded)
 }
 
 func (r subscriptionResolver) WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error) {
-	return r.workOrderAddedDone(ctx, event.WorkOrderDone)
+	return r.workOrderSubscribe(ctx, event.WorkOrderDone)
 }

@@ -15,8 +15,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions"
 	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/gorilla/mux"
@@ -28,7 +28,7 @@ type routerConfig struct {
 		authurl string
 	}
 	logger  log.Logger
-	events  struct{ subscriber pubsub.Subscriber }
+	events  struct{ ev.ReceiverFactory }
 	orc8r   struct{ client *http.Client }
 	actions struct{ registry *executor.Registry }
 }
@@ -53,8 +53,8 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		},
 	)
 	handler, err := importer.NewHandler(importer.Config{
-		Logger:     cfg.logger,
-		Subscriber: cfg.events.subscriber,
+		Logger:          cfg.logger,
+		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("creating import handler: %w", err)
@@ -71,8 +71,8 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		Name("export")
 
 	handler, err = jobs.NewHandler(jobs.Config{
-		Logger:     cfg.logger,
-		Subscriber: cfg.events.subscriber,
+		Logger:          cfg.logger,
+		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("creating jobs handler: %w", err)
@@ -83,9 +83,9 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 
 	handler, cleanup, err := graphql.NewHandler(
 		graphql.HandlerConfig{
-			Logger:      cfg.logger,
-			Subscriber:  cfg.events.subscriber,
-			Orc8rClient: cfg.orc8r.client,
+			Logger:          cfg.logger,
+			ReceiverFactory: cfg.events.ReceiverFactory,
+			Orc8rClient:     cfg.orc8r.client,
 		},
 	)
 	if err != nil {

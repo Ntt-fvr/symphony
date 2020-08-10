@@ -13,30 +13,30 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions/action/magmarebootnode"
 	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/actions/trigger/magmaalert"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.opencensus.io/stats/view"
-
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
+	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 )
 
 // Config defines the http server config.
 type Config struct {
-	Tenancy      viewer.Tenancy
-	AuthURL      *url.URL
-	Subscriber   pubsub.Subscriber
-	Logger       log.Logger
-	Telemetry    *telemetry.Config
-	HealthChecks []health.Checker
-	Orc8r        orc8r.Config
+	Tenancy         viewer.Tenancy
+	AuthURL         *url.URL
+	ReceiverFactory ev.ReceiverFactory
+	Logger          log.Logger
+	Telemetry       *telemetry.Config
+	HealthChecks    []health.Checker
+	Orc8r           orc8r.Config
 }
 
 // NewServer creates a server from config.
@@ -64,7 +64,7 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 	cfg = routerConfig{logger: config.Logger}
 	cfg.viewer.tenancy = config.Tenancy
 	cfg.viewer.authurl = config.AuthURL.String()
-	cfg.events.subscriber = config.Subscriber
+	cfg.events.ReceiverFactory = config.ReceiverFactory
 	cfg.orc8r.client = client
 	cfg.actions.registry = registry
 	return cfg, nil
@@ -73,6 +73,7 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
 	views = append(views, mysql.DefaultViews...)
-	views = append(views, pubsub.DefaultViews...)
+	views = append(views, ocpubsub.DefaultViews...)
+	views = append(views, ev.OpenCensusViews...)
 	return views
 }

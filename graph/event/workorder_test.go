@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package event
+package event_test
 
 import (
 	"context"
@@ -11,12 +11,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-
+	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/ev"
+	evmocks "github.com/facebookincubator/symphony/pkg/ev/mocks"
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -29,109 +31,134 @@ func TestWorkOrderEvents(t *testing.T) {
 	suite.Run(t, &workOrderTestSuite{})
 }
 
-func (s *workOrderTestSuite) SetupSuite() {
-	s.eventTestSuite.SetupSuite()
-	s.typ = s.client.WorkOrderType.Create().
+func (s *workOrderTestSuite) SetupTest() {
+	s.eventTestSuite.SetupTest()
+	s.typ = s.client.WorkOrderType.
+		Create().
 		SetName("Chore").
 		SaveX(s.ctx)
 }
 
 func (s *workOrderTestSuite) TestWorkOrderCreate() {
-	s.T().Skip("Flaky test - T69052905")
+	runCtx, cancel := context.WithCancel(s.ctx)
+	var handler evmocks.EventHandler
+	for _, c := range []struct {
+		name   string
+		action func()
+	}{
+		{name: event.WorkOrderAdded, action: func() {}},
+		{name: event.WorkOrderDone, action: cancel},
+	} {
+		name, action := c.name, c.action
+		handler.On("HandleEvent", mock.Anything, mock.AnythingOfType("*ev.Event")).
+			Run(func(args mock.Arguments) {
+				defer action()
+				evt := args.Get(1).(*ev.Event)
+				s.Require().Equal(name, evt.Name)
+				_, ok := evt.Object.(*ent.WorkOrder)
+				s.Require().True(ok)
+			}).
+			Return(nil).
+			Once()
+	}
+	defer handler.AssertExpectations(s.T())
+
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: s.receiver,
+			Handler: ev.LoggingEventHandler{
+				Handler: &handler,
+				Logger:  logtest.NewTestLogger(s.T()),
+			},
+		},
+		ev.WithTenant(viewertest.DefaultTenant),
+		ev.WithEvent(event.WorkOrderAdded, event.WorkOrderDone),
+		ev.WithMaxConcurrency(1),
+	)
+	s.Require().NoError(err)
+
 	var wg sync.WaitGroup
 	wg.Add(1)
-	ctx, cancel := context.WithCancel(s.ctx)
-	events := []string{WorkOrderAdded, WorkOrderDone}
-	emitted := make(map[string]struct{}, len(events))
-	for i := range events {
-		emitted[events[i]] = struct{}{}
-	}
-	listener, err := pubsub.NewListener(ctx, pubsub.ListenerConfig{
-		Subscriber: s.subscriber,
-		Logger:     s.logger.Background(),
-		Tenant:     pointer.ToString(viewertest.DefaultTenant),
-		Events:     events,
-		Handler: pubsub.HandlerFunc(func(_ context.Context, _ string, name string, body []byte) error {
-			s.Assert().NotEmpty(body)
-			_, ok := emitted[name]
-			s.Assert().True(ok)
-			delete(emitted, name)
-			if len(emitted) == 0 {
-				cancel()
-			}
-			return nil
-		}),
-	})
-	s.Assert().NoError(err)
+	defer wg.Wait()
 	go func() {
-		defer wg.Done()
-		defer listener.Shutdown(ctx)
-		err := listener.Listen(ctx)
+		defer func() {
+			svc.Stop(s.ctx)
+			wg.Done()
+		}()
+		err := svc.Run(runCtx)
 		s.Require().True(errors.Is(err, context.Canceled))
 	}()
-	woType := s.client.WorkOrderType.Create().
-		SetName("CleanType").
-		SaveX(s.ctx)
+
 	s.client.WorkOrder.Create().
 		SetName("Clean").
-		SetType(woType).
+		SetType(s.typ).
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
 		SetStatus(workorder.StatusDone).
 		SaveX(s.ctx)
-	wg.Wait()
 }
 
 func (s *workOrderTestSuite) TestWorkOrderUpdate() {
-	s.T().Skip("Flaky test - T69052905")
 	err := s.client.WorkOrder.Update().
 		SetStatus(workorder.StatusDone).
 		Exec(s.ctx)
-	s.Require().Error(err)
-	s.Require().Contains(err.Error(), "work order status update to done by predicate not allowed")
+	s.Require().True(
+		errors.Is(err, event.ErrWorkOrderUpdateStatusOfMany),
+	)
 }
 
 func (s *workOrderTestSuite) TestWorkOrderUpdateOne() {
-	s.T().Skip("Flaky test - T69052905")
+	runCtx, cancel := context.WithCancel(s.ctx)
+	var handler evmocks.EventHandler
+	handler.On("HandleEvent", mock.Anything, mock.AnythingOfType("*ev.Event")).
+		Run(func(args mock.Arguments) {
+			defer cancel()
+			evt := args.Get(1).(*ev.Event)
+			s.Require().Equal(event.WorkOrderDone, evt.Name)
+			wo, ok := evt.Object.(*ent.WorkOrder)
+			s.Require().True(ok)
+			s.Require().Equal("Vacuum", wo.Name)
+		}).
+		Return(nil).
+		Once()
+	defer handler.AssertExpectations(s.T())
+
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: s.receiver,
+			Handler:  &handler,
+		},
+		ev.WithTenant(viewertest.DefaultTenant),
+		ev.WithEvent(event.WorkOrderDone),
+	)
+	s.Require().NoError(err)
+
 	var wg sync.WaitGroup
 	wg.Add(1)
-	ctx, cancel := context.WithCancel(s.ctx)
-	listener, err := pubsub.NewListener(ctx, pubsub.ListenerConfig{
-		Subscriber: s.subscriber,
-		Logger:     s.logger.Background(),
-		Tenant:     pointer.ToString(viewertest.DefaultTenant),
-		Events:     []string{WorkOrderDone},
-		Handler: pubsub.HandlerFunc(func(_ context.Context, tenant string, name string, body []byte) error {
-			s.Assert().Equal(WorkOrderDone, name)
-			s.Assert().NotEmpty(body)
-			cancel()
-			return nil
-		}),
-	})
-	s.Assert().NoError(err)
+	defer wg.Wait()
+
 	go func() {
-		defer wg.Done()
-		defer listener.Shutdown(ctx)
-		err := listener.Listen(ctx)
+		defer func() {
+			svc.Stop(s.ctx)
+			wg.Done()
+		}()
+		err := svc.Run(runCtx)
 		s.Require().True(errors.Is(err, context.Canceled))
 	}()
 
-	woType := s.client.WorkOrderType.Create().
-		SetName("VacuumType").
-		SaveX(s.ctx)
 	wo := s.client.WorkOrder.Create().
 		SetName("Vacuum").
-		SetType(woType).
+		SetType(s.typ).
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
 		SaveX(s.ctx)
 	tx, err := s.client.Tx(s.ctx)
 	s.Require().NoError(err)
-	ctx = ent.NewTxContext(s.ctx, tx)
-	tx.WorkOrder.UpdateOne(wo).
+	ctx := ent.NewTxContext(s.ctx, tx)
+	err = tx.WorkOrder.UpdateOne(wo).
 		SetStatus(workorder.StatusDone).
-		ExecX(ctx)
+		Exec(ctx)
+	s.Require().NoError(err)
 	err = tx.Commit()
 	s.Require().NoError(err)
-	wg.Wait()
 }
