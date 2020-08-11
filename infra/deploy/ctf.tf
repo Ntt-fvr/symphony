@@ -1,7 +1,6 @@
 locals {
-  # deploy ctf resources on staging only.
-  ctf_count  = terraform.workspace == "staging" ? 1 : 0
-  ctf_create = local.ctf_count > 0
+  # deploy ctf iam resources on production only.
+  ctf_iam_count = terraform.workspace == "default" ? 1 : 0
   # k8s group name for ctf admins.
   ctf_admin_user  = "ctf:master"
   ctf_admin_group = "ctf:masters"
@@ -95,17 +94,23 @@ resource kubernetes_role_binding ctf_admins {
   }
 }
 
+# IAM group for CTF team.
+resource aws_iam_group ctf {
+  name  = "CTF"
+  count = local.ctf_iam_count
+}
+
 # aws iam role for admins in ctf namespace.
 resource aws_iam_role ctf_admin {
   name               = "CTFAdmin"
   assume_role_policy = data.aws_iam_policy_document.root_delegate.json
-  count              = local.ctf_count
+  count              = local.ctf_iam_count
 }
 
-# IAM group for CTF team.
-resource aws_iam_group ctf {
-  name  = "CTF"
-  count = local.ctf_count
+# ref the above iam role.
+data aws_iam_role ctf_admin {
+  name  = "CTFAdmin"
+  count = 1 - local.ctf_iam_count
 }
 
 # aws iam policy document granting ctf admin assume role
@@ -120,14 +125,14 @@ data aws_iam_policy_document ctf_admin_role {
     ]
   }
 
-  count = local.ctf_count
+  count = local.ctf_iam_count
 }
 
 # aws iam group policy for above policy document
 resource aws_iam_group_policy ctf {
   group  = aws_iam_group.ctf[count.index].id
   policy = data.aws_iam_policy_document.ctf_admin_role[count.index].json
-  count  = local.ctf_count
+  count  = local.ctf_iam_count
 }
 
 # certificate issuer for openctf.io
@@ -166,7 +171,6 @@ resource helm_release ctf_cert_issuer {
 resource random_password ctf_db {
   length  = 50
   special = false
-  count   = local.ctf_count
 }
 
 # postgres db for ctf
@@ -184,7 +188,7 @@ module ctf_db {
   identifier = "ctf"
   name       = "ctf"
   username   = "root"
-  password   = try(random_password.ctf_db[0].result, "")
+  password   = random_password.ctf_db.result
   port       = local.postgres_port
 
   monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
@@ -200,10 +204,6 @@ module ctf_db {
   deletion_protection     = true
   skip_final_snapshot     = false
   allocated_storage       = 64
-
-  create_db_instance        = local.ctf_create
-  create_db_parameter_group = local.ctf_create
-  create_db_option_group    = local.ctf_create
 
   tags = local.tags
 }
@@ -222,6 +222,4 @@ resource kubernetes_secret ctf_db {
     password = module.ctf_db.this_db_instance_password
     database = module.ctf_db.this_db_instance_name
   }
-
-  count = local.ctf_count
 }

@@ -81,30 +81,31 @@ module eks {
     },
   ]
 
-  map_roles = concat(
-    [
-      {
-        rolearn  = aws_iam_role.eks_admin.arn
-        username = "admin"
-        groups   = ["system:masters"]
-      },
-      {
-        rolearn  = local.eks_developer_role.arn
-        username = ""
-        groups   = [local.eks_developer_group]
-      },
-      {
-        rolearn  = local.orc8r_admin_role.arn
-        username = ""
-        groups   = [local.orc8r_admin_group]
-      },
-    ],
-    try([{
-      rolearn  = aws_iam_role.ctf_admin[0].arn
+  map_roles = [
+    {
+      rolearn  = aws_iam_role.eks_admin.arn
+      username = "admin"
+      groups   = ["system:masters"]
+    },
+    {
+      rolearn  = local.eks_developer_role.arn
+      username = ""
+      groups   = [local.eks_developer_group]
+    },
+    {
+      rolearn  = local.orc8r_admin_role.arn
+      username = ""
+      groups   = [local.orc8r_admin_group]
+    },
+    {
+      rolearn = try(
+        aws_iam_role.ctf_admin[0].arn,
+        data.aws_iam_role.ctf_admin[0].arn,
+      )
       username = local.ctf_admin_user
       groups   = [local.ctf_admin_group]
-    }], []),
-  )
+    }
+  ]
 
   kubeconfig_name                      = "symphony-${local.environment}"
   kubeconfig_aws_authenticator_command = "aws"
