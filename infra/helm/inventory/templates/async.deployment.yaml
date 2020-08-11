@@ -38,14 +38,10 @@ spec:
           image: {{ .Values.async.image.repository }}:{{ .Values.async.image.tag }}
           imagePullPolicy: {{ .Values.async.image.pullPolicy }}
           env:
-            {{- with .Values.async.spec.event.pub_url }}
             - name: EVENT_PUB_URL
-              value: {{ . | quote }}
-            {{- end }}
-            {{- with .Values.async.spec.event.sub_url }}
+              value: {{ required ".Values.async.spec.event.pub_url is required" .Values.async.spec.event.pub_url | quote }}
             - name: EVENT_SUB_URL
-              value: {{ . | quote }}
-            {{- end }}
+              value: {{ required ".Values.async.spec.event.sub_url is required" .Values.async.spec.event.sub_url | quote }}
             {{- with .Values.async.spec.tenancy.tenantMaxDBConn }}
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}
