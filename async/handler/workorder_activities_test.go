@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package handler
+package handler_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -23,7 +24,7 @@ import (
 func TestAddWorkOrderActivities(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	c.Use(event.LogHook(HandleActivityLog, log.NewNopLogger()))
+	c.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 
 	now := time.Now()
@@ -69,7 +70,7 @@ func TestAddWorkOrderActivities(t *testing.T) {
 func TestEditWorkOrderActivities(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	c.Use(event.LogHook(HandleActivityLog, log.NewNopLogger()))
+	c.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 
 	now := time.Now()

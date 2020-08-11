@@ -6,19 +6,17 @@ package main
 
 import (
 	"context"
-	"fmt"
 	stdlog "log"
 	"net"
 	"os"
-	"sync"
 	"syscall"
 
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -35,7 +33,8 @@ import (
 type cliFlags struct {
 	HTTPAddr        *net.TCPAddr
 	MySQLConfig     mysql.Config
-	EventConfig     pubsub.Config
+	EventPubURL     ev.TopicFactory
+	EventSubURL     ev.TopicFactory
 	LogConfig       log.Config
 	TelemetryConfig telemetry.Config
 	TenancyConfig   viewer.Config
@@ -57,7 +56,18 @@ func main() {
 	).
 		Default(":http").
 		TCPVar(&cf.HTTPAddr)
-	pubsub.AddFlagsVar(kingpin.CommandLine, &cf.EventConfig)
+	kingpin.Flag(
+		"event.pub-url", "events pub url").
+		Envar("EVENT_PUB_URL").
+		Required().
+		SetValue(&cf.EventPubURL)
+	kingpin.Flag(
+		"event.sub-url",
+		"events sub url",
+	).
+		Envar("EVENT_SUB_URL").
+		Required().
+		SetValue(&cf.EventSubURL)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
 	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)
@@ -89,21 +99,16 @@ type application struct {
 }
 
 func (app *application) run(ctx context.Context) error {
-	var wg sync.WaitGroup
-	listener, err := app.server.Subscribe(ctx, &wg)
-	if err != nil {
-		return fmt.Errorf("creating event listener: %w", err)
-	}
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(context.Context) error {
 		err := app.http.ListenAndServe(app.http.addr)
-		app.logger.Debug("server terminated", zap.Error(err))
+		app.logger.Debug("http server terminated", zap.Error(err))
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
-		err := listener.Listen(ctx)
-		app.logger.Debug("listener terminated", zap.Error(err))
+		err := app.server.Serve(ctx)
+		app.logger.Debug("event server terminated", zap.Error(err))
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
@@ -119,22 +124,16 @@ func (app *application) run(ctx context.Context) error {
 	defer app.logger.Debug("end application termination")
 
 	g.Go(func(context.Context) error {
-		app.logger.Debug("start server termination")
+		app.logger.Debug("start http server termination")
 		err := app.http.Shutdown(context.Background())
-		app.logger.Debug("end server termination", zap.Error(err))
+		app.logger.Debug("end http server termination", zap.Error(err))
 		return err
 	})
 	g.Go(func(context.Context) error {
-		app.logger.Debug("start listener termination")
-		err := listener.Shutdown(context.Background())
-		app.logger.Debug("end listener termination", zap.Error(err))
+		app.logger.Debug("start event server termination")
+		err := app.server.Shutdown(context.Background())
+		app.logger.Debug("end event server termination", zap.Error(err))
 		return err
-	})
-	g.Go(func(context.Context) error {
-		app.logger.Debug("wait for event handlers to end")
-		wg.Wait()
-		app.logger.Debug("event handlers ended")
-		return nil
 	})
 	return g.Wait()
 }
