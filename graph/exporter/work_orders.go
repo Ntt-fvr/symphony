@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -40,13 +39,12 @@ type woRower struct {
 
 var woDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
-func (er woRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er woRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error
 		filterInput []*models.WorkOrderFilterInput
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToWOFilterInput(filtersParam)
 		if err != nil {

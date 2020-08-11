@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -37,7 +36,7 @@ type linksRower struct {
 	log log.Logger
 }
 
-func (er linksRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er linksRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger          = er.log.For(ctx)
 		err             error
@@ -48,7 +47,6 @@ func (er linksRower) rows(ctx context.Context, url *url.URL) ([][]string, error)
 		parentsBHeader  = [...]string{"Parent Equipment (3) B", "Position (3) B", "Parent Equipment (2) B", "Position (2) B", "Parent Equipment B", "Equipment Position B"}
 		servicesHeader  = [...]string{"Service Names"}
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToLinkFilterInput(filtersParam)
 		if err != nil {

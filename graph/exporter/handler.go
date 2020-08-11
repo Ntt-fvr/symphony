@@ -32,7 +32,7 @@ type exporter struct {
 }
 
 type rower interface {
-	rows(context.Context, *url.URL) ([][]string, error)
+	rows(ctx context.Context, filters string) ([][]string, error)
 }
 
 func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
@@ -114,7 +114,8 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		writer := csv.NewWriter(w)
 
-		rows, err := m.rows(ctx, r.URL)
+		filters := r.URL.Query().Get("filters")
+		rows, err := m.rows(ctx, filters)
 		if err != nil {
 			log.Error("error in export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)

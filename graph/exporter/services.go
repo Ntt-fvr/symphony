@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -39,14 +38,13 @@ type servicesRower struct {
 	log log.Logger
 }
 
-func (er servicesRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er servicesRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error
 		filterInput []*models.ServiceFilterInput
 		dataHeader  = [...]string{bom + "Service ID", "Service Name", "Service Type", "Discovery Method", "Service External ID", "Customer Name", "Customer External ID", "Status"}
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToServiceFilterInput(filtersParam)
 		if err != nil {
