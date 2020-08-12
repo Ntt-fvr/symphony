@@ -42,7 +42,7 @@ aliases:
 
 orbs:
   artifactory: circleci/artifactory@1.0.0
-  docker: circleci/docker@1.0.0
+  docker: circleci/docker@1.4.0
   go: circleci/go@1.1.0
   helm: circleci/helm@0.2.3
 
@@ -275,6 +275,8 @@ jobs:
   docker-publish:
     executor: node
     resource_class: large
+    environment:
+      DOCKER_BUILDKIT: 1
     parameters:
       path:
         default: .
@@ -295,11 +297,12 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+          version: 19.03.12
       - docker/check:
           registry: <<parameters.registry>>
       - docker/build:
           dockerfile: <<parameters.dockerfile>>
-          extra_build_args: --pull
+          extra_build_args: --pull --progress plain
           image: <<parameters.image>>
           tag: <<parameters.tag>>
           lint-dockerfile: true
@@ -368,10 +371,13 @@ jobs:
     executor:
       name: docker/machine
       dlc: true
+      image: ubuntu-1604:202007-01
     resource_class: large
     environment:
       COMPOSE_FILE: <<parameters.compose_file>>
       DOCKER_REGISTRY: facebookconnectivity-symphony-dev-docker.jfrog.io
+      COMPOSE_DOCKER_CLI_BUILD: 1
+      DOCKER_BUILDKIT: 1
     parameters:
       compose_file:
         type: string
@@ -398,7 +404,7 @@ jobs:
                 command: docker-compose pull
       - run:
           name: Build services
-          command: docker-compose build <<parameters.extra_build_args>>
+          command: docker-compose build --parallel --progress plain <<parameters.extra_build_args>>
       - run:
           name: Start containers
           command: docker-compose up -d --scale tests=0 --scale pytests=0 --scale testimio=0
