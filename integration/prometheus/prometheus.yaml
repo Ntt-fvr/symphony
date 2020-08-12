@@ -7,15 +7,18 @@ global:
   evaluation_interval: 30s
 
 scrape_configs:
-  - job_name: inventory
+  - job_name: front
     static_configs:
-      - targets: ['inventory:9464']
+      - targets: ['platform-server:9464']
   - job_name: graph
     static_configs:
       - targets: ['graph']
   - job_name: store
     static_configs:
       - targets: ['store']
+  - job_name: async
+    static_configs:
+      - targets: ['async']
   - job_name: fluentd
     static_configs:
       - targets: ['fluentd:24231']
