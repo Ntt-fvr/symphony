@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"strconv"
+	"sync/atomic"
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -18,13 +20,19 @@ import (
 	"gocloud.dev/pubsub/mempubsub"
 )
 
+// nextURL is used to generate unique pubsub urls.
+var nextURL uint64
+
 func TestEventsOverTopic(t *testing.T) {
 	type payload struct {
 		S string
 		I int
 	}
 	ctx := context.Background()
-	url := mempubsub.Scheme + "://" + t.Name()
+	url := mempubsub.Scheme + "://" + t.Name() +
+		strconv.FormatUint(
+			atomic.AddUint64(&nextURL, 1), 10,
+		)
 
 	emitter, err := ev.NewTopicEmitter(
 		ctx, url, ev.JSONEncoder,
@@ -95,7 +103,10 @@ func TestEventTelemetry(t *testing.T) {
 
 	ctx := context.Background()
 	factory := ev.TopicFactory(
-		mempubsub.Scheme + "://" + t.Name(),
+		mempubsub.Scheme + "://" + t.Name() +
+			strconv.FormatUint(
+				atomic.AddUint64(&nextURL, 1), 10,
+			),
 	)
 	require.Implements(t, (*ev.Factory)(nil), factory)
 

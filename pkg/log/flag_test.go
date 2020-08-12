@@ -29,8 +29,10 @@ func TestFlags(t *testing.T) {
 func TestEnvarFlags(t *testing.T) {
 	err := os.Setenv(log.LevelFlagEnvar, "debug")
 	require.NoError(t, err)
+	defer func() { _ = os.Unsetenv(log.LevelFlagEnvar) }()
 	err = os.Setenv(log.FormatFlagEnvar, "json")
 	require.NoError(t, err)
+	defer func() { _ = os.Unsetenv(log.FormatFlagEnvar) }()
 	a := kingpin.New(t.Name(), "")
 	c := log.AddFlags(a)
 	_, err = a.Parse(nil)
