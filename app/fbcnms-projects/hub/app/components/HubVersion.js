@@ -11,9 +11,8 @@
 import * as React from 'react';
 import RelayEnvironment from '../common/RelayEnvironment';
 import Text from '@fbcnms/ui/components/design-system/Text';
-import type {HubVersionQueryResponse} from './__generated__/HubVersionQuery.graphql';
-// flowlint untyped-import:warn
 import {QueryRenderer, graphql} from 'react-relay';
+import type {HubVersionQueryResponse} from './__generated__/HubVersionQuery.graphql';
 
 const HubVersionQuery = graphql`
   query HubVersionQuery {
@@ -33,8 +32,8 @@ function HubVersion() {
         error,
         props,
       }: {
-        error?: Error,
-        props?: HubVersionQueryResponse,
+        error?: ?Error,
+        props?: ?HubVersionQueryResponse,
       }) => {
         if (error) {
           return <Text>Couldn't load hub version!</Text>;

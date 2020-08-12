@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash f1055cf578ddef96d81f013206edc0cb
  */
 
 /* eslint-disable */
@@ -63,17 +62,14 @@ mutation CreateServiceMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "nsi",
-    "type": "NetworkServiceInput!",
-    "defaultValue": null
+    "name": "nsi"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "createService",
     "args": [
       {
         "kind": "Variable",
@@ -81,34 +77,39 @@ v1 = [
         "variableName": "nsi"
       }
     ],
+    "kind": "ScalarField",
+    "name": "createService",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "CreateServiceMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "CreateServiceMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "CreateServiceMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "CreateServiceMutation",
+    "cacheID": "ed11e68b1cbe41caeba422fe122f6692",
     "id": null,
-    "text": "mutation CreateServiceMutation(\n  $nsi: NetworkServiceInput!\n) {\n  createService(input: $nsi)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "CreateServiceMutation",
+    "operationKind": "mutation",
+    "text": "mutation CreateServiceMutation(\n  $nsi: NetworkServiceInput!\n) {\n  createService(input: $nsi)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'e2ad8acf01814141fa4911f024690c1a';
+
 module.exports = node;

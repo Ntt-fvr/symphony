@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 4e95ef44d950f97aaf5bb7c64b9a4fef
  */
 
 /* eslint-disable */
@@ -39,49 +38,52 @@ query HubVersionQuery {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "version",
-    "storageKey": null,
     "args": null,
     "concreteType": "Version",
+    "kind": "LinkedField",
+    "name": "version",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "string",
         "args": null,
+        "kind": "ScalarField",
+        "name": "string",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "HubVersionQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
-    "selections": (v0/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "HubVersionQuery",
+    "selections": (v0/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "HubVersionQuery",
-    "argumentDefinitions": [],
     "selections": (v0/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "HubVersionQuery",
+    "cacheID": "92d4b3cb877cb1bcf2ac299ccbd461c9",
     "id": null,
-    "text": "query HubVersionQuery {\n  version {\n    string\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "HubVersionQuery",
+    "operationKind": "query",
+    "text": "query HubVersionQuery {\n  version {\n    string\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '34ebb96a32faf7bffcb55abca095e681';
+
 module.exports = node;
