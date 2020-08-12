@@ -7,12 +7,13 @@ package exporter
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strconv"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"net/url"
-	"strconv"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -82,46 +83,21 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 	sheetName := "Summary"
 	f.SetSheetName("Sheet1", sheetName)
 	currRow := 1
-	var projName, woType, locName, assigneeEmail, ownerEmail, closedDate string
 
-	assignee, err := wo.QueryAssignee().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
+	woDataHeader := []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Creation date", "Close date", "Location", "Assignee", "Owner"}
+	data, err := getSummaryData(ctx, wo)
+	if err != nil {
 		return err
 	}
-	if assignee != nil {
-		assigneeEmail = assignee.Email
-	}
 
-	owner, err := wo.QueryOwner().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
-		return err
-	}
-	if owner != nil {
-		ownerEmail = owner.Email
-	}
+	f.SetColWidth(sheetName, "A", "C", 80)
 
-	project, err := wo.QueryProject().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
-		return err
-	}
-	if project != nil {
-		projName = project.Name
-	}
-
-	location, err := wo.QueryLocation().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
-		return err
-	}
-	if location != nil {
-		locName = location.Name
-	}
-
-	wType, err := wo.QueryType().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
-		return err
-	}
-	if wType != nil {
-		woType = wType.Name
+	for i := 0; i < len(woDataHeader); i++ {
+		headerCell := "A" + strconv.Itoa(currRow)
+		valueCell := "B" + strconv.Itoa(currRow)
+		f.SetCellValue(sheetName, headerCell, woDataHeader[i])
+		f.SetCellValue(sheetName, valueCell, data[i])
+		currRow++
 	}
 
 	comments, err := wo.QueryComments().All(ctx)
@@ -134,50 +110,11 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		return err
 	}
 
-	if wo.Status == workorder.StatusDone {
-		closedDate = wo.CloseDate.String()
-	}
-
-	woDataHeader := []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Creation date", "Close date", "Location", "Assignee", "Owner"}
-	data := []string{strconv.Itoa(wo.ID), wo.Name, *wo.Description, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.String(), closedDate, locName, assigneeEmail, ownerEmail}
-
-	f.SetColWidth(sheetName, "A", "C", 80)
-	headerStyle, _ := f.NewStyle(`{
-		"font":
-		{
-			"bold": true
-		},
-		"alignment":
-		{
-			"horizontal": "center",
-			"wrap_text": true
-		}
-	}`)
-
-	style, _ := f.NewStyle(`{
-		"alignment":
-		{
-			"horizontal": "center",
-			"wrap_text": true
-		}
-	}`)
-
-	for i := 0; i < len(woDataHeader); i++ {
-		headerCell := "A" + strconv.Itoa(currRow)
-		valueCell := "B" + strconv.Itoa(currRow)
-		f.SetCellValue(sheetName, headerCell, woDataHeader[i])
-		f.SetCellStyle(sheetName, headerCell, headerCell, headerStyle)
-		f.SetCellValue(sheetName, valueCell, data[i])
-		f.SetCellStyle(sheetName, valueCell, valueCell, style)
-		currRow++
-	}
-
 	commentsHeader := []string{"Activity/Comment", "Created at", "Updated at"}
 
 	for i := 0; i < len(commentsHeader); i++ {
 		cell := columns[i] + strconv.Itoa(currRow)
 		f.SetCellValue(sheetName, cell, commentsHeader[i])
-		f.SetCellStyle(sheetName, cell, cell, headerStyle)
 	}
 
 	for i := range comments {
@@ -187,7 +124,6 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 			f.SetCellValue(sheetName, "A"+row, comments[i].Text)
 			f.SetCellValue(sheetName, "B"+row, comments[i].CreateTime.String())
 			f.SetCellValue(sheetName, "C"+row, comments[i].UpdateTime.String())
-			f.SetCellStyle(sheetName, "A"+row, "C"+row, style)
 		}
 	}
 
@@ -199,18 +135,19 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		}
 		if author != nil && activities[i] != nil {
 			row := strconv.Itoa(currRow)
-			f.SetCellValue(sheetName, "A"+row, author.Email+" changed "+activities[i].ChangedField.String()+" from "+activities[i].OldValue+" to "+activities[i].NewValue)
-			f.SetCellValue(sheetName, "B"+row, activities[i].CreateTime.String())
-			f.SetCellValue(sheetName, "C"+row, activities[i].UpdateTime.String())
-			f.SetCellStyle(sheetName, "A"+row, "C"+row, style)
+			activity := author.Email + " changed " + activities[i].ChangedField.String() + " from " + activities[i].OldValue + " to " + activities[i].NewValue
+			data := []string{activity, activities[i].CreateTime.String(), activities[i].UpdateTime.String()}
+			for j := range data {
+				cell := columns[j] + row
+				f.SetCellValue(sheetName, cell, data[j])
+			}
 		}
 	}
-
 	return nil
 }
 
 func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, sheetName string, f *excelize.File) error {
-	checklistHeader := []string{"Description", "Additional instructions", "Type", "Is Mandatory", "Checked"}
+	checklistHeader := []string{"Description", "Type", "Is Mandatory", "Checked", "Additional instructions"}
 	currRow := 1
 	headerStyle, _ := f.NewStyle(`{
 		"font":
@@ -236,13 +173,13 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 
 	for i := range items {
 		item := items[i]
-		f.SetCellValue(sheetName, "A"+strconv.Itoa(currRow), item.Title)
+		data := []string{item.Title, item.Type.String(), strconv.FormatBool(item.IsMandatory), strconv.FormatBool(item.Checked)}
+		for j := range data {
+			f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data[j])
+		}
 		if item.HelpText != nil {
 			f.SetCellValue(sheetName, "B"+strconv.Itoa(currRow), *item.HelpText)
 		}
-		f.SetCellValue(sheetName, "C"+strconv.Itoa(currRow), item.Type)
-		f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), item.IsMandatory)
-		f.SetCellValue(sheetName, "E"+strconv.Itoa(currRow), item.Checked)
 
 		currRow++
 
@@ -269,7 +206,6 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 				}
 				currRow++
 			}
-
 		}
 
 		if item.Type == "files" {
@@ -298,4 +234,57 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 		}
 	}
 	return nil
+}
+
+func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
+	var (
+		projName, woType, locName, assigneeEmail, ownerEmail, closedDate string
+		err                                                              error
+	)
+
+	assignee, err := wo.QueryAssignee().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
+	if assignee != nil {
+		assigneeEmail = assignee.Email
+	}
+
+	owner, err := wo.QueryOwner().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
+	if owner != nil {
+		ownerEmail = owner.Email
+	}
+
+	project, err := wo.QueryProject().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
+	if project != nil {
+		projName = project.Name
+	}
+
+	location, err := wo.QueryLocation().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
+	if location != nil {
+		locName = location.Name
+	}
+
+	wType, err := wo.QueryType().Only(ctx)
+	if ent.MaskNotFound(err) != nil {
+		return nil, err
+	}
+	if wType != nil {
+		woType = wType.Name
+	}
+
+	if wo.Status == workorder.StatusDone {
+		closedDate = wo.CloseDate.String()
+	}
+
+	return []string{strconv.Itoa(wo.ID), wo.Name, *wo.Description, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.String(), closedDate, locName, assigneeEmail, ownerEmail}, nil
 }

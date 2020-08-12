@@ -5,7 +5,6 @@
 package exporter
 
 import (
-	//"fmt"
 	"context"
 	"net/http"
 	"net/http/httptest"
@@ -157,19 +156,19 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 	}
 	wo1, _ := r.Mutation().AddWorkOrder(ctx, woInput1)
 	ctxt := "Test Comment"
-	r.Mutation().AddComment(ctx, models.CommentInput{
+	_, _ = r.Mutation().AddComment(ctx, models.CommentInput{
 		ID:         wo1.ID,
 		EntityType: "WORK_ORDER",
 		Text:       ctxt,
 	})
 
-	r.Mutation().AddComment(ctx, models.CommentInput{
+	_, _ = r.Mutation().AddComment(ctx, models.CommentInput{
 		ID:         wo1.ID,
 		EntityType: "WORK_ORDER",
 		Text:       "Testing comment 2",
 	})
 
-	r.client.Activity.Create().
+	_, _ = r.client.Activity.Create().
 		SetWorkOrder(wo1).
 		SetChangedField(activity.ChangedFieldPriority).
 		SetOldValue(workorder.PriorityLow.String()).
@@ -235,11 +234,8 @@ func TestEmptyWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	f, err := excelize.OpenReader(res.Body)
-	f.SaveAs("hehe2.xlsx")
-	if err != nil {
-		return
-	}
+	_, err = excelize.OpenReader(res.Body)
+	require.NoError(t, err)
 }
 
 func TestSingleWoExport(t *testing.T) {
@@ -267,9 +263,6 @@ func TestSingleWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	f, err := excelize.OpenReader(res.Body)
-	f.SaveAs("hehe.xlsx")
-	if err != nil {
-		return
-	}
+	_, err = excelize.OpenReader(res.Body)
+	require.NoError(t, err)
 }
