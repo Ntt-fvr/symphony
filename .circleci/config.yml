@@ -281,6 +281,9 @@ jobs:
       path:
         default: .
         type: string
+      docker-context:
+        default: .
+        type: string
       dockerfile:
         default: Dockerfile
         type: string
@@ -301,6 +304,7 @@ jobs:
       - docker/check:
           registry: <<parameters.registry>>
       - docker/build:
+          docker-context: <<parameters.docker-context>>
           dockerfile: <<parameters.dockerfile>>
           extra_build_args: --pull --progress plain
           image: <<parameters.image>>
@@ -705,7 +709,7 @@ workflows:
       - docker-publish:
           name: graph/publish
           context: symphony
-          dockerfile: graph/Dockerfile
+          path: graph
           image: graph
           requires: &dpreq
             - lint
@@ -715,20 +719,21 @@ workflows:
       - docker-publish:
           name: store/publish
           context: symphony
-          dockerfile: store/Dockerfile
+          path: store
           image: store
           requires: *dpreq
           <<: *onlymaster
       - docker-publish:
           name: async/publish
           context: symphony
-          dockerfile: async/Dockerfile
+          path: async
           image: async
           requires: *dpreq
           <<: *onlymaster
       - docker-publish:
           name: docs/publish
           context: symphony
+          docker-context: docs
           path: docs
           image: docs
           requires: *dpreq
@@ -736,23 +741,24 @@ workflows:
       - docker-publish:
           name: front/publish
           context: symphony
-          dockerfile: fbcnms-projects/platform-server/Dockerfile.prod
-          path: app
+          docker-context: app
+          dockerfile: Dockerfile.prod
+          path: app/fbcnms-projects/platform-server
           image: front
           requires: *dpreq
           <<: *onlymaster
       - docker-publish:
           name: storybook/publish
           context: symphony
-          dockerfile: fbcnms-projects/storybook/Dockerfile
-          path: app
+          docker-context: app
+          path: app/fbcnms-projects/storybook
           image: storybook
           requires: *dpreq
           <<: *onlymaster
       - docker-publish:
           name: jobrunner/publish
           context: symphony
-          dockerfile: jobrunner/Dockerfile
+          path: jobrunner
           image: jobrunner
           requires: *dpreq
           <<: *onlymaster
