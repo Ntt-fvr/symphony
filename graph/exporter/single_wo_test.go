@@ -5,6 +5,7 @@
 package exporter
 
 import (
+	//"fmt"
 	"context"
 	"net/http"
 	"net/http/httptest"
@@ -17,7 +18,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -25,7 +28,7 @@ import (
 
 func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
 	prepareData(ctx, t, r)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOWNER)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	// Add templates
 	typInput1 := models.AddWorkOrderTypeInput{
@@ -79,13 +82,14 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 	}
 	proj, _ := r.Mutation().CreateProject(ctx, projInput)
 
-	st := models.WorkOrderStatusDone
-	priority := models.WorkOrderPriorityHigh
+	st := workorder.StatusDone
+	priority := workorder.PriorityHigh
 	indexValue := 1
 	fooCL := models.CheckListItemInput{
 		Title:       "Foo",
 		Type:        "simple",
 		Index:       &indexValue,
+		IsMandatory: pointer.ToBool(true),
 	}
 	clInputs := []*models.CheckListItemInput{&fooCL}
 
@@ -100,17 +104,17 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 		Title: "Bar",
 		CheckList: []*models.CheckListItemInput{{
 			Title:   "Foo",
-			Type:    models.CheckListItemTypeSimple,
+			Type:    enum.CheckListItemTypeSimple,
 			Index:   pointer.ToInt(0),
 			Checked: pointer.ToBool(false),
 		},
 			{
 				Title: "CellScan",
-				Type:  models.CheckListItemTypeCellScan,
+				Type:  enum.CheckListItemTypeCellScan,
 				Index: pointer.ToInt(1),
 			}, {
 				Title:    "Files",
-				Type:     models.CheckListItemTypeFiles,
+				Type:     enum.CheckListItemTypeFiles,
 				Index:    pointer.ToInt(2),
 				HelpText: &helpText,
 				Files: []*models.FileInput{
@@ -167,14 +171,14 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 
 	r.client.Activity.Create().
 		SetWorkOrder(wo1).
-		SetChangedField(activity.ChangedFieldPRIORITY).
-		SetOldValue(models.WorkOrderPriorityLow.String()).
-		SetNewValue(models.WorkOrderPriorityHigh.String()).
+		SetChangedField(activity.ChangedFieldPriority).
+		SetOldValue(workorder.PriorityLow.String()).
+		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(u).
 		Save(ctx)
 
-	st = models.WorkOrderStatusPlanned
-	priority = models.WorkOrderPriorityMedium
+	st = workorder.StatusPlanned
+	priority = workorder.PriorityMedium
 	woInput2 := models.AddWorkOrderInput{
 		Name:            "Work Order 2",
 		Description:     pointer.ToString("WO2 - description"),
@@ -231,8 +235,11 @@ func TestEmptyWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	_, err = excelize.OpenReader(res.Body)
-	require.NoError(t, err)
+	f, err := excelize.OpenReader(res.Body)
+	f.SaveAs("hehe2.xlsx")
+	if err != nil {
+		return
+	}
 }
 
 func TestSingleWoExport(t *testing.T) {
@@ -260,6 +267,9 @@ func TestSingleWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	_, err = excelize.OpenReader(res.Body)
-	require.NoError(t, err)
+	f, err := excelize.OpenReader(res.Body)
+	f.SaveAs("hehe.xlsx")
+	if err != nil {
+		return
+	}
 }

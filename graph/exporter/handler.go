@@ -13,14 +13,12 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
-	"github.com/pkg/errors"
-
-	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/viewer"
-
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/pkg/errors"
 
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
@@ -35,6 +33,10 @@ type exporter struct {
 type exporterExcel struct {
 	log log.Logger
 	excelFile
+}
+
+type excelFile interface {
+	createExcelFile(context.Context, *url.URL) (*excelize.File, error)
 }
 
 type rower interface {

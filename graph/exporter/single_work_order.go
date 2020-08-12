@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"net/url"
 	"strconv"
@@ -133,12 +134,12 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		return err
 	}
 
-	if wo.Status == "DONE" {
+	if wo.Status == workorder.StatusDone {
 		closedDate = wo.CloseDate.String()
 	}
 
 	woDataHeader := []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Creation date", "Close date", "Location", "Assignee", "Owner"}
-	data := []string{strconv.Itoa(wo.ID), wo.Name, wo.Description, projName, woType, wo.Priority, wo.Status, wo.CreationDate.String(), closedDate, locName, assigneeEmail, ownerEmail}
+	data := []string{strconv.Itoa(wo.ID), wo.Name, *wo.Description, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.String(), closedDate, locName, assigneeEmail, ownerEmail}
 
 	f.SetColWidth(sheetName, "A", "C", 80)
 	headerStyle, _ := f.NewStyle(`{
@@ -209,7 +210,7 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 }
 
 func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, sheetName string, f *excelize.File) error {
-	checklistHeader := []string{"Description", "Additional instructions", "Type", "Checked"}
+	checklistHeader := []string{"Description", "Additional instructions", "Type", "Is Mandatory", "Checked"}
 	currRow := 1
 	headerStyle, _ := f.NewStyle(`{
 		"font":
@@ -240,7 +241,8 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			f.SetCellValue(sheetName, "B"+strconv.Itoa(currRow), *item.HelpText)
 		}
 		f.SetCellValue(sheetName, "C"+strconv.Itoa(currRow), item.Type)
-		f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), item.Checked)
+		f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), item.IsMandatory)
+		f.SetCellValue(sheetName, "E"+strconv.Itoa(currRow), item.Checked)
 
 		currRow++
 
@@ -262,12 +264,12 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			for i := range cellScans {
 				cellScan := cellScans[i]
 				for j := range cellScanHeader {
-					data := []string{cellScan.CreateTime.String(), cellScan.UpdateTime.String(), cellScan.NetworkType, strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.String(), fmt.Sprintf("%f", cellScan.Latitude), fmt.Sprintf("%f", cellScan.Longitude)}
+					data := []string{cellScan.CreateTime.String(), cellScan.UpdateTime.String(), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.String(), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)}
 					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data[j])
 				}
 				currRow++
 			}
-			currRow++
+
 		}
 
 		if item.Type == "files" {
@@ -288,12 +290,11 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			for i := range files {
 				file := files[i]
 				for j := range fileHeader {
-					data := []string{file.Name, file.Type, file.CreateTime.String(), file.ModifiedAt.String(), file.UploadedAt.String(), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation}
+					data := []string{file.Name, file.Type.String(), file.CreateTime.String(), file.ModifiedAt.String(), file.UploadedAt.String(), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation}
 					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data[j])
 				}
 				currRow++
 			}
-			currRow++
 		}
 	}
 	return nil
