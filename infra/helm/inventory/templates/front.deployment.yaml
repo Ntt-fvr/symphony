@@ -40,6 +40,8 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.front.service.targetPort | quote }}
+            - name: INTERNAL_PORT
+              value: {{ .Values.front.service.targetInternalPort | quote }}
             - name: LOG_LEVEL
               value: {{ .Values.front.spec.log.level | quote }}
             - name: API_HOST
@@ -80,6 +82,21 @@ spec:
             {{- end }}
             - name: USER_GRAFANA_ADDRESS
               value: {{ .Values.front.spec.grafana.address | quote }}
+            {{- /*
+            This block should include `inventory.tracingEnv`, but the node jaeger client only supports
+            Thrift when working with the agent.  This is a temporary hack until the node client supports
+            grpc, at which point we can delete `agentThriftClient`.
+            */ -}}
+            {{- if and .Values.tracing.enabled .Values.tracing.jaeger.agentThriftEndpoint }}
+            - name: TELEMETRY_TRACE_SAMPLING_PROBABILITY
+              value: {{ int .Values.tracing.enabled | quote }}
+            - name: TELEMETRY_TRACE_EXPORTER
+              value: "jaeger"
+            {{- with .Values.tracing.jaeger.agentThriftEndpoint }}
+            - name: JAEGER_AGENT_ENDPOINT
+              value: {{ . | quote }}
+            {{- end }}
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ template "inventory.front.fullname" . }}
@@ -88,6 +105,8 @@ spec:
               name: http
             - containerPort: 9464
               name: http-metrics
+            - containerPort: {{ .Values.front.service.targetInternalPort }}
+              name: http-internal
           {{- with .Values.front.probes.liveness }}
           livenessProbe:
             httpGet:

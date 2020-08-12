@@ -40,6 +40,6 @@ spec:
             - name: MYSQL_DSN
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "inventory.graph.fullname" . }}
+                  name: {{ template "inventory.graphDB.secretName" . }}
                   key: MYSQL_DSN
       restartPolicy: OnFailure

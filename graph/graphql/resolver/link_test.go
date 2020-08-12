@@ -10,6 +10,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -80,8 +81,8 @@ func TestAddLink(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -117,7 +118,7 @@ func TestAddLinkWithProperties(t *testing.T) {
 	linkStrValue := "Foo"
 	linkStrPropType := models.PropertyTypeInput{
 		Name:        "link_str_prop",
-		Type:        models.PropertyKindString,
+		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
 	linkPropTypeInput := []*models.PropertyTypeInput{&linkStrPropType}
@@ -178,8 +179,8 @@ func TestAddLinkWithProperties(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -197,8 +198,8 @@ func TestAddLinkWithProperties(t *testing.T) {
 	propA := linkA.QueryProperties().FirstX(ctx)
 	propZ := linkB.QueryProperties().FirstX(ctx)
 
-	assert.Equal(t, propA.StringVal, linkVal)
-	assert.Equal(t, propZ.StringVal, linkVal)
+	assert.Equal(t, pointer.GetString(propA.StringVal), linkVal)
+	assert.Equal(t, pointer.GetString(propZ.StringVal), linkVal)
 }
 
 func TestEditLinkWithProperties(t *testing.T) {
@@ -219,7 +220,7 @@ func TestEditLinkWithProperties(t *testing.T) {
 	linkStrValue := "Foo"
 	linkStrPropType := models.PropertyTypeInput{
 		Name:        "link_str_prop",
-		Type:        models.PropertyKindString,
+		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
 	linkPropTypeInput := []*models.PropertyTypeInput{&linkStrPropType}
@@ -295,8 +296,8 @@ func TestEditLinkWithProperties(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)
@@ -314,8 +315,8 @@ func TestEditLinkWithProperties(t *testing.T) {
 	propA := linkA.QueryProperties().FirstX(ctx)
 	propZ := linkB.QueryProperties().FirstX(ctx)
 
-	assert.Equal(t, propA.StringVal, editedLinkVal)
-	assert.Equal(t, propZ.StringVal, editedLinkVal)
+	assert.Equal(t, pointer.GetString(propA.StringVal), editedLinkVal)
+	assert.Equal(t, pointer.GetString(propZ.StringVal), editedLinkVal)
 }
 
 func TestRemoveLink(t *testing.T) {
@@ -438,8 +439,8 @@ func TestAddLinkWithWorkOrder(t *testing.T) {
 	fetchedPortA := fetchedEquipmentA.QueryPorts().OnlyX(ctx)
 	fetchedPortB := fetchedEquipmentB.QueryPorts().OnlyX(ctx)
 
-	assert.Equal(t, fetchedPortA.QueryParent().OnlyXID(ctx), equipmentA.ID)
-	assert.Equal(t, fetchedPortB.QueryParent().OnlyXID(ctx), equipmentB.ID)
+	assert.Equal(t, fetchedPortA.QueryParent().OnlyIDX(ctx), equipmentA.ID)
+	assert.Equal(t, fetchedPortB.QueryParent().OnlyIDX(ctx), equipmentB.ID)
 
 	linkA, _ := pr.Link(ctx, fetchedPortA)
 	linkB, _ := pr.Link(ctx, fetchedPortB)

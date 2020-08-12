@@ -12,7 +12,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '../theme/design-system/Text';
 import moment from 'moment';
 import type {ChartStyle} from '@fbcnms/ui/insights/AsyncMetric';
 
@@ -24,7 +24,7 @@ const isValid = (start, end): boolean => {
   return start.isValid() && end.isValid() && moment.min(start, end) === start;
 };
 
-export default function({startEnd}: Props) {
+export default function ({startEnd}: Props) {
   const [start, end] = startEnd;
   const state = {
     title: 'Frequency of Alerts and Events',
@@ -60,9 +60,9 @@ export default function({startEnd}: Props) {
   };
   return (
     <Grid>
-      <Card>
+      <Card elevation={0}>
         <CardHeader
-          title={<Text variant="h6">{state.title}</Text>}
+          title={<Text variant="body2">{state.title}</Text>}
           subheader={
             <AsyncMetric
               style={chartStyle}

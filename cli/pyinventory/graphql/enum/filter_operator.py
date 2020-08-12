@@ -10,8 +10,10 @@ class FilterOperator(Enum):
     IS_NOT_ONE_OF = "IS_NOT_ONE_OF"
     DATE_GREATER_THAN = "DATE_GREATER_THAN"
     DATE_LESS_THAN = "DATE_LESS_THAN"
+    DATE_GREATER_OR_EQUAL_THAN = "DATE_GREATER_OR_EQUAL_THAN"
+    DATE_LESS_OR_EQUAL_THAN = "DATE_LESS_OR_EQUAL_THAN"
     MISSING_ENUM = ""
 
     @classmethod
-    def _missing_(cls, value: str) -> "FilterOperator":
+    def _missing_(cls, value: object) -> "FilterOperator":
         return cls.MISSING_ENUM

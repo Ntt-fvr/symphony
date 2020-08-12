@@ -14,9 +14,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
+	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/pkg/errors"
 )
@@ -29,24 +31,44 @@ func handleLinkFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.Li
 }
 
 func stateFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
-		p := link.FutureStateIn(filter.StringSet...)
-		for _, s := range filter.StringSet {
-			if s == models.FutureStateInstall.String() {
-				p = link.Or(p, link.FutureStateIsNil())
-				break
-			}
-		}
-		return q.Where(p), nil
+	if filter.Operator != models.FilterOperatorIsOneOf {
+		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+	states := make([]enum.FutureState, 0, len(filter.StringSet))
+	seen := make(map[enum.FutureState]struct{}, len(filter.StringSet))
+	for _, s := range filter.StringSet {
+		var state enum.FutureState
+		if err := state.UnmarshalGQL(s); err != nil {
+			return nil, err
+		}
+		if _, ok := seen[state]; !ok {
+			seen[state] = struct{}{}
+			states = append(states, state)
+		}
+	}
+	pred := link.FutureStateIn(states...)
+	if _, ok := seen[enum.FutureStateInstall]; ok {
+		pred = link.Or(pred, link.FutureStateIsNil())
+	}
+	return q.Where(pred), nil
 }
 
 func handleLinkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.FilterType == models.LinkFilterTypeLocationInst {
+	switch filter.FilterType {
+	case models.LinkFilterTypeLocationInst:
 		return linkLocationFilter(q, filter)
+	case models.LinkFilterTypeLocationInstExternalID:
+		return linkLocationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
+}
+
+func linkLocationExternalIDFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
+	if filter.Operator == models.FilterOperatorContains {
+		return q.Where(link.HasPortsWith(equipmentport.HasParentWith(
+			equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))))), nil
+	}
+	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func linkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
@@ -154,7 +176,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 				property.And(
 					property.HasTypeWith(
 						propertytype.Name(p.Name),
-						propertytype.Type(p.Type.String()),
+						propertytype.TypeEQ(p.Type),
 					),
 					propPred,
 				),
@@ -165,7 +187,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 						equipmentportdefinition.HasEquipmentPortTypeWith(
 							equipmentporttype.HasLinkPropertyTypesWith(
 								propertytype.Name(p.Name),
-								propertytype.Type(p.Type.String()),
+								propertytype.TypeEQ(p.Type),
 								propTypePred,
 							),
 						),
@@ -175,7 +197,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 					link.HasPropertiesWith(
 						property.HasTypeWith(
 							propertytype.Name(p.Name),
-							propertytype.Type(p.Type.String()),
+							propertytype.TypeEQ(p.Type),
 						),
 					),
 				),
@@ -191,7 +213,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 				property.And(
 					property.HasTypeWith(
 						propertytype.Name(p.Name),
-						propertytype.Type(p.Type.String()),
+						propertytype.TypeEQ(p.Type),
 					),
 					propPred,
 				),
@@ -202,7 +224,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 						equipmentportdefinition.HasEquipmentPortTypeWith(
 							equipmentporttype.HasLinkPropertyTypesWith(
 								propertytype.Name(p.Name),
-								propertytype.Type(p.Type.String()),
+								propertytype.TypeEQ(p.Type),
 								propTypePred,
 							),
 						),
@@ -213,7 +235,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 						equipmentport.HasPropertiesWith(
 							property.HasTypeWith(
 								propertytype.Name(p.Name),
-								propertytype.Type(p.Type.String()),
+								propertytype.TypeEQ(p.Type),
 							),
 						),
 					),

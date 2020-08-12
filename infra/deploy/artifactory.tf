@@ -9,7 +9,7 @@ locals {
 }
 
 # save docker login creds as k8s secret
-resource "kubernetes_secret" "artifactory" {
+resource kubernetes_secret artifactory {
   metadata {
     name = "artifactory"
   }

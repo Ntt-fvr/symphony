@@ -10,10 +10,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -22,14 +26,18 @@ import (
 
 func TestAddWorkOrderActivities(t *testing.T) {
 	r := newTestResolver(t)
-	tim := time.Now()
+	r.client.Use(event.LogHook(
+		handler.HandleActivityLog,
+		logtest.NewTestLogger(t),
+	))
+	now := time.Now()
 
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithFeatures(viewer.FeatureWorkOrderActivitiesHook))
+	ctx := viewertest.NewContext(context.Background(), r.client)
 	u := viewer.MustGetOrCreateUser(
 		privacy.DecisionContext(ctx, privacy.Allow),
 		viewertest.DefaultUser,
-		user.RoleOWNER)
+		user.RoleOwner)
 
 	wor, ar := r.WorkOrder(), r.Activity()
 	name := "example_work_order"
@@ -54,26 +62,28 @@ func TestAddWorkOrderActivities(t *testing.T) {
 		require.True(t, a.IsCreate)
 
 		switch a.ChangedField {
-		case activity.ChangedFieldCREATIONDATE:
+		case activity.ChangedFieldCreationDate:
+			timestampInt, err := strconv.ParseInt(a.NewValue, 10, 64)
+			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
-			require.Equal(t, a.NewValue, strconv.FormatInt(tim.Unix(), 10))
+			require.WithinDuration(t, time.Unix(timestampInt, 0), now, time.Second*3)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldOWNER:
+		case activity.ChangedFieldOwner:
 			fetchedNode, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNode.ID, u.ID)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldSTATUS:
+		case activity.ChangedFieldStatus:
 			require.Empty(t, a.OldValue)
-			require.Equal(t, a.NewValue, models.WorkOrderStatusPlanned.String())
+			require.EqualValues(t, a.NewValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPRIORITY:
+		case activity.ChangedFieldPriority:
 			require.Empty(t, a.OldValue)
-			require.Equal(t, a.NewValue, models.WorkOrderPriorityNone.String())
+			require.EqualValues(t, a.NewValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:
@@ -84,14 +94,17 @@ func TestAddWorkOrderActivities(t *testing.T) {
 
 func TestEditWorkOrderActivities(t *testing.T) {
 	r := newTestResolver(t)
+	r.client.Use(event.LogHook(
+		handler.HandleActivityLog, logtest.NewTestLogger(t),
+	))
 
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithFeatures(viewer.FeatureWorkOrderActivitiesHook))
+	ctx := viewertest.NewContext(context.Background(), r.client)
 	u := viewer.MustGetOrCreateUser(
 		privacy.DecisionContext(ctx, privacy.Allow),
 		viewertest.DefaultUser,
-		user.RoleOWNER)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOWNER)
+		user.RoleOwner)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	mr, wor, ar := r.Mutation(), r.WorkOrder(), r.Activity()
 	name := "example_work_order"
@@ -105,8 +118,8 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		Name:       wo.Name,
 		OwnerID:    &u2.ID,
 		AssigneeID: &u.ID,
-		Status:     models.WorkOrderStatusPending,
-		Priority:   models.WorkOrderPriorityHigh,
+		Status:     workOrderStatusPtr(workorder.StatusPending),
+		Priority:   workOrderPriorityPtr(workorder.PriorityHigh),
 	})
 	require.NoError(t, err)
 	activities, err = wor.Activities(ctx, wo)
@@ -131,7 +144,7 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		}
 		newCount++
 		switch a.ChangedField {
-		case activity.ChangedFieldOWNER:
+		case activity.ChangedFieldOwner:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			fetchedNodeOld, err := oldNode.Node(ctx)
@@ -140,21 +153,21 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNodeNew.ID, u2.ID)
 			require.Equal(t, fetchedNodeOld.ID, u.ID)
-		case activity.ChangedFieldASSIGNEE:
+		case activity.ChangedFieldAssignee:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Nil(t, oldNode)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Empty(t, a.OldValue)
 			require.Equal(t, fetchedNodeNew.ID, u.ID)
-		case activity.ChangedFieldSTATUS:
-			require.Equal(t, a.NewValue, models.WorkOrderStatusPending.String())
-			require.Equal(t, a.OldValue, models.WorkOrderStatusPlanned.String())
+		case activity.ChangedFieldStatus:
+			require.EqualValues(t, a.NewValue, workorder.StatusPending)
+			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPRIORITY:
-			require.Equal(t, a.NewValue, models.WorkOrderPriorityHigh.String())
-			require.Equal(t, a.OldValue, models.WorkOrderPriorityNone.String())
+		case activity.ChangedFieldPriority:
+			require.EqualValues(t, a.NewValue, workorder.PriorityHigh)
+			require.EqualValues(t, a.OldValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:

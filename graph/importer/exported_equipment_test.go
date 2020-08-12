@@ -250,21 +250,21 @@ func TestLocationHierarchy(t *testing.T) {
 	loc, err := importer.verifyOrCreateLocationHierarchy(ctx, rec, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc.Name, "locNameL")
-	require.Equal(t, loc.QueryType().OnlyXID(ctx), ids.locTypeIDL)
+	require.Equal(t, loc.QueryType().OnlyIDX(ctx), ids.locTypeIDL)
 	require.False(t, loc.QueryChildren().ExistX(ctx))
 
 	rec2, _ := NewImportRecord(test2, title)
 	loc2, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc2.Name, "locNameS")
-	require.Equal(t, loc2.QueryType().OnlyXID(ctx), ids.locTypeIDS)
+	require.Equal(t, loc2.QueryType().OnlyIDX(ctx), ids.locTypeIDS)
 	require.Equal(t, loc2.QueryParent().OnlyX(ctx).Name, "locNameM")
 
 	rec3, _ := NewImportRecord(test3, title)
 	loc3, err := importer.verifyOrCreateLocationHierarchy(ctx, rec3, true, nil)
 	require.NoError(t, err)
 	require.Equal(t, loc3.Name, "locNameM")
-	require.Equal(t, loc3.QueryType().OnlyXID(ctx), ids.locTypeIDM)
+	require.Equal(t, loc3.QueryType().OnlyIDX(ctx), ids.locTypeIDM)
 	require.False(t, loc3.QueryChildren().ExistX(ctx))
 }
 
@@ -373,10 +373,10 @@ func TestValidatePropertiesForType(t *testing.T) {
 		switch ptyp.Name {
 		case propName1:
 			require.Equal(t, *value.StringValue, "strVal")
-			require.Equal(t, ptyp.Type, "string")
+			require.Equal(t, ptyp.Type, propertytype.TypeString)
 		case propName2:
 			require.Equal(t, *value.IntValue, 54)
-			require.Equal(t, ptyp.Type, "int")
+			require.Equal(t, ptyp.Type, propertytype.TypeInt)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -395,10 +395,10 @@ func TestValidatePropertiesForType(t *testing.T) {
 		switch ptyp.Name {
 		case propName3:
 			require.Equal(t, *value.StringValue, "29/03/88")
-			require.Equal(t, ptyp.Type, "date")
+			require.Equal(t, ptyp.Type, propertytype.TypeDate)
 		case propName4:
 			require.Equal(t, *value.BooleanValue, false)
-			require.Equal(t, ptyp.Type, "bool")
+			require.Equal(t, ptyp.Type, propertytype.TypeBool)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -420,11 +420,11 @@ func TestValidatePropertiesForType(t *testing.T) {
 		case propName5:
 			require.Equal(t, *value.RangeFromValue, 30.23)
 			require.EqualValues(t, *value.RangeToValue, 50)
-			require.Equal(t, ptyp.Type, "range")
+			require.Equal(t, ptyp.Type, propertytype.TypeRange)
 		case ptyp.Name:
 			require.Equal(t, *value.LatitudeValue, 45.8)
 			require.Equal(t, *value.LongitudeValue, 88.9)
-			require.Equal(t, ptyp.Type, "gps_location")
+			require.Equal(t, ptyp.Type, propertytype.TypeGpsLocation)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}

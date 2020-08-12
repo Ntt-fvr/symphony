@@ -34,7 +34,7 @@ func TestAddUsersGroup(t *testing.T) {
 
 	mr := r.Mutation()
 
-	u1 := viewer.MustGetOrCreateUser(ctx, "user_1@test.ing", user.RoleUSER)
+	u1 := viewer.MustGetOrCreateUser(ctx, "user_1@test.ing", user.RoleUser)
 	memberIds := []int{u1.ID}
 
 	gName := "group_1"
@@ -52,7 +52,7 @@ func TestAddUsersGroup(t *testing.T) {
 	require.Len(t, ugs, 1)
 
 	require.Equal(t, ugs[0].Name, gName, "verifying group name")
-	require.Equal(t, ugs[0].Status, usersgroup.StatusACTIVE, "verifying group status")
+	require.Equal(t, ugs[0].Status, usersgroup.StatusActive, "verifying group status")
 }
 
 func TestDeleteUsersGroup(t *testing.T) {
@@ -108,7 +108,7 @@ func TestAddUsersGroupWithPolicy(t *testing.T) {
 	require.Len(t, ugs, 1)
 
 	require.Equal(t, ugs[0].Name, gName, "verifying group name")
-	require.Equal(t, ugs[0].Status, usersgroup.StatusACTIVE, "verifying group status")
+	require.Equal(t, ugs[0].Status, usersgroup.StatusActive, "verifying group status")
 	require.Len(t, ugs[0].QueryPolicies().AllX(ctx), 1)
 }
 
@@ -143,7 +143,7 @@ func TestEditUsersGroup(t *testing.T) {
 	require.Equal(t, ug1update2.Name, gUpdatedName, "verifying group name stayed the same")
 	require.Equal(t, ug1update2.Description, gUpdatedDescription, "verifying group description update")
 
-	gUpdatedStatus := usersgroup.StatusDEACTIVATED
+	gUpdatedStatus := usersgroup.StatusDeactivated
 	updateInput3 := models.EditUsersGroupInput{
 		ID:     ug1.ID,
 		Status: &gUpdatedStatus,

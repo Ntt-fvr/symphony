@@ -74,6 +74,7 @@ tracing:
   jaeger:
     collectorEndpoint: ""
     agentEndpoint: ""
+    agentThriftEndpoint: ""
 
 # Configuration for front application
 front:
@@ -108,6 +109,10 @@ front:
     targetPort: 8080
     # Service type
     type: ClusterIP
+    # Internal Service external port
+    internalPort: 1030
+    # Internal Service target port
+    targetInternalPort: 1030
 
   # Configuration for front service account
   serviceAccount:
@@ -193,6 +198,16 @@ front:
 
     grafana:
       address: ""
+
+# Configuration for graph database
+graphDB:
+  # MySQL database configuration
+  mysql:
+    host: "localhost"
+    port: 3306
+    user: "root"
+    pass: "root"
+    param: ""
 
 # Configuration for graph application
 graph:
@@ -291,14 +306,7 @@ graph:
       level: info
       format: json
 
-    # MySQL database configuration
-    mysql:
-      host: "localhost"
-      port: 3306
-      user: "root"
-      pass: "root"
-      param: ""
-
+    # Settings for restricting resource per tenant
     tenancy:
       tenantMaxDBConn: 10
 
@@ -306,6 +314,90 @@ graph:
     # ref: https://gocloud.dev/howto/pubsub/
     event:
       url: ""
+
+    # Additional key/value pairs to be used as environment variables
+    extraEnvVars: []
+
+# Configuration for async application
+async:
+  # Annotations to be added to async deployment
+  deploymentAnnotations: {}
+  # Annotations to be added to async pods
+  podAnnotations: {}
+
+  # Configure pod disruption budgets for async
+  # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+
+  # Configuration for async service account
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    annotations: {}
+
+  # async image
+  image:
+    repository: facebookconnectivity-phb-docker.jfrog.io/async
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Configuration for liveness / readiness probes
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  probes:
+    liveness:
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 3
+      successThreshold: 1
+      failureThreshold: 5
+
+    readiness:
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+
+  # Resource limits & requests
+  resources: {}
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  # Assign async to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  affinity: {}
+
+  # Number of async replicas desired
+  replicas: 1
+
+  # Settings affecting async application
+  spec:
+    # Log configuration
+    log:
+      level: info
+      format: json
+
+    # Settings for restricting resource per tenant
+    tenancy:
+      tenantMaxDBConn: 5
+
+    # Event pubsub configuration
+    # ref: https://gocloud.dev/howto/pubsub/
+    event:
+      pub_url: ""
+      sub_url: ""
 
     # Additional key/value pairs to be used as environment variables
     extraEnvVars: []

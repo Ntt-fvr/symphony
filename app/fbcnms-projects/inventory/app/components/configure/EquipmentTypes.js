@@ -154,8 +154,11 @@ const EquipmentTypes = () => {
         <div className={classes.firstRow}>
           <ConfigueTitle
             className={classes.title}
-            title={'Equipment Types'}
-            subtitle={'Manage the types of equipment in your inventory'}
+            title={fbt('Equipment Types', 'Equipment Types header')}
+            subtitle={fbt(
+              'Add and manage the types of equipment in your inventory. Add properties and details about them that will make them easier to find when you search.',
+              'Equipment Types subheader',
+            )}
           />
           <div className={classes.addButtonContainer}>
             <FormActionWithPermissions

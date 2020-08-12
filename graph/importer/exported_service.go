@@ -9,12 +9,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -158,7 +160,7 @@ func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request
 				if id == 0 {
 					var (
 						created bool
-						service *ent.Service
+						svc     *ent.Service
 					)
 
 					if commit {
@@ -168,13 +170,13 @@ func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request
 								modifiedCount++
 								log.Info(fmt.Sprintf("(row #%d) creating service", numRows), zap.String("name", name))
 							} else {
-								errs = append(errs, ErrorLine{Line: numRows, Error: "service exists", Message: fmt.Sprintf("service %v already exists under location/position (id=%v)", service.Name, service.ID)})
+								errs = append(errs, ErrorLine{Line: numRows, Error: "service exists", Message: fmt.Sprintf("service %v already exists under location/position (id=%v)", svc.Name, svc.ID)})
 								continue
 							}
 						}
 					} else {
-						service, err = m.getServiceIfExist(ctx, name, serviceType)
-						if service != nil {
+						svc, err = m.getServiceIfExist(ctx, name, serviceType)
+						if svc != nil {
 							err = errors.Errorf("service %v already exists", name)
 						}
 					}
@@ -184,14 +186,14 @@ func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request
 					}
 				} else {
 					// existingService
-					service, err := m.validateLineForExistingService(ctx, id, importLine)
+					svc, err := m.validateLineForExistingService(ctx, id, importLine)
 					if err != nil {
 						errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: fmt.Sprintf("validating existing service: id %v", id)})
 						continue
 					}
 					propertiesValid := false
 					for i, propInput := range propInputs {
-						propID, err := service.QueryProperties().Where(property.HasTypeWith(propertytype.ID(propInput.PropertyTypeID))).OnlyID(ctx)
+						propID, err := svc.QueryProperties().Where(property.HasTypeWith(propertytype.ID(propInput.PropertyTypeID))).OnlyID(ctx)
 						if err != nil {
 							if !ent.IsNotFound(err) {
 								errs = append(errs, ErrorLine{Line: numRows, Error: err.Error(), Message: fmt.Sprintf("property fetching error: property type id %v", propInput.PropertyTypeID)})
@@ -205,7 +207,7 @@ func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request
 							propertiesValid = true
 						}
 					}
-					if !propertiesValid {
+					if len(propInputs) != 0 && !propertiesValid {
 						continue
 					}
 					if commit {
@@ -239,32 +241,25 @@ func (m *importer) processExportedService(w http.ResponseWriter, r *http.Request
 
 func (m *importer) validateLineForExistingService(ctx context.Context, serviceID int, importLine ImportRecord) (*ent.Service, error) {
 	client := m.ClientFrom(ctx)
-	service, err := client.Service.Get(ctx, serviceID)
+	svc, err := client.Service.Get(ctx, serviceID)
 	if err != nil {
 		return nil, errors.Wrapf(err, "fetching service")
 	}
-	typ := service.QueryType().OnlyX(ctx)
+	typ := svc.QueryType().OnlyX(ctx)
 	if typ.Name != importLine.TypeName() {
 		return nil, errors.Errorf("wrong service type. should be %v, but %v", typ.Name, importLine.TypeName())
 	}
 
-	if typ.DiscoveryMethod != "" && typ.DiscoveryMethod.String() != models.DiscoveryMethodManual.String() {
+	if typ.DiscoveryMethod != "" && typ.DiscoveryMethod != servicetype.DiscoveryMethodManual {
 		return nil, errors.Errorf("can't add services which are not manually discoverable. %v", typ.Name)
 	}
-	return service, nil
+	return svc, nil
 }
 
-func (m *importer) getValidatedStatus(importLine ImportRecord) (*models.ServiceStatus, error) {
-	statuses := make([]string, len(models.AllServiceStatus))
-	for i, status := range models.AllServiceStatus {
-		statuses[i] = status.String()
-	}
-
-	index := findIndexForSimilar(statuses, importLine.Status())
-	if index == -1 {
-		return nil, errors.Errorf("failed parse status %q", importLine.Status())
-	}
-	return &models.AllServiceStatus[index], nil
+func (m *importer) getValidatedStatus(importLine ImportRecord) (*service.Status, error) {
+	str := strings.ReplaceAll(strings.ToUpper(importLine.Status()), " ", "_")
+	status := service.Status(str)
+	return &status, service.StatusValidator(status)
 }
 
 func (m *importer) validatePropertiesForServiceType(ctx context.Context, line ImportRecord, serviceType *ent.ServiceType) ([]*models.PropertyInput, error) {

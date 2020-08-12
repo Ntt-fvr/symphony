@@ -12,14 +12,12 @@ import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
 import AddServiceDialog from './AddServiceDialog';
 import Button from '@fbcnms/ui/components/design-system/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardFooter from '@fbcnms/ui/components/CardFooter';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useCallback, useState} from 'react';
 import ServiceComparisonViewQueryRenderer from './ServiceComparisonViewQueryRenderer';
-import symphony from '@fbcnms/ui/theme/symphony';
+import ViewHeader from '@fbcnms/ui/components/design-system/View/ViewHeader';
+import fbt from 'fbt';
 import useFilterBookmarks from '../comparison_view/hooks/filterBookmarksHook';
 import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import usePropertyFilters from '../comparison_view/hooks/propertiesHook';
@@ -50,7 +48,6 @@ const useStyles = makeStyles(_ => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: symphony.palette.white,
     height: '100%',
   },
   searchResults: {
@@ -68,6 +65,12 @@ const useStyles = makeStyles(_ => ({
     '&:empty': {
       display: 'none',
     },
+  },
+  searchArea: {
+    padding: '16px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
   },
 }));
 
@@ -114,63 +117,68 @@ const ServiceComparisonView = () => {
       permissions={{
         entity: 'service',
       }}>
-      <Card className={classes.cardRoot}>
-        <CardContent className={classes.cardContent}>
-          <div className={classes.root}>
-            <div className={classes.bar}>
-              <div className={classes.searchBar}>
-                <PowerSearchBar
-                  placeholder="Filter services"
-                  filterConfigs={filterConfigs}
-                  searchConfig={ServiceSearchConfig}
-                  getSelectedFilter={(filterConfig: FilterConfig) =>
-                    getSelectedFilter(filterConfig, possibleProperties ?? [])
-                  }
-                  onFiltersChanged={filters => setFilters(filters)}
-                  filters={filters}
-                  filterValues={filters}
-                  savedSearches={filterBookmarksFilterConfig}
-                  exportPath={'/services'}
-                  footer={
-                    count != null
-                      ? count > QUERY_LIMIT
-                        ? `1 to ${QUERY_LIMIT} of ${count}`
-                        : `1 to ${count}`
-                      : null
-                  }
-                  entity={'SERVICE'}
-                />
-              </div>
-            </div>
-            <div className={classes.searchResults}>
-              <ServiceComparisonViewQueryRenderer
-                limit={50}
-                filters={filters}
-                onServiceSelected={selectedServiceCardId =>
-                  navigateToService(selectedServiceCardId)
+      <div className={classes.root}>
+        <ViewHeader
+          title={fbt('Services', 'Services header')}
+          subtitle={fbt(
+            'Add and visualize service topology and link services to equipment in your inventory.',
+            'Services subheader',
+          )}
+          actionButtons={[
+            <FormActionWithPermissions
+              permissions={{entity: 'service', action: 'create'}}>
+              <Button onClick={showDialog}>Add Service</Button>
+            </FormActionWithPermissions>,
+          ]}
+        />
+        <div className={classes.searchArea}>
+          <div className={classes.bar}>
+            <div className={classes.searchBar}>
+              <PowerSearchBar
+                placeholder="Filter services"
+                filterConfigs={filterConfigs}
+                searchConfig={ServiceSearchConfig}
+                getSelectedFilter={(filterConfig: FilterConfig) =>
+                  getSelectedFilter(filterConfig, possibleProperties ?? [])
                 }
-                serviceKey={serviceKey}
-                onQueryReturn={x => setCount(x)}
+                onFiltersChanged={filters => setFilters(filters)}
+                filters={filters}
+                filterValues={filters}
+                savedSearches={filterBookmarksFilterConfig}
+                exportPath={'/services'}
+                footer={
+                  count != null
+                    ? count > QUERY_LIMIT
+                      ? `1 to ${QUERY_LIMIT} of ${count}`
+                      : `1 to ${count}`
+                    : null
+                }
+                entity={'SERVICE'}
               />
             </div>
           </div>
-        </CardContent>
-        <CardFooter className={classes.footer} alignItems="left">
-          <FormActionWithPermissions
-            permissions={{entity: 'service', action: 'create'}}>
-            <Button onClick={showDialog}>Add Service</Button>
-          </FormActionWithPermissions>
-        </CardFooter>
-        <AddServiceDialog
-          key={`new_service_${dialogKey}`}
-          open={dialogOpen}
-          onClose={hideDialog}
-          onServiceCreated={serviceId => {
-            navigateToService(serviceId);
-            setDialogOpen(false);
-          }}
-        />
-      </Card>
+          <div className={classes.searchResults}>
+            <ServiceComparisonViewQueryRenderer
+              limit={50}
+              filters={filters}
+              onServiceSelected={selectedServiceCardId =>
+                navigateToService(selectedServiceCardId)
+              }
+              serviceKey={serviceKey}
+              onQueryReturn={x => setCount(x)}
+            />
+          </div>
+        </div>
+      </div>
+      <AddServiceDialog
+        key={`new_service_${dialogKey}`}
+        open={dialogOpen}
+        onClose={hideDialog}
+        onServiceCreated={serviceId => {
+          navigateToService(serviceId);
+          setDialogOpen(false);
+        }}
+      />
     </FormContextProvider>
   );
 };

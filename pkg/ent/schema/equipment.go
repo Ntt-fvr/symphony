@@ -8,12 +8,13 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/facebookincubator/symphony/pkg/authz"
-
 	"github.com/facebookincubator/ent"
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/ent/schema/index"
+	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // EquipmentPortType defines the equipment port definition schema.
@@ -294,9 +295,17 @@ type Equipment struct {
 func (Equipment) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
-			NotEmpty(),
-		field.String("future_state").
-			Optional(),
+			NotEmpty().
+			Annotations(entgql.Annotation{
+				OrderField: "NAME",
+			}),
+		field.Enum("future_state").
+			GoType(enum.FutureState("")).
+			Optional().
+			Nillable().
+			Annotations(entgql.Annotation{
+				OrderField: "FUTURE_STATE",
+			}),
 		field.String("device_id").
 			Optional().
 			Validate(func(s string) error {

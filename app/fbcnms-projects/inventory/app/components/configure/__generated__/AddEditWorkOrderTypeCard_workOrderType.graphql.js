@@ -54,6 +54,7 @@ export type AddEditWorkOrderTypeCard_workOrderType = {|
       +title: string,
       +type: CheckListItemType,
       +index: ?number,
+      +isMandatory: ?boolean,
       +enumValues: ?string,
       +enumSelectionMode: ?CheckListItemEnumSelectionMode,
       +helpText: ?string,
@@ -107,6 +108,13 @@ v4 = {
   "storageKey": null
 },
 v5 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "isMandatory",
+  "args": null,
+  "storageKey": null
+},
+v6 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "title",
@@ -213,13 +221,7 @@ return {
           "args": null,
           "storageKey": null
         },
-        {
-          "kind": "ScalarField",
-          "alias": null,
-          "name": "isMandatory",
-          "args": null,
-          "storageKey": null
-        },
+        (v5/*: any*/),
         {
           "kind": "ScalarField",
           "alias": null,
@@ -253,7 +255,7 @@ return {
       "plural": true,
       "selections": [
         (v0/*: any*/),
-        (v5/*: any*/),
+        (v6/*: any*/),
         (v2/*: any*/),
         {
           "kind": "LinkedField",
@@ -265,9 +267,10 @@ return {
           "plural": true,
           "selections": [
             (v0/*: any*/),
-            (v5/*: any*/),
+            (v6/*: any*/),
             (v3/*: any*/),
             (v4/*: any*/),
+            (v5/*: any*/),
             {
               "kind": "ScalarField",
               "alias": null,
@@ -297,5 +300,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd41a35b8680d6ea20ea8a79786fba884';
+(node/*: any*/).hash = '957647da063892216c692ff7acfb9141';
 module.exports = node;

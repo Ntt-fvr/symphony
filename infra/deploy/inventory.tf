@@ -8,7 +8,7 @@ locals {
 }
 
 # inventory service data store
-resource "aws_s3_bucket" "inventory_store" {
+resource aws_s3_bucket inventory_store {
   bucket_prefix = "${var.project}-${terraform.workspace}-"
   region        = data.aws_region.current.id
 
@@ -44,7 +44,7 @@ resource "aws_s3_bucket" "inventory_store" {
 }
 
 # limit public access to inventory data store
-resource "aws_s3_bucket_public_access_block" "inventory_store" {
+resource aws_s3_bucket_public_access_block inventory_store {
   bucket                  = aws_s3_bucket.inventory_store.id
   block_public_acls       = true
   block_public_policy     = true
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_public_access_block" "inventory_store" {
 }
 
 # iam role for inventory store
-module "inventory_store_role" {
+module inventory_store_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "InventoryStoreRole"
   role_path                 = local.eks_sa_role_path
@@ -65,7 +65,7 @@ module "inventory_store_role" {
 }
 
 # policy required by inventory store service
-data "aws_iam_policy_document" "inventory_store" {
+data aws_iam_policy_document inventory_store {
   statement {
     actions = [
       "s3:GetObject",
@@ -80,14 +80,14 @@ data "aws_iam_policy_document" "inventory_store" {
 }
 
 # inventory application
-resource "helm_release" "inventory" {
+resource helm_release inventory {
   name                = local.inventory_name
   namespace           = local.inventory_namespace
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "inventory"
-  version             = "1.4.2"
+  version             = "1.6.1"
   keyring             = ""
   max_history         = 100
 
@@ -100,6 +100,7 @@ resource "helm_release" "inventory" {
       name      = local.inventory_name
       namespace = local.inventory_namespace
     })
+    host = format("*.%s", local.domains.symphony.name)
     front_logger_host = format("%s-http.%s.svc.cluster.local:9880",
       helm_release.fluentd_elasticsearch.name,
       helm_release.fluentd_elasticsearch.namespace,
@@ -113,10 +114,11 @@ resource "helm_release" "inventory" {
     graph_db_port      = module.graph_db.this_db_instance_port
     graph_db_user      = module.graph_db.this_db_instance_username
     graph_replicas     = 3
+    async_replicas     = 3
     store_bucket_url   = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
     store_sa_name      = module.inventory_store_role.service_account_name
     store_rolearn      = module.inventory_store_role.role_arn
-    orc8r_host         = terraform.workspace == "staging" ? "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}" : "orc8r-clientcert-legacy.${kubernetes_namespace.orc8r.id}"
+    orc8r_host         = "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}"
     grafana_address    = "orc8r-user-grafana.${kubernetes_namespace.orc8r.id}:3000"
     nats_server_url    = format("nats://%s-client.%s", helm_release.nats.name, helm_release.nats.namespace)
   })]
@@ -127,7 +129,7 @@ resource "helm_release" "inventory" {
   }
 
   set_sensitive {
-    name  = "graph.spec.mysql.pass"
+    name  = "graphDB.mysql.pass"
     value = module.graph_db.this_db_instance_password
   }
 
@@ -152,7 +154,7 @@ resource "helm_release" "inventory" {
 }
 
 # cron job periodically cleaning test tenant data
-resource "kubernetes_cron_job" "tenant_cleaner" {
+resource kubernetes_cron_job tenant_cleaner {
   for_each = terraform.workspace == "staging" ? {
     testimio = {
       schedule = "25,55 * * * *"

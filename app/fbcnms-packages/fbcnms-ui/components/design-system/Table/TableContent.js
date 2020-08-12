@@ -26,15 +26,15 @@ import {useTableCommonStyles} from './TableCommons';
 
 const useStyles = makeStyles(() => ({
   row: {
-    backgroundColor: symphony.palette.white,
     borderLeft: `2px solid transparent`,
+    backgroundColor: symphony.palette.white,
     '&$bands:nth-child(odd)': {
       backgroundColor: symphony.palette.background,
     },
     '&$border:not(:last-child)': {
       borderBottom: `1px solid ${symphony.palette.separatorLight}`,
     },
-    '&$hoverHighlighting:hover': {
+    '&$hoverHighlighting:hover:not($disabled)': {
       cursor: 'pointer',
       '&$border': {
         backgroundColor: symphony.palette.D10,
@@ -49,6 +49,7 @@ const useStyles = makeStyles(() => ({
       },
     },
   },
+  disabled: {},
   activeRow: {
     borderLeft: `2px solid ${symphony.palette.primary}`,
     '&:not($bands)': {
@@ -61,6 +62,7 @@ const useStyles = makeStyles(() => ({
   hoverHighlighting: {},
   checkBox: {
     width: '28px',
+    paddingTop: '7px',
     paddingLeft: '12px',
   },
   textualCell: {},
@@ -95,7 +97,7 @@ const TableContent = <T>(props: Props<T>) => {
   } = props;
   const classes = useStyles();
   const commonClasses = useTableCommonStyles();
-  const {settings} = useTable();
+  const {settings, width: tableWidth} = useTable();
   const {activeId, setActiveId} = useSelection();
 
   const [sortedData, setSortedData] = useState<Array<TableRowDataType<T>>>([]);
@@ -133,6 +135,7 @@ const TableContent = <T>(props: Props<T>) => {
         return (
           <tr
             key={`row_${rowIndex}`}
+            title={d.tooltip}
             onClick={() => {
               if (setActiveId == null) {
                 return;
@@ -143,15 +146,17 @@ const TableContent = <T>(props: Props<T>) => {
             className={classNames(
               classes.row,
               dataRowClassName,
+              d.className,
               classes[rowsSeparator],
               {
                 [classes.hoverHighlighting]: settings.clickableRows,
                 [classes.activeRow]: rowId === activeId,
+                [classes.disabled]: d.disabled,
               },
             )}>
             {settings.showSelection && (
               <td className={classes.checkBox}>
-                <TableRowCheckbox id={rowId} />
+                {d.disabled !== true ? <TableRowCheckbox id={rowId} /> : null}
               </td>
             )}
             {columns
@@ -160,14 +165,22 @@ const TableContent = <T>(props: Props<T>) => {
                 const renderedCol = col.render(d);
                 return (
                   <td
+                    title={col.tooltip && col.tooltip(d)}
                     key={`col_${colIndex}_${d.key ?? rowIndex}`}
                     id={`column${colIndex}`}
                     className={classNames(
                       commonClasses.cell,
                       col.className,
                       cellClassName,
-                    )}>
+                    )}
+                    style={{
+                      width:
+                        tableWidth != null && settings.columnWidths
+                          ? settings.columnWidths[colIndex].width
+                          : undefined,
+                    }}>
                     <Text
+                      color="inherit"
                       className={classes.textualCell}
                       useEllipsis={true}
                       variant="body2">

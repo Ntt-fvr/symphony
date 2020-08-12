@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash ab9bbbb20bfc4719222f02f35f5ca388
+ * @relayHash d2e39b167af803356ab13770bfef0c25
  */
 
 /* eslint-disable */
@@ -57,6 +57,7 @@ export type CheckListDefinitionInput = {|
   title: string,
   type: CheckListItemType,
   index?: ?number,
+  isMandatory?: ?boolean,
   enumValues?: ?string,
   enumSelectionMode?: ?CheckListItemEnumSelectionMode,
   helpText?: ?string,
@@ -125,6 +126,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
       title
       type
       index
+      isMandatory
       enumValues
       enumSelectionMode
       helpText
@@ -185,6 +187,13 @@ v6 = {
   "storageKey": null
 },
 v7 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "isMandatory",
+  "args": null,
+  "storageKey": null
+},
+v8 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "title",
@@ -328,13 +337,7 @@ return {
                 "args": null,
                 "storageKey": null
               },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "name": "isMandatory",
-                "args": null,
-                "storageKey": null
-              },
+              (v7/*: any*/),
               {
                 "kind": "ScalarField",
                 "alias": null,
@@ -368,7 +371,7 @@ return {
             "plural": true,
             "selections": [
               (v2/*: any*/),
-              (v7/*: any*/),
+              (v8/*: any*/),
               (v4/*: any*/),
               {
                 "kind": "LinkedField",
@@ -380,9 +383,10 @@ return {
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
-                  (v7/*: any*/),
+                  (v8/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "kind": "ScalarField",
                     "alias": null,
@@ -416,7 +420,7 @@ return {
     "operationKind": "mutation",
     "name": "AddWorkOrderTypeMutation",
     "id": null,
-    "text": "mutation AddWorkOrderTypeMutation(\n  $input: AddWorkOrderTypeInput!\n) {\n  addWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n",
+    "text": "mutation AddWorkOrderTypeMutation(\n  $input: AddWorkOrderTypeInput!\n) {\n  addWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n",
     "metadata": {}
   }
 };

@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 89ce93a7d62ab8dde0e2f79922c6e76f
+ * @relayHash 4ec7041115e41863b12a06c8628fab9e
  */
 
 /* eslint-disable */
@@ -20,7 +20,7 @@ export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PEN
 export type ServiceCreateData = {|
   name: string,
   externalId?: ?string,
-  status?: ?ServiceStatus,
+  status: ServiceStatus,
   serviceTypeId: string,
   customerId?: ?string,
   upstreamServiceIds: $ReadOnlyArray<string>,

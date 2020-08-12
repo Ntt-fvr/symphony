@@ -19,8 +19,8 @@ class ServiceCreateData(DataClassJsonMixin):
     name: str
     serviceTypeId: str
     upstreamServiceIds: List[str]
+    status: ServiceStatus = enum_field(ServiceStatus)
     externalId: Optional[str] = None
-    status: Optional[ServiceStatus] = None
     customerId: Optional[str] = None
     properties: Optional[List[PropertyInput]] = None
 

@@ -28,6 +28,11 @@ export type ChecklistItemsDialogMutateStateActionType =
       destinationIndex: number,
     |}
   | {|
+      type: 'MARK_ITEM_AS_REQUIRED',
+      itemId: string,
+      isMandatory: boolean,
+    |}
+  | {|
       type: 'REMOVE_ITEM',
       itemId: string,
     |}

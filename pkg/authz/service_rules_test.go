@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 )
 
@@ -89,27 +90,27 @@ func TestServiceWritePolicyRule(t *testing.T) {
 		SetName("test service type1").
 		SetHasCustomer(false).
 		SaveX(ctx)
-	service := c.Service.Create().
+	svc := c.Service.Create().
 		SetName("test service 1").
 		SetTypeID(srvType1.ID).
-		SetStatus("PLANNED").
+		SetStatus(service.StatusPending).
 		SaveX(ctx)
 	createService := func(ctx context.Context) error {
 		_, err := c.Service.Create().
 			SetName("new service").
 			SetTypeID(srvType1.ID).
-			SetStatus("PLANNED").
+			SetStatus(service.StatusPending).
 			Save(ctx)
 		return err
 	}
 	updateService := func(ctx context.Context) error {
-		return c.Service.UpdateOne(service).
+		return c.Service.UpdateOne(svc).
 			SetName("NewName").
 			SetExternalID("123").
 			Exec(ctx)
 	}
 	deleteService := func(ctx context.Context) error {
-		return c.Service.DeleteOne(service).
+		return c.Service.DeleteOne(svc).
 			Exec(ctx)
 	}
 	runCudPolicyTest(t, cudPolicyTest{
@@ -154,18 +155,18 @@ func TestServiceEndpointsWritePolicyRule(t *testing.T) {
 		SetName("Equipment3").
 		SetType(equipmentType).
 		SaveX(ctx)
-	service := c.Service.Create().
+	svc := c.Service.Create().
 		SetName("test service 1").
 		SetTypeID(srvType1.ID).
-		SetStatus("PLANNED").
+		SetStatus(service.StatusPending).
 		SaveX(ctx)
 
 	endpoint1 := c.ServiceEndpoint.Create().SetDefinition(endpointDef1).SetEquipment(equipment1).
-		SetService(service).SaveX(ctx)
+		SetService(svc).SaveX(ctx)
 
 	createServiceEP := func(ctx context.Context) error {
 		_, err := c.ServiceEndpoint.Create().SetDefinition(endpointDef2).SetEquipment(equipment2).
-			SetService(service).Save(ctx)
+			SetService(svc).Save(ctx)
 		return err
 	}
 	updateServiceEP := func(ctx context.Context) error {

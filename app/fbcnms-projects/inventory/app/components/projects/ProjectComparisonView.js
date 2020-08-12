@@ -15,20 +15,43 @@ import Button from '@fbcnms/ui/components/design-system/Button';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryView, {DisplayOptions} from '../InventoryViewContainer';
+import PowerSearchBar from '../power_search/PowerSearchBar';
 import ProjectCard from './ProjectCard';
 import ProjectComparisonViewQueryRenderer from './ProjectComparisonViewQueryRenderer';
 import React, {useMemo, useState} from 'react';
 import fbt from 'fbt';
+import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
+import {ProjectSearchConfig} from './ProjectsSearchConfig';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
+import {getInitialFilterValue} from '../comparison_view/FilterUtils';
+import {makeStyles} from '@material-ui/styles';
+import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
+
+const QUERY_LIMIT = 1000;
+
+const useStyles = makeStyles(() => ({
+  projectComparisonView: {
+    height: '100%',
+  },
+  powerSearchBarWrapper: {
+    paddingRight: '8px',
+  },
+  powerSearchBar: {
+    borderRadius: '8px',
+  },
+}));
 
 const ProjectComparisonView = () => {
+  const [filters, setFilters] = useState([]);
+  const [count, setCount] = useState((0: number));
   const [dialogKey, setDialogKey] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const {match, history, location} = useRouter();
   const [resultsDisplayMode, setResultsDisplayMode] = useState(
     DisplayOptions.table,
   );
+  const classes = useStyles();
 
   const selectedProjectTypeId = useMemo(
     () => extractEntityIdFromUrl('projectType', location.search),
@@ -38,6 +61,19 @@ const ProjectComparisonView = () => {
   const selectedProjectCardId = useMemo(
     () => extractEntityIdFromUrl('project', location.search),
     [location.search],
+  );
+
+  const locationTypesFilterConfigs = useLocationTypes();
+
+  const filterConfigs = useMemo(
+    () =>
+      ProjectSearchConfig.map(ent => ent.filters)
+        .reduce(
+          (allFilters, currentFilter) => allFilters.concat(currentFilter),
+          [],
+        )
+        .concat(locationTypesFilterConfigs ?? []),
+    [locationTypesFilterConfigs],
   );
 
   function navigateToProject(selectedProjectCardId: ?string) {
@@ -73,12 +109,53 @@ const ProjectComparisonView = () => {
     );
   }
   const header = {
-    title: 'Projects',
+    title: fbt('Projects', 'Projects header'),
+    subtitle: fbt(
+      'Manage and create new projects, which include multiple work orders.',
+      'Projects subheader',
+    ),
+    searchBar: (
+      <div className={classes.powerSearchBarWrapper}>
+        <PowerSearchBar
+          placeholder="Filter projects"
+          className={classes.powerSearchBar}
+          filterConfigs={filterConfigs}
+          searchConfig={ProjectSearchConfig}
+          filterValues={filters}
+          getSelectedFilter={(filterConfig: FilterConfig) =>
+            getInitialFilterValue(
+              filterConfig.key,
+              filterConfig.name,
+              filterConfig.defaultOperator,
+              null,
+            )
+          }
+          onFiltersChanged={filters => setFilters(filters)}
+          footer={
+            count !== 0
+              ? count > QUERY_LIMIT
+                ? fbt(
+                    '1 to ' +
+                      fbt.param('size of page', QUERY_LIMIT) +
+                      ' of ' +
+                      fbt.param('total number possible rows', count),
+                    'header to indicate partial results',
+                  )
+                : fbt(
+                    '1 to ' + fbt.param('number of results in page', count),
+                    'header to indicate number of results',
+                  )
+              : null
+          }
+        />
+      </div>
+    ),
     actionButtons: [
       <FormActionWithPermissions
         permissions={{
           entity: 'project',
           action: 'create',
+          ignoreTypes: true,
         }}>
         <Button
           onClick={() => {
@@ -95,13 +172,14 @@ const ProjectComparisonView = () => {
     <ErrorBoundary>
       <InventoryView
         header={header}
+        className={classes.projectComparisonView}
         onViewToggleClicked={setResultsDisplayMode}
         permissions={{
           entity: 'project',
         }}>
         <ProjectComparisonViewQueryRenderer
-          limit={50}
-          filters={[]}
+          limit={QUERY_LIMIT}
+          filters={filters}
           onProjectSelected={selectedProjectCardId =>
             navigateToProject(selectedProjectCardId)
           }
@@ -110,6 +188,7 @@ const ProjectComparisonView = () => {
               ? DisplayOptions.map
               : DisplayOptions.table
           }
+          onQueryReturn={c => setCount(c)}
         />
         <AddProjectDialog
           key={`new_project_${dialogKey}`}

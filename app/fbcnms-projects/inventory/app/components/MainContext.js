@@ -15,7 +15,6 @@ import type {
 import type {SessionUser} from '@fbcnms/magmalte/app/common/UserModel';
 
 import * as React from 'react';
-import AppContext from '@fbcnms/ui/context/AppContext';
 import RelayEnvironment from '../common/RelayEnvironment';
 import {DEACTIVATED_PAGE_PATH} from './DeactivatedPage';
 import {PermissionValues} from './admin/userManagement/utils/UserManagementUtils';
@@ -72,17 +71,129 @@ const meQuery = graphql`
         lastName
       }
       permissions {
-        canWrite
         adminPolicy {
           access {
             isAllowed
           }
         }
         inventoryPolicy {
-          ...UserManagementUtils_inventoryPolicy @relay(mask: false)
+          read {
+            isAllowed
+          }
+          location {
+            create {
+              isAllowed
+              locationTypeIds
+            }
+            update {
+              isAllowed
+              locationTypeIds
+            }
+            delete {
+              isAllowed
+              locationTypeIds
+            }
+          }
+          equipment {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          equipmentType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          locationType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          portType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          serviceType {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
         }
         workforcePolicy {
-          ...UserManagementUtils_workforcePolicy @relay(mask: false)
+          read {
+            isAllowed
+            projectTypeIds
+            workOrderTypeIds
+          }
+          templates {
+            create {
+              isAllowed
+            }
+            update {
+              isAllowed
+            }
+            delete {
+              isAllowed
+            }
+          }
+          data {
+            create {
+              isAllowed
+              projectTypeIds
+              workOrderTypeIds
+            }
+            update {
+              isAllowed
+              projectTypeIds
+              workOrderTypeIds
+            }
+            delete {
+              isAllowed
+              projectTypeIds
+              workOrderTypeIds
+            }
+            assign {
+              isAllowed
+              projectTypeIds
+              workOrderTypeIds
+            }
+            transferOwnership {
+              isAllowed
+              projectTypeIds
+              workOrderTypeIds
+            }
+          }
         }
       }
     }
@@ -100,13 +211,6 @@ export function MainContextProvider(props: Props) {
   const [value, setValue] = useState(DEFUALT_VALUE);
   const location = useLocation();
 
-  const {isFeatureEnabled} = useContext(AppContext);
-
-  const permissionsEnforcementIsOn = isFeatureEnabled(
-    'permissions_ui_enforcement',
-  );
-  const ignorePermissions = !permissionsEnforcementIsOn;
-
   useEffect(() => {
     if (location.pathname === DEACTIVATED_PAGE_PATH) {
       setValue(currentValue => ({
@@ -120,12 +224,8 @@ export function MainContextProvider(props: Props) {
       .then(meValue =>
         setValue(currentValue => ({
           ...currentValue,
-          integrationUserDefinition: integrationUserDefinitionBuilder(
-            meValue,
-            ignorePermissions,
-          ),
-          userHasAdminPermissions:
-            ignorePermissions || isUserHasAdminPermissions(meValue),
+          integrationUserDefinition: integrationUserDefinitionBuilder(meValue),
+          userHasAdminPermissions: isUserHasAdminPermissions(meValue),
           ...meValue,
         })),
       )
@@ -135,7 +235,7 @@ export function MainContextProvider(props: Props) {
           initializing: false,
         })),
       );
-  }, [ignorePermissions, location.pathname]);
+  }, [location.pathname]);
   return (
     <MainContext.Provider value={value}>{props.children}</MainContext.Provider>
   );

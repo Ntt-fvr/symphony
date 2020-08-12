@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 7459bf2367b15af6a91cd7c5fe6d9e21
+ * @relayHash aab3e394d7497b57c4e4da5bbd6373ca
  */
 
 /* eslint-disable */
@@ -15,12 +15,13 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type EditProjectInput = {|
   id: string,
   name: string,
   description?: ?string,
-  creator?: ?string,
+  priority?: ?ProjectPriority,
   creatorId?: ?string,
   type: string,
   location?: ?string,

@@ -16,9 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
-// WritePermissionGroupName is the name of the group that its member has write permission for all symphony.
-const WritePermissionGroupName = "Write Permission"
-
 var allowedEnums = map[models.PermissionValue]int{
 	models.PermissionValueNo:          1,
 	models.PermissionValueByCondition: 2,
@@ -111,6 +108,14 @@ func appendBasicPermissionRule(rule *models.BasicPermissionRule, addRule *models
 	return rule
 }
 
+func appendTopLevelLocationPermissionRuleInput(
+	rule *models.LocationPermissionRuleInput, bottomRule *models.BasicPermissionRuleInput) *models.LocationPermissionRuleInput {
+	if bottomRule == nil || bottomRule.IsAllowed == models.PermissionValueNo {
+		return &models.LocationPermissionRuleInput{IsAllowed: models.PermissionValueNo}
+	}
+	return rule
+}
+
 func appendLocationPermissionRule(rule *models.LocationPermissionRule, addRule *models.LocationPermissionRuleInput) *models.LocationPermissionRule {
 	if addRule == nil {
 		return rule
@@ -125,6 +130,14 @@ func appendLocationPermissionRule(rule *models.LocationPermissionRule, addRule *
 		rule.LocationTypeIds = nil
 	case models.PermissionValueByCondition:
 		rule.LocationTypeIds = append(rule.LocationTypeIds, addRule.LocationTypeIds...)
+	}
+	return rule
+}
+
+func appendTopLevelWorkforcePermissionRuleInput(
+	rule *models.WorkforcePermissionRuleInput, bottomRule *models.BasicPermissionRuleInput) *models.WorkforcePermissionRuleInput {
+	if bottomRule == nil || bottomRule.IsAllowed == models.PermissionValueNo {
+		return &models.WorkforcePermissionRuleInput{IsAllowed: models.PermissionValueNo}
 	}
 	return rule
 }
@@ -164,21 +177,24 @@ func appendLocationCUD(cud *models.LocationCud, addCUD *models.LocationCUDInput)
 	if addCUD == nil {
 		return cud
 	}
-	cud.Create = appendLocationPermissionRule(cud.Create, addCUD.Create)
-	cud.Delete = appendLocationPermissionRule(cud.Delete, addCUD.Delete)
+	cud.Create = appendLocationPermissionRule(
+		cud.Create, appendTopLevelLocationPermissionRuleInput(addCUD.Update, addCUD.Create))
 	cud.Update = appendLocationPermissionRule(cud.Update, addCUD.Update)
+	cud.Delete = appendLocationPermissionRule(
+		cud.Delete, appendTopLevelLocationPermissionRuleInput(addCUD.Update, addCUD.Delete))
 	return cud
 }
 
-func appendWorkforceCUD(cud *models.WorkforceCud, addCUD *models.WorkforceCUDInput) *models.WorkforceCud {
+func appendWorkforceCUD(cud *models.WorkforceCud, readRule *models.WorkforcePermissionRuleInput, addCUD *models.WorkforceCUDInput) *models.WorkforceCud {
 	if addCUD == nil {
 		return cud
 	}
-	cud.Create = appendWorkforcePermissionRule(cud.Create, addCUD.Create)
-	cud.Delete = appendWorkforcePermissionRule(cud.Delete, addCUD.Delete)
-	cud.Update = appendWorkforcePermissionRule(cud.Update, addCUD.Update)
-	cud.Assign = appendWorkforcePermissionRule(cud.Assign, addCUD.Assign)
-	cud.TransferOwnership = appendWorkforcePermissionRule(cud.TransferOwnership, addCUD.TransferOwnership)
+	cud.Create = appendWorkforcePermissionRule(cud.Create, appendTopLevelWorkforcePermissionRuleInput(readRule, addCUD.Create))
+	cud.Delete = appendWorkforcePermissionRule(cud.Delete, appendTopLevelWorkforcePermissionRuleInput(readRule, addCUD.Delete))
+	cud.Update = appendWorkforcePermissionRule(cud.Update, appendTopLevelWorkforcePermissionRuleInput(readRule, addCUD.Update))
+	cud.Assign = appendWorkforcePermissionRule(cud.Assign, appendTopLevelWorkforcePermissionRuleInput(readRule, addCUD.Assign))
+	cud.TransferOwnership = appendWorkforcePermissionRule(
+		cud.TransferOwnership, appendTopLevelWorkforcePermissionRuleInput(readRule, addCUD.TransferOwnership))
 	return cud
 }
 
@@ -206,7 +222,7 @@ func AppendWorkforcePolicies(policy *models.WorkforcePolicy, inputs ...*models.W
 			continue
 		}
 		policy.Read = appendWorkforcePermissionRule(policy.Read, input.Read)
-		policy.Data = appendWorkforceCUD(policy.Data, input.Data)
+		policy.Data = appendWorkforceCUD(policy.Data, input.Read, input.Data)
 		policy.Templates = appendCUD(policy.Templates, input.Templates)
 	}
 	return policy
@@ -222,7 +238,7 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 			permissionspolicy.IsGlobal(true),
 			permissionspolicy.HasGroupsWith(
 				usersgroup.HasMembersWith(user.ID(userID)),
-				usersgroup.StatusEQ(usersgroup.StatusACTIVE),
+				usersgroup.StatusEQ(usersgroup.StatusActive),
 			))).
 		All(ctx)
 	if err != nil {
@@ -241,41 +257,22 @@ func permissionPolicies(ctx context.Context, v *viewer.UserViewer) (*models.Inve
 	return inventoryPolicy, workforcePolicy, nil
 }
 
-func userHasWritePermissions(ctx context.Context) (bool, error) {
-	v := viewer.FromContext(ctx)
-	if v.Role() == user.RoleOWNER {
-		return true, nil
-	}
-	if v, ok := v.(*viewer.UserViewer); ok && !v.Features().Enabled(viewer.FeaturePermissionPolicies) {
-		return v.User().QueryGroups().
-			Where(usersgroup.Name(WritePermissionGroupName)).
-			Exist(ctx)
-	}
-	return false, nil
-}
-
 // Permissions builds the aggregated permissions for the given viewer
 func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
-	writePermissions, err := userHasWritePermissions(ctx)
-	if err != nil {
-		return nil, err
-	}
+	var err error
 	v := viewer.FromContext(ctx)
-	policiesEnabled := v.Features().Enabled(viewer.FeaturePermissionPolicies)
-	inventoryPolicy := NewInventoryPolicy(writePermissions)
-	workforcePolicy := NewWorkforcePolicy(true, writePermissions)
-	if policiesEnabled {
-		if u, ok := v.(*viewer.UserViewer); ok && !writePermissions {
-			inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, u)
-			if err != nil {
-				return nil, err
-			}
+	fullPermissions := userHasFullPermissions(v)
+	inventoryPolicy := NewInventoryPolicy(fullPermissions)
+	workforcePolicy := NewWorkforcePolicy(true, fullPermissions)
+	if u, ok := v.(*viewer.UserViewer); ok && !fullPermissions {
+		inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, u)
+		if err != nil {
+			return nil, err
 		}
 	}
 	res := models.PermissionSettings{
-		// TODO(T64743627): Deprecate CanWrite field
-		CanWrite:        writePermissions,
-		AdminPolicy:     NewAdministrativePolicy(v.Role() == user.RoleADMIN || v.Role() == user.RoleOWNER),
+		CanWrite:        fullPermissions,
+		AdminPolicy:     NewAdministrativePolicy(fullPermissions),
 		InventoryPolicy: inventoryPolicy,
 		WorkforcePolicy: workforcePolicy,
 	}

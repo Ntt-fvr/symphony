@@ -10,28 +10,13 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/facebookincubator/symphony/pkg/ent/user"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/pkg/errors"
-)
-
-const (
-	boolVal          = "bool"
-	emailVal         = "email"
-	stringVal        = "string"
-	dateVal          = "date"
-	intVal           = "int"
-	floatVal         = "float"
-	gpsLocationVal   = "gps_location"
-	rangeVal         = "range"
-	enum             = "enum"
-	datetimeLocalVal = "datetime_local"
-	nodeVal          = "node"
 )
 
 type AddPropertyArgs struct {
@@ -40,7 +25,39 @@ type AddPropertyArgs struct {
 	IsTemplate *bool
 }
 
-func PropertyValue(ctx context.Context, typ string, v interface{}) (string, error) {
+func NodePropertyValue(ctx context.Context, p *ent.Property, nodeType string) string {
+	var id *int
+	switch nodeType {
+	case hooks.NodeTypeLocation:
+		if i, err := p.QueryLocationValue().OnlyID(ctx); err == nil {
+			id = &i
+		}
+	case hooks.NodeTypeEquipment:
+		if i, err := p.QueryEquipmentValue().OnlyID(ctx); err == nil {
+			id = &i
+		}
+	case hooks.NodeTypeService:
+		if i, err := p.QueryServiceValue().OnlyID(ctx); err == nil {
+			id = &i
+		}
+	case hooks.NodeTypeWorkOrder:
+		if i, err := p.QueryWorkOrderValue().OnlyID(ctx); err == nil {
+			id = &i
+		}
+	case hooks.NodeTypeUser:
+		if i, err := p.QueryUserValue().OnlyID(ctx); err == nil {
+			id = &i
+		}
+	default:
+		return ""
+	}
+	if id == nil {
+		return ""
+	}
+	return strconv.Itoa(*id)
+}
+
+func PropertyValue(ctx context.Context, typ propertytype.Type, nodeType string, v interface{}) (string, error) {
 	switch v.(type) {
 	case *ent.PropertyType, *ent.Property:
 	default:
@@ -48,43 +65,53 @@ func PropertyValue(ctx context.Context, typ string, v interface{}) (string, erro
 	}
 	vo := reflect.ValueOf(v).Elem()
 	switch typ {
-	case emailVal, stringVal, dateVal, enum, datetimeLocalVal:
-		return vo.FieldByName("StringVal").String(), nil
-	case intVal:
-		i := vo.FieldByName("IntVal").Int()
-		return strconv.Itoa(int(i)), nil
-	case floatVal:
-		return fmt.Sprintf("%.3f", vo.FieldByName("FloatVal").Float()), nil
-	case gpsLocationVal:
-		la, lo := vo.FieldByName("LatitudeVal").Float(), vo.FieldByName("LongitudeVal").Float()
+	case propertytype.TypeEmail, propertytype.TypeString, propertytype.TypeDate,
+		propertytype.TypeEnum, propertytype.TypeDatetimeLocal:
+		strValue := vo.FieldByName("StringVal")
+		if strValue.IsNil() {
+			return "", nil
+		}
+		return reflect.Indirect(strValue).String(), nil
+	case propertytype.TypeInt:
+		intValue := vo.FieldByName("IntVal")
+		if intValue.IsNil() {
+			return "", nil
+		}
+		return strconv.Itoa(int(reflect.Indirect(intValue).Int())), nil
+	case propertytype.TypeFloat:
+		floatValue := vo.FieldByName("FloatVal")
+		if floatValue.IsNil() {
+			return "", nil
+		}
+		return fmt.Sprintf("%.3f", reflect.Indirect(floatValue).Float()), nil
+	case propertytype.TypeGpsLocation:
+		latitudeValue := vo.FieldByName("LatitudeVal")
+		longitudeValue := vo.FieldByName("LongitudeVal")
+		if latitudeValue.IsNil() || longitudeValue.IsNil() {
+			return "", nil
+		}
+		la, lo := reflect.Indirect(latitudeValue).Float(), reflect.Indirect(longitudeValue).Float()
 		return fmt.Sprintf("%f", la) + ", " + fmt.Sprintf("%f", lo), nil
-	case rangeVal:
-		rf, rt := vo.FieldByName("RangeFromVal").Float(), vo.FieldByName("RangeToVal").Float()
+	case propertytype.TypeRange:
+		rangeFromValue := vo.FieldByName("RangeFromVal")
+		rangeToValue := vo.FieldByName("RangeToVal")
+		if rangeFromValue.IsNil() || rangeToValue.IsNil() {
+			return "", nil
+		}
+		rf, rt := reflect.Indirect(rangeFromValue).Float(), reflect.Indirect(rangeToValue).Float()
 		return fmt.Sprintf("%.3f", rf) + " - " + fmt.Sprintf("%.3f", rt), nil
-	case boolVal:
-		return strconv.FormatBool(vo.FieldByName("BoolVal").Bool()), nil
-	case nodeVal:
+	case propertytype.TypeBool:
+		boolValue := vo.FieldByName("BoolVal")
+		if boolValue.IsNil() {
+			return "", nil
+		}
+		return strconv.FormatBool(reflect.Indirect(boolValue).Bool()), nil
+	case propertytype.TypeNode:
 		p, ok := v.(*ent.Property)
 		if !ok {
 			return "", nil
 		}
-		var id int
-		if i, err := p.QueryEquipmentValue().OnlyID(ctx); err == nil {
-			id = i
-		}
-		if i, err := p.QueryLocationValue().OnlyID(ctx); err == nil {
-			id = i
-		}
-		if i, err := p.QueryServiceValue().OnlyID(ctx); err == nil {
-			id = i
-		}
-		if i, err := p.QueryWorkOrderValue().OnlyID(ctx); err == nil {
-			id = i
-		}
-		if i, err := p.QueryUserValue().OnlyID(ctx); err == nil {
-			id = i
-		}
-		return strconv.Itoa(id), nil
+		return NodePropertyValue(ctx, p, nodeType), nil
 	default:
 		return "", errors.Errorf("type not supported %s", typ)
 	}
@@ -94,23 +121,23 @@ func PropertyValue(ctx context.Context, typ string, v interface{}) (string, erro
 func GetPropertyPredicate(p models.PropertyTypeInput) (predicate.Property, error) {
 	var pred predicate.Property
 	switch p.Type {
-	case models.PropertyKindString,
-		models.PropertyKindEmail,
-		models.PropertyKindDate,
-		models.PropertyKindEnum,
-		models.PropertyKindDatetimeLocal:
+	case propertytype.TypeString,
+		propertytype.TypeEmail,
+		propertytype.TypeDate,
+		propertytype.TypeEnum,
+		propertytype.TypeDatetimeLocal:
 		if p.StringValue != nil {
 			pred = property.StringVal(*p.StringValue)
 		}
-	case models.PropertyKindInt:
+	case propertytype.TypeInt:
 		if p.IntValue != nil {
 			pred = property.IntVal(*p.IntValue)
 		}
-	case models.PropertyKindBool:
+	case propertytype.TypeBool:
 		if p.BooleanValue != nil {
 			pred = property.BoolVal(*p.BooleanValue)
 		}
-	case models.PropertyKindFloat:
+	case propertytype.TypeFloat:
 		if p.FloatValue != nil {
 			pred = property.FloatVal(*p.FloatValue)
 		}
@@ -124,23 +151,23 @@ func GetPropertyPredicate(p models.PropertyTypeInput) (predicate.Property, error
 func GetPropertyTypePredicate(p models.PropertyTypeInput) (predicate.PropertyType, error) {
 	var pred predicate.PropertyType
 	switch p.Type {
-	case models.PropertyKindString,
-		models.PropertyKindEmail,
-		models.PropertyKindDate,
-		models.PropertyKindEnum,
-		models.PropertyKindDatetimeLocal:
+	case propertytype.TypeString,
+		propertytype.TypeEmail,
+		propertytype.TypeDate,
+		propertytype.TypeEnum,
+		propertytype.TypeDatetimeLocal:
 		if p.StringValue != nil {
 			pred = propertytype.StringVal(*p.StringValue)
 		}
-	case models.PropertyKindInt:
+	case propertytype.TypeInt:
 		if p.IntValue != nil {
 			pred = propertytype.IntVal(*p.IntValue)
 		}
-	case models.PropertyKindBool:
+	case propertytype.TypeBool:
 		if p.BooleanValue != nil {
 			pred = propertytype.BoolVal(*p.BooleanValue)
 		}
-	case models.PropertyKindFloat:
+	case propertytype.TypeFloat:
 		if p.FloatValue != nil {
 			pred = propertytype.FloatVal(*p.FloatValue)
 		}
@@ -152,23 +179,11 @@ func GetPropertyTypePredicate(p models.PropertyTypeInput) (predicate.PropertyTyp
 
 // GetDatePropertyPred returns the property and propertyType predicate for the date
 func GetDatePropertyPred(p models.PropertyTypeInput, operator models.FilterOperator) (predicate.Property, predicate.PropertyType, error) {
-	if p.Type != models.PropertyKindDate && p.Type != models.PropertyKindDatetimeLocal {
+	if p.Type != propertytype.TypeDate && p.Type != propertytype.TypeDatetimeLocal {
 		return nil, nil, errors.Errorf("property kind should be type")
 	}
 	if operator == models.FilterOperatorDateLessThan {
 		return property.StringValLT(*p.StringValue), propertytype.StringValLT(*p.StringValue), nil
 	}
 	return property.StringValGT(*p.StringValue), propertytype.StringValGT(*p.StringValue), nil
-}
-
-func GetUserID(ctx context.Context, userID *int, userName *string) (*int, error) {
-	if userName != nil && *userName != "" {
-		c := ent.FromContext(ctx)
-		id, err := c.User.Query().Where(user.AuthID(*userName)).OnlyID(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("fetching assignee user: %w", err)
-		}
-		return &id, nil
-	}
-	return userID, nil
 }

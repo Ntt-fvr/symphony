@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// nolint: goconst
 package resolver
 
 import (
 	"context"
 	"testing"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -89,16 +89,16 @@ func TestAddLocationTypeWithProperties(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	intProp := locType.QueryPropertyTypes().Where(propertytype.Type("int")).OnlyX(ctx)
-	strProp := locType.QueryPropertyTypes().Where(propertytype.Type("string")).OnlyX(ctx)
+	intProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
+	strProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 
 	require.Equal(t, "int_prop", intProp.Name, "verifying int property type's name")
-	require.Equal(t, "", intProp.StringVal, "verifying int property type's string value (default as this is an int property)")
-	require.Equal(t, intValue, intProp.IntVal, "verifying int property type's int value")
+	require.Nil(t, intProp.StringVal, "verifying int property type's string value (default as this is an int property)")
+	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "verifying int property type's int value")
 	require.Equal(t, intIndex, intProp.Index, "verifying int property type's index")
 	require.Equal(t, "str_prop", strProp.Name, "verifying string property type's name")
-	require.Equal(t, strValue, strProp.StringVal, "verifying string property type's String value")
-	require.Equal(t, 0, strProp.IntVal, "verifying int property type's int value")
+	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "verifying string property type's String value")
+	require.Nil(t, strProp.IntVal, "verifying int property type's int value")
 	require.Equal(t, strIndex, strProp.Index, "verifying string property type's index")
 }
 
@@ -141,17 +141,17 @@ func TestAddLocationTypeWithEquipmentProperty(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	eqProp := locType.QueryPropertyTypes().Where(propertytype.Type("node")).OnlyX(ctx)
+	eqProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeNode)).OnlyX(ctx)
 
 	require.Equal(t, "eq_prop", eqProp.Name)
-	require.Equal(t, "node", eqProp.Type)
+	require.Equal(t, propertytype.TypeNode, eqProp.Type)
 }
 
 func TestAddLocationTypeWithSurveyTemplate(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	// TODO(T66882071): Remove owner role
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOWNER))
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 	mr := r.Mutation()
 
 	question := models.SurveyTemplateQuestionInput{
@@ -257,7 +257,7 @@ func TestEditLocationTypeWithSurveyTemplate(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
 	// TODO(T66882071): Remove owner role
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOWNER))
+	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleOwner))
 	mr := r.Mutation()
 
 	question := models.SurveyTemplateQuestionInput{
@@ -350,7 +350,7 @@ func TestEditLocationTypeWithProperties(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	strProp := locType.QueryPropertyTypes().Where(propertytype.Type("string")).OnlyX(ctx)
+	strProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
 	strPropType = models.PropertyTypeInput{
@@ -371,13 +371,13 @@ func TestEditLocationTypeWithProperties(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, locType.Name, newType.Name, "successfully edited location type name")
 
-	strProp = locType.QueryPropertyTypes().Where(propertytype.Type("string")).OnlyX(ctx)
+	strProp = locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")
-	require.Equal(t, strValue, strProp.StringVal, "successfully edited prop type string value")
+	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "successfully edited prop type string value")
 
-	intProp := locType.QueryPropertyTypes().Where(propertytype.Type("int")).OnlyX(ctx)
+	intProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
-	require.Equal(t, intValue, intProp.IntVal, "successfully edited prop type int value")
+	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
 	intPropType = models.PropertyTypeInput{

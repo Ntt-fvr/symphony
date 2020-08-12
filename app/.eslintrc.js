@@ -7,6 +7,10 @@
  * @format
  */
 
+const fs = require('fs');
+const path = require('path');
+const {buildSchema, printSchema} = require('graphql');
+
 // enforces copyright header to be present in every file
 // eslint-disable-next-line max-len
 const openSourcePattern = /\*\n \* Copyright 20\d{2}-present Facebook\. All Rights Reserved\.\n \*\n \* This source code is licensed under the BSD-style license found in the\n \* LICENSE file in the root directory of this source tree\.\n \*\n/;
@@ -16,7 +20,33 @@ const combinedOpenSourcePattern = new RegExp(
   '(' + newOpenSourcePattern.source + ')|(' + openSourcePattern.source + ')',
 );
 
-module.exports.extends = ['eslint-config-fbcnms'];
+module.exports.extends = ['eslint-config-fbcnms', 'plugin:relay/recommended'];
+module.exports.plugins = ['relay', 'graphql'];
+module.exports.rules = {
+  // Relay Plugin
+  'relay/unused-fields': 'off',
+};
+
+function graphqlSchemaObject() {
+  const schemaPath = path.resolve(
+    __dirname,
+    '../graph/graphql/schema/symphony.graphql',
+  );
+  return buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}));
+}
+
+const schemaObject = graphqlSchemaObject();
+if (Object.keys(schemaObject).length > 0) {
+  module.exports.rules['graphql/no-deprecated-fields'] = [
+    'error',
+    {
+      env: 'relay',
+      schemaString: printSchema(schemaObject),
+      tagName: 'graphql',
+    },
+  ];
+}
+
 module.exports.overrides = [
   {
     files: ['*'],
@@ -29,6 +59,19 @@ module.exports.overrides = [
           bracketSpacing: false,
           jsxBracketSameLine: true,
           parser: 'flow',
+        },
+      ],
+    },
+  },
+  {
+    files: ['*.mdx'],
+    extends: ['plugin:mdx/overrides'],
+    rules: {
+      'flowtype/require-valid-file-annotation': 'off',
+      'prettier/prettier': [
+        2,
+        {
+          parser: 'mdx',
         },
       ],
     },
@@ -88,7 +131,6 @@ module.exports.overrides = [
       'fbcnms-projects/*/scripts/**/*.js',
       'fbcnms-projects/*/server/**/*.js',
       'fbcnms-projects/platform-server/**/*.js',
-      'fbcnms-projects/workflows/**/*.js',
       'scripts/fb/fbt/*.js',
     ],
     rules: {

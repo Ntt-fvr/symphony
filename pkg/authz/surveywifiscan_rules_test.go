@@ -21,7 +21,7 @@ import (
 func TestSurveyWiFiScanWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
@@ -138,7 +138,7 @@ func TestSurveyWiFiScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyCellScan.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -152,7 +152,7 @@ func TestSurveyWiFiScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyWiFiScan.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -165,7 +165,7 @@ func TestSurveyWiFiScanReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.SurveyWiFiScan.Query().Count(permissionsContext)
 		require.NoError(t, err)

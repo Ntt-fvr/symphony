@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log
+package log_test
 
 import (
 	"os"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -15,10 +16,10 @@ import (
 
 func TestFlags(t *testing.T) {
 	a := kingpin.New(t.Name(), "")
-	c := AddFlags(a)
+	c := log.AddFlags(a)
 	_, err := a.Parse([]string{
-		"--" + LevelFlagName, "error",
-		"--" + FormatFlagName, "json",
+		"--" + log.LevelFlagName, "error",
+		"--" + log.FormatFlagName, "json",
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "error", c.Level.String())
@@ -26,12 +27,14 @@ func TestFlags(t *testing.T) {
 }
 
 func TestEnvarFlags(t *testing.T) {
-	err := os.Setenv(LevelFlagEnvar, "debug")
+	err := os.Setenv(log.LevelFlagEnvar, "debug")
 	require.NoError(t, err)
-	err = os.Setenv(FormatFlagEnvar, "json")
+	defer func() { _ = os.Unsetenv(log.LevelFlagEnvar) }()
+	err = os.Setenv(log.FormatFlagEnvar, "json")
 	require.NoError(t, err)
+	defer func() { _ = os.Unsetenv(log.FormatFlagEnvar) }()
 	a := kingpin.New(t.Name(), "")
-	c := AddFlags(a)
+	c := log.AddFlags(a)
 	_, err = a.Parse(nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "debug", c.Level.String())
@@ -41,17 +44,17 @@ func TestEnvarFlags(t *testing.T) {
 func TestBadFlags(t *testing.T) {
 	t.Run("Level", func(t *testing.T) {
 		a := kingpin.New(t.Name(), "")
-		_ = AddFlags(a)
+		_ = log.AddFlags(a)
 		_, err := a.Parse([]string{
-			"--" + LevelFlagName, "fatal",
+			"--" + log.LevelFlagName, "fatal",
 		})
 		assert.EqualError(t, err, `unrecognized level: "fatal"`)
 	})
 	t.Run("Format", func(t *testing.T) {
 		a := kingpin.New(t.Name(), "")
-		_ = AddFlags(a)
+		_ = log.AddFlags(a)
 		_, err := a.Parse([]string{
-			"--" + FormatFlagName, "fmt",
+			"--" + log.FormatFlagName, "fmt",
 		})
 		assert.EqualError(t, err, `unrecognized format: "fmt"`)
 	})

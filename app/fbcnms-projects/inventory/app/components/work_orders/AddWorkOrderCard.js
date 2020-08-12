@@ -23,6 +23,7 @@ import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {WorkOrder} from '../../common/WorkOrder';
 
 import AddWorkOrderMutation from '../../mutations/AddWorkOrderMutation';
+import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
@@ -34,7 +35,7 @@ import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useContext, useReducer, useState} from 'react';
 import Select from '@fbcnms/ui/components/design-system/Select/Select';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
@@ -54,7 +55,7 @@ import {
 } from '../checklist/ChecklistCategoriesMutateReducer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/WorkOrder';
+import {priorityValues, statusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';
@@ -158,6 +159,7 @@ const workOrderTypeQuery = graphql`
             title
             type
             index
+            isMandatory
             enumValues
             enumSelectionMode
             helpText
@@ -214,10 +216,15 @@ const AddWorkOrderCard = (props: Props) => {
           files: [],
           images: [],
           assignedTo: null,
-          projectId: null,
+          project: null,
           checkListCategories: [],
         }
       : null,
+  );
+
+  const {isFeatureEnabled} = useContext(AppContext);
+  const mandatoryPropertiesOnCloseEnabled = isFeatureEnabled(
+    'mandatory_properties_on_work_order_close',
   );
 
   const enqueueSnackbar = useEnqueueSnackbar();
@@ -255,7 +262,7 @@ const AddWorkOrderCard = (props: Props) => {
       name,
       description,
       locationId,
-      projectId,
+      project,
       assignedTo,
       status,
       priority,
@@ -269,7 +276,7 @@ const AddWorkOrderCard = (props: Props) => {
         locationId,
         workOrderTypeId,
         assigneeId: assignedTo?.id,
-        projectId,
+        projectId: project?.id,
         status,
         priority,
         properties: toPropertyInput(properties),
@@ -303,7 +310,7 @@ const AddWorkOrderCard = (props: Props) => {
       | 'name'
       | 'description'
       | 'assignedTo'
-      | 'projectId'
+      | 'project'
       | 'locationId'
       | 'priority'
       | 'status',
@@ -365,6 +372,7 @@ const AddWorkOrderCard = (props: Props) => {
         permissions={{
           entity: 'workorder',
           action: 'create',
+          workOrderTypeId: workOrderTypeId,
         }}>
         <div className={classes.nameHeader}>
           <Breadcrumbs
@@ -408,7 +416,7 @@ const AddWorkOrderCard = (props: Props) => {
                           className={classes.gridInput}
                           margin="dense"
                           onProjectSelection={project =>
-                            _setWorkOrderDetail('projectId', project?.id)
+                            _setWorkOrderDetail('project', project)
                           }
                         />
                       </FormField>
@@ -474,7 +482,11 @@ const AddWorkOrderCard = (props: Props) => {
                           lg={4}
                           xl={4}>
                           <PropertyValueInput
-                            required={!!property.propertyType.isMandatory}
+                            required={
+                              !!property.propertyType.isMandatory &&
+                              (workOrder.status === 'DONE' ||
+                                !mandatoryPropertiesOnCloseEnabled)
+                            }
                             disabled={!property.propertyType.isInstanceProperty}
                             label={property.propertyType.name}
                             className={classes.gridInput}

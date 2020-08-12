@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -53,8 +54,9 @@ func preparePortData(ctx context.Context, r *TestResolver) portSearchDataModels 
 	})
 
 	loc1, _ := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "loc_inst1",
-		Type: locType1.ID,
+		Name:       "loc_inst1",
+		Type:       locType1.ID,
+		ExternalID: pointer.ToString("111"),
 	})
 
 	loc2, _ := mr.AddLocation(ctx, models.AddLocationInput{
@@ -75,7 +77,7 @@ func preparePortData(ctx context.Context, r *TestResolver) portSearchDataModels 
 			},
 			{
 				Name: "connected_date",
-				Type: models.PropertyKindDate,
+				Type: propertytype.TypeDate,
 			},
 		},
 	})
@@ -249,6 +251,16 @@ func TestSearchPortLocation(t *testing.T) {
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 4)
+
+	fExternal := models.PortFilterInput{
+		FilterType:  models.PortFilterTypeLocationInstExternalID,
+		Operator:    models.FilterOperatorContains,
+		StringValue: pointer.ToString("1"),
+	}
+	res1, err = qr.PortSearch(ctx, []*models.PortFilterInput{&fExternal}, &limit)
+	require.NoError(t, err)
+	ports = res1.Ports
+	require.Len(t, ports, 4)
 }
 
 func TestSearchPortProperties(t *testing.T) {
@@ -266,7 +278,7 @@ func TestSearchPortProperties(t *testing.T) {
 		Operator:   models.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
-			Type:        models.PropertyKindString,
+			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("t1"),
 		},
 	}
@@ -281,7 +293,7 @@ func TestSearchPortProperties(t *testing.T) {
 		Operator:   models.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
-			Type:        models.PropertyKindString,
+			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("newVal"),
 		},
 	}
@@ -296,7 +308,7 @@ func TestSearchPortProperties(t *testing.T) {
 		Operator:   models.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:         "propBool",
-			Type:         models.PropertyKindBool,
+			Type:         propertytype.TypeBool,
 			BooleanValue: pointer.ToBool(true),
 		},
 	}
@@ -311,7 +323,7 @@ func TestSearchPortProperties(t *testing.T) {
 		Operator:   models.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:         "propBool",
-			Type:         models.PropertyKindBool,
+			Type:         propertytype.TypeBool,
 			BooleanValue: pointer.ToBool(false),
 		},
 	}
@@ -326,7 +338,7 @@ func TestSearchPortProperties(t *testing.T) {
 		Operator:   models.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "connected_date",
-			Type:        models.PropertyKindDate,
+			Type:        propertytype.TypeDate,
 			StringValue: pointer.ToString("2019-01-01"),
 		},
 	}
@@ -375,7 +387,7 @@ func TestSearchPortsByService(t *testing.T) {
 	s1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Service Instance 1",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -393,7 +405,7 @@ func TestSearchPortsByService(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Service Instance 2",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{

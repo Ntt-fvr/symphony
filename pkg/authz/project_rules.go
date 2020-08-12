@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
+
 	"github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -19,6 +21,20 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
+func getProjectType(ctx context.Context, m *ent.ProjectMutation) (*int, error) {
+	id, exists := m.ID()
+	if !exists {
+		return nil, nil
+	}
+	projectTypeID, err := m.Client().ProjectType.Query().
+		Where(projecttype.HasProjectsWith(project.ID(id))).
+		OnlyID(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch project type id: %w", err)
+	}
+	return &projectTypeID, nil
+}
+
 func projectCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *ent.ProjectMutation) (bool, error) {
 	if m.Op().Is(ent.OpCreate) {
 		typeID, exists := m.TypeID()
@@ -27,23 +43,14 @@ func projectCudBasedCheck(ctx context.Context, cud *models.WorkforceCud, m *ent.
 		}
 		return checkWorkforce(cud.Create, nil, &typeID), nil
 	}
-	id, exists := m.ID()
-	if !exists {
-		return false, nil
-	}
-	projectTypeID, err := m.Client().ProjectType.Query().
-		Where(projecttype.HasProjectsWith(project.ID(id))).
-		OnlyID(ctx)
+	projectTypeID, err := getProjectType(ctx, m)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return false, nil
-		}
-		return false, fmt.Errorf("failed to fetch project type id: %w", err)
+		return false, err
 	}
 	if m.Op().Is(ent.OpUpdateOne) {
-		return checkWorkforce(cud.Update, nil, &projectTypeID), nil
+		return checkWorkforce(cud.Update, nil, projectTypeID), nil
 	}
-	return checkWorkforce(cud.Delete, nil, &projectTypeID), nil
+	return checkWorkforce(cud.Delete, nil, projectTypeID), nil
 }
 
 func projectReadPredicate(ctx context.Context) predicate.Project {
@@ -110,6 +117,27 @@ func isCreatorChanged(ctx context.Context, m *ent.ProjectMutation) (bool, error)
 	return false, nil
 }
 
+func allowOrSkipWorkOrderDefinition(ctx context.Context, client *ent.Client, workOrderDefinitionID int) error {
+	workOrderDefinition, err := client.WorkOrderDefinition.Query().
+		Where(workorderdefinition.ID(workOrderDefinitionID)).
+		WithProjectTemplate().
+		WithProjectType().
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return privacy.Denyf("failed to query work order definition: %w", err)
+		}
+		return privacy.Skip
+	}
+	switch {
+	case workOrderDefinition.Edges.ProjectTemplate != nil:
+		return privacy.Allow
+	case workOrderDefinition.Edges.ProjectType != nil:
+		return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+	}
+	return privacy.Skip
+}
+
 // ProjectWritePolicyRule grants write permission to project based on policy.
 func ProjectWritePolicyRule() privacy.MutationRule {
 	return privacy.ProjectMutationRuleFunc(func(ctx context.Context, m *ent.ProjectMutation) error {
@@ -124,7 +152,11 @@ func ProjectWritePolicyRule() privacy.MutationRule {
 				return privacy.Denyf(err.Error())
 			}
 			if creatorChanged {
-				allowed = allowed && (cud.TransferOwnership.IsAllowed == models.PermissionValueYes)
+				projectTypeID, err := getProjectType(ctx, m)
+				if err != nil {
+					return err
+				}
+				allowed = allowed && checkWorkforce(cud.TransferOwnership, nil, projectTypeID)
 			}
 		}
 		if allowed {
@@ -137,6 +169,9 @@ func ProjectWritePolicyRule() privacy.MutationRule {
 // AllowProjectCreatorWrite grants write permission if user is creator of project
 func AllowProjectCreatorWrite() privacy.MutationRule {
 	return privacy.ProjectMutationRuleFunc(func(ctx context.Context, m *ent.ProjectMutation) error {
+		if m.Op().Is(ent.OpDeleteOne) {
+			return privacy.Skip
+		}
 		projectID, exists := m.ID()
 		if !exists {
 			return privacy.Skip
@@ -184,7 +219,21 @@ func ProjectTypeWritePolicyRule() privacy.MutationRule {
 
 // WorkOrderDefinitionWritePolicyRule grants write permission to work order definition based on policy.
 func WorkOrderDefinitionWritePolicyRule() privacy.MutationRule {
-	return privacy.MutationRuleFunc(func(ctx context.Context, m ent.Mutation) error {
-		return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+	return privacy.WorkOrderDefinitionMutationRuleFunc(func(ctx context.Context, m *ent.WorkOrderDefinitionMutation) error {
+		if m.Op().Is(ent.OpCreate) {
+			if _, exists := m.ProjectTemplateID(); exists {
+				return privacy.Allow
+			}
+			if _, exists := m.ProjectTypeID(); exists {
+				return allowOrSkip(FromContext(ctx).WorkforcePolicy.Templates.Update)
+			}
+		} else {
+			workOrderDefinitionID, exists := m.ID()
+			if !exists {
+				return privacy.Skip
+			}
+			return allowOrSkipWorkOrderDefinition(ctx, m.Client(), workOrderDefinitionID)
+		}
+		return privacy.Skip
 	})
 }

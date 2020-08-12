@@ -13,5 +13,6 @@ locals {
     sstarcher     = "https://shanestarcher.com/helm-charts"
     bitnami       = "https://charts.bitnami.com/bitnami"
     eks           = "https://aws.github.io/eks-charts"
+    jetstack      = "https://charts.jetstack.io"
   }
 }

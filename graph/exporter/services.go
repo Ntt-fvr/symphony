@@ -8,14 +8,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/AlekSi/pointer"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/jobs"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
@@ -23,7 +19,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 type servicesFilterInput struct {
@@ -39,14 +38,13 @@ type servicesRower struct {
 	log log.Logger
 }
 
-func (er servicesRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er servicesRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error
 		filterInput []*models.ServiceFilterInput
 		dataHeader  = [...]string{bom + "Service ID", "Service Name", "Service Type", "Discovery Method", "Service External ID", "Customer Name", "Customer External ID", "Status"}
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToServiceFilterInput(filtersParam)
 		if err != nil {
@@ -134,9 +132,9 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		externalID = *service.ExternalID
 	}
 
-	discoveryMethod := st.DiscoveryMethod.String()
+	discoveryMethod := st.DiscoveryMethod
 	if st.DiscoveryMethod == "" {
-		discoveryMethod = models.DiscoveryMethodManual.String()
+		discoveryMethod = servicetype.DiscoveryMethodManual
 	}
 
 	properties, err := propertiesSlice(ctx, service, propertyTypes, models.PropertyEntityService)
@@ -148,7 +146,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		return nil, err
 	}
 
-	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod, externalID, customerName, customerExternalID, service.Status}
+	row := []string{strconv.Itoa(service.ID), service.Name, serviceType, discoveryMethod.String(), externalID, customerName, customerExternalID, service.Status.String()}
 	row = append(row, endpoints...)
 	row = append(row, properties...)
 

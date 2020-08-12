@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -71,7 +73,7 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "example_type_a", HasCustomer: true, Properties: propTypeInput})
 	require.NoError(t, err)
 
-	strProp := serviceType.QueryPropertyTypes().Where(propertytype.Type("string")).OnlyX(ctx)
+	strProp := serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
 	strPropType = models.PropertyTypeInput{
@@ -95,13 +97,13 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, serviceType.Name, newType.Name, "successfully edited service type name")
 
-	strProp = serviceType.QueryPropertyTypes().Where(propertytype.Type("string")).OnlyX(ctx)
+	strProp = serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.Equal(t, "str_prop_new", strProp.Name, "successfully edited prop type name")
-	require.Equal(t, strValue, strProp.StringVal, "successfully edited prop type string value")
+	require.Equal(t, strValue, pointer.GetString(strProp.StringVal), "successfully edited prop type string value")
 
-	intProp := serviceType.QueryPropertyTypes().Where(propertytype.Type("int")).OnlyX(ctx)
+	intProp := serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
-	require.Equal(t, intValue, intProp.IntVal, "successfully edited prop type int value")
+	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
 	intPropType = models.PropertyTypeInput{
@@ -118,9 +120,9 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 		HasCustomer: true,
 	})
 	require.NoError(t, err)
-	intProp = serviceType.QueryPropertyTypes().Where(propertytype.Type("int")).OnlyX(ctx)
+	intProp = serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeInt)).OnlyX(ctx)
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
-	require.Equal(t, intValue, intProp.IntVal, "successfully edited prop type int value")
+	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 }
 
 func TestRemoveServiceType(t *testing.T) {
@@ -138,11 +140,11 @@ func TestRemoveServiceType(t *testing.T) {
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "s1",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending)},
-	)
+		Status:        service.StatusPending,
+	})
 	require.NoError(t, err)
 
-	dm := models.DiscoveryMethodInventory
+	dm := servicetype.DiscoveryMethodInventory
 	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:            "example_type2",
 		HasCustomer:     false,
@@ -153,7 +155,7 @@ func TestRemoveServiceType(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "s2",
 		ServiceTypeID: serviceType2.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	require.NotNil(t, s2)

@@ -1,5 +1,5 @@
 # iam role for alb ingress controller
-module "alb_ingress_controller_role" {
+module alb_ingress_controller_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "ALBIngressControllerRole"
   role_path                 = local.eks_sa_role_path
@@ -11,7 +11,7 @@ module "alb_ingress_controller_role" {
 }
 
 # policy required by alb ingress controller
-data "aws_iam_policy_document" "alb_ingress_controller" {
+data aws_iam_policy_document alb_ingress_controller {
   statement {
     actions = [
       "acm:DescribeCertificate",
@@ -159,11 +159,11 @@ data "aws_iam_policy_document" "alb_ingress_controller" {
 }
 
 # alb ingress controller exposes ingress resources
-resource "helm_release" "alb_ingress_controller" {
+resource helm_release alb_ingress_controller {
   chart      = "aws-alb-ingress-controller"
   name       = module.alb_ingress_controller_role.service_account_name
   repository = local.helm_repository.incubator
-  version    = "1.0.0"
+  version    = "1.0.2"
   namespace  = module.alb_ingress_controller_role.service_account_namespace
   keyring    = ""
 
@@ -182,13 +182,39 @@ resource "helm_release" "alb_ingress_controller" {
   ]
 }
 
+# security groups allowing http/https access to intern.
+resource "aws_security_group" "intern_sg" {
+  name_prefix = "${local.eks_cluster_name}-intern-"
+  vpc_id      = module.vpc.vpc_id
+
+  dynamic "ingress" {
+    for_each = [80, 443]
+
+    content {
+      from_port = ingress.value
+      to_port   = ingress.value
+      protocol  = "tcp"
+      cidr_blocks = jsondecode(
+        jsondecode(data.aws_secretsmanager_secret_version.cidrs.secret_string)["facebook"]
+      )
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # nginx ingress manages ingress resources
-resource "helm_release" "nginx_ingress" {
+resource helm_release nginx_ingress {
   chart      = "nginx-ingress"
   repository = local.helm_repository.stable
   name       = "nginx-ingress"
   namespace  = "kube-system"
-  version    = "1.39.1"
+  version    = "1.41.2"
   keyring    = ""
 
   values = [<<VALUES
@@ -196,17 +222,25 @@ resource "helm_release" "nginx_ingress" {
     replicaCount: 3
     minAvailable: 2
     service:
-      type: ClusterIP
-      enableHttps: false
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        external-dns.alpha.kubernetes.io/hostname: ${local.ctf_domain_name}
+      externalTrafficPolicy: Local
+      internal:
+        enabled: true
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+          service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+          service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+          service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: ${aws_security_group.intern_sg.id}
     config:
       proxy-buffer-size: "32k"
       use-forwarded-headers: "true"
       log-format-escape-json: "true"
       log-format-upstream: '{"time": "$time_iso8601", "remote_addr": "$remote_addr", "request_id": "$req_id", "user": "$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status": $status, "host": "$host", "proto": "$server_protocol", "path": "$uri", "request_length": $request_length, "duration": $request_time, "method": "$request_method", "referrer": "$http_referer", "user_agent": "$http_user_agent", "proxy_upstream_name": "$proxy_upstream_name", "upstream_addr": "$upstream_addr", "upstream_response_length": "$upstream_response_length", "upstream_response_time": "$upstream_response_time", "upstream_status": "$upstream_status"}'
-      server-snippet: |
-        if ($host ~* ^(.*)${local.domains.purpleheadband.name}$) {
-          return 301 https://$1${local.domains.symphony.name}$request_uri;
-        }
     affinity:
       podAntiAffinity:
         preferredDuringSchedulingIgnoredDuringExecution:
@@ -227,7 +261,7 @@ resource "helm_release" "nginx_ingress" {
 }
 
 # alb for ingress gateways
-resource "kubernetes_ingress" "gateway" {
+resource kubernetes_ingress gateway {
   for_each = {
     public = {
       waf_acl_id = aws_wafregional_web_acl.wafacl.id
@@ -245,7 +279,6 @@ resource "kubernetes_ingress" "gateway" {
         for _, domain in local.domains : [
           domain.intern_name,
           format("*.%s", domain.intern_name),
-          format("auth.%s", domain.name),
         ]
       ])
     }
@@ -260,7 +293,7 @@ resource "kubernetes_ingress" "gateway" {
       "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
       "alb.ingress.kubernetes.io/target-type"          = "ip"
       "alb.ingress.kubernetes.io/healthcheck-path"     = "/healthz"
-      "alb.ingress.kubernetes.io/certificate-arn"      = aws_acm_certificate.cert.arn
+      "alb.ingress.kubernetes.io/certificate-arn"      = aws_acm_certificate.symphony.arn
       "alb.ingress.kubernetes.io/ssl-policy"           = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
       "alb.ingress.kubernetes.io/waf-acl-id"           = each.value.waf_acl_id
       "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTP = 80 }, { HTTPS = 443 }])
@@ -295,7 +328,7 @@ resource "kubernetes_ingress" "gateway" {
 }
 
 # iam role for external dns
-module "external_dns_role" {
+module external_dns_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "ExternalDNSRole"
   role_path                 = local.eks_sa_role_path
@@ -306,18 +339,26 @@ module "external_dns_role" {
   tags                      = local.tags
 }
 
+locals {
+  # managed hosted zones
+  aws_route53_zones = [
+    aws_route53_zone.symphony.id,
+    data.aws_route53_zone.magma.id,
+    aws_route53_zone.ctf.id,
+  ]
+}
+
 # policy required by external dns
-data "aws_iam_policy_document" "external_dns" {
+data aws_iam_policy_document external_dns {
   statement {
     actions = [
       "route53:ChangeResourceRecordSets",
     ]
 
-    resources = [
-      "arn:aws:route53:::hostedzone/${aws_route53_zone.symphony.id}",
-      "arn:aws:route53:::hostedzone/${aws_route53_zone.purpleheadband.id}",
-      "arn:aws:route53:::hostedzone/${local.magma_hosted_zone.id}",
-    ]
+    resources = formatlist(
+      "arn:aws:route53:::hostedzone/%s",
+      local.aws_route53_zones,
+    )
   }
 
   statement {
@@ -331,11 +372,11 @@ data "aws_iam_policy_document" "external_dns" {
 }
 
 # external dns maps route53 to ingress resources
-resource "helm_release" "external_dns" {
+resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.2.0"
+  version    = "3.2.6"
   namespace  = "kube-system"
   keyring    = ""
 
@@ -346,9 +387,7 @@ resource "helm_release" "external_dns" {
     annotations:
       eks.amazonaws.com/role-arn: ${module.external_dns_role.role_arn}
   zoneIdFilters:
-    - ${aws_route53_zone.symphony.id}
-    - ${aws_route53_zone.purpleheadband.id}
-    - ${local.magma_hosted_zone.id}
+    ${indent(4, yamlencode(local.aws_route53_zones))}
   metrics:
     enabled: true
     serviceMonitor:
@@ -356,3 +395,114 @@ resource "helm_release" "external_dns" {
   VALUES
   ]
 }
+
+# policy required by cert manager
+data aws_iam_policy_document cert_manager {
+  statement {
+    actions = [
+      "route53:GetChange",
+    ]
+
+    resources = [
+      "arn:aws:route53:::change/*",
+    ]
+  }
+
+  statement {
+    actions = [
+      "route53:ChangeResourceRecordSets",
+      "route53:ListResourceRecordSets",
+    ]
+
+    resources = [
+      format(
+        "arn:aws:route53:::hostedzone/%s",
+        aws_route53_zone.ctf.id,
+      ),
+    ]
+  }
+
+  statement {
+    actions = [
+      "route53:ListHostedZonesByName",
+    ]
+
+    resources = ["*"]
+  }
+}
+
+# iam role for cert manager
+module cert_manager_role {
+  source                    = "./modules/irsa"
+  role_name_prefix          = "CertManagerRole"
+  role_path                 = local.eks_sa_role_path
+  role_policy               = data.aws_iam_policy_document.cert_manager.json
+  service_account_name      = "cert-manager"
+  service_account_namespace = "cert-manager"
+  oidc_provider_arn         = module.eks.oidc_provider_arn
+  tags                      = local.tags
+}
+
+# cert manager is a certificate management controller.
+resource helm_release cert_manager {
+  name             = "cert-manager"
+  repository       = local.helm_repository.jetstack
+  chart            = "cert-manager"
+  version          = "0.16.1"
+  namespace        = "cert-manager"
+  create_namespace = true
+
+  values = [<<VALUES
+  serviceAccount:
+    name: ${module.cert_manager_role.service_account_name}
+    annotations:
+      eks.amazonaws.com/role-arn: ${module.cert_manager_role.role_arn}
+  securityContext:
+    fsGroup: 1001
+  extraArgs:
+    - --issuer-ambient-credentials
+  prometheus:
+    servicemonitor:
+      enabled: true
+  VALUES
+  ]
+}
+
+locals {
+  cert_issuer = {
+    intern = "cert-issuer-intern"
+  }
+}
+
+# cluster certificate issuer for intern.
+resource "helm_release" "intern_cert_issuer" {
+  name       = "intern-cert-issuer"
+  namespace  = helm_release.cert_manager.namespace
+  repository = local.helm_repository.kiwigrid
+  chart      = "any-resource"
+
+  values = [<<VALUES
+  anyResources:
+    InternIssuer: |-
+      apiVersion: cert-manager.io/v1alpha2
+      kind: ClusterIssuer
+      metadata:
+        name: ${local.cert_issuer.intern}
+      spec:
+        acme:
+          server: https://acme-v02.api.letsencrypt.org/directory
+          email: alexsn@fb.com
+          privateKeySecretRef:
+            name: ${local.cert_issuer.intern}-account-key
+          solvers:
+            - dns01:
+                route53:
+                  region: ${data.aws_region.current.name}
+                  hostedZoneID: ${aws_route53_zone.symphony.id}
+              selector:
+                dnsZones:
+                  - ${local.domains.symphony.intern_name}
+  VALUES
+  ]
+}
+

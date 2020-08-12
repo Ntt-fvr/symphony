@@ -82,6 +82,16 @@ export function reducer(
           ...items.slice(itemToRemoveIndex + 1, items.length),
         ],
       };
+    case 'MARK_ITEM_AS_REQUIRED':
+      const itemToMarkAsRequired = items.find(c => c.id === action.itemId);
+      if (itemToMarkAsRequired == null) {
+        return state;
+      }
+
+      return editItem(state, {
+        ...itemToMarkAsRequired,
+        isMandatory: action.isMandatory,
+      });
     case 'SET_EDITED_DEFINITION_ID':
       return {
         ...state,

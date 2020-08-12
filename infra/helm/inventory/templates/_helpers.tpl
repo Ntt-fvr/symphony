@@ -61,6 +61,12 @@ app.kubernetes.io/component: graph
 {{ include "inventory.metaLabels" . }}
 {{- end }}
 
+{{/* Meta labels for async service */}}
+{{- define "inventory.async.metaLabels" -}}
+app.kubernetes.io/component: async
+{{ include "inventory.metaLabels" . }}
+{{- end }}
+
 {{/* Meta labels for migrate job */}}
 {{- define "inventory.migrate.metaLabels" -}}
 app.kubernetes.io/component: migrate
@@ -97,6 +103,12 @@ app.kubernetes.io/component: front
 app.kubernetes.io/component: graph
 {{- end }}
 
+{{/* Selector labels for async service */}}
+{{- define "inventory.async.selectorLabels" -}}
+{{ include "inventory.selectorLabels" . }}
+app.kubernetes.io/component: async
+{{- end }}
+
 {{/* Selector labels for store service */}}
 {{- define "inventory.store.selectorLabels" -}}
 {{ include "inventory.selectorLabels" . }}
@@ -117,6 +129,11 @@ app.kubernetes.io/component: docs
 {{/* Fullname suffixed with graph */}}
 {{- define "inventory.graph.fullname" -}}
 {{- print (include "inventory.fullname" .) "-graph" -}}
+{{- end }}
+
+{{/* Fullname suffixed with async */}}
+{{- define "inventory.async.fullname" -}}
+{{- print (include "inventory.fullname" .) "-async" -}}
 {{- end }}
 
 {{/* Fullname suffixed with migrate */}}
@@ -152,6 +169,15 @@ app.kubernetes.io/component: docs
 {{- end -}}
 {{- end }}
 
+{{/* Create the name of async service account to use */}}
+{{- define "inventory.async.serviceAccountName" -}}
+{{- if .Values.async.serviceAccount.create -}}
+{{ default (include "inventory.async.fullname" .) .Values.async.serviceAccount.name }}
+{{- else -}}
+{{ default "default" .Values.async.serviceAccount.name }}
+{{- end -}}
+{{- end }}
+
 {{/* Create the name of store service account to use */}}
 {{- define "inventory.store.serviceAccountName" -}}
 {{- if .Values.store.serviceAccount.create -}}
@@ -173,6 +199,11 @@ app.kubernetes.io/component: docs
 {{/* Create the name for orc8r certs secret */}}
 {{- define "inventory.integrations.orc8r.certsSecretName" -}}
 {{- print (include "inventory.fullname" .) "-orc8r-certs" -}}
+{{- end }}
+
+{{/* Create the name for graph database secret */}}
+{{- define "inventory.graphDB.secretName" -}}
+{{- print (include "inventory.fullname" .) "-graph-db" -}}
 {{- end }}
 
 {{/* Create logging enviroment variables for store service */}}

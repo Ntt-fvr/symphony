@@ -9,9 +9,10 @@
  */
 
 require('@fbcnms/babel-register');
+const createCompiler = require('@storybook/addon-docs/mdx-compiler-plugin');
 
 const autoprefixer = require('autoprefixer');
-const paths = require('fbcnms-webpack-config/paths');
+const paths = require('@fbcnms/webpack-config/paths');
 const webpack = require('webpack');
 
 import type {WebpackOptions} from 'webpack';
@@ -28,8 +29,7 @@ export default function builder({config}: BuilderParams): WebpackOptions {
       rules: [
         {
           test: /\.(js|jsx|mjs)$/,
-          include: [paths.appSrc, paths.packagesDir],
-          exclude: /node_modules/,
+          include: [paths.appSrc, paths.packagesDir, paths.nodeModulesDir],
           loader: require.resolve('babel-loader'),
           options: {
             configFile: '../../babel.config.js',
@@ -39,6 +39,41 @@ export default function builder({config}: BuilderParams): WebpackOptions {
             // rebuilds.
             cacheDirectory: true,
           },
+        },
+        {
+          test: /\.(stories|story)\.mdx$/,
+          use: [
+            {
+              loader: require.resolve('babel-loader'),
+              options: {
+                configFile: '../../babel.config.js',
+                cacheDirectory: true,
+              },
+            },
+            {
+              loader: '@mdx-js/loader',
+              options: {
+                compilers: [createCompiler({})],
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(stories|story)\.[tj]sx?$/,
+          use: [
+            {
+              loader: require.resolve('@storybook/source-loader'),
+            },
+            {
+              loader: require.resolve('babel-loader'),
+              options: {
+                configFile: '../../babel.config.js',
+                cacheDirectory: true,
+              },
+            },
+          ],
+          exclude: [/node_modules/],
+          enforce: 'pre',
         },
         {
           test: /\.css$/,

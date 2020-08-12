@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash cc526e88587cd8b225852c3b455d631c
+ * @relayHash fc6537c6e89ea13f023abd029d1a6fbe
  */
 
 /* eslint-disable */
@@ -28,7 +28,7 @@ export type WorkOrderProjectTypesQueryResponse = {|
       |}
     |}>
   |},
-  +workOrderTypes: ?{|
+  +workOrderTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +$fragmentRefs: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref

@@ -18,7 +18,7 @@ import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventorySuspense from '../../common/InventorySuspense';
 import InventoryView, {DisplayOptions} from '../InventoryViewContainer';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import WorkOrderCard from './WorkOrderCard';
 import WorkOrderComparisonViewQueryRenderer from './WorkOrderComparisonViewQueryRenderer';
 import fbt from 'fbt';
@@ -26,15 +26,25 @@ import useFilterBookmarks from '../comparison_view/hooks/filterBookmarksHook';
 import useLocationTypes from '../comparison_view/hooks/locationTypesHook';
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
-import {WorkOrderSearchConfig} from './WorkOrderSearchConfig';
+import {
+  WORK_ORDER_FILTERS,
+  WorkOrderSearchConfig,
+} from './WorkOrderSearchConfig';
+import {doneStatus, statusValues} from '../../common/FilterTypes';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
-import {getInitialFilterValue} from '../comparison_view/FilterUtils';
+import {
+  getInitialFilterValue,
+  getPredefinedFilterSetWithValues,
+} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
+  },
+  workOrderComparisonView: {
     height: '100%',
   },
   powerSearchBarWrapper: {
@@ -51,11 +61,22 @@ const useStyles = makeStyles(() => ({
 
 const QUERY_LIMIT = 100;
 
+const selectedStatusValues = statusValues
+  .filter(status => status.key !== doneStatus.key)
+  .map(status => status.value);
+
+// For additional default filters, just create another variable
+// and add it to the initial state array
+const defaultStatusFilter = getPredefinedFilterSetWithValues(
+  WORK_ORDER_FILTERS.STATUS,
+  WorkOrderSearchConfig,
+  selectedStatusValues,
+);
+
 const WorkOrderComparisonView = () => {
-  const [filters, setFilters] = useState([]);
+  const [filters, setFilters] = useState([defaultStatusFilter]);
   const [dialogKey, setDialogKey] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [workOrderKey, setWorkOrderKey] = useState(1);
   const [resultsDisplayMode, setResultsDisplayMode] = useState(
     DisplayOptions.table,
   );
@@ -76,30 +97,65 @@ const WorkOrderComparisonView = () => {
   const locationTypesFilterConfigs = useLocationTypes();
   const filterBookmarksFilterConfig = useFilterBookmarks('WORK_ORDER');
 
-  const filterConfigs = WorkOrderSearchConfig.map(ent => ent.filters)
-    .reduce((allFilters, currentFilter) => allFilters.concat(currentFilter), [])
-    .concat(locationTypesFilterConfigs ?? []);
+  const filterConfigs = useMemo(
+    () =>
+      WorkOrderSearchConfig.map(ent => ent.filters)
+        .reduce(
+          (allFilters, currentFilter) => allFilters.concat(currentFilter),
+          [],
+        )
+        .concat(locationTypesFilterConfigs ?? []),
+    [locationTypesFilterConfigs],
+  );
 
-  function navigateToAddWorkOrder(selectedWorkOrderTypeId: ?string) {
-    history.push(
-      match.url +
-        (selectedWorkOrderTypeId
-          ? `?workorderType=${selectedWorkOrderTypeId}`
-          : ''),
-    );
-  }
+  const navigateToAddWorkOrder = useCallback(
+    (selectedWorkOrderTypeId: ?string) => {
+      history.push(
+        match.url +
+          (selectedWorkOrderTypeId
+            ? `?workorderType=${selectedWorkOrderTypeId}`
+            : ''),
+      );
+    },
+    [history, match.url],
+  );
 
-  function navigateToWorkOrder(selectedWorkOrderCardId: ?string) {
-    history.push(InventoryAPIUrls.workorder(selectedWorkOrderCardId));
-  }
+  const navigateToWorkOrder = useCallback(
+    (selectedWorkOrderCardId: ?string) => {
+      history.push(InventoryAPIUrls.workorder(selectedWorkOrderCardId));
+    },
+    [history],
+  );
 
   const showDialog = () => {
     setDialogOpen(true);
     setDialogKey(dialogKey + 1);
-    setWorkOrderKey(workOrderKey + 1);
   };
 
   const hideDialog = () => setDialogOpen(false);
+
+  const shouldRenderTable =
+    selectedWorkOrderCardId == null && selectedWorkOrderTypeId == null;
+
+  const workOrdersTable = useMemo(
+    () =>
+      shouldRenderTable === false ? null : (
+        <WorkOrderComparisonViewQueryRenderer
+          limit={QUERY_LIMIT}
+          filters={filters}
+          onWorkOrderSelected={selectedWorkOrderCardId =>
+            navigateToWorkOrder(selectedWorkOrderCardId)
+          }
+          displayMode={
+            resultsDisplayMode === DisplayOptions.map
+              ? DisplayOptions.map
+              : DisplayOptions.table
+          }
+          onQueryReturn={c => setCount(c)}
+        />
+      ),
+    [filters, navigateToWorkOrder, resultsDisplayMode, shouldRenderTable],
+  );
 
   if (selectedWorkOrderTypeId != null) {
     return (
@@ -124,7 +180,11 @@ const WorkOrderComparisonView = () => {
   }
 
   const header = {
-    title: 'Work Orders',
+    title: fbt('Work Orders', 'Work order header'),
+    subtitle: fbt(
+      'Find and create work orders, assign them to team members and track their status.',
+      'Work order subheader',
+    ),
     searchBar: (
       <div className={classes.powerSearchBarWrapper}>
         <PowerSearchBar
@@ -169,6 +229,7 @@ const WorkOrderComparisonView = () => {
         permissions={{
           entity: 'workorder',
           action: 'create',
+          ignoreTypes: true,
         }}>
         <Button onClick={showDialog}>
           <fbt desc="">Create Work Order</fbt>
@@ -182,21 +243,9 @@ const WorkOrderComparisonView = () => {
       <InventoryView
         permissions={{entity: 'workorder'}}
         header={header}
+        className={classes.workOrderComparisonView}
         onViewToggleClicked={setResultsDisplayMode}>
-        <WorkOrderComparisonViewQueryRenderer
-          limit={QUERY_LIMIT}
-          filters={filters}
-          onWorkOrderSelected={selectedWorkOrderCardId =>
-            navigateToWorkOrder(selectedWorkOrderCardId)
-          }
-          workOrderKey={workOrderKey}
-          displayMode={
-            resultsDisplayMode === DisplayOptions.map
-              ? DisplayOptions.map
-              : DisplayOptions.table
-          }
-          onQueryReturn={c => setCount(c)}
-        />
+        {workOrdersTable}
         <AddWorkOrderDialog
           key={`new_work_order_${dialogKey}`}
           open={dialogOpen}

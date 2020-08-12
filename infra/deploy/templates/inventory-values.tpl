@@ -5,6 +5,8 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-body-size: 10m
+  hosts:
+    - "${host}"
   paths:
     - /
 serviceMonitor:
@@ -15,7 +17,16 @@ tracing:
   enabled: true
   jaeger:
     agentEndpoint: localhost:6831
+    agentThriftEndpoint: localhost:6832
+graphDB:
+  mysql:
+    host: ${graph_db_host}
+    port: ${graph_db_port}
+    user: ${graph_db_user}
+    param: charset=utf8&parseTime=true&interpolateParams=true
 front:
+  deploymentAnnotations:
+    sidecar.jaegertracing.io/inject: "true"
   podDisruptionBudget:
     enabled: true
   replicas: ${replicas}
@@ -46,15 +57,30 @@ graph:
   spec:
     log:
       level: debug
-    mysql:
-      host: ${graph_db_host}
-      port: ${graph_db_port}
-      user: ${graph_db_user}
-      param: charset=utf8&parseTime=true&interpolateParams=true
     tenancy:
       tenantMaxDBConn: 10
     event:
       url: nats://graph.event
+    extraEnvVars:
+      - name: NATS_SERVER_URL
+        value: ${nats_server_url}
+async:
+  deploymentAnnotations:
+    sidecar.jaegertracing.io/inject: "true"
+  podDisruptionBudget:
+    enabled: true
+  replicas: ${async_replicas}
+  image:
+    repository: ${docker_registry}/async
+    tag: ${docker_tag}
+  spec:
+    log:
+      level: debug
+    tenancy:
+      tenantMaxDBConn: 5
+    event:
+      pub_url: nats://graph.event
+      sub_url: nats://graph.event?queue=async
     extraEnvVars:
       - name: NATS_SERVER_URL
         value: ${nats_server_url}

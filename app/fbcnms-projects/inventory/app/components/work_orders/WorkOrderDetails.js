@@ -54,7 +54,11 @@ import symphony from '@fbcnms/ui/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {doneStatus, priorityValues, statusValues} from '../../common/WorkOrder';
+import {
+  doneStatus,
+  priorityValues,
+  statusValues,
+} from '../../common/FilterTypes';
 import {formatDateForTextInput} from '@fbcnms/ui/utils/displayUtils';
 import {
   getInitialState,
@@ -162,6 +166,7 @@ const WorkOrderDetails = ({
       .map<Property>(toMutableProperty)
       .sort(sortPropertiesByIndex),
   );
+
   const [locationId, setLocationId] = useState(propsWorkOrder.location?.id);
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
   const {isFeatureEnabled} = useContext(AppContext);
@@ -267,6 +272,9 @@ const WorkOrderDetails = ({
 
   const {location} = workOrder;
   const actionsEnabled = isFeatureEnabled('planned_equipment');
+  const mandatoryPropertiesOnCloseEnabled = isFeatureEnabled(
+    'mandatory_properties_on_work_order_close',
+  );
 
   const isOwner = me?.user?.email === propsWorkOrder?.owner?.email;
   const isAssignee = me?.user?.email === propsWorkOrder?.assignedTo?.email;
@@ -277,6 +285,7 @@ const WorkOrderDetails = ({
         permissions={{
           entity: 'workorder',
           action: 'update',
+          workOrderTypeId: propsWorkOrder.workOrderType.id,
           ignorePermissions: isOwner || isAssignee,
         }}>
         <WorkOrderHeader
@@ -334,6 +343,26 @@ const WorkOrderDetails = ({
                               onProjectSelection={project =>
                                 _setWorkOrderDetail('project', project)
                               }
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Type">
+                            <TextInput
+                              disabled={true}
+                              variant="outlined"
+                              className={classes.gridInput}
+                              value={workOrder.workOrderType.name}
+                            />
+                          </FormField>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4} xl={4}>
+                          <FormField label="Type">
+                            <TextInput
+                              disabled={true}
+                              variant="outlined"
+                              className={classes.gridInput}
+                              value={workOrder.workOrderType.name}
                             />
                           </FormField>
                         </Grid>
@@ -417,7 +446,11 @@ const WorkOrderDetails = ({
                             lg={4}
                             xl={4}>
                             <PropertyValueInput
-                              required={!!property.propertyType.isMandatory}
+                              required={
+                                !!property.propertyType.isMandatory &&
+                                (workOrder.status === 'DONE' ||
+                                  !mandatoryPropertiesOnCloseEnabled)
+                              }
                               disabled={
                                 !property.propertyType.isInstanceProperty
                               }
@@ -533,6 +566,7 @@ const WorkOrderDetails = ({
                         permissions={{
                           entity: 'workorder',
                           action: 'transferOwnership',
+                          workOrderTypeId: propsWorkOrder.workOrderType.id,
                           ignorePermissions: isOwner,
                         }}
                         required={true}
@@ -551,6 +585,7 @@ const WorkOrderDetails = ({
                         permissions={{
                           entity: 'workorder',
                           action: 'assign',
+                          workOrderTypeId: propsWorkOrder.workOrderType.id,
                           ignorePermissions: isOwner || isAssignee,
                         }}>
                         <UserTypeahead
@@ -655,6 +690,7 @@ export default withRouter(
             checkList {
               id
               index
+              isMandatory
               type
               title
               helpText
@@ -673,6 +709,7 @@ export default withRouter(
                 fileType
                 storeKey
                 category
+                annotation
               }
               cellData {
                 id

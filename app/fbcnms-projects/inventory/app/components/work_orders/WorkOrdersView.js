@@ -13,6 +13,7 @@ import type {WorkOrdersView_workOrder} from './__generated__/WorkOrdersView_work
 import Button from '@fbcnms/ui/components/design-system/Button';
 import DateTimeFormat from '../../common/DateTimeFormat';
 import LocationLink from '../location/LocationLink';
+import PriorityTag from './PriorityTag';
 import React, {useMemo} from 'react';
 import Table from '@fbcnms/ui/components/design-system/Table/Table';
 import fbt from 'fbt';
@@ -20,7 +21,7 @@ import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
-import {statusValues} from '../../common/WorkOrder';
+import {prioritySortingValues, statusValues} from '../../common/FilterTypes';
 import {useHistory} from 'react-router';
 
 type Props = {
@@ -121,6 +122,12 @@ const WorkOrdersView = (props: Props) => {
           render: row => row.assignedTo?.email || null,
         },
         {
+          key: 'priority',
+          title: 'Priority',
+          getSortingValue: row => prioritySortingValues[row.priority],
+          render: row => <PriorityTag priority={row.priority} />,
+        },
+        {
           key: 'closeDate',
           title: 'Close Time',
           getSortingValue: row => row.closeDate,
@@ -161,6 +168,7 @@ export default createFragmentContainer(WorkOrdersView, {
         name
       }
       closeDate
+      priority
     }
   `,
 });

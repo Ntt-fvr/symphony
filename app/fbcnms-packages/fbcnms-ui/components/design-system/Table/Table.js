@@ -20,6 +20,7 @@ import TableHeader from './TableHeader';
 import classNames from 'classnames';
 import symphony from '../../../theme/symphony';
 import useVerticalScrollingEffect from '../hooks/useVerticalScrollingEffect';
+import {AutoSizer} from 'react-virtualized';
 import {TableContextProvider} from './TableContext';
 import {TableSelectionContextProvider} from './TableSelectionContext';
 import {makeStyles} from '@material-ui/styles';
@@ -89,6 +90,9 @@ const useStyles = makeStyles(() => ({
 export type TableRowDataType<T> = $ReadOnly<{|
   key?: string,
   alwaysShowOnTop?: ?boolean,
+  className?: ?string,
+  disabled?: ?boolean,
+  tooltip?: ?string,
   ...T,
 |}>;
 
@@ -98,7 +102,7 @@ export type TableRowId = string | number;
 export type NullableTableRowId = TableRowId | null;
 
 export type SelectionCallbackType = (
-  selectedIds: Array<TableRowId>,
+  selectedIds: $ReadOnlyArray<TableRowId>,
   selection: TableSelectionType,
   toggledItem?: ?{id: TableRowId, change: SelectionType},
 ) => void;
@@ -110,6 +114,18 @@ export const TABLE_VARIANT_TYPES = {
 };
 export type TableVariantTypes = $Keys<typeof TABLE_VARIANT_TYPES>;
 
+export type TableDesignProps = $ReadOnly<{|
+  showSelection?: boolean,
+  className?: string,
+  variant?: TableVariantTypes,
+  dataRowsSeparator?: RowsSeparationTypes,
+  dataRowClassName?: string,
+|}>;
+
+export type TableSelectionProps = $ReadOnly<{|
+  selectedIds?: $ReadOnlyArray<TableRowId>,
+  onSelectionChanged?: SelectionCallbackType,
+|}>;
 /*
   detailsCard:
     When passed, will be shown on as part of the table content.
@@ -120,16 +136,12 @@ type Props<T> = $ReadOnly<{|
   ...TableHeaderData<T>,
   data: $ReadOnlyArray<TableRowDataType<T>>,
   sortSettings?: ?TableSortSettings,
-  showSelection?: boolean,
-  className?: string,
-  variant?: TableVariantTypes,
-  dataRowsSeparator?: RowsSeparationTypes,
-  dataRowClassName?: string,
-  selectedIds?: Array<TableRowId>,
-  onSelectionChanged?: SelectionCallbackType,
   activeRowId?: NullableTableRowId,
   onActiveRowIdChanged?: ActiveCallbackType,
   detailsCard?: ?React.Node,
+  resizableColumns?: boolean,
+  ...TableDesignProps,
+  ...TableSelectionProps,
 |}>;
 
 const Table = <T>(props: Props<T>) => {
@@ -148,6 +160,7 @@ const Table = <T>(props: Props<T>) => {
     dataRowClassName,
     dataRowsSeparator,
     detailsCard,
+    resizableColumns = false,
   } = props;
   const classes = useStyles();
   const [dataColumns, setDataColumns] = useState([]);
@@ -183,8 +196,10 @@ const Table = <T>(props: Props<T>) => {
     false,
   );
 
-  const renderChildren = () => (
-    <div className={classNames(classes.root, classes[variant], className)}>
+  const renderChildren = (width: number) => (
+    <div
+      className={classNames(classes.root, classes[variant], className)}
+      style={{width}}>
       <div
         className={classNames(classes.tableContainer, {
           [classes.expanded]: !detailsCard,
@@ -212,31 +227,42 @@ const Table = <T>(props: Props<T>) => {
     </div>
   );
 
-  const allIds = useMemo(() => data.map((d, i) => d.key ?? i), [data]);
+  const allIds = useMemo(
+    () => data.filter(d => !d.disabled).map((d, i) => d.key ?? i),
+    [data],
+  );
   const contextValue: TableSettings = useMemo(
     () => ({
       showSelection: showSelection ?? false,
       clickableRows: !!onActiveRowIdChanged,
       sort: propSortSettings,
+      resizableColumns,
     }),
-    [onActiveRowIdChanged, propSortSettings, showSelection],
+    [onActiveRowIdChanged, propSortSettings, showSelection, resizableColumns],
   );
 
   return (
-    <TableContextProvider settings={contextValue}>
-      {contextValue.showSelection || contextValue.clickableRows ? (
-        <TableSelectionContextProvider
-          allIds={allIds}
-          activeId={activeRowId}
-          onActiveChanged={onActiveRowIdChanged}
-          selectedIds={selectedIds ?? []}
-          onSelectionChanged={onSelectionChanged}>
-          {renderChildren()}
-        </TableSelectionContextProvider>
-      ) : (
-        renderChildren()
+    <AutoSizer disableHeight>
+      {({width}: {width: number}) => (
+        <TableContextProvider
+          width={width}
+          settings={contextValue}
+          columns={columns}>
+          {contextValue.showSelection || contextValue.clickableRows ? (
+            <TableSelectionContextProvider
+              allIds={allIds}
+              activeId={activeRowId}
+              onActiveChanged={onActiveRowIdChanged}
+              selectedIds={selectedIds ?? []}
+              onSelectionChanged={onSelectionChanged}>
+              {renderChildren(width)}
+            </TableSelectionContextProvider>
+          ) : (
+            renderChildren(width)
+          )}
+        </TableContextProvider>
       )}
-    </TableContextProvider>
+    </AutoSizer>
   );
 };
 

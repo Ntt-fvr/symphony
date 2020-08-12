@@ -59,12 +59,17 @@ func (ServiceType) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			Unique(),
-		field.Bool("has_customer").Default(false),
-		field.Bool("is_deleted").Default(false),
+		field.Bool("has_customer").
+			Default(false),
+		field.Bool("is_deleted").
+			Default(false),
 		field.Enum("discovery_method").
-			Comment("how will service of this type be discovered? (null means manual adding and not discovery)").
-			Values("INVENTORY").
-			Optional(),
+			Comment("how will service of this type be discovered?").
+			ValueMap(map[string]string{
+				"Manual":    "MANUAL",
+				"Inventory": "INVENTORY",
+			}).
+			Default("MANUAL"),
 	}
 }
 
@@ -176,7 +181,13 @@ func (Service) Fields() []ent.Field {
 			Nillable().
 			NotEmpty().
 			Unique(),
-		field.String("status"),
+		field.Enum("status").
+			ValueMap(map[string]string{
+				"Pending":      "PENDING",
+				"InService":    "IN_SERVICE",
+				"Maintenance":  "MAINTENANCE",
+				"Disconnected": "DISCONNECTED",
+			}),
 	}
 }
 

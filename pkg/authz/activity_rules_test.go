@@ -4,24 +4,37 @@
 
 package authz_test
 
-//TODO(T67933416): Return these rules
-/*
+import (
+	"context"
+	"testing"
+	"time"
+
+	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/authz/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/require"
+)
+
 func getActivityCudOperations(
 	ctx context.Context,
 	c *ent.Client,
 	setParent func(*ent.ActivityCreate) *ent.ActivityCreate,
 ) cudOperations {
-	author := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	author := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	activityQuery := c.Activity.Create().
 		SetAuthor(author).
-		SetChangedField(activity.ChangedFieldASSIGNEE).
+		SetChangedField(activity.ChangedFieldAssignee).
 		SetNewValue("a").
 		SetOldValue("b")
 	activityQuery = setParent(activityQuery)
 	activityEntity := activityQuery.SaveX(ctx)
 	createActivity := func(ctx context.Context) error {
 		activityQuery := c.Activity.Create().
-			SetChangedField(activity.ChangedFieldASSIGNEE).
+			SetChangedField(activity.ChangedFieldAssignee).
 			SetNewValue("a").
 			SetOldValue("b").
 			SetAuthor(author)
@@ -48,20 +61,20 @@ func getActivityCudOperations(
 func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
 	woType1, wo1 := prepareWorkOrderData(ctx, c)
 	_, wo2 := prepareWorkOrderData(ctx, c)
 	c.Activity.Create().
 		SetAuthor(u).
 		SetWorkOrder(wo1).
-		SetChangedField(activity.ChangedFieldASSIGNEE).
+		SetChangedField(activity.ChangedFieldAssignee).
 		SetNewValue("a").
 		SetOldValue("b").
 		SaveX(ctx)
 	c.Activity.Create().
 		SetAuthor(u).
 		SetWorkOrder(wo2).
-		SetChangedField(activity.ChangedFieldASSIGNEE).
+		SetChangedField(activity.ChangedFieldAssignee).
 		SetNewValue("a").
 		SetOldValue("b").
 		SaveX(ctx)
@@ -71,7 +84,7 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Activity.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -85,7 +98,7 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Activity.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -98,7 +111,7 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Activity.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -109,7 +122,7 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 func TestWorkOrderActivityPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
@@ -135,4 +148,3 @@ func TestWorkOrderActivityPolicyRule(t *testing.T) {
 		delete: cudOperations.delete,
 	})
 }
-*/

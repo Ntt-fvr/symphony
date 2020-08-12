@@ -51,9 +51,6 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     textTransform: 'capitalize',
   },
-  fieldName: {
-    textTransform: 'capitalize',
-  },
 }));
 
 const ActivityPost = (props: Props) => {
@@ -102,11 +99,9 @@ const ActivityPost = (props: Props) => {
           <fbt desc="">
             set the{' '}
             <fbt:param name="changed field">
-              <span className={classes.fieldName}>
-                {activity.changedField.toLowerCase()}
-              </span>
+              <span>{activity.changedField.toLowerCase()}</span>
             </fbt:param>
-            to be{' '}
+            to{' '}
             <fbt:param name="new value">
               {genActivityValueComponent(newVal)}
             </fbt:param>
@@ -115,16 +110,49 @@ const ActivityPost = (props: Props) => {
       );
     }
     if (newVal === '') {
+      if (oldValNode && oldValNode?.__typename === 'User') {
+        return (
+          <span>
+            <fbt desc="">
+              removed{' '}
+              <fbt:param name="old value">
+                {genActivityValueComponent(oldVal)}
+              </fbt:param>
+              as an
+              <fbt:param name="changed field">
+                <span>{activity.changedField.toLowerCase()}</span>
+              </fbt:param>
+            </fbt>
+          </span>
+        );
+      }
       return (
         <span>
           <fbt desc="">
             removed{' '}
             <fbt:param name="changed field">
-              <span className={classes.fieldName}>
-                {activity.changedField.toLowerCase()}
-              </span>
+              <span>{activity.changedField.toLowerCase()}</span>
             </fbt:param>
             value
+          </fbt>
+        </span>
+      );
+    }
+    if (activity.changedField === 'DESCRIPTION') {
+      return (
+        <span>
+          <fbt desc="">changed the description</fbt>
+        </span>
+      );
+    }
+    if (activity.changedField === 'NAME') {
+      return (
+        <span>
+          <fbt desc="">
+            changed work order name to{' '}
+            <fbt:param name="new value">
+              {genActivityValueComponent(newVal)}
+            </fbt:param>
           </fbt>
         </span>
       );
@@ -134,9 +162,7 @@ const ActivityPost = (props: Props) => {
         <fbt desc="">
           changed the{' '}
           <fbt:param name="changed field">
-            <span className={classes.fieldName}>
-              {activity.changedField.toLowerCase()}
-            </span>
+            <span>{activity.changedField.toLowerCase()}</span>
           </fbt:param>
           from{' '}
           <fbt:param name="old value">

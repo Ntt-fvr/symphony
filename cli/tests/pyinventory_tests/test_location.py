@@ -25,10 +25,10 @@ from pyinventory.api.location import (
     move_location,
 )
 from pyinventory.api.location_type import add_location_type
-from pyinventory.common.data_class import PropertyDefinition
 from pyinventory.exceptions import LocationCannotBeDeletedWithDependency
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import PropertyDefinition
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub

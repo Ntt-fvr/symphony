@@ -133,7 +133,7 @@ func TestProjectTransferOwnershipWritePolicyRule(t *testing.T) {
 	getCud := func(p *models.PermissionSettings) *models.WorkforceCud {
 		return p.WorkforcePolicy.Data
 	}
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	appendTransferOwnership := func(p *models.PermissionSettings) {
 		getCud(p).TransferOwnership.IsAllowed = models.PermissionValueYes
 	}
@@ -181,15 +181,39 @@ func TestProjectTransferOwnershipWritePolicyRule(t *testing.T) {
 			appendPermissions: appendTransferOwnership,
 			operation:         clearProjectCreator,
 		},
+		{
+			operationName: "UpdateWithCreatorWithType",
+			initialPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Update.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Update.ProjectTypeIds = []int{projectType.ID}
+			},
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).TransferOwnership.IsAllowed = models.PermissionValueByCondition
+				getCud(p).TransferOwnership.ProjectTypeIds = []int{projectType.ID}
+			},
+			operation: updateProjectCreator,
+		},
+		{
+			operationName: "ClearWorkOrderAssigneeWithType",
+			initialPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Update.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Update.ProjectTypeIds = []int{projectType.ID}
+			},
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).TransferOwnership.IsAllowed = models.PermissionValueByCondition
+				getCud(p).TransferOwnership.ProjectTypeIds = []int{projectType.ID}
+			},
+			operation: clearProjectCreator,
+		},
 	}
 	runPolicyTest(t, tests)
 }
 
-func TestProjectCreatorCanEditProject(t *testing.T) {
+func TestProjectCreatorCanEditProjectButNoDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	projectType, _ := prepareProjectData(ctx, c)
-	u2 := viewer.MustGetOrCreateUser(ctx, "AnotherUser", user.RoleUSER)
+	u2 := viewer.MustGetOrCreateUser(ctx, "AnotherUser", user.RoleUser)
 	ctx = userContextWithPermissions(ctx, "SomeUser", func(p *models.PermissionSettings) {
 		p.WorkforcePolicy.Data.Create.IsAllowed = models.PermissionValueYes
 	})
@@ -219,7 +243,7 @@ func TestProjectCreatorCanEditProject(t *testing.T) {
 	require.NoError(t, err)
 	err = c.Project.DeleteOne(proj2).
 		Exec(ctx)
-	require.NoError(t, err)
+	require.Error(t, err)
 }
 
 func TestProjectCreatorUnchangedWritePolicyRule(t *testing.T) {
@@ -227,7 +251,7 @@ func TestProjectCreatorUnchangedWritePolicyRule(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, project := prepareProjectData(ctx, c)
 	_, project2 := prepareProjectData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	c.Project.UpdateOne(project).
 		SetCreatorID(u.ID).
 		ExecX(ctx)
@@ -237,7 +261,7 @@ func TestProjectCreatorUnchangedWritePolicyRule(t *testing.T) {
 		context.Background(),
 		c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 	err := c.Project.UpdateOne(project).
 		SetCreatorID(u.ID).
@@ -284,6 +308,26 @@ func TestProjectTypeWritePolicyRule(t *testing.T) {
 	})
 }
 
+func TestProjectTemplateIsAlwaysEditable(t *testing.T) {
+	c := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(
+		context.Background(),
+		c,
+		viewertest.WithRole(user.RoleUser),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	projectTemplate, err := c.ProjectTemplate.Create().
+		SetName("ProjectTemplate").
+		Save(ctx)
+	require.NoError(t, err)
+	err = c.ProjectTemplate.UpdateOne(projectTemplate).
+		SetName("NewName").
+		Exec(ctx)
+	require.NoError(t, err)
+	err = c.ProjectTemplate.DeleteOne(projectTemplate).
+		Exec(ctx)
+	require.NoError(t, err)
+}
+
 func TestProjectReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
@@ -295,7 +339,7 @@ func TestProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Project.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -309,7 +353,7 @@ func TestProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Project.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -322,7 +366,7 @@ func TestProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Project.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -359,7 +403,7 @@ func TestProjectOfOwnedWorkOrderReadPolicyRule(t *testing.T) {
 	c.Project.UpdateOne(project).
 		AddWorkOrders(workOrder).
 		ExecX(ctx)
-	u := viewer.MustGetOrCreateUser(ctx, "theOwner", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "theOwner", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetOwner(u).
 		ExecX(ctx)

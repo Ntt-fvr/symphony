@@ -3,22 +3,22 @@ locals {
   eks_cluster_name = "${var.project}-${terraform.workspace}"
 
   # iam role path for service accounts
-  eks_sa_role_path = "/service_accounts/${local.enviroment}/"
+  eks_sa_role_path = "/service_accounts/${local.environment}/"
 }
 
 # eks workers ssh key
-resource "tls_private_key" "eks_workers" {
+resource tls_private_key eks_workers {
   algorithm = "RSA"
 }
 
 # keypair from ssh key
-resource "aws_key_pair" "eks_workers" {
+resource aws_key_pair eks_workers {
   key_name_prefix = "${local.eks_cluster_name}-"
   public_key      = tls_private_key.eks_workers.public_key_openssh
 }
 
 # security group allowing ssh traffic from bastion
-resource "aws_security_group" "eks_worker_ssh" {
+resource aws_security_group eks_worker_ssh {
   name_prefix = "eks-ssh-"
   vpc_id      = module.vpc.vpc_id
 
@@ -30,11 +30,11 @@ resource "aws_security_group" "eks_worker_ssh" {
   }
 }
 
-module "eks" {
+module eks {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 12.0"
   cluster_name    = local.eks_cluster_name
-  cluster_version = "1.16"
+  cluster_version = "1.17"
   enable_irsa     = true
 
   subnets = module.vpc.private_subnets
@@ -57,8 +57,8 @@ module "eks" {
   worker_groups = [
     {
       instance_type        = "t3.xlarge"
-      asg_desired_capacity = 3
-      asg_min_size         = 3
+      asg_desired_capacity = 5
+      asg_min_size         = 5
       asg_max_size         = 9
       autoscaling_enabled  = true
       tags = [
@@ -97,9 +97,17 @@ module "eks" {
       username = ""
       groups   = [local.orc8r_admin_group]
     },
+    {
+      rolearn = try(
+        aws_iam_role.ctf_admin[0].arn,
+        data.aws_iam_role.ctf_admin[0].arn,
+      )
+      username = local.ctf_admin_user
+      groups   = [local.ctf_admin_group]
+    }
   ]
 
-  kubeconfig_name                      = "symphony-${local.enviroment}"
+  kubeconfig_name                      = "symphony-${local.environment}"
   kubeconfig_aws_authenticator_command = "aws"
   kubeconfig_aws_authenticator_command_args = concat(
     [
@@ -117,13 +125,13 @@ module "eks" {
 }
 
 # generates eks access token
-data "aws_eks_cluster_auth" "eks" {
+data aws_eks_cluster_auth eks {
   name     = module.eks.cluster_id
   provider = aws.eks_admin
 }
 
 # policy delegating assume role check to account root
-data "aws_iam_policy_document" "root_delegate" {
+data aws_iam_policy_document root_delegate {
   statement {
     principals {
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
@@ -137,7 +145,7 @@ data "aws_iam_policy_document" "root_delegate" {
 }
 
 # create iam role for eks admin
-resource "aws_iam_role" "eks_admin" {
+resource aws_iam_role eks_admin {
   name = format(
     "Eks%sAdmin",
     terraform.workspace != "default" ? title(terraform.workspace) : "",
@@ -147,7 +155,7 @@ resource "aws_iam_role" "eks_admin" {
 }
 
 # policy allowing full access to eks resources
-data "aws_iam_policy_document" "eks_full_access" {
+data aws_iam_policy_document eks_full_access {
   statement {
     actions = [
       "eks:*",
@@ -160,13 +168,13 @@ data "aws_iam_policy_document" "eks_full_access" {
 }
 
 # attach full eks access policy to admin role
-resource "aws_iam_role_policy" "eks_admin" {
+resource aws_iam_role_policy eks_admin {
   role   = aws_iam_role.eks_admin.id
   policy = data.aws_iam_policy_document.eks_full_access.json
 }
 
 # document allowing assume eks admin role
-data "aws_iam_policy_document" "eks_admin" {
+data aws_iam_policy_document eks_admin {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -179,12 +187,12 @@ data "aws_iam_policy_document" "eks_admin" {
 }
 
 # policy allowing assume eks admin role
-resource "aws_iam_policy" "eks_admin" {
+resource aws_iam_policy eks_admin {
   policy = data.aws_iam_policy_document.eks_admin.json
 }
 
 # role assume policy for eks workers
-data "aws_iam_policy_document" "eks_worker_assumable" {
+data aws_iam_policy_document eks_worker_assumable {
   statement {
     principals {
       identifiers = ["ec2.amazonaws.com"]
@@ -203,7 +211,7 @@ data "aws_iam_policy_document" "eks_worker_assumable" {
 }
 
 # kubernetes cluster role binding for viewers
-resource "kubernetes_cluster_role_binding" "viewers" {
+resource kubernetes_cluster_role_binding viewers {
   metadata {
     name = "viewers"
   }

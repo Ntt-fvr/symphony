@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -118,10 +119,10 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "L2 Access", HasCustomer: false})
 	require.NoError(t, err)
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Service23",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -130,7 +131,7 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 		row1       = []string{"", "s1", serviceTypeName, "MANUAL", "M123", "", "", "IN_SERVICE", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "strVal", "54", "", "", "", "", "", ""}
 		row2       = []string{"", "s2", serviceType2Name, "MANUAL", "M456", "", "", "MAINTENANCE", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "29/03/88", "false", "", "", "", ""}
 		row3       = []string{"", "s3", serviceType3Name, "MANUAL", "M789", "", "", "DISCONNECTED", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "30.23-50", "45.8,88.9", "", ""}
-		row4       = []string{"", "s3", serviceType4Name, "MANUAL", "M789", "", "", "DISCONNECTED", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", strconv.Itoa(loc.ID), strconv.Itoa(service.ID)}
+		row4       = []string{"", "s3", serviceType4Name, "MANUAL", "M789", "", "", "DISCONNECTED", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", strconv.Itoa(loc.ID), strconv.Itoa(svc.ID)}
 	)
 	titleWithEndpoint := append(dataHeader[:], endpointHeader[:]...)
 	titleWithProperties := append(titleWithEndpoint, propName1, propName2, propName3, propName4, propName5, propName6, propName7, propName8)
@@ -150,10 +151,10 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 		switch ptyp.Name {
 		case propName1:
 			require.Equal(t, *value.StringValue, "strVal")
-			require.Equal(t, ptyp.Type, "string")
+			require.Equal(t, ptyp.Type, propertytype.TypeString)
 		case propName2:
 			require.Equal(t, *value.IntValue, 54)
-			require.Equal(t, ptyp.Type, "int")
+			require.Equal(t, ptyp.Type, propertytype.TypeInt)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -172,10 +173,10 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 		switch ptyp.Name {
 		case propName3:
 			require.Equal(t, *value.StringValue, "29/03/88")
-			require.Equal(t, ptyp.Type, "date")
+			require.Equal(t, ptyp.Type, propertytype.TypeDate)
 		case propName4:
 			require.Equal(t, *value.BooleanValue, false)
-			require.Equal(t, ptyp.Type, "bool")
+			require.Equal(t, ptyp.Type, propertytype.TypeBool)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -197,11 +198,11 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 		case propName5:
 			require.Equal(t, *value.RangeFromValue, 30.23)
 			require.EqualValues(t, *value.RangeToValue, 50)
-			require.Equal(t, ptyp.Type, "range")
+			require.Equal(t, ptyp.Type, propertytype.TypeRange)
 		case propName6:
 			require.Equal(t, *value.LatitudeValue, 45.8)
 			require.Equal(t, *value.LongitudeValue, 88.9)
-			require.Equal(t, ptyp.Type, "gps_location")
+			require.Equal(t, ptyp.Type, propertytype.TypeGpsLocation)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -222,10 +223,10 @@ func TestValidatePropertiesForServiceType(t *testing.T) {
 		switch ptyp.Name {
 		case propName7:
 			require.Equal(t, *value.NodeIDValue, loc.ID)
-			require.Equal(t, ptyp.Type, "node")
+			require.Equal(t, ptyp.Type, propertytype.TypeNode)
 		case propName8:
-			require.Equal(t, *value.NodeIDValue, service.ID)
-			require.Equal(t, ptyp.Type, "node")
+			require.Equal(t, *value.NodeIDValue, svc.ID)
+			require.Equal(t, ptyp.Type, propertytype.TypeNode)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -246,16 +247,16 @@ func TestValidateForExistingService(t *testing.T) {
 		Name: "type1",
 	})
 	require.NoError(t, err)
-	service, err := importer.r.Mutation().AddService(ctx, models.ServiceCreateData{
+	svc, err := importer.r.Mutation().AddService(ctx, models.ServiceCreateData{
 		Name:          "myService",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	var (
-		test = []string{strconv.Itoa(service.ID), "myService", "type1", "", "", "", "", models.ServiceStatusPending.String()}
+		test = []string{strconv.Itoa(svc.ID), "myService", "type1", "", "", "", "", service.StatusPending.String()}
 	)
 	rec, _ := NewImportRecord(test, title)
-	_, err = importer.validateLineForExistingService(ctx, service.ID, rec)
+	_, err = importer.validateLineForExistingService(ctx, svc.ID, rec)
 	require.NoError(t, err)
 }

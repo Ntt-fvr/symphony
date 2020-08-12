@@ -1,4 +1,4 @@
-resource "aws_security_group" "elastic_sg" {
+resource aws_security_group elastic_sg {
   name_prefix = "elastic-cluster"
   description = "Security group for Elasticsearch instance"
   vpc_id      = module.vpc.vpc_id
@@ -21,13 +21,13 @@ resource "aws_security_group" "elastic_sg" {
 }
 
 # elastic search linked role
-resource "aws_iam_service_linked_role" "es" {
+resource aws_iam_service_linked_role es {
   aws_service_name = "es.amazonaws.com"
   count            = terraform.workspace == "default" ? 1 : 0
 }
 
 # elastic search domain
-resource "aws_elasticsearch_domain" "es" {
+resource aws_elasticsearch_domain es {
   domain_name           = "tf-symphony-${terraform.workspace}"
   elasticsearch_version = "7.4"
 
@@ -73,7 +73,7 @@ resource "aws_elasticsearch_domain" "es" {
 }
 
 # policy allowing elastic managment access
-data "aws_iam_policy_document" "es_management_access" {
+data aws_iam_policy_document es_management_access {
   statement {
     actions = [
       "es:*",
@@ -91,18 +91,18 @@ data "aws_iam_policy_document" "es_management_access" {
 }
 
 # bind elastic managment access policy to domain
-resource "aws_elasticsearch_domain_policy" "es_management_access" {
+resource aws_elasticsearch_domain_policy es_management_access {
   domain_name     = aws_elasticsearch_domain.es.domain_name
   access_policies = data.aws_iam_policy_document.es_management_access.json
 }
 
 # helm chart for cleanning old indices.
-resource "helm_release" "elasticsearch_curator" {
+resource helm_release elasticsearch_curator {
   name       = "elasticsearch-curator"
   repository = local.helm_repository.stable
   chart      = "elasticsearch-curator"
   namespace  = "monitoring"
-  version    = "2.1.5"
+  version    = "2.2.1"
   keyring    = ""
 
   values = [<<EOT
@@ -118,7 +118,7 @@ resource "helm_release" "elasticsearch_curator" {
 }
 
 # external service for elastic
-resource "kubernetes_service" "elastic" {
+resource kubernetes_service elastic {
   metadata {
     name      = "elastic"
     namespace = "monitoring"
@@ -131,7 +131,7 @@ resource "kubernetes_service" "elastic" {
 }
 
 # provide intern kibana access
-resource "kubernetes_ingress" "kibana" {
+resource kubernetes_ingress kibana {
   metadata {
     name      = "kibana"
     namespace = "monitoring"
@@ -158,7 +158,7 @@ resource "kubernetes_ingress" "kibana" {
 }
 
 # redirect root to kibana plugin
-resource "kubernetes_ingress" "kibana_redirect" {
+resource kubernetes_ingress kibana_redirect {
   metadata {
     name      = "kibana-redirect"
     namespace = "monitoring"
@@ -188,12 +188,12 @@ resource "kubernetes_ingress" "kibana_redirect" {
 }
 
 # fluentd charts for sending logs from the cluster to elastic.
-resource "helm_release" "fluentd_elasticsearch" {
+resource helm_release fluentd_elasticsearch {
   chart      = "fluentd-elasticsearch"
   repository = local.helm_repository.kiwigrid
   name       = "fluentd-elasticsearch"
   namespace  = "monitoring"
-  version    = "9.3.2"
+  version    = "9.6.0"
   keyring    = ""
 
   values = [<<EOT

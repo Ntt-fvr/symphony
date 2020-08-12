@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -38,7 +37,7 @@ type locationsRower struct {
 	log log.Logger
 }
 
-func (er locationsRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er locationsRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger           = er.log.For(ctx)
 		err              error
@@ -46,7 +45,6 @@ func (er locationsRower) rows(ctx context.Context, url *url.URL) ([][]string, er
 		locationIDHeader = [...]string{bom + "Location ID"}
 		fixedHeaders     = [...]string{"External ID", "Latitude", "Longitude"}
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToLocationFilterInput(filtersParam)
 		if err != nil {

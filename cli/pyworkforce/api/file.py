@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 from pysymphony.api.image import add_image, delete_image
+from pysymphony.common.data_class import SiteSurvey
 from pysymphony.graphql.enum.image_entity import ImageEntity
 
 from .. import SymphonyClient
-from ..common.data_class import SiteSurvey
 
 
 def add_site_survey_image(

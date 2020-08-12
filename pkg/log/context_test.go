@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log
+package log_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
@@ -15,10 +16,10 @@ import (
 
 func TestLoggerFieldContext(t *testing.T) {
 	core, o := observer.New(zap.InfoLevel)
-	logger := NewDefaultLogger(zap.New(core))
+	logger := log.NewDefaultLogger(zap.New(core))
 
-	ctx := NewFieldsContext(context.Background(), zap.String("name", "test"))
-	ctx = NewFieldsContext(ctx, zap.String("lang", "go"))
+	ctx := log.NewFieldsContext(context.Background(), zap.String("name", "test"))
+	ctx = log.NewFieldsContext(ctx, zap.String("lang", "go"))
 	logger.For(ctx).Info("test message", zap.Int("speed", 42))
 
 	assert.Equal(t, 1, o.

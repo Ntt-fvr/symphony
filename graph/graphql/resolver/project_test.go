@@ -6,15 +6,15 @@ package resolver
 
 import (
 	"context"
-	"errors"
 	"testing"
-
-	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -34,7 +34,7 @@ func TestNumOfProjects(t *testing.T) {
 
 	numWO, err := ptr.NumberOfProjects(ctx, pType)
 	require.NoError(t, err)
-	require.Equal(t, 0, numWO)
+	require.Zero(t, numWO)
 
 	workOrder, err := mr.CreateProject(ctx, models.AddProjectInput{
 		Name: "foo", Type: pType.ID,
@@ -50,7 +50,7 @@ func TestNumOfProjects(t *testing.T) {
 
 	numWO, err = ptr.NumberOfProjects(ctx, pType)
 	require.NoError(t, err)
-	require.Equal(t, 0, numWO)
+	require.Zero(t, numWO)
 }
 
 func TestProjectQuery(t *testing.T) {
@@ -90,7 +90,21 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), resolver.client)
 	mutation := resolver.Mutation()
 
-	woType, err := mutation.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type_a"})
+	woType, err := mutation.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
+		Name: "example_type_a",
+		CheckListCategories: []*models.CheckListCategoryDefinitionInput{
+			{
+				Title: "Category",
+				CheckList: []*models.CheckListDefinitionInput{
+					{
+						Title:       "Item 1",
+						Type:        enum.CheckListItemTypeString,
+						IsMandatory: pointer.ToBool(true),
+					},
+				},
+			},
+		},
+	})
 	require.NoError(t, err)
 	woDef := models.WorkOrderDefinitionInput{Type: woType.ID, Index: pointer.ToInt(1)}
 
@@ -114,13 +128,21 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	input := models.AddProjectInput{Name: "test", Type: typ.ID, Location: &location.ID}
 	proj, err := mutation.CreateProject(ctx, input)
 	require.NoError(t, err)
-	wos, err := proj.QueryWorkOrders().All(ctx)
+	wos, err := proj.QueryWorkOrders().WithCheckListCategories().All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, wos, 1)
 	wo := wos[0]
 	assert.EqualValues(t, wo.Name, woType.Name)
 	assert.EqualValues(t, wo.Index, *woDef.Index)
 	assert.EqualValues(t, wo.QueryLocation().FirstXID(ctx), location.ID)
+	assert.Len(t, wo.Edges.CheckListCategories, 1)
+
+	clItems, err := wo.QueryCheckListCategories().QueryCheckListItems().All(ctx)
+	require.NoError(t, err)
+	assert.Len(t, clItems, 1)
+	clItem := clItems[0]
+	assert.EqualValues(t, clItem.Title, "Item 1")
+	assert.EqualValues(t, clItem.IsMandatory, true)
 }
 
 func TestEditProjectTypeWorkOrders(t *testing.T) {
@@ -233,7 +255,7 @@ func TestProjectMutation(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, deleted)
 	deleted, err = mutation.DeleteProject(ctx, project.ID)
-	assert.True(t, errors.Is(err, privacy.Deny))
+	assert.Error(t, err)
 	assert.False(t, deleted)
 
 	deleted, err = mutation.DeleteProjectType(ctx, typ.ID)
@@ -271,7 +293,7 @@ func TestEditProject(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, input.Name, project.Name)
 		assert.Equal(t, *input.Location, project.QueryLocation().OnlyX(ctx).ID)
-		assert.Equal(t, *input.CreatorID, project.QueryCreator().OnlyXID(ctx))
+		assert.Equal(t, *input.CreatorID, project.QueryCreator().OnlyIDX(ctx))
 
 		updateInput := models.EditProjectInput{
 			ID:          project.ID,
@@ -346,22 +368,22 @@ func TestAddProjectWithProperties(t *testing.T) {
 
 	strValue := "Foo"
 	strProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_prop")).OnlyIDX(ctx),
 		StringValue:    &strValue,
 	}
 	strFixedProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyIDX(ctx),
 		StringValue:    &strFixedValue,
 	}
 	intValue := 5
 	intProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("int_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("int_prop")).OnlyIDX(ctx),
 		StringValue:    nil,
 		IntValue:       &intValue,
 	}
 	fl1, fl2 := 5.5, 7.8
 	rngProp := models.PropertyInput{
-		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyXID(ctx),
+		PropertyTypeID: typ.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyIDX(ctx),
 		RangeFromValue: &fl1,
 		RangeToValue:   &fl2,
 	}
@@ -381,23 +403,33 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.NoError(t, err, "querying project node")
 	fetchedProj, ok := node.(*ent.Project)
 	require.True(t, ok, "casting project instance")
+	fetchedProjectTemplate, err := fetchedProj.QueryTemplate().Only(ctx)
+	require.NoError(t, err)
 
 	intFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("int_prop"))).OnlyX(ctx)
-	require.Equal(t, intFetchProp.IntVal, *intProp.IntValue, "Comparing properties: int value")
-	require.Equal(t, intFetchProp.QueryType().OnlyXID(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	tIntFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("int_prop")).OnlyX(ctx)
+	require.Equal(t, pointer.GetInt(intFetchProp.IntVal), pointer.GetInt(intProp.IntValue), "Comparing properties: int value")
+	require.NotEqual(t, intFetchProp.QueryType().OnlyIDX(ctx), intProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, intFetchProp.QueryType().OnlyIDX(ctx), tIntFetchProp.ID, "Comparing properties: PropertyType value")
 
 	strFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
-	require.Equal(t, strFetchProp.StringVal, *strProp.StringValue, "Comparing properties: string value")
-	require.Equal(t, strFetchProp.QueryType().OnlyXID(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	tStrFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_prop")).OnlyX(ctx)
+	require.Equal(t, pointer.GetString(strFetchProp.StringVal), pointer.GetString(strProp.StringValue), "Comparing properties: string value")
+	require.NotEqual(t, strFetchProp.QueryType().OnlyIDX(ctx), strProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, strFetchProp.QueryType().OnlyIDX(ctx), tStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fixedStrFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_fixed_prop"))).OnlyX(ctx)
-	require.Equal(t, fixedStrFetchProp.StringVal, *strFixedProp.StringValue, "Comparing properties: fixed string value")
-	require.Equal(t, fixedStrFetchProp.QueryType().OnlyXID(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	tFixedStrFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_fixed_prop")).OnlyX(ctx)
+	require.Equal(t, pointer.GetString(fixedStrFetchProp.StringVal), pointer.GetString(strFixedProp.StringValue), "Comparing properties: fixed string value")
+	require.NotEqual(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), strFixedProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, fixedStrFetchProp.QueryType().OnlyIDX(ctx), tFixedStrFetchProp.ID, "Comparing properties: PropertyType value")
 
 	rngFetchProp := fetchedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("rng_prop"))).OnlyX(ctx)
-	require.Equal(t, rngFetchProp.RangeFromVal, *rngProp.RangeFromValue, "Comparing properties: range value")
-	require.Equal(t, rngFetchProp.RangeToVal, *rngProp.RangeToValue, "Comparing properties: range value")
-	require.Equal(t, rngFetchProp.QueryType().OnlyXID(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	tRngFetchProp := fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("rng_prop")).OnlyX(ctx)
+	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeFromVal), pointer.GetFloat64(rngProp.RangeFromValue), "Comparing properties: range value")
+	require.Equal(t, pointer.GetFloat64(rngFetchProp.RangeToVal), pointer.GetFloat64(rngProp.RangeToValue), "Comparing properties: range value")
+	require.NotEqual(t, rngFetchProp.QueryType().OnlyIDX(ctx), rngProp.PropertyTypeID, "Comparing properties: PropertyType value")
+	require.Equal(t, rngFetchProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing properties: PropertyType value")
 
 	fetchedProps, err := pr.Properties(ctx, fetchedProj)
 	require.NoError(t, err)
@@ -442,15 +474,17 @@ func TestAddProjectWithProperties(t *testing.T) {
 	require.NoError(t, err, "querying updated project node")
 	updatedProj, ok := updatedNode.(*ent.Project)
 	require.True(t, ok, "casting updated project instance")
-
 	require.Equal(t, updatedProj.Name, newProjectName, "Comparing updated project name")
-
+	fetchedProjectTemplate, err = updatedProj.QueryTemplate().Only(ctx)
+	require.NoError(t, err)
 	fetchedProps, _ = pr.Properties(ctx, updatedProj)
 	require.Equal(t, len(propInputs), len(fetchedProps), "number of properties should remain he same")
 
 	updatedProp := updatedProj.QueryProperties().Where(property.HasTypeWith(propertytype.Name("str_prop"))).OnlyX(ctx)
-	require.Equal(t, updatedProp.StringVal, *prop.StringValue, "Comparing updated properties: string value")
-	require.Equal(t, updatedProp.QueryType().OnlyXID(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	tRngFetchProp = fetchedProjectTemplate.QueryProperties().Where(propertytype.Name("str_prop")).OnlyX(ctx)
+	require.Equal(t, pointer.GetString(updatedProp.StringVal), pointer.GetString(prop.StringValue), "Comparing updated properties: string value")
+	require.NotEqual(t, updatedProp.QueryType().OnlyIDX(ctx), prop.PropertyTypeID, "Comparing updated properties: PropertyType value")
+	require.Equal(t, updatedProp.QueryType().OnlyIDX(ctx), tRngFetchProp.ID, "Comparing updated properties: PropertyType value")
 }
 
 func TestEditProjectType(t *testing.T) {
@@ -533,6 +567,48 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	wos, err := proj.QueryWorkOrders().All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, wos, 1)
-	props := wos[0].QueryProperties().AllX(ctx)
+	props := wos[0].QueryProperties().Where().AllX(ctx)
 	require.Len(t, props, 2)
+}
+
+func TestAddProjectWithPriority(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr, qr := r.Mutation(), r.Query()
+	name := "Project Name"
+	typ, err := mr.CreateProjectType(
+		ctx, models.AddProjectTypeInput{Name: "type_1_" + name, Description: pointer.ToString("foobar")},
+	)
+	require.NoError(t, err)
+	priorityLow := project.PriorityLow
+	priorityHigh := project.PriorityHigh
+
+	project, err := mr.CreateProject(ctx, models.AddProjectInput{
+		Name:     name,
+		Type:     typ.ID,
+		Priority: &priorityLow,
+	})
+	require.NoError(t, err)
+	require.Equal(t, priorityLow, project.Priority)
+
+	creator := viewer.MustGetOrCreateUser(ctx, "John", user.RoleOwner)
+
+	input := models.EditProjectInput{
+		ID:          project.ID,
+		Name:        project.Name,
+		Description: project.Description,
+		CreatorID:   &creator.ID,
+		Priority:    &priorityHigh,
+	}
+
+	project, err = mr.EditProject(ctx, input)
+	require.NoError(t, err)
+	require.Equal(t, priorityHigh, project.Priority)
+
+	node, err := qr.Node(ctx, project.ID)
+	require.NoError(t, err)
+	project, ok := node.(*ent.Project)
+	require.True(t, ok)
+	require.Equal(t, priorityHigh, project.Priority)
 }

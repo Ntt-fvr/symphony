@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -33,7 +34,7 @@ type woTestType struct {
 
 func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
 	prepareData(ctx, t, r)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOWNER)
+	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	// Add templates
 	typInput1 := models.AddWorkOrderTypeInput{
@@ -87,8 +88,8 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	}
 	proj, _ := r.Mutation().CreateProject(ctx, projInput)
 
-	st := models.WorkOrderStatusDone
-	prio := models.WorkOrderPriorityHigh
+	st := workorder.StatusDone
+	priority := workorder.PriorityHigh
 	woInput1 := models.AddWorkOrderInput{
 		Name:            "WO1",
 		Description:     pointer.ToString("WO1 - description"),
@@ -107,12 +108,12 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 		},
 		AssigneeID: &u.ID,
 		Status:     &st,
-		Priority:   &prio,
+		Priority:   &priority,
 	}
 	wo1, _ := r.Mutation().AddWorkOrder(ctx, woInput1)
 
-	st = models.WorkOrderStatusPlanned
-	prio = models.WorkOrderPriorityMedium
+	st = workorder.StatusPlanned
+	priority = workorder.PriorityMedium
 	woInput2 := models.AddWorkOrderInput{
 		Name:            "WO2",
 		Description:     pointer.ToString("WO2 - description"),
@@ -130,7 +131,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 		},
 		AssigneeID: &u2.ID,
 		Status:     &st,
-		Priority:   &prio,
+		Priority:   &priority,
 	}
 	wo2, _ := r.Mutation().AddWorkOrder(ctx, woInput2)
 	/*
@@ -208,11 +209,11 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				models.WorkOrderStatusDone.String(),
+				workorder.StatusDone.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
-				models.WorkOrderPriorityHigh.String(),
-				getStringDate(time.Now()),
+				workorder.PriorityHigh.String(),
+				getStringDate(pointer.ToTime(time.Now())),
 				"",
 				grandParentLocation + "; " + parentLocation,
 				"",
@@ -225,11 +226,11 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO2",
 				"",
-				models.WorkOrderStatusPlanned.String(),
+				workorder.StatusPlanned.String(),
 				"tester2@example.com",
 				viewertest.DefaultUser,
-				models.WorkOrderPriorityMedium.String(),
-				getStringDate(time.Now()),
+				workorder.PriorityMedium.String(),
+				getStringDate(pointer.ToTime(time.Now())),
 				"",
 				parentLocation + "; " + childLocation,
 				"true",
@@ -294,11 +295,11 @@ func TestExportWOWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				models.WorkOrderStatusDone.String(),
+				workorder.StatusDone.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
-				models.WorkOrderPriorityHigh.String(),
-				getStringDate(time.Now()),
+				workorder.PriorityHigh.String(),
+				getStringDate(pointer.ToTime(time.Now())),
 				"",
 				grandParentLocation + "; " + parentLocation,
 				"string1",

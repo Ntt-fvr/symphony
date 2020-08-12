@@ -8,11 +8,10 @@
  * @format
  */
 
-import type {UserPermissionsGroup} from '../utils/UserManagementUtils';
-import type {UsersGroupStatus} from '../__generated__/UserManagementContextQuery.graphql';
+import type {UsersGroup} from '../data/UsersGroups';
+import type {UsersGroupStatus} from '../data/__generated__/PermissionsPoliciesSearchQuery.graphql';
 
 import * as React from 'react';
-import AppContext from '@fbcnms/ui/context/AppContext';
 import Card from '@fbcnms/ui/components/design-system/Card/Card';
 import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
@@ -23,7 +22,7 @@ import fbt from 'fbt';
 import {GROUP_STATUSES} from '../utils/UserManagementUtils';
 import {isTempId} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useContext, useMemo} from 'react';
+import {useMemo} from 'react';
 
 const useStyles = makeStyles(() => ({
   viewContainer: {
@@ -38,15 +37,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{
-  group: UserPermissionsGroup,
-  onChange: UserPermissionsGroup => void,
+  group: UsersGroup,
+  onChange: UsersGroup => void,
   className?: ?string,
 }>;
 
 export default function PermissionsGroupDetailsPane(props: Props) {
   const {group, className, onChange} = props;
-  const {isFeatureEnabled} = useContext(AppContext);
-  const permissionPoliciesMode = isFeatureEnabled('permission_policies');
   const classes = useStyles();
   const isNewGroup = isTempId(group.id);
 
@@ -69,7 +66,6 @@ export default function PermissionsGroupDetailsPane(props: Props) {
           <Grid item xs={12} sm={6} lg={6} xl={6}>
             <FormFieldTextInput
               className={classes.nameField}
-              disabled={!permissionPoliciesMode}
               label={`${fbt('Group Name', '')}`}
               validationId="name"
               value={group.name}
@@ -81,7 +77,7 @@ export default function PermissionsGroupDetailsPane(props: Props) {
               }}
             />
           </Grid>
-          {permissionPoliciesMode && !isNewGroup ? (
+          {!isNewGroup ? (
             <Grid item xs={12} sm={6} lg={6} xl={6}>
               <FormField label={`${fbt('Status', '')}`}>
                 <Select

@@ -16,7 +16,6 @@ import React from 'react';
 import isGatewayHealthy from '../../components/GatewayUtils';
 import nullthrows from '@fbcnms/util/nullthrows';
 import useMagmaAPI from '@fbcnms/ui/magma/useMagmaAPI';
-
 import {useRouter} from '@fbcnms/ui/hooks';
 
 const getLatency = (resp, fn) => {
@@ -71,7 +70,7 @@ export default function EquipmentGatewayKPIs({
 
   let avgLatency = 0;
   if (avgLatencyArr && avgLatencyArr.length) {
-    const sum = avgLatencyArr.reduce(function(a, b) {
+    const sum = avgLatencyArr.reduce(function (a, b) {
       return a + b;
     }, 0);
     avgLatency = sum / avgLatencyArr.length;

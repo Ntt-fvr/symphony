@@ -30,6 +30,7 @@ export type CoordsWithProps = {
 };
 
 export type WorkOrderLocation = BasicLocation & {
+  id: string,
   randomizedLatitude: number,
 };
 
@@ -76,6 +77,7 @@ export type WorkOrderProperties = {
   description: string,
   status: WorkOrderStatus,
   priority: WorkOrderPriority,
+  projectId: ?string,
   owner: ShortUser,
   assignedTo: ?ShortUser,
   installDate: string,
@@ -109,6 +111,7 @@ export const workOrderToGeoFeature = (
       assignedTo: workOrder.workOrder.assignedTo,
       installDate: workOrder.workOrder.installDate,
       location: workOrder.workOrder.location,
+      projectId: workOrder.workOrder.project?.id,
       iconStatus: getWorkOrderStatusIcon(workOrder.workOrder.status),
       iconTech: workOrder.workOrder.assignedTo
         ? 'icon_pin'

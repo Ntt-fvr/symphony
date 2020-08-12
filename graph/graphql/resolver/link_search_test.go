@@ -9,6 +9,9 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 
@@ -44,14 +47,19 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 	wot, _ := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "WO-type1"})
 	wo1, _ := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{Name: "wo1", WorkOrderTypeID: wot.ID})
 	wo2, _ := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{Name: "wo2", WorkOrderTypeID: wot.ID})
-	wo2, _ = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{ID: wo2.ID, Name: "wo2", Status: models.WorkOrderStatusDone})
+	wo2, _ = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
+		ID:     wo2.ID,
+		Name:   "wo2",
+		Status: workOrderStatusPtr(workorder.StatusDone),
+	})
 	locType1, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "loc_type1",
 	})
 
 	loc1, _ := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "loc_inst1",
-		Type: locType1.ID,
+		Name:       "loc_inst1",
+		Type:       locType1.ID,
+		ExternalID: pointer.ToString("111"),
 	})
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
@@ -64,7 +72,7 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 			},
 			{
 				Name: "connected_date",
-				Type: models.PropertyKindDate,
+				Type: propertytype.TypeDate,
 			},
 		},
 	})
@@ -144,12 +152,12 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 	s1, _ := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "S1",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	_, _ = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "S2",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 
 	_, _ = mr.AddServiceLink(ctx, s1.ID, l1.ID)
@@ -297,7 +305,7 @@ func TestSearchLinksFutureState(t *testing.T) {
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLinkFutureStatus,
 		Operator:   models.FilterOperatorIsOneOf,
-		StringSet:  []string{models.FutureStateRemove.String()},
+		StringSet:  []string{enum.FutureStateRemove.String()},
 		MaxDepth:   &maxDepth,
 	}
 	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
@@ -306,7 +314,7 @@ func TestSearchLinksFutureState(t *testing.T) {
 	ports := res1.Links[0].QueryPorts().AllX(ctx)
 	require.NotEqual(t, ports[0].QueryParent().OnlyX(ctx).ID, ports[1].QueryParent().OnlyX(ctx).ID)
 	for _, port := range ports {
-		id := port.QueryParent().OnlyXID(ctx)
+		id := port.QueryParent().OnlyIDX(ctx)
 		require.Contains(t, []int{data.e2, data.e4}, id)
 	}
 }
@@ -349,6 +357,16 @@ func TestSearchLinksByLocation(t *testing.T) {
 	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
+
+	f1External := models.LinkFilterInput{
+		FilterType:  models.LinkFilterTypeLocationInstExternalID,
+		Operator:    models.FilterOperatorContains,
+		StringValue: pointer.ToString("111"),
+	}
+	res1, err = qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1External}, &limit)
+	require.NoError(t, err)
+	require.Len(t, res1.Links, 2)
+
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLocationInst,
 		Operator:   models.FilterOperatorIsOneOf,
@@ -539,7 +557,7 @@ func TestSearchLinksByService(t *testing.T) {
 	s1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2a",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s1.ID, data.l1)
@@ -548,7 +566,7 @@ func TestSearchLinksByService(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2b",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s2.ID, data.l1)
@@ -626,7 +644,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 		Operator:   models.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
-			Type:        models.PropertyKindString,
+			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("newVal"),
 		},
 	}
@@ -641,7 +659,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 		Operator:   models.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "connected_date",
-			Type:        models.PropertyKindDate,
+			Type:        propertytype.TypeDate,
 			StringValue: pointer.ToString("2019-01-01"),
 		},
 	}

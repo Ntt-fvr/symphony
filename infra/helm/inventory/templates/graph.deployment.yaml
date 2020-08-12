@@ -43,12 +43,8 @@ spec:
           env:
             - name: WS_AUTH_URL
               value: {{ printf "http://%s:%d/user/me" (include "inventory.front.fullname" .) (int .Values.front.service.port) | quote }}
-            {{- with .Values.graph.spec.event.url }}
-            - name: EVENT_PUB_URL
-              value: {{ . | quote }}
-            - name: EVENT_SUB_URL
-              value: {{ . | quote }}
-            {{- end }}
+            - name: EVENT_PUBSUB_URL
+              value: {{ required ".Values.graph.spec.event.url is required" .Values.graph.spec.event.url | quote }}
             {{- with .Values.graph.spec.tenancy.tenantMaxDBConn }}
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}
@@ -68,7 +64,7 @@ spec:
             {{- end }}
           envFrom:
             - secretRef:
-                name: {{ template "inventory.graph.fullname" . }}
+                name: {{ template "inventory.graphDB.secretName" . }}
           ports:
             - name: http
               containerPort: {{ .Values.graph.service.port.http.targetPort }}

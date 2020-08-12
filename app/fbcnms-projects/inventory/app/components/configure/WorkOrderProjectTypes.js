@@ -108,7 +108,10 @@ const WorkOrderProjectTypes = () => {
             header={{
               title: <fbt desc="">Project Templates</fbt>,
               subtitle: (
-                <fbt desc="">Create and manage reusable project workflows.</fbt>
+                <fbt desc="">
+                  Create reusable templates for project types. Project templates
+                  are created from more than one work order template.
+                </fbt>
               ),
               actionButtons: [
                 <FormActionWithPermissions

@@ -65,7 +65,7 @@ if __name__ == "__main__":
     get_location_run = sum([r[1] for r in result]) / number_of_calls
     # pyre-fixme[5]: Global expression must be annotated.
     edit_location_run = sum([r[2] for r in result]) / number_of_calls
-    print(f"RESULT".center(80, "*"))
+    print("RESULT".center(80, "*"))
     print(
         f"get_location_by_external_id - avg {get_location_run:.4f} secs per query call"
     )

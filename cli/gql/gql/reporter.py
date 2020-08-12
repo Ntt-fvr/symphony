@@ -74,7 +74,9 @@ class CSVReporter(Reporter):
 
         # pyre-fixme[8]: Attribute has type `UnicodeWriter`; used as `_writer`.
         self.out_file: UnicodeWriter = writer(
-            open(out_file_path, "wb"), encoding="utf-8"
+            # pyre-fixme[6]: Expected `_Writer` for 1st param but got `BufferedWriter`.
+            open(out_file_path, "wb"),
+            encoding="utf-8",
         )
         self.out_file.writerow(
             ["operation_name", "variables", "network_time", "decode_time"]
@@ -82,7 +84,9 @@ class CSVReporter(Reporter):
 
         # pyre-fixme[8]: Attribute has type `UnicodeWriter`; used as `_writer`.
         self.err_file: UnicodeWriter = writer(
-            open(err_file_path, "wb"), encoding="utf-8"
+            # pyre-fixme[6]: Expected `_Writer` for 1st param but got `BufferedWriter`.
+            open(err_file_path, "wb"),
+            encoding="utf-8",
         )
         self.err_file.writerow(
             [

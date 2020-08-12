@@ -23,30 +23,11 @@ func TestUserViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleUSER).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleUser).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.Equal(t, &models.BasicPermissionRule{IsAllowed: models.PermissionValueNo}, permissions.AdminPolicy.Access)
 	require.False(t, permissions.CanWrite)
-}
-
-func TestUserViewerInWriteGroup(t *testing.T) {
-	r := newTestResolver(t)
-	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client, viewertest.WithRole(user.RoleUSER), viewertest.WithFeatures())
-	vr := r.Viewer()
-
-	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	_ = r.client.UsersGroup.Create().
-		SetName(authz.WritePermissionGroupName).
-		AddMembers(v.User()).
-		SaveX(ctx)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleUSER).ExecX(ctx)
-
-	permissions, err := vr.Permissions(ctx, v)
-	require.NoError(t, err)
-	require.Equal(t, &models.BasicPermissionRule{IsAllowed: models.PermissionValueNo}, permissions.AdminPolicy.Access)
-	require.True(t, permissions.CanWrite)
 }
 
 func TestAdminViewer(t *testing.T) {
@@ -56,11 +37,11 @@ func TestAdminViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleADMIN).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleAdmin).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.Equal(t, &models.BasicPermissionRule{IsAllowed: models.PermissionValueYes}, permissions.AdminPolicy.Access)
-	require.False(t, permissions.CanWrite)
+	require.True(t, permissions.CanWrite)
 }
 
 func TestOwnerViewer(t *testing.T) {
@@ -70,7 +51,7 @@ func TestOwnerViewer(t *testing.T) {
 	vr := r.Viewer()
 
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
-	r.client.User.UpdateOne(v.User()).SetRole(user.RoleOWNER).ExecX(ctx)
+	r.client.User.UpdateOne(v.User()).SetRole(user.RoleOwner).ExecX(ctx)
 	permissions, err := vr.Permissions(ctx, v)
 	require.NoError(t, err)
 	require.EqualValues(t, authz.FullPermissions(), permissions)

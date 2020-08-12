@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -38,7 +37,7 @@ type portsRower struct {
 	log log.Logger
 }
 
-func (er portsRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er portsRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger         = er.log.For(ctx)
 		err            error
@@ -48,7 +47,6 @@ func (er portsRower) rows(ctx context.Context, url *url.URL) ([][]string, error)
 		linkHeader     = [...]string{"Linked Port ID", "Linked Port Name", "Linked Equipment ID", "Linked Equipment"}
 		serviceHeader  = [...]string{"Service Names"}
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToPortFilterInput(filtersParam)
 		if err != nil {

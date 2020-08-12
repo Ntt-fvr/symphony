@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/url"
 	"runtime"
 	"strings"
 	"sync"
@@ -30,6 +31,7 @@ import (
 
 type Config struct {
 	TenantMaxConn int
+	FeaturesURL   *url.URL
 }
 
 // AddFlagsVar adds the flags used by this package to the Kingpin application.
@@ -41,6 +43,12 @@ func AddFlagsVar(a *kingpin.Application, config *Config) {
 		Envar("TENANCY_DB_MAX_CONN").
 		Required().
 		IntVar(&config.TenantMaxConn)
+	a.Flag(
+		"features.url",
+		"url to fetch features for all tenants",
+	).
+		Envar("FEATURES_URL").
+		URLVar(&config.FeaturesURL)
 }
 
 // Tenancy provides tenant client for key.

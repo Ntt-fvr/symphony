@@ -2,8 +2,7 @@
 
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
 from pysymphony import SymphonyClient
-
-from .common.constant import __version__
+from pysymphony.common.constant import __version__
 
 
 class WorkforceClient(SymphonyClient):

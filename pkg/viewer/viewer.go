@@ -54,9 +54,6 @@ var (
 	KeyUserAgent = tag.MustNewKey(UserAgentAttribute)
 )
 
-// FeatureSet holds the list of features of the viewer
-type FeatureSet map[string]struct{}
-
 // Option enables viewer customization.
 type Option func(Viewer)
 
@@ -127,15 +124,6 @@ func (v *AutomationViewer) Name() string {
 // Role implements Viewer.Role by returning stored role.
 func (v *AutomationViewer) Role() user.Role {
 	return v.role
-}
-
-// NewFeatureSet create FeatureSet from a list of features.
-func NewFeatureSet(features ...string) FeatureSet {
-	set := make(FeatureSet, len(features))
-	for _, feature := range features {
-		set[feature] = struct{}{}
-	}
-	return set
 }
 
 // NewUser initializes and return UserViewer.
@@ -376,7 +364,7 @@ func MustGetOrCreateUser(ctx context.Context, authID string, role user.Role) *en
 func UserHandler(h http.Handler, logger log.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if v, ok := FromContext(r.Context()).(*UserViewer); ok {
-			if u := v.User(); u.Status == user.StatusDEACTIVATED {
+			if u := v.User(); u.Status == user.StatusDeactivated {
 				logger.For(r.Context()).Debug("blocking deactivated user",
 					zap.String("authid", u.AuthID),
 					zap.String("email", u.Email),

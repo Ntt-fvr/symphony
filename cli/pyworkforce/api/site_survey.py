@@ -11,13 +11,13 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 import pandas as pd
 from dacite import Config, from_dict
 from pysymphony import SymphonyClient
+from pysymphony.common.constant import SIMPLE_QUESTION_TYPE_TO_REQUIRED_PROPERTY_NAME
+from pysymphony.common.data_class import SiteSurvey
 from xlsxwriter.format import Format
 from xlsxwriter.utility import xl_col_to_name
 from xlsxwriter.workbook import Workbook
 from xlsxwriter.worksheet import Worksheet
 
-from ..common.constant import SIMPLE_QUESTION_TYPE_TO_REQUIRED_PROPERTY_NAME
-from ..common.data_class import SiteSurvey
 from ..graphql.enum.survey_question_type import SurveyQuestionType
 from ..graphql.fragment.survey import SurveyFragment
 from ..graphql.fragment.survey_question import SurveyQuestionFragment
@@ -82,8 +82,8 @@ def _extract_form_descriptions(content: Dict[str, Any]) -> Dict[str, str]:
     return form_name_to_description
 
 
-def rpad(l: List[str], char: str, size: int) -> List[str]:
-    return l + [char] * (size - len(l))
+def rpad(_list: List[str], char: str, size: int) -> List[str]:
+    return _list + [char] * (size - len(_list))
 
 
 def adjust_column_and_row_sizes(

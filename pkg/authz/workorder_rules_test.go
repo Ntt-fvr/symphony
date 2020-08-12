@@ -23,7 +23,7 @@ import (
 )
 
 func prepareWorkOrderData(ctx context.Context, c *ent.Client) (*ent.WorkOrderType, *ent.WorkOrder) {
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderTypeName := uuid.New().String()
 	workOrderName := uuid.New().String()
 	workOrderType := c.WorkOrderType.Create().
@@ -43,7 +43,7 @@ func TestNonUserCannotEditWorkOrder(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
 
-	v := viewer.NewAutomation(viewertest.DefaultTenant, "BOT", user.RoleUSER)
+	v := viewer.NewAutomation(viewertest.DefaultTenant, "BOT", user.RoleUser)
 	ctx = viewer.NewContext(ctx, v)
 	ctx = authz.NewContext(ctx, authz.EmptyPermissions())
 	err := c.WorkOrder.UpdateOne(workOrder).
@@ -56,14 +56,14 @@ func TestAssignCanEditWOWithOwnerAndDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "MyAssignee", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "MyAssignee", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetAssignee(u).
 		ExecX(ctx)
 
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("MyAssignee"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetName("NewName").
@@ -78,19 +78,19 @@ func TestAssignCanEditWOWithOwnerAndDelete(t *testing.T) {
 	require.True(t, errors.Is(err, privacy.Deny))
 }
 
-func TestOwnerCanEditWO(t *testing.T) {
+func TestOwnerCanEditWOButNotDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUSER)
-	u2 := viewer.MustGetOrCreateUser(ctx, "NewOwner", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "MyOwner", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "NewOwner", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetOwner(u).
 		ExecX(ctx)
 
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("MyOwner"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetName("NewName").
@@ -102,11 +102,11 @@ func TestOwnerCanEditWO(t *testing.T) {
 	require.NoError(t, err)
 	ctx = viewertest.NewContext(ctx, c,
 		viewertest.WithUser("NewOwner"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err = c.WorkOrder.DeleteOne(workOrder).
 		Exec(ctx)
-	require.NoError(t, err)
+	require.Error(t, err)
 }
 
 func TestWorkOrderWritePolicyRule(t *testing.T) {
@@ -231,7 +231,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -245,7 +245,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -258,7 +258,7 @@ func TestWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.WorkOrder.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -273,10 +273,8 @@ func TestWorkOrderTransferOwnershipWritePolicyRule(t *testing.T) {
 	getCud := func(p *models.PermissionSettings) *models.WorkforceCud {
 		return p.WorkforcePolicy.Data
 	}
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
-	appendTransferOwnership := func(p *models.PermissionSettings) {
-		getCud(p).TransferOwnership.IsAllowed = models.PermissionValueYes
-	}
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
+	u2 := viewer.MustGetOrCreateUser(ctx, "NewUser", user.RoleUser)
 	createWorkOrderWithOwner := func(ctx context.Context) error {
 		_, err := c.WorkOrder.Create().
 			SetName("NewWorkOrder").
@@ -286,11 +284,13 @@ func TestWorkOrderTransferOwnershipWritePolicyRule(t *testing.T) {
 			Save(ctx)
 		return err
 	}
-	updateWorkOrderOwner := func(ctx context.Context) error {
-		_, err := c.WorkOrder.UpdateOne(workOrder).
-			SetOwner(u).
-			Save(ctx)
-		return err
+	updateWorkOrderOwner := func(user *ent.User) func(context.Context) error {
+		return func(ctx context.Context) error {
+			_, err := c.WorkOrder.UpdateOne(workOrder).
+				SetOwner(user).
+				Save(ctx)
+			return err
+		}
 	}
 	tests := []policyTest{
 		{
@@ -305,8 +305,22 @@ func TestWorkOrderTransferOwnershipWritePolicyRule(t *testing.T) {
 			initialPermissions: func(p *models.PermissionSettings) {
 				getCud(p).Update.IsAllowed = models.PermissionValueYes
 			},
-			appendPermissions: appendTransferOwnership,
-			operation:         updateWorkOrderOwner,
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).TransferOwnership.IsAllowed = models.PermissionValueYes
+			},
+			operation: updateWorkOrderOwner(u),
+		},
+		{
+			operationName: "UpdateWithOwnerWithType",
+			initialPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Update.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Update.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).TransferOwnership.IsAllowed = models.PermissionValueByCondition
+				getCud(p).TransferOwnership.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			operation: updateWorkOrderOwner(u2),
 		},
 	}
 	runPolicyTest(t, tests)
@@ -333,11 +347,11 @@ func TestWorkOrderCreateWithViewerAssigneeOwner(t *testing.T) {
 func TestWorkOrderUpdateAssignee(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	_, workOrder := prepareWorkOrderData(ctx, c)
+	workOrderType, workOrder := prepareWorkOrderData(ctx, c)
 	getCud := func(p *models.PermissionSettings) *models.WorkforceCud {
 		return p.WorkforcePolicy.Data
 	}
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	appendAssign := func(p *models.PermissionSettings) {
 		getCud(p).Assign.IsAllowed = models.PermissionValueYes
 	}
@@ -370,6 +384,30 @@ func TestWorkOrderUpdateAssignee(t *testing.T) {
 			appendPermissions: appendAssign,
 			operation:         clearWorkOrderAssignee,
 		},
+		{
+			operationName: "UpdateWithAssigneeWithType",
+			initialPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Update.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Update.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Assign.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Assign.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			operation: updateWorkOrderAssignee,
+		},
+		{
+			operationName: "ClearWorkOrderAssigneeWithType",
+			initialPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Update.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Update.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			appendPermissions: func(p *models.PermissionSettings) {
+				getCud(p).Assign.IsAllowed = models.PermissionValueByCondition
+				getCud(p).Assign.WorkOrderTypeIds = []int{workOrderType.ID}
+			},
+			operation: clearWorkOrderAssignee,
+		},
 	}
 	runPolicyTest(t, tests)
 }
@@ -379,7 +417,7 @@ func TestWorkOrderAssigneeUnchangedWritePolicyRule(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
 	_, workOrder2 := prepareWorkOrderData(ctx, c)
-	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "SomeUser", user.RoleUser)
 	c.WorkOrder.UpdateOne(workOrder).
 		SetAssigneeID(u.ID).
 		ExecX(ctx)
@@ -389,7 +427,7 @@ func TestWorkOrderAssigneeUnchangedWritePolicyRule(t *testing.T) {
 		context.Background(),
 		c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetAssigneeID(u.ID).
@@ -415,19 +453,19 @@ func TestWorkOrderOwnerUnchangedWritePolicyRule(t *testing.T) {
 		context.Background(),
 		c,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
-	ownerID := workOrder.QueryOwner().OnlyXID(ctx)
+	ownerID := workOrder.QueryOwner().OnlyIDX(ctx)
 	err := c.WorkOrder.UpdateOne(workOrder).
 		SetOwnerID(ownerID).
 		Exec(ctx)
 	require.NoError(t, err)
 }
 
-func TestWorkorderTypeWritePolicyRule(t *testing.T) {
+func TestWorkOrderTypeWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	workorderType := c.WorkOrderType.Create().
+	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
 	createWorkOrderType := func(ctx context.Context) error {
@@ -437,12 +475,12 @@ func TestWorkorderTypeWritePolicyRule(t *testing.T) {
 		return err
 	}
 	updateWorkOrderType := func(ctx context.Context) error {
-		return c.WorkOrderType.UpdateOne(workorderType).
+		return c.WorkOrderType.UpdateOne(workOrderType).
 			SetName("NewName").
 			Exec(ctx)
 	}
 	deleteWorkOrderType := func(ctx context.Context) error {
-		return c.WorkOrderType.DeleteOne(workorderType).
+		return c.WorkOrderType.DeleteOne(workOrderType).
 			Exec(ctx)
 	}
 	runCudPolicyTest(t, cudPolicyTest{
@@ -453,4 +491,24 @@ func TestWorkorderTypeWritePolicyRule(t *testing.T) {
 		update: updateWorkOrderType,
 		delete: deleteWorkOrderType,
 	})
+}
+
+func TestWorkOrderTemplateIsAlwaysEditable(t *testing.T) {
+	c := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(
+		context.Background(),
+		c,
+		viewertest.WithRole(user.RoleUser),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	workOrderTemplate, err := c.WorkOrderTemplate.Create().
+		SetName("WorkOrderTemplate").
+		Save(ctx)
+	require.NoError(t, err)
+	err = c.WorkOrderTemplate.UpdateOne(workOrderTemplate).
+		SetName("NewName").
+		Exec(ctx)
+	require.NoError(t, err)
+	err = c.WorkOrderTemplate.DeleteOne(workOrderTemplate).
+		Exec(ctx)
+	require.NoError(t, err)
 }

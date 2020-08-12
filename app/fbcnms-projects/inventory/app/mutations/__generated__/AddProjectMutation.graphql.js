@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 2180aadce4e5e887770685400bced0a0
+ * @relayHash 7d00d6cedfaf1204427d410cdd3f3588
  */
 
 /* eslint-disable */
@@ -16,10 +16,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type ProjectsTableView_projects$ref = any;
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type AddProjectInput = {|
   name: string,
   description?: ?string,
-  creator?: ?string,
+  priority?: ?ProjectPriority,
   creatorId?: ?string,
   type: string,
   location?: ?string,
@@ -80,6 +81,8 @@ fragment ProjectsTableView_projects on Project {
     id
     name
   }
+  priority
+  numberOfWorkOrders
 }
 */
 
@@ -198,6 +201,20 @@ return {
             "concreteType": "ProjectType",
             "plural": false,
             "selections": (v4/*: any*/)
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "name": "priority",
+            "args": null,
+            "storageKey": null
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "name": "numberOfWorkOrders",
+            "args": null,
+            "storageKey": null
           }
         ]
       }
@@ -207,7 +224,7 @@ return {
     "operationKind": "mutation",
     "name": "AddProjectMutation",
     "id": null,
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n}\n",
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n",
     "metadata": {}
   }
 };

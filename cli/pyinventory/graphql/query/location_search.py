@@ -9,7 +9,7 @@ from gql.gql.client import OperationException
 from gql.gql.reporter import FailedOperationException
 from functools import partial
 from numbers import Number
-from typing import Any, Callable, List, Mapping, Optional
+from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
@@ -19,11 +19,13 @@ from ..input.location_filter import LocationFilterInput
 
 QUERY: List[str] = LocationFragmentQuery + ["""
 query LocationSearchQuery($filters: [LocationFilterInput!]!, $limit: Int) {
-  locationSearch(filters: $filters, limit: $limit) {
-    locations {
-      ...LocationFragment
+  locations(filterBy: $filters, first: $limit) {
+    edges {
+      node {
+        ...LocationFragment
+      }
     }
-    count
+    totalCount
   }
 }
 
@@ -34,23 +36,27 @@ class LocationSearchQuery(DataClassJsonMixin):
     @dataclass
     class LocationSearchQueryData(DataClassJsonMixin):
         @dataclass
-        class LocationSearchResult(DataClassJsonMixin):
+        class LocationConnection(DataClassJsonMixin):
             @dataclass
-            class Location(LocationFragment):
-                pass
+            class LocationEdge(DataClassJsonMixin):
+                @dataclass
+                class Location(LocationFragment):
+                    pass
 
-            locations: List[Location]
-            count: int
+                node: Optional[Location]
 
-        locationSearch: LocationSearchResult
+            edges: List[LocationEdge]
+            totalCount: int
+
+        locations: Optional[LocationConnection]
 
     data: LocationSearchQueryData
 
     @classmethod
     # fmt: off
-    def execute(cls, client: GraphqlClient, filters: List[LocationFilterInput] = [], limit: Optional[int] = None) -> LocationSearchQueryData.LocationSearchResult:
+    def execute(cls, client: GraphqlClient, filters: List[LocationFilterInput] = [], limit: Optional[int] = None) -> Optional[LocationSearchQueryData.LocationConnection]:
         # fmt: off
-        variables = {"filters": filters, "limit": limit}
+        variables: Dict[str, Any] = {"filters": filters, "limit": limit}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
@@ -59,7 +65,7 @@ class LocationSearchQuery(DataClassJsonMixin):
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
             client.reporter.log_successful_operation("LocationSearchQuery", variables, network_time, decode_time)
-            return res.locationSearch
+            return res.locations
         except OperationException as e:
             raise FailedOperationException(
                 client.reporter,

@@ -135,16 +135,19 @@ const AddEditWorkOrderTypeCard = ({
           fbt.param('name', editingWorkOrderType.name),
         '',
       ).toString(),
-    )
-      .then(() => deleteWorkOrderType(editingWorkOrderType.id))
-      .then(onClose)
-      .catch((errorMessage: string) =>
-        enqueueSnackbar(errorMessage, {
-          children: key => (
-            <SnackbarItem id={key} message={errorMessage} variant="error" />
+    ).then(
+      deleteApproved =>
+        deleteApproved &&
+        deleteWorkOrderType(editingWorkOrderType.id)
+          .then(onClose)
+          .catch((errorMessage: string) =>
+            enqueueSnackbar(errorMessage, {
+              children: key => (
+                <SnackbarItem id={key} message={errorMessage} variant="error" />
+              ),
+            }),
           ),
-        }),
-      );
+    );
   }, [
     confirm,
     editingWorkOrderType.name,
@@ -314,6 +317,7 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
           title
           type
           index
+          isMandatory
           enumValues
           enumSelectionMode
           helpText

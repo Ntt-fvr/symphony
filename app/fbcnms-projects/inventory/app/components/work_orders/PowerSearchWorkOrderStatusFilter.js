@@ -13,7 +13,7 @@ import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 import * as React from 'react';
 import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
-import {statusValues} from '../../common/WorkOrder';
+import {statusValues} from '../../common/FilterTypes';
 
 const PowerSearchWorkOrderStatusFilter = (props: FilterProps) => {
   const {

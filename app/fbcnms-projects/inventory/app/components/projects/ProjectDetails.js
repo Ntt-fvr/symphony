@@ -37,6 +37,7 @@ import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection
 import ProjectWorkOrdersList from './ProjectWorkOrdersList';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React from 'react';
+import Select from '@fbcnms/ui/components/design-system/Select/Select';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
 import UserTypeahead from '../typeahead/UserTypeahead';
@@ -47,6 +48,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {getGraphError} from '../../common/EntUtils';
+import {priorityValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {withRouter} from 'react-router-dom';
 import {withSnackbar} from 'notistack';
@@ -148,7 +150,10 @@ class ProjectDetails extends React.Component<Props, State> {
     );
   }
 
-  _setProjectDetail = (key: 'name' | 'description' | 'createdBy', value) => {
+  _setProjectDetail = (
+    key: 'name' | 'description' | 'createdBy' | 'priority',
+    value,
+  ) => {
     this.setState(prevState => {
       return {
         // $FlowFixMe Set state for each field
@@ -169,12 +174,20 @@ class ProjectDetails extends React.Component<Props, State> {
     this.setState({locationId});
 
   saveProject = () => {
-    const {id, name, description, createdBy, type} = this.state.editedProject;
+    const {
+      id,
+      name,
+      description,
+      createdBy,
+      type,
+      priority,
+    } = this.state.editedProject;
     const variables: EditProjectMutationVariables = {
       input: {
         id,
         name,
         description,
+        priority,
         creatorId: createdBy?.id,
         type: type.id,
         properties: toPropertyInput(this.state.properties),
@@ -226,6 +239,7 @@ class ProjectDetails extends React.Component<Props, State> {
                 permissions={{
                   entity: 'project',
                   action: 'update',
+                  projectTypeId: project.type.id,
                   ignorePermissions: isOwner,
                 }}>
                 <div className={classes.nameHeader}>
@@ -307,6 +321,17 @@ class ProjectDetails extends React.Component<Props, State> {
                               />
                             </FormField>
                           </Grid>
+                          <Grid item xs={12} sm={6} lg={4} xl={4}>
+                            <FormField label="Priority">
+                              <Select
+                                options={priorityValues}
+                                selectedValue={project.priority}
+                                onChange={value =>
+                                  this._setProjectDetail('priority', value)
+                                }
+                              />
+                            </FormField>
+                          </Grid>
                           {properties.map((property, index) => (
                             <Grid
                               key={property.id}
@@ -379,6 +404,7 @@ class ProjectDetails extends React.Component<Props, State> {
                           permissions={{
                             entity: 'project',
                             action: 'transferOwnership',
+                            projectTypeId: project.type.id,
                             ignorePermissions: isOwner,
                           }}>
                           <UserTypeahead
@@ -462,6 +488,7 @@ export default withRouter(
                 }
                 ...LocationBreadcrumbsTitle_locationDetails
               }
+              priority
               properties {
                 id
                 stringValue

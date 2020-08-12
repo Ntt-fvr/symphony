@@ -12,28 +12,31 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/pubsub"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
-
-	"github.com/facebookincubator/symphony/pkg/ent"
-
-	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/viewer"
+	"gocloud.dev/runtimevar/constantvar"
 )
 
 func newTestServer(t *testing.T, client *ent.Client, subscriber pubsub.Subscriber, handlers []Handler) *Server {
 	return &Server{
-		tenancy:    viewer.NewFixedTenancy(client),
+		tenancy: viewer.NewFixedTenancy(client),
+		features: constantvar.New(viewer.TenantFeatures{
+			viewertest.DefaultTenant: viewertest.DefaultFeatures,
+		}),
 		logger:     logtest.NewTestLogger(t),
 		subscriber: subscriber,
 		handlers:   handlers,
 	}
 }
 
-func getLogEntry() pubsub.LogEntry {
-	return pubsub.LogEntry{
+func getLogEntry() event.LogEntry {
+	return event.LogEntry{
 		UserName:  "",
 		UserID:    nil,
 		Time:      time.Time{},
@@ -67,11 +70,11 @@ func TestServer(t *testing.T) {
 	require.NoError(t, err)
 	client := viewertest.NewTestClient(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	h := Func(func(ctx context.Context, entry pubsub.LogEntry) error {
+	h := Func(func(ctx context.Context, entry event.LogEntry) error {
 		v := viewer.FromContext(ctx)
 		require.Equal(t, tenantName, v.Tenant())
 		require.Equal(t, serviceName, v.Name())
-		require.Equal(t, user.RoleOWNER, v.Role())
+		require.Equal(t, user.RoleOwner, v.Role())
 		require.EqualValues(t, logEntry, entry)
 		cancel()
 		return nil
@@ -87,7 +90,7 @@ func TestServer(t *testing.T) {
 		err := listener.Listen(ctx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(ctx, tenantName, pubsub.EntMutation, data)
+	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
 	require.NoError(t, err)
 	wg.Wait()
 }
@@ -101,7 +104,7 @@ func TestServerBadData(t *testing.T) {
 	}()
 	client := viewertest.NewTestClient(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	h := Func(func(context.Context, pubsub.LogEntry) error {
+	h := Func(func(context.Context, event.LogEntry) error {
 		cancel()
 		return nil
 	})
@@ -117,7 +120,7 @@ func TestServerBadData(t *testing.T) {
 		require.Error(t, err)
 		require.False(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(ctx, viewertest.DefaultTenant, pubsub.EntMutation, []byte(""))
+	err = emitter.Emit(ctx, viewertest.DefaultTenant, event.EntMutation, []byte(""))
 	require.NoError(t, err)
 	wg.Wait()
 }
@@ -137,7 +140,7 @@ func TestServerHandlerError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := Func(func(ctx context.Context, entry pubsub.LogEntry) error {
+	h := Func(func(ctx context.Context, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -156,7 +159,7 @@ func TestServerHandlerError(t *testing.T) {
 		err := listener.Listen(cancelledCtx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(cancelledCtx, tenantName, pubsub.EntMutation, data)
+	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
 	require.NoError(t, err)
 	wg.Wait()
 	require.False(t, client.LocationType.Query().Where().ExistX(ctx))
@@ -177,7 +180,7 @@ func TestServerHandlerNoError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := Func(func(ctx context.Context, entry pubsub.LogEntry) error {
+	h := Func(func(ctx context.Context, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -196,7 +199,7 @@ func TestServerHandlerNoError(t *testing.T) {
 		err := listener.Listen(cancelledCtx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(cancelledCtx, tenantName, pubsub.EntMutation, data)
+	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
 	require.NoError(t, err)
 	wg.Wait()
 	require.True(t, client.LocationType.Query().Where().ExistX(ctx))

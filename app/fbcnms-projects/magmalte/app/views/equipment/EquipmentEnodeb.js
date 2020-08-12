@@ -11,11 +11,12 @@
 import type {EnodebInfo} from '../../components/lte/EnodebUtils';
 
 import ActionTable from '../../components/ActionTable';
-import EnodebThroughputChart from './EnodebThroughputChart';
+import DateTimeMetricChart from '../../components/DateTimeMetricChart';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import SettingsInputAntennaIcon from '@material-ui/icons/SettingsInputAntenna';
 
+import {colors} from '../../theme/default';
 import {isEnodebHealthy} from '../../components/lte/EnodebUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useRouter} from '@fbcnms/ui/hooks';
@@ -29,15 +30,15 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   topBar: {
-    backgroundColor: theme.palette.magmalte.background,
+    backgroundColor: colors.primary.mirage,
     padding: '20px 40px 20px 40px',
   },
   tabBar: {
-    backgroundColor: theme.palette.magmalte.appbar,
+    backgroundColor: colors.primary.brightGray,
     padding: '0 0 0 20px',
   },
   tabs: {
-    color: 'white',
+    color: colors.primary.white,
   },
   tab: {
     fontSize: '18px',
@@ -58,7 +59,6 @@ const useStyles = makeStyles(theme => ({
     height: 100,
     padding: theme.spacing(10),
     textAlign: 'center',
-    color: theme.palette.text.secondary,
   },
   formControl: {
     margin: theme.spacing(1),
@@ -73,7 +73,7 @@ export default function Enodeb({enbInfo}: {enbInfo: {[string]: EnodebInfo}}) {
     <div className={classes.dashboardRoot}>
       <Grid container justify="space-between" spacing={3}>
         <Grid item xs={12}>
-          <EnodebThroughputChart
+          <DateTimeMetricChart
             title={CHART_TITLE}
             queries={[
               `sum(pdcp_user_plane_bytes_dl{service="enodebd"} + pdcp_user_plane_bytes_ul{service="enodebd"})/1000`,

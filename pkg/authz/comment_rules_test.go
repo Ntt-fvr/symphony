@@ -23,7 +23,7 @@ func getCommentCudOperations(
 	c *ent.Client,
 	setParent func(*ent.CommentCreate) *ent.CommentCreate,
 ) cudOperations {
-	author := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	author := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	commentQuery := c.Comment.Create().
 		SetAuthor(author).
 		SetText("comment")
@@ -56,7 +56,7 @@ func getCommentCudOperations(
 func TestCommentOfWorkOrderReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
 	woType1, wo1 := prepareWorkOrderData(ctx, c)
 	_, wo2 := prepareWorkOrderData(ctx, c)
 	c.Comment.Create().
@@ -75,7 +75,7 @@ func TestCommentOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -89,7 +89,7 @@ func TestCommentOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -102,7 +102,7 @@ func TestCommentOfWorkOrderReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -112,7 +112,7 @@ func TestCommentOfWorkOrderReadPolicyRule(t *testing.T) {
 func TestCommentOfProjectReadPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleUser)
 	projectType1, project1 := prepareProjectData(ctx, c)
 	_, project2 := prepareProjectData(ctx, c)
 	c.Comment.Create().
@@ -131,7 +131,7 @@ func TestCommentOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -145,7 +145,7 @@ func TestCommentOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -158,7 +158,7 @@ func TestCommentOfProjectReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Comment.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -197,7 +197,7 @@ func TestProjectCommentPolicyRule(t *testing.T) {
 func TestWorkOrderCommentPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)

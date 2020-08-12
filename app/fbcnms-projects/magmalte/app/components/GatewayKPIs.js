@@ -8,6 +8,9 @@
  * @format
  */
 
+import type {KPIData} from './KPITray';
+import type {lte_gateway} from '@fbcnms/magma-api';
+
 import CellWifiIcon from '@material-ui/icons/CellWifi';
 import KPITray from './KPITray';
 import LoadingFiller from '@fbcnms/ui/components/LoadingFiller';
@@ -16,9 +19,8 @@ import React from 'react';
 import isGatewayHealthy from './GatewayUtils';
 import nullthrows from '@fbcnms/util/nullthrows';
 import useMagmaAPI from '@fbcnms/ui/magma/useMagmaAPI';
+
 import {useRouter} from '@fbcnms/ui/hooks';
-import type {KPIData} from './KPITray';
-import type {lte_gateway} from '@fbcnms/magma-api';
 
 export default function GatewayKPIs() {
   const {match} = useRouter();
@@ -48,7 +50,7 @@ function gatewayStatus(gatewaySt: {[string]: lte_gateway}): [number, number] {
   Object.keys(gatewaySt)
     .map((k: string) => gatewaySt[k])
     .filter((g: lte_gateway) => g.cellular && g.id)
-    .map(function(gateway: lte_gateway) {
+    .map(function (gateway: lte_gateway) {
       isGatewayHealthy(gateway) ? upCount++ : downCount++;
     });
   return [upCount, downCount];

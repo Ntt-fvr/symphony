@@ -19,9 +19,13 @@ type Survey struct {
 func (Survey) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
-		field.String("owner_name").Optional(),
+		field.String("owner_name").
+			Optional().
+			Nillable(),
 		field.Time("creation_timestamp").
-			StructTag(`gqlgen:"creationTimestamp"`).Optional(),
+			StructTag(`gqlgen:"creationTimestamp"`).
+			Optional().
+			Nillable(),
 		field.Time("completion_timestamp").
 			StructTag(`gqlgen:"completionTimestamp"`),
 	}

@@ -15,9 +15,9 @@ import UserAccountDetailsPane, {
   ACCOUNT_DISPLAY_VARIANTS,
 } from './UserAccountDetailsPane';
 import {FormContextProvider} from '../../../../common/FormContext';
+import {changeCurrentUserPassword, changeUserPassword} from '../data/Users';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
-import {useUserManagement} from '../UserManagementContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -29,15 +29,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   user: User,
   isForCurrentUserSettings?: ?boolean,
-};
+|}>;
 
 export default function UserAccountPane(props: Props) {
   const {user, isForCurrentUserSettings = false} = props;
   const classes = useStyles();
-  const userManagement = useUserManagement();
   const enqueueSnackbar = useEnqueueSnackbar();
 
   const handleError = error => {
@@ -60,12 +59,11 @@ export default function UserAccountPane(props: Props) {
           user={user}
           onChange={(user, password, currentPassword) => {
             if (isForCurrentUserSettings && currentPassword != null) {
-              return userManagement
-                .changeCurrentUserPassword(currentPassword, password)
-                .catch(handleError);
+              return changeCurrentUserPassword(currentPassword, password).catch(
+                handleError,
+              );
             }
-            return userManagement
-              .changeUserPassword(user, password)
+            return changeUserPassword(user, password)
               .then(() => undefined)
               .catch(handleError);
           }}

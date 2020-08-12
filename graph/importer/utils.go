@@ -7,6 +7,7 @@ package importer
 import (
 	"context"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,8 +25,6 @@ import (
 	"golang.org/x/net/html/charset"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
-
-	"github.com/pkg/errors"
 )
 
 const maxFormSize = 5 << 20
@@ -96,6 +95,11 @@ func equal(a, b []string) bool {
 
 func getPropInput(propertyType ent.PropertyType, value string) (*models.PropertyInput, error) {
 	typ := propertyType.Type
+	if value == "" {
+		return &models.PropertyInput{
+			PropertyTypeID: propertyType.ID,
+		}, nil
+	}
 	switch typ {
 	case "date", "email", "string", "enum", "datetime_local":
 		return &models.PropertyInput{
@@ -103,27 +107,27 @@ func getPropInput(propertyType ent.PropertyType, value string) (*models.Property
 			StringValue:    &value,
 		}, nil
 	case "int":
-		intVal, err := strconv.Atoi(value)
+		val, err := strconv.Atoi(value)
 		if err != nil {
 			return nil, err
 		}
 		return &models.PropertyInput{
 			PropertyTypeID: propertyType.ID,
-			IntValue:       &intVal,
+			IntValue:       &val,
 		}, nil
 	case "float":
-		floatVal, err := strconv.ParseFloat(value, 64)
+		val, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			return nil, err
 		}
 		return &models.PropertyInput{
 			PropertyTypeID: propertyType.ID,
-			FloatValue:     &floatVal,
+			FloatValue:     &val,
 		}, nil
 	case "gps_location": // 45.6 , 67.89
 		split := strings.Split(value, ",")
 		if len(split) != 2 {
-			return nil, errors.Errorf("gps location data isn't of form '<LAT>,<LONG>' %s", value)
+			return nil, fmt.Errorf("gps location data isn't of form '<LAT>,<LONG>' %s", value)
 		}
 		lat, err := strconv.ParseFloat(strings.TrimSpace(split[0]), 64)
 		if err != nil {
@@ -141,9 +145,8 @@ func getPropInput(propertyType ent.PropertyType, value string) (*models.Property
 	case "range":
 		split := strings.Split(value, "-")
 		if len(split) != 2 {
-			return nil, errors.Errorf("range data isn't of form '<FROM>-<TO>' %s", value)
+			return nil, fmt.Errorf("range data isn't of form '<FROM>-<TO>' %s", value)
 		}
-
 		from, err := strconv.ParseFloat(strings.TrimSpace(split[0]), 64)
 		if err != nil {
 			return nil, err
@@ -160,25 +163,20 @@ func getPropInput(propertyType ent.PropertyType, value string) (*models.Property
 	case "bool":
 		b, err := strconv.ParseBool(strings.ToLower(value))
 		if err != nil {
-			return nil, errors.WithMessagef(err, "failed parsing bool property %s", value)
+			return nil, fmt.Errorf("cannot parse bool property %s: %w", value, err)
 		}
 		return &models.PropertyInput{
 			PropertyTypeID: propertyType.ID,
 			BooleanValue:   &b,
 		}, nil
 	case "node":
-		if value != "" {
-			id, err := strconv.Atoi(value)
-			if err != nil {
-				return nil, err
-			}
-			return &models.PropertyInput{
-				PropertyTypeID: propertyType.ID,
-				NodeIDValue:    &id,
-			}, nil
+		id, err := strconv.Atoi(value)
+		if err != nil {
+			return nil, err
 		}
 		return &models.PropertyInput{
 			PropertyTypeID: propertyType.ID,
+			NodeIDValue:    &id,
 		}, nil
 	default:
 		return &models.PropertyInput{
@@ -296,7 +294,7 @@ func (m *importer) newReader(key string, req *http.Request) ([]string, *reader, 
 	}
 	r, err := m.charsetReader(f, hdr.Header, textproto.MIMEHeader(req.Header))
 	if err != nil {
-		m.logger.For(req.Context()).Warn("cannot detect mime charset", zap.Error(err))
+		m.logger.For(req.Context()).Debug("cannot detect mime charset", zap.Error(err))
 		r, err = charset.NewReader(f, req.Header.Get("Content-Type"))
 	}
 	if err != nil {

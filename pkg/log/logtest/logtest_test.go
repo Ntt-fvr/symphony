@@ -2,18 +2,19 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package logtest
+package logtest_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTestLogger(t *testing.T) {
-	assert.Implements(t, (*TestingT)(nil), &testing.T{})
-	assert.Implements(t, (*TestingT)(nil), &testing.B{})
-	logger := NewTestLogger(t)
+	assert.Implements(t, (*logtest.TestingT)(nil), &testing.T{})
+	assert.Implements(t, (*logtest.TestingT)(nil), &testing.B{})
+	logger := logtest.NewTestLogger(t)
 	assert.Equal(t, logger.Background(), logger.For(context.Background()))
 }

@@ -13,7 +13,7 @@ import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 import * as React from 'react';
 import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
-import {priorityValues} from '../../common/WorkOrder';
+import {priorityValues} from '../../common/FilterTypes';
 
 const PowerSearchWorkOrderPriorityFilter = (props: FilterProps) => {
   const {

@@ -148,7 +148,7 @@ func TestImportLocationHierarchy(t *testing.T) {
 	parentLoc2, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, &parentIndex)
 	require.NoError(t, err)
 	require.Equal(t, parentLoc2.Name, "locNameM")
-	require.Equal(t, parentLoc2.QueryType().OnlyXID(ctx), ids.locTypeIDM)
+	require.Equal(t, parentLoc2.QueryType().OnlyIDX(ctx), ids.locTypeIDM)
 	require.Equal(t, parentLoc2.QueryParent().OnlyX(ctx).Name, "locNameL")
 
 	rec3, _ := NewImportRecord(test3, title)
@@ -170,7 +170,7 @@ func TestImportLocationHierarchy(t *testing.T) {
 	parentLoc3, err := importer.verifyOrCreateLocationHierarchy(ctx, rec2, true, &parentIndex)
 	require.NoError(t, err)
 	require.Equal(t, parentLoc3.Name, "locNameL")
-	require.Equal(t, parentLoc3.QueryType().OnlyXID(ctx), ids.locTypeIDL)
+	require.Equal(t, parentLoc3.QueryType().OnlyIDX(ctx), ids.locTypeIDL)
 	require.False(t, parentLoc3.QueryParent().ExistX(ctx))
 }
 
@@ -212,10 +212,10 @@ func TestValidateLocationPropertiesForType(t *testing.T) {
 		switch ptyp.Name {
 		case propName1:
 			require.Equal(t, *value.StringValue, "strVal")
-			require.Equal(t, ptyp.Type, "string")
+			require.Equal(t, ptyp.Type, propertytype.TypeString)
 		case propName2:
 			require.Equal(t, *value.IntValue, 54)
-			require.Equal(t, ptyp.Type, "int")
+			require.Equal(t, ptyp.Type, propertytype.TypeInt)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -234,10 +234,10 @@ func TestValidateLocationPropertiesForType(t *testing.T) {
 		switch ptyp.Name {
 		case propName3:
 			require.Equal(t, *value.StringValue, "29/03/88")
-			require.Equal(t, ptyp.Type, "date")
+			require.Equal(t, ptyp.Type, propertytype.TypeDate)
 		case propName4:
 			require.Equal(t, *value.BooleanValue, false)
-			require.Equal(t, ptyp.Type, "bool")
+			require.Equal(t, ptyp.Type, propertytype.TypeBool)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -259,11 +259,11 @@ func TestValidateLocationPropertiesForType(t *testing.T) {
 		case propName5:
 			require.Equal(t, *value.RangeFromValue, 30.23)
 			require.EqualValues(t, *value.RangeToValue, 50)
-			require.Equal(t, ptyp.Type, "range")
+			require.Equal(t, ptyp.Type, propertytype.TypeRange)
 		case ptyp.Name:
 			require.Equal(t, *value.LatitudeValue, 45.8)
 			require.Equal(t, *value.LongitudeValue, 88.9)
-			require.Equal(t, ptyp.Type, "gps_location")
+			require.Equal(t, ptyp.Type, propertytype.TypeGpsLocation)
 		default:
 			require.Fail(t, "property type name should be one of the two")
 		}
@@ -289,7 +289,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Properties: []*models.PropertyInput{{
 			RangeFromValue: pointer.ToFloat64(30),
 			RangeToValue:   pointer.ToFloat64(50.88),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName5)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName5)).OnlyIDX(ctx),
 		}},
 	})
 	require.NoError(t, err)
@@ -298,7 +298,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Type: ids.locTypeIDM,
 		Properties: []*models.PropertyInput{{
 			StringValue:    pointer.ToString("10/11/88"),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName3)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName3)).OnlyIDX(ctx),
 		}},
 		Latitude:  pointer.ToFloat64(16),
 		Longitude: pointer.ToFloat64(44),
@@ -309,7 +309,7 @@ func TestValidateForExistingLocation(t *testing.T) {
 		Type: ids.locTypeIDS,
 		Properties: []*models.PropertyInput{{
 			IntValue:       pointer.ToInt(16),
-			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName2)).OnlyXID(ctx),
+			PropertyTypeID: r.client.PropertyType.Query().Where(propertytype.Name(propName2)).OnlyIDX(ctx),
 		}},
 		Parent:     pointer.ToInt(loc1.ID),
 		ExternalID: pointer.ToString("123"),

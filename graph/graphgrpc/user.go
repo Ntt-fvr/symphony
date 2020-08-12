@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
-	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 
@@ -32,16 +31,6 @@ func NewUserService(provider UserProvider) UserService {
 	return UserService{provider}
 }
 
-func (s UserService) createWriteGroup(ctx context.Context, client *ent.Client) error {
-	_, err := client.UsersGroup.Create().
-		SetName(authz.WritePermissionGroupName).
-		Save(ctx)
-	if !ent.IsConstraintError(err) {
-		return err
-	}
-	return nil
-}
-
 // Create a user by authID, tenantID and required role.
 func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*schema.User, error) {
 	if input.Tenant == "" {
@@ -56,11 +45,11 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 		return nil, status.FromContextError(err).Err()
 	}
 
-	role := user.RoleUSER
+	role := user.RoleUser
 	if input.IsOwner {
-		role = user.RoleOWNER
+		role = user.RoleOwner
 	}
-	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleADMIN)
+	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleAdmin)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -70,14 +59,8 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 			u, err = client.User.Create().SetAuthID(input.Id).SetEmail(input.Id).SetRole(role).Save(ctx)
 		}
 	} else {
-		_, err = client.User.UpdateOne(u).SetStatus(user.StatusACTIVE).SetRole(role).Save(ctx)
+		_, err = client.User.UpdateOne(u).SetStatus(user.StatusActive).SetRole(role).Save(ctx)
 	}
-	if err != nil {
-		return nil, status.FromContextError(err).Err()
-	}
-
-	// TODO(T64743627): Stop creating this group
-	err = s.createWriteGroup(ctx, client)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -99,7 +82,7 @@ func (s UserService) Delete(ctx context.Context, input *schema.UserInput) (*empt
 		return nil, status.FromContextError(err).Err()
 	}
 
-	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleADMIN)
+	ctx, err = CreateServiceContext(ctx, input.Tenant, UserServiceName, user.RoleAdmin)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -108,7 +91,7 @@ func (s UserService) Delete(ctx context.Context, input *schema.UserInput) (*empt
 		return nil, status.FromContextError(err).Err()
 	}
 	err = client.User.UpdateOne(u).
-		SetStatus(user.StatusDEACTIVATED).
+		SetStatus(user.StatusDeactivated).
 		Exec(ctx)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()

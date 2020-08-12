@@ -9,7 +9,7 @@ import sys
 from argparse import Namespace
 from asyncio.events import AbstractEventLoop
 from datetime import datetime
-from typing import Tuple
+from typing import Sequence, Tuple
 
 from pyinventory import InventoryClient
 from pyinventory.common.data_class import Location
@@ -46,7 +46,7 @@ async def run_it(
 
 async def main(
     email: str, password: str, tenant: str
-) -> Tuple[Tuple[Location, float, float]]:
+) -> Sequence[Tuple[Location, float, float]]:
     client = get_client(email=email, password=password, tenant=tenant)
     locations_with_external_ids = get_building_locations(client)
     t = Timer()
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     get_location_run = sum([r[1] for r in result]) / number_of_calls
     # pyre-fixme[5]: Global expression must be annotated.
     edit_location_run = sum([r[2] for r in result]) / number_of_calls
-    print(f"RESULT".center(80, "*"))
+    print("RESULT".center(80, "*"))
     print(
         f"get_location_by_external_id - avg {get_location_run:.4f} secs per query call"
     )

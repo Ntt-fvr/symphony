@@ -91,10 +91,6 @@ func (resolver) EquipmentType() generated.EquipmentTypeResolver {
 	return equipmentTypeResolver{}
 }
 
-func (resolver) File() generated.FileResolver {
-	return fileResolver{}
-}
-
 func (resolver) User() generated.UserResolver {
 	return userResolver{}
 }
@@ -141,6 +137,10 @@ func (resolver) WorkOrder() generated.WorkOrderResolver {
 
 func (resolver) WorkOrderType() generated.WorkOrderTypeResolver {
 	return workOrderTypeResolver{}
+}
+
+func (resolver) WorkOrderTemplate() generated.WorkOrderTemplateResolver {
+	return workOrderTemplateResolver{}
 }
 
 func (resolver) WorkOrderDefinition() generated.WorkOrderDefinitionResolver {
@@ -199,6 +199,10 @@ func (resolver) ProjectType() generated.ProjectTypeResolver {
 	return projectTypeResolver{}
 }
 
+func (resolver) ProjectTemplate() generated.ProjectTemplateResolver {
+	return projectTemplateResolver{}
+}
+
 func (resolver) CheckListCategory() generated.CheckListCategoryResolver {
 	return checkListCategoryResolver{}
 }
@@ -209,10 +213,6 @@ func (resolver) CheckListItem() generated.CheckListItemResolver {
 
 func (resolver) CheckListCategoryDefinition() generated.CheckListCategoryDefinitionResolver {
 	return checkListCategoryDefinitionResolver{}
-}
-
-func (resolver) CheckListItemDefinition() generated.CheckListItemDefinitionResolver {
-	return checkListItemDefinitionResolver{}
 }
 
 func (resolver) ActionsRule() generated.ActionsRuleResolver {
@@ -237,6 +237,10 @@ func (resolver) Viewer() generated.ViewerResolver {
 
 func (r resolver) ReportFilter() generated.ReportFilterResolver {
 	return reportFilterResolver{}
+}
+
+func (r resolver) ExportTask() generated.ExportTaskResolver {
+	return exportTaskResolver{}
 }
 
 func (r resolver) Comment() generated.CommentResolver {

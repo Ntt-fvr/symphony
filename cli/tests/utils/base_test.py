@@ -5,8 +5,8 @@
 
 import unittest
 
-from pyinventory.common.cache import clear_types
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import clear_types
 
 from . import truncate_client
 from .grpc.rpc_pb2_grpc import TenantServiceStub

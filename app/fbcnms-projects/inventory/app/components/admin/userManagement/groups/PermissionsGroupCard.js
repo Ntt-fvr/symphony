@@ -8,11 +8,10 @@
  * @format
  */
 
-import type {UserPermissionsGroup} from '../utils/UserManagementUtils';
+import type {UsersGroup} from '../data/UsersGroups';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
 import * as React from 'react';
-import AppContext from '@fbcnms/ui/context/AppContext';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@fbcnms/ui/components/design-system/Button';
 import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
@@ -28,14 +27,16 @@ import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContaine
 import classNames from 'classnames';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import withSuspense from '../../../../common/withSuspense';
 import {GROUP_STATUSES, NEW_DIALOG_PARAM} from '../utils/UserManagementUtils';
 import {PERMISSION_GROUPS_VIEW_NAME} from './PermissionsGroupsView';
+import {addGroup, deleteGroup, editGroup} from '../data/UsersGroups';
 import {generateTempId} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
-import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useRouteMatch} from 'react-router-dom';
-import {useUserManagement} from '../UserManagementContext';
+import {useUsersGroup} from '../data/UsersGroups';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -54,39 +55,27 @@ type Props = $ReadOnly<{|
   ...WithAlert,
 |}>;
 
-const initialNewGroup: UserPermissionsGroup = {
+const initialNewGroup: UsersGroup = {
   id: generateTempId(),
   name: '',
   description: '',
   status: GROUP_STATUSES.ACTIVE.key,
   members: [],
-  memberUsers: [],
+  policies: [],
 };
 
 function PermissionsGroupCard(props: Props) {
   const {redirectToGroupsView, onClose} = props;
   const classes = useStyles();
   const match = useRouteMatch();
-  const {isFeatureEnabled} = useContext(AppContext);
-  const userManagementDevMode = isFeatureEnabled('user_management_dev');
-  const permissionPoliciesMode = isFeatureEnabled('permission_policies');
-  const {groups, editGroup, addGroup, deleteGroup} = useUserManagement();
+
   const groupId = match.params.id;
+  const fetchedGroup = useUsersGroup(groupId || '');
+
   const isOnNewGroup = groupId === NEW_DIALOG_PARAM;
-  const [group, setGroup] = useState<?UserPermissionsGroup>(
+  const [group, setGroup] = useState<?UsersGroup>(
     isOnNewGroup ? {...initialNewGroup} : null,
   );
-
-  useEffect(() => {
-    if (isOnNewGroup) {
-      return;
-    }
-    const requestedGroup = groups.find(group => group.id === groupId);
-    if (requestedGroup == null) {
-      redirectToGroupsView();
-    }
-    setGroup(requestedGroup);
-  }, [groupId, groups, isOnNewGroup, redirectToGroupsView]);
 
   const enqueueSnackbar = useEnqueueSnackbar();
   const handleError = useCallback(
@@ -95,6 +84,34 @@ function PermissionsGroupCard(props: Props) {
     },
     [enqueueSnackbar],
   );
+
+  useEffect(() => {
+    if (isOnNewGroup || group != null) {
+      return;
+    }
+    if (fetchedGroup == null) {
+      if (groupId != null) {
+        handleError(
+          `${fbt(
+            `Group with id ${fbt.param(
+              'group id url param',
+              groupId,
+            )} does not exist.`,
+            '',
+          )}`,
+        );
+      }
+      redirectToGroupsView();
+    }
+    setGroup(fetchedGroup);
+  }, [
+    fetchedGroup,
+    group,
+    groupId,
+    handleError,
+    isOnNewGroup,
+    redirectToGroupsView,
+  ]);
 
   const header = useMemo(() => {
     const breadcrumbs = [
@@ -121,15 +138,13 @@ function PermissionsGroupCard(props: Props) {
               return;
             }
             const saveAction = isOnNewGroup ? addGroup : editGroup;
-            saveAction(group)
-              .then(onClose)
-              .catch(handleError);
+            saveAction(group).then(onClose).catch(handleError);
           }}>
           {Strings.common.saveButton}
         </Button>
       </FormAction>,
     ];
-    if (!isOnNewGroup && permissionPoliciesMode) {
+    if (!isOnNewGroup) {
       actions.unshift(
         <FormAction>
           <IconButton
@@ -162,18 +177,7 @@ function PermissionsGroupCard(props: Props) {
       subtitle: fbt('Manage group details, members and policies', ''),
       actionButtons: actions,
     };
-  }, [
-    addGroup,
-    deleteGroup,
-    editGroup,
-    group,
-    handleError,
-    isOnNewGroup,
-    onClose,
-    props,
-    redirectToGroupsView,
-    permissionPoliciesMode,
-  ]);
+  }, [group, handleError, isOnNewGroup, onClose, props, redirectToGroupsView]);
 
   if (group == null) {
     return null;
@@ -185,16 +189,11 @@ function PermissionsGroupCard(props: Props) {
           <Grid
             item
             xs={8}
-            sm={8}
-            lg={8}
-            xl={8}
             className={classNames(classes.container, classes.vertical)}>
             <PermissionsGroupDetailsPane group={group} onChange={setGroup} />
-            {userManagementDevMode ? (
-              <PermissionsGroupPoliciesPane group={group} />
-            ) : null}
+            <PermissionsGroupPoliciesPane group={group} onChange={setGroup} />
           </Grid>
-          <Grid item xs={4} sm={4} lg={4} xl={4} className={classes.container}>
+          <Grid item xs={4} className={classes.container}>
             <PermissionsGroupMembersPane group={group} onChange={setGroup} />
           </Grid>
         </Grid>
@@ -203,4 +202,4 @@ function PermissionsGroupCard(props: Props) {
   );
 }
 
-export default withAlert(PermissionsGroupCard);
+export default withSuspense(withAlert(PermissionsGroupCard));

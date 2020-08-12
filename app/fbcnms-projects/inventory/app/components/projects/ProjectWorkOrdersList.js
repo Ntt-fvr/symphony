@@ -23,7 +23,7 @@ import TableRow from '@material-ui/core/TableRow';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/WorkOrder';
+import {priorityValues, statusValues} from '../../common/FilterTypes';
 
 type Props = {
   onSelect: (workOrder: WorkOrder) => void,
@@ -59,7 +59,7 @@ const ProjectWorkOrdersList = (props: Props) => {
           <TableCell>Type</TableCell>
           <TableCell>Status</TableCell>
           <TableCell>Owner</TableCell>
-          <TableCell>Prioriry</TableCell>
+          <TableCell>Priority</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

@@ -3,16 +3,16 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Dict, Iterator, Mapping, Optional, Tuple, cast
 
 from pysymphony import SymphonyClient
+from pysymphony.common.cache import EQUIPMENT_TYPES
+from pysymphony.common.constant import EQUIPMENTS_TO_SEARCH, PAGINATION_STEP
+from pysymphony.common.data_class import Equipment, EquipmentType, Location
+from pysymphony.common.data_enum import Entity
 from tqdm import tqdm
 
 from .._utils import PropertyValue, _get_property_value, get_graphql_property_inputs
-from ..common.cache import EQUIPMENT_TYPES
-from ..common.constant import EQUIPMENTS_TO_SEARCH
-from ..common.data_class import Equipment, EquipmentType, Location
-from ..common.data_enum import Entity
 from ..exceptions import (
     EntityNotFoundError,
     EquipmentIsNotUniqueException,
@@ -35,6 +35,7 @@ from ..graphql.query.equipment_type_and_properties import (
     EquipmentTypeAndPropertiesQuery,
 )
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
+from ..graphql.query.equipments import EquipmentsQuery
 from ..graphql.query.location_equipments import LocationEquipmentsQuery
 
 
@@ -66,28 +67,31 @@ def _get_equipment_if_exists(
 def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equipment:
     """Get equipment by name in a given location.
 
-        Args:
-            name (str): equipment name
-            location ( `pyinventory.common.data_class.Location`): location object could be retrieved from
-            - `pyinventory.api.location.get_location`
-            - `pyinventory.api.location.add_location`
+        :param name: Equipment name
+        :type name: str
+        :param location: Location object could be retrieved from
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object:
-                You can use the ID to access the equipment from the UI:
-                https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+            * :meth:`~pyinventory.api.location.get_location`
+            * :meth:`~pyinventory.api.location.add_location`
 
-        Raises:
-            EquipmentIsNotUniqueException: location contains
-                more than one equipment with the same name
-            EquipmentNotFoundException: the equipment was not found
-            FailedOperationException: internal inventory error
+        :type location: :class:`~pyinventory.common.data_class.Location`
 
-        Example:
-            ```
+
+        :raises:
+            * EquipmentIsNotUniqueException: Location contains more than one equipment with the same name
+            * EquipmentNotFoundException: The equipment was not found
+            * FailedOperationException: Internal inventory error
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location([("Country", "LS_IND_Prod_Copy")])
             equipment = client.get_equipment("indProdCpy1_AIO", location)
-            ```
     """
 
     equipment = _get_equipment_if_exists(client, name, location)
@@ -96,27 +100,58 @@ def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equi
     return equipment
 
 
+def get_equipments(client: SymphonyClient) -> Iterator[Equipment]:
+    """This function returns all existing equipments
+
+        :return: Equipments Iterator
+        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
+
+        **Example**
+
+        .. code-block:: python
+
+            all_equipments = client.get_equipments()
+    """
+    equipments = EquipmentsQuery.execute(client, first=PAGINATION_STEP)
+    edges = equipments.edges if equipments else []
+    while equipments is not None and equipments.pageInfo.hasNextPage:
+        equipments = EquipmentsQuery.execute(
+            client, after=equipments.pageInfo.endCursor, first=PAGINATION_STEP
+        )
+        if equipments is not None:
+            edges.extend(equipments.edges)
+
+    for edge in edges:
+        node = edge.node
+        if node is not None:
+            yield Equipment(
+                id=node.id,
+                external_id=node.externalId,
+                name=node.name,
+                equipment_type_name=node.equipmentType.name,
+            )
+
+
 def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Equipment:
     """Get equipment by external ID.
 
-        Args:
-            external_id (str): equipment external ID
+        :param external_id: Equipment external ID
+        :type external_id: str
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object:
-                You can use the ID to access the equipment from the UI:
-                https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :raises:
+            * EquipmentIsNotUniqueException: Location contains more than one equipment with the same external ID
+            * :class:`~pyinventory.exceptions.EntityNotFoundError`: The equipment was not found
+            * FailedOperationException: Internal inventory error
 
-        Raises:
-            EquipmentIsNotUniqueException: location contains
-                more than one equipment with the same external ID
-            `pyinventory.exceptions.EntityNotFoundError`: the equipment was not found
-            FailedOperationException: internal inventory error
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
 
-        Example:
-            ```
+        **Example**
+
+        .. code-block:: python
+
             equipment = client.get_equipment_by_external_id(external_id="123456")
-            ```
     """
     equipment_filter = EquipmentFilterInput(
         filterType=EquipmentFilterType.EQUIP_INST_EXTERNAL_ID,
@@ -126,24 +161,26 @@ def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Eq
         stringSet=[],
     )
 
-    equipments = EquipmentSearchQuery.execute(
-        client, filters=[equipment_filter], limit=5
-    )
+    res = EquipmentSearchQuery.execute(client, filters=[equipment_filter], limit=5)
 
-    if not equipments or equipments.count == 0:
+    if not res or res.totalCount == 0:
         raise EntityNotFoundError(
             entity=Entity.Equipment, msg=f"external_id={external_id}"
         )
 
-    if equipments.count > 1:
+    if res.totalCount > 1:
         raise EquipmentIsNotUniqueException(external_id)
 
-    return Equipment(
-        id=equipments.equipment[0].id,
-        external_id=equipments.equipment[0].externalId,
-        name=equipments.equipment[0].name,
-        equipment_type_name=equipments.equipment[0].equipmentType.name,
-    )
+    for edge in res.edges:
+        node = edge.node
+        if node is not None:
+            return Equipment(
+                id=node.id,
+                external_id=node.externalId,
+                name=node.name,
+                equipment_type_name=node.equipmentType.name,
+            )
+    raise EntityNotFoundError(entity=Entity.Equipment, msg=f"external_id={external_id}")
 
 
 def get_equipment_properties(
@@ -151,20 +188,29 @@ def get_equipment_properties(
 ) -> Dict[str, PropertyValue]:
     """Get specific equipment properties.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object
+        :param equipment: Equipment objecte, could be retrieved from
 
-        Returns:
-            Dict[str, PropertyValue]: dictionary of property name to property value
-            - str - property name
-            - PropertyValue - new value of the same type for this property
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Example:
-            ```
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+
+        :return: Dictionary of property name to property value
+
+            * str - property name
+            * PropertyValue - new value of the same type for this property
+
+        :rtype: Dict[str, PropertyValue]
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment = client.get_equipment("indProdCpy1_AIO", location)
             properties = client.get_equipment_properties(equipment=equipment)
-            ```
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client, equipment
@@ -174,22 +220,23 @@ def get_equipment_properties(
 
 def get_equipments_by_type(
     client: SymphonyClient, equipment_type_id: str
-) -> List[Equipment]:
+) -> Iterator[Equipment]:
     """Get equipments by ID of specific type.
 
-        Args:
-            equipment_type_id (str): equipment type ID
+        :param equipment_type_id: Equipment type ID
+        :type equipment_type_id: str
 
-        Returns:
-            List[ `pyinventory.common.data_class.Equipment` ]: List of found equipments
+        :raises:
+            :class:`~pyinventory.exceptions.EntityNotFoundError`: Equipment type with this ID does not exist
 
-        Raises:
-            `pyinventory.exceptions.EntityNotFoundError`: equipment type with this ID does not exist
+        :return: Equipments Iterator
+        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
 
-        Example:
-            ```
+        **Example**
+
+        .. code-block:: python
+
             equipments = client.get_equipments_by_type(equipment_type_id="34359738369")
-            ```
     """
     equipment_type_with_equipments = EquipmentTypeEquipmentQuery.execute(
         client, id=equipment_type_id
@@ -198,53 +245,46 @@ def get_equipments_by_type(
         raise EntityNotFoundError(
             entity=Entity.EquipmentType, entity_id=equipment_type_id
         )
-    result = []
     for equipment in equipment_type_with_equipments.equipments:
-        result.append(
-            Equipment(
-                id=equipment.id,
-                external_id=equipment.externalId,
-                name=equipment.name,
-                equipment_type_name=equipment.equipmentType.name,
-            )
+        yield Equipment(
+            id=equipment.id,
+            external_id=equipment.externalId,
+            name=equipment.name,
+            equipment_type_name=equipment.equipmentType.name,
         )
-
-    return result
 
 
 def get_equipments_by_location(
     client: SymphonyClient, location_id: str
-) -> List[Equipment]:
+) -> Iterator[Equipment]:
     """Get equipments by ID of specific location.
 
-        Args:
-            location_id (str): location ID
+        :param location_id: Location ID
+        :type location_id: str
 
-        Returns:
-            List[ `pyinventory.common.data_class.Equipment` ]: List of found equipments
+        :raises:
+            :class:`~pyinventory.exceptions.EntityNotFoundError`: Location with this ID does not exist
 
-        Raises:
-            `pyinventory.exceptions.EntityNotFoundError`: location with this ID does not exist
+        :return: Equipments Iterator
+        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
 
-        Example:
-            ```
+        **Example**
+
+        .. code-block:: python
+
             equipments = client.get_equipments_by_location(location_id="60129542651")
-            ```
     """
     location_details = LocationEquipmentsQuery.execute(client, id=location_id)
     if location_details is None:
         raise EntityNotFoundError(entity=Entity.Location, entity_id=location_id)
-    result = []
+
     for equipment in location_details.equipments:
-        result.append(
-            Equipment(
-                id=equipment.id,
-                external_id=equipment.externalId,
-                name=equipment.name,
-                equipment_type_name=equipment.equipmentType.name,
-            )
+        yield Equipment(
+            id=equipment.id,
+            external_id=equipment.externalId,
+            name=equipment.name,
+            equipment_type_name=equipment.equipmentType.name,
         )
-    return result
 
 
 def _get_equipment_in_position_if_exists(
@@ -259,33 +299,34 @@ def get_equipment_in_position(
 ) -> Equipment:
     """Get the equipment attached in a given `position_name` of a given `parent_equipment`
 
-        Args:
-            parent_equipment ( `pyinventory.common.data_class.Equipment` ): could be retrieved from
-            - `pyinventory.api.equipment.get_equipment`
-            - `pyinventory.api.equipment.get_equipment_in_position`
-            - `pyinventory.api.equipment.add_equipment`
-            - `pyinventory.api.equipment.add_equipment_to_position`
+        :param parent_equipment: Parent equipment, could be retrieved from
 
-            position_name (str): position name
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object:
-                You can use the ID to access the equipment from the UI:
-                https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :type parent_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param position_name: Position name
+        :type position_name: str
 
-        Raises:
-            AssertionException: if parent equipment has more than one
-                position with the given name, or none with this name or
-                if the position is not occupied.
-            FailedOperationException: for internal inventory error
-            `pyinventory.exceptions.EntityNotFoundError`: if parent_equipment does not exist
+        :raises:
+            * AssertionException: Parent equipment has more than one position with the given name,
+              or none with this name or the position is not occupied.
+            * FailedOperationException: Internal inventory error
+            * :class:`~pyinventory.exceptions.EntityNotFoundError`: `parent_equipment` does not exist
 
-        Example:
-            ```
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location([("Country", "LS_IND_Prod_Copy")])
             p_equipment = client.get_equipment("indProdCpy1_AIO", location)
             equipment = client.get_equipment_in_position(p_equipment, "some_position")
-            ```
     """
 
     equipment = _get_equipment_in_position_if_exists(
@@ -313,31 +354,38 @@ def add_equipment(
         If equipment with this name already exists in this location,
         then existing equipment is returned.
 
-        Args:
-            name (str): new equipment name
-            equipment_type (str): equipment type name
-            location ( `pyinventory.common.data_class.Location` ): location object could be retrieved from
-            - `pyinventory.api.location.get_location`
-            - `pyinventory.api.location.add_location`
+        :param name: New equipment name
+        :type name: str
+        :param equipment_type: Equipment type name
+        :type equipment_type: str
+        :param location: Location object, could be retrieved from
 
-            properties_dict (Mapping[str, PropertyValue]): dictionary of property name to property value
-            - str - property name
-            - PropertyValue - new value of the same type for this property
+            * :meth:`~pyinventory.api.location.get_location`
+            * :meth:`~pyinventory.api.location.add_location`
 
-            external_id (Optional[str]): equipment external ID
+        :type location: :class:`~pyinventory.common.data_class.Location`
+        :param properties_dict: Dictionary of property name to property value
 
-        Returns:
-            `pyinventory.common.data_class.Equipment`:
-                You can use the ID to access the equipment from the UI:
-                https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+            * str - property name
+            * PropertyValue - new value of the same type for this property
 
-        Raises:
-            AssertionException: location contains more than one equipment with the
-                same name or if property value in properties_dict does not match the property type
-            FailedOperationException: internal inventory error
+        :type properties_dict: Mapping[str, PropertyValue]
+        :param external_id: Equipment external ID
+        :type external_id: str, optional
 
-        Example:
-            ```
+        :raises:
+            * AssertionException: Location contains more than one equipment with the
+              same name or property value in `properties_dict` does not match the property type
+            * FailedOperationException: Internal inventory error
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             from datetime import date
             equipment = client.add_equipment(
                 name="Router X123",
@@ -351,7 +399,6 @@ def add_equipment(
                     "String Property": "aa",
                     "Float Property": 1.23
                 })
-            ```
     """
 
     property_types = EQUIPMENT_TYPES[equipment_type].property_types
@@ -382,21 +429,34 @@ def edit_equipment(
 ) -> Equipment:
     """Edit existing equipment.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object
-            new_name (Optional[str]): equipment new name
-            new_properties (Optional[Dict[str, PropertyValue]]): dictionary of property name to property value
-                str - property name
-                PropertyValue - new value of the same type for this property
+        :param equipment: Equipment object, could be retrieved from
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Raises:
-            FailedOperationException: internal inventory error
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param new_name: Equipment new name
+        :type new_name: str, optional
+        :param new_properties: Dictionary of property name to property value
 
-        Example:
-            ```
+            * str - property name
+            * PropertyValue - new value of the same type for this property
+
+        :type new_properties: Dict[str, PropertyValue], optional
+
+        :raises:
+            FailedOperationException: Internal inventory error
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
             edited_equipment = client.edit_equipment(
@@ -404,7 +464,6 @@ def edit_equipment(
                 new_name="new_name",
                 new_properties={"Z AIO - Number": 123},
             )
-            ```
     """
     properties = []
     property_types = EQUIPMENT_TYPES[equipment.equipment_type_name].property_types
@@ -481,35 +540,43 @@ def add_equipment_to_position(
         The equipment will be of the given `equipment_type`, with the given `name` and with the given `properties`.
         If equipment with this name already exists in this position, then existing equipment is returned.
 
-        Args:
-            name (str): new equipment name
-            equipment_type (str): equipment type name
-            existing_equipment ( `pyinventory.common.data_class.Equipment` ): could be retrieved from
-            - `pyinventory.api.equipment.get_equipment`
-            - `pyinventory.api.equipment.get_equipment_in_position`
-            - `pyinventory.api.equipment.add_equipment`
-            - `pyinventory.api.equipment.add_equipment_to_position`
+        :param name: New equipment name
+        :type name: str
+        :param equipment_type: Equipment type name
+        :type equipment_type: str
+        :param existing_equipment: Equipment object, could be retrieved from
 
-            position_name (str): position name in the equipment type.
-            properties_dict (Mapping[str, PropertyValue]): dictionary of property name to property value
-            - str - property name
-            - PropertyValue - new value of the same type for this property
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-            external_id (Optional[str]): equipment external ID
+        :type existing_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param position_name: Position name in the equipment type
+        :type position_name: str
+        :param properties_dict: Dictionary of property name to property value
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object:
-                You can use the ID to access the equipment from the UI:
-                https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+            * str - property name
+            * PropertyValue - new value of the same type for this property
 
-        Raises:
-            AssertionException: if parent equipment has more than one position with the given name
-                            or if property value in `properties_dict` does not match the property type
-            FailedOperationException: for internal inventory error
-            `pyinventory.exceptions.EntityNotFoundError`: if `existing_equipment` does not exist
+        :type properties_dict: Mapping[str, PropertyValue]
+        :param external_id: Equipment external ID
+        :type external_id: str, optional
 
-        Example:
-            ```
+        :raises:
+            * AssertionException: Parent equipment has more than one position with the given name
+              or property value in `properties_dict` does not match the property type
+            * FailedOperationException: Internal inventory error
+            * :class:`~pyinventory.exceptions.EntityNotFoundError`: `existing_equipment` does not exist
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             from datetime import date
             equipment = client.add_equipment_to_position(
                 name="Card Y123",
@@ -523,8 +590,8 @@ def add_equipment_to_position(
                     "Number Property": 11,
                     "String Property": "aa",
                     "Float Property": 1.23
-                })
-            ```
+                }
+            )
     """
 
     position_definition_id, _ = _find_position_definition_id(
@@ -554,75 +621,100 @@ def add_equipment_to_position(
 def delete_equipment(client: SymphonyClient, equipment: Equipment) -> None:
     """This function delete Equipment.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object
+        :param equipment: Existing equipment object, could be retrieved from
 
-        Example:
-            ```
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
+
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+
+        :rtype: None
+
+        **Example**
+
+        .. code-block:: python
+
             client.delete_equipment(equipment=equipment)
-            ```
     """
     RemoveEquipmentMutation.execute(client, id=equipment.id)
 
 
 def search_for_equipments(
     client: SymphonyClient, limit: int
-) -> Tuple[List[Equipment], int]:
+) -> Tuple[Iterator[Equipment], int]:
     """Search for equipments.
 
-        Args:
-            limit (int): search result limit
+        :param limit: Search result limit
+        :type limit: int
 
-        Returns:
-            Tuple[List[ `pyinventory.common.data_class.Equipment` ], int]
+        :return: Tuple[Iterator[ :class:`~pyinventory.common.data_class.Equipment` ], int]
 
-        Example:
-            ```
+            * Iterator[ :class:`~pyinventory.common.data_class.Equipment` ] - Equipments Iterator
+            * int - Total count of results
+
+        :rtype: Tuple[Iterator[ :class:`~pyinventory.common.data_class.Equipment` ], int]
+
+        **Example**
+
+        .. code-block:: python
+
             client.search_for_equipments(limit=10)
-            ```
     """
-    equipments = EquipmentSearchQuery.execute(client, filters=[], limit=limit)
 
-    total_count = equipments.count
-    equipments = [
-        Equipment(
-            id=equipment.id,
-            external_id=equipment.externalId,
-            name=equipment.name,
-            equipment_type_name=equipment.equipmentType.name,
-        )
-        for equipment in equipments.equipment
-    ]
+    def generate_equipments(
+        data: EquipmentSearchQuery.EquipmentSearchQueryData.EquipmentConnection,
+    ) -> Iterator[Equipment]:
+        for edge in data.edges:
+            node = edge.node
+            if node is not None:
+                yield Equipment(
+                    id=node.id,
+                    external_id=node.externalId,
+                    name=node.name,
+                    equipment_type_name=node.equipmentType.name,
+                )
+
+    equipments_result = EquipmentSearchQuery.execute(client, filters=[], limit=limit)
+    total_count = equipments_result.totalCount
+
+    equipments = generate_equipments(equipments_result)
     return equipments, total_count
 
 
 def delete_all_equipments(client: SymphonyClient) -> None:
     """This function delete all Equipments.
 
-        Example:
-            ```
+        :rtype: None
+
+        **Example**
+
+        .. code-block:: python
+
             client.delete_all_equipment()
-            ```
     """
-    equipments, total_count = search_for_equipments(
-        client=client, limit=EQUIPMENTS_TO_SEARCH
-    )
 
-    for equipment in equipments:
-        delete_equipment(client=client, equipment=equipment)
+    def delete_equipments(client: SymphonyClient) -> Tuple[int, int]:
+        equipments, total = search_for_equipments(
+            client=client, limit=EQUIPMENTS_TO_SEARCH
+        )
+        deleted = 0
+        for equipment in equipments:
+            deleted += 1
+            delete_equipment(client=client, equipment=equipment)
 
-    if total_count == len(equipments):
+        return total, deleted
+
+    total_count, deleted_count = delete_equipments(client)
+    if total_count == deleted_count:
         return
 
     with tqdm(total=total_count) as progress_bar:
-        progress_bar.update(len(equipments))
-        while len(equipments) != 0:
-            equipments, _ = search_for_equipments(
-                client=client, limit=EQUIPMENTS_TO_SEARCH
-            )
-            for equipment in equipments:
-                delete_equipment(client=client, equipment=equipment)
-            progress_bar.update(len(equipments))
+        progress_bar.update(deleted_count)
+        while deleted_count != 0:
+            total_count, deleted_count = delete_equipments(client)
+            progress_bar.update(deleted_count)
 
 
 def _get_equipment_type_and_properties_dict(
@@ -634,7 +726,7 @@ def _get_equipment_type_and_properties_dict(
         raise EntityNotFoundError(entity=Entity.Equipment, entity_id=equipment.id)
     equipment_type = result.equipmentType.name
 
-    properties_dict = {}
+    properties_dict: Dict[str, PropertyValue] = {}
     property_types = EQUIPMENT_TYPES[equipment_type].property_types
     for property in result.properties:
         property_type_id = property.propertyType.id
@@ -654,8 +746,8 @@ def _get_equipment_type_and_properties_dict(
         )
         if property_type.property_kind == PropertyKind.gps_location:
             properties_dict[property_type.property_name] = (
-                property_value[0],
-                property_value[1],
+                cast(float, property_value[0]),
+                cast(float, property_value[1]),
             )
         else:
             properties_dict[property_type.property_name] = property_value[0]
@@ -671,17 +763,29 @@ def copy_equipment_in_position(
 ) -> Equipment:
     """Copy equipment in position.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object to be copied
-            dest_parent_equipment ( `pyinventory.common.data_class.Equipment` ): parent equipment, destination to copy to
-            dest_position_name (str): destination position name
-            new_external_id (Optional[str]): new external ID for equipment
+        :param equipment: Equipment object to be copied, could be retrieved from
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Example:
-            ```
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param dest_parent_equipment: Parent equipment, destination to copy to
+        :type dest_parent_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param dest_position_name: Destination position name
+        :type dest_position_name: str
+        :param new_external_id: New external ID for equipment
+        :type new_external_id: str, optional
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment_to_copy = client.get_equipment(name="indProdCpy1_AIO", location=location)
             parent_equipment = client.get_equipment(name="parent", location=location)
@@ -690,7 +794,6 @@ def copy_equipment_in_position(
                 dest_parent_equipment=parent_equipment,
                 dest_position_name="destination position name",
             )
-            ```
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client, equipment
@@ -714,16 +817,27 @@ def copy_equipment(
 ) -> Equipment:
     """Copy equipment.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object to be copied
-            dest_location ( `pyinventory.common.data_class.Location` ): destination locatoin to copy to
-            new_external_id (Optional[str]): equipment external ID
+        :param equipment: Equipment object to be copied, could be retrieved from
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Example:
-            ```
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param dest_location: Destination location to copy to
+        :type dest_location: :class:`~pyinventory.common.data_class.Location`
+        :param new_external_id: External ID for new equipment
+        :type new_external_id: str, optional
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
             new_location = client.get_location({("Country", "LS_IND_Prod")})
@@ -731,7 +845,6 @@ def copy_equipment(
                 equipment=equipment,
                 dest_location=new_location,
             )
-            ```
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client=client, equipment=equipment
@@ -751,18 +864,25 @@ def get_equipment_type_of_equipment(
 ) -> EquipmentType:
     """This function returns equipment type object of equipment.
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): equipment object
+        :param equipment: Equipment object to be copied, could be retrieved from
 
-        Returns:
-            `pyinventory.common.data_class.EquipmentType` object
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Example:
-            ```
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+
+        :return: EquipmentType object
+        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
             equipment_type = client.get_equipment_type_of_equipment(equipment=equipment)
-            ```
     """
     equipment_type, _ = _get_equipment_type_and_properties_dict(
         client=client, equipment=equipment
@@ -781,29 +901,38 @@ def get_or_create_equipment(
     """This function checks equipment existence by name in specific location,
         in case it is not found by name, creates one.
 
-        Args:
-            name (str): equipment name
-            equipment_type (str): equipment type name
-            location ( `pyinventory.common.data_class.Location` ): location object could be retrieved from
-            - `pyinventory.api.location.get_location`
-            - `pyinventory.api.location.add_location`
+        :param name: Equipment name
+        :type name: str
+        :param equipment_type: Equipment type name
+        :type equipment_type: str
+        :param location: Location object, could be retrieved from
 
-            properties_dict (Mapping[str, PropertyValue]): dictionary of property name to property value
-            - str - property name
-            - PropertyValue - new value of the same type for this property
+            * :meth:`~pyinventory.api.location.get_location`
+            * :meth:`~pyinventory.api.location.add_location`
 
-            external_id (Optional[str]): equipment external ID
+        :type location: :class:`~pyinventory.common.data_class.Location`
+        :param properties_dict: Dictionary of property name to property value
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object
+            * str - property name
+            * PropertyValue - new value of the same type for this property
 
-        Raises:
-            AssertionException: location contains more than one equipment with the
-                same name or if property value in properties_dict does not match the property type
-            FailedOperationException: internal inventory error
+        :type properties_dict: Mapping[str, PropertyValue]
+        :param external_id: Equipment external ID
+        :type external_id: str, optional
 
-        Example:
-            ```
+        :raises:
+            * AssertionException: Location contains more than one equipment with the
+              same name or property value in `properties_dict` does not match the property type
+            * FailedOperationException: Internal inventory error
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             equipment = client.get_or_create_equipment(
                 name="indProdCpy1_AIO",
@@ -816,8 +945,8 @@ def get_or_create_equipment(
                     "Number Property": 11,
                     "String Property": "aa",
                     "Float Property": 1.23
-                })
-            ```
+                }
+            )
     """
     equipment = _get_equipment_if_exists(client, name, location)
     if equipment is not None:
@@ -844,27 +973,42 @@ def get_or_create_equipment_in_position(
     """This function checks equipment existence by name in specific location,
         in case it is not found by name, creates one.
 
-        Args:
-            name (str): equipment name
-            equipment_type (str): equipment type name
-            existing_equipment ( `pyinventory.common.data_class.Equipment` ): existing equipment
-            position_name (str): position name
-            properties_dict (Mapping[str, PropertyValue]): dictionary of property name to property value
-            - str - property name
-            - PropertyValue - new value of the same type for this property
+        :param name: Equipment name
+        :type name: str
+        :param equipment_type: Equipment type name
+        :type equipment_type: str
+        :param existing_equipment: Equipment object to be copied, could be retrieved from
 
-            external_id (Optional[str]): equipment external ID
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Returns:
-            `pyinventory.common.data_class.Equipment` object
+        :type existing_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param position_name: Position name
+        :type position_name: str
+        :param properties_dict: Dictionary of property name to property value
 
-        Raises:
-            AssertionException: location contains more than one equipment with the
-                same name or if property value in properties_dict does not match the property type
-            FailedOperationException: internal inventory error
+            * str - property name
+            * PropertyValue - new value of the same type for this property
 
-        Example:
-            ```
+        :type properties_dict: Mapping[str, PropertyValue]
+        :param external_id: Equipment external ID
+        :type external_id: str, optional
+
+        :raises:
+            * AssertionException: Location contains more than one equipment with the
+              same name or property value in `properties_dict` does not match the property type
+            * FailedOperationException: Internal inventory error
+
+        :return: Equipment object, you can use the ID to access the equipment from the UI:
+            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
             location = client.get_location({("Country", "LS_IND_Prod_Copy")})
             e_equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
             equipment_in_position = client.get_or_create_equipment_in_position(
@@ -879,8 +1023,8 @@ def get_or_create_equipment_in_position(
                     "Number Property": 11,
                     "String Property": "aa",
                     "Float Property": 1.23
-                })
-            ```
+                }
+            )
     """
     equipment = _get_equipment_in_position_if_exists(
         client=client, parent_equipment=existing_equipment, position_name=position_name

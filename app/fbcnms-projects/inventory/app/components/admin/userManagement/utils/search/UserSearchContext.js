@@ -16,27 +16,13 @@ import RelayEnvironment from '../../../../../common/RelayEnvironment';
 import createSearchContext from './SearchContext';
 import {USER_STATUSES} from '../UserManagementUtils';
 import {fetchQuery, graphql} from 'relay-runtime';
-import {userResponse2User} from '../UserManagementUtils';
 
 const userSearchQuery = graphql`
   query UserSearchContextQuery($filters: [UserFilterInput!]!) {
-    userSearch(filters: $filters) {
-      users {
-        id
-        authID
-        firstName
-        lastName
-        email
-        status
-        role
-        groups {
-          id
-          name
-        }
-        profilePhoto {
-          id
-          fileName
-          storeKey
+    users(first: 500, filterBy: $filters) {
+      edges {
+        node {
+          ...UserManagementUtils_user @relay(mask: false)
         }
       }
     }
@@ -58,12 +44,10 @@ const searchCallback = (searchTerm: string) =>
       },
     ],
   }).then(response => {
-    if (response?.userSearch == null) {
+    if (response?.users == null) {
       return [];
     }
-    return response.userSearch.users.filter(Boolean).map(userNode => {
-      return userResponse2User(userNode);
-    });
+    return response.users.edges.map(edge => edge.node).filter(Boolean);
   });
 
 const {

@@ -27,7 +27,7 @@ PYINVENTORY_PACKAGES = ["pyinventory", "pyinventory.*"]
 
 setuptools.setup(
     name="pyinventory",
-    version=find_version("pyinventory", "common", "constant.py"),
+    version=find_version("pysymphony", "common", "constant.py"),
     author="Facebook Inc.",
     description="Tool for accessing and modifying FBC Platform Inventory database",
     packages=setuptools.find_packages(
@@ -49,12 +49,15 @@ setuptools.setup(
         "dataclasses==0.6",
         "dataclasses-json==0.3.2",
         "dacite>=1.0.2",
-        "pdoc3>=0.7.5",
+        "sphinx>=3.1.2",
+        "sphinxcontrib-napoleon",
         "colorama>=0.4.1",
         "unittest-xml-reporting>=2.5.2",
-        "protobuf>=3.11.3",
         "grpcio>=1.27.2",
         "grpcio-tools>=1.27.2",
         "websocket-client>=0.56.0",
+        "mypy",
+        "black",
+        "flake8",
     ],
 )

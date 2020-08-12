@@ -8,19 +8,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/resolverutil"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 type propertyTypeResolver struct{}
 
-func (propertyTypeResolver) Type(_ context.Context, obj *ent.PropertyType) (models.PropertyKind, error) {
-	return models.PropertyKind(obj.Type), nil
-}
 func (propertyTypeResolver) RawValue(ctx context.Context, propertyType *ent.PropertyType) (*string, error) {
-	raw, err := resolverutil.PropertyValue(ctx, propertyType.Type, propertyType)
+	raw, err := resolverutil.PropertyValue(ctx, propertyType.Type, propertyType.NodeType, propertyType)
 	return &raw, err
 }
 
@@ -31,12 +28,16 @@ func (propertyResolver) RawValue(ctx context.Context, property *ent.Property) (*
 	if err != nil {
 		return nil, fmt.Errorf("querying property type %w", err)
 	}
-	raw, err := resolverutil.PropertyValue(ctx, propertyType.Type, property)
+	raw, err := resolverutil.PropertyValue(ctx, propertyType.Type, propertyType.NodeType, property)
 	return &raw, err
 }
 
 func (propertyResolver) PropertyType(ctx context.Context, obj *ent.Property) (*ent.PropertyType, error) {
-	return obj.QueryType().Only(ctx)
+	typ, err := obj.Edges.TypeOrErr()
+	if ent.IsNotLoaded(err) {
+		return obj.QueryType().Only(ctx)
+	}
+	return typ, err
 }
 
 func (propertyResolver) NodeValue(ctx context.Context, property *ent.Property) (models.NamedNode, error) {
@@ -45,19 +46,19 @@ func (propertyResolver) NodeValue(ctx context.Context, property *ent.Property) (
 		return nil, fmt.Errorf("querying property type %w", err)
 	}
 	switch propertyType.NodeType {
-	case "location":
+	case hooks.NodeTypeLocation:
 		l, err := property.QueryLocationValue().Only(ctx)
 		return l, ent.MaskNotFound(err)
-	case "equipment":
+	case hooks.NodeTypeEquipment:
 		e, err := property.QueryEquipmentValue().Only(ctx)
 		return e, ent.MaskNotFound(err)
-	case "service":
+	case hooks.NodeTypeService:
 		s, err := property.QueryServiceValue().Only(ctx)
 		return s, ent.MaskNotFound(err)
-	case "work_order":
+	case hooks.NodeTypeWorkOrder:
 		s, err := property.QueryWorkOrderValue().Only(ctx)
 		return s, ent.MaskNotFound(err)
-	case "user":
+	case hooks.NodeTypeUser:
 		s, err := property.QueryUserValue().Only(ctx)
 		return s, ent.MaskNotFound(err)
 	default:

@@ -9,9 +9,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/facebookincubator/symphony/graph/graphql/complexity"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
@@ -95,11 +96,13 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 			generated.Config{
 				Resolvers:  rsv,
 				Directives: directive.New(cfg.Logger),
+				Complexity: complexity.New(),
 			},
 		),
 	)
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
 	srv.SetRecoverFunc(recoverFunc(cfg.Logger))
+	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))
 	srv.Use(ocgql.Tracer{})
 	srv.Use(ocgql.Metrics{})
 
@@ -125,13 +128,29 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 }
 
 func errorPresenter(logger log.Logger) graphql.ErrorPresenterFunc {
-	return func(ctx context.Context, err error) *gqlerror.Error {
-		gqlerr := graphql.DefaultErrorPresenter(ctx, err)
-		if strings.Contains(err.Error(), privacy.Deny.Error()) {
-			gqlerr.Message = "Permission denied"
-		} else if _, ok := err.(*gqlerror.Error); !ok {
-			logger.For(ctx).Error("graphql internal error", zap.Error(err))
-			gqlerr.Message = "Sorry, something went wrong"
+	return func(ctx context.Context, err error) (gqlerr *gqlerror.Error) {
+		defer func() {
+			if errors.Is(err, privacy.Deny) {
+				gqlerr.Message = "Permission denied"
+			}
+		}()
+		if errors.As(err, &gqlerr) {
+			if gqlerr.Path == nil {
+				gqlerr.Path = graphql.GetFieldContext(ctx).Path()
+			}
+			return gqlerr
+		}
+		logger.For(ctx).
+			Warn("graphql internal failure",
+				zap.Error(err),
+			)
+		gqlerr = &gqlerror.Error{
+			Message: "Sorry, something went wrong",
+			Path:    graphql.GetFieldContext(ctx).Path(),
+		}
+		var ee graphql.ExtendedError
+		if errors.As(err, &ee) {
+			gqlerr.Extensions = ee.Extensions()
 		}
 		return gqlerr
 	}

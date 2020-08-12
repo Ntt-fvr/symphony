@@ -2,7 +2,7 @@
 # Build static dist
 ###################
 
-FROM node:12.5.0-alpine as ui
+FROM node:12.18-alpine as ui
 
 # Install dependencies required by some node modules
 RUN apk add --no-cache python g++ make libx11 glew-dev libxi-dev
@@ -24,7 +24,7 @@ RUN yarn build
 # Build main image
 ##################
 
-FROM node:12.5.0-alpine
+FROM node:12.18-alpine
 
 # Install runtime dependencies
 RUN apk add --no-cache curl

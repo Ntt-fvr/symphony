@@ -5,13 +5,13 @@
 package resolver
 
 import (
-	"strconv"
+	"encoding/json"
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func TestQueryNode(t *testing.T) {
@@ -20,19 +20,12 @@ func TestQueryNode(t *testing.T) {
 	c := resolver.GraphClient()
 
 	var lt struct{ AddLocationType struct{ ID string } }
-	c.MustPost(
-		`mutation($input: AddLocationTypeInput!) { addLocationType(input: $input) { id } }`,
-		&lt,
-		client.Var("input", models.AddLocationTypeInput{Name: "city"}),
-	)
-	id, err := strconv.Atoi(lt.AddLocationType.ID)
-	require.NoError(t, err)
+	c.MustPost(`mutation { addLocationType(input: {name: "City"}) { id } }`, &lt)
 
 	var l struct{ AddLocation struct{ ID string } }
 	c.MustPost(
-		`mutation($input: AddLocationInput!) { addLocation(input: $input) { id } }`,
-		&l,
-		client.Var("input", models.AddLocationInput{Name: "tlv", Type: id}),
+		`mutation($type: ID!) { addLocation(input: {name: "TLV", type: $type}) { id } }`,
+		&l, client.Var("type", lt.AddLocationType.ID),
 	)
 
 	t.Run("LocationType", func(t *testing.T) {
@@ -42,38 +35,24 @@ func TestQueryNode(t *testing.T) {
 			&rsp,
 			client.Var("id", lt.AddLocationType.ID),
 		)
-		assert.Equal(t, "city", rsp.Node.Name)
+		assert.Equal(t, "City", rsp.Node.Name)
 	})
 	t.Run("Location", func(t *testing.T) {
-		var rsp struct{ Node struct{ Name string } }
+		var rsp struct{ Location struct{ Name string } }
 		c.MustPost(
-			`query($id: ID!) { node(id: $id) { ... on Location { name } } }`,
+			`query($id: ID!) { location: node(id: $id) { ... on Location { name } } }`,
 			&rsp,
 			client.Var("id", l.AddLocation.ID),
 		)
-		assert.Equal(t, "tlv", rsp.Node.Name)
+		assert.Equal(t, "TLV", rsp.Location.Name)
 	})
 	t.Run("NonExistent", func(t *testing.T) {
-		rsp, err := c.RawPost(
-			`query($id: ID!) { node(id: $id) { id } }`,
-			client.Var("id", func() string {
-				id, err := strconv.Atoi(l.AddLocation.ID)
-				require.NoError(t, err)
-				return strconv.Itoa(id + 42)
-			}()),
-		)
-		require.NoError(t, err)
-		assert.Empty(t, rsp.Errors)
-		v, ok := rsp.Data.(map[string]interface{})["node"]
-		assert.True(t, ok)
-		assert.Nil(t, v)
-	})
-	t.Run("badID", func(t *testing.T) {
-		rsp, err := c.RawPost(`query { node(id: "-1") { id } }`)
-		require.NoError(t, err)
-		assert.Empty(t, rsp.Errors)
-		v, ok := rsp.Data.(map[string]interface{})["node"]
-		assert.True(t, ok)
-		assert.Nil(t, v)
+		var rsp struct{ Node struct{ ID string } }
+		err, ok := c.Post(`query { node(id: "-1") { id } }`, &rsp).(client.RawJsonError)
+		require.True(t, ok)
+		var errs gqlerror.List
+		require.NoError(t, json.Unmarshal(err.RawMessage, &errs))
+		assert.Equal(t, "Could not resolve to a node with the global id of '-1'", errs[0].Message)
+		assert.Equal(t, "NOT_FOUND", errs[0].Extensions["code"])
 	})
 }

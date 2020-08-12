@@ -7,17 +7,17 @@
  * @flow
  * @format
  */
-import type {ContextRouter} from 'react-router';
 import type {NavigatableView} from '@fbcnms/ui/components/design-system/View/NavigatableViews';
 
 import * as React from 'react';
-import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@fbcnms/ui/components/design-system/Button';
+import InventorySuspense from '../../../common/InventorySuspense';
 import NavigatableViews from '@fbcnms/ui/components/design-system/View/NavigatableViews';
 import NewUserDialog from './users/NewUserDialog';
 import PermissionsGroupCard from './groups/PermissionsGroupCard';
 import PermissionsGroupsView, {
   PERMISSION_GROUPS_VIEW_NAME,
+  PERMISSION_GROUPS_VIEW_SUBHEADER,
 } from './groups/PermissionsGroupsView';
 import PermissionsPoliciesView, {
   PERMISSION_POLICIES_VIEW_NAME,
@@ -27,21 +27,26 @@ import PopoverMenu from '@fbcnms/ui/components/design-system/Select/PopoverMenu'
 import Strings from '@fbcnms/strings/Strings';
 import UsersView from './users/UsersView';
 import fbt from 'fbt';
+import {ALL_USERS_PATH_PARAM, USER_PATH_PARAM} from './users/UsersTable';
+import {DialogShowingContextProvider} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
 import {FormContextProvider} from '../../../common/FormContext';
 import {NEW_DIALOG_PARAM, POLICY_TYPES} from './utils/UserManagementUtils';
-import {UserManagementContextProvider} from './UserManagementContext';
-import {useCallback, useContext, useMemo, useState} from 'react';
-import {useHistory, withRouter} from 'react-router-dom';
+import {useCallback, useMemo, useState} from 'react';
+import {useHistory, useRouteMatch} from 'react-router-dom';
 
 const USERS_HEADER = fbt(
   'Users & Roles',
   'Header for view showing system users settings',
 );
 
-type Props = ContextRouter;
+const USERS_SUBHEADER = fbt(
+  "Add and manage your organization's users by entering their details and selecting a role.",
+  'Subheader for view showing system users settings',
+);
 
-const UserManaementView = ({match}: Props) => {
+const UserManaementForm = () => {
   const history = useHistory();
+  const match = useRouteMatch();
   const basePath = match.path;
   const [addingNewUser, setAddingNewUser] = useState(false);
   const gotoGroupsPage = useCallback(() => history.push(`${basePath}/groups`), [
@@ -53,14 +58,11 @@ const UserManaementView = ({match}: Props) => {
     [history, basePath],
   );
 
-  const {isFeatureEnabled} = useContext(AppContext);
-  const permissionPoliciesMode = isFeatureEnabled('permission_policies');
-
-  const VIEWS: Array<NavigatableView> = useMemo(() => {
-    const views = [
+  const VIEWS: Array<NavigatableView> = useMemo(
+    () => [
       {
-        routingPath: 'users/:id',
-        targetPath: 'users/all',
+        routingPath: `users/${USER_PATH_PARAM}`,
+        targetPath: `users/${ALL_USERS_PATH_PARAM}`,
         menuItem: {
           label: USERS_HEADER,
           tooltip: `${USERS_HEADER}`,
@@ -68,8 +70,7 @@ const UserManaementView = ({match}: Props) => {
         component: {
           header: {
             title: `${USERS_HEADER}`,
-            subtitle:
-              'Add and manage your organization users, and set their role to control their global settings',
+            subtitle: `${USERS_SUBHEADER}`,
             actionButtons: [
               <Button onClick={() => setAddingNewUser(true)}>
                 <fbt desc="">Add User</fbt>
@@ -88,16 +89,12 @@ const UserManaementView = ({match}: Props) => {
         component: {
           header: {
             title: `${PERMISSION_GROUPS_VIEW_NAME}`,
-            subtitle:
-              'Create groups with different rules and add users to apply permissions',
-            actionButtons: permissionPoliciesMode
-              ? [
-                  <Button
-                    onClick={() => history.push(`group/${NEW_DIALOG_PARAM}`)}>
-                    <fbt desc="">Create Group</fbt>
-                  </Button>,
-                ]
-              : [],
+            subtitle: `${PERMISSION_GROUPS_VIEW_SUBHEADER}`,
+            actionButtons: [
+              <Button onClick={() => history.push(`group/${NEW_DIALOG_PARAM}`)}>
+                <fbt desc="">Create Group</fbt>
+              </Button>,
+            ],
           },
           children: <PermissionsGroupsView />,
         },
@@ -114,64 +111,58 @@ const UserManaementView = ({match}: Props) => {
         },
         relatedMenuItemIndex: 1,
       },
-    ];
-
-    if (permissionPoliciesMode) {
-      views.push(
-        {
-          routingPath: 'policies',
-          menuItem: {
-            label: PERMISSION_POLICIES_VIEW_NAME,
-            tooltip: `${PERMISSION_POLICIES_VIEW_NAME}`,
-          },
-          component: {
-            header: {
-              title: `${PERMISSION_POLICIES_VIEW_NAME}`,
-              subtitle: 'Manage policies and apply them to groups.',
-              actionButtons: [
-                <PopoverMenu
-                  options={[
-                    POLICY_TYPES.InventoryPolicy,
-                    POLICY_TYPES.WorkforcePolicy,
-                  ].map(type => ({
-                    key: type.key,
-                    value: type.key,
-                    label: fbt(
-                      fbt.param('policy type', type.value) + ' Policy',
-                      'create policy of given type',
-                    ),
-                  }))}
-                  skin="primary"
-                  onChange={typeKey => {
-                    history.push(`policy/${NEW_DIALOG_PARAM}?type=${typeKey}`);
-                  }}>
-                  <fbt desc="">Create Policy</fbt>
-                </PopoverMenu>,
-              ],
-            },
-            children: <PermissionsPoliciesView />,
-          },
+      {
+        routingPath: 'policies',
+        menuItem: {
+          label: PERMISSION_POLICIES_VIEW_NAME,
+          tooltip: `${PERMISSION_POLICIES_VIEW_NAME}`,
         },
-        {
-          routingPath: 'policy/:id',
-          component: {
-            children: (
-              <PermissionsPolicyCard
-                redirectToPoliciesView={gotoPoliciesPage}
-                onClose={gotoPoliciesPage}
-              />
-            ),
+        component: {
+          header: {
+            title: `${PERMISSION_POLICIES_VIEW_NAME}`,
+            subtitle: 'Manage policies and apply them to groups.',
+            actionButtons: [
+              <PopoverMenu
+                options={[
+                  POLICY_TYPES.InventoryPolicy,
+                  POLICY_TYPES.WorkforcePolicy,
+                ].map(type => ({
+                  key: type.key,
+                  value: type.key,
+                  label: fbt(
+                    fbt.param('policy type', type.value) + ' Policy',
+                    'create policy of given type',
+                  ),
+                }))}
+                skin="primary"
+                onChange={typeKey => {
+                  history.push(`policy/${NEW_DIALOG_PARAM}?type=${typeKey}`);
+                }}>
+                <fbt desc="">Create Policy</fbt>
+              </PopoverMenu>,
+            ],
           },
-          relatedMenuItemIndex: 3,
+          children: <PermissionsPoliciesView />,
         },
-      );
-    }
-
-    return views;
-  }, [gotoGroupsPage, gotoPoliciesPage, history, permissionPoliciesMode]);
+      },
+      {
+        routingPath: 'policy/:id',
+        component: {
+          children: (
+            <PermissionsPolicyCard
+              redirectToPoliciesView={gotoPoliciesPage}
+              onClose={gotoPoliciesPage}
+            />
+          ),
+        },
+        relatedMenuItemIndex: 3,
+      },
+    ],
+    [gotoGroupsPage, gotoPoliciesPage, history],
+  );
 
   return (
-    <UserManagementContextProvider>
+    <>
       <FormContextProvider permissions={{adminRightsRequired: true}}>
         <NavigatableViews
           header={Strings.admin.users.viewHeader}
@@ -182,8 +173,16 @@ const UserManaementView = ({match}: Props) => {
       {addingNewUser && (
         <NewUserDialog onClose={() => setAddingNewUser(false)} />
       )}
-    </UserManagementContextProvider>
+    </>
   );
 };
 
-export default withRouter(UserManaementView);
+const UserManaementView = () => (
+  <InventorySuspense isTopLevel={true}>
+    <DialogShowingContextProvider>
+      <UserManaementForm />
+    </DialogShowingContextProvider>
+  </InventorySuspense>
+);
+
+export default UserManaementView;

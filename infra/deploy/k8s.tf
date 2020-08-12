@@ -1,5 +1,5 @@
 # iam role for cluster autoscaler
-module "cluster_autoscaler_role" {
+module cluster_autoscaler_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "ClusterAutoScalerRole"
   role_path                 = local.eks_sa_role_path
@@ -11,7 +11,7 @@ module "cluster_autoscaler_role" {
 }
 
 # policy required by cluster autoscaler
-data "aws_iam_policy_document" "cluster_autoscaler" {
+data aws_iam_policy_document cluster_autoscaler {
   statement {
     sid    = "ClusterAutoScalerAll"
     effect = "Allow"
@@ -54,11 +54,11 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 }
 
 # autoscaler scales worker nodes within autoscaling groups
-resource "helm_release" "cluster_autoscaler" {
+resource helm_release cluster_autoscaler {
   chart      = "cluster-autoscaler"
   repository = local.helm_repository.stable
   name       = "cluster-autoscaler"
-  version    = "7.3.2"
+  version    = "7.3.4"
   namespace  = module.cluster_autoscaler_role.service_account_namespace
   keyring    = ""
 
@@ -82,17 +82,23 @@ resource "helm_release" "cluster_autoscaler" {
 }
 
 # metrics is a cluster-wide aggregator of resource usage data
-resource "helm_release" "metrics_server" {
+resource helm_release metrics_server {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.2.0"
+  version    = "4.3.0"
   namespace  = "kube-system"
   keyring    = ""
+
+  values = [<<VALUES
+  extraArgs:
+    kubelet-preferred-address-types: InternalIP
+  VALUES
+  ]
 }
 
 # monitors extra attributes on nodes
-resource "helm_release" "node_problem_detector" {
+resource helm_release node_problem_detector {
   chart      = "node-problem-detector"
   repository = local.helm_repository.stable
   name       = "node-problem-detector"
@@ -107,7 +113,7 @@ resource "helm_release" "node_problem_detector" {
 }
 
 # iam role for aws node
-module "aws_node_role" {
+module aws_node_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "AWSNodeRole"
   role_path                 = local.eks_sa_role_path
@@ -119,12 +125,12 @@ module "aws_node_role" {
 }
 
 # networking plugin for pod networking using ENI
-resource "helm_release" "aws_vpc_cni" {
+resource helm_release aws_vpc_cni {
   chart      = "aws-vpc-cni"
   repository = local.helm_repository.eks
   name       = "aws-vpc-cni"
   namespace  = "kube-system"
-  version    = "1.0.4"
+  version    = "1.0.9"
   keyring    = ""
 
   values = [<<VALUES
@@ -134,19 +140,4 @@ resource "helm_release" "aws_vpc_cni" {
       eks.amazonaws.com/role-arn: ${module.aws_node_role.role_arn}
   VALUES
   ]
-}
-
-# gracefully handle EC2 instance shutdown
-resource "helm_release" "node_termination_handler" {
-  chart      = "aws-node-termination-handler"
-  repository = local.helm_repository.eks
-  name       = "aws-node-termination-handler"
-  namespace  = "kube-system"
-  version    = "0.7.5"
-  keyring    = ""
-
-  set {
-    name  = "deleteLocalData"
-    value = "true"
-  }
 }

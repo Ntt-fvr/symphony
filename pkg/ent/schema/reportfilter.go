@@ -23,8 +23,16 @@ func (ReportFilter) Fields() []ent.Field {
 		field.String("name").
 			NotEmpty(),
 		field.Enum("entity").
-			Values("WORK_ORDER", "PORT", "EQUIPMENT", "LINK", "LOCATION", "SERVICE"),
-		field.Text("filters").Default("[]"),
+			ValueMap(map[string]string{
+				"WorkOrder": "WORK_ORDER",
+				"Port":      "PORT",
+				"Equipment": "EQUIPMENT",
+				"Link":      "LINK",
+				"Location":  "LOCATION",
+				"Service":   "SERVICE",
+			}),
+		field.Text("filters").
+			Default("[]"),
 	}
 }
 

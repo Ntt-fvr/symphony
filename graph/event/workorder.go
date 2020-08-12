@@ -9,13 +9,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/pkg/pubsub"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/viewer"
-
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 )
 
 // Work order events.
@@ -30,31 +26,8 @@ func (e *Eventer) workOrderHook() ent.Hook {
 		e.workOrderCreateHook(),
 		e.workOrderUpdateHook(),
 		e.workOrderUpdateOneHook(),
-		e.workOrderActivityHook(),
 	)
 	return chain.Hook()
-}
-
-func (e *Eventer) workOrderActivityHook() ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
-		return e.hookWithLog(func(ctx context.Context, entry pubsub.LogEntry) error {
-			var err error
-			v := viewer.FromContext(ctx)
-			if v == nil ||
-				!v.Features().Enabled(viewer.FeatureWorkOrderActivitiesHook) {
-				return nil
-			}
-			if entry.Operation.Is(ent.OpCreate) {
-				err = updateActivitiesOnWOCreate(ctx, &entry)
-			} else if entry.Operation.Is(ent.OpUpdate) || entry.Operation.Is(ent.OpUpdateOne) {
-				err = updateActivitiesOnWOUpdate(ctx, &entry)
-			}
-			if err != nil {
-				return err
-			}
-			return nil
-		}, next)
-	}
 }
 
 func (e *Eventer) workOrderCreateHook() ent.Hook {
@@ -65,7 +38,7 @@ func (e *Eventer) workOrderCreateHook() ent.Hook {
 				return value, err
 			}
 			e.emit(ctx, WorkOrderAdded, value)
-			if value.(*ent.WorkOrder).Status == models.WorkOrderStatusDone.String() {
+			if value.(*ent.WorkOrder).Status == workorder.StatusDone {
 				e.emit(ctx, WorkOrderDone, value)
 			}
 			return value, nil
@@ -77,7 +50,7 @@ func (e *Eventer) workOrderCreateHook() ent.Hook {
 func (e *Eventer) workOrderUpdateHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
-			if status, exists := m.Status(); exists && status == models.WorkOrderStatusDone.String() {
+			if status, exists := m.Status(); exists && status == workorder.StatusDone {
 				return nil, errors.New("work order status update to done by predicate not allowed")
 			}
 			return next.Mutate(ctx, m)
@@ -90,7 +63,7 @@ func (e *Eventer) workOrderUpdateOneHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
 			status, exists := m.Status()
-			if !exists || status != models.WorkOrderStatusDone.String() {
+			if !exists || status != workorder.StatusDone {
 				return next.Mutate(ctx, m)
 			}
 			oldStatus, err := m.OldStatus(ctx)

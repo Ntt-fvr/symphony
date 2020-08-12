@@ -8,9 +8,10 @@ class EquipmentFilterType(Enum):
     EQUIP_INST_EXTERNAL_ID = "EQUIP_INST_EXTERNAL_ID"
     PROPERTY = "PROPERTY"
     LOCATION_INST = "LOCATION_INST"
+    LOCATION_INST_EXTERNAL_ID = "LOCATION_INST_EXTERNAL_ID"
     EQUIPMENT_TYPE = "EQUIPMENT_TYPE"
     MISSING_ENUM = ""
 
     @classmethod
-    def _missing_(cls, value: str) -> "EquipmentFilterType":
+    def _missing_(cls, value: object) -> "EquipmentFilterType":
         return cls.MISSING_ENUM

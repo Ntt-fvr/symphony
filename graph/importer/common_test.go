@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/testdb"
@@ -66,19 +67,19 @@ func prepareSvcData(ctx context.Context, t *testing.T, r TestImporterResolver) {
 	_, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          svcName,
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          svc2Name,
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddService(ctx, models.ServiceCreateData{
 		Name:          svc3Name,
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 }

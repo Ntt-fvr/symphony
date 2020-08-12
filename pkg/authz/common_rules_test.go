@@ -26,7 +26,7 @@ func TestUserCannotEditOrViewWithNoPermission(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	location, err := client.LocationType.Create().SetName("LocationType").Save(ctx)
 	require.NoError(t, err)
-	u := viewer.MustGetOrCreateUser(ctx, viewertest.DefaultUser, user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, viewertest.DefaultUser, user.RoleOwner)
 	v := viewer.NewUser(viewertest.DefaultTenant, u)
 	ctx = ent.NewContext(context.Background(), client)
 	ctx = viewer.NewContext(ctx, v)
@@ -47,7 +47,7 @@ func TestUserCannotEditWithEmptyPermission(t *testing.T) {
 	ctx = viewertest.NewContext(ctx,
 		client,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	_, err = client.UsersGroup.Create().SetName("NewGroup").Save(ctx)
 	require.True(t, errors.Is(err, privacy.Deny))
@@ -69,7 +69,7 @@ func TestUserCanWrite(t *testing.T) {
 	ctx = viewertest.NewContext(ctx,
 		client,
 		viewertest.WithUser("user"),
-		viewertest.WithRole(user.RoleUSER),
+		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(permissions))
 	_, err = client.LocationType.Get(ctx, location.ID)
 	require.NoError(t, err)

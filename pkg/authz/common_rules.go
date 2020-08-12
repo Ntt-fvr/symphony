@@ -84,27 +84,21 @@ func cudBasedRule(cud *models.Cud, m ent.Mutation) error {
 	return privacyDecision(cudBasedCheck(cud, m))
 }
 
+func userHasFullPermissions(v viewer.Viewer) bool {
+	return v.Role() == user.RoleOwner || v.Role() == user.RoleAdmin
+}
+
 func allowWritePermissionsRule() privacy.MutationRule {
 	return privacy.MutationRuleFunc(func(ctx context.Context, _ ent.Mutation) error {
 		v := viewer.FromContext(ctx)
-		if v != nil && v.Features().Enabled(viewer.FeaturePermissionPolicies) {
-			return privacyDecision(v.Role() == user.RoleOWNER)
-		}
-		return privacyDecision(FromContext(ctx).CanWrite)
+		return privacyDecision(userHasFullPermissions(v))
 	})
 }
 
 func allowReadPermissionsRule() privacy.QueryRule {
 	return privacy.QueryRuleFunc(func(ctx context.Context, _ ent.Query) error {
-		switch v := viewer.FromContext(ctx); {
-		case v == nil:
-			return privacy.Skip
-		case !v.Features().Enabled(viewer.FeaturePermissionPolicies),
-			v.Role() == user.RoleOWNER:
-			return privacy.Allow
-		default:
-			return privacy.Skip
-		}
+		v := viewer.FromContext(ctx)
+		return privacyDecision(userHasFullPermissions(v))
 	})
 }
 
@@ -157,12 +151,5 @@ func allowOrSkipProject(ctx context.Context, p *models.PermissionSettings, proj 
 }
 
 func denyBulkEditOrDeleteRule() privacy.MutationRule {
-	rule := privacy.DenyMutationOperationRule(ent.OpUpdate | ent.OpDelete)
-	return privacy.MutationRuleFunc(func(ctx context.Context, m ent.Mutation) error {
-		if v := viewer.FromContext(ctx); v == nil ||
-			!v.Features().Enabled(viewer.FeaturePermissionPolicies) {
-			return privacy.Skip
-		}
-		return rule.EvalMutation(ctx, m)
-	})
+	return privacy.DenyMutationOperationRule(ent.OpUpdate | ent.OpDelete)
 }

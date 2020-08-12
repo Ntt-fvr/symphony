@@ -30,7 +30,7 @@ import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {Link} from 'react-router-dom';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/WorkOrder';
+import {priorityValues, statusValues} from '../../common/FilterTypes';
 
 const useStyles = makeStyles(() => ({
   fullDetails: {
@@ -142,6 +142,8 @@ const WorkOrderPopover = (props: Props) => {
         status: workOrder.status,
         priority: workOrder.priority,
         assigneeId: workOrder.assignedTo?.id,
+        locationId: workOrder.location?.id,
+        projectId: workOrder.projectId,
       },
     };
     switch (key) {

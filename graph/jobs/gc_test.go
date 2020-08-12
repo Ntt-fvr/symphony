@@ -15,7 +15,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -39,31 +38,22 @@ func TestGarbageCollectProperties(t *testing.T) {
 		SetName("Location2").
 		SetType(locationType).
 		SaveX(ctx)
-	projectType := client.ProjectType.Create().
-		SetName("ProjectType").
-		SaveX(ctx)
 	propTypeToDelete := client.PropertyType.Create().
 		SetName("PropToDelete").
 		SetLocationType(locationType).
-		SetType(models.PropertyKindString.String()).
+		SetType(propertytype.TypeString).
 		SetDeleted(true).
 		SaveX(ctx)
 	propTypeToDelete2 := client.PropertyType.Create().
 		SetName("PropToDelete2").
 		SetLocationType(locationType).
-		SetType(models.PropertyKindBool.String()).
-		SetDeleted(true).
-		SaveX(ctx)
-	propTypeNotToDelete := client.PropertyType.Create().
-		SetName("PropTypeNotToDelete").
-		SetProjectType(projectType).
-		SetType(models.PropertyKindInt.String()).
+		SetType(propertytype.TypeBool).
 		SetDeleted(true).
 		SaveX(ctx)
 	propType := client.PropertyType.Create().
 		SetName("Prop").
 		SetLocationType(locationType).
-		SetType(models.PropertyKindInt.String()).
+		SetType(propertytype.TypeInt).
 		SaveX(ctx)
 	_ = client.Location.Create().
 		SetName("Location").
@@ -97,7 +87,6 @@ func TestGarbageCollectProperties(t *testing.T) {
 	require.False(t, client.Property.Query().Where(property.ID(propToDelete3.ID)).ExistX(ctx))
 	require.True(t, client.PropertyType.Query().Where(propertytype.ID(propType.ID)).ExistX(ctx))
 	require.True(t, client.Property.Query().Where(property.ID(prop.ID)).ExistX(ctx))
-	require.True(t, client.PropertyType.Query().Where(propertytype.ID(propTypeNotToDelete.ID)).ExistX(ctx))
 }
 
 func TestGarbageCollectServices(t *testing.T) {

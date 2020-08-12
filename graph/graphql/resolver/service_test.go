@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 
 	"github.com/AlekSi/pointer"
 
@@ -23,10 +24,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-func pointerToServiceStatus(status models.ServiceStatus) *models.ServiceStatus {
-	return &status
-}
 
 func TestAddServiceWithProperties(t *testing.T) {
 	r := newTestResolver(t)
@@ -54,18 +51,17 @@ func TestAddServiceWithProperties(t *testing.T) {
 
 	servicePropInput := []*models.PropertyInput{&serviceStrProp}
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Kent building, room 201",
 		ServiceTypeID: serviceType.ID,
 		Properties:    servicePropInput,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
-	fetchedProperty, err := service.QueryProperties().Only(ctx)
+	fetchedProperty, err := svc.QueryProperties().Only(ctx)
 	require.NoError(t, err)
-
-	assert.Equal(t, fetchedProperty.StringVal, serviceStrValue)
+	assert.Equal(t, pointer.GetString(fetchedProperty.StringVal), serviceStrValue)
 }
 
 func TestAddServiceWithExternalIdUnique(t *testing.T) {
@@ -77,7 +73,6 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:        "Internet Access",
 		HasCustomer: false,
-		Properties:  []*models.PropertyTypeInput{},
 	})
 	require.NoError(t, err)
 
@@ -88,8 +83,7 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 		Name:          "Kent building, room 201",
 		ServiceTypeID: serviceType.ID,
 		ExternalID:    &externalID1,
-		Properties:    []*models.PropertyInput{},
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, *s1.ExternalID, externalID1)
@@ -98,8 +92,7 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 		Name:          "Kent building, room 202",
 		ServiceTypeID: serviceType.ID,
 		ExternalID:    &externalID1,
-		Properties:    []*models.PropertyInput{},
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.Error(t, err)
 
@@ -107,8 +100,7 @@ func TestAddServiceWithExternalIdUnique(t *testing.T) {
 		Name:          "Kent building, room 203",
 		ServiceTypeID: serviceType.ID,
 		ExternalID:    &externalID2,
-		Properties:    []*models.PropertyInput{},
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, *s2.ExternalID, externalID2)
@@ -134,7 +126,7 @@ func TestAddServiceWithCustomer(t *testing.T) {
 		Name:          "Kent building, room 201",
 		ServiceTypeID: serviceType.ID,
 		CustomerID:    &customer.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -224,7 +216,7 @@ func TestServiceTopologyReturnsCorrectLinksAndEquipment(t *testing.T) {
 	s, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s.ID, l1.ID)
@@ -335,7 +327,7 @@ func TestServiceTopologyWithSlots(t *testing.T) {
 	s, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s.ID, l.ID)
@@ -377,21 +369,21 @@ func TestEditService(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "service_type_name", serviceType.Name)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_name",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
 	newService, err := mr.EditService(ctx, models.ServiceEditData{
-		ID:   service.ID,
+		ID:   svc.ID,
 		Name: pointer.ToString("new_service_name"),
 	})
 	require.NoError(t, err)
 	require.Equal(t, "new_service_name", newService.Name)
 
-	fetchedNode, err := qr.Node(ctx, service.ID)
+	fetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok := fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -410,13 +402,13 @@ func TestEditServiceWithExternalID(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "service_type_name", serviceType.Name)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_name",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
-	fetchedNode, err := qr.Node(ctx, service.ID)
+	fetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok := fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -424,12 +416,12 @@ func TestEditServiceWithExternalID(t *testing.T) {
 
 	externalID1 := "externalID1"
 	_, err = mr.EditService(ctx, models.ServiceEditData{
-		ID:         service.ID,
-		Name:       pointer.ToString(service.Name),
+		ID:         svc.ID,
+		Name:       pointer.ToString(svc.Name),
 		ExternalID: &externalID1,
 	})
 	require.NoError(t, err)
-	fetchedNode, err = qr.Node(ctx, service.ID)
+	fetchedNode, err = qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok = fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -437,12 +429,12 @@ func TestEditServiceWithExternalID(t *testing.T) {
 
 	externalID2 := "externalID2"
 	_, err = mr.EditService(ctx, models.ServiceEditData{
-		ID:         service.ID,
-		Name:       pointer.ToString(service.Name),
+		ID:         svc.ID,
+		Name:       pointer.ToString(svc.Name),
 		ExternalID: &externalID2,
 	})
 	require.NoError(t, err)
-	fetchedNode, err = qr.Node(ctx, service.ID)
+	fetchedNode, err = qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok = fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -461,14 +453,14 @@ func TestEditServiceWithCustomer(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "service_type_name", serviceType.Name)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_name",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
-	fetchedNode, err := qr.Node(ctx, service.ID)
+	fetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok := fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -486,12 +478,12 @@ func TestEditServiceWithCustomer(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = mr.EditService(ctx, models.ServiceEditData{
-		ID:         service.ID,
-		Name:       pointer.ToString(service.Name),
+		ID:         svc.ID,
+		Name:       pointer.ToString(svc.Name),
 		CustomerID: &donald.ID,
 	})
 	require.NoError(t, err)
-	fetchedNode, err = qr.Node(ctx, service.ID)
+	fetchedNode, err = qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok = fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -499,12 +491,12 @@ func TestEditServiceWithCustomer(t *testing.T) {
 	require.Equal(t, donald.ID, fetchedCustomer.ID)
 
 	_, err = mr.EditService(ctx, models.ServiceEditData{
-		ID:         service.ID,
-		Name:       pointer.ToString(service.Name),
+		ID:         svc.ID,
+		Name:       pointer.ToString(svc.Name),
 		CustomerID: &dafi.ID,
 	})
 	require.NoError(t, err)
-	fetchedNode, err = qr.Node(ctx, service.ID)
+	fetchedNode, err = qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok = fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -546,14 +538,14 @@ func TestEditServiceWithProperties(t *testing.T) {
 		StringValue:    &strValue2,
 	}
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "inst_name_1",
 		ServiceTypeID: serviceType.ID,
 		Properties:    []*models.PropertyInput{&strProp, &strProp2},
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
-	fetchedNode, err := qr.Node(ctx, service.ID)
+	fetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok := fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -562,23 +554,24 @@ func TestEditServiceWithProperties(t *testing.T) {
 	// Property[] -> PropertyInput[]
 	var propInputClone []*models.PropertyInput
 	for _, v := range fetchedProps {
-		var strValue = v.StringVal + "-2"
+		require.NotNil(t, v.StringVal)
+		var strValue = *v.StringVal + "-2"
 		propInput := &models.PropertyInput{
 			ID:             &v.ID,
-			PropertyTypeID: v.QueryType().OnlyXID(ctx),
+			PropertyTypeID: v.QueryType().OnlyIDX(ctx),
 			StringValue:    &strValue,
 		}
 		propInputClone = append(propInputClone, propInput)
 	}
 
 	_, err = mr.EditService(ctx, models.ServiceEditData{
-		ID:         service.ID,
+		ID:         svc.ID,
 		Name:       pointer.ToString("service_name_1"),
 		Properties: propInputClone,
 	})
 	require.NoError(t, err, "Editing service")
 
-	newFetchedNode, err := qr.Node(ctx, service.ID)
+	newFetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	newFetchedService, ok := newFetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -660,17 +653,17 @@ func TestAddEndpointsToService(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "service_type_name", serviceType.Name)
 
-	service, err := mr.AddService(ctx, models.ServiceCreateData{
+	svc, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_name",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
 	ept := serviceType.QueryEndpointDefinitions().OnlyX(ctx)
 
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          service.ID,
+		ID:          svc.ID,
 		EquipmentID: eq1.ID,
 		PortID:      pointer.ToInt(ep1.ID),
 		Definition:  ept.ID,
@@ -678,14 +671,14 @@ func TestAddEndpointsToService(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          service.ID,
+		ID:          svc.ID,
 		EquipmentID: eq2.ID,
 		PortID:      pointer.ToInt(ep2.ID),
 		Definition:  ept.ID,
 	})
 	require.NoError(t, err)
 
-	fetchedNode, err := qr.Node(ctx, service.ID)
+	fetchedNode, err := qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok := fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -696,7 +689,7 @@ func TestAddEndpointsToService(t *testing.T) {
 	e1 := fetchedService.QueryEndpoints().Where(serviceendpoint.HasPortWith(equipmentport.ID(ep1.ID))).OnlyX(ctx)
 
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          service.ID,
+		ID:          svc.ID,
 		EquipmentID: eq3.ID,
 		PortID:      pointer.ToInt(ep3.ID),
 		Definition:  ept.ID,
@@ -707,7 +700,7 @@ func TestAddEndpointsToService(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NoError(t, err)
-	fetchedNode, err = qr.Node(ctx, service.ID)
+	fetchedNode, err = qr.Node(ctx, svc.ID)
 	require.NoError(t, err)
 	fetchedService, ok = fetchedNode.(*ent.Service)
 	require.True(t, ok)
@@ -791,7 +784,7 @@ func TestServicesOfEquipment(t *testing.T) {
 	s1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2a",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -808,7 +801,7 @@ func TestServicesOfEquipment(t *testing.T) {
 	s2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Internet Access Room 2b",
 		ServiceTypeID: st.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceLink(ctx, s2.ID, l1.ID)
@@ -846,7 +839,7 @@ func TestAddServiceWithServiceProperty(t *testing.T) {
 	service1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_1",
 		ServiceTypeID: serviceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 
@@ -874,7 +867,7 @@ func TestAddServiceWithServiceProperty(t *testing.T) {
 	service2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "service_2",
 		ServiceTypeID: serviceTypeWithServiceProp.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 		Properties:    []*models.PropertyInput{&servicePropInput},
 	})
 	require.NoError(t, err)
@@ -956,7 +949,7 @@ func TestAddServiceEndpointType(t *testing.T) {
 	service1, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Kent building, room 201",
 		ServiceTypeID: serviceType1.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
@@ -982,7 +975,7 @@ func TestAddServiceEndpointType(t *testing.T) {
 	service2, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "Kent2 building, room 401",
 		ServiceTypeID: serviceType2.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 

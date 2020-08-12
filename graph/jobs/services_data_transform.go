@@ -11,7 +11,6 @@ import (
 
 	"github.com/prometheus/common/log"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
@@ -185,7 +184,7 @@ func (m *jobs) createServicesFromList(ctx context.Context, serviceDetails []serv
 			return errors.Wrapf(err, "can't get links for service")
 		}
 		srvc, err := client.Service.Create().
-			SetStatus(models.ServiceStatusPending.String()).
+			SetStatus(service.StatusPending).
 			AddLinks(links...).
 			SetName(strconv.Itoa(rand.Int())[:5]).
 			SetType(serviceType).

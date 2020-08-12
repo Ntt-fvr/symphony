@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package log
+package log_test
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
@@ -24,6 +25,10 @@ type testExporter struct {
 
 func (e *testExporter) ExportSpan(s *trace.SpanData) {
 	e.spans = append(e.spans, s)
+}
+
+func newSpanCore(span *trace.Span) zapcore.Core {
+	return log.NewSpanCore(span, zap.InfoLevel)
 }
 
 func TestSpanCoreCheck(t *testing.T) {
@@ -70,7 +75,7 @@ func TestSpanCoreCheck(t *testing.T) {
 
 			_, span := trace.StartSpan(context.Background(), "test",
 				trace.WithSampler(tc.sampler))
-			logger := zap.New(spanCore{span: span, LevelEnabler: zap.InfoLevel})
+			logger := zap.New(newSpanCore(span))
 			if ce := logger.Check(tc.level, tc.level.String()+" message"); ce != nil {
 				ce.Write()
 			}
@@ -87,7 +92,7 @@ func TestSpanCoreWith(t *testing.T) {
 	_, span := trace.StartSpan(context.Background(), "test",
 		trace.WithSampler(trace.AlwaysSample()))
 
-	root := zap.New(spanCore{span: span, LevelEnabler: zap.InfoLevel})
+	root := zap.New(newSpanCore(span))
 	root = root.With(zap.String("root", "root"))
 	left := root.With(zap.String("left", "left"))
 	right := root.With(zap.String("right", "right"))
@@ -138,7 +143,7 @@ func TestSpanCoreWrite(t *testing.T) {
 
 	_, span := trace.StartSpan(context.Background(), "test",
 		trace.WithSampler(trace.AlwaysSample()))
-	logger := zap.New(spanCore{span: span, LevelEnabler: zap.InfoLevel})
+	logger := zap.New(newSpanCore(span))
 	logger.Info("field dump",
 		zap.Bool("b", true),
 		zap.Float32("f32", math.Pi),
@@ -202,10 +207,7 @@ func TestSpanCoreOnPanic(t *testing.T) {
 	_, span := trace.StartSpan(context.Background(), "test",
 		trace.WithSampler(trace.AlwaysSample()))
 
-	logger := zap.New(spanCore{
-		span:         span,
-		LevelEnabler: zap.InfoLevel,
-	}, zap.AddStacktrace(zap.PanicLevel))
+	logger := zap.New(newSpanCore(span), zap.AddStacktrace(zap.PanicLevel))
 	assert.Panics(t, func() { logger.Panic("oh no!") })
 	span.End()
 
@@ -215,18 +217,21 @@ func TestSpanCoreOnPanic(t *testing.T) {
 	annotations := spans[0].Annotations
 	require.Len(t, annotations, 1)
 	var annotation *trace.Annotation
-	for i := range annotations {
-		if annotations[i].Message == "oh no!" {
-			annotation = &annotations[i]
-			break
+	require.Condition(t, func() bool {
+		for i := range annotations {
+			if annotations[i].Message == "oh no!" {
+				annotation = &annotations[i]
+				return true
+			}
 		}
-	}
-	require.NotNil(t, annotation)
+		return false
+	})
+	require.NotNil(t, annotation.Attributes)
 	assert.Equal(t, "panic", annotation.Attributes["level"])
 	assert.NotEmpty(t, annotation.Attributes["stack"])
 }
 
 func TestSpanCoreSync(t *testing.T) {
-	core := spanCore{}
+	core := newSpanCore(nil)
 	assert.NoError(t, core.Sync())
 }

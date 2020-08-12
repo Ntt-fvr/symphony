@@ -9,25 +9,31 @@
  */
 
 import type {TableRowDataType} from '@fbcnms/ui/components/design-system/Table/Table';
-import type {UserPermissionsGroup} from '../utils/UserManagementUtils';
+import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
 import Table from '@fbcnms/ui/components/design-system/Table/Table';
 import fbt from 'fbt';
+import withSuspense from '../../../../common/withSuspense';
 import {GROUP_STATUSES} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
+import {useMemo} from 'react';
 import {useRouter} from '@fbcnms/ui/hooks';
-import {useState} from 'react';
-import {useUserManagement} from '../UserManagementContext';
+import {useUsersGroups} from '../data/UsersGroups';
 
 export const PERMISSION_GROUPS_VIEW_NAME = fbt(
-  'Groups',
+  'Permission Groups',
   'Header for view showing system permissions groups settings',
+);
+
+export const PERMISSION_GROUPS_VIEW_SUBHEADER = fbt(
+  "Create groups of users, choose which data they have access to, and what theyֿ're allowed to do with it.",
+  'Subheader for view showing system permissions groups settings',
 );
 
 const useStyles = makeStyles(() => ({
   root: {
-    maxHeight: '100%',
+    flexGrow: 1,
   },
   narrowColumn: {
     width: '70%',
@@ -37,23 +43,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type GroupTableRow = TableRowDataType<UserPermissionsGroup>;
-type GroupTableData = Array<GroupTableRow>;
+type GroupTableRow = TableRowDataType<UsersGroup>;
 
 const group2GroupTableRow: (
-  UserPermissionsGroup | GroupTableRow,
+  UsersGroup | GroupTableRow,
 ) => GroupTableRow = group => ({
   key: group.key || group.id,
   ...group,
 });
 
-export default function PermissionsGroupsView() {
+function PermissionsGroupsView() {
   const classes = useStyles();
   const {history} = useRouter();
-  const {groups} = useUserManagement();
-  const [groupsTable, _setGroupsTable] = useState<GroupTableData>(
-    groups.map(group2GroupTableRow),
-  );
+  const groups = useUsersGroups();
+  const groupsTable = useMemo(() => groups.map(group2GroupTableRow), [groups]);
 
   const columns = [
     {
@@ -65,6 +68,7 @@ export default function PermissionsGroupsView() {
       ),
       getSortingValue: groupRow => groupRow.name,
       render: groupRow => groupRow.name,
+      tooltip: groupRow => groupRow.name,
     },
     {
       key: 'description',
@@ -74,7 +78,8 @@ export default function PermissionsGroupsView() {
         </fbt>
       ),
       getSortingValue: groupRow => groupRow.description,
-      render: groupRow => groupRow.description,
+      render: groupRow => groupRow.description || '',
+      tooltip: groupRow => groupRow.description,
       titleClassName: classes.wideColumn,
       className: classes.wideColumn,
     },
@@ -87,6 +92,7 @@ export default function PermissionsGroupsView() {
       ),
       getSortingValue: groupRow => groupRow.members.length,
       render: groupRow => groupRow.members.length,
+      tooltip: groupRow => groupRow.members.length,
       titleClassName: classes.narrowColumn,
       className: classes.narrowColumn,
     },
@@ -97,6 +103,7 @@ export default function PermissionsGroupsView() {
       ),
       getSortingValue: groupRow => GROUP_STATUSES[groupRow.status].value,
       render: groupRow => GROUP_STATUSES[groupRow.status].value,
+      tooltip: groupRow => GROUP_STATUSES[groupRow.status].value,
       titleClassName: classes.narrowColumn,
       className: classes.narrowColumn,
     },
@@ -116,3 +123,5 @@ export default function PermissionsGroupsView() {
     </div>
   );
 }
+
+export default withSuspense(PermissionsGroupsView);

@@ -4,7 +4,7 @@ locals {
 }
 
 # storybook application
-resource "helm_release" "storybook" {
+resource helm_release storybook {
   name                = "storybook"
   namespace           = "default"
   repository          = local.helm_repository.symphony.url

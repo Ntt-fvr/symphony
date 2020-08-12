@@ -10,11 +10,11 @@ from pyinventory.api.equipment_type import (
     get_or_create_equipment_type,
 )
 from pyinventory.api.property_type import get_property_type_id, get_property_types
-from pyinventory.common.data_class import PropertyDefinition
-from pyinventory.common.data_enum import Entity
-from pyinventory.common.data_format import format_to_property_type_input
 from pyinventory.graphql.enum.property_kind import PropertyKind
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import PropertyDefinition
+from pysymphony.common.data_enum import Entity
+from pysymphony.common.data_format import format_to_property_type_input
 
 from ..utils.base_test import BaseTest
 from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
@@ -92,7 +92,9 @@ class TestEquipmentType(BaseTest):
         for property_type in property_types:
             if property_type.property_name == property_type_name:
                 fetched_property_type = property_type
-        self.assertIsNotNone(fetched_property_type)
+        assert (
+            fetched_property_type is not None
+        ), f"property {property_type_name} does not exist"
         self.assertEqual(fetched_property_type.external_id, "12345")
 
     def test_equipment_type_property_type_name(self) -> None:
@@ -132,5 +134,6 @@ class TestEquipmentType(BaseTest):
             property_type_input = format_to_property_type_input(property_type)
             if property_type_input.name == new_name:
                 fetched_property_type = property_type_input
-        self.assertIsNotNone(fetched_property_type)
-        self.assertEqual(fetched_property_type.name, new_name)
+        assert fetched_property_type is not None, f"property {new_name} does not exist"
+        if fetched_property_type is not None:
+            self.assertEqual(fetched_property_type.name, new_name)

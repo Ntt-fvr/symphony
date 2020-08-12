@@ -3,37 +3,60 @@ id: release-notes
 title: Release Notes
 ---
 
-### Work In Progress
-
-The team is currently working on:
-* Mobile app: View work orders and site surveys in the mobile app
-* Permission model: Customizeable infrastructure to enable roles and policies
-* Workorder history: Show activity history for every workorder
-* Integration between work order and inventory (planned equipment)
-
 
 ### Release Notes
-* 5/22/2020
+* 7/16/2020
 	* Platform	
-		* **[User Management]** **[Roles & Policies]**	User management, Roles & Policies	Added the ability to define and customize more specific editing permissions via the Administrative tools. Specific roles and policies are enforced via both UI and GraphQL API
-		* **[Property type]**	Support of "User" property	Users can now add "user" as "property type" while creating/editing templates/catalog and assign a specific value from a drop-down list
+		* **[User Management]** **[Roles & Policies]**		Change in User Roles:	User role "owner" has been removed. Now there are 2 roles ("user" and "admin") whereby admin can do everything in the system (same as "owner" previously).
+		* **[User Management]** **[Roles & Policies]** **[Property type]**	Advanced filters:	Admins are now able to grant users access to locations based on their types and to work orders and projects based on the templates they were created from 
+		* **[Search]**	Adding filter by "Location External ID":	Users have now the options to search by "Location External ID" across the platform.
+	* Inventory Management
+		* **[Catalog]**		"Default value" only for mandatory fields:	When adding a property type to an existing type, user is not required anymore to fill-in a "default value" for each property.  Only "mandatory" property will require a "default value".	
+		* **[Location Search]**		Location parent name visible in location search:	When using the location search, users are now able to see within brackets, the location parent's name. This functionality helps to remove confusions in case of locations with same name on different location types.
+		* **[Location Tree]**		Parent location GPS coords:	If a location does not have GPS coordinates, it will inherit them from the nearest ancestor that has them.
+	* Workforce management	
+		* **[Projects]**	Increase projects limit: 	An issue has been fixed that prevented users to see more than 50 projects in the main "Projects" table view.
+		* **[Work Orders]** **[UI]**		Activites & comments logs:	Users are now able to track changes within the WO page. Changes of "Owner", "Assignee", "Priority", "Status" are now logged in the Activities & Comments card, allowing users to better understand what and when changes have been applied.
+		* **[Work Orders]** **[UI]**		Added Map View: 	Users are now able to see work orders on geographical map based on WO's location.
+		* **[Work Orders]** **[Properties]**		Template behavior with work order properties:	Change to properties in work order template doesn't affect properties of work orders that were already created.
+
+	* Mobile App	
+		* **[My Tasks]** **[Checklist]**	Read-only mode for closed WO:	Users are now allowed to view (only) answers provided in work orders which have been already marked as "DONE". 
+
+	* API
+		* **[Python API]** **[Documentation]**		New Python API documentation:	An improved and more usable Python API documentation is now available. Just add your subdomain to the link below.<br>
+		For example : https://YOUR-SUB-DOMAIN.thesymphony.cloud/docs/pyinventory/html/pyinventory.html .
+
+
+
+
+
+
+
+* 6/5/2020
+	* Platform	
+		* **[User Management]** **[Roles & Policies]**	User management, Roles & Policies:	Added the ability to create user groups and assign policies to them via the Administrative tools. Specific roles and policies are enforced via both UI and GraphQL API.
+		* **[Property type]**	Support of "User" property:	Users can now add "user" as "property type" while creating/editing templates/catalog and assign a specific value from a drop-down list.
 
 	* Inventory Management	
 		* **[Services]**	Added "discovery method" field in Services:	Users can now choose "inventory" as "discovery method" during the creation of a service type. When a new "service type" is defined and the option "inventory" is selected, all Services matching that specific "service type" definition will be automatically detected every hour and presented in the list of Services.
-		* **[Services]**	Added "export" for Services:	Users can now export the list of Services in csv format
-		* **[Services]**	Added "filter by location" for Services:	Users can now filter Services also by "location type"
+		* **[Services]**	Added "export" for Services:	Users can now export the list of Services in csv format.
+		* **[Services]**	Added "filter by location" for Services:	Users can now filter Services also by "location type".
 
 	* Workforce management	
 		* **[Work Orders]** **[UI]**	Work Order's location opened in a new tab:	When opening a Work order page, users can click on the work order's location and a new tab in the browser will be opened, allowing the user to keep both tabs (Work order and Location's tabs) opened at the same time.  
 		* **[Work Orders]** **[Templates]**	Checklist definition:	Users are now able to define checklist categories on a template and easily create work orders that inherit them. 
 		* **[Work Orders]** **[Checklist]**	Checklist response view enabled:	Users are now able to view the responses within the checklist categories even when the work order's is in "done" status.
 
-	* Mobile App	
+	* Mobile App
+		* **[Documentation]**	Symphony Mobile App user guide:		A first version 1.0.16 of the Mobile App user guide is available.  	
 		* **[My Tasks]** **[Checklist]**	Photos upload in checklist:	Users are now able to upload more than 1 photo per checklist item during site survey. The user can choose whether to upload photos from the phone gallery or take photos via the camera.
-		* **[My Tasks]**	Offline mode:	Users can now complete a work order tasks even if the device does not have internet connection.
-	
+		* **[My Tasks]**	Offline mode:	Users can now complete work order tasks even if the device does not have internet connection.
+
 	* API 	
+		* **[Python API]**	Python API new release:		A new version (3.0.0.) of the Python API is now available. More details [here](py-inventory-changelog.md)
 		* **[GraphQL API]**	Queries with pagination:	Users are now able to query all entities by using pagination and improving data handling. Queries are: "equipment", "ports", "links", "projects".
+		* **[GraphQL API]**	Improved "Property" data querying:	Users can now query "rawValue" to get property value. This feature provides users with an easier way to extract property data.
 
 
 * 4/30/2020

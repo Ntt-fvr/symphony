@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -40,13 +39,12 @@ type woRower struct {
 
 var woDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
-func (er woRower) rows(ctx context.Context, url *url.URL) ([][]string, error) {
+func (er woRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error
 		filterInput []*models.WorkOrderFilterInput
 	)
-	filtersParam := url.Query().Get("filters")
 	if filtersParam != "" {
 		filterInput, err = paramToWOFilterInput(filtersParam)
 		if err != nil {
@@ -144,8 +142,8 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 	}
 
 	row := []string{
-		strconv.Itoa(wo.ID), wo.Name, projName, wo.Status, assigneeName,
-		ownerName, wo.Priority, getStringDate(wo.CreationDate),
+		strconv.Itoa(wo.ID), wo.Name, projName, wo.Status.String(), assigneeName,
+		ownerName, wo.Priority.String(), getStringDate(&wo.CreationDate),
 		getStringDate(wo.InstallDate), locName,
 	}
 	row = append(row, properties...)
@@ -153,7 +151,10 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 	return row, nil
 }
 
-func getStringDate(t time.Time) string {
+func getStringDate(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
 	y, m, d := t.Date()
 	if y != 1 || m != time.January || d != 1 {
 		return fmt.Sprintf("%d %v %d", d, m.String(), y)

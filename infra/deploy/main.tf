@@ -9,12 +9,47 @@ terraform {
     dynamodb_table       = "symphony.terraform.lock"
   }
 
-  required_version = ">= 0.12"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 2.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 1.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 2.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 2.0"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 2.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 1.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 1.0"
+    }
+  }
+
+  required_version = ">= 0.13"
 }
 
 locals {
-  # current enviroment name
-  enviroment = terraform.workspace != "default" ? terraform.workspace : "production"
+  # current environment name
+  environment = terraform.workspace != "default" ? terraform.workspace : "production"
 
   # default resource tags
   tags = {
@@ -26,7 +61,7 @@ locals {
   output_path = "${path.module}/.terraform/output/"
 }
 
-data "terraform_remote_state" "current" {
+data terraform_remote_state current {
   backend   = "s3"
   workspace = terraform.workspace
 
@@ -47,22 +82,22 @@ data "terraform_remote_state" "current" {
 }
 
 # expose deployment bucket
-data "aws_s3_bucket" "deployment" {
+data aws_s3_bucket deployment {
   bucket   = "symphony.deployment"
   provider = aws.us-east-1
 }
 
 # expose state lock table
-data "aws_dynamodb_table" "lock" {
+data aws_dynamodb_table lock {
   name     = "symphony.terraform.lock"
   provider = aws.us-east-1
 }
 
 # expose available azs in current region
-data "aws_availability_zones" "current" {}
+data aws_availability_zones current {}
 
 # expose current user data
-data "aws_caller_identity" "current" {}
+data aws_caller_identity current {}
 
 # expose current region data
-data "aws_region" "current" {}
+data aws_region current {}

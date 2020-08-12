@@ -32,14 +32,14 @@ class Timer:
 
     def start(self) -> None:
         if self._start_time is not None:
-            raise TimerError(f"Timer is running. Use .stop() to stop it")
+            raise TimerError("Timer is running. Use .stop() to stop it")
 
         self._start_time = time.perf_counter()
 
     def stop(self) -> float:
         start_time = self._start_time
         if start_time is None:
-            raise TimerError(f"Timer is not running. Use .start() to start it")
+            raise TimerError("Timer is not running. Use .start() to start it")
 
         elapsed_time = time.perf_counter() - start_time
         self._start_time = None
@@ -56,7 +56,7 @@ def get_location(client: InventoryClient, external_id: str) -> Tuple[Location, f
 def get_building_locations(client: InventoryClient) -> List[Tuple[Location, str]]:
     t = Timer()
     t.start()
-    locations = get_locations(client=client)
+    locations = list(get_locations(client=client))
     print(f"Collected {len(locations)} Locations in {t.stop():.4f} secs")
     result = []
     for location in locations:

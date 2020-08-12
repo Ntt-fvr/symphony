@@ -6,9 +6,9 @@
 from typing import Dict, List, Tuple
 
 from pysymphony import SymphonyClient
+from pysymphony.common.data_class import Equipment, Location
+from pysymphony.common.data_enum import Entity
 
-from ..common.data_class import Equipment, Location
-from ..common.data_enum import Entity
 from ..exceptions import EntityNotFoundError
 from ..graphql.query.equipment_positions import EquipmentPositionsQuery
 from ..graphql.query.location_equipments import LocationEquipmentsQuery
@@ -46,27 +46,31 @@ def copy_equipment_with_all_attachments(
 ) -> Dict[Equipment, Equipment]:
     """Copy the equipment to the new location with all its attachments
 
-        Args:
-            equipment ( `pyinventory.common.data_class.Equipment` ): could be retrieved from
-            - `pyinventory.api.equipment.get_equipment`
-            - `pyinventory.api.equipment.get_equipment_in_position`
-            - `pyinventory.api.equipment.add_equipment`
-            - `pyinventory.api.equipment.add_equipment_to_position`
+        :param equipment: Equipment object to be copied, could be retrieved from
 
-            dest_location ( `pyinventory.common.data_class.Location` ): could be retrieved from
-            - `pyinventory.api.location.get_location`
-            - `pyinventory.api.location.add_location`
+            * :meth:`~pyinventory.api.equipment.get_equipment`
+            * :meth:`~pyinventory.api.equipment.get_equipment_in_position`
+            * :meth:`~pyinventory.api.equipment.add_equipment`
+            * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        Raises:
-            FailedOperationException: internal inventory error
+        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :param dest_location: Location to copy equipment to, could be retrieved from
 
-        Returns:
-            Dict[ `pyinventory.common.data_class.Equipment` , `pyinventory.common.data_class.Equipment` ]
-            - `pyinventory.common.data_class.Equipment` - source equipment
-            - `pyinventory.common.data_class.Equipment` - new equipment
+            * :meth:`~pyinventory.api.location.get_location`
+            * :meth:`~pyinventory.api.location.add_location`
 
-            The dict includes the equipment given as parameter and also all the equipments
-                attached to it
+        :type dest_location: :class:`~pyinventory.common.data_class.Location`
+
+        :raises:
+            FailedOperationException: Internal inventory error
+
+        :return: Dictionary of source equipment to new equipment,
+            includes the equipment given as parameter and also all the equipments attached to it
+
+            * source equipment - :class:`~pyinventory.common.data_class.Equipment`
+            * new equipment - :class:`~pyinventory.common.data_class.Equipment`
+
+        :rtype: Iterator[ Tuple[ :class:`~pyinventory.common.data_class.Equipment`, str ] ]
     """
 
     result = {}
@@ -113,12 +117,10 @@ def apply_location_template_to_location(
             copy_equipment_with_all_attachments(client, equipment, location)
         )
 
-    equipments = equipments_to_new_equipments.keys()
-
     link_to_equipment_and_port = {}
     connected_links = []
 
-    for equipment in equipments:
+    for equipment in equipments_to_new_equipments.keys():
         links_and_ports = get_all_links_and_port_names_of_equipment(client, equipment)
         for link, port_name in links_and_ports:
             if link not in link_to_equipment_and_port:

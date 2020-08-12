@@ -154,6 +154,10 @@ const locationsPropertiesCardQuery = graphql`
         surveys {
           id
         }
+        parentCoords {
+          latitude
+          longitude
+        }
         ...LocationSiteSurveyTab_location
         ...LocationDocumentsCard_location
         ...LocationFloorPlansTab_location
@@ -212,6 +216,7 @@ class LocationPropertiesCard extends React.Component<Props, State> {
               permissions={{
                 entity: 'location',
                 action: 'update',
+                locationTypeId: location.locationType.id,
               }}>
               <div className={classes.root}>
                 <div className={classes.cardHeader}>

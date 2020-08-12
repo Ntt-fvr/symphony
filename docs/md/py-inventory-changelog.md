@@ -17,6 +17,16 @@ This is template for release notes
 
 
 ***
+## 3.1.0 - release date 23.7.2020
+### Features
+- Features
+    - `get_enabled_features` - Returns list of the enabled features that are accessible publicly
+    - `set_feature` - Enable or disable given feature if the feature is publicly accessible
+### Bug fixes
+***
+
+
+***
 ## 3.0.0 - release date 10.6.2020
 ### Features
 - ServiceType

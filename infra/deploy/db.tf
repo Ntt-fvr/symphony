@@ -2,6 +2,9 @@ locals {
   # mysql standard port
   mysql_port = 3306
 
+  # postgres standard port
+  postgres_port = 5432
+
   # rds database user
   db_user = "admin"
 
@@ -10,15 +13,27 @@ locals {
   graph_db_name = "graph"
 }
 
-# grant mysql access to eks nodes
-resource "aws_security_group" "eks_mysql" {
-  name_prefix = "eks-mysql"
-  description = "EKS node access to MySQL"
+# grant RDS to EKS nodes
+resource aws_security_group eks_rds {
+  for_each = {
+    mysql = {
+      name = "MySQL"
+      port = local.mysql_port
+    }
+
+    postgres = {
+      name = "Postgres"
+      port = local.postgres_port
+    }
+  }
+
+  name_prefix = "eks-${each.key}"
+  description = "EKS node access to ${each.value.name}"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    from_port       = local.mysql_port
-    to_port         = local.mysql_port
+    from_port       = each.value.port
+    to_port         = each.value.port
     protocol        = "tcp"
     security_groups = [module.eks.worker_security_group_id]
   }
@@ -29,20 +44,20 @@ resource "aws_security_group" "eks_mysql" {
 }
 
 # role allowing enhanced monitoring
-data "aws_iam_role" "rds_enhanced_monitoring" {
+data aws_iam_role rds_enhanced_monitoring {
   name = "rds-monitoring-role"
 }
 
 # generate random database password
-resource "random_string" "rds_password" {
+resource random_string rds_password {
   length  = 16
   special = false
 }
 
-# generate random database indentifier
-resource "random_pet" "rds_identifier" {}
+# generate random database identifier
+resource random_pet rds_identifier {}
 
-module "db" {
+module db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -69,18 +84,18 @@ module "db" {
   monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
   monitoring_interval = 60
 
-  vpc_security_group_ids = [aws_security_group.eks_mysql.id]
+  vpc_security_group_ids = [aws_security_group.eks_rds["mysql"].id]
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
   tags = local.tags
 }
 
-# generate random graph database indentifier
-resource "random_pet" "graph_db_identifier" {}
+# generate random graph database identifier
+resource random_pet graph_db_identifier {}
 
 # rds database for inventory graph
-module "graph_db" {
+module graph_db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 
@@ -111,7 +126,7 @@ module "graph_db" {
   monitoring_role_arn = data.aws_iam_role.rds_enhanced_monitoring.arn
   monitoring_interval = 60
 
-  vpc_security_group_ids = [aws_security_group.eks_mysql.id]
+  vpc_security_group_ids = [aws_security_group.eks_rds["mysql"].id]
   db_subnet_group_name   = module.vpc.database_subnet_group
 
   parameters = [
@@ -133,10 +148,10 @@ module "graph_db" {
 }
 
 # generate random provisioner name
-resource "random_pet" "rds_provisioner" {}
+resource random_pet rds_provisioner {}
 
 # provision required databases
-resource "null_resource" "rds_provisioner" {
+resource null_resource rds_provisioner {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
 

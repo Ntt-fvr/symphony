@@ -17,6 +17,7 @@ import type { ReaderFragment } from 'relay-runtime';
 type CommentsActivitiesBox_comments$ref = any;
 type LocationBreadcrumbsTitle_locationDetails$ref = any;
 type ProjectWorkOrdersList_workOrders$ref = any;
+export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type ProjectDetails_project$ref: FragmentReference;
@@ -44,6 +45,7 @@ export type ProjectDetails_project = {|
     |},
     +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
   |},
+  +priority: ProjectPriority,
   +properties: $ReadOnlyArray<{|
     +id: string,
     +stringValue: ?string,
@@ -270,6 +272,13 @@ return {
       ]
     },
     {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "priority",
+      "args": null,
+      "storageKey": null
+    },
+    {
       "kind": "LinkedField",
       "alias": null,
       "name": "properties",
@@ -394,5 +403,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6d59e4e433fadca289abe047e9f15d3c';
+(node/*: any*/).hash = '288b5bcaa92dfb5095dd6cd8c0cfe4c8';
 module.exports = node;

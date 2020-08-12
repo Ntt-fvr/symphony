@@ -14,7 +14,7 @@ import type {FBCNMSRequest} from '@fbcnms/auth/access';
 
 import asyncHandler from '@fbcnms/util/asyncHandler';
 import express from 'express';
-import staticDist from 'fbcnms-webpack-config/staticDist';
+import staticDist from '@fbcnms/webpack-config/staticDist';
 import userMiddleware from '@fbcnms/auth/express';
 import {AccessRoles} from '@fbcnms/auth/roles';
 import {MAPBOX_ACCESS_TOKEN} from '@fbcnms/platform-server/config';
@@ -28,7 +28,7 @@ import {TABS} from '@fbcnms/types/tabs';
 const router: express.Router<FBCNMSRequest, ExpressResponse> = express.Router();
 
 const handleReact = tab =>
-  async function(req: FBCNMSRequest, res) {
+  async function (req: FBCNMSRequest, res) {
     const organization = req.organization ? await req.organization() : null;
     const orgTabs = organization?.tabs || [];
     if (TABS[tab] && orgTabs.indexOf(tab) === -1) {

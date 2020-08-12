@@ -18,19 +18,21 @@ import NestedRouteLink from '@fbcnms/ui/components/NestedRouteLink';
 import React from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+
 import {Redirect, Route, Switch} from 'react-router-dom';
+import {colors} from '../../theme/default';
 import {findIndex} from 'lodash';
 import {makeStyles} from '@material-ui/styles';
 import {useContext} from 'react';
 import {useRouter} from '@fbcnms/ui/hooks';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(_ => ({
   bar: {
-    backgroundColor: theme.palette.blueGrayDark,
+    backgroundColor: colors.primary.brightGray,
   },
   tabs: {
     flex: 1,
-    color: 'white',
+    color: colors.primary.white,
   },
 }));
 
@@ -38,7 +40,7 @@ function GrafanaDashboard() {
   return <Grafana grafanaURL="/grafana" />;
 }
 
-export default function() {
+export default function () {
   const classes = useStyles();
   const {match, relativePath, relativeUrl, location} = useRouter();
 

@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -95,6 +96,7 @@ func (tr *TestResolver) GraphClient(opts ...viewertest.Option) *client.Client {
 			},
 		),
 	)
+	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 		ctx = viewertest.NewContext(ctx, tr.client, opts...)
 		return next(ctx)

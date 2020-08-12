@@ -1,16 +1,16 @@
 # prometheus is a monitoring system and time series database
-resource "helm_release" "prometheus_operator" {
+resource helm_release prometheus_operator {
   name       = "prometheus-operator"
   namespace  = "monitoring"
   repository = local.helm_repository.stable
   chart      = "prometheus-operator"
-  version    = "8.15.0"
+  version    = "9.3.1"
   keyring    = ""
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
     host               = local.domains.symphony.intern_name
-    env                = local.enviroment
+    env                = local.environment
     access_token       = jsondecode(data.aws_secretsmanager_secret_version.alertmanager.secret_string)["access_token"]
     grafana_sa_name    = module.grafana_role.service_account_name
     grafana_rolearn    = module.grafana_role.role_arn
@@ -25,66 +25,53 @@ resource "helm_release" "prometheus_operator" {
   depends_on = [helm_release.efs_provisioner]
 }
 
+# publicly available grafana dashboards
+# https://grafana.com/grafana/dashboards/<gnetId>
 locals {
-  # publicly available grafana dashboards
-  # https://grafana.com/grafana/dashboards/<gnetId>
-  grafana_dashboards = {
-    aws-s3 = {
-      gnetId     = 575,
-      revision   = 5,
+  aws_dashboards = {
+    for d in [
+      { name = "s3", id = 575, rev = 6 },
+      { name = "ec2", id = 617, rev = 4 },
+      { name = "elb", id = 644, rev = 4 },
+      { name = "alb", id = 650, rev = 8 },
+      { name = "efs", id = 653, rev = 4 },
+      { name = "rds", id = 707, rev = 4 },
+    ] :
+    format("aws-%s", d.name) => {
+      gnetId     = d.id,
+      revision   = d.rev,
       datasource = "CloudWatch"
-    },
-    aws-ec2 = {
-      gnetId     = 617,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-elb = {
-      gnetId     = 644,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-alb = {
-      gnetId     = 650,
-      revision   = 7,
-      datasource = "CloudWatch"
-    },
-    aws-efs = {
-      gnetId     = 653,
-      revision   = 3,
-      datasource = "CloudWatch"
-    },
-    aws-rds = {
-      gnetId     = 707,
-      revision   = 2,
-      datasource = "CloudWatch"
-    },
-    go-processes = {
-      gnetId     = 6671,
-      revision   = 2,
-      datasource = "Prometheus",
-    },
-    helm-exporter = {
-      gnetId     = 9367,
-      revision   = 2,
-      datasource = "Prometheus",
-    },
-    nginx-ingress = {
-      gnetId     = 9789,
-      revision   = 5,
-      datasource = "Prometheus",
-    },
+    }
   }
+
+  misc_dashboards = {
+    for d in [
+      { name = "go-processes", id = 6671, rev = 2 },
+      { name = "helm-exporter", id = 9367, rev = 2 },
+      { name = "nginx-ingress", id = 9789, rev = 5 },
+      { name = "nats-server", id = 2279, rev = 1 },
+    ] :
+    d.name => {
+      gnetId     = d.id,
+      revision   = d.rev,
+      datasource = "Prometheus"
+    }
+  }
+
+  grafana_dashboards = merge(
+    local.aws_dashboards,
+    local.misc_dashboards,
+  )
 }
 
 # random password generator for grafana
-resource "random_string" "grafana_admin_password" {
+resource random_string grafana_admin_password {
   length  = 10
   special = false
 }
 
 # iam role for grafana
-module "grafana_role" {
+module grafana_role {
   source                    = "./modules/irsa"
   role_name_prefix          = "GrafanaRole"
   role_path                 = local.eks_sa_role_path
@@ -96,7 +83,7 @@ module "grafana_role" {
 }
 
 # policy required by grafana cloudwatch datasource
-data "aws_iam_policy_document" "grafana" {
+data aws_iam_policy_document grafana {
   statement {
     sid = "AllowReadingMetricsFromCloudWatch"
 
@@ -134,7 +121,7 @@ data "aws_iam_policy_document" "grafana" {
 }
 
 # grafana dashboards are passed as config map.
-resource "kubernetes_config_map" "grafana_extra_dashboards" {
+resource kubernetes_config_map grafana_extra_dashboards {
   metadata {
     name      = "grafana-extra-dashboards"
     namespace = "monitoring"
@@ -151,11 +138,11 @@ resource "kubernetes_config_map" "grafana_extra_dashboards" {
 }
 
 # exports helm release stats to prometheus
-resource "helm_release" "helm_exporter" {
+resource helm_release helm_exporter {
   name       = "helm-exporter"
   repository = local.helm_repository.sstarcher
   chart      = "helm-exporter"
-  version    = "0.5.6"
+  version    = "0.6.0"
   namespace  = "monitoring"
   keyring    = ""
 
@@ -169,11 +156,11 @@ resource "helm_release" "helm_exporter" {
 
 # The blackbox exporter allows blackbox probing of endpoints
 # over HTTP, HTTPS, DNS, TCP and ICMP.
-resource "helm_release" "blackbox_exporter" {
+resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.stable
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.1.1"
+  version    = "4.3.0"
   namespace  = "monitoring"
   keyring    = ""
 

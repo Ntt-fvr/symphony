@@ -12,12 +12,14 @@ import type {FiltersQuery} from './comparison_view/ComparisonViewTypes';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
+import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@fbcnms/ui/components/design-system/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, {useState} from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import {useContext} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = {
@@ -51,6 +53,9 @@ type Props = {
 const CSVFileExport = (props: Props) => {
   const {classes, title, exportPath} = props;
   const [isDownloading, setIsDownloading] = useState(false);
+  const isAsyncExportEnabled = useContext(AppContext).isFeatureEnabled(
+    'async_export',
+  );
 
   const filters = props.filters?.map(f => {
     if (f.name == 'property') {
@@ -75,10 +80,12 @@ const CSVFileExport = (props: Props) => {
         .then(response => {
           setIsDownloading(false);
           const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', fileName);
-          link.click();
+          if (!isAsyncExportEnabled) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            link.click();
+          }
         });
     } catch (error) {
       props.alert(error.response?.data?.error || error);

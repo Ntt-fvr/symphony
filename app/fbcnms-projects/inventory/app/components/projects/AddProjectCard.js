@@ -30,6 +30,7 @@ import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection
 import PropertyValueInput from '../form/PropertyValueInput';
 import React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
+import Select from '@fbcnms/ui/components/design-system/Select/Select';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextField from '@material-ui/core/TextField';
 import UserTypeahead from '../typeahead/UserTypeahead';
@@ -40,6 +41,7 @@ import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {getGraphError} from '../../common/EntUtils';
 import {getInitialPropertyFromType} from '../../common/PropertyType';
+import {priorityValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {withRouter} from 'react-router-dom';
 import {withSnackbar} from 'notistack';
@@ -164,6 +166,7 @@ class AddProjectCard extends React.Component<Props, State> {
           permissions={{
             entity: 'project',
             action: 'create',
+            ignoreTypes: true,
           }}>
           <div className={classes.nameHeader}>
             <div className={classes.breadcrumbs}>
@@ -225,6 +228,17 @@ class AddProjectCard extends React.Component<Props, State> {
                             margin="dense"
                             onLocationSelection={location =>
                               this._locationChangeHandler(location?.id ?? null)
+                            }
+                          />
+                        </FormField>
+                      </Grid>
+                      <Grid item xs={12} sm={6} lg={4} xl={4}>
+                        <FormField label="Priority">
+                          <Select
+                            options={priorityValues}
+                            selectedValue={project.priority}
+                            onChange={value =>
+                              this._setProjectDetail('priority', value)
                             }
                           />
                         </FormField>
@@ -306,6 +320,7 @@ class AddProjectCard extends React.Component<Props, State> {
       description: projectType.description,
       creatorId: null,
       location: null,
+      priority: projectType.priority,
       properties: initialProps,
       workOrders: [],
       numberOfWorkOrders: 0,
@@ -313,13 +328,19 @@ class AddProjectCard extends React.Component<Props, State> {
   }
 
   _saveProject = () => {
-    const {name, description, creatorId, properties, type} = nullthrows(
-      this.state.project,
-    );
+    const {
+      name,
+      description,
+      creatorId,
+      properties,
+      priority,
+      type,
+    } = nullthrows(this.state.project);
     const variables: AddProjectMutationVariables = {
       input: {
         name,
         description,
+        priority,
         creatorId: creatorId,
         type: type?.id ?? '',
         properties: toPropertyInput(properties),
@@ -353,7 +374,10 @@ class AddProjectCard extends React.Component<Props, State> {
     });
   };
 
-  _setProjectDetail = (key: 'name' | 'description' | 'creatorId', value) => {
+  _setProjectDetail = (
+    key: 'name' | 'description' | 'creatorId' | 'priority',
+    value,
+  ) => {
     this.setState(prevState => {
       return {
         // $FlowFixMe Set state for each field

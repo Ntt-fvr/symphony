@@ -9,7 +9,7 @@ from gql.gql.client import OperationException
 from gql.gql.reporter import FailedOperationException
 from functools import partial
 from numbers import Number
-from typing import Any, Callable, List, Mapping, Optional
+from typing import Any, Callable, List, Mapping, Optional, Dict
 from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
@@ -19,11 +19,13 @@ from ..input.equipment_filter import EquipmentFilterInput
 
 QUERY: List[str] = EquipmentFragmentQuery + ["""
 query EquipmentSearchQuery($filters: [EquipmentFilterInput!]!, $limit: Int) {
-  equipmentSearch(filters: $filters, limit: $limit) {
-    equipment {
-      ...EquipmentFragment
+  equipments(filterBy: $filters, first: $limit) {
+    edges {
+      node {
+        ...EquipmentFragment
+      }
     }
-    count
+    totalCount
   }
 }
 
@@ -34,23 +36,27 @@ class EquipmentSearchQuery(DataClassJsonMixin):
     @dataclass
     class EquipmentSearchQueryData(DataClassJsonMixin):
         @dataclass
-        class EquipmentSearchResult(DataClassJsonMixin):
+        class EquipmentConnection(DataClassJsonMixin):
             @dataclass
-            class Equipment(EquipmentFragment):
-                pass
+            class EquipmentEdge(DataClassJsonMixin):
+                @dataclass
+                class Equipment(EquipmentFragment):
+                    pass
 
-            equipment: List[Equipment]
-            count: int
+                node: Optional[Equipment]
 
-        equipmentSearch: EquipmentSearchResult
+            edges: List[EquipmentEdge]
+            totalCount: int
+
+        equipments: EquipmentConnection
 
     data: EquipmentSearchQueryData
 
     @classmethod
     # fmt: off
-    def execute(cls, client: GraphqlClient, filters: List[EquipmentFilterInput] = [], limit: Optional[int] = None) -> EquipmentSearchQueryData.EquipmentSearchResult:
+    def execute(cls, client: GraphqlClient, filters: List[EquipmentFilterInput] = [], limit: Optional[int] = None) -> EquipmentSearchQueryData.EquipmentConnection:
         # fmt: off
-        variables = {"filters": filters, "limit": limit}
+        variables: Dict[str, Any] = {"filters": filters, "limit": limit}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
@@ -59,7 +65,7 @@ class EquipmentSearchQuery(DataClassJsonMixin):
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
             client.reporter.log_successful_operation("EquipmentSearchQuery", variables, network_time, decode_time)
-            return res.equipmentSearch
+            return res.equipments
         except OperationException as e:
             raise FailedOperationException(
                 client.reporter,

@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
@@ -309,7 +310,7 @@ func TestPropertiesForCSV(t *testing.T) {
 	propService, err := mr.AddService(ctx, models.ServiceCreateData{
 		Name:          "prop_service_inst",
 		ServiceTypeID: propServiceType.ID,
-		Status:        pointerToServiceStatus(models.ServiceStatusPending),
+		Status:        service.StatusPending,
 	})
 	require.NoError(t, err)
 	prop8 := models.PropertyInput{
@@ -459,7 +460,7 @@ func TestSamePropertyTypesForCSV(t *testing.T) {
 	intVal := 40
 	propInput1 := models.PropertyTypeInput{
 		Name:     "Ptype1",
-		Type:     models.PropertyKindInt,
+		Type:     propertytype.TypeInt,
 		IntValue: &intVal,
 	}
 
@@ -471,7 +472,7 @@ func TestSamePropertyTypesForCSV(t *testing.T) {
 	pa := equipmentTypeA.QueryPropertyTypes().OnlyX(ctx)
 	propInput2 := models.PropertyTypeInput{
 		Name:     "Ptype2",
-		Type:     models.PropertyKindInt,
+		Type:     propertytype.TypeInt,
 		IntValue: &intVal,
 	}
 	equipmentTypeB, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{

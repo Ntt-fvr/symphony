@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 0feed5d3c2967414efa18da5c07c2d67
+ * @relayHash bd9f370a68d9797cfa9f35b5b70c0deb
  */
 
 /* eslint-disable */
@@ -15,6 +15,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type CellularNetworkType = "CDMA" | "GSM" | "LTE" | "WCDMA" | "%future added value";
 export type CheckListItemEnumSelectionMode = "multiple" | "single" | "%future added value";
 export type CheckListItemType = "cell_scan" | "enum" | "files" | "simple" | "string" | "wifi_scan" | "yes_no" | "%future added value";
 export type FileType = "FILE" | "IMAGE" | "%future added value";
@@ -29,10 +30,8 @@ export type AddWorkOrderInput = {|
   projectId?: ?string,
   properties?: ?$ReadOnlyArray<PropertyInput>,
   checkList?: ?$ReadOnlyArray<CheckListItemInput>,
-  ownerName?: ?string,
   ownerId?: ?string,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryInput>,
-  assignee?: ?string,
   assigneeId?: ?string,
   index?: ?number,
   status?: ?WorkOrderStatus,
@@ -58,6 +57,7 @@ export type CheckListItemInput = {|
   title: string,
   type: CheckListItemType,
   index?: ?number,
+  isMandatory?: ?boolean,
   helpText?: ?string,
   enumValues?: ?string,
   enumSelectionMode?: ?CheckListItemEnumSelectionMode,
@@ -66,6 +66,8 @@ export type CheckListItemInput = {|
   checked?: ?boolean,
   files?: ?$ReadOnlyArray<FileInput>,
   yesNoResponse?: ?YesNoResponse,
+  wifiData?: ?$ReadOnlyArray<SurveyWiFiScanData>,
+  cellData?: ?$ReadOnlyArray<SurveyCellScanData>,
 |};
 export type FileInput = {|
   id?: ?string,
@@ -77,6 +79,41 @@ export type FileInput = {|
   mimeType?: ?string,
   storeKey: string,
   annotation?: ?string,
+|};
+export type SurveyWiFiScanData = {|
+  timestamp: number,
+  frequency: number,
+  channel: number,
+  bssid: string,
+  strength: number,
+  ssid?: ?string,
+  band?: ?string,
+  channelWidth?: ?number,
+  capabilities?: ?string,
+  latitude?: ?number,
+  longitude?: ?number,
+|};
+export type SurveyCellScanData = {|
+  networkType: CellularNetworkType,
+  signalStrength: number,
+  timestamp?: ?number,
+  baseStationID?: ?string,
+  networkID?: ?string,
+  systemID?: ?string,
+  cellID?: ?string,
+  locationAreaCode?: ?string,
+  mobileCountryCode?: ?string,
+  mobileNetworkCode?: ?string,
+  primaryScramblingCode?: ?string,
+  operator?: ?string,
+  arfcn?: ?number,
+  physicalCellID?: ?string,
+  trackingAreaCode?: ?string,
+  timingAdvance?: ?number,
+  earfcn?: ?number,
+  uarfcn?: ?number,
+  latitude?: ?number,
+  longitude?: ?number,
 |};
 export type CheckListCategoryInput = {|
   id?: ?string,
@@ -116,6 +153,7 @@ export type AddWorkOrderMutationResponse = {|
       +name: string,
     |},
     +closeDate: ?any,
+    +priority: WorkOrderPriority,
   |}
 |};
 export type AddWorkOrderMutation = {|
@@ -157,6 +195,7 @@ mutation AddWorkOrderMutation(
       name
     }
     closeDate
+    priority
   }
 }
 */
@@ -300,6 +339,13 @@ v5 = [
         "name": "closeDate",
         "args": null,
         "storageKey": null
+      },
+      {
+        "kind": "ScalarField",
+        "alias": null,
+        "name": "priority",
+        "args": null,
+        "storageKey": null
       }
     ]
   }
@@ -324,7 +370,7 @@ return {
     "operationKind": "mutation",
     "name": "AddWorkOrderMutation",
     "id": null,
-    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    assignedTo {\n      id\n      email\n    }\n    location {\n      id\n      name\n    }\n    workOrderType {\n      id\n      name\n    }\n    project {\n      id\n      name\n    }\n    closeDate\n  }\n}\n",
+    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    assignedTo {\n      id\n      email\n    }\n    location {\n      id\n      name\n    }\n    workOrderType {\n      id\n      name\n    }\n    project {\n      id\n      name\n    }\n    closeDate\n    priority\n  }\n}\n",
     "metadata": {}
   }
 };

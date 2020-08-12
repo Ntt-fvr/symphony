@@ -41,26 +41,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-type Props = {
+type Props = $ReadOnly<{|
   className?: string,
   onWorkOrderSelected: (workOrderId: string) => void,
   limit?: number,
   filters: Array<any>,
-  workOrderKey: number,
   displayMode?: DisplayOptionTypes,
   onQueryReturn?: (resultCount: number) => void,
-};
+|}>;
 
 const workOrderSearchQuery = graphql`
   query WorkOrderComparisonViewQueryRendererSearchQuery(
     $limit: Int
     $filters: [WorkOrderFilterInput!]!
   ) {
-    workOrderSearch(limit: $limit, filters: $filters) {
-      count
-      workOrders {
-        ...WorkOrdersView_workOrder
-        ...WorkOrdersMap_workOrders
+    workOrders(
+      first: $limit
+      orderBy: {direction: DESC, field: UPDATED_AT}
+      filterBy: $filters
+    ) {
+      totalCount
+      edges {
+        node {
+          ...WorkOrdersView_workOrder
+          ...WorkOrdersMap_workOrders
+        }
       }
     }
   }
@@ -72,7 +77,6 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
     filters,
     limit,
     onWorkOrderSelected,
-    workOrderKey,
     displayMode,
     className,
     onQueryReturn,
@@ -91,14 +95,14 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
           idSet: f.idSet,
           stringSet: f.stringSet,
         })),
-        workOrderKey: workOrderKey,
       }}
       render={props => {
-        const {count, workOrders} = props.workOrderSearch;
-        onQueryReturn && onQueryReturn(count);
-        if (count === 0) {
+        const {totalCount, edges} = props.workOrders;
+        onQueryReturn && onQueryReturn(totalCount);
+        if (totalCount === 0) {
           return <ComparisonViewNoResults />;
         }
+        const workOrders = edges.map(edge => edge.node);
         return (
           <div className={classNames(classes.root, className)}>
             {displayMode === DisplayOptions.map ? (

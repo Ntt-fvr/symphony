@@ -71,7 +71,7 @@ func TestHyperlinkReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Hyperlink.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -85,7 +85,7 @@ func TestHyperlinkReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Hyperlink.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -98,7 +98,7 @@ func TestHyperlinkReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.Hyperlink.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -165,7 +165,7 @@ func TestLocationHyperlinkPolicyRule(t *testing.T) {
 func TestWorkOrderHyperlinkPolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOWNER)
+	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)

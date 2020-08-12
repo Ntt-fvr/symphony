@@ -59,7 +59,7 @@ func TestCheckListCategoryDefinitionWritePolicyRule(t *testing.T) {
 func TestCheckListCategoryWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
@@ -155,7 +155,7 @@ func TestCheckListItemDefinitionWritePolicyRule(t *testing.T) {
 func TestCheckListItemWritePolicyRule(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUSER)
+	u := viewer.MustGetOrCreateUser(ctx, "anotherOne", user.RoleUser)
 	workOrderType := c.WorkOrderType.Create().
 		SetName("WorkOrderType").
 		SaveX(ctx)
@@ -228,7 +228,7 @@ func TestCheckListCategoryReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListCategory.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -242,7 +242,7 @@ func TestCheckListCategoryReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListCategory.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -255,7 +255,7 @@ func TestCheckListCategoryReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListCategory.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -292,7 +292,7 @@ func TestCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListItem.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -306,7 +306,7 @@ func TestCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListItem.Query().Count(permissionsContext)
 		require.NoError(t, err)
@@ -319,7 +319,7 @@ func TestCheckListItemReadPolicyRule(t *testing.T) {
 			context.Background(),
 			c,
 			viewertest.WithUser("user"),
-			viewertest.WithRole(user.RoleUSER),
+			viewertest.WithRole(user.RoleUser),
 			viewertest.WithPermissions(permissions))
 		count, err := c.CheckListItem.Query().Count(permissionsContext)
 		require.NoError(t, err)

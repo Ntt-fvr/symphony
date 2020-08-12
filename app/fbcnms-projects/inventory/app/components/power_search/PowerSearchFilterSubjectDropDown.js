@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     paddingRight: '15px',
     paddingLeft: '15px',
+    backgroundColor: theme.palette.common.white,
   },
   input: {
     marginTop: '0px',

@@ -12,8 +12,6 @@ import type {FormAlertsContextType} from '@fbcnms/ui/components/design-system/Fo
 import type {PermissionEnforcement} from '../components/admin/userManagement/utils/usePermissions';
 
 import * as React from 'react';
-import fbt from 'fbt';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import usePermissions from '../components/admin/userManagement/utils/usePermissions';
 import {
   DEFAULT_CONTEXT_VALUE as DEFAULT_ALERTS,
@@ -21,7 +19,6 @@ import {
   useFormAlertsContext,
 } from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
 import {createContext, useContext} from 'react';
-import {useMainContext} from '../components/MainContext';
 
 type FromContextType = $ReadOnly<{|
   alerts: FormAlertsContextType,
@@ -40,35 +37,10 @@ type Props = $ReadOnly<{|
 
 function FormWrapper(props: Props) {
   const {children, permissions} = props;
-  const {me} = useMainContext();
-
-  const permissionsEnforcementIsOn = useFeatureFlag(
-    'permissions_ui_enforcement',
-  );
-
-  const permissionPoliciesMode = useFeatureFlag('permission_policies');
-  const shouldEnforcePermissions =
-    permissionsEnforcementIsOn && permissions.ignorePermissions != true;
-
   const permissionsRules = usePermissions();
   const alerts = useFormAlertsContext();
 
-  if (permissionPoliciesMode) {
-    permissionsRules.check(permissions, 'Form Permissions');
-  } else if (shouldEnforcePermissions && me != null) {
-    alerts.missingPermissions.check({
-      fieldId: 'System Rules',
-      fieldDisplayName: 'Read Only User',
-      value: me?.permissions.canWrite,
-      checkCallback: canWrite =>
-        canWrite
-          ? ''
-          : `${fbt(
-              'Writing permissions are required. Contact your system administrator.',
-              '',
-            )}`,
-    });
-  }
+  permissionsRules.check(permissions, 'Form Permissions');
 
   return (
     <FormContext.Provider value={{alerts}}>{children}</FormContext.Provider>

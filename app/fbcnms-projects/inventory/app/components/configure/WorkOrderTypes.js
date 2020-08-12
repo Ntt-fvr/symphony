@@ -115,7 +115,11 @@ const WorkOrderTypes = () => {
     <InventoryView
       header={{
         title: <fbt desc="">Work Order Templates</fbt>,
-        subtitle: <fbt desc="">Create and manage reusable work orders.</fbt>,
+        subtitle: (
+          <fbt desc="">
+            Create reusable templates for frequently created work order types.
+          </fbt>
+        ),
         actionButtons: [
           <FormActionWithPermissions
             permissions={{

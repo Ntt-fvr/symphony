@@ -12,17 +12,24 @@ import InventorySuspense from '../../common/InventorySuspense';
 import NavigatableViews from '@fbcnms/ui/components/design-system/View/NavigatableViews';
 import React, {useMemo} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import Text from '@fbcnms/ui/components/design-system/Text';
 import WorkOrderProjectTypes from '../configure/WorkOrderProjectTypes';
 import WorkOrderTypes from '../configure/WorkOrderTypes';
 import fbt from 'fbt';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 import {makeStyles} from '@material-ui/styles';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     height: '100vh',
     transform: 'translateZ(0)',
+  },
+  subtitle: {
+    color: theme.palette.gray13,
+  },
+  title: {
+    display: 'block',
   },
 }));
 
@@ -59,7 +66,11 @@ export default function WorkOrderConfigure() {
       <RelayEnvironmentProvider environment={RelayEnvironment}>
         <InventorySuspense>
           <NavigatableViews
-            header={<fbt desc="">Templates</fbt>}
+            header={
+              <Text className={classes.title}>
+                {<fbt desc="">Templates</fbt>}
+              </Text>
+            }
             views={menuItems}
             routingBasePath="/workorders/configure"
           />

@@ -27,11 +27,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func pointerToServiceStatus(status models.ServiceStatus) *models.ServiceStatus {
-	return &status
-}
-
-func (m *importer) getOrCreateEquipmentType(ctx context.Context, name string, positionsCount int, positionPrefix string, portsCount int, props []*models.PropertyTypeInput) *ent.EquipmentType {
+func (m *importer) getOrCreateEquipmentType(
+	ctx context.Context, name string, positionsCount int,
+	positionPrefix string, portsCount int,
+	props []*models.PropertyTypeInput,
+) *ent.EquipmentType {
 	log := m.logger.For(ctx)
 	client := m.ClientFrom(ctx)
 
@@ -47,7 +47,7 @@ func (m *importer) getOrCreateEquipmentType(ctx context.Context, name string, po
 		propEnt := client.PropertyType.
 			Create().
 			SetName(input.Name).
-			SetType(input.Type.String()).
+			SetType(input.Type).
 			SetNillableStringVal(input.StringValue).
 			SetNillableIntVal(input.IntValue).
 			SetNillableBoolVal(input.BooleanValue).
@@ -176,8 +176,8 @@ func (m *importer) getOrCreateEquipment(
 
 	var parentEquipmentID, positionDefinitionID *int
 	if position != nil {
-		p := position.QueryParent().OnlyXID(ctx)
-		d := position.QueryDefinition().OnlyXID(ctx)
+		p := position.QueryParent().OnlyIDX(ctx)
+		d := position.QueryDefinition().OnlyIDX(ctx)
 		parentEquipmentID = &p
 		positionDefinitionID = &d
 	}
@@ -227,7 +227,7 @@ func (m *importer) getServiceIfExist(ctx context.Context, name string, serviceTy
 func (m *importer) getOrCreateService(
 	ctx context.Context, mr generated.MutationResolver, name string,
 	serviceType *ent.ServiceType, props []*models.PropertyInput,
-	customerID *int, externalID *string, status models.ServiceStatus,
+	customerID *int, externalID *string, status service.Status,
 ) (*ent.Service, bool, error) {
 	log := m.logger.For(ctx)
 	svc, err := m.getServiceIfExist(ctx, name, serviceType)
@@ -239,7 +239,7 @@ func (m *importer) getOrCreateService(
 		Name:          name,
 		ServiceTypeID: serviceType.ID,
 		Properties:    props,
-		Status:        pointerToServiceStatus(status),
+		Status:        status,
 		CustomerID:    customerID,
 		ExternalID:    externalID,
 	})

@@ -9,6 +9,7 @@ import (
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
 // CheckListCategory defines the CheckListCategoryDefinition type schema.
@@ -32,8 +33,10 @@ func (CheckListCategoryDefinition) Edges() []ent.Edge {
 		edge.To("check_list_item_definitions", CheckListItemDefinition.Type),
 		edge.From("work_order_type", WorkOrderType.Type).
 			Ref("check_list_category_definitions").
-			Unique().
-			Required(),
+			Unique(),
+		edge.From("work_order_template", WorkOrderTemplate.Type).
+			Ref("check_list_category_definitions").
+			Unique(),
 	}
 }
 
@@ -92,16 +95,20 @@ type CheckListItemDefinition struct {
 func (CheckListItemDefinition) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
-		field.String("type"),
+		field.Enum("type").
+			GoType(enum.CheckListItemType("")),
 		field.Int("index").
+			Optional(),
+		field.Bool("is_mandatory").
 			Optional(),
 		field.String("enum_values").
 			StructTag(`gqlgen:"enumValues"`).
 			Nillable().
 			Optional(),
 		field.Enum("enum_selection_mode_value").
-			Values("single", "multiple").
-			Optional(),
+			GoType(enum.CheckListItemEnumSelectionMode("")).
+			Optional().
+			Nillable(),
 		field.String("help_text").
 			StructTag(`gqlgen:"helpText"`).
 			Nillable().
@@ -137,8 +144,11 @@ type CheckListItem struct {
 func (CheckListItem) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
-		field.String("type"),
+		field.Enum("type").
+			GoType(enum.CheckListItemType("")),
 		field.Int("index").
+			Optional(),
+		field.Bool("is_mandatory").
 			Optional(),
 		field.Bool("checked").
 			Optional(),
@@ -149,14 +159,19 @@ func (CheckListItem) Fields() []ent.Field {
 			StructTag(`gqlgen:"enumValues"`).
 			Optional(),
 		field.Enum("enum_selection_mode_value").
-			Values("single", "multiple").
-			Optional(),
+			GoType(enum.CheckListItemEnumSelectionMode("")).
+			Optional().
+			Nillable(),
 		field.String("selected_enum_values").
 			StructTag(`gqlgen:"selectedEnumValues"`).
 			Optional(),
 		field.Enum("yes_no_val").
-			Values("YES", "NO").
-			Optional(),
+			ValueMap(map[string]string{
+				"Yes": "YES",
+				"No":  "NO",
+			}).
+			Optional().
+			Nillable(),
 		field.String("help_text").
 			StructTag(`gqlgen:"helpText"`).
 			Nillable().

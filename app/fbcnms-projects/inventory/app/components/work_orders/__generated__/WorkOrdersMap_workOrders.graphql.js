@@ -29,6 +29,9 @@ export type WorkOrdersMap_workOrders = $ReadOnlyArray<{|
   |},
   +status: WorkOrderStatus,
   +priority: WorkOrderPriority,
+  +project: ?{|
+    +id: string
+  |},
   +assignedTo: ?{|
     +id: string,
     +email: string,
@@ -121,6 +124,18 @@ return {
     {
       "kind": "LinkedField",
       "alias": null,
+      "name": "project",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "Project",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/)
+      ]
+    },
+    {
+      "kind": "LinkedField",
+      "alias": null,
       "name": "assignedTo",
       "storageKey": null,
       "args": null,
@@ -166,5 +181,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6bb7dd94318b80fa9274ae5e245b1e70';
+(node/*: any*/).hash = '40e62c63b30e3cfbbc07e2f8c19f283d';
 module.exports = node;

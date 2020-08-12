@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash f01e19bdbea4d4c0875e494f217aaf7d
+ * @relayHash 31c9995cc17e3569ccdd2c930c0a4ff2
  */
 
 /* eslint-disable */
@@ -18,7 +18,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 type AddEditWorkOrderTypeCard_workOrderType$ref = any;
 export type WorkOrderTypesQueryVariables = {||};
 export type WorkOrderTypesQueryResponse = {|
-  +workOrderTypes: ?{|
+  +workOrderTypes: {|
     +edges: $ReadOnlyArray<{|
       +node: ?{|
         +id: string,
@@ -90,6 +90,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
       title
       type
       index
+      isMandatory
       enumValues
       enumSelectionMode
       helpText
@@ -181,6 +182,13 @@ v8 = {
   "storageKey": null
 },
 v9 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "isMandatory",
+  "args": null,
+  "storageKey": null
+},
+v10 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "title",
@@ -367,13 +375,7 @@ return {
                         "args": null,
                         "storageKey": null
                       },
-                      {
-                        "kind": "ScalarField",
-                        "alias": null,
-                        "name": "isMandatory",
-                        "args": null,
-                        "storageKey": null
-                      },
+                      (v9/*: any*/),
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -407,7 +409,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v0/*: any*/),
-                      (v9/*: any*/),
+                      (v10/*: any*/),
                       (v2/*: any*/),
                       {
                         "kind": "LinkedField",
@@ -419,9 +421,10 @@ return {
                         "plural": true,
                         "selections": [
                           (v0/*: any*/),
-                          (v9/*: any*/),
+                          (v10/*: any*/),
                           (v7/*: any*/),
                           (v8/*: any*/),
+                          (v9/*: any*/),
                           {
                             "kind": "ScalarField",
                             "alias": null,
@@ -471,7 +474,7 @@ return {
     "operationKind": "query",
     "name": "WorkOrderTypesQuery",
     "id": null,
-    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n",
+    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n",
     "metadata": {
       "connection": [
         {

@@ -9,6 +9,7 @@
  */
 
 import type {BasicLocation} from '../../common/Location';
+import type {Location} from '../../common/Location';
 import type {ShortUser} from '../../common/EntUtils';
 import type {WorkOrder} from '../../common/WorkOrder';
 import type {
@@ -44,7 +45,7 @@ const useStyles = makeStyles(() => ({
 const LOCATIONS_DISTRIBUTION_FACTOR = 0.01;
 
 const distributeLocations = (
-  location: BasicLocation,
+  location: Location,
   setLocations: Set<string>,
 ): WorkOrderLocation => {
   let lat = location.latitude + Math.random() * LOCATIONS_DISTRIBUTION_FACTOR;
@@ -211,6 +212,9 @@ export default withRouter(
         }
         status
         priority
+        project {
+          id
+        }
         assignedTo {
           id
           email
