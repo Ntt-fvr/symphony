@@ -96,7 +96,7 @@ func WithTenant(tenant string) Option {
 	}
 }
 
-// WithEvent filters out events who's name doesn't match
+// WithEvent filters out events whose name doesn't match
 // any of the passed in event names.
 func WithEvent(event ...string) Option {
 	events := make(map[string]struct{}, len(event))
