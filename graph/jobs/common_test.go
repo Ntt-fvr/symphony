@@ -17,8 +17,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -37,8 +37,8 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestJobsResolver {
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
 	)
 	r := resolver.New(resolver.Config{
-		Logger:     logtest.NewTestLogger(t),
-		Subscriber: pubsub.NewNopSubscriber(),
+		Logger:          logtest.NewTestLogger(t),
+		ReceiverFactory: ev.ErrFactory{},
 	})
 	return &TestJobsResolver{
 		drv:    drv,
@@ -53,8 +53,8 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestJobsResolver {
 func syncServicesRequest(t *testing.T, r *TestJobsResolver) *http.Response {
 	h, _ := NewHandler(
 		Config{
-			Logger:     logtest.NewTestLogger(t),
-			Subscriber: pubsub.NewNopSubscriber(),
+			Logger:          logtest.NewTestLogger(t),
+			ReceiverFactory: ev.ErrFactory{},
 		},
 	)
 
@@ -71,6 +71,6 @@ func syncServicesRequest(t *testing.T, r *TestJobsResolver) *http.Response {
 	resp, err := http.DefaultClient.Do(req)
 	require.Nil(t, err)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	return resp
 }

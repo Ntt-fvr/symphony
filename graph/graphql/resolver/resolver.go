@@ -8,7 +8,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/facebookincubator/symphony/pkg/pubsub"
+	"github.com/facebookincubator/symphony/pkg/ev"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -18,9 +18,9 @@ import (
 type (
 	// Config configures resolver.
 	Config struct {
-		Client     *ent.Client
-		Logger     log.Logger
-		Subscriber pubsub.Subscriber
+		Client          *ent.Client
+		Logger          log.Logger
+		ReceiverFactory ev.ReceiverFactory
 	}
 
 	// Option allows for managing resolver configuration using functional options.
@@ -28,7 +28,7 @@ type (
 
 	resolver struct {
 		logger   log.Logger
-		event    struct{ pubsub.Subscriber }
+		event    struct{ ev.ReceiverFactory }
 		mutation struct{ transactional bool }
 		orc8r    struct{ client *http.Client }
 	}
@@ -37,7 +37,7 @@ type (
 // New creates a graphql resolver.
 func New(cfg Config, opts ...Option) generated.ResolverRoot {
 	r := &resolver{logger: cfg.Logger}
-	r.event.Subscriber = cfg.Subscriber
+	r.event.ReceiverFactory = cfg.ReceiverFactory
 	r.mutation.transactional = true
 	for _, opt := range opts {
 		opt(r)

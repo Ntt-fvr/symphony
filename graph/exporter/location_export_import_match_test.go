@@ -18,8 +18,8 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -90,8 +90,8 @@ func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method m
 	logger := logtest.NewTestLogger(t)
 	h, _ := importer.NewHandler(
 		importer.Config{
-			Logger:     logger,
-			Subscriber: pubsub.NewNopSubscriber(),
+			Logger:          logger,
+			ReceiverFactory: ev.ErrFactory{},
 		},
 	)
 	th := viewertest.TestHandler(t, h, client)

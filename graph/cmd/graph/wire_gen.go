@@ -15,9 +15,9 @@ import (
 	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"gocloud.dev/server/health"
@@ -45,31 +45,29 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	pubsubConfig := flags.EventConfig
-	topicEmitter, cleanup2, err := pubsub.ProvideEmitter(ctx, pubsubConfig)
+	topicFactory := flags.EventPubsubURL
+	emitter, cleanup2, err := ev.ProvideEmitter(ctx, topicFactory)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	tenancy, err := newTenancy(mySQLTenancy, logger, topicEmitter)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
+	eventer := &event.Eventer{
+		Logger:  logger,
+		Emitter: emitter,
 	}
+	tenancy := newTenancy(mySQLTenancy, eventer)
 	url := flags.AuthURL
-	urlSubscriber := pubsub.ProvideSubscriber(pubsubConfig)
 	telemetryConfig := &flags.TelemetryConfig
 	v := newHealthChecks(mySQLTenancy)
 	orc8rConfig := flags.Orc8rConfig
 	graphhttpConfig := graphhttp.Config{
-		Tenancy:      tenancy,
-		AuthURL:      url,
-		Subscriber:   urlSubscriber,
-		Logger:       logger,
-		Telemetry:    telemetryConfig,
-		HealthChecks: v,
-		Orc8r:        orc8rConfig,
+		Tenancy:         tenancy,
+		AuthURL:         url,
+		ReceiverFactory: topicFactory,
+		Logger:          logger,
+		Telemetry:       telemetryConfig,
+		HealthChecks:    v,
+		Orc8r:           orc8rConfig,
 	}
 	server, cleanup3, err := graphhttp.NewServer(graphhttpConfig)
 	if err != nil {
@@ -115,9 +113,8 @@ func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Serve
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, logger log.Logger, emitter pubsub.Emitter) (viewer.Tenancy, error) {
-	eventer := event.Eventer{Logger: logger, Emitter: emitter}
-	return viewer.NewCacheTenancy(tenancy, eventer.HookTo), nil
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {

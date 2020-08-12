@@ -11,22 +11,21 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/NYTimes/gziphandler"
 	"github.com/facebookincubator/symphony/graph/graphql/complexity"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-
-	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -37,10 +36,10 @@ import (
 
 // HandlerConfig configures graphql handler.
 type HandlerConfig struct {
-	Client      *ent.Client
-	Logger      log.Logger
-	Subscriber  pubsub.Subscriber
-	Orc8rClient *http.Client
+	Client          *ent.Client
+	Logger          log.Logger
+	ReceiverFactory ev.ReceiverFactory
+	Orc8rClient     *http.Client
 }
 
 func init() {
@@ -61,9 +60,9 @@ func init() {
 func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	rsv := resolver.New(
 		resolver.Config{
-			Client:     cfg.Client,
-			Logger:     cfg.Logger,
-			Subscriber: cfg.Subscriber,
+			Client:          cfg.Client,
+			Logger:          cfg.Logger,
+			ReceiverFactory: cfg.ReceiverFactory,
 		},
 		resolver.WithOrc8rClient(
 			cfg.Orc8rClient,
