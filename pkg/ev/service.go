@@ -149,6 +149,8 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 	if cfg.OnError == nil {
 		cfg.OnError = func(error) {}
 	}
+	// increment concurrency in concurrent mode to account
+	// for the acquire call in Run.
 	if o.concurrency > 1 && o.concurrency < math.MaxInt64 {
 		o.concurrency++
 	}

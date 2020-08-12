@@ -42,6 +42,11 @@ var (
 		"Number of filtered events",
 		stats.UnitDimensionless,
 	)
+	EventShutdownErrorTotal = stats.Int64(
+		"ev/event_shutdown_errors_total",
+		"Number of shutdown errors",
+		stats.UnitDimensionless,
+	)
 )
 
 // Event atomic counters.
@@ -55,6 +60,8 @@ var (
 	KeyEventTenant = tag.MustNewKey("tenant")
 	// KeyEventName is the event name.
 	KeyEventName = tag.MustNewKey("event")
+	// KeyShutdownKind is the shutdown kind.
+	KeyShutdownKind = tag.MustNewKey("kind")
 )
 
 // Event views.
@@ -98,6 +105,13 @@ var (
 		Measure:     EventReceiveFilteredTotal,
 		Aggregation: view.Count(),
 	}
+	EventShutdownErrorTotalView = &view.View{
+		Name:        EventShutdownErrorTotal.Name(),
+		Description: EventShutdownErrorTotal.Description(),
+		TagKeys:     []tag.Key{KeyShutdownKind},
+		Measure:     EventShutdownErrorTotal,
+		Aggregation: view.Count(),
+	}
 )
 
 // OpenCensusViews are the views provided by this package.
@@ -108,4 +122,5 @@ var OpenCensusViews = []*view.View{
 	EventReceivedTotalView,
 	EventReceiveErrorTotalView,
 	EventReceiveFilteredTotalView,
+	EventShutdownErrorTotalView,
 }

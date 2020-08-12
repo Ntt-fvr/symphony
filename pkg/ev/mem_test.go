@@ -44,7 +44,11 @@ func TestMemFactory(t *testing.T) {
 	}
 
 	err := factory.Shutdown(ctx)
-	require.NoError(t, err)
+	require.NoError(t, err,
+		"first shutdown should succeed",
+	)
 	err = factory.Shutdown(ctx)
-	require.Error(t, err)
+	require.Error(t, err,
+		"second shutdown should error",
+	)
 }

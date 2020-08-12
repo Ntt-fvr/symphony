@@ -153,7 +153,16 @@ func (e *TopicEmitter) emit(ctx context.Context, evt *Event) error {
 
 // Shutdown shuts down the topic emitter.
 func (e *TopicEmitter) Shutdown(ctx context.Context) error {
-	return e.topic.Shutdown(ctx)
+	err := e.topic.Shutdown(ctx)
+	if err != nil {
+		_ = stats.RecordWithTags(ctx,
+			[]tag.Mutator{
+				tag.Upsert(KeyShutdownKind, "emitter"),
+			},
+			EventShutdownErrorTotal.M(1),
+		)
+	}
+	return err
 }
 
 // NewTopicReceiver creates an event receiver that read from a pubsub topic.
@@ -248,6 +257,13 @@ func (r *TopicReceiver) Shutdown(ctx context.Context) (err error) {
 			stats.Record(ctx, EventOpenReceiverTotal.M(
 				atomic.AddInt64(&EventOpenReceiverCount, -1),
 			))
+		} else {
+			_ = stats.RecordWithTags(ctx,
+				[]tag.Mutator{
+					tag.Upsert(KeyShutdownKind, "receiver"),
+				},
+				EventShutdownErrorTotal.M(1),
+			)
 		}
 	}()
 
