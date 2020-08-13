@@ -101,9 +101,7 @@ class TestWorkOrderType(BaseTest):
         fetched_work_order_type = get_work_order_type_by_id(
             client=self.client, id=edited_work_order_type.id
         )
-        fetched_property_types = None
-        if fetched_work_order_type.property_types is not None:
-            fetched_property_types = fetched_work_order_type.property_types
+        fetched_property_types = fetched_work_order_type.property_types
 
         self.assertIsNotNone(fetched_property_types)
         self.assertEqual(len(fetched_property_types), 1)
