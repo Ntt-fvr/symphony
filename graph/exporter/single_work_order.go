@@ -57,10 +57,10 @@ func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*exc
 		return nil, errors.Wrap(err, "cannot query checklist categories")
 	}
 
-	for i := range checklists {
+	for i, checklist := range checklists {
 		sheetName := "CheckList" + strconv.Itoa(i+1)
 		f.NewSheet(sheetName)
-		items, err := checklists[i].QueryCheckListItems().All(ctx)
+		items, err := checklist.QueryCheckListItems().All(ctx)
 		if err != nil {
 			logger.Error("cannot query checklist items", zap.Error(err))
 			return nil, errors.Wrap(err, "cannot query checklist items")
