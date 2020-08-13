@@ -104,11 +104,9 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		return err
 	}
 
-	commentsHeader := []string{"Activity/Comment", "Created at", "Updated at"}
-
-	for i := 0; i < len(commentsHeader); i++ {
+	for i, header := range []string{"Activity/Comment", "Created at", "Updated at"} {
 		cell := columns[i] + strconv.Itoa(currRow)
-		f.SetCellValue(sheetName, cell, commentsHeader[i])
+		f.SetCellValue(sheetName, cell, header)
 	}
 
 	for i := range comments {
