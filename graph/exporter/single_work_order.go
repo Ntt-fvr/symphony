@@ -128,10 +128,9 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		if author != nil && activities[i] != nil {
 			row := strconv.Itoa(currRow)
 			activity := author.Email + " changed " + activities[i].ChangedField.String() + " from " + activities[i].OldValue + " to " + activities[i].NewValue
-			data := []string{activity, activities[i].CreateTime.String(), activities[i].UpdateTime.String()}
-			for j := range data {
+			for j, data := range []string{activity, activities[i].CreateTime.String(), activities[i].UpdateTime.String()} {
 				cell := columns[j] + row
-				f.SetCellValue(sheetName, cell, data[j])
+				f.SetCellValue(sheetName, cell, data)
 			}
 		}
 	}
@@ -175,9 +174,9 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 
 		currRow++
 
-		if item.Type == "cell_scan" {
+		if item.Type == enum.CheckListItemTypeCellScan {
 			cellScans, err := item.QueryCellScan().All(ctx)
-			if ent.MaskNotFound(err) != nil {
+			if err != nil {
 				return err
 			}
 
@@ -200,9 +199,9 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			}
 		}
 
-		if item.Type == "files" {
+		if item.Type == enum.CheckListItemTypeFiles {
 			files, err := item.QueryFiles().All(ctx)
-			if ent.MaskNotFound(err) != nil {
+			if err != nil {
 				return err
 			}
 
