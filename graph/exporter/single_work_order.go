@@ -119,7 +119,7 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		}
 	}
 
-	for i := range activities {
+	for _, activity := range activities {
 		currRow++
 		author, err := activities[i].QueryAuthor().Only(ctx)
 		if !ent.IsNotFound(err) {
