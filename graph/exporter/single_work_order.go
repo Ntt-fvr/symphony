@@ -39,15 +39,11 @@ func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*exc
 	}
 
 	client := ent.FromContext(ctx)
-	node, err := client.Noder(ctx, id)
+	wo, err := client.WorkOrder.Get(ctx, id)
 	if err != nil {
 		logger.Error("cannot query work order", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query work order")
 	}
-	if node == nil {
-		return nil, nil
-	}
-	wo, _ := node.(*ent.WorkOrder)
 
 	err = generateWoSummary(ctx, f, wo)
 	if err != nil {
