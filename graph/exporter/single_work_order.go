@@ -109,7 +109,7 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		f.SetCellValue(sheetName, cell, header)
 	}
 
-	for i := range comments {
+	for _, comment := range comments {
 		if comments[i] != nil {
 			currRow++
 			row := strconv.Itoa(currRow)
