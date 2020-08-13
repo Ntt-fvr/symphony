@@ -48,104 +48,106 @@ export type ActionsListCard_actionsRule$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "data",
   "args": null,
+  "kind": "ScalarField",
+  "name": "data",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "ActionsListCard_actionsRule",
-  "type": "ActionsRule",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ActionsListCard_actionsRule",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "trigger",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsTrigger",
+      "kind": "LinkedField",
+      "name": "trigger",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "description",
           "args": null,
+          "kind": "ScalarField",
+          "name": "description",
           "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ActionsAddDialog_triggerData",
-          "args": null
+          "name": "ActionsAddDialog_triggerData"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "ruleActions",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsRuleAction",
+      "kind": "LinkedField",
+      "name": "ruleActions",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "actionID",
           "args": null,
+          "kind": "ScalarField",
+          "name": "actionID",
           "storageKey": null
         },
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "ruleFilters",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsRuleFilter",
+      "kind": "LinkedField",
+      "name": "ruleFilters",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "filterID",
           "args": null,
+          "kind": "ScalarField",
+          "name": "filterID",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "operatorID",
           "args": null,
+          "kind": "ScalarField",
+          "name": "operatorID",
           "storageKey": null
         },
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ActionsRule",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '5c259632c00bc3ceaa2d85fde01b1664';
+
 module.exports = node;

@@ -102,10 +102,10 @@ export type UserManagementUtils_inventoryPolicy$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isAllowed",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isAllowed",
   "storageKey": null
 },
 v1 = [
@@ -113,156 +113,158 @@ v1 = [
 ],
 v2 = [
   {
-    "kind": "LinkedField",
     "alias": null,
+    "args": null,
+    "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
     "name": "create",
-    "storageKey": null,
-    "args": null,
-    "concreteType": "BasicPermissionRule",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
+    "args": null,
+    "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
     "name": "update",
-    "storageKey": null,
-    "args": null,
-    "concreteType": "BasicPermissionRule",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "delete",
-    "storageKey": null,
     "args": null,
     "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
+    "name": "delete",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "UserManagementUtils_inventoryPolicy",
-  "type": "InventoryPolicy",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "UserManagementUtils_inventoryPolicy",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "read",
-      "storageKey": null,
       "args": null,
       "concreteType": "BasicPermissionRule",
+      "kind": "LinkedField",
+      "name": "read",
       "plural": false,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
       "args": null,
       "concreteType": "LocationCUD",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "create",
-          "storageKey": null,
           "args": null,
           "concreteType": "LocationPermissionRule",
+          "kind": "LinkedField",
+          "name": "create",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "update",
-          "storageKey": null,
           "args": null,
           "concreteType": "LocationPermissionRule",
+          "kind": "LinkedField",
+          "name": "update",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "locationTypeIds",
               "args": null,
+              "kind": "ScalarField",
+              "name": "locationTypeIds",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "delete",
-          "storageKey": null,
           "args": null,
           "concreteType": "LocationPermissionRule",
+          "kind": "LinkedField",
+          "name": "delete",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "CUD",
+      "kind": "LinkedField",
       "name": "equipment",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "CUD",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "CUD",
+      "kind": "LinkedField",
       "name": "equipmentType",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "CUD",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "CUD",
+      "kind": "LinkedField",
       "name": "locationType",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "CUD",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "CUD",
+      "kind": "LinkedField",
       "name": "portType",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "CUD",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "serviceType",
-      "storageKey": null,
       "args": null,
       "concreteType": "CUD",
+      "kind": "LinkedField",
+      "name": "serviceType",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "InventoryPolicy",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '68ace9bf65bb53be9b160062c73a22d2';
+
 module.exports = node;

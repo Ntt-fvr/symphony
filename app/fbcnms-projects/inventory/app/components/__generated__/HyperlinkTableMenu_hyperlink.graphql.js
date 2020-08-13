@@ -35,40 +35,42 @@ export type HyperlinkTableMenu_hyperlink$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "HyperlinkTableMenu_hyperlink",
-  "type": "Hyperlink",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "HyperlinkTableMenu_hyperlink",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "displayName",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "url",
       "args": null,
+      "kind": "ScalarField",
+      "name": "url",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "HyperlinkTableRow_hyperlink",
-      "args": null
+      "name": "HyperlinkTableRow_hyperlink"
     }
-  ]
+  ],
+  "type": "Hyperlink",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'b53387e8d2b2f550ae139101508f2d9b';
+
 module.exports = node;

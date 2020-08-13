@@ -33,28 +33,30 @@ export type PhotosGrid_images$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "PhotosGrid_images",
-  "type": "File",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "PhotosGrid_images",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ImageAttachment_img",
-      "args": null
+      "name": "ImageAttachment_img"
     }
-  ]
+  ],
+  "type": "File",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '80a98a9a4d57a8e83e65f977e4b203bb';
+
 module.exports = node;

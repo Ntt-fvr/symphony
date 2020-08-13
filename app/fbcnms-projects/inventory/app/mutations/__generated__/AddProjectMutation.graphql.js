@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 7d00d6cedfaf1204427d410cdd3f3588
  */
 
 /* eslint-disable */
@@ -89,10 +88,9 @@ fragment ProjectsTableView_projects on Project {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddProjectInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
@@ -103,17 +101,17 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = [
@@ -121,114 +119,117 @@ v4 = [
   (v3/*: any*/)
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddProjectMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddProjectMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "createProject",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Project",
+        "kind": "LinkedField",
+        "name": "createProject",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "ProjectsTableView_projects",
-            "args": null
+            "name": "ProjectsTableView_projects"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddProjectMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "createProject",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Project",
+        "kind": "LinkedField",
+        "name": "createProject",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "createdBy",
-            "storageKey": null,
             "args": null,
             "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "createdBy",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "email",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "email",
                 "storageKey": null
               },
               (v2/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "location",
-            "storageKey": null,
             "args": null,
             "concreteType": "Location",
+            "kind": "LinkedField",
+            "name": "location",
             "plural": false,
-            "selections": (v4/*: any*/)
+            "selections": (v4/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "type",
-            "storageKey": null,
             "args": null,
             "concreteType": "ProjectType",
+            "kind": "LinkedField",
+            "name": "type",
             "plural": false,
-            "selections": (v4/*: any*/)
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "priority",
-            "args": null,
+            "selections": (v4/*: any*/),
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "numberOfWorkOrders",
             "args": null,
+            "kind": "ScalarField",
+            "name": "priority",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "numberOfWorkOrders",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddProjectMutation",
+    "cacheID": "6faabab486f9c550a089638257c49c8c",
     "id": null,
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddProjectMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4b62a168191f8fdb0ee345d1fd1212fc';
+
 module.exports = node;

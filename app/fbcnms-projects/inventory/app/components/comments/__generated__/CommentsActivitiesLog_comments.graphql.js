@@ -34,35 +34,37 @@ export type CommentsActivitiesLog_comments$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "CommentsActivitiesLog_comments",
-  "type": "Comment",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "CommentsActivitiesLog_comments",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "createTime",
       "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "TextCommentPost_comment",
-      "args": null
+      "name": "TextCommentPost_comment"
     }
-  ]
+  ],
+  "type": "Comment",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'df495dc20009f04644722a4f796c7db9';
+
 module.exports = node;

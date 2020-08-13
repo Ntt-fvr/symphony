@@ -43,70 +43,72 @@ export type ServiceCard_service$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ServiceCard_service",
-  "type": "Service",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServiceCard_service",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "topology",
-      "storageKey": null,
       "args": null,
       "concreteType": "NetworkTopology",
+      "kind": "LinkedField",
+      "name": "topology",
       "plural": false,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceEquipmentTopology_topology",
-          "args": null
+          "name": "ServiceEquipmentTopology_topology"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "endpoints",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceEndpoint",
+      "kind": "LinkedField",
+      "name": "endpoints",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceEquipmentTopology_endpoints",
-          "args": null
+          "name": "ServiceEquipmentTopology_endpoints"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ServiceDetailsPanel_service",
-      "args": null
+      "name": "ServiceDetailsPanel_service"
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ServicePanel_service",
-      "args": null
+      "name": "ServicePanel_service"
     }
-  ]
+  ],
+  "type": "Service",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'b365b307bdc31d3d737c3f7f1b6d33fe';
+
 module.exports = node;

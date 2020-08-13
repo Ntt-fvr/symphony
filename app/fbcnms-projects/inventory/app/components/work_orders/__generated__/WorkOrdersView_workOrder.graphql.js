@@ -61,26 +61,26 @@ export type WorkOrdersView_workOrder$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   (v0/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "email",
     "args": null,
+    "kind": "ScalarField",
+    "name": "email",
     "storageKey": null
   }
 ],
@@ -89,111 +89,113 @@ v3 = [
   (v1/*: any*/)
 ];
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "WorkOrdersView_workOrder",
-  "type": "WorkOrder",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "WorkOrdersView_workOrder",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "description",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "User",
+      "kind": "LinkedField",
       "name": "owner",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "User",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "creationDate",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "installDate",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "status",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "assignedTo",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "assignedTo",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
-      "selections": (v3/*: any*/)
+      "selections": (v3/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "workOrderType",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkOrderType",
+      "kind": "LinkedField",
+      "name": "workOrderType",
       "plural": false,
-      "selections": (v3/*: any*/)
+      "selections": (v3/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "project",
-      "storageKey": null,
       "args": null,
       "concreteType": "Project",
+      "kind": "LinkedField",
+      "name": "project",
       "plural": false,
-      "selections": (v3/*: any*/)
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "closeDate",
-      "args": null,
+      "selections": (v3/*: any*/),
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "priority",
       "args": null,
+      "kind": "ScalarField",
+      "name": "closeDate",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrder",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '7c7c1a73a39706db0bd7c6ff9320b21a';
+
 module.exports = node;

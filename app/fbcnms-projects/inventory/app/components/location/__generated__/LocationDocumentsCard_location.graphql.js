@@ -44,64 +44,66 @@ export type LocationDocumentsCard_location$key = {
 const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "EntityDocumentsTable_files",
-    "args": null
+    "name": "EntityDocumentsTable_files"
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "LocationDocumentsCard_location",
-  "type": "Location",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "LocationDocumentsCard_location",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "images",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "files",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "hyperlinks",
-      "storageKey": null,
       "args": null,
       "concreteType": "Hyperlink",
+      "kind": "LinkedField",
+      "name": "hyperlinks",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "EntityDocumentsTable_hyperlinks",
-          "args": null
+          "name": "EntityDocumentsTable_hyperlinks"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '8c1e05fd5d50af01cf1f5b5f42ac1d27';
+
 module.exports = node;

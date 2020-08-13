@@ -51,86 +51,88 @@ export type WorkOrderDetailsPane_workOrder$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = [
   (v0/*: any*/),
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "WorkOrderDetailsPaneEquipmentItem_equipment",
-    "args": null
+    "name": "WorkOrderDetailsPaneEquipmentItem_equipment"
   }
 ],
 v2 = [
   (v0/*: any*/),
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "WorkOrderDetailsPaneLinkItem_link",
-    "args": null
+    "name": "WorkOrderDetailsPaneLinkItem_link"
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "WorkOrderDetailsPane_workOrder",
-  "type": "WorkOrder",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "WorkOrderDetailsPane_workOrder",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "name",
       "args": null,
+      "kind": "ScalarField",
+      "name": "name",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "Equipment",
+      "kind": "LinkedField",
       "name": "equipmentToAdd",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "Equipment",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "Equipment",
+      "kind": "LinkedField",
       "name": "equipmentToRemove",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "Equipment",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "Link",
+      "kind": "LinkedField",
       "name": "linksToAdd",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "Link",
       "plural": true,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "linksToRemove",
-      "storageKey": null,
       "args": null,
       "concreteType": "Link",
+      "kind": "LinkedField",
+      "name": "linksToRemove",
       "plural": true,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrder",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4c85915884fc2d9d9f8c4fbee32cc2a4';
+
 module.exports = node;

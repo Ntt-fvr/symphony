@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 40f5938b7c62ab6435d905cbd586e396
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation DeleteReportFilterMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "deleteReportFilter",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "deleteReportFilter",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "DeleteReportFilterMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeleteReportFilterMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeleteReportFilterMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "DeleteReportFilterMutation",
+    "cacheID": "4ed13f38fa4d8ec48c83c8919984606f",
     "id": null,
-    "text": "mutation DeleteReportFilterMutation(\n  $id: ID!\n) {\n  deleteReportFilter(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "DeleteReportFilterMutation",
+    "operationKind": "mutation",
+    "text": "mutation DeleteReportFilterMutation(\n  $id: ID!\n) {\n  deleteReportFilter(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '7963d86165414f401b01981da338f8de';
+
 module.exports = node;

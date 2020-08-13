@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 6f056f173b0f862f6d7afb0d6f584c90
  */
 
 /* eslint-disable */
@@ -43,18 +42,14 @@ query UsersByAuthIDQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "authID",
-    "type": "String!",
-    "defaultValue": null
+    "name": "authID"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "user",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -63,43 +58,49 @@ v1 = [
       }
     ],
     "concreteType": "User",
+    "kind": "LinkedField",
+    "name": "user",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "id",
         "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "UsersByAuthIDQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "UsersByAuthIDQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UsersByAuthIDQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "UsersByAuthIDQuery",
+    "cacheID": "b290fe9119bb1d17416d9065d8be0b6d",
     "id": null,
-    "text": "query UsersByAuthIDQuery(\n  $authID: String!\n) {\n  user(authID: $authID) {\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "UsersByAuthIDQuery",
+    "operationKind": "query",
+    "text": "query UsersByAuthIDQuery(\n  $authID: String!\n) {\n  user(authID: $authID) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'a242fdd9ce8fb33496aab66755ad0186';
+
 module.exports = node;

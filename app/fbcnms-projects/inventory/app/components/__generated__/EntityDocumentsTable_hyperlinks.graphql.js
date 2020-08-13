@@ -32,21 +32,23 @@ export type EntityDocumentsTable_hyperlinks$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "EntityDocumentsTable_hyperlinks",
-  "type": "Hyperlink",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "EntityDocumentsTable_hyperlinks",
   "selections": [
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "DocumentTable_hyperlinks",
-      "args": null
+      "name": "DocumentTable_hyperlinks"
     }
-  ]
+  ],
+  "type": "Hyperlink",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'dff4323de5cb8d1ba32bfd2518647a88';
+
 module.exports = node;

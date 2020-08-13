@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 1c80c064fc304a4994166ab76fd7bc5c
  */
 
 /* eslint-disable */
@@ -99,226 +98,229 @@ fragment TriggerFilterRow_data on ActionsTrigger {
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "description",
   "args": null,
+  "kind": "ScalarField",
+  "name": "description",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "actionID",
   "args": null,
+  "kind": "ScalarField",
+  "name": "actionID",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "dataType",
   "args": null,
+  "kind": "ScalarField",
+  "name": "dataType",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "filterID",
   "args": null,
+  "kind": "ScalarField",
+  "name": "filterID",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "operatorID",
   "args": null,
+  "kind": "ScalarField",
+  "name": "operatorID",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "data",
   "args": null,
+  "kind": "ScalarField",
+  "name": "data",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "ActionsListCard_rulesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ActionsListCard_rulesQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "actionsRules",
-        "storageKey": null,
         "args": null,
         "concreteType": "ActionsRulesSearchResult",
+        "kind": "LinkedField",
+        "name": "actionsRules",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "results",
-            "storageKey": null,
             "args": null,
             "concreteType": "ActionsRule",
+            "kind": "LinkedField",
+            "name": "results",
             "plural": true,
             "selections": [
               {
+                "args": null,
                 "kind": "FragmentSpread",
-                "name": "ActionsListCard_actionsRule",
-                "args": null
+                "name": "ActionsListCard_actionsRule"
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "ActionsListCard_rulesQuery",
-    "argumentDefinitions": [],
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "actionsRules",
-        "storageKey": null,
         "args": null,
         "concreteType": "ActionsRulesSearchResult",
+        "kind": "LinkedField",
+        "name": "actionsRules",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "results",
-            "storageKey": null,
             "args": null,
             "concreteType": "ActionsRule",
+            "kind": "LinkedField",
+            "name": "results",
             "plural": true,
             "selections": [
               (v0/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "name",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "trigger",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ActionsTrigger",
+                "kind": "LinkedField",
+                "name": "trigger",
                 "plural": false,
                 "selections": [
                   (v1/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "triggerID",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "triggerID",
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "supportedActions",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "ActionsAction",
+                    "kind": "LinkedField",
+                    "name": "supportedActions",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
                       (v1/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "supportedFilters",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "ActionsFilter",
+                    "kind": "LinkedField",
+                    "name": "supportedFilters",
                     "plural": true,
                     "selections": [
                       (v4/*: any*/),
                       (v1/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "supportedOperators",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "ActionsOperator",
+                        "kind": "LinkedField",
+                        "name": "supportedOperators",
                         "plural": true,
                         "selections": [
                           (v5/*: any*/),
                           (v1/*: any*/),
                           (v3/*: any*/)
-                        ]
+                        ],
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   (v0/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "ruleActions",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ActionsRuleAction",
+                "kind": "LinkedField",
+                "name": "ruleActions",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v6/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "ruleFilters",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ActionsRuleFilter",
+                "kind": "LinkedField",
+                "name": "ruleFilters",
                 "plural": true,
                 "selections": [
                   (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "ActionsListCard_rulesQuery",
+    "cacheID": "d7f4d605fc40187c8f2901c7b33cb45b",
     "id": null,
-    "text": "query ActionsListCard_rulesQuery {\n  actionsRules {\n    results {\n      ...ActionsListCard_actionsRule\n      id\n    }\n  }\n}\n\nfragment ActionRow_data on ActionsTrigger {\n  triggerID\n  supportedActions {\n    actionID\n    dataType\n    description\n  }\n}\n\nfragment ActionsAddDialog_triggerData on ActionsTrigger {\n  triggerID\n  description\n  ...ActionRow_data\n  ...TriggerFilterRow_data\n}\n\nfragment ActionsListCard_actionsRule on ActionsRule {\n  id\n  name\n  trigger {\n    description\n    ...ActionsAddDialog_triggerData\n    id\n  }\n  ruleActions {\n    actionID\n    data\n  }\n  ruleFilters {\n    filterID\n    operatorID\n    data\n  }\n}\n\nfragment TriggerFilterOperator_data on ActionsFilter {\n  supportedOperators {\n    operatorID\n    description\n    dataType\n  }\n}\n\nfragment TriggerFilterRow_data on ActionsTrigger {\n  triggerID\n  supportedFilters {\n    filterID\n    description\n    supportedOperators {\n      operatorID\n    }\n    ...TriggerFilterOperator_data\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "ActionsListCard_rulesQuery",
+    "operationKind": "query",
+    "text": "query ActionsListCard_rulesQuery {\n  actionsRules {\n    results {\n      ...ActionsListCard_actionsRule\n      id\n    }\n  }\n}\n\nfragment ActionRow_data on ActionsTrigger {\n  triggerID\n  supportedActions {\n    actionID\n    dataType\n    description\n  }\n}\n\nfragment ActionsAddDialog_triggerData on ActionsTrigger {\n  triggerID\n  description\n  ...ActionRow_data\n  ...TriggerFilterRow_data\n}\n\nfragment ActionsListCard_actionsRule on ActionsRule {\n  id\n  name\n  trigger {\n    description\n    ...ActionsAddDialog_triggerData\n    id\n  }\n  ruleActions {\n    actionID\n    data\n  }\n  ruleFilters {\n    filterID\n    operatorID\n    data\n  }\n}\n\nfragment TriggerFilterOperator_data on ActionsFilter {\n  supportedOperators {\n    operatorID\n    description\n    dataType\n  }\n}\n\nfragment TriggerFilterRow_data on ActionsTrigger {\n  triggerID\n  supportedFilters {\n    filterID\n    description\n    supportedOperators {\n      operatorID\n    }\n    ...TriggerFilterOperator_data\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'ea80e4c4f3ab927ae77127e709c1ca77';
+
 module.exports = node;

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 477ffd930d739a116f9c92fd75e9df48
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveWorkOrderTypeMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "removeWorkOrderType",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "removeWorkOrderType",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveWorkOrderTypeMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveWorkOrderTypeMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveWorkOrderTypeMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveWorkOrderTypeMutation",
+    "cacheID": "75877a405e4cebc521c390abe927349d",
     "id": null,
-    "text": "mutation RemoveWorkOrderTypeMutation(\n  $id: ID!\n) {\n  removeWorkOrderType(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveWorkOrderTypeMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveWorkOrderTypeMutation(\n  $id: ID!\n) {\n  removeWorkOrderType(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '6fec7c186557570f206537c12c607614';
+
 module.exports = node;

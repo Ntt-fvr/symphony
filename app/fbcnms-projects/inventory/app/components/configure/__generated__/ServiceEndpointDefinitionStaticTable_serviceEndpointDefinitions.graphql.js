@@ -39,60 +39,62 @@ export type ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions$key 
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions",
-  "type": "ServiceEndpointDefinition",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "role",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipmentType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentType",
+      "kind": "LinkedField",
+      "name": "equipmentType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ServiceEndpointDefinition",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '355047f79b4b79d16aa746b866d228ae';
+
 module.exports = node;

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 01123a838225dacce7f7ac2a256dadfa
  */
 
 /* eslint-disable */
@@ -95,10 +94,9 @@ fragment ImageDialog_img on File {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddFloorPlanInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
@@ -109,142 +107,145 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddFloorPlanMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddFloorPlanMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addFloorPlan",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "FloorPlan",
+        "kind": "LinkedField",
+        "name": "addFloorPlan",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "image",
-            "storageKey": null,
             "args": null,
             "concreteType": "File",
+            "kind": "LinkedField",
+            "name": "image",
             "plural": false,
             "selections": [
               {
+                "args": null,
                 "kind": "FragmentSpread",
-                "name": "FileAttachment_file",
-                "args": null
+                "name": "FileAttachment_file"
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddFloorPlanMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addFloorPlan",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "FloorPlan",
+        "kind": "LinkedField",
+        "name": "addFloorPlan",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "image",
-            "storageKey": null,
             "args": null,
             "concreteType": "File",
+            "kind": "LinkedField",
+            "name": "image",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "fileName",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "sizeInBytes",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "uploaded",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "fileType",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "storeKey",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "category",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "category",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddFloorPlanMutation",
+    "cacheID": "20c9038db8c71ef642d3159d6927a984",
     "id": null,
-    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddFloorPlanMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddFloorPlanMutation(\n  $input: AddFloorPlanInput!\n) {\n  addFloorPlan(input: $input) {\n    id\n    name\n    image {\n      ...FileAttachment_file\n      id\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd318199b52e4e0c7bbc6d5467669fe28';
+
 module.exports = node;

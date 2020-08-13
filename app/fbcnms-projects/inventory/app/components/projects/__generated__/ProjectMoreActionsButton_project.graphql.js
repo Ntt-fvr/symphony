@@ -37,49 +37,51 @@ export type ProjectMoreActionsButton_project$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "ProjectMoreActionsButton_project",
-  "type": "Project",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ProjectMoreActionsButton_project",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "numberOfWorkOrders",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "type",
-      "storageKey": null,
       "args": null,
       "concreteType": "ProjectType",
+      "kind": "LinkedField",
+      "name": "type",
       "plural": false,
       "selections": [
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Project",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'fab778d2924d1e0b30c094cc7dfa5572';
+
 module.exports = node;

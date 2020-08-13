@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 8bf8652045bc85dff716d1b1774fa0f1
  */
 
 /* eslint-disable */
@@ -59,24 +58,19 @@ mutation EditLocationTypeSurveyTemplateCategoriesMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "surveyTemplateCategories",
-    "type": "[SurveyTemplateCategoryInput!]!",
-    "defaultValue": null
+    "name": "surveyTemplateCategories"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "editLocationTypeSurveyTemplateCategories",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -90,43 +84,49 @@ v1 = [
       }
     ],
     "concreteType": "SurveyTemplateCategory",
+    "kind": "LinkedField",
+    "name": "editLocationTypeSurveyTemplateCategories",
     "plural": true,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "id",
         "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditLocationTypeSurveyTemplateCategoriesMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditLocationTypeSurveyTemplateCategoriesMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditLocationTypeSurveyTemplateCategoriesMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditLocationTypeSurveyTemplateCategoriesMutation",
+    "cacheID": "a59c0f8df4a12a1861f389ba3ee9f767",
     "id": null,
-    "text": "mutation EditLocationTypeSurveyTemplateCategoriesMutation(\n  $id: ID!\n  $surveyTemplateCategories: [SurveyTemplateCategoryInput!]!\n) {\n  editLocationTypeSurveyTemplateCategories(id: $id, surveyTemplateCategories: $surveyTemplateCategories) {\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditLocationTypeSurveyTemplateCategoriesMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditLocationTypeSurveyTemplateCategoriesMutation(\n  $id: ID!\n  $surveyTemplateCategories: [SurveyTemplateCategoryInput!]!\n) {\n  editLocationTypeSurveyTemplateCategories(id: $id, surveyTemplateCategories: $surveyTemplateCategories) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '85792e6b61c311d8ce3645703deb69b6';
+
 module.exports = node;

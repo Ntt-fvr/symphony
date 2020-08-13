@@ -63,34 +63,34 @@ export type EquipmentPositionsGrid_equipment$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   (v0/*: any*/),
   (v1/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "index",
     "args": null,
+    "kind": "ScalarField",
+    "name": "index",
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "visibleLabel",
     "args": null,
+    "kind": "ScalarField",
+    "name": "visibleLabel",
     "storageKey": null
   }
 ],
@@ -98,104 +98,106 @@ v3 = [
   (v0/*: any*/)
 ];
 return {
-  "kind": "Fragment",
-  "name": "EquipmentPositionsGrid_equipment",
-  "type": "Equipment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "EquipmentPositionsGrid_equipment",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "positions",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPosition",
+      "kind": "LinkedField",
+      "name": "positions",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "definition",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPositionDefinition",
+          "kind": "LinkedField",
+          "name": "definition",
           "plural": false,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "attachedEquipment",
-          "storageKey": null,
           "args": null,
           "concreteType": "Equipment",
+          "kind": "LinkedField",
+          "name": "attachedEquipment",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "futureState",
               "args": null,
+              "kind": "ScalarField",
+              "name": "futureState",
               "storageKey": null
             },
             {
-              "kind": "LinkedField",
               "alias": null,
-              "name": "services",
-              "storageKey": null,
               "args": null,
               "concreteType": "Service",
+              "kind": "LinkedField",
+              "name": "services",
               "plural": true,
-              "selections": (v3/*: any*/)
+              "selections": (v3/*: any*/),
+              "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "parentEquipment",
-          "storageKey": null,
           "args": null,
           "concreteType": "Equipment",
+          "kind": "LinkedField",
+          "name": "parentEquipment",
           "plural": false,
-          "selections": (v3/*: any*/)
+          "selections": (v3/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipmentType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentType",
+      "kind": "LinkedField",
+      "name": "equipmentType",
       "plural": false,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "positionDefinitions",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPositionDefinition",
+          "kind": "LinkedField",
+          "name": "positionDefinitions",
           "plural": true,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "AddToEquipmentDialog_parentEquipment",
-      "args": null
+      "name": "AddToEquipmentDialog_parentEquipment"
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'c4ed56ad25227e14dccf883ee79b3e2d';
+
 module.exports = node;

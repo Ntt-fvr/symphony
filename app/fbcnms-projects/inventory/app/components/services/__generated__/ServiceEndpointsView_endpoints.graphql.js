@@ -51,103 +51,105 @@ export type ServiceEndpointsView_endpoints$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   (v1/*: any*/),
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "EquipmentBreadcrumbs_equipment",
-    "args": null
+    "name": "EquipmentBreadcrumbs_equipment"
   }
 ];
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ServiceEndpointsView_endpoints",
-  "type": "ServiceEndpoint",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ServiceEndpointsView_endpoints",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "port",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPort",
+      "kind": "LinkedField",
+      "name": "port",
       "plural": false,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "parentEquipment",
-          "storageKey": null,
           "args": null,
           "concreteType": "Equipment",
+          "kind": "LinkedField",
+          "name": "parentEquipment",
           "plural": false,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "definition",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPortDefinition",
+          "kind": "LinkedField",
+          "name": "definition",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipment",
-      "storageKey": null,
       "args": null,
       "concreteType": "Equipment",
+      "kind": "LinkedField",
+      "name": "equipment",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "definition",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceEndpointDefinition",
+      "kind": "LinkedField",
+      "name": "definition",
       "plural": false,
       "selections": [
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "role",
           "args": null,
+          "kind": "ScalarField",
+          "name": "role",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ServiceEndpoint",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'c9bdfa0f5793f7884b71103e23e3c420';
+
 module.exports = node;

@@ -46,94 +46,96 @@ export type LocationSiteSurveyTab_location$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "LocationSiteSurveyTab_location",
-  "type": "Location",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "LocationSiteSurveyTab_location",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "siteSurveyNeeded",
       "args": null,
+      "kind": "ScalarField",
+      "name": "siteSurveyNeeded",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "surveys",
-      "storageKey": null,
       "args": null,
       "concreteType": "Survey",
+      "kind": "LinkedField",
+      "name": "surveys",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "completionTimestamp",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "name",
-          "args": null,
           "storageKey": null
         },
         {
+          "alias": null,
+          "args": null,
           "kind": "ScalarField",
-          "alias": null,
           "name": "ownerName",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "sourceFile",
-          "storageKey": null,
           "args": null,
           "concreteType": "File",
+          "kind": "LinkedField",
+          "name": "sourceFile",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "fileName",
               "args": null,
+              "kind": "ScalarField",
+              "name": "fileName",
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "storeKey",
               "args": null,
+              "kind": "ScalarField",
+              "name": "storeKey",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "SiteSurveyPane_survey",
-          "args": null
+          "name": "SiteSurveyPane_survey"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd42a66c9f702b247082792e87c3b7a84';
+
 module.exports = node;

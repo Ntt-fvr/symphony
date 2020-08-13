@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash eccdeb0a78433f27d7e9c17962b7c52b
  */
 
 /* eslint-disable */
@@ -96,21 +95,17 @@ fragment ProjectsTableView_projects on Project {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "kind": "LocalArgument",
-    "name": "limit",
-    "type": "Int",
-    "defaultValue": null
-  },
-  {
-    "kind": "LocalArgument",
-    "name": "filters",
-    "type": "[ProjectFilterInput!]!",
-    "defaultValue": null
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filters"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = [
   {
     "kind": "Variable",
     "name": "filterBy",
@@ -130,198 +125,207 @@ v1 = [
     }
   }
 ],
-v2 = {
-  "kind": "ScalarField",
+v3 = {
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
-v3 = {
-  "kind": "ScalarField",
+v4 = {
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
-    "name": "ProjectComparisonViewQueryRendererSearchQuery",
-    "type": "Query",
     "metadata": null,
-    "argumentDefinitions": (v0/*: any*/),
+    "name": "ProjectComparisonViewQueryRendererSearchQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "projects",
-        "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ProjectConnection",
+        "kind": "LinkedField",
+        "name": "projects",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "ProjectEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Project",
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   {
+                    "args": null,
                     "kind": "FragmentSpread",
-                    "name": "ProjectsTableView_projects",
-                    "args": null
+                    "name": "ProjectsTableView_projects"
                   },
                   {
+                    "args": null,
                     "kind": "FragmentSpread",
-                    "name": "ProjectsMap_projects",
-                    "args": null
+                    "name": "ProjectsMap_projects"
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "ProjectComparisonViewQueryRendererSearchQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "projects",
-        "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "ProjectConnection",
+        "kind": "LinkedField",
+        "name": "projects",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "ProjectEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Project",
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
                   (v3/*: any*/),
+                  (v4/*: any*/),
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "createdBy",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "User",
+                    "kind": "LinkedField",
+                    "name": "createdBy",
                     "plural": false,
                     "selections": [
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "email",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "email",
                         "storageKey": null
                       },
-                      (v2/*: any*/)
-                    ]
+                      (v3/*: any*/)
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "location",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "Location",
+                    "kind": "LinkedField",
+                    "name": "location",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
                       (v3/*: any*/),
+                      (v4/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "latitude",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "latitude",
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "longitude",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "longitude",
                         "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "type",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "ProjectType",
+                    "kind": "LinkedField",
+                    "name": "type",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
-                      (v3/*: any*/)
-                    ]
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "priority",
-                    "args": null,
+                      (v3/*: any*/),
+                      (v4/*: any*/)
+                    ],
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "numberOfWorkOrders",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "priority",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "numberOfWorkOrders",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "ProjectComparisonViewQueryRendererSearchQuery",
+    "cacheID": "0abf16ec3966c076fb135fb61fb0dada",
     "id": null,
-    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "ProjectComparisonViewQueryRendererSearchQuery",
+    "operationKind": "query",
+    "text": "query ProjectComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [ProjectFilterInput!]!\n) {\n  projects(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    edges {\n      node {\n        ...ProjectsTableView_projects\n        ...ProjectsMap_projects\n        id\n      }\n    }\n  }\n}\n\nfragment ProjectsMap_projects on Project {\n  id\n  name\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  numberOfWorkOrders\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'a1f6b1f4e71ebad6a27dac6b7beea9b9';
+
 module.exports = node;

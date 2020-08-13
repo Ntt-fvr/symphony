@@ -38,56 +38,58 @@ export type ProjectTypeCard_projectType$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "ProjectTypeCard_projectType",
-  "type": "ProjectType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ProjectTypeCard_projectType",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "description",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "numberOfProjects",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "workOrders",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkOrderDefinition",
+      "kind": "LinkedField",
+      "name": "workOrders",
       "plural": true,
       "selections": [
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ProjectType",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'a0ed06d279a9e96ad0fbb45c505ad5e8';
+
 module.exports = node;

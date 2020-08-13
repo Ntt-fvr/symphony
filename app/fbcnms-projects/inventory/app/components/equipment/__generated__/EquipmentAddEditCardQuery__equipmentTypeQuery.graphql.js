@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 8b80ea99865d1434e55d2d9de7fdf619
  */
 
 /* eslint-disable */
@@ -86,10 +85,9 @@ query EquipmentAddEditCardQuery__equipmentTypeQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "equipmentTypeId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "equipmentTypeId"
   }
 ],
 v1 = [
@@ -100,204 +98,209 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "propertyTypes",
-  "storageKey": null,
   "args": null,
   "concreteType": "PropertyType",
+  "kind": "LinkedField",
+  "name": "propertyTypes",
   "plural": true,
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "type",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "nodeType",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "stringValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "intValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "booleanValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "floatValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "latitudeValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "longitudeValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "rangeFromValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "rangeToValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "isEditable",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "isMandatory",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "isInstanceProperty",
       "args": null,
+      "kind": "ScalarField",
+      "name": "isInstanceProperty",
       "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EquipmentAddEditCardQuery__equipmentTypeQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EquipmentAddEditCardQuery__equipmentTypeQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "equipmentType",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "EquipmentType",
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/)
-            ]
+            ],
+            "type": "EquipmentType",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EquipmentAddEditCardQuery__equipmentTypeQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "equipmentType",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "EquipmentType",
             "selections": [
               (v3/*: any*/),
               (v4/*: any*/)
-            ]
+            ],
+            "type": "EquipmentType",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "EquipmentAddEditCardQuery__equipmentTypeQuery",
+    "cacheID": "6041410739365db25a55a2b0724582fe",
     "id": null,
-    "text": "query EquipmentAddEditCardQuery__equipmentTypeQuery(\n  $equipmentTypeId: ID!\n) {\n  equipmentType: node(id: $equipmentTypeId) {\n    __typename\n    ... on EquipmentType {\n      id\n      name\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n      }\n    }\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EquipmentAddEditCardQuery__equipmentTypeQuery",
+    "operationKind": "query",
+    "text": "query EquipmentAddEditCardQuery__equipmentTypeQuery(\n  $equipmentTypeId: ID!\n) {\n  equipmentType: node(id: $equipmentTypeId) {\n    __typename\n    ... on EquipmentType {\n      id\n      name\n      propertyTypes {\n        id\n        name\n        type\n        nodeType\n        index\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isEditable\n        isMandatory\n        isInstanceProperty\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd0bad0b552a71b56cb8f59b3283de631';
+
 module.exports = node;

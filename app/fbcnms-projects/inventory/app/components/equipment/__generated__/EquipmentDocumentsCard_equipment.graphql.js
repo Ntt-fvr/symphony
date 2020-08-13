@@ -44,64 +44,66 @@ export type EquipmentDocumentsCard_equipment$key = {
 const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "EntityDocumentsTable_files",
-    "args": null
+    "name": "EntityDocumentsTable_files"
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "EquipmentDocumentsCard_equipment",
-  "type": "Equipment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "EquipmentDocumentsCard_equipment",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "images",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "files",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "hyperlinks",
-      "storageKey": null,
       "args": null,
       "concreteType": "Hyperlink",
+      "kind": "LinkedField",
+      "name": "hyperlinks",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "EntityDocumentsTable_hyperlinks",
-          "args": null
+          "name": "EntityDocumentsTable_hyperlinks"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '47fa4ebbcddc93a1562ca029f897dc4e';
+
 module.exports = node;

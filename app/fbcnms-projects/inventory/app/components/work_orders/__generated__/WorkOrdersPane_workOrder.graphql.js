@@ -32,30 +32,32 @@ export type WorkOrdersPane_workOrder$key = {
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "WorkOrdersPane_workOrder",
-  "type": "WorkOrder",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "WorkOrdersPane_workOrder",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "name",
       "args": null,
+      "kind": "ScalarField",
+      "name": "name",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrder",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '944b8648852d096f3bf6f11462155af6';
+
 module.exports = node;

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 24e4af8962784fc2704217c26d2b39b9
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveEquipmentPortTypeMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "removeEquipmentPortType",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "removeEquipmentPortType",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveEquipmentPortTypeMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveEquipmentPortTypeMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveEquipmentPortTypeMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveEquipmentPortTypeMutation",
+    "cacheID": "850aa7791a94353972b0ad317b3f9c81",
     "id": null,
-    "text": "mutation RemoveEquipmentPortTypeMutation(\n  $id: ID!\n) {\n  removeEquipmentPortType(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveEquipmentPortTypeMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveEquipmentPortTypeMutation(\n  $id: ID!\n) {\n  removeEquipmentPortType(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'f14522f936273971e9cd0691f19f241e';
+
 module.exports = node;

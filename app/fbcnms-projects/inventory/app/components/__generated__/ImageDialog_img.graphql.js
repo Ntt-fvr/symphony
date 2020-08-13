@@ -32,28 +32,30 @@ export type ImageDialog_img$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ImageDialog_img",
-  "type": "File",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ImageDialog_img",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "storeKey",
       "args": null,
+      "kind": "ScalarField",
+      "name": "storeKey",
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "fileName",
       "args": null,
+      "kind": "ScalarField",
+      "name": "fileName",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "File",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '9df3ae53271a85ffc0bd704420104cc5';
+
 module.exports = node;

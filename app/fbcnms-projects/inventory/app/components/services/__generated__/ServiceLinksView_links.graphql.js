@@ -42,66 +42,68 @@ export type ServiceLinksView_links$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = [
   (v0/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "name",
     "args": null,
+    "kind": "ScalarField",
+    "name": "name",
     "storageKey": null
   }
 ];
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ServiceLinksView_links",
-  "type": "Link",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ServiceLinksView_links",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "ports",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPort",
+      "kind": "LinkedField",
+      "name": "ports",
       "plural": true,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "parentEquipment",
-          "storageKey": null,
           "args": null,
           "concreteType": "Equipment",
+          "kind": "LinkedField",
+          "name": "parentEquipment",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "definition",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPortDefinition",
+          "kind": "LinkedField",
+          "name": "definition",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Link",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '0e01ac9e52351ad401bac91867ae8714';
+
 module.exports = node;

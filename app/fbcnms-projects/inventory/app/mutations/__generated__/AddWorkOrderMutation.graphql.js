@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash bd9f370a68d9797cfa9f35b5b70c0deb
  */
 
 /* eslint-disable */
@@ -203,33 +202,32 @@ mutation AddWorkOrderMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddWorkOrderInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = [
   (v1/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "email",
     "args": null,
+    "kind": "ScalarField",
+    "name": "email",
     "storageKey": null
   }
 ],
@@ -239,10 +237,7 @@ v4 = [
 ],
 v5 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "addWorkOrder",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -251,130 +246,136 @@ v5 = [
       }
     ],
     "concreteType": "WorkOrder",
+    "kind": "LinkedField",
+    "name": "addWorkOrder",
     "plural": false,
     "selections": [
       (v1/*: any*/),
       (v2/*: any*/),
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "description",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
+        "args": null,
+        "concreteType": "User",
+        "kind": "LinkedField",
         "name": "owner",
-        "storageKey": null,
-        "args": null,
-        "concreteType": "User",
         "plural": false,
-        "selections": (v3/*: any*/)
+        "selections": (v3/*: any*/),
+        "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "creationDate",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "installDate",
-        "args": null,
         "storageKey": null
       },
       {
+        "alias": null,
+        "args": null,
         "kind": "ScalarField",
-        "alias": null,
         "name": "status",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "assignedTo",
-        "storageKey": null,
         "args": null,
         "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "assignedTo",
         "plural": false,
-        "selections": (v3/*: any*/)
+        "selections": (v3/*: any*/),
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "location",
-        "storageKey": null,
         "args": null,
         "concreteType": "Location",
+        "kind": "LinkedField",
+        "name": "location",
         "plural": false,
-        "selections": (v4/*: any*/)
+        "selections": (v4/*: any*/),
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "workOrderType",
-        "storageKey": null,
         "args": null,
         "concreteType": "WorkOrderType",
+        "kind": "LinkedField",
+        "name": "workOrderType",
         "plural": false,
-        "selections": (v4/*: any*/)
+        "selections": (v4/*: any*/),
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "project",
-        "storageKey": null,
         "args": null,
         "concreteType": "Project",
+        "kind": "LinkedField",
+        "name": "project",
         "plural": false,
-        "selections": (v4/*: any*/)
-      },
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "closeDate",
-        "args": null,
+        "selections": (v4/*: any*/),
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "priority",
         "args": null,
+        "kind": "ScalarField",
+        "name": "closeDate",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "priority",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddWorkOrderMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v5/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddWorkOrderMutation",
+    "selections": (v5/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddWorkOrderMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v5/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddWorkOrderMutation",
+    "cacheID": "a0a1eaac76658ab12e23aca50c497d25",
     "id": null,
-    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    assignedTo {\n      id\n      email\n    }\n    location {\n      id\n      name\n    }\n    workOrderType {\n      id\n      name\n    }\n    project {\n      id\n      name\n    }\n    closeDate\n    priority\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddWorkOrderMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    assignedTo {\n      id\n      email\n    }\n    location {\n      id\n      name\n    }\n    workOrderType {\n      id\n      name\n    }\n    project {\n      id\n      name\n    }\n    closeDate\n    priority\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '59a17c820a60f80ca4a246e34ea79176';
+
 module.exports = node;

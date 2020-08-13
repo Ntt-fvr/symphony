@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 6f029d1e50aa404c023180be3067862e
  */
 
 /* eslint-disable */
@@ -49,78 +48,81 @@ query WorkOrderTemplateNodesQuery {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "workOrderTypes",
-    "storageKey": null,
     "args": null,
     "concreteType": "WorkOrderTypeConnection",
+    "kind": "LinkedField",
+    "name": "workOrderTypes",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "WorkOrderTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrderType",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "id",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "id",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "name",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "WorkOrderTemplateNodesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
-    "selections": (v0/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "WorkOrderTemplateNodesQuery",
+    "selections": (v0/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "WorkOrderTemplateNodesQuery",
-    "argumentDefinitions": [],
     "selections": (v0/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "WorkOrderTemplateNodesQuery",
+    "cacheID": "63e335913e056a362b0821003ee0dca2",
     "id": null,
-    "text": "query WorkOrderTemplateNodesQuery {\n  workOrderTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "WorkOrderTemplateNodesQuery",
+    "operationKind": "query",
+    "text": "query WorkOrderTemplateNodesQuery {\n  workOrderTypes {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '7a892dd4443cb15717b92876c8c5989d';
+
 module.exports = node;

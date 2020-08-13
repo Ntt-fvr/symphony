@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash eacd02d5db33a5a2c17ef5e97fafb9e7
  */
 
 /* eslint-disable */
@@ -61,10 +60,9 @@ fragment TextCommentPost_comment on Comment {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "CommentInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
@@ -75,100 +73,103 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddCommentMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddCommentMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addComment",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Comment",
+        "kind": "LinkedField",
+        "name": "addComment",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "TextCommentPost_comment",
-            "args": null
+            "name": "TextCommentPost_comment"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddCommentMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addComment",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Comment",
+        "kind": "LinkedField",
+        "name": "addComment",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "author",
-            "storageKey": null,
             "args": null,
             "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "author",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "email",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "email",
                 "storageKey": null
               },
               (v2/*: any*/)
-            ]
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "text",
-            "args": null,
+            ],
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "createTime",
             "args": null,
+            "kind": "ScalarField",
+            "name": "text",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "createTime",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddCommentMutation",
+    "cacheID": "cfe5958f35680b1c235f43ad400c68c1",
     "id": null,
-    "text": "mutation AddCommentMutation(\n  $input: CommentInput!\n) {\n  addComment(input: $input) {\n    ...TextCommentPost_comment\n    id\n  }\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddCommentMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddCommentMutation(\n  $input: CommentInput!\n) {\n  addComment(input: $input) {\n    ...TextCommentPost_comment\n    id\n  }\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '18acd250d64b7a14e2d84071967d7cb9';
+
 module.exports = node;

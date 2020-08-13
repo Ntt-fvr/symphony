@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 557bdf091692bd9f31d232162e911b03
  */
 
 /* eslint-disable */
@@ -63,38 +62,33 @@ query PowerSearchLocationFilterQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name",
-    "type": "String!",
-    "defaultValue": null
+    "name": "name"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "types",
-    "type": "[ID!]",
-    "defaultValue": null
+    "name": "types"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "locations",
-    "storageKey": null,
     "args": [
       {
         "kind": "Literal",
@@ -113,73 +107,79 @@ v3 = [
       }
     ],
     "concreteType": "LocationConnection",
+    "kind": "LinkedField",
+    "name": "locations",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "Location",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               (v1/*: any*/),
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "parentLocation",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Location",
+                "kind": "LinkedField",
+                "name": "parentLocation",
                 "plural": false,
                 "selections": [
                   (v1/*: any*/),
                   (v2/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "PowerSearchLocationFilterQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v3/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "PowerSearchLocationFilterQuery",
+    "selections": (v3/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "PowerSearchLocationFilterQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v3/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "PowerSearchLocationFilterQuery",
+    "cacheID": "490d46f253599e2f682d68bb83418d1f",
     "id": null,
-    "text": "query PowerSearchLocationFilterQuery(\n  $name: String!\n  $types: [ID!]\n) {\n  locations(name: $name, first: 10, types: $types) {\n    edges {\n      node {\n        id\n        name\n        parentLocation {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "PowerSearchLocationFilterQuery",
+    "operationKind": "query",
+    "text": "query PowerSearchLocationFilterQuery(\n  $name: String!\n  $types: [ID!]\n) {\n  locations(name: $name, first: 10, types: $types) {\n    edges {\n      node {\n        id\n        name\n        parentLocation {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4361823ce4f9bdf393a3e64e6060a46d';
+
 module.exports = node;

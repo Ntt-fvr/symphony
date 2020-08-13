@@ -42,62 +42,64 @@ export type EquipmentPortTypeItem_equipmentPortType$key = {
 const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
+    "args": null,
     "kind": "FragmentSpread",
-    "name": "DynamicPropertyTypesGrid_propertyTypes",
-    "args": null
+    "name": "DynamicPropertyTypesGrid_propertyTypes"
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "EquipmentPortTypeItem_equipmentPortType",
-  "type": "EquipmentPortType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "EquipmentPortTypeItem_equipmentPortType",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "numberOfPortDefinitions",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "linkPropertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "linkPropertyTypes",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPortType",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '64680fb091846a1ed120759b8199a89c';
+
 module.exports = node;

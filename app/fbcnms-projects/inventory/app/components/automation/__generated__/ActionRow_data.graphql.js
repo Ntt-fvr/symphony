@@ -39,53 +39,55 @@ export type ActionRow_data$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ActionRow_data",
-  "type": "ActionsTrigger",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ActionRow_data",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "triggerID",
       "args": null,
+      "kind": "ScalarField",
+      "name": "triggerID",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "supportedActions",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsAction",
+      "kind": "LinkedField",
+      "name": "supportedActions",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "actionID",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "dataType",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "description",
           "args": null,
+          "kind": "ScalarField",
+          "name": "description",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ActionsTrigger",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'ee5d5f84b4912c3c7b63fda08f43b60a';
+
 module.exports = node;

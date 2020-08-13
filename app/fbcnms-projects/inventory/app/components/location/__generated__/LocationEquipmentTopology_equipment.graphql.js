@@ -31,23 +31,25 @@ export type LocationEquipmentTopology_equipment$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "LocationEquipmentTopology_equipment",
-  "type": "Equipment",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "LocationEquipmentTopology_equipment",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '8d782dfc3b488a1005aaeef451b77d56';
+
 module.exports = node;

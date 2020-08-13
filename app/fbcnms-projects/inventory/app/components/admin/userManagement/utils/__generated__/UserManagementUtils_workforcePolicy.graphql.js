@@ -65,153 +65,155 @@ export type UserManagementUtils_workforcePolicy$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isAllowed",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isAllowed",
   "storageKey": null
 },
 v1 = [
   (v0/*: any*/)
 ];
 return {
-  "kind": "Fragment",
-  "name": "UserManagementUtils_workforcePolicy",
-  "type": "WorkforcePolicy",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "UserManagementUtils_workforcePolicy",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "read",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkforcePermissionRule",
+      "kind": "LinkedField",
+      "name": "read",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "projectTypeIds",
           "args": null,
+          "kind": "ScalarField",
+          "name": "projectTypeIds",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "workOrderTypeIds",
           "args": null,
+          "kind": "ScalarField",
+          "name": "workOrderTypeIds",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "templates",
-      "storageKey": null,
       "args": null,
       "concreteType": "CUD",
+      "kind": "LinkedField",
+      "name": "templates",
       "plural": false,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "BasicPermissionRule",
+          "kind": "LinkedField",
           "name": "create",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "BasicPermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "BasicPermissionRule",
+          "kind": "LinkedField",
           "name": "update",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "BasicPermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "delete",
-          "storageKey": null,
           "args": null,
           "concreteType": "BasicPermissionRule",
+          "kind": "LinkedField",
+          "name": "delete",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "data",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkforceCUD",
+      "kind": "LinkedField",
+      "name": "data",
       "plural": false,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "WorkforcePermissionRule",
+          "kind": "LinkedField",
           "name": "create",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "WorkforcePermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "WorkforcePermissionRule",
+          "kind": "LinkedField",
           "name": "update",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "WorkforcePermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "WorkforcePermissionRule",
+          "kind": "LinkedField",
           "name": "delete",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "WorkforcePermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
+          "args": null,
+          "concreteType": "WorkforcePermissionRule",
+          "kind": "LinkedField",
           "name": "assign",
-          "storageKey": null,
-          "args": null,
-          "concreteType": "WorkforcePermissionRule",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "transferOwnership",
-          "storageKey": null,
           "args": null,
           "concreteType": "WorkforcePermissionRule",
+          "kind": "LinkedField",
+          "name": "transferOwnership",
           "plural": false,
-          "selections": (v1/*: any*/)
+          "selections": (v1/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkforcePolicy",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd110f4f516c9551f09b4cd7f70c6849b';
+
 module.exports = node;

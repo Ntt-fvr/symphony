@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 8da567781c18ac7822fdf5e2959f8c87
  */
 
 /* eslint-disable */
@@ -104,39 +103,35 @@ mutation EditReportFilterMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "EditReportFilterInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v4 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "editReportFilter",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -145,190 +140,196 @@ v4 = [
       }
     ],
     "concreteType": "ReportFilter",
+    "kind": "LinkedField",
+    "name": "editReportFilter",
     "plural": false,
     "selections": [
       (v1/*: any*/),
       (v2/*: any*/),
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "entity",
         "args": null,
+        "kind": "ScalarField",
+        "name": "entity",
         "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "filters",
-        "storageKey": null,
         "args": null,
         "concreteType": "GeneralFilter",
+        "kind": "LinkedField",
+        "name": "filters",
         "plural": true,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "filterType",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "key",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "operator",
             "args": null,
+            "kind": "ScalarField",
+            "name": "operator",
             "storageKey": null
           },
           (v3/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "idSet",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "stringSet",
-            "args": null,
             "storageKey": null
           },
           {
+            "alias": null,
+            "args": null,
             "kind": "ScalarField",
-            "alias": null,
             "name": "boolValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "propertyValue",
-            "storageKey": null,
             "args": null,
             "concreteType": "PropertyType",
+            "kind": "LinkedField",
+            "name": "propertyValue",
             "plural": false,
             "selections": [
               (v1/*: any*/),
               (v2/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "type",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "nodeType",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "isEditable",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "isInstanceProperty",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "isInstanceProperty",
                 "storageKey": null
               },
               (v3/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "intValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "floatValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "booleanValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "latitudeValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "longitudeValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "rangeFromValue",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "rangeToValue",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "rangeToValue",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditReportFilterMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v4/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditReportFilterMutation",
+    "selections": (v4/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditReportFilterMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v4/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditReportFilterMutation",
+    "cacheID": "74b69fd5fa56529d384fe0d56e1d2bf4",
     "id": null,
-    "text": "mutation EditReportFilterMutation(\n  $input: EditReportFilterInput!\n) {\n  editReportFilter(input: $input) {\n    id\n    name\n    entity\n    filters {\n      filterType\n      key\n      operator\n      stringValue\n      idSet\n      stringSet\n      boolValue\n      propertyValue {\n        id\n        name\n        type\n        nodeType\n        isEditable\n        isInstanceProperty\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditReportFilterMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditReportFilterMutation(\n  $input: EditReportFilterInput!\n) {\n  editReportFilter(input: $input) {\n    id\n    name\n    entity\n    filters {\n      filterType\n      key\n      operator\n      stringValue\n      idSet\n      stringSet\n      boolValue\n      propertyValue {\n        id\n        name\n        type\n        nodeType\n        isEditable\n        isInstanceProperty\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'dc9fbe43ecf904517a036b595a47c621';
+
 module.exports = node;

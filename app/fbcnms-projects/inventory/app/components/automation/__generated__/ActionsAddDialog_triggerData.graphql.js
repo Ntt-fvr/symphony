@@ -36,38 +36,40 @@ export type ActionsAddDialog_triggerData$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ActionsAddDialog_triggerData",
-  "type": "ActionsTrigger",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ActionsAddDialog_triggerData",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "triggerID",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "description",
       "args": null,
+      "kind": "ScalarField",
+      "name": "description",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ActionRow_data",
-      "args": null
+      "name": "ActionRow_data"
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "TriggerFilterRow_data",
-      "args": null
+      "name": "TriggerFilterRow_data"
     }
-  ]
+  ],
+  "type": "ActionsTrigger",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '0af12b6eb810778e0e590238e2c67a25';
+
 module.exports = node;

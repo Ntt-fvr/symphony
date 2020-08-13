@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 722d90799e171dd8a993919d96cc7adb
  */
 
 /* eslint-disable */
@@ -53,10 +52,9 @@ fragment HyperlinkTableRow_hyperlink on Hyperlink {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
@@ -67,94 +65,97 @@ v1 = [
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "DeleteHyperlinkMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeleteHyperlinkMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "deleteHyperlink",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Hyperlink",
+        "kind": "LinkedField",
+        "name": "deleteHyperlink",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "HyperlinkTableRow_hyperlink",
-            "args": null
+            "name": "HyperlinkTableRow_hyperlink"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeleteHyperlinkMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "deleteHyperlink",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Hyperlink",
+        "kind": "LinkedField",
+        "name": "deleteHyperlink",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "id",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "category",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "url",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "displayName",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "createTime",
             "args": null,
+            "kind": "ScalarField",
+            "name": "createTime",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "DeleteHyperlinkMutation",
+    "cacheID": "6d3eb01e9bc72b9836f465c1231e3598",
     "id": null,
-    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "DeleteHyperlinkMutation",
+    "operationKind": "mutation",
+    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'eea56538c03c8ce55b62e4e48331a303';
+
 module.exports = node;

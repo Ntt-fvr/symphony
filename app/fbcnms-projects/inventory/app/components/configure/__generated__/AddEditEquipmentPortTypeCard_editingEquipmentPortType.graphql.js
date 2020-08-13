@@ -65,139 +65,141 @@ export type AddEditEquipmentPortTypeCard_editingEquipmentPortType$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   (v0/*: any*/),
   (v1/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "type",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "nodeType",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "index",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "stringValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "intValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "booleanValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "floatValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "latitudeValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "longitudeValue",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
+    "args": null,
+    "kind": "ScalarField",
     "name": "isEditable",
-    "args": null,
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "isInstanceProperty",
     "args": null,
+    "kind": "ScalarField",
+    "name": "isInstanceProperty",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "AddEditEquipmentPortTypeCard_editingEquipmentPortType",
-  "type": "EquipmentPortType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "AddEditEquipmentPortTypeCard_editingEquipmentPortType",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfPortDefinitions",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfPortDefinitions",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "linkPropertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "linkPropertyTypes",
       "plural": true,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPortType",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '7ac4f29ced9bfcf2b8395e8a95c58b15';
+
 module.exports = node;

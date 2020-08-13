@@ -39,60 +39,62 @@ export type PortDefinitionsAddEditTable_portDefinitions$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "PortDefinitionsAddEditTable_portDefinitions",
-  "type": "EquipmentPortDefinition",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "PortDefinitionsAddEditTable_portDefinitions",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "visibleLabel",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "portType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPortType",
+      "kind": "LinkedField",
+      "name": "portType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPortDefinition",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '02bde9d17bd7bb5430914f693cdd659b';
+
 module.exports = node;

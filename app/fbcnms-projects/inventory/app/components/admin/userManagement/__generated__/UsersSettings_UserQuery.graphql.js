@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 024a2038b0137c2caf3c55a776604fc4
  */
 
 /* eslint-disable */
@@ -43,18 +42,14 @@ query UsersSettings_UserQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "authID",
-    "type": "String!",
-    "defaultValue": null
+    "name": "authID"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "user",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -63,43 +58,49 @@ v1 = [
       }
     ],
     "concreteType": "User",
+    "kind": "LinkedField",
+    "name": "user",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "id",
         "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "UsersSettings_UserQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "UsersSettings_UserQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "UsersSettings_UserQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "UsersSettings_UserQuery",
+    "cacheID": "c482acfcb83a03f3eefe2d11406b7f2c",
     "id": null,
-    "text": "query UsersSettings_UserQuery(\n  $authID: String!\n) {\n  user(authID: $authID) {\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "UsersSettings_UserQuery",
+    "operationKind": "query",
+    "text": "query UsersSettings_UserQuery(\n  $authID: String!\n) {\n  user(authID: $authID) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '8bb8a3865034e4ca2fdbf08976b0f1ca';
+
 module.exports = node;

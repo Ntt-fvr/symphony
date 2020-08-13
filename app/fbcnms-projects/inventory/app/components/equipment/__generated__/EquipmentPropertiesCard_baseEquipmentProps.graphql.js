@@ -40,53 +40,55 @@ export type EquipmentPropertiesCard_baseEquipmentProps$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "EquipmentPropertiesCard_baseEquipmentProps",
-  "type": "Equipment",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "EquipmentPropertiesCard_baseEquipmentProps",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "futureState",
       "args": null,
+      "kind": "ScalarField",
+      "name": "futureState",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "parentLocation",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "parentLocation",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '38c108dd662662f36827a889ffc2706f';
+
 module.exports = node;

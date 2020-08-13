@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash cf22b9996609b238dc365a5dafe9554c
  */
 
 /* eslint-disable */
@@ -65,32 +64,28 @@ query EntDetailsQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "vertex",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -99,84 +94,90 @@ v3 = [
       }
     ],
     "concreteType": "Vertex",
+    "kind": "LinkedField",
+    "name": "vertex",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "id",
         "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       },
       (v1/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "fields",
-        "storageKey": null,
         "args": null,
         "concreteType": "Field",
+        "kind": "LinkedField",
+        "name": "fields",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "value",
             "args": null,
+            "kind": "ScalarField",
+            "name": "value",
             "storageKey": null
           },
           (v1/*: any*/)
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "Edge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           (v1/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "ids",
             "args": null,
+            "kind": "ScalarField",
+            "name": "ids",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EntDetailsQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v3/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EntDetailsQuery",
+    "selections": (v3/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EntDetailsQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v3/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "EntDetailsQuery",
+    "cacheID": "1c539c26a6c41aaacc0c449a2f231b02",
     "id": null,
-    "text": "query EntDetailsQuery(\n  $id: ID!\n) {\n  vertex(id: $id) {\n    id\n    type\n    fields {\n      name\n      value\n      type\n    }\n    edges {\n      name\n      type\n      ids\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EntDetailsQuery",
+    "operationKind": "query",
+    "text": "query EntDetailsQuery(\n  $id: ID!\n) {\n  vertex(id: $id) {\n    id\n    type\n    fields {\n      name\n      value\n      type\n    }\n    edges {\n      name\n      type\n      ids\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4be33521bcf990ae9df86c758a47fcde';
+
 module.exports = node;

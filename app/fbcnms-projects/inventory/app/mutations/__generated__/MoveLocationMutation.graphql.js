@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 77db1948ec186d25858fdaf4227fd999
  */
 
 /* eslint-disable */
@@ -61,38 +60,33 @@ mutation MoveLocationMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "locationID",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "locationID"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "parentLocationID",
-    "type": "ID",
-    "defaultValue": null
+    "name": "parentLocationID"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "moveLocation",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -106,72 +100,78 @@ v3 = [
       }
     ],
     "concreteType": "Location",
+    "kind": "LinkedField",
+    "name": "moveLocation",
     "plural": false,
     "selections": [
       (v1/*: any*/),
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "externalId",
         "args": null,
+        "kind": "ScalarField",
+        "name": "externalId",
         "storageKey": null
       },
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "locationType",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationType",
+        "kind": "LinkedField",
+        "name": "locationType",
         "plural": false,
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/)
-        ]
-      },
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "numChildren",
-        "args": null,
+        ],
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "siteSurveyNeeded",
         "args": null,
+        "kind": "ScalarField",
+        "name": "numChildren",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "siteSurveyNeeded",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "MoveLocationMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v3/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "MoveLocationMutation",
+    "selections": (v3/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MoveLocationMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v3/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "MoveLocationMutation",
+    "cacheID": "399e9c7b3bc5283bdc0d9e8b9e78b401",
     "id": null,
-    "text": "mutation MoveLocationMutation(\n  $locationID: ID!\n  $parentLocationID: ID\n) {\n  moveLocation(locationID: $locationID, parentLocationID: $parentLocationID) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "MoveLocationMutation",
+    "operationKind": "mutation",
+    "text": "mutation MoveLocationMutation(\n  $locationID: ID!\n  $parentLocationID: ID\n) {\n  moveLocation(locationID: $locationID, parentLocationID: $parentLocationID) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '98502526513b758cda745d28f8b0f7ee';
+
 module.exports = node;

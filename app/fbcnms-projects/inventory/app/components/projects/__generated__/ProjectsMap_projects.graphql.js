@@ -40,67 +40,69 @@ export type ProjectsMap_projects$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ProjectsMap_projects",
-  "type": "Project",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ProjectsMap_projects",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "latitude",
           "args": null,
+          "kind": "ScalarField",
+          "name": "latitude",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "longitude",
           "args": null,
+          "kind": "ScalarField",
+          "name": "longitude",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfWorkOrders",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfWorkOrders",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Project",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd43c7f541350f23d3936722943b7ca9b';
+
 module.exports = node;

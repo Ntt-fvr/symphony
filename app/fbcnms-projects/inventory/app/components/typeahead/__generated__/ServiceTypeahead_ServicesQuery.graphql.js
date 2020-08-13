@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 4275cd5876fcf908f1cdee2ff5181e99
  */
 
 /* eslint-disable */
@@ -88,24 +87,19 @@ query ServiceTypeahead_ServicesQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "filters",
-    "type": "[ServiceFilterInput!]!",
-    "defaultValue": null
+    "name": "filters"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "limit",
-    "type": "Int",
-    "defaultValue": null
+    "name": "limit"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "services",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -119,72 +113,78 @@ v1 = [
       }
     ],
     "concreteType": "ServiceConnection",
+    "kind": "LinkedField",
+    "name": "services",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "ServiceEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "Service",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "id",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "id",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "name",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "ServiceTypeahead_ServicesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ServiceTypeahead_ServicesQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ServiceTypeahead_ServicesQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "ServiceTypeahead_ServicesQuery",
+    "cacheID": "6a1fdc9f4b74656d6c45da94c5a0f370",
     "id": null,
-    "text": "query ServiceTypeahead_ServicesQuery(\n  $filters: [ServiceFilterInput!]!\n  $limit: Int\n) {\n  services(filterBy: $filters, first: $limit) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "ServiceTypeahead_ServicesQuery",
+    "operationKind": "query",
+    "text": "query ServiceTypeahead_ServicesQuery(\n  $filters: [ServiceFilterInput!]!\n  $limit: Int\n) {\n  services(filterBy: $filters, first: $limit) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '76ab89e627f48adb6ac1601ad66f151f';
+
 module.exports = node;

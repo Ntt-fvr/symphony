@@ -36,46 +36,48 @@ export type TriggerFilterOperator_data$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "TriggerFilterOperator_data",
-  "type": "ActionsFilter",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "TriggerFilterOperator_data",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "supportedOperators",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsOperator",
+      "kind": "LinkedField",
+      "name": "supportedOperators",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "operatorID",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "description",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "dataType",
           "args": null,
+          "kind": "ScalarField",
+          "name": "dataType",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ActionsFilter",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '2c0b10a0f1bbd74ce1cb44bc791d1b9a';
+
 module.exports = node;

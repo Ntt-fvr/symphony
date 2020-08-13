@@ -39,79 +39,81 @@ export type LocationWiFiScanCoverageMap_wifiData$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "LocationWiFiScanCoverageMap_wifiData",
-  "type": "SurveyWiFiScan",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "LocationWiFiScanCoverageMap_wifiData",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "latitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "longitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "frequency",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "channel",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "bssid",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "ssid",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "strength",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "band",
       "args": null,
+      "kind": "ScalarField",
+      "name": "band",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "SurveyWiFiScan",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'c19f1446b6147fde7dff384c07c86b60';
+
 module.exports = node;

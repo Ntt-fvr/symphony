@@ -35,42 +35,44 @@ export type DocumentTable_files$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "DocumentTable_files",
-  "type": "File",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "DocumentTable_files",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "fileName",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "category",
       "args": null,
+      "kind": "ScalarField",
+      "name": "category",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "FileAttachment_file",
-      "args": null
+      "name": "FileAttachment_file"
     }
-  ]
+  ],
+  "type": "File",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '171a55fcd66fd996e20dd78e3d3db780';
+
 module.exports = node;

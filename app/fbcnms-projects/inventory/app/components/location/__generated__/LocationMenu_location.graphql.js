@@ -54,103 +54,105 @@ export type LocationMenu_location$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = [
   (v0/*: any*/)
 ];
 return {
-  "kind": "Fragment",
-  "name": "LocationMenu_location",
-  "type": "Location",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "LocationMenu_location",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "name",
       "args": null,
+      "kind": "ScalarField",
+      "name": "name",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationType",
-      "storageKey": null,
       "args": null,
       "concreteType": "LocationType",
+      "kind": "LinkedField",
+      "name": "locationType",
       "plural": false,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "Location",
+      "kind": "LinkedField",
       "name": "parentLocation",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "Location",
       "plural": false,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "children",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "children",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipments",
-      "storageKey": null,
       "args": null,
       "concreteType": "Equipment",
+      "kind": "LinkedField",
+      "name": "equipments",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "images",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": "File",
+      "kind": "LinkedField",
       "name": "files",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "File",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "surveys",
-      "storageKey": null,
       "args": null,
       "concreteType": "Survey",
+      "kind": "LinkedField",
+      "name": "surveys",
       "plural": true,
-      "selections": (v1/*: any*/)
+      "selections": (v1/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4155d2d7cef7ceef7b79a4639755fec9';
+
 module.exports = node;

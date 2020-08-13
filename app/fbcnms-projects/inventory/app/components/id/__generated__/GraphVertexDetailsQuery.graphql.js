@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash c10665f2bcab1fa8b00ea7c90081f6ac
  */
 
 /* eslint-disable */
@@ -53,18 +52,14 @@ query GraphVertexDetailsQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "vertex",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -73,75 +68,81 @@ v1 = [
       }
     ],
     "concreteType": "Vertex",
+    "kind": "LinkedField",
+    "name": "vertex",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "id",
-        "args": null,
         "storageKey": null
       },
       {
+        "alias": null,
+        "args": null,
         "kind": "ScalarField",
-        "alias": null,
         "name": "type",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "fields",
-        "storageKey": null,
         "args": null,
         "concreteType": "Field",
+        "kind": "LinkedField",
+        "name": "fields",
         "plural": true,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "name",
             "args": null,
+            "kind": "ScalarField",
+            "name": "name",
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "value",
             "args": null,
+            "kind": "ScalarField",
+            "name": "value",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "GraphVertexDetailsQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "GraphVertexDetailsQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "GraphVertexDetailsQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "GraphVertexDetailsQuery",
+    "cacheID": "3ab5c4ce13ed255d1183d7fab15a5feb",
     "id": null,
-    "text": "query GraphVertexDetailsQuery(\n  $id: ID!\n) {\n  vertex(id: $id) {\n    id\n    type\n    fields {\n      name\n      value\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "GraphVertexDetailsQuery",
+    "operationKind": "query",
+    "text": "query GraphVertexDetailsQuery(\n  $id: ID!\n) {\n  vertex(id: $id) {\n    id\n    type\n    fields {\n      name\n      value\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'b810a4963a64c2695e2cb81fbd02be9e';
+
 module.exports = node;

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 74b3d452a2e60bf8dae923dddea27be6
  */
 
 /* eslint-disable */
@@ -49,10 +48,7 @@ query locationTypesHookLocationTypesQuery {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "locationTypes",
-    "storageKey": "locationTypes(first:20)",
     "args": [
       {
         "kind": "Literal",
@@ -61,72 +57,78 @@ var v0 = [
       }
     ],
     "concreteType": "LocationTypeConnection",
+    "kind": "LinkedField",
+    "name": "locationTypes",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "LocationType",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "id",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "id",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "name",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": "locationTypes(first:20)"
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "locationTypesHookLocationTypesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
-    "selections": (v0/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "locationTypesHookLocationTypesQuery",
+    "selections": (v0/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "locationTypesHookLocationTypesQuery",
-    "argumentDefinitions": [],
     "selections": (v0/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "locationTypesHookLocationTypesQuery",
+    "cacheID": "b1175e5ef97121785d59143d3ee0df2d",
     "id": null,
-    "text": "query locationTypesHookLocationTypesQuery {\n  locationTypes(first: 20) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "locationTypesHookLocationTypesQuery",
+    "operationKind": "query",
+    "text": "query locationTypesHookLocationTypesQuery {\n  locationTypes(first: 20) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '2706298ca30018e201078173961b57d9';
+
 module.exports = node;

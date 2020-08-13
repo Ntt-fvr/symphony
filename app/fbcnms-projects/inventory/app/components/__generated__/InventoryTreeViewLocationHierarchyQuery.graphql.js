@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 7d469e9b3fe566914d3d6246b20475ce
  */
 
 /* eslint-disable */
@@ -51,10 +50,9 @@ query InventoryTreeViewLocationHierarchyQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "locationId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "locationId"
   }
 ],
 v1 = [
@@ -65,89 +63,93 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
   "kind": "InlineFragment",
-  "type": "Location",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationHierarchy",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "locationHierarchy",
       "plural": true,
       "selections": [
         (v2/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "InventoryTreeViewLocationHierarchyQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "InventoryTreeViewLocationHierarchyQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           (v3/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "InventoryTreeViewLocationHierarchyQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           (v3/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "InventoryTreeViewLocationHierarchyQuery",
+    "cacheID": "256985644275bc4206960186d9f449a8",
     "id": null,
-    "text": "query InventoryTreeViewLocationHierarchyQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      locationHierarchy {\n        id\n      }\n    }\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "InventoryTreeViewLocationHierarchyQuery",
+    "operationKind": "query",
+    "text": "query InventoryTreeViewLocationHierarchyQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      locationHierarchy {\n        id\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '37b918eaa916d586a5f62c755f6a1b83';
+
 module.exports = node;

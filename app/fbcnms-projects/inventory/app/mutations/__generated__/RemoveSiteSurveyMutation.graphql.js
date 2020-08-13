@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 6f6ebf8f00eb0e675c1ca70ea6b7f4b5
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveSiteSurveyMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "removeSiteSurvey",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "removeSiteSurvey",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveSiteSurveyMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveSiteSurveyMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveSiteSurveyMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveSiteSurveyMutation",
+    "cacheID": "52c4cfd0d670294b9754caa9546832b0",
     "id": null,
-    "text": "mutation RemoveSiteSurveyMutation(\n  $id: ID!\n) {\n  removeSiteSurvey(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveSiteSurveyMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveSiteSurveyMutation(\n  $id: ID!\n) {\n  removeSiteSurvey(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'fc6117923fa8eda4898294028568180b';
+
 module.exports = node;

@@ -36,50 +36,53 @@ export type ServiceEquipmentTopology_topology$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ServiceEquipmentTopology_topology",
-  "type": "NetworkTopology",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServiceEquipmentTopology_topology",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "nodes",
-      "storageKey": null,
       "args": null,
       "concreteType": null,
+      "kind": "LinkedField",
+      "name": "nodes",
       "plural": true,
       "selections": [
         {
           "kind": "InlineFragment",
-          "type": "Equipment",
           "selections": [
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "id",
               "args": null,
+              "kind": "ScalarField",
+              "name": "id",
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "name",
               "args": null,
+              "kind": "ScalarField",
+              "name": "name",
               "storageKey": null
             }
-          ]
+          ],
+          "type": "Equipment",
+          "abstractKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ForceNetworkTopology_topology",
-      "args": null
+      "name": "ForceNetworkTopology_topology"
     }
-  ]
+  ],
+  "type": "NetworkTopology",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '3aacf7059c6ccea42895132c69cbb030';
+
 module.exports = node;

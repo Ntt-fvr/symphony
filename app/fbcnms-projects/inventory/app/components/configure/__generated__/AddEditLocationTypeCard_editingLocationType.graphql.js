@@ -69,231 +69,233 @@ export type AddEditLocationTypeCard_editingLocationType$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "index",
   "args": null,
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "AddEditLocationTypeCard_editingLocationType",
-  "type": "LocationType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "AddEditLocationTypeCard_editingLocationType",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "mapType",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "mapZoomLevel",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "numberOfLocations",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "isSite",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "type",
           "args": null,
+          "kind": "ScalarField",
+          "name": "type",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "nodeType",
           "args": null,
+          "kind": "ScalarField",
+          "name": "nodeType",
           "storageKey": null
         },
         (v2/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "stringValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "intValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "booleanValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "floatValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "latitudeValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "longitudeValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "rangeFromValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "rangeToValue",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "isEditable",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "isMandatory",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "isInstanceProperty",
           "args": null,
+          "kind": "ScalarField",
+          "name": "isInstanceProperty",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "surveyTemplateCategories",
-      "storageKey": null,
       "args": null,
       "concreteType": "SurveyTemplateCategory",
+      "kind": "LinkedField",
+      "name": "surveyTemplateCategories",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "categoryTitle",
-          "args": null,
           "storageKey": null
         },
         {
+          "alias": null,
+          "args": null,
           "kind": "ScalarField",
-          "alias": null,
           "name": "categoryDescription",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "surveyTemplateQuestions",
-          "storageKey": null,
           "args": null,
           "concreteType": "SurveyTemplateQuestion",
+          "kind": "LinkedField",
+          "name": "surveyTemplateQuestions",
           "plural": true,
           "selections": [
             (v0/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "questionTitle",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "questionDescription",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "questionType",
               "args": null,
+              "kind": "ScalarField",
+              "name": "questionType",
               "storageKey": null
             },
             (v2/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "LocationType",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '922d9f9f84ee7d6e6f8efd7f0da8b295';
+
 module.exports = node;

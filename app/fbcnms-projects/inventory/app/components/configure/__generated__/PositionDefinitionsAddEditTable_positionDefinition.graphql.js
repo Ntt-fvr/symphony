@@ -34,44 +34,46 @@ export type PositionDefinitionsAddEditTable_positionDefinition$key = {
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "PositionDefinitionsAddEditTable_positionDefinition",
-  "type": "EquipmentPositionDefinition",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "PositionDefinitionsAddEditTable_positionDefinition",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "visibleLabel",
       "args": null,
+      "kind": "ScalarField",
+      "name": "visibleLabel",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPositionDefinition",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '3952fd6597286104bfc0889a1d16bb1a';
+
 module.exports = node;

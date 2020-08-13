@@ -35,35 +35,37 @@ export type AddToEquipmentDialog_parentEquipment$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "AddToEquipmentDialog_parentEquipment",
-  "type": "Equipment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "AddToEquipmentDialog_parentEquipment",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationHierarchy",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "locationHierarchy",
       "plural": true,
       "selections": [
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '5f1bb222d3448e6445d42e84470b6d5c';
+
 module.exports = node;

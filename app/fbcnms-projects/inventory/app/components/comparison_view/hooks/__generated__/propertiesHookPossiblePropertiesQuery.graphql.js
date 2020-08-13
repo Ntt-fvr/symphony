@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 413cd186d130ee3447909ec33968bf52
  */
 
 /* eslint-disable */
@@ -50,10 +49,9 @@ query propertiesHookPossiblePropertiesQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "entityType",
-    "type": "PropertyEntity!",
-    "defaultValue": null
+    "name": "entityType"
   }
 ],
 v1 = [
@@ -64,88 +62,91 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "propertiesHookPossiblePropertiesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "propertiesHookPossiblePropertiesQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "possibleProperties",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "PropertyType",
+        "kind": "LinkedField",
+        "name": "possibleProperties",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "propertiesHookPossiblePropertiesQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "possibleProperties",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "PropertyType",
+        "kind": "LinkedField",
+        "name": "possibleProperties",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "id",
             "args": null,
+            "kind": "ScalarField",
+            "name": "id",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "propertiesHookPossiblePropertiesQuery",
+    "cacheID": "e0abbdf9be3861677aac8270d30ff7c1",
     "id": null,
-    "text": "query propertiesHookPossiblePropertiesQuery(\n  $entityType: PropertyEntity!\n) {\n  possibleProperties(entityType: $entityType) {\n    name\n    type\n    stringValue\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "propertiesHookPossiblePropertiesQuery",
+    "operationKind": "query",
+    "text": "query propertiesHookPossiblePropertiesQuery(\n  $entityType: PropertyEntity!\n) {\n  possibleProperties(entityType: $entityType) {\n    name\n    type\n    stringValue\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'bb938da07f028b2a4f6fc67588a53b78';
+
 module.exports = node;

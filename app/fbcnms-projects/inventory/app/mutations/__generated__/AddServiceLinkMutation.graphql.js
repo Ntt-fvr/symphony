@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash e6f04597d4d304774282ee8ebc4e3e26
  */
 
 /* eslint-disable */
@@ -274,16 +273,14 @@ fragment ServicePanel_service on Service {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "linkId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "linkId"
   }
 ],
 v1 = [
@@ -299,17 +296,17 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = [
@@ -317,94 +314,94 @@ v4 = [
   (v2/*: any*/)
 ],
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isInstanceProperty",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isInstanceProperty",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "nodeType",
   "args": null,
+  "kind": "ScalarField",
+  "name": "nodeType",
   "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v11 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v12 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v13 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v14 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v15 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 },
 v16 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isMandatory",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
   "storageKey": null
 },
 v17 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "role",
   "args": null,
+  "kind": "ScalarField",
+  "name": "role",
   "storageKey": null
 },
 v18 = [
@@ -412,104 +409,104 @@ v18 = [
   (v3/*: any*/)
 ],
 v19 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "equipmentType",
-  "storageKey": null,
   "args": null,
   "concreteType": "EquipmentType",
+  "kind": "LinkedField",
+  "name": "equipmentType",
   "plural": false,
-  "selections": (v18/*: any*/)
+  "selections": (v18/*: any*/),
+  "storageKey": null
 },
 v20 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "__typename",
   "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
 v21 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "definition",
-  "storageKey": null,
   "args": null,
   "concreteType": "EquipmentPortDefinition",
+  "kind": "LinkedField",
+  "name": "definition",
   "plural": false,
-  "selections": (v18/*: any*/)
+  "selections": (v18/*: any*/),
+  "storageKey": null
 },
 v22 = [
   (v3/*: any*/),
   (v2/*: any*/),
   (v19/*: any*/),
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "locationHierarchy",
-    "storageKey": null,
     "args": null,
     "concreteType": "Location",
+    "kind": "LinkedField",
+    "name": "locationHierarchy",
     "plural": true,
     "selections": [
       (v2/*: any*/),
       (v3/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "locationType",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationType",
+        "kind": "LinkedField",
+        "name": "locationType",
         "plural": false,
-        "selections": (v4/*: any*/)
+        "selections": (v4/*: any*/),
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "positionHierarchy",
-    "storageKey": null,
     "args": null,
     "concreteType": "EquipmentPosition",
+    "kind": "LinkedField",
+    "name": "positionHierarchy",
     "plural": true,
     "selections": [
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "definition",
-        "storageKey": null,
         "args": null,
         "concreteType": "EquipmentPositionDefinition",
+        "kind": "LinkedField",
+        "name": "definition",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "visibleLabel",
             "args": null,
+            "kind": "ScalarField",
+            "name": "visibleLabel",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "parentEquipment",
-        "storageKey": null,
         "args": null,
         "concreteType": "Equipment",
+        "kind": "LinkedField",
+        "name": "parentEquipment",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v19/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ],
 v23 = [
@@ -517,92 +514,90 @@ v23 = [
   (v2/*: any*/)
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddServiceLinkMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddServiceLinkMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addServiceLink",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Service",
+        "kind": "LinkedField",
+        "name": "addServiceLink",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "ServiceCard_service",
-            "args": null
+            "name": "ServiceCard_service"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddServiceLinkMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "addServiceLink",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Service",
+        "kind": "LinkedField",
+        "name": "addServiceLink",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "externalId",
             "args": null,
+            "kind": "ScalarField",
+            "name": "externalId",
             "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "customer",
-            "storageKey": null,
             "args": null,
             "concreteType": "Customer",
+            "kind": "LinkedField",
+            "name": "customer",
             "plural": false,
-            "selections": (v4/*: any*/)
+            "selections": (v4/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "serviceType",
-            "storageKey": null,
             "args": null,
             "concreteType": "ServiceType",
+            "kind": "LinkedField",
+            "name": "serviceType",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "propertyTypes",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "propertyTypes",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "index",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "index",
                     "storageKey": null
                   },
                   (v5/*: any*/),
@@ -617,49 +612,49 @@ return {
                   (v14/*: any*/),
                   (v15/*: any*/),
                   (v16/*: any*/)
-                ]
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "name": "discoveryMethod",
-                "args": null,
+                ],
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "endpointDefinitions",
-                "storageKey": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "discoveryMethod",
+                "storageKey": null
+              },
+              {
+                "alias": null,
                 "args": null,
                 "concreteType": "ServiceEndpointDefinition",
+                "kind": "LinkedField",
+                "name": "endpointDefinitions",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v17/*: any*/),
                   (v19/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "properties",
-            "storageKey": null,
             "args": null,
             "concreteType": "Property",
+            "kind": "LinkedField",
+            "name": "properties",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "propertyType",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "propertyType",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
@@ -667,16 +662,17 @@ return {
                   (v6/*: any*/),
                   (v7/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "isEditable",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "isEditable",
                     "storageKey": null
                   },
                   (v5/*: any*/),
                   (v16/*: any*/),
                   (v8/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               (v8/*: any*/),
               (v9/*: any*/),
@@ -687,197 +683,202 @@ return {
               (v14/*: any*/),
               (v15/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "nodeValue",
-                "storageKey": null,
                 "args": null,
                 "concreteType": null,
+                "kind": "LinkedField",
+                "name": "nodeValue",
                 "plural": false,
                 "selections": [
                   (v20/*: any*/),
                   (v2/*: any*/),
                   (v3/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "status",
-            "args": null,
+            ],
             "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "links",
-            "storageKey": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "status",
+            "storageKey": null
+          },
+          {
+            "alias": null,
             "args": null,
             "concreteType": "Link",
+            "kind": "LinkedField",
+            "name": "links",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "ports",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "EquipmentPort",
+                "kind": "LinkedField",
+                "name": "ports",
                 "plural": true,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "parentEquipment",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "Equipment",
+                    "kind": "LinkedField",
+                    "name": "parentEquipment",
                     "plural": false,
-                    "selections": (v18/*: any*/)
+                    "selections": (v18/*: any*/),
+                    "storageKey": null
                   },
                   (v21/*: any*/),
                   (v2/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "endpoints",
-            "storageKey": null,
             "args": null,
             "concreteType": "ServiceEndpoint",
+            "kind": "LinkedField",
+            "name": "endpoints",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "definition",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ServiceEndpointDefinition",
+                "kind": "LinkedField",
+                "name": "definition",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v17/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "port",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "EquipmentPort",
+                "kind": "LinkedField",
+                "name": "port",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "parentEquipment",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "Equipment",
+                    "kind": "LinkedField",
+                    "name": "parentEquipment",
                     "plural": false,
-                    "selections": (v22/*: any*/)
+                    "selections": (v22/*: any*/),
+                    "storageKey": null
                   },
                   (v21/*: any*/),
                   (v2/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "equipment",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Equipment",
+                "kind": "LinkedField",
+                "name": "equipment",
                 "plural": false,
-                "selections": (v22/*: any*/)
+                "selections": (v22/*: any*/),
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "topology",
-            "storageKey": null,
             "args": null,
             "concreteType": "NetworkTopology",
+            "kind": "LinkedField",
+            "name": "topology",
             "plural": false,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "nodes",
-                "storageKey": null,
                 "args": null,
                 "concreteType": null,
+                "kind": "LinkedField",
+                "name": "nodes",
                 "plural": true,
                 "selections": [
                   (v20/*: any*/),
                   (v2/*: any*/),
                   {
                     "kind": "InlineFragment",
-                    "type": "Equipment",
                     "selections": [
                       (v3/*: any*/)
-                    ]
+                    ],
+                    "type": "Equipment",
+                    "abstractKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "links",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "TopologyLink",
+                "kind": "LinkedField",
+                "name": "links",
                 "plural": true,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "source",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "source",
                     "plural": false,
-                    "selections": (v23/*: any*/)
+                    "selections": (v23/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "target",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "target",
                     "plural": false,
-                    "selections": (v23/*: any*/)
+                    "selections": (v23/*: any*/),
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddServiceLinkMutation",
+    "cacheID": "e5faba991ab6b4fa11f877c275b0d6fb",
     "id": null,
-    "text": "mutation AddServiceLinkMutation(\n  $id: ID!\n  $linkId: ID!\n) {\n  addServiceLink(id: $id, linkId: $linkId) {\n    ...ServiceCard_service\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment ForceNetworkTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    id\n  }\n  links {\n    source {\n      __typename\n      id\n    }\n    target {\n      __typename\n      id\n    }\n  }\n}\n\nfragment ServiceCard_service on Service {\n  id\n  name\n  ...ServiceDetailsPanel_service\n  ...ServicePanel_service\n  topology {\n    ...ServiceEquipmentTopology_topology\n  }\n  endpoints {\n    ...ServiceEquipmentTopology_endpoints\n    id\n  }\n}\n\nfragment ServiceDetailsPanel_service on Service {\n  id\n  name\n  externalId\n  customer {\n    name\n    id\n  }\n  serviceType {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      index\n      isInstanceProperty\n      type\n      nodeType\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isMandatory\n    }\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isInstanceProperty\n      isMandatory\n      stringValue\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n}\n\nfragment ServiceEndpointsView_endpoints on ServiceEndpoint {\n  id\n  port {\n    parentEquipment {\n      name\n      ...EquipmentBreadcrumbs_equipment\n      id\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n  equipment {\n    name\n    ...EquipmentBreadcrumbs_equipment\n    id\n  }\n  definition {\n    name\n    role\n    id\n  }\n}\n\nfragment ServiceEquipmentTopology_endpoints on ServiceEndpoint {\n  definition {\n    role\n    id\n  }\n  equipment {\n    id\n    positionHierarchy {\n      parentEquipment {\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment ServiceEquipmentTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    ... on Equipment {\n      id\n      name\n    }\n    id\n  }\n  ...ForceNetworkTopology_topology\n}\n\nfragment ServiceLinksView_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment ServicePanel_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    name\n    id\n  }\n  serviceType {\n    name\n    discoveryMethod\n    endpointDefinitions {\n      id\n      name\n      role\n      equipmentType {\n        id\n        name\n      }\n    }\n    id\n  }\n  links {\n    id\n    ...ServiceLinksView_links\n  }\n  endpoints {\n    id\n    definition {\n      id\n      name\n    }\n    ...ServiceEndpointsView_endpoints\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddServiceLinkMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddServiceLinkMutation(\n  $id: ID!\n  $linkId: ID!\n) {\n  addServiceLink(id: $id, linkId: $linkId) {\n    ...ServiceCard_service\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment ForceNetworkTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    id\n  }\n  links {\n    source {\n      __typename\n      id\n    }\n    target {\n      __typename\n      id\n    }\n  }\n}\n\nfragment ServiceCard_service on Service {\n  id\n  name\n  ...ServiceDetailsPanel_service\n  ...ServicePanel_service\n  topology {\n    ...ServiceEquipmentTopology_topology\n  }\n  endpoints {\n    ...ServiceEquipmentTopology_endpoints\n    id\n  }\n}\n\nfragment ServiceDetailsPanel_service on Service {\n  id\n  name\n  externalId\n  customer {\n    name\n    id\n  }\n  serviceType {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      index\n      isInstanceProperty\n      type\n      nodeType\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isMandatory\n    }\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isInstanceProperty\n      isMandatory\n      stringValue\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n}\n\nfragment ServiceEndpointsView_endpoints on ServiceEndpoint {\n  id\n  port {\n    parentEquipment {\n      name\n      ...EquipmentBreadcrumbs_equipment\n      id\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n  equipment {\n    name\n    ...EquipmentBreadcrumbs_equipment\n    id\n  }\n  definition {\n    name\n    role\n    id\n  }\n}\n\nfragment ServiceEquipmentTopology_endpoints on ServiceEndpoint {\n  definition {\n    role\n    id\n  }\n  equipment {\n    id\n    positionHierarchy {\n      parentEquipment {\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment ServiceEquipmentTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    ... on Equipment {\n      id\n      name\n    }\n    id\n  }\n  ...ForceNetworkTopology_topology\n}\n\nfragment ServiceLinksView_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment ServicePanel_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    name\n    id\n  }\n  serviceType {\n    name\n    discoveryMethod\n    endpointDefinitions {\n      id\n      name\n      role\n      equipmentType {\n        id\n        name\n      }\n    }\n    id\n  }\n  links {\n    id\n    ...ServiceLinksView_links\n  }\n  endpoints {\n    id\n    definition {\n      id\n      name\n    }\n    ...ServiceEndpointsView_endpoints\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '3b83f98153410044fac10f58dc648a47';
+
 module.exports = node;

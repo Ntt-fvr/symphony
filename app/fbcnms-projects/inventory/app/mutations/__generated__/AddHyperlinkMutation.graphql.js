@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash ef5cdad8cf78d342f46b53e8486f9cb9
  */
 
 /* eslint-disable */
@@ -59,18 +58,14 @@ mutation AddHyperlinkMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddHyperlinkInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "addHyperlink",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -79,71 +74,77 @@ v1 = [
       }
     ],
     "concreteType": "Hyperlink",
+    "kind": "LinkedField",
+    "name": "addHyperlink",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "id",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "url",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "displayName",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "category",
-        "args": null,
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "createTime",
         "args": null,
+        "kind": "ScalarField",
+        "name": "createTime",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddHyperlinkMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddHyperlinkMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddHyperlinkMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddHyperlinkMutation",
+    "cacheID": "9091ac8be2be52dfc9b8855bc5caaf1a",
     "id": null,
-    "text": "mutation AddHyperlinkMutation(\n  $input: AddHyperlinkInput!\n) {\n  addHyperlink(input: $input) {\n    id\n    url\n    displayName\n    category\n    createTime\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddHyperlinkMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddHyperlinkMutation(\n  $input: AddHyperlinkInput!\n) {\n  addHyperlink(input: $input) {\n    id\n    url\n    displayName\n    category\n    createTime\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '8aeb4cde118c6a2a5365fe50a82c419e';
+
 module.exports = node;
