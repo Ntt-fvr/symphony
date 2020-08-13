@@ -24,14 +24,16 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
-	// FieldChangedField holds the string denoting the changed_field field in the database.
-	FieldChangedField = "changed_field"
+	// FieldActivityType holds the string denoting the activity_type field in the database.
+	FieldActivityType = "changed_field"
 	// FieldIsCreate holds the string denoting the is_create field in the database.
 	FieldIsCreate = "is_create"
 	// FieldOldValue holds the string denoting the old_value field in the database.
 	FieldOldValue = "old_value"
 	// FieldNewValue holds the string denoting the new_value field in the database.
 	FieldNewValue = "new_value"
+	// FieldClockDetails holds the string denoting the clock_details field in the database.
+	FieldClockDetails = "clock_details"
 
 	// EdgeAuthor holds the string denoting the author edge name in mutations.
 	EdgeAuthor = "author"
@@ -61,10 +63,11 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
-	FieldChangedField,
+	FieldActivityType,
 	FieldIsCreate,
 	FieldOldValue,
 	FieldNewValue,
+	FieldClockDetails,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Activity type.
@@ -92,48 +95,49 @@ var (
 	DefaultIsCreate bool
 )
 
-// ChangedField defines the type for the changed_field enum field.
-type ChangedField string
+// ActivityType defines the type for the activity_type enum field.
+type ActivityType string
 
-// ChangedField values.
+// ActivityType values.
 const (
-	ChangedFieldAssignee     ChangedField = "ASSIGNEE"
-	ChangedFieldCreationDate ChangedField = "CREATION_DATE"
-	ChangedFieldDescription  ChangedField = "DESCRIPTION"
-	ChangedFieldName         ChangedField = "NAME"
-	ChangedFieldOwner        ChangedField = "OWNER"
-	ChangedFieldPriority     ChangedField = "PRIORITY"
-	ChangedFieldStatus       ChangedField = "STATUS"
+	ActivityTypeAssigneeChanged     ActivityType = "ASSIGNEE"
+	ActivityTypeClockIn             ActivityType = "CLOCK_IN"
+	ActivityTypeCreationDateChanged ActivityType = "CREATION_DATE"
+	ActivityTypeDescriptionChanged  ActivityType = "DESCRIPTION"
+	ActivityTypeNameChanged         ActivityType = "NAME"
+	ActivityTypeOwnerChanged        ActivityType = "OWNER"
+	ActivityTypePriorityChanged     ActivityType = "PRIORITY"
+	ActivityTypeStatusChanged       ActivityType = "STATUS"
 )
 
-func (cf ChangedField) String() string {
-	return string(cf)
+func (at ActivityType) String() string {
+	return string(at)
 }
 
-// ChangedFieldValidator is a validator for the "changed_field" field enum values. It is called by the builders before save.
-func ChangedFieldValidator(cf ChangedField) error {
-	switch cf {
-	case ChangedFieldAssignee, ChangedFieldCreationDate, ChangedFieldDescription, ChangedFieldName, ChangedFieldOwner, ChangedFieldPriority, ChangedFieldStatus:
+// ActivityTypeValidator is a validator for the "activity_type" field enum values. It is called by the builders before save.
+func ActivityTypeValidator(at ActivityType) error {
+	switch at {
+	case ActivityTypeAssigneeChanged, ActivityTypeClockIn, ActivityTypeCreationDateChanged, ActivityTypeDescriptionChanged, ActivityTypeNameChanged, ActivityTypeOwnerChanged, ActivityTypePriorityChanged, ActivityTypeStatusChanged:
 		return nil
 	default:
-		return fmt.Errorf("activity: invalid enum value for changed_field field: %q", cf)
+		return fmt.Errorf("activity: invalid enum value for activity_type field: %q", at)
 	}
 }
 
 // MarshalGQL implements graphql.Marshaler interface.
-func (cf ChangedField) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(cf.String()))
+func (at ActivityType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(at.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (cf *ChangedField) UnmarshalGQL(v interface{}) error {
+func (at *ActivityType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enum %T must be a string", v)
 	}
-	*cf = ChangedField(str)
-	if err := ChangedFieldValidator(*cf); err != nil {
-		return fmt.Errorf("%s is not a valid ChangedField", str)
+	*at = ActivityType(str)
+	if err := ActivityTypeValidator(*at); err != nil {
+		return fmt.Errorf("%s is not a valid ActivityType", str)
 	}
 	return nil
 }

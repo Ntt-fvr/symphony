@@ -468,7 +468,7 @@ func TestAddWorkOrderWithActivity(t *testing.T) {
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
 	act, err := r.client.Activity.Create().
 		SetWorkOrder(w).
-		SetChangedField(activity.ChangedFieldPriority).
+		SetActivityType(activity.ActivityTypePriorityChanged).
 		SetOldValue(workorder.PriorityLow.String()).
 		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(v.User()).
@@ -1807,13 +1807,18 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	mr := r.Mutation()
 
 	w := createWorkOrder(ctx, t, *r, "Foo")
-	w, err := mr.TechnicianWorkOrderCheckIn(ctx, w.ID)
+	w, err := mr.TechnicianWorkOrderCheckIn(
+		ctx,
+		w.ID,
+		&models.TechnicianWorkOrderCheckInInput{DistanceMeters: pointer.ToFloat64(50)},
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, w.Status, workorder.StatusPending)
-	comments, err := w.QueryComments().All(ctx)
+
+	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, comments, 1)
+	assert.Len(t, activities, 1)
 }
 
 func TestTechnicianUploadDataToWorkOrder(t *testing.T) {

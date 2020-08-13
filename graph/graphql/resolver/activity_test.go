@@ -61,33 +61,33 @@ func TestAddWorkOrderActivities(t *testing.T) {
 		require.NoError(t, err)
 		require.True(t, a.IsCreate)
 
-		switch a.ChangedField {
-		case activity.ChangedFieldCreationDate:
+		switch a.ActivityType {
+		case activity.ActivityTypeCreationDateChanged:
 			timestampInt, err := strconv.ParseInt(a.NewValue, 10, 64)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
 			require.WithinDuration(t, time.Unix(timestampInt, 0), now, time.Second*3)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldOwner:
+		case activity.ActivityTypeOwnerChanged:
 			fetchedNode, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNode.ID, u.ID)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldStatus:
+		case activity.ActivityTypeStatusChanged:
 			require.Empty(t, a.OldValue)
 			require.EqualValues(t, a.NewValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPriority:
+		case activity.ActivityTypePriorityChanged:
 			require.Empty(t, a.OldValue)
 			require.EqualValues(t, a.NewValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:
-			require.Fail(t, "unsupported changed field %v", a.ChangedField)
+			require.Fail(t, "unsupported changed field %v", a.ActivityType)
 		}
 	}
 }
@@ -143,8 +143,8 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			continue
 		}
 		newCount++
-		switch a.ChangedField {
-		case activity.ChangedFieldOwner:
+		switch a.ActivityType {
+		case activity.ActivityTypeOwnerChanged:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			fetchedNodeOld, err := oldNode.Node(ctx)
@@ -153,25 +153,25 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
 			require.Equal(t, fetchedNodeNew.ID, u2.ID)
 			require.Equal(t, fetchedNodeOld.ID, u.ID)
-		case activity.ChangedFieldAssignee:
+		case activity.ActivityTypeAssigneeChanged:
 			fetchedNodeNew, err := newNode.Node(ctx)
 			require.NoError(t, err)
 			require.Nil(t, oldNode)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.Empty(t, a.OldValue)
 			require.Equal(t, fetchedNodeNew.ID, u.ID)
-		case activity.ChangedFieldStatus:
+		case activity.ActivityTypeStatusChanged:
 			require.EqualValues(t, a.NewValue, workorder.StatusPending)
 			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
-		case activity.ChangedFieldPriority:
+		case activity.ActivityTypePriorityChanged:
 			require.EqualValues(t, a.NewValue, workorder.PriorityHigh)
 			require.EqualValues(t, a.OldValue, workorder.PriorityNone)
 			require.Nil(t, newNode)
 			require.Nil(t, oldNode)
 		default:
-			require.Fail(t, "unsupported changed field %v", a.ChangedField)
+			require.Fail(t, "unsupported changed field %v", a.ActivityType)
 		}
 	}
 	require.Equal(t, 4, newCount)

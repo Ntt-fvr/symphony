@@ -815,6 +815,10 @@ type TechnicianCheckListItemInput struct {
 	FilesData          []*FileInput            `json:"filesData"`
 }
 
+type TechnicianWorkOrderCheckInInput struct {
+	DistanceMeters *float64 `json:"distanceMeters"`
+}
+
 type TechnicianWorkOrderUploadInput struct {
 	WorkOrderID         int                             `json:"workOrderId"`
 	Checklist           []*TechnicianCheckListItemInput `json:"checklist"`
