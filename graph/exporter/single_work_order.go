@@ -65,8 +65,7 @@ func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*exc
 			return nil, errors.Wrap(err, "cannot query checklist items")
 		}
 
-		err = generateChecklistItems(ctx, items, sheetName, f)
-		if err != nil {
+		if err := generateChecklistItems(ctx, items, sheetName, f); err != nil {
 			logger.Error("cannot generate checklist items", zap.Error(err))
 			return nil, errors.Wrap(err, "cannot generate checklist items")
 		}
