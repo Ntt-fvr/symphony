@@ -95,7 +95,7 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 	}
 
 	comments, err := wo.QueryComments().All(ctx)
-	if ent.MaskNotFound(err) != nil {
+	if err != nil {
 		return err
 	}
 
