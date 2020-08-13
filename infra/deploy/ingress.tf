@@ -227,7 +227,7 @@ resource helm_release nginx_ingress {
         service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
         service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
-        external-dns.alpha.kubernetes.io/hostname: ${local.ctf_domain_name}
+        external-dns.alpha.kubernetes.io/hostname: '${local.ctf_domain_name},*.${local.ctf_domain_name}'
       externalTrafficPolicy: Local
       internal:
         enabled: true
@@ -376,7 +376,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.2.6"
+  version    = "3.3.0"
   namespace  = "kube-system"
   keyring    = ""
 
