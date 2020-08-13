@@ -22,9 +22,9 @@ var (
 		"Number of emission errors",
 		stats.UnitDimensionless,
 	)
-	EventOpenReceiverTotal = stats.Int64(
-		"ev/open_receivers_total",
-		"Number of open receivers",
+	EventNumReceivers = stats.Int64(
+		"ev/num_receivers",
+		"Current number of open receivers",
 		stats.UnitDimensionless,
 	)
 	EventReceivedTotal = stats.Int64(
@@ -47,11 +47,6 @@ var (
 		"Number of shutdown errors",
 		stats.UnitDimensionless,
 	)
-)
-
-// Event atomic counters.
-var (
-	EventOpenReceiverCount int64
 )
 
 // Event tag keys.
@@ -80,10 +75,10 @@ var (
 		Measure:     EventEmitErrorTotal,
 		Aggregation: view.Count(),
 	}
-	EventOpenReceiverTotalView = &view.View{
-		Name:        EventOpenReceiverTotal.Name(),
-		Description: EventOpenReceiverTotal.Description(),
-		Measure:     EventOpenReceiverTotal,
+	EventNumReceiversView = &view.View{
+		Name:        EventNumReceivers.Name(),
+		Description: EventNumReceivers.Description(),
+		Measure:     EventNumReceivers,
 		Aggregation: view.LastValue(),
 	}
 	EventReceivedTotalView = &view.View{
@@ -118,7 +113,7 @@ var (
 var OpenCensusViews = []*view.View{
 	EventEmittedTotalView,
 	EventEmitErrorTotalView,
-	EventOpenReceiverTotalView,
+	EventNumReceiversView,
 	EventReceivedTotalView,
 	EventReceiveErrorTotalView,
 	EventReceiveFilteredTotalView,
