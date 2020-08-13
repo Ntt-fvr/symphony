@@ -237,7 +237,7 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	)
 
 	assignee, err := wo.QueryAssignee().Only(ctx)
-	if ent.MaskNotFound(err) != nil {
+	if !ent.IsNotFound(err) {
 		return nil, err
 	}
 	if assignee != nil {
