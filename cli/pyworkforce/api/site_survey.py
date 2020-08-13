@@ -817,10 +817,10 @@ def build_site_survey_from_survey_response(survey: SurveyFragment) -> SiteSurvey
     return SiteSurvey(
         survey_id=survey_id,
         name=name,
-        completionTime=completion_time,
-        sourceFileId=source_file_id,
-        sourceFileName=source_file_name,
-        sourceFileKey=source_file_key,
+        completion_time=completion_time,
+        source_file_id=source_file_id,
+        source_file_name=source_file_name,
+        source_file_key=source_file_key,
         forms=forms,
     )
 

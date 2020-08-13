@@ -54,10 +54,10 @@ class TestSiteSurvey(BaseTest):
         self.assertEqual(1, len(surveys))
         survey = surveys[0]
         self.assertEqual("My site survey", survey.name)
-        self.assertEqual(completion_date, survey.completionTime)
+        self.assertEqual(completion_date, survey.completion_time)
 
         self.assertIsNotNone(survey.sourceFileId)
-        self.assertEqual(survey.sourceFileName, "city_center_site_survey.xlsx")
+        self.assertEqual(survey.source_file_name, "city_center_site_survey.xlsx")
 
         delete_site_survey(self.client, survey)
         surveys = get_site_surveys(self.client, location.id)
