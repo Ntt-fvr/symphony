@@ -376,7 +376,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.3.0"
+  version    = "3.2.6"
   namespace  = "kube-system"
   keyring    = ""
 
