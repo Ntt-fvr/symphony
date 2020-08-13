@@ -45,8 +45,7 @@ func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*exc
 		return nil, errors.Wrap(err, "cannot query work order")
 	}
 
-	err = generateWoSummary(ctx, f, wo)
-	if err != nil {
+	if err := generateWoSummary(ctx, f, wo); err != nil {
 		logger.Error("cannot generate work order", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot generate work order")
 	}
