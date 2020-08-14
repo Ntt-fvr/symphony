@@ -895,7 +895,7 @@ func TestExecuteWorkOrderInstallEquipmentMultilayer(t *testing.T) {
 		parentID := prevEquipmentPosition.QueryParent().OnlyIDX(ctx)
 		require.NoError(t, err)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-			Name:               string(i),
+			Name:               string(rune(i)),
 			Type:               rootEquipmentType.ID,
 			Parent:             &parentID,
 			PositionDefinition: &defID,
@@ -949,7 +949,7 @@ func TestExecuteWorkOrderRemoveEquipmentMultilayer(t *testing.T) {
 		defID := position.QueryDefinition().OnlyIDX(ctx)
 		parentID := position.QueryParent().OnlyIDX(ctx)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-			Name:               string(i),
+			Name:               string(rune(i)),
 			Type:               rootEquipmentType.ID,
 			Parent:             &parentID,
 			PositionDefinition: &defID,
