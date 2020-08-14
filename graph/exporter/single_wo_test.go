@@ -263,7 +263,6 @@ func TestSingleWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	f, err := excelize.OpenReader(res.Body)
-	f.SaveAs("single_wo.xlsx")
+	_, err = excelize.OpenReader(res.Body)
 	require.NoError(t, err)
 }
