@@ -2,19 +2,21 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package event
+package event_test
 
 import (
 	"context"
+	"fmt"
+	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebookincubator/ent/dialect"
+	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
-	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/suite"
@@ -22,27 +24,43 @@ import (
 
 type eventTestSuite struct {
 	suite.Suite
-	ctx        context.Context
-	logger     log.Logger
-	client     *ent.Client
-	user       *ent.User
-	subscriber pubsub.Subscriber
+	ctx      context.Context
+	logger   log.Logger
+	client   *ent.Client
+	user     *ent.User
+	emitter  ev.Emitter
+	receiver ev.Receiver
 }
 
-func (s *eventTestSuite) SetupSuite(opts ...viewertest.Option) {
-	db, name, err := testdb.Open()
-	s.Require().NoError(err)
-	db.SetMaxOpenConns(1)
-
-	s.client = enttest.NewClient(s.T(),
-		enttest.WithOptions(ent.Driver(sql.OpenDB(name, db))),
-		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
-	)
-	s.ctx = viewertest.NewContext(context.Background(), s.client, opts...)
-	s.user = viewer.FromContext(s.ctx).(*viewer.UserViewer).User()
+func (s *eventTestSuite) SetupSuite() {
 	s.logger = logtest.NewTestLogger(s.T())
+}
 
-	eventer := Eventer{Logger: s.logger}
-	eventer.Emitter, s.subscriber = pubsub.Pipe()
+func (s *eventTestSuite) SetupTest() {
+	s.client = enttest.Open(s.T(), dialect.SQLite,
+		fmt.Sprintf("file:%s-%d?mode=memory&cache=shared&_fk=1",
+			s.T().Name(), time.Now().UnixNano(),
+		),
+		enttest.WithMigrateOptions(
+			migrate.WithGlobalUniqueID(true),
+		),
+	)
+	s.ctx = viewertest.NewContext(context.Background(), s.client)
+	s.user = viewer.FromContext(s.ctx).(*viewer.UserViewer).User()
+	s.emitter, s.receiver = ev.Pipe()
+}
+
+func (s *eventTestSuite) BeforeTest(string, string) {
+	eventer := event.Eventer{
+		Logger:  s.logger,
+		Emitter: s.emitter,
+	}
 	eventer.HookTo(s.client)
+}
+
+func (s *eventTestSuite) TearDownTest() {
+	ctx := context.Background()
+	s.emitter.Shutdown(ctx)
+	s.receiver.Shutdown(ctx)
+	s.client.Close()
 }

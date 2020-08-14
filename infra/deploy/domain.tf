@@ -1,20 +1,10 @@
 locals {
-  purpleheadband_domain_name = format(
-    "%spurpleheadband.cloud",
-    terraform.workspace != "default" ? format("${terraform.workspace}.") : "",
-  )
-
   symphony_domain_name = format(
     "%sthesymphony.cloud",
     terraform.workspace != "default" ? format("${terraform.workspace}.") : "",
   )
 
   domains = {
-    purpleheadband = {
-      name        = local.purpleheadband_domain_name
-      intern_name = format("intern.%s", local.purpleheadband_domain_name)
-    }
-
     symphony = {
       name        = local.symphony_domain_name
       intern_name = format("intern.%s", local.symphony_domain_name)

@@ -16,6 +16,7 @@ import symphony from '@fbcnms/ui/theme/symphony';
 import {
   EditIcon,
   MessageIcon,
+  PlannedIcon,
   ProfileIcon,
 } from '@fbcnms/ui/components/design-system/Icons';
 import {makeStyles} from '@material-ui/styles';
@@ -44,6 +45,9 @@ const ActivityCommentsIcon = ({field}: Props) => {
     case 'ASSIGNEE':
     case 'OWNER':
       Icon = ProfileIcon;
+      break;
+    case 'CLOCK_IN':
+      Icon = PlannedIcon;
       break;
     default:
       Icon = EditIcon;

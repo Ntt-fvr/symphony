@@ -159,7 +159,7 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     a.ID,
 		Type:   "Activity",
-		Fields: make([]*Field, 6),
+		Fields: make([]*Field, 7),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -179,12 +179,12 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(a.ChangedField); err != nil {
+	if buf, err = json.Marshal(a.ActivityType); err != nil {
 		return nil, err
 	}
 	node.Fields[2] = &Field{
-		Type:  "activity.ChangedField",
-		Name:  "changed_field",
+		Type:  "activity.ActivityType",
+		Name:  "activity_type",
 		Value: string(buf),
 	}
 	if buf, err = json.Marshal(a.IsCreate); err != nil {
@@ -209,6 +209,14 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[5] = &Field{
 		Type:  "string",
 		Name:  "new_value",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(a.ClockDetails); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "activity.ClockDetails",
+		Name:  "clock_details",
 		Value: string(buf),
 	}
 	var ids []int

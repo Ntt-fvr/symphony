@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package handler
+package handler_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -23,7 +24,7 @@ import (
 func TestAddWorkOrderActivities(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	c.Use(event.LogHook(HandleActivityLog, log.NewNopLogger()))
+	c.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 
 	now := time.Now()
@@ -43,20 +44,20 @@ func TestAddWorkOrderActivities(t *testing.T) {
 	for _, a := range activities {
 		require.Equal(t, a.QueryAuthor().OnlyX(ctx).AuthID, u.AuthID)
 		require.Equal(t, a.QueryWorkOrder().OnlyX(ctx).ID, wo.ID)
-		switch a.ChangedField {
-		case activity.ChangedFieldCreationDate:
+		switch a.ActivityType {
+		case activity.ActivityTypeCreationDateChanged:
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.FormatInt(now.Unix(), 10))
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldOwner, activity.ChangedFieldAssignee:
+		case activity.ActivityTypeOwnerChanged, activity.ActivityTypeAssigneeChanged:
 			require.Empty(t, a.OldValue)
 			require.Equal(t, a.NewValue, strconv.Itoa(u.ID))
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldStatus:
+		case activity.ActivityTypeStatusChanged:
 			require.Empty(t, a.OldValue)
 			require.EqualValues(t, a.NewValue, workorder.StatusPlanned)
 			require.True(t, a.IsCreate)
-		case activity.ChangedFieldPriority:
+		case activity.ActivityTypePriorityChanged:
 			require.Empty(t, a.OldValue)
 			require.EqualValues(t, a.NewValue, workorder.PriorityNone)
 			require.True(t, a.IsCreate)
@@ -69,7 +70,7 @@ func TestAddWorkOrderActivities(t *testing.T) {
 func TestEditWorkOrderActivities(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
-	c.Use(event.LogHook(HandleActivityLog, log.NewNopLogger()))
+	c.Use(event.LogHook(handler.HandleActivityLog, log.NewNopLogger()))
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
 
 	now := time.Now()
@@ -108,20 +109,20 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			continue
 		}
 		newCount++
-		switch a.ChangedField {
-		case activity.ChangedFieldAssignee:
+		switch a.ActivityType {
+		case activity.ActivityTypeAssigneeChanged:
 			require.Equal(t, a.NewValue, strconv.Itoa(u2.ID))
 			require.False(t, a.IsCreate)
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
-		case activity.ChangedFieldStatus:
+		case activity.ActivityTypeStatusChanged:
 			require.EqualValues(t, a.NewValue, workorder.StatusPending)
 			require.False(t, a.IsCreate)
 			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
-		case activity.ChangedFieldName:
+		case activity.ActivityTypeNameChanged:
 			require.EqualValues(t, a.NewValue, "wo2_")
 			require.False(t, a.IsCreate)
 			require.EqualValues(t, a.OldValue, "wo2")
-		case activity.ChangedFieldDescription:
+		case activity.ActivityTypeDescriptionChanged:
 			require.EqualValues(t, a.NewValue, "descr_")
 			require.False(t, a.IsCreate)
 			require.EqualValues(t, a.OldValue, "descr")

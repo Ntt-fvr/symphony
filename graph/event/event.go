@@ -8,8 +8,8 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 )
@@ -17,7 +17,7 @@ import (
 // Eventer generates events from mutations.
 type Eventer struct {
 	Logger  log.Logger
-	Emitter pubsub.Emitter
+	Emitter ev.Emitter
 }
 
 // HookTo hooks eventer to ent client.
@@ -26,23 +26,31 @@ func (e *Eventer) HookTo(client *ent.Client) {
 	client.WorkOrder.Use(e.workOrderHook())
 }
 
-func (e *Eventer) emit(ctx context.Context, name string, value interface{}) {
-	emit := func() {
-		logger := e.Logger.For(ctx).With(zap.String("name", name))
-		body, err := pubsub.Marshal(value)
-		if err != nil {
-			logger.Warn("cannot marshal event value", zap.Error(err))
-			return
-		}
-		if err := e.Emitter.Emit(ctx, viewer.FromContext(ctx).Tenant(), name, body); err != nil {
-			logger.Warn("cannot emit event", zap.Error(err))
-		}
-		logger.Debug("emitting event")
+func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {
+	current := viewer.FromContext(ctx)
+	event := &ev.Event{
+		Tenant: current.Tenant(),
+		Name:   name,
+		Object: obj,
 	}
+
+	logger := e.Logger.For(ctx).With(
+		zap.Object("viewer", current),
+		zap.Object("event", event),
+	)
+	emit := func() {
+		if err := e.Emitter.Emit(ctx, event); err != nil {
+			logger.Error("cannot emit event", zap.Error(err))
+		} else {
+			logger.Debug("emitted event")
+		}
+	}
+
 	if tx := ent.TxFromContext(ctx); tx != nil {
 		tx.OnCommit(func(next ent.Committer) ent.Committer {
-			return ent.CommitFunc(func(ctx context.Context, tx *ent.Tx) (err error) {
-				if err = next.Commit(ctx, tx); err == nil {
+			return ent.CommitFunc(func(ctx context.Context, tx *ent.Tx) error {
+				err := next.Commit(ctx, tx)
+				if err == nil {
 					emit()
 				}
 				return err

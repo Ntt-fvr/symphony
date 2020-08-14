@@ -176,8 +176,9 @@ type ComplexityRoot struct {
 	}
 
 	Activity struct {
+		ActivityType   func(childComplexity int) int
 		Author         func(childComplexity int) int
-		ChangedField   func(childComplexity int) int
+		ClockDetails   func(childComplexity int) int
 		CreateTime     func(childComplexity int) int
 		ID             func(childComplexity int) int
 		IsCreate       func(childComplexity int) int
@@ -243,6 +244,10 @@ type ComplexityRoot struct {
 		IsMandatory            func(childComplexity int) int
 		Title                  func(childComplexity int) int
 		Type                   func(childComplexity int) int
+	}
+
+	ClockDetails struct {
+		DistanceMeters func(childComplexity int) int
 	}
 
 	Comment struct {
@@ -683,7 +688,7 @@ type ComplexityRoot struct {
 		RemoveSiteSurvey                         func(childComplexity int, id int) int
 		RemoveWorkOrder                          func(childComplexity int, id int) int
 		RemoveWorkOrderType                      func(childComplexity int, id int) int
-		TechnicianWorkOrderCheckIn               func(childComplexity int, workOrderID int) int
+		TechnicianWorkOrderCheckIn               func(childComplexity int, workOrderID int, input *models.TechnicianWorkOrderCheckInInput) int
 		TechnicianWorkOrderUploadData            func(childComplexity int, input models.TechnicianWorkOrderUploadInput) int
 		UpdateUserGroups                         func(childComplexity int, input models.UpdateUserGroupsInput) int
 	}
@@ -1452,7 +1457,7 @@ type MutationResolver interface {
 	AddActionsRule(ctx context.Context, input models.AddActionsRuleInput) (*ent.ActionsRule, error)
 	EditActionsRule(ctx context.Context, id int, input models.AddActionsRuleInput) (*ent.ActionsRule, error)
 	RemoveActionsRule(ctx context.Context, id int) (bool, error)
-	TechnicianWorkOrderCheckIn(ctx context.Context, workOrderID int) (*ent.WorkOrder, error)
+	TechnicianWorkOrderCheckIn(ctx context.Context, workOrderID int, input *models.TechnicianWorkOrderCheckInInput) (*ent.WorkOrder, error)
 	TechnicianWorkOrderUploadData(ctx context.Context, input models.TechnicianWorkOrderUploadInput) (*ent.WorkOrder, error)
 	AddReportFilter(ctx context.Context, input models.ReportFilterInput) (*ent.ReportFilter, error)
 	EditReportFilter(ctx context.Context, input models.EditReportFilterInput) (*ent.ReportFilter, error)
@@ -1882,6 +1887,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ActionsTriggersSearchResult.Results(childComplexity), true
 
+	case "Activity.activityType":
+		if e.complexity.Activity.ActivityType == nil {
+			break
+		}
+
+		return e.complexity.Activity.ActivityType(childComplexity), true
+
 	case "Activity.author":
 		if e.complexity.Activity.Author == nil {
 			break
@@ -1889,12 +1901,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Activity.Author(childComplexity), true
 
-	case "Activity.changedField":
-		if e.complexity.Activity.ChangedField == nil {
+	case "Activity.clockDetails":
+		if e.complexity.Activity.ClockDetails == nil {
 			break
 		}
 
-		return e.complexity.Activity.ChangedField(childComplexity), true
+		return e.complexity.Activity.ClockDetails(childComplexity), true
 
 	case "Activity.createTime":
 		if e.complexity.Activity.CreateTime == nil {
@@ -2203,6 +2215,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CheckListItemDefinition.Type(childComplexity), true
+
+	case "ClockDetails.distanceMeters":
+		if e.complexity.ClockDetails.DistanceMeters == nil {
+			break
+		}
+
+		return e.complexity.ClockDetails.DistanceMeters(childComplexity), true
 
 	case "Comment.author":
 		if e.complexity.Comment.Author == nil {
@@ -4655,7 +4674,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.TechnicianWorkOrderCheckIn(childComplexity, args["workOrderId"].(int)), true
+		return e.complexity.Mutation.TechnicianWorkOrderCheckIn(childComplexity, args["workOrderId"].(int), args["input"].(*models.TechnicianWorkOrderCheckInInput)), true
 
 	case "Mutation.technicianWorkOrderUploadData":
 		if e.complexity.Mutation.TechnicianWorkOrderUploadData == nil {
@@ -8107,7 +8126,7 @@ input CommentInput {
 
 enum ActivityField
   @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ChangedField"
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ActivityType"
   ) {
   STATUS
   PRIORITY
@@ -8116,19 +8135,28 @@ enum ActivityField
   OWNER
   NAME
   DESCRIPTION
+  CLOCK_IN
+}
+
+type ClockDetails
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockDetails"
+  ) {
+  distanceMeters: Float
 }
 
 type Activity implements Node {
   id: ID!
   author: User
   isCreate: Boolean!
-  changedField: ActivityField!
+  activityType: ActivityField!
   newRelatedNode: Node
   oldRelatedNode: Node
   oldValue: String
   newValue: String
   createTime: Time!
   workOrder: WorkOrder!
+  clockDetails: ClockDetails
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -9205,16 +9233,16 @@ input ReportFilterInput {
 }
 
 enum ExportType
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
-){
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
+  ) {
   EQUIPMENT
   LOCATION
 }
 enum ExportStatus
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
-){
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
+  ) {
   PENDING
   IN_PROGRESS
   SUCCEEDED
@@ -10623,6 +10651,10 @@ input AddActionsRuleInput {
   ruleFilters: [ActionsRuleFilterInput]!
 }
 
+input TechnicianWorkOrderCheckInInput {
+  distanceMeters: Float
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -11149,7 +11181,10 @@ type Mutation {
   addActionsRule(input: AddActionsRuleInput!): ActionsRule!
   editActionsRule(id: ID!, input: AddActionsRuleInput!): ActionsRule!
   removeActionsRule(id: ID!): Boolean!
-  technicianWorkOrderCheckIn(workOrderId: ID!): WorkOrder!
+  technicianWorkOrderCheckIn(
+    workOrderId: ID!
+    input: TechnicianWorkOrderCheckInInput
+  ): WorkOrder!
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
@@ -12649,6 +12684,14 @@ func (ec *executionContext) field_Mutation_technicianWorkOrderCheckIn_args(ctx c
 		}
 	}
 	args["workOrderId"] = arg0
+	var arg1 *models.TechnicianWorkOrderCheckInInput
+	if tmp, ok := rawArgs["input"]; ok {
+		arg1, err = ec.unmarshalOTechnicianWorkOrderCheckInInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -16075,7 +16118,7 @@ func (ec *executionContext) _Activity_isCreate(ctx context.Context, field graphq
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Activity_changedField(ctx context.Context, field graphql.CollectedField, obj *ent.Activity) (ret graphql.Marshaler) {
+func (ec *executionContext) _Activity_activityType(ctx context.Context, field graphql.CollectedField, obj *ent.Activity) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -16092,7 +16135,7 @@ func (ec *executionContext) _Activity_changedField(ctx context.Context, field gr
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ChangedField, nil
+		return obj.ActivityType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16104,9 +16147,9 @@ func (ec *executionContext) _Activity_changedField(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(activity.ChangedField)
+	res := resTmp.(activity.ActivityType)
 	fc.Result = res
-	return ec.marshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐChangedField(ctx, field.Selections, res)
+	return ec.marshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐActivityType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Activity_newRelatedNode(ctx context.Context, field graphql.CollectedField, obj *ent.Activity) (ret graphql.Marshaler) {
@@ -16299,6 +16342,37 @@ func (ec *executionContext) _Activity_workOrder(ctx context.Context, field graph
 	res := resTmp.(*ent.WorkOrder)
 	fc.Result = res
 	return ec.marshalNWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Activity_clockDetails(ctx context.Context, field graphql.CollectedField, obj *ent.Activity) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Activity",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClockDetails, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(activity.ClockDetails)
+	fc.Result = res
+	return ec.marshalOClockDetails2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐClockDetails(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AdministrativePolicy_access(ctx context.Context, field graphql.CollectedField, obj *models1.AdministrativePolicy) (ret graphql.Marshaler) {
@@ -17466,6 +17540,37 @@ func (ec *executionContext) _CheckListItemDefinition_helpText(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClockDetails_distanceMeters(ctx context.Context, field graphql.CollectedField, obj *activity.ClockDetails) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClockDetails",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistanceMeters, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *ent.Comment) (ret graphql.Marshaler) {
@@ -27621,7 +27726,7 @@ func (ec *executionContext) _Mutation_technicianWorkOrderCheckIn(ctx context.Con
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().TechnicianWorkOrderCheckIn(rctx, args["workOrderId"].(int))
+		return ec.resolvers.Mutation().TechnicianWorkOrderCheckIn(rctx, args["workOrderId"].(int), args["input"].(*models.TechnicianWorkOrderCheckInInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -45988,6 +46093,24 @@ func (ec *executionContext) unmarshalInputTechnicianCheckListItemInput(ctx conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTechnicianWorkOrderCheckInInput(ctx context.Context, obj interface{}) (models.TechnicianWorkOrderCheckInInput, error) {
+	var it models.TechnicianWorkOrderCheckInInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "distanceMeters":
+			var err error
+			it.DistanceMeters, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTechnicianWorkOrderUploadInput(ctx context.Context, obj interface{}) (models.TechnicianWorkOrderUploadInput, error) {
 	var it models.TechnicianWorkOrderUploadInput
 	var asMap = obj.(map[string]interface{})
@@ -47111,8 +47234,8 @@ func (ec *executionContext) _Activity(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "changedField":
-			out.Values[i] = ec._Activity_changedField(ctx, field, obj)
+		case "activityType":
+			out.Values[i] = ec._Activity_activityType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
@@ -47161,6 +47284,8 @@ func (ec *executionContext) _Activity(ctx context.Context, sel ast.SelectionSet,
 				}
 				return res
 			})
+		case "clockDetails":
+			out.Values[i] = ec._Activity_clockDetails(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -47483,6 +47608,30 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 			out.Values[i] = ec._CheckListItemDefinition_enumSelectionMode(ctx, field, obj)
 		case "helpText":
 			out.Values[i] = ec._CheckListItemDefinition_helpText(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var clockDetailsImplementors = []string{"ClockDetails"}
+
+func (ec *executionContext) _ClockDetails(ctx context.Context, sel ast.SelectionSet, obj *activity.ClockDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clockDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ClockDetails")
+		case "distanceMeters":
+			out.Values[i] = ec._ClockDetails_distanceMeters(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -55170,12 +55319,12 @@ func (ec *executionContext) marshalNActivity2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._Activity(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐChangedField(ctx context.Context, v interface{}) (activity.ChangedField, error) {
-	var res activity.ChangedField
+func (ec *executionContext) unmarshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐActivityType(ctx context.Context, v interface{}) (activity.ActivityType, error) {
+	var res activity.ActivityType
 	return res, res.UnmarshalGQL(v)
 }
 
-func (ec *executionContext) marshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐChangedField(ctx context.Context, sel ast.SelectionSet, v activity.ChangedField) graphql.Marshaler {
+func (ec *executionContext) marshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐActivityType(ctx context.Context, sel ast.SelectionSet, v activity.ActivityType) graphql.Marshaler {
 	return v
 }
 
@@ -60847,6 +60996,10 @@ func (ec *executionContext) unmarshalOCheckListItemInput2ᚕᚖgithubᚗcomᚋfa
 	return res, nil
 }
 
+func (ec *executionContext) marshalOClockDetails2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐClockDetails(ctx context.Context, sel ast.SelectionSet, v activity.ClockDetails) graphql.Marshaler {
+	return ec._ClockDetails(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalOComment2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐComment(ctx context.Context, sel ast.SelectionSet, v ent.Comment) graphql.Marshaler {
 	return ec._Comment(ctx, sel, &v)
 }
@@ -62751,6 +62904,18 @@ func (ec *executionContext) unmarshalOTechnicianCheckListItemInput2ᚕᚖgithub�
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalOTechnicianWorkOrderCheckInInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx context.Context, v interface{}) (models.TechnicianWorkOrderCheckInInput, error) {
+	return ec.unmarshalInputTechnicianWorkOrderCheckInInput(ctx, v)
+}
+
+func (ec *executionContext) unmarshalOTechnicianWorkOrderCheckInInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx context.Context, v interface{}) (*models.TechnicianWorkOrderCheckInInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalOTechnicianWorkOrderCheckInInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐTechnicianWorkOrderCheckInInput(ctx, v)
+	return &res, err
 }
 
 func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {

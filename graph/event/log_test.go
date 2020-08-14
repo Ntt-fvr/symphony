@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package event
+package event_test
 
 import (
 	"context"
@@ -10,11 +10,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/event"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
+	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/suite"
 )
@@ -29,8 +28,8 @@ func TestLogEvents(t *testing.T) {
 	suite.Run(t, &logTestSuite{})
 }
 
-func (s *logTestSuite) SetupSuite() {
-	s.eventTestSuite.SetupSuite()
+func (s *logTestSuite) SetupTest() {
+	s.eventTestSuite.SetupTest()
 	s.toUpdate = s.client.LocationType.Create().
 		SetName("LocationTypeToUpdate").
 		SaveX(s.ctx)
@@ -39,116 +38,124 @@ func (s *logTestSuite) SetupSuite() {
 		SaveX(s.ctx)
 }
 
-func (s *logTestSuite) subscribeForOneEvent(wg *sync.WaitGroup, expect func(entry event.LogEntry)) {
-	wg.Add(1)
+func (s *logTestSuite) subscribeForOneEvent(expect func(entry event.LogEntry)) *sync.WaitGroup {
 	ctx, cancel := context.WithCancel(s.ctx)
-	events := []string{event.EntMutation}
-	listener, err := pubsub.NewListener(s.ctx, pubsub.ListenerConfig{
-		Subscriber: s.subscriber,
-		Logger:     s.logger.Background(),
-		Events:     events,
-		Handler: pubsub.HandlerFunc(func(_ context.Context, tenant, name string, body []byte) error {
-			s.Assert().NotEmpty(body)
-			s.Assert().Equal(viewertest.DefaultTenant, tenant)
-			s.Assert().Equal(event.EntMutation, name)
-			var entry event.LogEntry
-			err := pubsub.Unmarshal(body, &entry)
-			s.NoError(err)
-			expect(entry)
-			cancel()
-			return nil
-		}),
-	})
-	s.Assert().NoError(err)
+	svc, err := ev.NewService(
+		ev.Config{
+			Receiver: s.receiver,
+			Handler: ev.EventHandlerFunc(func(ctx context.Context, evt *ev.Event) error {
+				s.Require().Equal(viewertest.DefaultTenant, evt.Tenant)
+				s.Require().Equal(event.EntMutation, evt.Name)
+				entry, ok := evt.Object.(event.LogEntry)
+				s.Require().True(ok)
+				expect(entry)
+				cancel()
+				return nil
+			}),
+		},
+		ev.WithTenant(viewertest.DefaultTenant),
+		ev.WithEvent(event.EntMutation),
+	)
+	s.Require().NoError(err)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		defer listener.Shutdown(ctx)
-		err := listener.Listen(ctx)
+		defer svc.Stop(context.Background())
+		err := svc.Run(ctx)
 		s.Require().True(errors.Is(err, context.Canceled))
 	}()
+	return &wg
 }
 
 func (s *logTestSuite) TestCreateEnt() {
-	var wg sync.WaitGroup
-	s.subscribeForOneEvent(&wg, func(entry event.LogEntry) {
-		s.Assert().Equal(s.user.AuthID, entry.UserName)
-		s.Assert().Equal(s.user.ID, *entry.UserID)
-		s.Assert().Equal(ent.OpCreate, entry.Operation)
-		s.Assert().Nil(entry.PrevState)
-		s.Assert().NotNil(entry.CurrState)
-		s.Assert().Equal("LocationType", entry.CurrState.Type)
+	wg := s.subscribeForOneEvent(func(entry event.LogEntry) {
+		s.Require().Equal(s.user.AuthID, entry.UserName)
+		s.Require().Equal(s.user.ID, *entry.UserID)
+		s.Require().Equal(ent.OpCreate, entry.Operation)
+		s.Require().Nil(entry.PrevState)
+		s.Require().NotNil(entry.CurrState)
+		s.Require().Equal("LocationType", entry.CurrState.Type)
 		found := 0
 		for _, field := range entry.CurrState.Fields {
 			switch field.Name {
 			case locationtype.FieldName:
-				s.Assert().Equal("SomeName", field.MustGetString())
-				s.Assert().Equal("string", field.Type)
+				s.Require().Equal("SomeName", field.MustGetString())
+				s.Require().Equal("string", field.Type)
 				found++
 			case locationtype.FieldIndex:
-				s.Assert().Equal(3, field.MustGetInt())
-				s.Assert().Equal("int", field.Type)
+				s.Require().Equal(3, field.MustGetInt())
+				s.Require().Equal("int", field.Type)
 				found++
 			}
 		}
-		s.Assert().Equal(2, found)
+		s.Require().Equal(2, found)
 	})
-	s.client.LocationType.Create().
+	defer wg.Wait()
+
+	_, err := s.client.LocationType.
+		Create().
 		SetName("SomeName").
 		SetIndex(3).
-		SaveX(s.ctx)
-	wg.Wait()
+		Save(s.ctx)
+	s.Require().NoError(err)
 }
 
 func (s *logTestSuite) TestUpdateEnt() {
-	var wg sync.WaitGroup
-	s.subscribeForOneEvent(&wg, func(entry event.LogEntry) {
-		s.Assert().Equal(s.user.AuthID, entry.UserName)
-		s.Assert().Equal(s.user.ID, *entry.UserID)
-		s.Assert().Equal(ent.OpUpdateOne, entry.Operation)
-		s.Assert().NotNil(entry.PrevState)
+	wg := s.subscribeForOneEvent(func(entry event.LogEntry) {
+		s.Require().Equal(s.user.AuthID, entry.UserName)
+		s.Require().Equal(s.user.ID, *entry.UserID)
+		s.Require().Equal(ent.OpUpdateOne, entry.Operation)
+		s.Require().NotNil(entry.PrevState)
 		found := 0
 		for _, field := range entry.PrevState.Fields {
 			if field.Name == locationtype.FieldName {
-				s.Assert().Equal("LocationTypeToUpdate", field.MustGetString())
-				s.Assert().Equal("string", field.Type)
+				s.Require().Equal("LocationTypeToUpdate", field.MustGetString())
+				s.Require().Equal("string", field.Type)
 				found++
 			}
 		}
-		s.Assert().NotNil(entry.CurrState)
+		s.Require().NotNil(entry.CurrState)
 		for _, field := range entry.CurrState.Fields {
 			if field.Name == locationtype.FieldName {
-				s.Assert().Equal("NewName", field.MustGetString())
-				s.Assert().Equal("string", field.Type)
+				s.Require().Equal("NewName", field.MustGetString())
+				s.Require().Equal("string", field.Type)
 				found++
 			}
 		}
-		s.Assert().Equal(2, found)
+		s.Require().Equal(2, found)
 	})
-	s.client.LocationType.UpdateOne(s.toUpdate).
+	defer wg.Wait()
+
+	err := s.client.LocationType.
+		UpdateOne(s.toUpdate).
 		SetName("NewName").
-		SaveX(s.ctx)
-	wg.Wait()
+		Exec(s.ctx)
+	s.Require().NoError(err)
 }
 
 func (s *logTestSuite) TestDeleteEnt() {
-	var wg sync.WaitGroup
-	s.subscribeForOneEvent(&wg, func(entry event.LogEntry) {
-		s.Assert().Equal(s.user.AuthID, entry.UserName)
-		s.Assert().Equal(s.user.ID, *entry.UserID)
-		s.Assert().Equal(ent.OpDeleteOne, entry.Operation)
-		s.Assert().NotNil(entry.PrevState)
+	wg := s.subscribeForOneEvent(func(entry event.LogEntry) {
+		s.Require().Equal(s.user.AuthID, entry.UserName)
+		s.Require().Equal(s.user.ID, *entry.UserID)
+		s.Require().Equal(ent.OpDeleteOne, entry.Operation)
+		s.Require().NotNil(entry.PrevState)
 		found := 0
 		for _, field := range entry.PrevState.Fields {
 			if field.Name == locationtype.FieldName {
-				s.Assert().Equal("LocationTypeToDelete", field.MustGetString())
-				s.Assert().Equal("string", field.Type)
+				s.Require().Equal("LocationTypeToDelete", field.MustGetString())
+				s.Require().Equal("string", field.Type)
 				found++
 			}
 		}
-		s.Assert().Equal(1, found)
-		s.Assert().Nil(entry.CurrState)
+		s.Require().Equal(1, found)
+		s.Require().Nil(entry.CurrState)
 	})
-	s.client.LocationType.DeleteOne(s.toDelete).
-		ExecX(s.ctx)
-	wg.Wait()
+	defer wg.Wait()
+
+	err := s.client.LocationType.
+		DeleteOne(s.toDelete).
+		Exec(s.ctx)
+	s.Require().NoError(err)
 }

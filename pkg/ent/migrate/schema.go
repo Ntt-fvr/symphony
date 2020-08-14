@@ -34,10 +34,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
+		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CLOCK_IN", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
 		{Name: "is_create", Type: field.TypeBool},
 		{Name: "old_value", Type: field.TypeString, Nullable: true},
 		{Name: "new_value", Type: field.TypeString, Nullable: true},
+		{Name: "clock_details", Type: field.TypeJSON, Nullable: true},
 		{Name: "activity_author", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_activities", Type: field.TypeInt, Nullable: true},
 	}
@@ -49,14 +50,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "activities_users_author",
-				Columns: []*schema.Column{ActivitiesColumns[7]},
+				Columns: []*schema.Column{ActivitiesColumns[8]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "activities_work_orders_activities",
-				Columns: []*schema.Column{ActivitiesColumns[8]},
+				Columns: []*schema.Column{ActivitiesColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,

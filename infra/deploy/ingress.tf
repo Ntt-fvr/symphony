@@ -227,7 +227,7 @@ resource helm_release nginx_ingress {
         service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
         service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
         service.beta.kubernetes.io/aws-load-balancer-type: nlb
-        external-dns.alpha.kubernetes.io/hostname: ${local.ctf_domain_name}
+        external-dns.alpha.kubernetes.io/hostname: '${local.ctf_domain_name},*.${local.ctf_domain_name}'
       externalTrafficPolicy: Local
       internal:
         enabled: true

@@ -13,7 +13,7 @@ import (
 
 // event log events.
 const (
-	EntMutation = "ent/mutation"
+	EntMutation = "ent:mutation"
 )
 
 // LogEntry holds an information on a single ent mutation that happened
