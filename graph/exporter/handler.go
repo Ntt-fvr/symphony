@@ -35,7 +35,7 @@ type exporterExcel struct {
 	excelFile
 }
 
-// Inteface for creating an excel file
+// Interface for creating an excel file
 type excelFile interface {
 	createExcelFile(context.Context, *url.URL) (*excelize.File, error)
 }
@@ -145,22 +145,17 @@ func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if rout != nil {
 		filename = rout.GetName()
 	}
-
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename+"xlsx")
-
 	log := m.log.For(ctx)
-
 	xlsx, err := m.createExcelFile(ctx, r.URL)
 	if err != nil {
 		log.Error("error in export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
 	}
-
 	if xlsx == nil {
 		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
 	}
-
 	err = xlsx.Write(w)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)

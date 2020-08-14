@@ -11,8 +11,6 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -22,6 +20,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	
+	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/require"
 )
 

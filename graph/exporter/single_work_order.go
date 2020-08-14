@@ -39,16 +39,12 @@ const (
 )
 
 func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
-	var (
-		logger = er.log.For(ctx)
-		err    error
-		id     int
-	)
+	logger := er.log.For(ctx)
 	f := excelize.NewFile()
-	id, err = strconv.Atoi(url.Query().Get("id"))
+	id, err := strconv.Atoi(url.Query().Get("id"))
 	if err != nil {
 		logger.Error("work order ID not found", zap.Error(err))
-		return nil, errors.Wrap(err, "work order ID not found")
+		return nil, fmt.Errorf("work order ID not found: %w", err)
 	}
 
 	client := ent.FromContext(ctx)
@@ -177,9 +173,9 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 
 	f.SetColWidth(sheetName, "A", "I", 30)
 
-	for i := range checklistHeader {
+	for i, header := range checklistHeader {
 		cell := columns[i] + strconv.Itoa(currRow)
-		f.SetCellValue(sheetName, cell, checklistHeader[i])
+		f.SetCellValue(sheetName, cell, header)
 		f.SetCellStyle(sheetName, cell, cell, headerStyle)
 	}
 
@@ -201,9 +197,9 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 				return err
 			}
 
-			for i := range cellScanHeader {
+			for i, header := range cellScanHeader {
 				cell := columns[i] + strconv.Itoa(currRow)
-				f.SetCellValue(sheetName, cell, cellScanHeader[i])
+				f.SetCellValue(sheetName, cell, header)
 				f.SetCellStyle(sheetName, cell, cell, headerStyle)
 			}
 
@@ -233,9 +229,8 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			currRow++
 
 			for _, file := range files {
-				for j := range fileHeader {
-					data := []string{file.Name, file.Type.String(), file.CreateTime.Format(timeLayout), file.ModifiedAt.Format(timeLayout), file.UploadedAt.Format(timeLayout), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation}
-					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data[j])
+				for j, date := range []string{file.Name, file.Type.String(), file.CreateTime.Format(timeLayout), file.ModifiedAt.Format(timeLayout), file.UploadedAt.Format(timeLayout), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation} {
+					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
 				}
 				currRow++
 			}
@@ -259,12 +254,10 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	}
 
 	owner, err := wo.QueryOwner().Only(ctx)
-	if err != nil && !ent.IsNotFound(err) {
+	if err != nil {
 		return nil, err
 	}
-	if owner != nil {
-		ownerEmail = owner.Email
-	}
+	ownerEmail := owner.Email
 
 	project, err := wo.QueryProject().Only(ctx)
 	if err != nil && !ent.IsNotFound(err) {
@@ -283,12 +276,10 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	}
 
 	wType, err := wo.QueryType().Only(ctx)
-	if err != nil && !ent.IsNotFound(err) {
+	if err != nil {
 		return nil, err
 	}
-	if wType != nil {
-		woType = wType.Name
-	}
+	woType := wType.Name
 
 	if wo.Status == workorder.StatusDone {
 		closedDate = wo.CloseDate.Format(timeLayout)
