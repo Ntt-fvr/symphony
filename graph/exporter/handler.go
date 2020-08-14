@@ -35,6 +35,7 @@ type exporterExcel struct {
 	excelFile
 }
 
+// Inteface for creating an excel file
 type excelFile interface {
 	createExcelFile(context.Context, *url.URL) (*excelize.File, error)
 }
@@ -136,6 +137,7 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ServerHTTP handles requests to returns an export Excel file with extension xlsx
 func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	filename := "exportExcel"
