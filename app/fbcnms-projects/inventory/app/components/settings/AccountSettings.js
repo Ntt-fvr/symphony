@@ -9,7 +9,6 @@
  */
 
 import type {AccountSettings_UserQuery} from './__generated__/AccountSettings_UserQuery.graphql';
-import type {User} from '../admin/userManagement/utils/UserManagementUtils';
 
 import * as React from 'react';
 import InventorySuspense from '../../common/InventorySuspense';
@@ -49,10 +48,10 @@ function UserAccountWrapper() {
   const loggedInUserID = mainContext.me?.user?.id;
 
   const userData = useLazyLoadQuery<AccountSettings_UserQuery>(userQuery, {
-    id: loggedInUserID,
+    id: loggedInUserID ?? '',
   });
 
-  const loggedInUser: User = userData?.node;
+  const loggedInUser = userData?.node;
 
   if (loggedInUserID == null || loggedInUser == null) {
     return <fbt desc="">Failed to identify logged in user account</fbt>;

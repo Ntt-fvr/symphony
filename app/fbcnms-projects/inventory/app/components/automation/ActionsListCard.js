@@ -76,6 +76,7 @@ const actionRuleFragment = graphql`
 export default function ActionsListCard() {
   const data: ActionsListCard_rulesQueryResponse = useLazyLoadQuery<ActionsListCard_rulesQuery>(
     query,
+    {},
   );
 
   const rules = (data.actionsRules?.results || []).filter(Boolean);

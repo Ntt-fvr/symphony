@@ -65,6 +65,7 @@ const WorkOrderTypes = () => {
     workOrderTypes,
   }: WorkOrderTypesQueryResponse = useLazyLoadQuery<WorkOrderTypesQuery>(
     workOrderTypesQuery,
+    {},
   );
   const [dialogKey, setDialogKey] = useState(0);
   const [showAddEditCard, setShowAddEditCard] = useState(false);

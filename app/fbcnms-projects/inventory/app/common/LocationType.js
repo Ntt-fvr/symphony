@@ -65,6 +65,7 @@ export type LocationTypeNode = $Exact<NamedNode>;
 export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   const response = useLazyLoadQuery<LocationTypeNodesQuery>(
     locationTypeNodesQuery,
+    {},
   );
   const locationTypesData = response.locationTypes?.edges || [];
   const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);

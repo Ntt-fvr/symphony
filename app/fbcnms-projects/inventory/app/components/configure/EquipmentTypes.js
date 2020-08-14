@@ -93,6 +93,7 @@ const EquipmentTypes = () => {
     equipmentTypes,
   }: EquipmentTypesQueryResponse = useLazyLoadQuery<EquipmentTypesQuery>(
     equipmentTypesQuery,
+    {},
   );
   const [
     editingEquipmentType,

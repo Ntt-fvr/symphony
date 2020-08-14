@@ -47,7 +47,7 @@ const usersQuery = graphql`
 `;
 
 export function useUsers(): $ReadOnlyArray<User> {
-  const data = useLazyLoadQuery<UsersQuery>(usersQuery);
+  const data = useLazyLoadQuery<UsersQuery>(usersQuery, {});
   const usersData = data.users?.edges || [];
   return usersData.map(p => p.node).filter(Boolean);
 }

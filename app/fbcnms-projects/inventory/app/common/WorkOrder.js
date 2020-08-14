@@ -122,6 +122,7 @@ export type WorkOrderTemplateNode = $Exact<NamedNode>;
 export function useWorkOrderTemplateNodes(): $ReadOnlyArray<WorkOrderTemplateNode> {
   const response = useLazyLoadQuery<WorkOrderTemplateNodesQuery>(
     workOrderTemplateNodesQuery,
+    {},
   );
   const workOrderTemplatesData = response.workOrderTypes?.edges || [];
   const workOrderTemplates = workOrderTemplatesData

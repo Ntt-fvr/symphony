@@ -488,7 +488,7 @@ const policiesQuery = graphql`
 `;
 
 export function usePermissionsPolicies(): $ReadOnlyArray<PermissionsPolicy> {
-  const data = useLazyLoadQuery<PermissionsPoliciesQuery>(policiesQuery);
+  const data = useLazyLoadQuery<PermissionsPoliciesQuery>(policiesQuery, {});
   return response2PermissionsPolicies(data);
 }
 

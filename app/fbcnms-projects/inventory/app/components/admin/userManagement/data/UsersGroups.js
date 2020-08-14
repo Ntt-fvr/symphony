@@ -42,7 +42,7 @@ const groupsQuery = graphql`
 `;
 
 export function useUsersGroups(): $ReadOnlyArray<UsersGroup> {
-  const data = useLazyLoadQuery<UsersGroupsQuery>(groupsQuery);
+  const data = useLazyLoadQuery<UsersGroupsQuery>(groupsQuery, {});
   const groupsData = data.usersGroups?.edges || [];
   return groupsData.map(p => p.node).filter(Boolean);
 }

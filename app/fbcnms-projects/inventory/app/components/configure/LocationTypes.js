@@ -118,6 +118,7 @@ const LocationTypes = () => {
     locationTypes,
   }: LocationTypesQueryResponse = useLazyLoadQuery<LocationTypesQuery>(
     locationTypesQuery,
+    {},
   );
 
   const locationTypesData: Array<ResponseLocationType> =
