@@ -170,7 +170,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 
 	_, _ = r.client.Activity.Create().
 		SetWorkOrder(wo1).
-		SetChangedField(activity.ChangedFieldPriority).
+		SetActivityType(activity.ActivityTypePriorityChanged).
 		SetOldValue(workorder.PriorityLow.String()).
 		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(u).
@@ -263,6 +263,7 @@ func TestSingleWoExport(t *testing.T) {
 	require.NoError(t, err)
 	defer res.Body.Close()
 
-	_, err = excelize.OpenReader(res.Body)
+	f, err := excelize.OpenReader(res.Body)
+	f.SaveAs("single_wo.xlsx")
 	require.NoError(t, err)
 }

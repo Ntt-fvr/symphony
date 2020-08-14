@@ -152,7 +152,7 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 			return err
 		}
 		row := strconv.Itoa(currRow)
-		activityVal := "changed " + activity.ChangedField.String() + " from " + activity.OldValue + " to " + activity.NewValue
+		activityVal := "changed " + activity.ActivityType.String() + " from " + activity.OldValue + " to " + activity.NewValue
 		for j, data := range []string{author.Email, activityVal, activity.CreateTime.Format(timeLayout), activity.UpdateTime.Format(timeLayout)} {
 			cell := columns[j] + row
 			f.SetCellValue(summarySheetName, cell, data)
