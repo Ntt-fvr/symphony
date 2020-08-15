@@ -98,7 +98,7 @@ func (Metrics) InterceptField(ctx context.Context, next graphql.Resolver) (inter
 	ctx, _ = tag.New(ctx,
 		tag.Upsert(Object, fc.Object),
 		tag.Upsert(Field, fc.Field.Name),
-		tag.Upsert(GraphQLField, fc.Object),
+		tag.Upsert(GraphQLObject, fc.Object),
 		tag.Upsert(GraphQLField, fc.Field.Name),
 		tag.Upsert(GraphQLDeprecated, strconv.FormatBool(deprecated != nil)),
 	)
