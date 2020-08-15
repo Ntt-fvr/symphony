@@ -94,9 +94,13 @@ func (Metrics) InterceptResponse(ctx context.Context, next graphql.ResponseHandl
 // InterceptField measures graphql field execution.
 func (Metrics) InterceptField(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 	fc := graphql.GetFieldContext(ctx)
+	deprecated := fc.Field.Definition.Directives.ForName("deprecated")
 	ctx, _ = tag.New(ctx,
 		tag.Upsert(Object, fc.Object),
 		tag.Upsert(Field, fc.Field.Name),
+		tag.Upsert(GraphQLField, fc.Object),
+		tag.Upsert(GraphQLField, fc.Field.Name),
+		tag.Upsert(GraphQLDeprecated, strconv.FormatBool(deprecated != nil)),
 	)
 
 	start := graphql.Now()

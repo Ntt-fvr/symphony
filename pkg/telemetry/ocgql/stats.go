@@ -71,6 +71,13 @@ var (
 	Errors = tag.MustNewKey("errors")
 )
 
+// The following tags are deprecated.
+var (
+	GraphQLObject     = tag.MustNewKey("graphql.object")
+	GraphQLField      = tag.MustNewKey("graphql.field")
+	GraphQLDeprecated = tag.MustNewKey("graphql.deprecated")
+)
+
 // Package ocgql provides some convenience views for measures.
 // You still need to register these views for data to actually be collected.
 var (
@@ -128,6 +135,17 @@ var (
 	}
 )
 
+// The following views are deprecated.
+var (
+	ResolveCountByObjectField = &view.View{
+		Name:        "graphql/server/resolve_count_by_object_field",
+		Description: "Count of GraphQL resolves by object and field",
+		TagKeys:     []tag.Key{GraphQLObject, GraphQLField, GraphQLDeprecated},
+		Measure:     ResolveTotal,
+		Aggregation: view.Count(),
+	}
+)
+
 // DefaultViews are the default views provided by this package.
 var DefaultViews = []*view.View{
 	RequestTotalView,
@@ -138,4 +156,5 @@ var DefaultViews = []*view.View{
 	DeprecatedResolveTotalView,
 	RequestComplexityView,
 	NumSubscriptionsView,
+	ResolveCountByObjectField,
 }
