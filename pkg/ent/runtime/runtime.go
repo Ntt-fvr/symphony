@@ -727,6 +727,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	projectHooks := schema.Project{}.Hooks()
+
+	project.Hooks[1] = projectHooks[0]
 	projectMixinFields0 := projectMixin[0].Fields()
 	projectMixinFields1 := projectMixin[1].Fields()
 	projectFields := schema.Project{}.Fields()
@@ -1206,6 +1209,8 @@ func init() {
 	workorder.Hooks[1] = workorderHooks[0]
 
 	workorder.Hooks[2] = workorderHooks[1]
+
+	workorder.Hooks[3] = workorderHooks[2]
 	workorderMixinFields0 := workorderMixin[0].Fields()
 	workorderMixinFields1 := workorderMixin[1].Fields()
 	workorderFields := schema.WorkOrder{}.Fields()

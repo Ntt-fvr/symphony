@@ -229,6 +229,7 @@ func (WorkOrder) Mixin() []ent.Mixin {
 func (WorkOrder) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.WorkOrderCloseDateHook(),
+		hooks.WorkOrderAddTemplateHook(),
 		hooks.WorkOrderMandatoryPropertyOnClose(),
 	}
 }

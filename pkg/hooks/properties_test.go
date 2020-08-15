@@ -47,19 +47,16 @@ func (s *propertiesTestSuite) SetupSuite() {
 
 func (s *propertiesTestSuite) BeforeTest(_, _ string) {
 	var err error
-	s.template, err = s.client.WorkOrderTemplate.
-		Create().
-		SetName("template").
-		Save(s.ctx)
-	s.Require().NoError(err)
 	s.workOrder, err = s.client.WorkOrder.
 		Create().
 		SetName("instance").
 		SetType(s.typ).
-		SetTemplate(s.template).
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
 		Save(s.ctx)
+	s.Require().NoError(err)
+	s.template, err = s.workOrder.QueryTemplate().
+		Only(s.ctx)
 	s.Require().NoError(err)
 }
 

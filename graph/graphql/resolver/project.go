@@ -265,51 +265,6 @@ func (projectResolver) NumberOfWorkOrders(ctx context.Context, obj *ent.Project)
 	return obj.QueryWorkOrders().Count(ctx)
 }
 
-func (r mutationResolver) addProjectTemplate(
-	ctx context.Context,
-	projectTypeID int,
-) (*ent.ProjectTemplate, error) {
-	client := r.ClientFrom(ctx)
-	projectType, err := client.ProjectType.Query().
-		Where(projecttype.ID(projectTypeID)).
-		WithProperties().
-		WithWorkOrders().
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying project type: %w", err)
-	}
-	tem, err := client.ProjectTemplate.
-		Create().
-		SetName(projectType.Name).
-		SetNillableDescription(projectType.Description).
-		Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("creating project template: %w", err)
-	}
-	for _, pt := range projectType.Edges.Properties {
-		_, err := r.createTemplatePropertyType(ctx, pt, tem.ID, models.PropertyEntityProject)
-		if err != nil {
-			return nil, fmt.Errorf("creating property type: %w", err)
-		}
-	}
-	for _, wo := range projectType.Edges.WorkOrders {
-		wot, err := wo.QueryType().Only(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("querying work order type: %w", err)
-		}
-		_, err = client.WorkOrderDefinition.
-			Create().
-			SetNillableIndex(pointer.ToInt(wo.Index)).
-			SetTypeID(wot.ID).
-			SetProjectTemplate(tem).
-			Save(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("updating work orders: %w", err)
-		}
-	}
-	return tem, nil
-}
-
 func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 	ctx context.Context,
 	projectTemplate *ent.ProjectTemplate,
@@ -337,17 +292,12 @@ func (r mutationResolver) convertToProjectTemplatePropertyInputs(
 
 func (r mutationResolver) CreateProject(ctx context.Context, input models.AddProjectInput) (*ent.Project, error) {
 	client := r.ClientFrom(ctx)
-	pTemplate, err := r.addProjectTemplate(ctx, input.Type)
-	if err != nil {
-		return nil, err
-	}
 	proj, err := client.
 		Project.Create().
 		SetName(input.Name).
 		SetNillablePriority(input.Priority).
 		SetNillableDescription(input.Description).
 		SetTypeID(input.Type).
-		SetTemplateID(pTemplate.ID).
 		SetNillableLocationID(input.Location).
 		SetNillableCreatorID(input.CreatorID).
 		Save(ctx)
@@ -356,6 +306,10 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 			return nil, gqlerror.Errorf("Project %q already exists", input.Name)
 		}
 		return nil, fmt.Errorf("creating project: %w", err)
+	}
+	pTemplate, err := proj.QueryTemplate().Only(ctx)
+	if err != nil {
+		return nil, err
 	}
 	tPropInputs, err := r.convertToProjectTemplatePropertyInputs(ctx, pTemplate, input.Properties)
 	if err != nil {
