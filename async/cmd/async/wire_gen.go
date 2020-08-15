@@ -119,8 +119,17 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 }
 
 var (
-	_wireLogEntryValue         = event.LogEntry{}
-	_wireValue                 = []handler.Handler{handler.Func(handler.HandleActivityLog), handler.Func(handler.HandleExport)}
+	_wireLogEntryValue = event.LogEntry{}
+	_wireValue         = []handler.NamedHandler{
+		{
+			Name:    "activity_log",
+			Handler: handler.Func(handler.HandleActivityLog),
+		},
+		{
+			Name:    "export",
+			Handler: handler.Func(handler.HandleExport),
+		},
+	}
 	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )
