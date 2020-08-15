@@ -50,16 +50,28 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	tenancy := newTenancy(mySQLTenancy)
-	variable, cleanup2, err := viewer.SyncFeatures(viewerConfig)
+	topicFactory := flags.EventPubURL
+	emitter, cleanup2, err := ev.ProvideEmitter(ctx, topicFactory)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	topicFactory := flags.EventSubURL
-	eventObject := _wireLogEntryValue
-	receiver, cleanup3, err := ev.ProvideReceiver(ctx, topicFactory, eventObject)
+	eventer := &event.Eventer{
+		Logger:  logger,
+		Emitter: emitter,
+	}
+	tenancy := newTenancy(mySQLTenancy, eventer)
+	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
 	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	receiverFactory := provideReceiverFactory(flags)
+	eventObject := _wireLogEntryValue
+	receiver, cleanup4, err := ev.ProvideReceiver(ctx, receiverFactory, eventObject)
+	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -80,13 +92,15 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	telemetryConfig := &flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup4, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	traceExporter, cleanup5, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -111,6 +125,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	logger2 := log.ProvideZapLogger(logger)
 	mainApplication := newApplication(handlerServer, serverServer, logger2, flags)
 	return mainApplication, func() {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -145,8 +160,8 @@ func newApplication(server2 *handler.Server, http *server.Server, logger *zap.Lo
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, nil)
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
@@ -169,4 +184,8 @@ func provideViews() []*view.View {
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views
+}
+
+func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
+	return flags.EventSubURL
 }

@@ -6,7 +6,6 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/authz"
@@ -38,6 +37,7 @@ func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntr
 	return f(ctx, logger, entry)
 }
 
+// NamedHandler contains the handler to run on every event with the name handler for tracking purposes
 type NamedHandler struct {
 	Name    string
 	Handler Handler
@@ -145,11 +145,11 @@ func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.
 func (s *Server) runHandlerWithTransaction(ctx context.Context, h NamedHandler, entry event.LogEntry) error {
 	ctx, span := trace.StartSpan(ctx, h.Name)
 	defer span.End()
-	evt, err := json.Marshal(entry)
-	if err != nil {
-		return fmt.Errorf("failed to marshal event: %w", err)
-	}
-	span.AddAttributes(trace.StringAttribute("event", string(evt)))
+	span.AddAttributes(
+		trace.StringAttribute("operation", entry.Operation.String()),
+		trace.StringAttribute("type", entry.Type),
+		trace.Int64Attribute("ent_id", int64(event.GetEntID(entry))),
+	)
 	tx, err := ent.FromContext(ctx).Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("creating transaction: %w", err)
