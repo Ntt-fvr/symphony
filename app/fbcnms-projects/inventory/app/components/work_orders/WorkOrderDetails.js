@@ -40,7 +40,7 @@ import LocationTypeahead from '../typeahead/LocationTypeahead';
 import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
-import React, {useContext, useReducer, useState} from 'react';
+import React, {useContext, useMemo, useReducer, useState} from 'react';
 import Select from '@fbcnms/ui/components/design-system/Select/Select';
 import Strings from '@fbcnms/strings/Strings';
 import Text from '@fbcnms/ui/components/design-system/Text';
@@ -171,7 +171,7 @@ const WorkOrderDetails = ({
   const [isLoadingDocument, setIsLoadingDocument] = useState(false);
   const {isFeatureEnabled} = useContext(AppContext);
 
-  const {me} = useMainContext();
+  const {me, userHasAdminPermissions} = useMainContext();
 
   const [editingCategories, dispatch] = useReducer<
     ChecklistCategoriesStateType,
@@ -278,6 +278,30 @@ const WorkOrderDetails = ({
 
   const isOwner = me?.user?.email === propsWorkOrder?.owner?.email;
   const isAssignee = me?.user?.email === propsWorkOrder?.assignedTo?.email;
+  const updatePermission = me?.permissions.workforcePolicy.data.update;
+  const templateId = propsWorkOrder.workOrderType.id;
+  const assigneeCanCompleteWorkOrder =
+    propsWorkOrder.workOrderTemplate?.assigneeCanCompleteWorkOrder;
+
+  const filteredStatusValues = useMemo(() => {
+    if (
+      userHasAdminPermissions ||
+      isOwner ||
+      updatePermission?.isAllowed == 'YES' ||
+      (updatePermission?.isAllowed == 'BY_CONDITION' &&
+        updatePermission.workOrderTypeIds?.includes(templateId)) ||
+      (isAssignee && assigneeCanCompleteWorkOrder)
+    ) {
+      return statusValues;
+    }
+    return statusValues.filter(status => status != doneStatus);
+  }, [
+    userHasAdminPermissions,
+    isOwner,
+    updatePermission,
+    isAssignee,
+    assigneeCanCompleteWorkOrder,
+  ]);
 
   return (
     <div className={classes.root}>
@@ -382,7 +406,7 @@ const WorkOrderDetails = ({
                             label="Status"
                             disabled={form.alerts.error.detected}>
                             <Select
-                              options={statusValues}
+                              options={filteredStatusValues}
                               selectedValue={workOrder.status}
                               onChange={value => setWorkOrderStatus(value)}
                             />
@@ -632,6 +656,9 @@ export default withRouter(
           workOrderType {
             name
             id
+          }
+          workOrderTemplate {
+            assigneeCanCompleteWorkOrder
           }
           location {
             name

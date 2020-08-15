@@ -19,6 +19,8 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldAssigneeCanCompleteWorkOrder holds the string denoting the assignee_can_complete_work_order field in the database.
+	FieldAssigneeCanCompleteWorkOrder = "assignee_can_complete_work_order"
 
 	// EdgePropertyTypes holds the string denoting the property_types edge name in mutations.
 	EdgePropertyTypes = "property_types"
@@ -57,6 +59,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldDescription,
+	FieldAssigneeCanCompleteWorkOrder,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the WorkOrderTemplate type.
@@ -73,4 +76,6 @@ var ForeignKeys = []string{
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
+	// DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
+	DefaultAssigneeCanCompleteWorkOrder bool
 )

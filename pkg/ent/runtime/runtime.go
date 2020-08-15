@@ -1252,6 +1252,7 @@ func init() {
 	workorderdefinition.DefaultUpdateTime = workorderdefinitionDescUpdateTime.Default.(func() time.Time)
 	// workorderdefinition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	workorderdefinition.UpdateDefaultUpdateTime = workorderdefinitionDescUpdateTime.UpdateDefault.(func() time.Time)
+	workordertemplateMixin := schema.WorkOrderTemplate{}.Mixin()
 	workordertemplate.Policy = schema.WorkOrderTemplate{}.Policy()
 	workordertemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
@@ -1261,6 +1262,14 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	workordertemplateMixinFields0 := workordertemplateMixin[0].Fields()
+	workordertemplateFields := schema.WorkOrderTemplate{}.Fields()
+	_ = workordertemplateFields
+	// workordertemplateDescAssigneeCanCompleteWorkOrder is the schema descriptor for assignee_can_complete_work_order field.
+	workordertemplateDescAssigneeCanCompleteWorkOrder := workordertemplateMixinFields0[2].Descriptor()
+	// workordertemplate.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
+	workordertemplate.DefaultAssigneeCanCompleteWorkOrder = workordertemplateDescAssigneeCanCompleteWorkOrder.Default.(bool)
+	workordertypeMixin := schema.WorkOrderType{}.Mixin()
 	workordertype.Policy = schema.WorkOrderType{}.Policy()
 	workordertype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
@@ -1270,6 +1279,13 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	workordertypeMixinFields0 := workordertypeMixin[0].Fields()
+	workordertypeFields := schema.WorkOrderType{}.Fields()
+	_ = workordertypeFields
+	// workordertypeDescAssigneeCanCompleteWorkOrder is the schema descriptor for assignee_can_complete_work_order field.
+	workordertypeDescAssigneeCanCompleteWorkOrder := workordertypeMixinFields0[2].Descriptor()
+	// workordertype.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
+	workordertype.DefaultAssigneeCanCompleteWorkOrder = workordertypeDescAssigneeCanCompleteWorkOrder.Default.(bool)
 }
 
 const (

@@ -60,6 +60,26 @@ func (wotu *WorkOrderTemplateUpdate) ClearDescription() *WorkOrderTemplateUpdate
 	return wotu
 }
 
+// SetAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field.
+func (wotu *WorkOrderTemplateUpdate) SetAssigneeCanCompleteWorkOrder(b bool) *WorkOrderTemplateUpdate {
+	wotu.mutation.SetAssigneeCanCompleteWorkOrder(b)
+	return wotu
+}
+
+// SetNillableAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field if the given value is not nil.
+func (wotu *WorkOrderTemplateUpdate) SetNillableAssigneeCanCompleteWorkOrder(b *bool) *WorkOrderTemplateUpdate {
+	if b != nil {
+		wotu.SetAssigneeCanCompleteWorkOrder(*b)
+	}
+	return wotu
+}
+
+// ClearAssigneeCanCompleteWorkOrder clears the value of assignee_can_complete_work_order.
+func (wotu *WorkOrderTemplateUpdate) ClearAssigneeCanCompleteWorkOrder() *WorkOrderTemplateUpdate {
+	wotu.mutation.ClearAssigneeCanCompleteWorkOrder()
+	return wotu
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (wotu *WorkOrderTemplateUpdate) AddPropertyTypeIDs(ids ...int) *WorkOrderTemplateUpdate {
 	wotu.mutation.AddPropertyTypeIDs(ids...)
@@ -240,6 +260,19 @@ func (wotu *WorkOrderTemplateUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: workordertemplate.FieldDescription,
 		})
 	}
+	if value, ok := wotu.mutation.AssigneeCanCompleteWorkOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
+	if wotu.mutation.AssigneeCanCompleteWorkOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
 	if nodes := wotu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -392,6 +425,26 @@ func (wotuo *WorkOrderTemplateUpdateOne) SetNillableDescription(s *string) *Work
 // ClearDescription clears the value of description.
 func (wotuo *WorkOrderTemplateUpdateOne) ClearDescription() *WorkOrderTemplateUpdateOne {
 	wotuo.mutation.ClearDescription()
+	return wotuo
+}
+
+// SetAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field.
+func (wotuo *WorkOrderTemplateUpdateOne) SetAssigneeCanCompleteWorkOrder(b bool) *WorkOrderTemplateUpdateOne {
+	wotuo.mutation.SetAssigneeCanCompleteWorkOrder(b)
+	return wotuo
+}
+
+// SetNillableAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field if the given value is not nil.
+func (wotuo *WorkOrderTemplateUpdateOne) SetNillableAssigneeCanCompleteWorkOrder(b *bool) *WorkOrderTemplateUpdateOne {
+	if b != nil {
+		wotuo.SetAssigneeCanCompleteWorkOrder(*b)
+	}
+	return wotuo
+}
+
+// ClearAssigneeCanCompleteWorkOrder clears the value of assignee_can_complete_work_order.
+func (wotuo *WorkOrderTemplateUpdateOne) ClearAssigneeCanCompleteWorkOrder() *WorkOrderTemplateUpdateOne {
+	wotuo.mutation.ClearAssigneeCanCompleteWorkOrder()
 	return wotuo
 }
 
@@ -571,6 +624,19 @@ func (wotuo *WorkOrderTemplateUpdateOne) sqlSave(ctx context.Context) (wot *Work
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: workordertemplate.FieldDescription,
+		})
+	}
+	if value, ok := wotuo.mutation.AssigneeCanCompleteWorkOrder(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
+		})
+	}
+	if wotuo.mutation.AssigneeCanCompleteWorkOrderCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
 		})
 	}
 	if nodes := wotuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {

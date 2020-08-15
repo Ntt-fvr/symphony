@@ -5000,7 +5000,7 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderTemplate",
-		Fields: make([]*Field, 2),
+		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -5018,6 +5018,14 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	node.Fields[1] = &Field{
 		Type:  "string",
 		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.AssigneeCanCompleteWorkOrder); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "bool",
+		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
 	var ids []int
@@ -5061,7 +5069,7 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderType",
-		Fields: make([]*Field, 2),
+		Fields: make([]*Field, 3),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
@@ -5079,6 +5087,14 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[1] = &Field{
 		Type:  "string",
 		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.AssigneeCanCompleteWorkOrder); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "bool",
+		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
 	}
 	var ids []int

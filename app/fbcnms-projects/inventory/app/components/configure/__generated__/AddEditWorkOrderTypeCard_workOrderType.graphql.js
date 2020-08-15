@@ -24,6 +24,7 @@ export type AddEditWorkOrderTypeCard_workOrderType = {|
   +id: string,
   +name: string,
   +description: ?string,
+  +assigneeCanCompleteWorkOrder: ?boolean,
   +numberOfWorkOrders: number,
   +propertyTypes: $ReadOnlyArray<?{|
     +id: string,
@@ -131,6 +132,13 @@ return {
     (v0/*: any*/),
     (v1/*: any*/),
     (v2/*: any*/),
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "assigneeCanCompleteWorkOrder",
+      "args": null,
+      "storageKey": null
+    },
     {
       "kind": "ScalarField",
       "alias": null,
@@ -300,5 +308,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '957647da063892216c692ff7acfb9141';
+(node/*: any*/).hash = 'aa28c279488d86771992c34cfcae9373';
 module.exports = node;

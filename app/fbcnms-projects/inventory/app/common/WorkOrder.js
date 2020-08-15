@@ -31,6 +31,7 @@ export type WorkOrderType = {
   id: string,
   name: string,
   description: ?string,
+  assigneeCanCompleteWorkOrder: ?boolean,
   propertyTypes: Array<PropertyType>,
   numberOfWorkOrders: number,
   checklistCategoryDefinitions: Array<ChecklistCategoryDefinition>,
@@ -100,6 +101,7 @@ export const convertWorkOrderTypeToMutationInput = (
           id: isTempId(item.id) ? undefined : item.id,
         })),
       })),
+    assigneeCanCompleteWorkOrder: workOrderType.assigneeCanCompleteWorkOrder,
   };
 };
 

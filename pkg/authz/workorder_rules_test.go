@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/google/uuid"
@@ -22,13 +23,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func prepareWorkOrderData(ctx context.Context, c *ent.Client) (*ent.WorkOrderType, *ent.WorkOrder) {
+func prepareWOData(ctx context.Context, c *ent.Client, setWorkOrderType func(wc *ent.WorkOrderTypeCreate)) (*ent.WorkOrderType, *ent.WorkOrder) {
 	u := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	workOrderTypeName := uuid.New().String()
 	workOrderName := uuid.New().String()
-	workOrderType := c.WorkOrderType.Create().
-		SetName(workOrderTypeName).
-		SaveX(ctx)
+	workOrderTypeMutation := c.WorkOrderType.Create().
+		SetName(workOrderTypeName)
+	if setWorkOrderType != nil {
+		setWorkOrderType(workOrderTypeMutation)
+	}
+	workOrderType := workOrderTypeMutation.SaveX(ctx)
 	workOrder := c.WorkOrder.Create().
 		SetName(workOrderName).
 		SetType(workOrderType).
@@ -36,6 +40,16 @@ func prepareWorkOrderData(ctx context.Context, c *ent.Client) (*ent.WorkOrderTyp
 		SetCreationDate(time.Now()).
 		SaveX(ctx)
 	return workOrderType, workOrder
+}
+
+func prepareWorkOrderData(ctx context.Context, c *ent.Client) (*ent.WorkOrderType, *ent.WorkOrder) {
+	return prepareWOData(ctx, c, nil)
+}
+
+func prepareWorkOrderDataWithCompletionDisallowed(ctx context.Context, c *ent.Client) (*ent.WorkOrderType, *ent.WorkOrder) {
+	return prepareWOData(ctx, c, func(wc *ent.WorkOrderTypeCreate) {
+		wc.SetAssigneeCanCompleteWorkOrder(false)
+	})
 }
 
 func TestNonUserCannotEditWorkOrder(t *testing.T) {
@@ -52,7 +66,7 @@ func TestNonUserCannotEditWorkOrder(t *testing.T) {
 	require.True(t, errors.Is(err, privacy.Deny))
 }
 
-func TestAssignCanEditWOWithOwnerAndDelete(t *testing.T) {
+func TestAssigneeCannotEditWOWithOwnerAndDelete(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
 	_, workOrder := prepareWorkOrderData(ctx, c)
@@ -74,6 +88,32 @@ func TestAssignCanEditWOWithOwnerAndDelete(t *testing.T) {
 		Exec(ctx)
 	require.True(t, errors.Is(err, privacy.Deny))
 	err = c.WorkOrder.DeleteOne(workOrder).
+		Exec(ctx)
+	require.True(t, errors.Is(err, privacy.Deny))
+}
+
+func TestAssigneeCanCompleteWO(t *testing.T) {
+	c := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(context.Background(), c)
+	_, workOrder := prepareWorkOrderData(ctx, c)
+	_, workOrderWithCompletionDisallowed := prepareWorkOrderDataWithCompletionDisallowed(ctx, c)
+	u := viewer.MustGetOrCreateUser(ctx, "MyAssignee", user.RoleUser)
+	c.WorkOrder.UpdateOne(workOrder).
+		SetAssignee(u).
+		ExecX(ctx)
+	c.WorkOrder.UpdateOne(workOrderWithCompletionDisallowed).
+		SetAssignee(u).
+		ExecX(ctx)
+	ctx = viewertest.NewContext(ctx, c,
+		viewertest.WithUser("MyAssignee"),
+		viewertest.WithRole(user.RoleUser),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	err := c.WorkOrder.UpdateOne(workOrder).
+		SetStatus(workorder.StatusDone).
+		Exec(ctx)
+	require.NoError(t, err)
+	err = c.WorkOrder.UpdateOne(workOrderWithCompletionDisallowed).
+		SetStatus(workorder.StatusDone).
 		Exec(ctx)
 	require.True(t, errors.Is(err, privacy.Deny))
 }
@@ -107,6 +147,10 @@ func TestOwnerCanEditWOButNotDelete(t *testing.T) {
 	err = c.WorkOrder.DeleteOne(workOrder).
 		Exec(ctx)
 	require.Error(t, err)
+	err = c.WorkOrder.UpdateOne(workOrder).
+		SetStatus(workorder.StatusDone).
+		Exec(ctx)
+	require.NoError(t, err)
 }
 
 func TestWorkOrderWritePolicyRule(t *testing.T) {
