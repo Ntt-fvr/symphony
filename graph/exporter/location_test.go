@@ -26,7 +26,7 @@ func TestEmptyLocationDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, locationsRower{log}}
+	e := &exporter{log, LocationsRower{log, true}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -55,54 +55,11 @@ func TestEmptyLocationDataExport(t *testing.T) {
 	}
 }
 
-func TestLocationsAsyncExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.log
-
-	e := &exporter{log, locationsRower{log}}
-	th := viewertest.TestHandler(t, e, r.client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	req, err := http.NewRequest(http.MethodGet, server.URL+"/locations", nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-	req.Header.Set(viewer.FeaturesHeader, "async_export")
-
-	prepareData(ctx, t, *r)
-	require.NoError(t, err)
-
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
-
-	type resStruct = struct {
-		TaskID string
-	}
-	var response resStruct
-	err = json.NewDecoder(res.Body).Decode(&response)
-	require.NoError(t, err)
-	taskID := response.TaskID
-	require.NotEmpty(t, taskID)
-	require.True(t, len(response.TaskID) > 1)
-
-	req, err = http.NewRequest(http.MethodGet, server.URL+"/equipments", nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-	req.Header.Set(viewer.FeaturesHeader, "async_export")
-	resEquip, err := http.DefaultClient.Do(req)
-	require.Error(t, err)
-	if resEquip != nil {
-		resEquip.Body.Close()
-	}
-}
-
 func TestLocationsExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, locationsRower{log}}
+	e := &exporter{log, LocationsRower{log, true}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -185,7 +142,7 @@ func TestExportLocationWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log, locationsRower{log}}
+	e := &exporter{log, LocationsRower{log, true}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -255,7 +212,7 @@ func TestExportLocationWithPropertyFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log, locationsRower{log}}
+	e := &exporter{log, LocationsRower{log, true}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -311,4 +268,47 @@ func TestExportLocationWithPropertyFilters(t *testing.T) {
 		}
 	}
 	require.Equal(t, 2, linesCount)
+}
+
+func TestLocationsAsyncExport(t *testing.T) {
+	r := newExporterTestResolver(t)
+	log := r.exporter.log
+
+	e := &exporter{log, LocationsRower{log, false}}
+	th := viewertest.TestHandler(t, e, r.client)
+	server := httptest.NewServer(th)
+	defer server.Close()
+
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/locations", nil)
+	require.NoError(t, err)
+	viewertest.SetDefaultViewerHeaders(req)
+	req.Header.Set(viewer.FeaturesHeader, "async_export")
+
+	prepareData(ctx, t, *r)
+	require.NoError(t, err)
+
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	type resStruct = struct {
+		TaskID string
+	}
+	var response resStruct
+	err = json.NewDecoder(res.Body).Decode(&response)
+	require.NoError(t, err)
+	taskID := response.TaskID
+	require.NotEmpty(t, taskID)
+	require.True(t, len(response.TaskID) > 1)
+
+	req, err = http.NewRequest(http.MethodGet, server.URL+"/equipments", nil)
+	require.NoError(t, err)
+	viewertest.SetDefaultViewerHeaders(req)
+	req.Header.Set(viewer.FeaturesHeader, "async_export")
+	resEquip, err := http.DefaultClient.Do(req)
+	require.Error(t, err)
+	if resEquip != nil {
+		resEquip.Body.Close()
+	}
 }
