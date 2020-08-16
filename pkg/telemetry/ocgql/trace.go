@@ -10,6 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/trace"
 )
@@ -30,6 +31,7 @@ type Tracer struct {
 
 var _ interface {
 	graphql.HandlerExtension
+	graphql.OperationInterceptor
 	graphql.ResponseInterceptor
 	graphql.FieldInterceptor
 } = Tracer{}
@@ -44,22 +46,60 @@ func (Tracer) Validate(graphql.ExecutableSchema) error {
 	return nil
 }
 
+func (t Tracer) InterceptOperation(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+	if !t.AllowRoot && trace.FromContext(ctx) == nil {
+		return next(ctx)
+	}
+	oc := graphql.GetOperationContext(ctx)
+	if !isSubscription(oc) {
+		return next(ctx)
+	}
+
+	ctx, span := t.startSpan(ctx, spanNameFromOperation(oc))
+	span.AddAttributes(operationAttrs(ctx, oc)...)
+	go func() {
+		<-ctx.Done()
+		span.End()
+	}()
+	return next(ctx)
+}
+
+func (t Tracer) startSpan(ctx context.Context, name string) (context.Context, *trace.Span) {
+	return trace.StartSpan(ctx, name, trace.WithSampler(t.Sampler))
+}
+
+func spanNameFromOperation(oc *graphql.OperationContext) string {
+	if oc.OperationName != "" {
+		return oc.OperationName
+	}
+	if oc.Operation != nil {
+		return string(oc.Operation.Operation)
+	}
+	return "operation"
+}
+
+func isSubscription(oc *graphql.OperationContext) bool {
+	return oc.Operation != nil && oc.Operation.Operation == ast.Subscription
+}
+
 // InterceptResponse traces graphql response execution.
 func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
 	oc := graphql.GetOperationContext(ctx)
-	ctx, span := trace.StartSpan(ctx,
-		spanNameFromOperation(oc),
-		trace.WithSampler(t.Sampler),
-	)
+	name := spanNameFromOperation(oc)
+	ctx, span := t.startSpan(ctx, name)
 	defer span.End()
 	if !span.IsRecordingEvents() {
 		return next(ctx)
 	}
 
-	span.AddAttributes(operationAttrs(ctx, oc)...)
+	if isSubscription(oc) {
+		span.SetName(name + ".response")
+	} else {
+		span.AddAttributes(operationAttrs(ctx, oc)...)
+	}
 	defer setSpanStatus(ctx, span, graphql.GetErrors)
 
 	return next(ctx)
@@ -98,26 +138,13 @@ func operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.A
 	return attrs
 }
 
-func spanNameFromOperation(oc *graphql.OperationContext) string {
-	if oc.OperationName != "" {
-		return oc.OperationName
-	}
-	if oc.Operation != nil {
-		return string(oc.Operation.Operation)
-	}
-	return "operation"
-}
-
 // InterceptField traces graphql field execution.
 func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 	if !t.Field || (!t.AllowRoot && trace.FromContext(ctx) == nil) {
 		return next(ctx)
 	}
 	fc := graphql.GetFieldContext(ctx)
-	ctx, span := trace.StartSpan(ctx,
-		spanNameFromField(fc.Field),
-		trace.WithSampler(t.Sampler),
-	)
+	ctx, span := t.startSpan(ctx, spanNameFromField(fc.Field))
 	defer span.End()
 	if !span.IsRecordingEvents() {
 		return next(ctx)

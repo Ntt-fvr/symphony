@@ -63,7 +63,7 @@ func (r subscriptionResolver) workOrderSubscribe(ctx context.Context, event stri
 	}
 
 	go func() {
-		defer svc.Stop(context.Background())
+		defer svc.Stop(ctx)
 		err := svc.Run(ctx)
 		logger.Debug("subscription terminated", zap.Error(err))
 	}()

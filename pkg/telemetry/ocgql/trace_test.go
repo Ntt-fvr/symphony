@@ -6,13 +6,17 @@ package ocgql_test
 
 import (
 	"context"
+	"errors"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/testserver"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/cenkalti/backoff/v4"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/stretchr/testify/suite"
 	"go.opencensus.io/trace"
@@ -22,12 +26,14 @@ type tracerTestSuite struct {
 	suite.Suite
 	sample bool
 	client *client.Client
-	spans  map[string]*trace.SpanData
+	server *testserver.TestServer
+	spans  sync.Map
 }
 
 func (s *tracerTestSuite) SetupSuite() {
 	srv := testserver.New()
 	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.Websocket{})
 	srv.Use(extension.FixedComplexityLimit(1000))
 	srv.SetCalculatedComplexity(100)
 	srv.Use(ocgql.Tracer{
@@ -47,6 +53,7 @@ func (s *tracerTestSuite) SetupSuite() {
 		},
 	)
 	s.client = client.New(srv)
+	s.server = srv
 	trace.RegisterExporter(s)
 }
 
@@ -56,28 +63,38 @@ func (s *tracerTestSuite) TearDownSuite() {
 
 func (s *tracerTestSuite) SetupTest() {
 	s.sample = true
-	s.spans = map[string]*trace.SpanData{}
+}
+
+func (s *tracerTestSuite) TearDownTest() {
+	s.spans = sync.Map{}
 }
 
 func (s *tracerTestSuite) ExportSpan(span *trace.SpanData) {
-	s.spans[span.Name] = span
+	s.spans.Store(span.Name, span)
+}
+
+func (s *tracerTestSuite) GetSpan(name string) *trace.SpanData {
+	span, ok := s.spans.Load(name)
+	if !ok {
+		return nil
+	}
+	return span.(*trace.SpanData)
 }
 
 func TestTracer(t *testing.T) {
 	suite.Run(t, &tracerTestSuite{})
 }
 
-func (s *tracerTestSuite) TestWithSampling() {
+func (s *tracerTestSuite) TestOperation() {
 	const (
 		query = "query($id: Int!) { name: find(id: $id) }"
 		id    = "42"
 	)
 	err := s.post(query, client.Var("id", id))
 	s.Require().NoError(err)
-	s.Require().Len(s.spans, 3)
 
-	span, ok := s.spans["query"]
-	s.Require().True(ok)
+	span := s.GetSpan("query")
+	s.Require().NotNil(span)
 	s.Require().Equal(query, span.Attributes["graphql.query"])
 	s.Require().Equal(id, span.Attributes["graphql.vars.id"])
 	s.Require().EqualValues(100, span.Attributes["graphql.complexity.value"])
@@ -85,8 +102,8 @@ func (s *tracerTestSuite) TestWithSampling() {
 	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
 	s.Require().Empty(span.Message)
 
-	span, ok = s.spans["name"]
-	s.Require().True(ok)
+	span = s.GetSpan("name")
+	s.Require().NotNil(span)
 	for _, attr := range []string{"path", "name", "alias"} {
 		s.Require().Equal("name", span.Attributes["graphql.field."+attr])
 	}
@@ -98,8 +115,8 @@ func (s *tracerTestSuite) TestWithoutSampling() {
 	s.sample = false
 	err := s.post("query { name }")
 	s.Require().NoError(err)
-	_, ok := s.spans["query"]
-	s.Require().False(ok)
+	span := s.GetSpan("query")
+	s.Require().Nil(span)
 }
 
 func (s *tracerTestSuite) TestNamedOperation() {
@@ -109,9 +126,42 @@ func (s *tracerTestSuite) TestNamedOperation() {
 	)
 	s.Require().Error(err)
 
-	span, ok := s.spans[op]
-	s.Require().True(ok)
+	span := s.GetSpan(op)
+	s.Require().NotNil(span)
 	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
+}
+
+func (s *tracerTestSuite) TestSubscription() {
+	sk := s.client.Websocket(`subscription { name }`)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := sk.Next(&struct{ Name string }{})
+		s.Require().NoError(err)
+	}()
+	s.server.SendNextSubscriptionMessage()
+	wg.Wait()
+	err := sk.Close()
+	s.Require().NoError(err)
+
+	ctx, cancel := context.WithTimeout(
+		context.Background(), time.Second,
+	)
+	defer cancel()
+	err = backoff.Retry(
+		func() error {
+			if s.GetSpan("subscription") == nil ||
+				s.GetSpan("subscription.response") == nil {
+				return errors.New("span not found")
+			}
+			return nil
+		},
+		backoff.WithContext(
+			backoff.NewConstantBackOff(10*time.Millisecond), ctx,
+		),
+	)
+	s.Require().NoError(err)
 }
 
 func (s *tracerTestSuite) post(query string, opts ...client.Option) error {
