@@ -10,7 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
-	"github.com/vektah/gqlparser/v2/ast"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/trace"
 )
 
@@ -45,7 +45,7 @@ func (Tracer) Validate(graphql.ExecutableSchema) error {
 }
 
 // InterceptResponse traces graphql response execution.
-func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) (rsp *graphql.Response) {
+func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
@@ -59,31 +59,43 @@ func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHand
 		return next(ctx)
 	}
 
-	span.AddAttributes(
+	span.AddAttributes(operationAttrs(ctx, oc)...)
+	defer setSpanStatus(ctx, span, graphql.GetErrors)
+
+	return next(ctx)
+}
+
+func setSpanStatus(ctx context.Context, span *trace.Span, getErrors func(context.Context) gqlerror.List) {
+	if errs := getErrors(ctx); errs != nil {
+		span.SetStatus(trace.Status{
+			Code:    trace.StatusCodeUnknown,
+			Message: errs.Error(),
+		})
+	}
+}
+
+func operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.Attribute {
+	attrs := make([]trace.Attribute, 0, 4+len(oc.Variables))
+	if op := oc.Operation; op != nil {
+		attrs = append(attrs,
+			trace.StringAttribute("graphql.operation", string(op.Operation)),
+		)
+	}
+	attrs = append(attrs,
 		trace.StringAttribute("graphql.query", oc.RawQuery),
 	)
 	for name, value := range oc.Variables {
-		span.AddAttributes(
+		attrs = append(attrs,
 			trace.StringAttribute("graphql.vars."+name, fmt.Sprintf("%+v", value)),
 		)
 	}
 	if stats := extension.GetComplexityStats(ctx); stats != nil {
-		span.AddAttributes(
+		attrs = append(attrs,
 			trace.Int64Attribute("graphql.complexity.value", int64(stats.Complexity)),
 			trace.Int64Attribute("graphql.complexity.limit", int64(stats.ComplexityLimit)),
 		)
 	}
-
-	defer func() {
-		if rsp.Errors != nil {
-			span.SetStatus(trace.Status{
-				Code:    trace.StatusCodeUnknown,
-				Message: rsp.Errors.Error(),
-			})
-		}
-	}()
-
-	return next(ctx)
+	return attrs
 }
 
 func spanNameFromOperation(oc *graphql.OperationContext) string {
@@ -93,7 +105,7 @@ func spanNameFromOperation(oc *graphql.OperationContext) string {
 	if oc.Operation != nil {
 		return string(oc.Operation.Operation)
 	}
-	return string(ast.Query)
+	return "operation"
 }
 
 // InterceptField traces graphql field execution.
@@ -111,32 +123,32 @@ func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (inte
 		return next(ctx)
 	}
 
-	span.AddAttributes(
+	span.AddAttributes(fieldAttrs(fc)...)
+	defer setSpanStatus(ctx, span, func(ctx context.Context) gqlerror.List {
+		return graphql.GetFieldErrors(ctx, fc)
+	})
+
+	return next(ctx)
+}
+
+func fieldAttrs(fc *graphql.FieldContext) []trace.Attribute {
+	attrs := make([]trace.Attribute, 0, 4+len(fc.Field.Arguments))
+	attrs = append(attrs,
 		trace.StringAttribute("graphql.field.path", fc.Path().String()),
 		trace.StringAttribute("graphql.field.name", fc.Field.Name),
 		trace.StringAttribute("graphql.field.alias", fc.Field.Alias),
 	)
 	if object := fc.Field.ObjectDefinition; object != nil {
-		span.AddAttributes(
+		attrs = append(attrs,
 			trace.StringAttribute("graphql.field.object", object.Name),
 		)
 	}
 	for _, arg := range fc.Field.Arguments {
-		span.AddAttributes(
+		attrs = append(attrs,
 			trace.StringAttribute("graphql.field.args."+arg.Name, arg.Value.String()),
 		)
 	}
-
-	defer func() {
-		if errs := graphql.GetFieldErrors(ctx, fc); errs != nil {
-			span.SetStatus(trace.Status{
-				Code:    trace.StatusCodeUnknown,
-				Message: errs.Error(),
-			})
-		}
-	}()
-
-	return next(ctx)
+	return attrs
 }
 
 func spanNameFromField(field graphql.CollectedField) string {

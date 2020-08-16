@@ -114,20 +114,6 @@ func (s *tracerTestSuite) TestNamedOperation() {
 	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
 }
 
-func (s *tracerTestSuite) TestUnsupportedOperation() {
-	const query = "mutation { name }"
-	err := s.post(query)
-	s.Require().Error(err)
-
-	span, ok := s.spans["mutation"]
-	s.Require().True(ok)
-	s.Require().Equal(query, span.Attributes["graphql.query"])
-	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
-	const message = "mutations are not supported"
-	s.Require().Contains(span.Message, message)
-	s.Require().Contains(err.Error(), message)
-}
-
 func (s *tracerTestSuite) post(query string, opts ...client.Option) error {
 	return s.client.Post(query, &struct{ Name string }{}, opts...)
 }
