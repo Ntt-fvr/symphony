@@ -53,35 +53,6 @@ func getFilterInput(filtersParam string, logger *zap.Logger) ([]*models.Location
 	return filterInput, nil
 }
 
-func getOrderedLocationTypes(ctx context.Context, logger *zap.Logger, useConcurrency bool) ([]string, error) {
-	client := ent.FromContext(ctx)
-	var (
-		orderedLocTypes []string
-		err             error
-	)
-	if useConcurrency {
-		cg := ctxgroup.WithContext(ctx)
-		cg.Go(func(ctx context.Context) (err error) {
-			orderedLocTypes, err = locationTypeHierarchy(ctx, client)
-			if err != nil {
-				logger.Error("cannot query location types", zap.Error(err))
-				return errors.Wrap(err, "cannot query location types")
-			}
-			return nil
-		})
-		if err := cg.Wait(); err != nil {
-			return nil, err
-		}
-	} else {
-		orderedLocTypes, err = locationTypeHierarchy(ctx, client)
-		if err != nil {
-			logger.Error("cannot query location types", zap.Error(err))
-			return nil, errors.Wrap(err, "cannot query location types")
-		}
-	}
-	return orderedLocTypes, nil
-}
-
 func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger           = lr.Log.For(ctx)
@@ -113,38 +84,19 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	}
 
 	var orderedLocTypes, propertyTypes []string
-	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
-	orderedLocTypes, err = getOrderedLocationTypes(ctx, logger, useConcurrency)
+	orderedLocTypes, err = locationTypeHierarchy(ctx, client)
 	if err != nil {
 		logger.Error("cannot query location types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query location types")
 	}
-	if useConcurrency {
-		cg.Go(func(ctx context.Context) (err error) {
-			locationIDs := make([]int, len(locationsList))
-			for i, l := range locationsList {
-				locationIDs[i] = l.ID
-			}
-			propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
-			if err != nil {
-				logger.Error("cannot query property types", zap.Error(err))
-				return errors.Wrap(err, "cannot query property types")
-			}
-			return nil
-		})
-		if err := cg.Wait(); err != nil {
-			return nil, err
-		}
-	} else {
-		locationIDs := make([]int, len(locationsList))
-		for i, l := range locationsList {
-			locationIDs[i] = l.ID
-		}
-		propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
-		if err != nil {
-			logger.Error("cannot query property types", zap.Error(err))
-			return nil, errors.Wrap(err, "cannot query property types")
-		}
+
+	for i, l := range locationsList {
+		locationIDs[i] = l.ID
+	}
+	propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
+	if err != nil {
+		logger.Error("cannot query property types", zap.Error(err))
+		return nil, errors.Wrap(err, "cannot query property types")
 	}
 
 	title := append(locationIDHeader[:], orderedLocTypes...)

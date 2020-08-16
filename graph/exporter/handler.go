@@ -96,8 +96,9 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Error("error in async export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+		} else {
+			m.writeExportTaskID(ctx, w, et.ID)
 		}
-		m.writeExportTaskID(ctx, w, et.ID)
 	} else {
 		filename := "export"
 		rout := mux.CurrentRoute(r)
