@@ -24,9 +24,6 @@ type Tracer struct {
 	// Field, if set to true, will enable recording of field spans.
 	Field bool
 
-	// DefaultAttributes will be set to each span as default.
-	DefaultAttributes []trace.Attribute
-
 	// Sampler to use when creating spans.
 	Sampler trace.Sampler
 }
@@ -47,24 +44,15 @@ func (Tracer) Validate(graphql.ExecutableSchema) error {
 	return nil
 }
 
-func (t *Tracer) startSpan(ctx context.Context, name string, kind int) (context.Context, *trace.Span) {
-	ctx, span := trace.StartSpan(ctx, name,
-		trace.WithSpanKind(kind),
-		trace.WithSampler(t.Sampler),
-	)
-	span.AddAttributes(t.DefaultAttributes...)
-	return ctx, span
-}
-
-// InterceptResponse measures graphql response execution.
+// InterceptResponse traces graphql response execution.
 func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) (rsp *graphql.Response) {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
 	oc := graphql.GetOperationContext(ctx)
-	ctx, span := t.startSpan(ctx,
-		spanNameFromContext(oc),
-		trace.SpanKindServer,
+	ctx, span := trace.StartSpan(ctx,
+		spanNameFromOperation(oc),
+		trace.WithSampler(t.Sampler),
 	)
 	defer span.End()
 	if !span.IsRecordingEvents() {
@@ -92,17 +80,13 @@ func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHand
 				Code:    trace.StatusCodeUnknown,
 				Message: rsp.Errors.Error(),
 			})
-		} else {
-			span.SetStatus(trace.Status{
-				Code: trace.StatusCodeOK,
-			})
 		}
 	}()
 
 	return next(ctx)
 }
 
-func spanNameFromContext(oc *graphql.OperationContext) string {
+func spanNameFromOperation(oc *graphql.OperationContext) string {
 	if oc.OperationName != "" {
 		return oc.OperationName
 	}
@@ -112,15 +96,15 @@ func spanNameFromContext(oc *graphql.OperationContext) string {
 	return string(ast.Query)
 }
 
-// InterceptField measures graphql field execution.
+// InterceptField traces graphql field execution.
 func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 	if !t.Field || (!t.AllowRoot && trace.FromContext(ctx) == nil) {
 		return next(ctx)
 	}
 	fc := graphql.GetFieldContext(ctx)
-	ctx, span := t.startSpan(ctx,
+	ctx, span := trace.StartSpan(ctx,
 		spanNameFromField(fc.Field),
-		trace.SpanKindUnspecified,
+		trace.WithSampler(t.Sampler),
 	)
 	defer span.End()
 	if !span.IsRecordingEvents() {
@@ -148,10 +132,6 @@ func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (inte
 			span.SetStatus(trace.Status{
 				Code:    trace.StatusCodeUnknown,
 				Message: errs.Error(),
-			})
-		} else {
-			span.SetStatus(trace.Status{
-				Code: trace.StatusCodeOK,
 			})
 		}
 	}()

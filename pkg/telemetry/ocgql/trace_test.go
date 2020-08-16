@@ -33,9 +33,6 @@ func (s *tracerTestSuite) SetupSuite() {
 	srv.Use(ocgql.Tracer{
 		AllowRoot: true,
 		Field:     true,
-		DefaultAttributes: []trace.Attribute{
-			trace.BoolAttribute("graphql.test.value", true),
-		},
 		Sampler: func(trace.SamplingParameters) trace.SamplingDecision {
 			return trace.SamplingDecision{Sample: s.sample}
 		},
@@ -77,25 +74,24 @@ func (s *tracerTestSuite) TestWithSampling() {
 	)
 	err := s.post(query, client.Var("id", id))
 	s.Require().NoError(err)
-	s.Assert().Len(s.spans, 3)
+	s.Require().Len(s.spans, 3)
 
 	span, ok := s.spans["query"]
 	s.Require().True(ok)
-	s.Assert().EqualValues(trace.SpanKindServer, span.SpanKind)
-	s.Assert().Equal(query, span.Attributes["graphql.query"])
-	s.Assert().Equal(id, span.Attributes["graphql.vars.id"])
-	s.Assert().EqualValues(100, span.Attributes["graphql.complexity.value"])
-	s.Assert().EqualValues(1000, span.Attributes["graphql.complexity.limit"])
-	s.Assert().EqualValues(trace.StatusCodeOK, span.Code)
-	s.Assert().Empty(span.Message)
+	s.Require().Equal(query, span.Attributes["graphql.query"])
+	s.Require().Equal(id, span.Attributes["graphql.vars.id"])
+	s.Require().EqualValues(100, span.Attributes["graphql.complexity.value"])
+	s.Require().EqualValues(1000, span.Attributes["graphql.complexity.limit"])
+	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
+	s.Require().Empty(span.Message)
 
 	span, ok = s.spans["name"]
 	s.Require().True(ok)
 	for _, attr := range []string{"path", "name", "alias"} {
-		s.Assert().Equal("name", span.Attributes["graphql.field."+attr])
+		s.Require().Equal("name", span.Attributes["graphql.field."+attr])
 	}
-	s.Assert().EqualValues(trace.StatusCodeOK, span.Code)
-	s.Assert().Empty(span.Message)
+	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
+	s.Require().Empty(span.Message)
 }
 
 func (s *tracerTestSuite) TestWithoutSampling() {
@@ -103,7 +99,7 @@ func (s *tracerTestSuite) TestWithoutSampling() {
 	err := s.post("query { name }")
 	s.Require().NoError(err)
 	_, ok := s.spans["query"]
-	s.Assert().False(ok)
+	s.Require().False(ok)
 }
 
 func (s *tracerTestSuite) TestNamedOperation() {
@@ -111,11 +107,11 @@ func (s *tracerTestSuite) TestNamedOperation() {
 	err := s.post("query { name }",
 		client.Operation(op),
 	)
-	s.Assert().Error(err)
+	s.Require().Error(err)
 
 	span, ok := s.spans[op]
-	s.Assert().True(ok)
-	s.Assert().EqualValues(trace.StatusCodeUnknown, span.Code)
+	s.Require().True(ok)
+	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
 }
 
 func (s *tracerTestSuite) TestUnsupportedOperation() {
@@ -125,21 +121,11 @@ func (s *tracerTestSuite) TestUnsupportedOperation() {
 
 	span, ok := s.spans["mutation"]
 	s.Require().True(ok)
-	s.Assert().EqualValues(trace.SpanKindServer, span.SpanKind)
-	s.Assert().Equal(query, span.Attributes["graphql.query"])
-	s.Assert().EqualValues(trace.StatusCodeUnknown, span.Code)
+	s.Require().Equal(query, span.Attributes["graphql.query"])
+	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
 	const message = "mutations are not supported"
-	s.Assert().Contains(span.Message, message)
-	s.Assert().Contains(err.Error(), message)
-}
-
-func (s *tracerTestSuite) TestDefaultAttributes() {
-	err := s.post("query { name }")
-	s.Require().NoError(err)
-
-	span, ok := s.spans["query"]
-	s.Require().True(ok)
-	s.Assert().Equal(true, span.Attributes["graphql.test.value"])
+	s.Require().Contains(span.Message, message)
+	s.Require().Contains(err.Error(), message)
 }
 
 func (s *tracerTestSuite) post(query string, opts ...client.Option) error {
