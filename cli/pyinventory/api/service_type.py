@@ -77,15 +77,15 @@ def add_service_type(
         :param has_customer: Flag for customer existance
         :type has_customer: bool
         :param properties: Property definitions list
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ], optional
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ], optional
         :param endpoint_definitions: Service endpoint definitions list
-        :type endpoint_definitions: List[ :class:`~pyinventory.common.data_class.ServiceEndpointDefinition` ], optional
+        :type endpoint_definitions: List[ :class:`~pysymphony.common.data_class.ServiceEndpointDefinition` ], optional
 
         :raises:
             FailedOperationException: Internal inventory error
 
         :return: ServiceType object
-        :rtype: :class:`~pyinventory.common.data_class.ServiceType`
+        :rtype: :class:`~pysymphony.common.data_class.ServiceType`
 
         **Example**
 
@@ -168,7 +168,7 @@ def get_service_type(client: SymphonyClient, service_type_id: str) -> ServiceTyp
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
 
         :return: ServiceType object
-        :rtype: :class:`~pyinventory.common.data_class.ServiceType`
+        :rtype: :class:`~pysymphony.common.data_class.ServiceType`
 
         **Example**
 
@@ -196,21 +196,21 @@ def edit_service_type(
     """Edit existing service type by ID.
 
         :param service_type: ServiceType object
-        :type service_type: :class:`~pyinventory.common.data_class.ServiceType`
+        :type service_type: :class:`~pysymphony.common.data_class.ServiceType`
         :param new_name: Service type name
         :type new_name: str, optional
         :param new_has_customer: Flag for customer existance
         :type new_has_customer: bool, optional
         :param new_properties: Property definitions list
-        :type new_properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ], optional
+        :type new_properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ], optional
         :param new_endpoints: Service endpont definitions list
-        :type new_endpoints: List[ :class:`~pyinventory.common.data_class.ServiceEndpointDefinition` ], optional
+        :type new_endpoints: List[ :class:`~pysymphony.common.data_class.ServiceEndpointDefinition` ], optional
 
         :raises:
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
 
         :return: ServiceType object
-        :rtype: :class:`~pyinventory.common.data_class.ServiceType`
+        :rtype: :class:`~pysymphony.common.data_class.ServiceType`
 
         **Example**
 
@@ -292,7 +292,7 @@ def delete_service_type(client: SymphonyClient, service_type: ServiceType) -> No
         It can get only the requested service type ID
 
         :param service_type: ServiceType object
-        :type service_type: :class:`~pyinventory.common.data_class.ServiceType`
+        :type service_type: :class:`~pysymphony.common.data_class.ServiceType`
 
         :rtype: None
 
@@ -312,7 +312,7 @@ def delete_service_type_with_services(
     """Delete service type with existing services.
 
         :param service_type: ServiceType object
-        :type service_type: :class:`~pyinventory.common.data_class.ServiceType`
+        :type service_type: :class:`~pysymphony.common.data_class.ServiceType`
 
         :raises:
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Service type does not exist

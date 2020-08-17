@@ -25,7 +25,7 @@ def add_customer(
         :type external_id: str, optional
 
         :return: Customer object
-        :rtype: :class:`~pyinventory.common.data_class.Customer`
+        :rtype: :class:`~pysymphony.common.data_class.Customer`
 
         **Example 1**
 
@@ -52,7 +52,7 @@ def get_all_customers(client: SymphonyClient) -> Iterator[Customer]:
     """This function returns all Customers.
 
         :return: Customers Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Customer` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Customer` ]
 
         **Example**
 
@@ -73,7 +73,7 @@ def delete_customer(client: SymphonyClient, customer: Customer) -> None:
     """This function delete Customer.
 
         :param name: Customer name
-        :type name: :class:`~pyinventory.common.data_class.Customer`
+        :type name: :class:`~pysymphony.common.data_class.Customer`
         :rtype: None
 
         **Example**

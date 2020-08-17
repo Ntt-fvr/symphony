@@ -90,7 +90,7 @@ def get_graphql_property_type_inputs(
     formats data, validates existence of keys from `properties_dict` in `property_types` and returns list of PropertyTypeInput
 
         Args:
-            property_types (List[ `pyinventory.common.data_class.PropertyDefinition` ]): list of existing property types
+            property_types (List[ `pysymphony.common.data_class.PropertyDefinition` ]): list of existing property types
             properties_dict (Dict[str, PropertyValue]): dictionary of properties, where
             - str - name of existing property
             - PropertyValue - new value of existing type for this property
@@ -140,7 +140,7 @@ def get_graphql_property_inputs(
     formats data, validates existence of keys from `properties_dict` in `property_types` and returns list of PropertyInput
 
         Args:
-            property_types (Sequence[ `pyinventory.common.data_class.PropertyDefinition` ]): list of existing property types
+            property_types (Sequence[ `pysymphony.common.data_class.PropertyDefinition` ]): list of existing property types
             properties_dict (Mapping[str, PropertyValue]): dictionary of properties, where
                 str: name of existing property
                 PropertyValue: new value of existing type for this property

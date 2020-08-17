@@ -16,13 +16,13 @@ def format_to_property_definition(
     property_type_fragment: PropertyTypeFragment,
 ) -> PropertyDefinition:
     """This function gets `pyinventory.graphql.fragment.property_type.PropertyTypeFragment` object as argument
-    and formats it to `pyinventory.common.data_class.PropertyDefinition` object
+    and formats it to `pysymphony.common.data_class.PropertyDefinition` object
 
         :param property_type_fragment: Existing property type fragment object
         :type property_type_fragment: :class:`~pyinventory.graphql.fragment.property_type.PropertyTypeFragment`
 
         :return: PropertyDefinition object
-        :rtype: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :rtype: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         **Example**
 
@@ -53,7 +53,7 @@ def format_to_property_definitions(
         :type data: Sequence[ :class:`~pyinventory.graphql.fragment.property_type.PropertyTypeFragment` ]
 
         :return: PropertyDefinitions sequence
-        :rtype: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :rtype: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
 
         **Example**
 
@@ -75,7 +75,7 @@ def format_to_property_type_input(
     """This function gets `PropertyDefinition` object as argument and formats it to `PropertyTypeInput` object
 
         :param property_definition: Existing property definition object
-        :type property_definition: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :type property_definition: :class:`~pysymphony.common.data_class.PropertyDefinition`
         :param is_new: Is new flag
         :type is_new: bool
 
@@ -147,7 +147,7 @@ def format_to_property_type_inputs(
     """This function gets Sequence[ `PropertyDefinition` ] as argument and formats it to Sequence[ `PropertyTypeInput` ]
 
         :param data: Existing property definitions sequence
-        :type data: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type data: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
 
         :return: PropertyTypeInputs list
         :rtype: List[ :class:`~pyinventory.graphql.input.property_type.PropertyTypeInput` ]

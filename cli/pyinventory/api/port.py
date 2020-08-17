@@ -33,7 +33,7 @@ def get_port(
     """This function returns port in equipment based on its name.
 
         :param equipment: Existing equipment object
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name: Existing port name
         :type port_name: str
 
@@ -42,7 +42,7 @@ def get_port(
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: Equipment does not exist or port was not found
 
         :return: EquipmentPort object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPort`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPort`
 
         **Example**
 
@@ -94,7 +94,7 @@ def get_ports(client: SymphonyClient) -> Iterator[EquipmentPort]:
     """This function returns all existing ports
 
         :return: EquipmentPorts Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.EquipmentPort` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.EquipmentPort` ]
 
         **Example**
 
@@ -153,7 +153,7 @@ def edit_port_properties(
     """This function returns edited port in equipment based on its name.
 
         :param equipment: Existing equipment object
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name: Equipment type name
         :type port_name: str
         :param new_properties: Dictionary of property name to property value
@@ -164,12 +164,12 @@ def edit_port_properties(
         :type new_properties: Dict[str, PropertyValue]
 
         :raises:
-            * :class:`~pyinventory.exceptions.EntityNotFoundError`: :attr:`~pyinventory.common.data_class.EquipmentPortDefinition.port_type_name` is None,
+            * :class:`~pyinventory.exceptions.EntityNotFoundError`: :attr:`~pysymphony.common.data_class.EquipmentPortDefinition.port_type_name` is None,
               there are no properties or there any unknown property name in `new_properties` keys
             * FailedOperationException: internal inventory error
 
         :return: EquipmentPort object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPort`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPort`
 
         **Example**
 
@@ -234,7 +234,7 @@ def edit_link_properties(
     """This function returns edited port in equipment based on its name.
 
         :param equipment: List of property definitions
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name: Equipment type name
         :type port_name: str
         :param new_link_properties: Dictionary of property name to property value
@@ -245,12 +245,12 @@ def edit_link_properties(
         :type new_link_properties: Dict[str, PropertyValue], optional
 
         :raises:
-            * :class:`~pyinventory.exceptions.EntityNotFoundError`: :attr:`~pyinventory.common.data_class.EquipmentPortDefinition.port_type_name` is None,
+            * :class:`~pyinventory.exceptions.EntityNotFoundError`: :attr:`~pysymphony.common.data_class.EquipmentPortDefinition.port_type_name` is None,
               there are no properties or there any unknown property name in `new_link_properties` keys
             * FailedOperationException: internal inventory error
 
         :return: EquipmentPort object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPort`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPort`
 
         **Example**
 

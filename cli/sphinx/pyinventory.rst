@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    pyinventory.api
-   pyinventory.common
 
 Submodules
 ----------

@@ -20,7 +20,7 @@ from ..graphql.query.users import UsersQuery
 
 
 def get_user(client: SymphonyClient, email: str) -> User:
-    """Returns `pyinventory.common.data_class.User` object by its email
+    """Returns `pysymphony.common.data_class.User` object by its email
 
         :param email: Email address the user registered with
         :type email: str
@@ -30,7 +30,7 @@ def get_user(client: SymphonyClient, email: str) -> User:
             * FailedOperationException: Internal inventory error
 
         :return: User object
-        :rtype: :class:`~pyinventory.common.data_class.User`
+        :rtype: :class:`~pysymphony.common.data_class.User`
 
         **Example**
 
@@ -65,7 +65,7 @@ def add_user(client: SymphonyClient, email: str, password: str) -> User:
             * HTTPError: Connection error
 
         :return: User object
-        :rtype: :class:`~pyinventory.common.data_class.User`
+        :rtype: :class:`~pysymphony.common.data_class.User`
 
         **Example**
 
@@ -90,7 +90,7 @@ def edit_user(
     """Edit user password and role
 
         :param user: User object
-        :type user: :class:`~pyinventory.common.data_class.User`
+        :type user: :class:`~pysymphony.common.data_class.User`
         :param new_password: New password the user would connect with
         :type new_password: str, optional
         :param new_role: New user role
@@ -132,7 +132,7 @@ def deactivate_user(client: SymphonyClient, user: User) -> None:
        Users in symphony are never deleted. Only de-activated.
 
         :param user: User object
-        :type user: :class:`~pyinventory.common.data_class.User`
+        :type user: :class:`~pysymphony.common.data_class.User`
 
         :raises:
             FailedOperationException: Internal inventory error
@@ -155,7 +155,7 @@ def activate_user(client: SymphonyClient, user: User) -> None:
     """Activate the user which would allow the user to login again to symphony
 
         :param user: User object
-        :type user: :class:`~pyinventory.common.data_class.User`
+        :type user: :class:`~pysymphony.common.data_class.User`
 
         :raises:
             FailedOperationException: Internal inventory error
@@ -181,7 +181,7 @@ def get_users(client: SymphonyClient) -> Iterator[User]:
             FailedOperationException: Internal inventory error
 
         :return: Users Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.User` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.User` ]
 
         **Example**
 
@@ -213,7 +213,7 @@ def get_active_users(client: SymphonyClient) -> List[User]:
             FailedOperationException: Internal inventory error
 
         :return: Users List
-        :rtype: List[ :class:`~pyinventory.common.data_class.User` ]
+        :rtype: List[ :class:`~pysymphony.common.data_class.User` ]
 
         **Example**
 

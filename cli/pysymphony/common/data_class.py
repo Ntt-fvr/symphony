@@ -122,7 +122,7 @@ class LocationType(NamedTuple):
         :param id: ID
         :type id: str
         :param property_types: PropertyTypes sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     name: str
@@ -166,7 +166,7 @@ class EquipmentType(NamedTuple):
         :param id: ID
         :type id: str
         :param property_types: PropertyDefinitions sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param position_definitions: EquipmentPositionDefinitionFragments sequence
         :type position_definitions: Sequence[ :class:`~pyinventory.graphql.fragment.equipment_position_definition.EquipmentPositionDefinitionFragment` ]
         :param port_definitions: EquipmentPortDefinitionFragments sequence
@@ -188,9 +188,9 @@ class EquipmentPortType(NamedTuple):
         :param name: Name
         :type name: str
         :param property_types: Property types sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param link_property_types: Link property types sequence
-        :type link_property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type link_property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     id: str
@@ -254,9 +254,9 @@ class EquipmentPort(NamedTuple):
         :param properties: Properties sequence
         :type properties: Sequence[ :class:`~pyinventory.graphql.fragment.property.PropertyFragment` ]
         :param definition: EquipmentPortDefinition object
-        :type definition: :class:`~pyinventory.common.data_class.EquipmentPortDefinition`
+        :type definition: :class:`~pysymphony.common.data_class.EquipmentPortDefinition`
         :param link: Link object
-        :type link: :class:`~pyinventory.common.data_class.Link`
+        :type link: :class:`~pysymphony.common.data_class.Link`
     """
 
     id: str
@@ -291,7 +291,7 @@ class Service(NamedTuple):
         :param service_type_name: Existing service type name
         :type service_type_name: str
         :param customer: Customer object
-        :type customer: :class:`~pyinventory.common.data_class.Customer`, optional
+        :type customer: :class:`~pysymphony.common.data_class.Customer`, optional
         :param properties: Properties sequence
         :type properties: Sequence[ :class:`~pyinventory.graphql.fragment.property..PropertyFragment` ]
     """
@@ -352,9 +352,9 @@ class ServiceType(NamedTuple):
         :param has_customer: Customer existence flag
         :type has_customer: bool
         :param property_types: PropertyDefinitions sequence
-        :type property_types: Sequence[ :c;ass:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :c;ass:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param endpoint_definitions: ServiceEndpointDefinitions list
-        :type endpoint_definitions: List[ :class:`~pyinventory.common.data_class.ServiceEndpointDefinition` ]
+        :type endpoint_definitions: List[ :class:`~pysymphony.common.data_class.ServiceEndpointDefinition` ]
     """
 
     name: str
@@ -442,7 +442,7 @@ class WorkOrderType(NamedTuple):
         :param description: Work order type description
         :type description: str, optional
         :param property_types: PropertyTypes list
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     id: str
