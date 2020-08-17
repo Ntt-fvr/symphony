@@ -9,7 +9,7 @@ require (
 	github.com/99designs/gqlgen v0.12.1
 	github.com/AlekSi/pointer v1.1.0
 	github.com/Azure/azure-amqp-common-go/v2 v2.1.0 // indirect
-	github.com/DATA-DOG/go-sqlmock v1.4.1
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/aws/aws-sdk-go v1.34.5
