@@ -97,7 +97,6 @@ router.get(
 router.get('/admin*', access(AccessRoles.SUPERUSER), handleReact('admin'));
 router.get('/automation*', access(AccessRoles.USER), handleReact('automation'));
 router.get('/inventory*', access(AccessRoles.USER), handleReact('inventory'));
-router.get('/hub*', access(AccessRoles.USER), handleReact('inventory'));
 router.get('/workorders*', access(AccessRoles.USER), handleReact('workorders'));
 router.get('/id*', access(AccessRoles.USER), handleReact('id'));
 router.use(
