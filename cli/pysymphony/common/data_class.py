@@ -33,9 +33,15 @@ from ..graphql.enum.image_entity import ImageEntity
 
 
 ReturnType = TypeVar("ReturnType")
-PropertyValue = Union[date, float, int, str, bool, Tuple[float, float]]
+PropertyValue = Union[date, datetime, float, int, str, bool, Tuple[float, float]]
 PropertyValueType = Union[
-    Type[date], Type[float], Type[int], Type[str], Type[bool], Type[Tuple[float, float]]
+    Type[date],
+    Type[datetime],
+    Type[float],
+    Type[int],
+    Type[str],
+    Type[bool],
+    Type[Tuple[float, float]],
 ]
 
 
@@ -93,6 +99,9 @@ class DataTypeName(NamedTuple):
 
 TYPE_AND_FIELD_NAME = {
     "date": DataTypeName(data_type=date, graphql_field_name=("stringValue",)),
+    "datetime_local": DataTypeName(
+        data_type=datetime, graphql_field_name=("stringValue",)
+    ),
     "float": DataTypeName(data_type=float, graphql_field_name=("floatValue",)),
     "int": DataTypeName(data_type=int, graphql_field_name=("intValue",)),
     "email": DataTypeName(data_type=str, graphql_field_name=("stringValue",)),
@@ -102,6 +111,7 @@ TYPE_AND_FIELD_NAME = {
         data_type=tuple,  # type: ignore
         graphql_field_name=("latitudeValue", "longitudeValue"),
     ),
+    "enum": DataTypeName(data_type=str, graphql_field_name=("stringValue",)),
 }
 
 

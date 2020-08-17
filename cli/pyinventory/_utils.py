@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+import datetime
+import json
 import warnings
-from datetime import datetime
 from typing import Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
 from dacite import Config, from_dict
@@ -43,10 +44,22 @@ def get_graphql_input_field(
         raise Exception(
             f"property type {property_type_name} has not supported type {type_key}"
         )
-    if type_key == "string":
+    if type_key in ["string", "enum"]:
         assert isinstance(value, str) or isinstance(
             value, bytes
         ), f"property {property_type_name} is not of type {type_key}"
+    elif type_key == "date":
+        assert isinstance(
+            value, datetime.date
+        ), f"property {property_type_name} is not of type {type_key}"
+        value = datetime.datetime.strftime(
+            datetime.datetime.combine(value, datetime.datetime.min.time()), "%Y-%m-%d"
+        )
+    elif type_key == "datetime_local":
+        assert isinstance(
+            value, datetime.datetime
+        ), f"property {property_type_name} is not of type {type_key}"
+        value = datetime.datetime.strftime(value, "%Y-%m-%d %H:%M:%S")
     elif type_key == "gps_location":
         assert isinstance(
             value, tuple
@@ -156,6 +169,13 @@ def get_graphql_property_inputs(
         property_type_id = property_type_names[name].id
         assert property_type_id is not None, f"property {name} has no id"
         assert not property_type_names[name].is_fixed, f"property {name} is fixed"
+        pk = property_type_names[name].property_kind
+        if pk == PropertyKind.enum:
+            def_raw_val = property_type_names[name].default_raw_value
+            if def_raw_val is None:
+                def_raw_val = ""
+            values = json.loads(def_raw_val)
+            assert value in values, f"{value} is not in {values}"
         result: Dict[str, PropertyValue] = {"propertyTypeID": property_type_id}
         result.update(
             get_graphql_input_field(
@@ -181,11 +201,17 @@ def _get_property_value(
     str_fields = formated_name.graphql_field_name
     values = []
     for str_field in str_fields:
+        field_data = property.__dict__[str_field]
         if property_type == "date":
-            date_data = property.__dict__[str_field]
-            values.append(datetime.strptime(cast(str, date_data), "%Y-%m-%d").date())
+            values.append(
+                datetime.datetime.strptime(cast(str, field_data), "%Y-%m-%d").date()
+            )
+        elif property_type == "datetime_local":
+            values.append(
+                datetime.datetime.strptime(cast(str, field_data), "%Y-%m-%d %H:%M:%S")
+            )
         else:
-            values.append(property.__dict__[str_field])
+            values.append(field_data)
     return tuple(value for value in values)
 
 
