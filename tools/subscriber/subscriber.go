@@ -32,11 +32,51 @@ type operationMessage struct {
 }
 
 func main() {
-	insecure := kingpin.Flag("insecure", "Allow insecure server connections when using SSL.").Short('k').Bool()
-	verbose := kingpin.Flag("verbose", "Make the operation more talkative.").Short('v').Bool()
-	auth := kingpin.Flag("auth", "Server user and password.").PlaceHolder("<user:password>").Short('u').Required().String()
-	query := kingpin.Flag("query", "Server subscription query.").Short('q').PlaceHolder("<query>").Required().String()
-	url := kingpin.Arg("url", "Server url.").Required().URL()
+	dialer := websocket.DefaultDialer
+	kingpin.Flag(
+		"connect-timeout", "Maximum time allowed for connection.",
+	).
+		Default("30s").
+		DurationVar(&dialer.HandshakeTimeout)
+	kingpin.Flag(
+		"compressed",
+		"Enable websocket compression.",
+	).
+		BoolVar(&dialer.EnableCompression)
+	insecure := kingpin.Flag(
+		"insecure",
+		"Allow insecure server connections when using SSL.",
+	).
+		Short('k').
+		Bool()
+	verbose := kingpin.Flag(
+		"verbose",
+		"Make the operation more talkative.",
+	).
+		Short('v').
+		Bool()
+	auth := kingpin.Flag(
+		"auth",
+		"Server user and password.",
+	).
+		PlaceHolder("<user:password>").
+		Short('u').
+		Required().
+		String()
+	query := kingpin.Flag(
+		"query",
+		"Server subscription query.",
+	).
+		Short('q').
+		PlaceHolder("<query>").
+		Required().
+		String()
+	url := kingpin.Arg(
+		"url",
+		"Server url.",
+	).
+		Required().
+		URL()
 	kingpin.CommandLine.HelpFlag.Short('h')
 	kingpin.Parse()
 
@@ -49,7 +89,6 @@ func main() {
 	header := make(http.Header)
 	header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(*auth)))
 
-	dialer := *websocket.DefaultDialer
 	dialer.Subprotocols = []string{"graphql-ws"}
 	if *insecure {
 		dialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
