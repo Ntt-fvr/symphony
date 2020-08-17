@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 	"gocloud.dev/runtimevar"
 )
@@ -36,13 +37,19 @@ func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntr
 	return f(ctx, logger, entry)
 }
 
+// NamedHandler contains the handler to run on every event with the name handler for tracking purposes
+type NamedHandler struct {
+	Name    string
+	Handler Handler
+}
+
 // NewServer is the events server.
 type Server struct {
 	service  *ev.Service
 	logger   log.Logger
 	tenancy  viewer.Tenancy
 	features *runtimevar.Variable
-	handlers []Handler
+	handlers []NamedHandler
 }
 
 // Config defines the async server config.
@@ -51,7 +58,7 @@ type Config struct {
 	Features *runtimevar.Variable
 	Receiver ev.Receiver
 	Logger   log.Logger
-	Handlers []Handler
+	Handlers []NamedHandler
 }
 
 func NewServer(cfg Config) *Server {
@@ -135,7 +142,14 @@ func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.
 	return nil
 }
 
-func (s *Server) runHandlerWithTransaction(ctx context.Context, h Handler, entry event.LogEntry) error {
+func (s *Server) runHandlerWithTransaction(ctx context.Context, h NamedHandler, entry event.LogEntry) error {
+	ctx, span := trace.StartSpan(ctx, h.Name)
+	defer span.End()
+	span.AddAttributes(
+		trace.StringAttribute("operation", entry.Operation.String()),
+		trace.StringAttribute("type", entry.Type),
+		trace.Int64Attribute("ent_id", int64(event.GetEntID(entry))),
+	)
 	tx, err := ent.FromContext(ctx).Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("creating transaction: %w", err)
@@ -148,7 +162,7 @@ func (s *Server) runHandlerWithTransaction(ctx context.Context, h Handler, entry
 		}
 	}()
 	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.Handle(ctx, s.logger, entry); err != nil {
+	if err := h.Handler.Handle(ctx, s.logger, entry); err != nil {
 		if r := tx.Rollback(); r != nil {
 			err = fmt.Errorf("rolling back transaction: %v", r)
 		}
