@@ -11,6 +11,12 @@ output kubeconfig {
   sensitive = true
 }
 
+output keycloak_admin_password {
+  description = "Keycloak administrator password"
+  value       = random_password.keycloak_admin.result
+  sensitive   = true
+}
+
 output grafana_admin_password {
   description = "Grafana administrator password"
   value       = random_string.grafana_admin_password.result
