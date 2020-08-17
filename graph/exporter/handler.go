@@ -15,7 +15,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
