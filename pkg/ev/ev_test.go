@@ -156,7 +156,7 @@ func TestEventTelemetry(t *testing.T) {
 	})
 
 	{
-		rows, err := view.RetrieveData(ev.EventOpenReceiverTotalView.Name)
+		rows, err := view.RetrieveData(ev.EventNumReceiversView.Name)
 		require.NoError(t, err)
 		require.Len(t, rows, 1)
 		data, ok := rows[0].Data.(*view.LastValueData)

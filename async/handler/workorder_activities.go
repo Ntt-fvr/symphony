@@ -9,11 +9,11 @@ import (
 	"strconv"
 
 	"github.com/AlekSi/pointer"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log"
 )
 
 func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) error {
@@ -198,7 +198,7 @@ func getDiffOfUniqueEdgeAsString(entry *event.LogEntry, edge string) (*string, *
 	return newStrVal, oldStrVal, shouldUpdate
 }
 
-func HandleActivityLog(ctx context.Context, entry event.LogEntry) error {
+func HandleActivityLog(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 	var err error
 	if entry.Type != ent.TypeWorkOrder {
 		return nil

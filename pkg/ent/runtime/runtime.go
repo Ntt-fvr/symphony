@@ -727,6 +727,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	projectHooks := schema.Project{}.Hooks()
+
+	project.Hooks[1] = projectHooks[0]
 	projectMixinFields0 := projectMixin[0].Fields()
 	projectMixinFields1 := projectMixin[1].Fields()
 	projectFields := schema.Project{}.Fields()
@@ -1206,6 +1209,8 @@ func init() {
 	workorder.Hooks[1] = workorderHooks[0]
 
 	workorder.Hooks[2] = workorderHooks[1]
+
+	workorder.Hooks[3] = workorderHooks[2]
 	workorderMixinFields0 := workorderMixin[0].Fields()
 	workorderMixinFields1 := workorderMixin[1].Fields()
 	workorderFields := schema.WorkOrder{}.Fields()
@@ -1268,6 +1273,6 @@ func init() {
 }
 
 const (
-	Version = "v0.2.8-0.20200802120605-b5a9c662901b"            // Version of ent codegen.
-	Sum     = "h1:AGDEdixB/OK5jmCZWyGxQH0sJokhS1hFgLt5bZMvYWA=" // Sum of ent codegen.
+	Version = "v0.3.0"                                          // Version of ent codegen.
+	Sum     = "h1:Jht3vZio7eshMo7yaEZJ6LHk4oM8xUCxKNNDj/Kb4fE=" // Sum of ent codegen.
 )

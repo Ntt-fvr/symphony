@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -62,7 +63,7 @@ func TestServer(t *testing.T) {
 	logEntry := getLogEntry()
 	client := viewertest.NewTestClient(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	h := handler.Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		v := viewer.FromContext(ctx)
 		require.Equal(t, t.Name(), v.Tenant())
 		require.Equal(t, handler.ServiceName, v.Name())
@@ -100,7 +101,7 @@ func TestServerBadData(t *testing.T) {
 
 	client := viewertest.NewTestClient(t)
 	server := newTestServer(t, client, receiver,
-		handler.Func(func(context.Context, event.LogEntry) error { return nil }),
+		handler.Func(func(context.Context, log.Logger, event.LogEntry) error { return nil }),
 	)
 	err := server.HandleEvent(ctx, &ev.Event{
 		Tenant: viewertest.DefaultTenant,
@@ -122,7 +123,7 @@ func TestServerHandlerError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := handler.Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -161,7 +162,7 @@ func TestServerHandlerNoError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := handler.Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").

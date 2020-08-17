@@ -36,7 +36,7 @@ type linksRower struct {
 	log log.Logger
 }
 
-func (er linksRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger          = er.log.For(ctx)
 		err             error

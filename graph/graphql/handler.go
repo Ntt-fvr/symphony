@@ -44,7 +44,7 @@ type HandlerConfig struct {
 
 func init() {
 	views := append(
-		ocgql.DefaultServerViews,
+		ocgql.DefaultViews,
 		directive.ServerDeprecatedCountByObjectInputField,
 	)
 	for _, v := range views {
@@ -70,7 +70,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	)
 
 	views := append(
-		ocgql.DefaultServerViews,
+		ocgql.DefaultViews,
 		directive.ServerDeprecatedCountByObjectInputField,
 	)
 	if err := view.Register(views...); err != nil {

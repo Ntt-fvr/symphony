@@ -39,7 +39,7 @@ type equipmentRower struct {
 	log log.Logger
 }
 
-func (er equipmentRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger          = er.log.For(ctx)
 		err             error

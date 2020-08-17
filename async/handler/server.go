@@ -24,16 +24,16 @@ const ServiceName = "async"
 
 // A Handler handles incoming events.
 type Handler interface {
-	Handle(context.Context, event.LogEntry) error
+	Handle(context.Context, log.Logger, event.LogEntry) error
 }
 
 // The Func type is an adapter to allow the use of
 // ordinary functions as handlers.
-type Func func(context.Context, event.LogEntry) error
+type Func func(context.Context, log.Logger, event.LogEntry) error
 
 // Handle returns f(ctx, entry).
-func (f Func) Handle(ctx context.Context, entry event.LogEntry) error {
-	return f(ctx, entry)
+func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	return f(ctx, logger, entry)
 }
 
 // NewServer is the events server.
@@ -148,7 +148,7 @@ func (s *Server) runHandlerWithTransaction(ctx context.Context, h Handler, entry
 		}
 	}()
 	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.Handle(ctx, entry); err != nil {
+	if err := h.Handle(ctx, s.logger, entry); err != nil {
 		if r := tx.Rollback(); r != nil {
 			err = fmt.Errorf("rolling back transaction: %v", r)
 		}

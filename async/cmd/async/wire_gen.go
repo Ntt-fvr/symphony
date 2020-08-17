@@ -120,7 +120,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 
 var (
 	_wireLogEntryValue         = event.LogEntry{}
-	_wireValue                 = []handler.Handler{handler.Func(handler.HandleActivityLog)}
+	_wireValue                 = []handler.Handler{handler.Func(handler.HandleActivityLog), handler.Func(handler.HandleExport)}
 	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )

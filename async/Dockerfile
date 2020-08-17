@@ -14,7 +14,9 @@ COPY go.* ./
 RUN go mod download
 
 # Copy shared components
+# TODO: temporary workaround until graph/exporter will be moved to pkg
 COPY pkg /src/symphony/pkg
+COPY graph /src/symphony/graph
 
 # Build services
 WORKDIR /src/symphony/async

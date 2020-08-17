@@ -13,14 +13,15 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/viewer"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/pkg/errors"
-
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -41,7 +42,7 @@ type excelFile interface {
 }
 
 type rower interface {
-	rows(ctx context.Context, filters string) ([][]string, error)
+	Rows(ctx context.Context, filters string) ([][]string, error)
 }
 
 func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
@@ -54,7 +55,6 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 	filtersParam := url.Query().Get("filters")
 	client := ent.FromContext(ctx)
 
-	filtersInput, err := json.Marshal(filtersParam)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot use filters")
 	}
@@ -69,7 +69,7 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 		Create().
 		SetType(etType).
 		SetStatus(exporttask.StatusPending).
-		SetFilters(string(filtersInput)).
+		SetFilters(filtersParam).
 		Save(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot create export task")
@@ -109,8 +109,9 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Error("error in async export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+		} else {
+			m.writeExportTaskID(ctx, w, et.ID)
 		}
-		m.writeExportTaskID(ctx, w, et.ID)
 	} else {
 		filename := "export"
 		rout := mux.CurrentRoute(r)
@@ -124,7 +125,7 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writer := csv.NewWriter(w)
 
 		filters := r.URL.Query().Get("filters")
-		rows, err := m.rows(ctx, filters)
+		rows, err := m.Rows(ctx, filters)
 		if err != nil {
 			log.Error("error in export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
@@ -173,7 +174,7 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 		{"ports", exporter{log, portsRower{log}}},
 		{"work_orders", exporter{log, woRower{log}}},
 		{"links", exporter{log, linksRower{log}}},
-		{"locations", exporter{log, locationsRower{log}}},
+		{"locations", exporter{log, LocationsRower{log, true}}},
 		{"services", exporter{log, servicesRower{log}}},
 	}
 

@@ -65,6 +65,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		handler.NewServer,
 		wire.Value([]handler.Handler{
 			handler.Func(handler.HandleActivityLog),
+			handler.Func(handler.HandleExport),
 		}),
 		newApplication,
 	)

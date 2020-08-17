@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 // ProjectTemplateMixin defines the project template mixin schema.
@@ -188,6 +189,13 @@ func (Project) Mixin() []ent.Mixin {
 				OrderField: "UPDATED_AT",
 			},
 		),
+	}
+}
+
+// Hooks returns project hooks.
+func (Project) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.ProjectAddTemplateHook(),
 	}
 }
 
