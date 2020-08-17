@@ -402,24 +402,24 @@ class SiteSurvey(NamedTuple):
         :type name: str
         :param survey_id: ID
         :type survey_id: str
-        :param completionTime: Complition time
-        :type completionTime: datetime
-        :param sourceFileId: Source file ID
-        :type sourceFileId: str, optional
-        :param sourceFileName: Source file name
-        :type sourceFileName: str, optional
-        :param sourceFileKey: Source file key
-        :type sourceFileKey: str, optional
-        :param id: Forms
-        :type id: Dict[str, Dict[str, Any]]
+        :param completion_time: Complition time
+        :type completion_time: datetime
+        :param source_file_id: Source file ID
+        :type source_file_id: str, optional
+        :param source_file_name: Source file name
+        :type source_file_name: str, optional
+        :param source_file_key: Source file key
+        :type source_file_key: str, optional
+        :param forms: Forms
+        :type forms: Dict[str, Dict[str, Any]]
     """
 
     name: str
     survey_id: str
-    completionTime: datetime
-    sourceFileId: Optional[str]
-    sourceFileName: Optional[str]
-    sourceFileKey: Optional[str]
+    completion_time: datetime
+    source_file_id: Optional[str]
+    source_file_name: Optional[str]
+    source_file_key: Optional[str]
     forms: Dict[str, Dict[str, Any]]
 
 

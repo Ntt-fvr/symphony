@@ -13,9 +13,9 @@ import (
 	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
@@ -29,7 +29,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		wire.FieldsOf(new(*cliFlags),
 			"MySQLConfig",
 			"AuthURL",
-			"EventConfig",
+			"EventPubsubURL",
 			"LogConfig",
 			"TelemetryConfig",
 			"Orc8rConfig",
@@ -38,14 +38,30 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		log.Provider,
 		newApp,
 		newTenancy,
+		wire.Struct(
+			new(event.Eventer),
+			"*",
+		),
 		newHealthChecks,
 		newMySQLTenancy,
 		mysql.Provider,
-		pubsub.Set,
+		ev.ProvideEmitter,
+		wire.Bind(
+			new(ev.EmitterFactory),
+			new(ev.TopicFactory),
+		),
+		wire.Bind(
+			new(ev.ReceiverFactory),
+			new(ev.TopicFactory),
+		),
 		graphhttp.NewServer,
-		wire.Struct(new(graphhttp.Config), "*"),
+		wire.Struct(
+			new(graphhttp.Config), "*",
+		),
 		graphgrpc.NewServer,
-		wire.Struct(new(graphgrpc.Config), "*"),
+		wire.Struct(
+			new(graphgrpc.Config), "*",
+		),
 	)
 	return nil, nil, nil
 }
@@ -60,9 +76,8 @@ func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Serve
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, logger log.Logger, emitter pubsub.Emitter) (viewer.Tenancy, error) {
-	eventer := event.Eventer{Logger: logger, Emitter: emitter}
-	return viewer.NewCacheTenancy(tenancy, eventer.HookTo), nil
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {

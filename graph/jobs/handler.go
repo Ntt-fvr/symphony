@@ -9,8 +9,8 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 
 	"github.com/gorilla/mux"
 )
@@ -18,8 +18,8 @@ import (
 type (
 	// Config configures jobs handler.
 	Config struct {
-		Logger     log.Logger
-		Subscriber pubsub.Subscriber
+		Logger          log.Logger
+		ReceiverFactory ev.ReceiverFactory
 	}
 
 	jobs struct {
@@ -32,8 +32,8 @@ type (
 func NewHandler(cfg Config) (http.Handler, error) {
 	r := resolver.New(
 		resolver.Config{
-			Logger:     cfg.Logger,
-			Subscriber: cfg.Subscriber,
+			Logger:          cfg.Logger,
+			ReceiverFactory: cfg.ReceiverFactory,
 		},
 		resolver.WithTransaction(false),
 	)

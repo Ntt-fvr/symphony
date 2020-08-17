@@ -17,43 +17,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r mutationResolver) createTemplatePropertyType(
-	ctx context.Context,
-	pt *ent.PropertyType,
-	id int,
-	entity models.PropertyEntity,
-) (*ent.PropertyType, error) {
-	mutation := r.ClientFrom(ctx).PropertyType.Create().
-		SetName(pt.Name).
-		SetType(pt.Type).
-		SetNodeType(pt.NodeType).
-		SetIndex(pt.Index).
-		SetCategory(pt.Category).
-		SetNillableStringVal(pt.StringVal).
-		SetNillableIntVal(pt.IntVal).
-		SetNillableBoolVal(pt.BoolVal).
-		SetNillableFloatVal(pt.FloatVal).
-		SetNillableLatitudeVal(pt.LatitudeVal).
-		SetNillableLongitudeVal(pt.LongitudeVal).
-		SetIsInstanceProperty(pt.IsInstanceProperty).
-		SetNillableRangeFromVal(pt.RangeFromVal).
-		SetNillableRangeToVal(pt.RangeToVal).
-		SetEditable(pt.Editable).
-		SetMandatory(pt.Mandatory).
-		SetDeleted(pt.Deleted)
-	switch entity {
-	case models.PropertyEntityWorkOrder:
-		mutation = mutation.SetWorkOrderTemplateID(id)
-	case models.PropertyEntityProject:
-		mutation = mutation.SetProjectTemplateID(id)
-	}
-	result, err := mutation.Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("creating property type: %w", err)
-	}
-	return result, nil
-}
-
 func (r mutationResolver) deleteTemplatePropertyTypes(
 	ctx context.Context,
 	id int,

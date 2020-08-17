@@ -16,8 +16,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 
 	"github.com/stretchr/testify/require"
@@ -48,8 +48,8 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestImporterResolver {
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
 	)
 	r := resolver.New(resolver.Config{
-		Logger:     logtest.NewTestLogger(t),
-		Subscriber: pubsub.NewNopSubscriber(),
+		Logger:          logtest.NewTestLogger(t),
+		ReceiverFactory: ev.ErrFactory{},
 	})
 	return &TestImporterResolver{
 		drv:    drv,

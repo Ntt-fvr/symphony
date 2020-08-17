@@ -16,8 +16,8 @@ import (
 
 // Work order events.
 const (
-	WorkOrderAdded = "work_order/added"
-	WorkOrderDone  = "work_order/done"
+	WorkOrderAdded = "work_order:added"
+	WorkOrderDone  = "work_order:done"
 )
 
 // Hook returns the hook which generates events from mutations.
@@ -47,11 +47,14 @@ func (e *Eventer) workOrderCreateHook() ent.Hook {
 	return hook.On(hk, ent.OpCreate)
 }
 
+// ErrWorkOrderUpdateStatusOfMany is returned on work order status update by predicate.
+var ErrWorkOrderUpdateStatusOfMany = errors.New("work order status update to done by predicate not allowed")
+
 func (e *Eventer) workOrderUpdateHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
 			if status, exists := m.Status(); exists && status == workorder.StatusDone {
-				return nil, errors.New("work order status update to done by predicate not allowed")
+				return nil, ErrWorkOrderUpdateStatusOfMany
 			}
 			return next.Mutate(ctx, m)
 		})

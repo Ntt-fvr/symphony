@@ -12,11 +12,13 @@ import (
 	"net/http"
 
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/google/wire"
@@ -31,8 +33,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
 			"MySQLConfig",
-			"EventConfig",
 			"LogConfig",
+			"EventSubURL",
 			"TelemetryConfig",
 			"TenancyConfig",
 		),
@@ -40,14 +42,31 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		newTenancy,
 		viewer.SyncFeatures,
 		newMySQLTenancy,
+		ev.ProvideReceiver,
+		wire.Bind(
+			new(ev.ReceiverFactory),
+			new(ev.TopicFactory),
+		),
+		wire.InterfaceValue(
+			new(ev.EventObject),
+			event.LogEntry{},
+		),
 		newHealthChecks,
 		mux.NewRouter,
-		wire.Bind(new(http.Handler), new(*mux.Router)),
+		wire.Bind(
+			new(http.Handler),
+			new(*mux.Router),
+		),
 		xserver.ServiceSet,
 		provideViews,
-		pubsub.Set,
-		wire.Struct(new(handler.Config), "*"),
+		wire.Struct(
+			new(handler.Config), "*",
+		),
 		handler.NewServer,
+		wire.Value([]handler.Handler{
+			handler.Func(handler.HandleActivityLog),
+			handler.Func(handler.HandleExport),
+		}),
 		newApplication,
 	)
 	return nil, nil, nil
@@ -62,8 +81,8 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, logger log.Logger, emitter pubsub.Emitter) (viewer.Tenancy, error) {
-	return viewer.NewCacheTenancy(tenancy, nil), nil
+func newTenancy(tenancy *viewer.MySQLTenancy) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, nil)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
@@ -83,6 +102,7 @@ func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logg
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
 	views = append(views, mysql.DefaultViews...)
-	views = append(views, pubsub.DefaultViews...)
+	views = append(views, ocpubsub.DefaultViews...)
+	views = append(views, ev.OpenCensusViews...)
 	return views
 }

@@ -27,14 +27,14 @@ func getActivityCudOperations(
 	author := viewer.MustGetOrCreateUser(ctx, "AuthID", user.RoleOwner)
 	activityQuery := c.Activity.Create().
 		SetAuthor(author).
-		SetChangedField(activity.ChangedFieldAssignee).
+		SetActivityType(activity.ActivityTypeAssigneeChanged).
 		SetNewValue("a").
 		SetOldValue("b")
 	activityQuery = setParent(activityQuery)
 	activityEntity := activityQuery.SaveX(ctx)
 	createActivity := func(ctx context.Context) error {
 		activityQuery := c.Activity.Create().
-			SetChangedField(activity.ChangedFieldAssignee).
+			SetActivityType(activity.ActivityTypeAssigneeChanged).
 			SetNewValue("a").
 			SetOldValue("b").
 			SetAuthor(author)
@@ -67,14 +67,14 @@ func TestActivityOfWorkOrderReadPolicyRule(t *testing.T) {
 	c.Activity.Create().
 		SetAuthor(u).
 		SetWorkOrder(wo1).
-		SetChangedField(activity.ChangedFieldAssignee).
+		SetActivityType(activity.ActivityTypeAssigneeChanged).
 		SetNewValue("a").
 		SetOldValue("b").
 		SaveX(ctx)
 	c.Activity.Create().
 		SetAuthor(u).
 		SetWorkOrder(wo2).
-		SetChangedField(activity.ChangedFieldAssignee).
+		SetActivityType(activity.ActivityTypeAssigneeChanged).
 		SetNewValue("a").
 		SetOldValue("b").
 		SaveX(ctx)

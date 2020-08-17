@@ -9,11 +9,11 @@ import (
 	"strconv"
 
 	"github.com/AlekSi/pointer"
-
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log"
 )
 
 func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) error {
@@ -22,7 +22,7 @@ func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) erro
 
 	wo := entry.CurrState
 	_, err := client.Activity.Create().
-		SetChangedField(activity.ChangedFieldCreationDate).
+		SetActivityType(activity.ActivityTypeCreationDateChanged).
 		SetIsCreate(true).
 		SetNewValue(strconv.FormatInt(entry.Time.Unix(), 10)).
 		SetNillableAuthorID(userID).
@@ -35,7 +35,7 @@ func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) erro
 	if assignee, found := event.FindEdge(wo.Edges, workorder.EdgeAssignee); found {
 		assgnID := assignee.IDs[0]
 		_, err = client.Activity.Create().
-			SetChangedField(activity.ChangedFieldAssignee).
+			SetActivityType(activity.ActivityTypeAssigneeChanged).
 			SetIsCreate(true).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(wo.ID).
@@ -50,7 +50,7 @@ func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) erro
 		ownerID := owner.IDs[0]
 
 		_, err = client.Activity.Create().
-			SetChangedField(activity.ChangedFieldOwner).
+			SetActivityType(activity.ActivityTypeOwnerChanged).
 			SetIsCreate(true).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(wo.ID).
@@ -63,7 +63,7 @@ func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) erro
 
 	if st, found := event.FindField(wo.Fields, workorder.FieldStatus); found {
 		_, err = client.Activity.Create().
-			SetChangedField(activity.ChangedFieldStatus).
+			SetActivityType(activity.ActivityTypeStatusChanged).
 			SetIsCreate(true).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(wo.ID).
@@ -76,7 +76,7 @@ func updateActivitiesOnWOCreate(ctx context.Context, entry *event.LogEntry) erro
 
 	if pri, found := event.FindField(wo.Fields, workorder.FieldPriority); found {
 		_, err = client.Activity.Create().
-			SetChangedField(activity.ChangedFieldPriority).
+			SetActivityType(activity.ActivityTypePriorityChanged).
 			SetIsCreate(true).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(wo.ID).
@@ -96,7 +96,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate := getDiffOfUniqueEdgeAsString(entry, workorder.EdgeAssignee)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldAssignee).
+			SetActivityType(activity.ActivityTypeAssigneeChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -111,7 +111,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate = getDiffOfUniqueEdgeAsString(entry, workorder.EdgeOwner)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldOwner).
+			SetActivityType(activity.ActivityTypeOwnerChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -126,7 +126,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldStatus)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldStatus).
+			SetActivityType(activity.ActivityTypeStatusChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -141,7 +141,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldPriority)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldPriority).
+			SetActivityType(activity.ActivityTypePriorityChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -156,7 +156,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldName)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldName).
+			SetActivityType(activity.ActivityTypeNameChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -171,7 +171,7 @@ func updateActivitiesOnWOUpdate(ctx context.Context, entry *event.LogEntry) erro
 	newVal, oldVal, shouldUpdate = event.GetStringDiffValuesField(entry, workorder.FieldDescription)
 	if shouldUpdate {
 		_, err := client.Activity.Create().
-			SetChangedField(activity.ChangedFieldDescription).
+			SetActivityType(activity.ActivityTypeDescriptionChanged).
 			SetIsCreate(false).
 			SetNillableAuthorID(userID).
 			SetWorkOrderID(entry.CurrState.ID).
@@ -198,7 +198,7 @@ func getDiffOfUniqueEdgeAsString(entry *event.LogEntry, edge string) (*string, *
 	return newStrVal, oldStrVal, shouldUpdate
 }
 
-func HandleActivityLog(ctx context.Context, entry event.LogEntry) error {
+func HandleActivityLog(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 	var err error
 	if entry.Type != ent.TypeWorkOrder {
 		return nil

@@ -7,135 +7,134 @@ package handler
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
-	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 	"gocloud.dev/runtimevar"
 )
 
-const serviceName = "async"
+// ServiceName is the current service name.
+const ServiceName = "async"
 
 // A Handler handles incoming events.
 type Handler interface {
-	Handle(context.Context, event.LogEntry) error
+	Handle(context.Context, log.Logger, event.LogEntry) error
 }
 
 // The Func type is an adapter to allow the use of
 // ordinary functions as handlers.
-type Func func(context.Context, event.LogEntry) error
+type Func func(context.Context, log.Logger, event.LogEntry) error
 
 // Handle returns f(ctx, entry).
-func (f Func) Handle(ctx context.Context, entry event.LogEntry) error {
-	return f(ctx, entry)
+func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	return f(ctx, logger, entry)
 }
 
 // NewServer is the events server.
 type Server struct {
-	tenancy    viewer.Tenancy
-	features   *runtimevar.Variable
-	subscriber pubsub.Subscriber
-	logger     log.Logger
-	handlers   []Handler
+	service  *ev.Service
+	logger   log.Logger
+	tenancy  viewer.Tenancy
+	features *runtimevar.Variable
+	handlers []Handler
 }
 
 // Config defines the async server config.
 type Config struct {
-	Tenancy    viewer.Tenancy
-	Features   *runtimevar.Variable
-	Logger     log.Logger
-	Subscriber pubsub.Subscriber
-	Telemetry  *telemetry.Config
+	Tenancy  viewer.Tenancy
+	Features *runtimevar.Variable
+	Receiver ev.Receiver
+	Logger   log.Logger
+	Handlers []Handler
 }
 
 func NewServer(cfg Config) *Server {
-	return &Server{
-		tenancy:    cfg.Tenancy,
-		features:   cfg.Features,
-		logger:     cfg.Logger,
-		subscriber: cfg.Subscriber,
-		handlers: []Handler{
-			Func(HandleActivityLog),
+	srv := &Server{
+		tenancy:  cfg.Tenancy,
+		features: cfg.Features,
+		logger:   cfg.Logger,
+		handlers: cfg.Handlers,
+	}
+	srv.service, _ = ev.NewService(
+		ev.Config{
+			Receiver: cfg.Receiver,
+			Handler:  srv,
 		},
+		ev.WithEvent(event.EntMutation),
+	)
+	return srv
+}
+
+// Serve starts the server.
+func (s *Server) Serve(ctx context.Context) error {
+	return s.service.Run(ctx)
+}
+
+// Shutdown terminates the server.
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.service.Stop(ctx)
+}
+
+// HandleEvent implement ev.EventHandler interface.
+func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
+	entry, ok := evt.Object.(event.LogEntry)
+	if !ok {
+		return fmt.Errorf("event object %T must be a log entry", evt.Object)
 	}
+	if err := s.handleLogEntry(ctx, evt.Tenant, entry); err != nil {
+		s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
+	}
+	return nil
 }
 
-// Subscribe returns listener to the relevant events.
-func (s *Server) Subscribe(ctx context.Context, wg *sync.WaitGroup) (*pubsub.Listener, error) {
-	return pubsub.NewListener(ctx, pubsub.ListenerConfig{
-		Subscriber: s.subscriber,
-		Logger:     s.logger.For(ctx),
-		Events:     []string{event.EntMutation},
-		Handler: pubsub.HandlerFunc(func(ctx context.Context, tenant string, _ string, body []byte) error {
-			wg.Add(1)
-			var entry event.LogEntry
-			err := pubsub.Unmarshal(body, &entry)
-			if err != nil {
-				wg.Done()
-				return fmt.Errorf("cannot unmarshal log entry: %w", err)
-			}
-			go func() {
-				defer wg.Done()
-				err := s.handleEventLog(s.handlers)(context.Background(), tenant, entry)
-				if err != nil {
-					s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
-				}
-			}()
-			return nil
-		}),
-	})
-}
+func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.LogEntry) error {
+	client, err := s.tenancy.ClientFor(ctx, tenant)
+	if err != nil {
+		const msg = "cannot get tenancy client"
+		s.logger.For(ctx).Error(msg, zap.Error(err))
+		return fmt.Errorf("%s. tenant: %s", msg, tenant)
+	}
+	ctx = ent.NewContext(ctx, client)
 
-func (s *Server) handleEventLog(handlers []Handler) func(context.Context, string, event.LogEntry) error {
-	return func(ctx context.Context, tenant string, entry event.LogEntry) error {
-		client, err := s.tenancy.ClientFor(ctx, tenant)
-		if err != nil {
-			const msg = "cannot get tenancy client"
-			s.logger.For(ctx).Error(msg, zap.Error(err))
-			return fmt.Errorf("%s. tenant: %s", msg, tenant)
+	var featureList []string
+	snapshot, err := s.features.Latest(ctx)
+	if err != nil {
+		return err
+	}
+	if tenantFeatures, ok := snapshot.Value.(viewer.TenantFeatures); ok {
+		if features, ok := tenantFeatures[tenant]; ok {
+			featureList = features
 		}
-		ctx = ent.NewContext(ctx, client)
-
-		var featureList []string
-		snapshot, err := s.features.Latest(ctx)
-		if err != nil {
-			return err
-		}
-		if tenantFeatures, ok := snapshot.Value.(viewer.TenantFeatures); ok {
-			if features, ok := tenantFeatures[tenant]; ok {
-				featureList = features
-			}
-		}
-		v := viewer.NewAutomation(tenant, serviceName, user.RoleOwner,
-			viewer.WithFeatures(featureList...),
+	}
+	v := viewer.NewAutomation(tenant, ServiceName, user.RoleOwner,
+		viewer.WithFeatures(featureList...),
+	)
+	ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
+	ctx = viewer.NewContext(ctx, v)
+	permissions, err := authz.Permissions(ctx)
+	if err != nil {
+		const msg = "cannot get permissions"
+		s.logger.For(ctx).Error(msg,
+			zap.Error(err),
 		)
-		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
-		ctx = viewer.NewContext(ctx, v)
-		permissions, err := authz.Permissions(ctx)
-		if err != nil {
-			const msg = "cannot get permissions"
-			s.logger.For(ctx).Error(msg,
-				zap.Error(err),
-			)
-			return fmt.Errorf("%s. tenant: %s, name: %s", msg, tenant, serviceName)
-		}
-		ctx = authz.NewContext(ctx, permissions)
-
-		for _, h := range handlers {
-			if err := s.runHandlerWithTransaction(ctx, h, entry); err != nil {
-				s.logger.For(ctx).Error("running handler", zap.Error(err))
-			}
-		}
-		return nil
+		return fmt.Errorf("%s. tenant: %s, name: %s", msg, tenant, ServiceName)
 	}
+	ctx = authz.NewContext(ctx, permissions)
+
+	for _, h := range s.handlers {
+		if err := s.runHandlerWithTransaction(ctx, h, entry); err != nil {
+			s.logger.For(ctx).Error("running handler", zap.Error(err))
+		}
+	}
+	return nil
 }
+
 func (s *Server) runHandlerWithTransaction(ctx context.Context, h Handler, entry event.LogEntry) error {
 	tx, err := ent.FromContext(ctx).Tx(ctx)
 	if err != nil {
@@ -149,7 +148,7 @@ func (s *Server) runHandlerWithTransaction(ctx context.Context, h Handler, entry
 		}
 	}()
 	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.Handle(ctx, entry); err != nil {
+	if err := h.Handle(ctx, s.logger, entry); err != nil {
 		if r := tx.Rollback(); r != nil {
 			err = fmt.Errorf("rolling back transaction: %v", r)
 		}

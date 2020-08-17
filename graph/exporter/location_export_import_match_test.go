@@ -18,8 +18,8 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -90,8 +90,8 @@ func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method m
 	logger := logtest.NewTestLogger(t)
 	h, _ := importer.NewHandler(
 		importer.Config{
-			Logger:     logger,
-			Subscriber: pubsub.NewNopSubscriber(),
+			Logger:          logger,
+			ReceiverFactory: ev.ErrFactory{},
 		},
 	)
 	th := viewertest.TestHandler(t, h, client)
@@ -115,7 +115,7 @@ func TestExportAndEditLocations(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, locationsRower{log}}
+			e := &exporter{log, LocationsRower{log, true}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 			importLocationsFile(t, r.client, res.Body, MethodEdit, withVerify, skipLines)
 			res.Body.Close()
@@ -164,7 +164,7 @@ func TestExportAndAddLocations(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, locationsRower{log}}
+			e := &exporter{log, LocationsRower{log, true}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
 			locs := r.client.Location.Query().AllX(ctx)

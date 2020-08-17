@@ -524,7 +524,7 @@ input CommentInput {
 
 enum ActivityField
   @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ChangedField"
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ActivityType"
   ) {
   STATUS
   PRIORITY
@@ -533,19 +533,28 @@ enum ActivityField
   OWNER
   NAME
   DESCRIPTION
+  CLOCK_IN
+}
+
+type ClockDetails
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockDetails"
+  ) {
+  distanceMeters: Float
 }
 
 type Activity implements Node {
   id: ID!
   author: User
   isCreate: Boolean!
-  changedField: ActivityField!
+  activityType: ActivityField!
   newRelatedNode: Node
   oldRelatedNode: Node
   oldValue: String
   newValue: String
   createTime: Time!
   workOrder: WorkOrder!
+  clockDetails: ClockDetails
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -1622,16 +1631,16 @@ input ReportFilterInput {
 }
 
 enum ExportType
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
-){
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Type"
+  ) {
   EQUIPMENT
   LOCATION
 }
 enum ExportStatus
-@goModel(
-  model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
-){
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/exporttask.Status"
+  ) {
   PENDING
   IN_PROGRESS
   SUCCEEDED
@@ -3040,6 +3049,10 @@ input AddActionsRuleInput {
   ruleFilters: [ActionsRuleFilterInput]!
 }
 
+input TechnicianWorkOrderCheckInInput {
+  distanceMeters: Float
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -3566,7 +3579,10 @@ type Mutation {
   addActionsRule(input: AddActionsRuleInput!): ActionsRule!
   editActionsRule(id: ID!, input: AddActionsRuleInput!): ActionsRule!
   removeActionsRule(id: ID!): Boolean!
-  technicianWorkOrderCheckIn(workOrderId: ID!): WorkOrder!
+  technicianWorkOrderCheckIn(
+    workOrderId: ID!
+    input: TechnicianWorkOrderCheckInInput
+  ): WorkOrder!
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!

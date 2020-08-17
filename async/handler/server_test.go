@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package handler
+package handler_test
 
 import (
 	"context"
@@ -10,38 +10,35 @@ import (
 	"math/rand"
 	"sync"
 	"testing"
-	"time"
 
+	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 	"gocloud.dev/runtimevar/constantvar"
 )
 
-func newTestServer(t *testing.T, client *ent.Client, subscriber pubsub.Subscriber, handlers []Handler) *Server {
-	return &Server{
-		tenancy: viewer.NewFixedTenancy(client),
-		features: constantvar.New(viewer.TenantFeatures{
+func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handlers ...handler.Handler) *handler.Server {
+	return handler.NewServer(handler.Config{
+		Tenancy: viewer.NewFixedTenancy(client),
+		Features: constantvar.New(viewer.TenantFeatures{
 			viewertest.DefaultTenant: viewertest.DefaultFeatures,
 		}),
-		logger:     logtest.NewTestLogger(t),
-		subscriber: subscriber,
-		handlers:   handlers,
-	}
+		Logger:   logtest.NewTestLogger(t),
+		Receiver: receiver,
+		Handlers: handlers,
+	})
 }
 
 func getLogEntry() event.LogEntry {
 	return event.LogEntry{
-		UserName:  "",
-		UserID:    nil,
-		Time:      time.Time{},
 		Operation: ent.OpCreate,
-		PrevState: nil,
 		CurrState: &ent.Node{
 			ID:   rand.Int(),
 			Type: "Dog",
@@ -52,95 +49,81 @@ func getLogEntry() event.LogEntry {
 					Value: "Lassie",
 				},
 			},
-			Edges: nil,
 		},
 	}
 }
 
 func TestServer(t *testing.T) {
-	tenantName := "Random"
-	emitter, subscriber := pubsub.Pipe()
+	emitter, receiver := ev.Pipe()
 	defer func() {
 		ctx := context.Background()
 		_ = emitter.Shutdown(ctx)
-		_ = subscriber.Shutdown(ctx)
+		_ = receiver.Shutdown(ctx)
 	}()
 	logEntry := getLogEntry()
-	data, err := pubsub.Marshal(logEntry)
-	require.NoError(t, err)
 	client := viewertest.NewTestClient(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	h := Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		v := viewer.FromContext(ctx)
-		require.Equal(t, tenantName, v.Tenant())
-		require.Equal(t, serviceName, v.Name())
+		require.Equal(t, t.Name(), v.Tenant())
+		require.Equal(t, handler.ServiceName, v.Name())
 		require.Equal(t, user.RoleOwner, v.Role())
 		require.EqualValues(t, logEntry, entry)
 		cancel()
 		return nil
 	})
-	server := newTestServer(t, client, subscriber, []Handler{h})
+	server := newTestServer(t, client, receiver, h)
 	var wg sync.WaitGroup
-	listener, err := server.Subscribe(ctx, &wg)
-	require.NoError(t, err)
-	defer listener.Shutdown(ctx)
+	defer server.Shutdown(ctx)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := listener.Listen(ctx)
+		err := server.Serve(ctx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
+
+	err := emitter.Emit(ctx, &ev.Event{
+		Tenant: t.Name(),
+		Name:   event.EntMutation,
+		Object: logEntry,
+	})
 	require.NoError(t, err)
 	wg.Wait()
 }
 
 func TestServerBadData(t *testing.T) {
-	emitter, subscriber := pubsub.Pipe()
+	ctx := context.Background()
+	emitter, receiver := ev.Pipe()
 	defer func() {
-		ctx := context.Background()
 		_ = emitter.Shutdown(ctx)
-		_ = subscriber.Shutdown(ctx)
+		_ = receiver.Shutdown(ctx)
 	}()
+
 	client := viewertest.NewTestClient(t)
-	ctx, cancel := context.WithCancel(context.Background())
-	h := Func(func(context.Context, event.LogEntry) error {
-		cancel()
-		return nil
+	server := newTestServer(t, client, receiver,
+		handler.Func(func(context.Context, log.Logger, event.LogEntry) error { return nil }),
+	)
+	err := server.HandleEvent(ctx, &ev.Event{
+		Tenant: viewertest.DefaultTenant,
+		Name:   event.EntMutation,
+		Object: []byte(""),
 	})
-	server := newTestServer(t, client, subscriber, []Handler{h})
-	var wg sync.WaitGroup
-	listener, err := server.Subscribe(ctx, &wg)
-	require.NoError(t, err)
-	defer listener.Shutdown(ctx)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		err := listener.Listen(ctx)
-		require.Error(t, err)
-		require.False(t, errors.Is(err, context.Canceled))
-	}()
-	err = emitter.Emit(ctx, viewertest.DefaultTenant, event.EntMutation, []byte(""))
-	require.NoError(t, err)
-	wg.Wait()
+	require.Error(t, err)
 }
 
 func TestServerHandlerError(t *testing.T) {
-	tenantName := "Random"
-	emitter, subscriber := pubsub.Pipe()
+	emitter, receiver := ev.Pipe()
 	defer func() {
 		ctx := context.Background()
 		_ = emitter.Shutdown(ctx)
-		_ = subscriber.Shutdown(ctx)
+		_ = receiver.Shutdown(ctx)
 	}()
 	logEntry := getLogEntry()
-	data, err := pubsub.Marshal(logEntry)
-	require.NoError(t, err)
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -148,39 +131,38 @@ func TestServerHandlerError(t *testing.T) {
 		cancel()
 		return errors.New("operation failed")
 	})
-	server := newTestServer(t, client, subscriber, []Handler{h})
+	server := newTestServer(t, client, receiver, h)
 	var wg sync.WaitGroup
-	listener, err := server.Subscribe(cancelledCtx, &wg)
-	require.NoError(t, err)
-	defer listener.Shutdown(ctx)
+	defer server.Shutdown(ctx)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := listener.Listen(cancelledCtx)
+		err := server.Serve(cancelledCtx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
+	err := emitter.Emit(ctx, &ev.Event{
+		Tenant: t.Name(),
+		Name:   event.EntMutation,
+		Object: logEntry,
+	})
 	require.NoError(t, err)
 	wg.Wait()
 	require.False(t, client.LocationType.Query().Where().ExistX(ctx))
 }
 
 func TestServerHandlerNoError(t *testing.T) {
-	tenantName := "Random"
-	emitter, subscriber := pubsub.Pipe()
+	emitter, receiver := ev.Pipe()
 	defer func() {
 		ctx := context.Background()
 		_ = emitter.Shutdown(ctx)
-		_ = subscriber.Shutdown(ctx)
+		_ = receiver.Shutdown(ctx)
 	}()
 	logEntry := getLogEntry()
-	data, err := pubsub.Marshal(logEntry)
-	require.NoError(t, err)
 	client := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := Func(func(ctx context.Context, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -188,18 +170,20 @@ func TestServerHandlerNoError(t *testing.T) {
 		cancel()
 		return nil
 	})
-	server := newTestServer(t, client, subscriber, []Handler{h})
+	server := newTestServer(t, client, receiver, h)
 	var wg sync.WaitGroup
-	listener, err := server.Subscribe(cancelledCtx, &wg)
-	require.NoError(t, err)
-	defer listener.Shutdown(ctx)
+	defer server.Shutdown(ctx)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err := listener.Listen(cancelledCtx)
+		err := server.Serve(cancelledCtx)
 		require.True(t, errors.Is(err, context.Canceled))
 	}()
-	err = emitter.Emit(ctx, tenantName, event.EntMutation, data)
+	err := emitter.Emit(ctx, &ev.Event{
+		Tenant: t.Name(),
+		Name:   event.EntMutation,
+		Object: logEntry,
+	})
 	require.NoError(t, err)
 	wg.Wait()
 	require.True(t, client.LocationType.Query().Where().ExistX(ctx))

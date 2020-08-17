@@ -165,14 +165,17 @@ func (e *TopicEmitter) Shutdown(ctx context.Context) error {
 	return err
 }
 
+// numReceivers tracks the current number of open receivers.
+var numReceivers int64
+
 // NewTopicReceiver creates an event receiver that read from a pubsub topic.
 func NewTopicReceiver(ctx context.Context, url string, decoder Decoder) (*TopicReceiver, error) {
 	subscription, err := pubsub.OpenSubscription(ctx, url)
 	if err != nil {
 		return nil, err
 	}
-	stats.Record(ctx, EventOpenReceiverTotal.M(
-		atomic.AddInt64(&EventOpenReceiverCount, 1),
+	stats.Record(ctx, EventNumReceivers.M(
+		atomic.AddInt64(&numReceivers, 1),
 	))
 	if decoder == nil {
 		decoder = BytesDecoder
@@ -254,8 +257,8 @@ func (r *TopicReceiver) receive(ctx context.Context) (*Event, error) {
 func (r *TopicReceiver) Shutdown(ctx context.Context) (err error) {
 	defer func() {
 		if err == nil {
-			stats.Record(ctx, EventOpenReceiverTotal.M(
-				atomic.AddInt64(&EventOpenReceiverCount, -1),
+			stats.Record(ctx, EventNumReceivers.M(
+				atomic.AddInt64(&numReceivers, -1),
 			))
 		} else {
 			_ = stats.RecordWithTags(ctx,

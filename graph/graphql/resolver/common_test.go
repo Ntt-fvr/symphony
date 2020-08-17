@@ -7,7 +7,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 
@@ -22,22 +21,42 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/hashicorp/go-multierror"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/require"
 )
 
 type TestResolver struct {
 	generated.ResolverRoot
-	logger     log.Logger
-	client     *ent.Client
-	emitter    *pubsub.PipeEmitter
-	subscriber *pubsub.PipeSubscriber
+	logger  log.Logger
+	client  *ent.Client
+	factory ev.Factory
 }
 
-func newTestResolver(t *testing.T, opts ...Option) *TestResolver {
+type option func(*options)
+
+type options struct {
+	opts    []Option
+	factory ev.Factory
+}
+
+func withResolverOptions(opts ...Option) option {
+	return func(o *options) {
+		o.opts = append(o.opts, opts...)
+	}
+}
+
+func withEventFactory(factory ev.Factory) option {
+	return func(o *options) {
+		o.factory = factory
+	}
+}
+
+func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 	c := enttest.Open(t, dialect.SQLite,
 		fmt.Sprintf("file:%s-%d?mode=memory&cache=shared&_fk=1",
 			t.Name(), time.Now().UnixNano(),
@@ -47,44 +66,46 @@ func newTestResolver(t *testing.T, opts ...Option) *TestResolver {
 		),
 	)
 
-	emitter, subscriber := pubsub.Pipe()
+	o := &options{}
+	for _, opt := range opts {
+		opt(o)
+	}
+	factory := o.factory
+	if factory == nil {
+		factory = &ev.MemFactory{}
+	}
+
+	ctx := context.Background()
+	emitter, err := factory.NewEmitter(ctx)
+	require.NoError(t, err)
+
 	logger := logtest.NewTestLogger(t)
 	eventer := event.Eventer{Logger: logger, Emitter: emitter}
 	eventer.HookTo(c)
 
 	r := New(Config{
-		Logger:     logger,
-		Subscriber: subscriber,
-	}, opts...)
+		Logger:          logger,
+		ReceiverFactory: factory,
+	}, o.opts...)
 
 	return &TestResolver{
 		ResolverRoot: r,
 		logger:       logger,
 		client:       c,
-		emitter:      emitter,
-		subscriber:   subscriber,
+		factory:      factory,
 	}
 }
 
 func (tr *TestResolver) Close() error {
-	var (
-		shutdowners = []func(context.Context) error{
-			func(context.Context) error { return tr.client.Close() },
-			tr.emitter.Shutdown,
-			tr.subscriber.Shutdown,
-		}
-		ctx = context.Background()
-		wg  sync.WaitGroup
-	)
-	wg.Add(len(shutdowners))
-	for _, shutdowner := range shutdowners {
-		go func(shutdowner func(context.Context) error) {
-			defer wg.Done()
-			_ = shutdowner(ctx)
-		}(shutdowner)
+	err := &multierror.Error{}
+	if shutdowner, ok := tr.factory.(ev.Shutdowner); ok {
+		err = multierror.Append(err,
+			shutdowner.Shutdown(context.Background()),
+		)
 	}
-	wg.Wait()
-	return nil
+	return multierror.Append(err,
+		tr.client.Close(),
+	).ErrorOrNil()
 }
 
 func (tr *TestResolver) GraphClient(opts ...viewertest.Option) *client.Client {

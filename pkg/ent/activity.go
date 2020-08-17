@@ -7,6 +7,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -26,14 +27,16 @@ type Activity struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// ChangedField holds the value of the "changed_field" field.
-	ChangedField activity.ChangedField `json:"changed_field,omitempty"`
+	// ActivityType holds the value of the "activity_type" field.
+	ActivityType activity.ActivityType `json:"activity_type,omitempty"`
 	// IsCreate holds the value of the "is_create" field.
 	IsCreate bool `json:"is_create,omitempty"`
 	// OldValue holds the value of the "old_value" field.
 	OldValue string `json:"old_value,omitempty"`
 	// NewValue holds the value of the "new_value" field.
 	NewValue string `json:"new_value,omitempty"`
+	// ClockDetails holds the value of the "clock_details" field.
+	ClockDetails activity.ClockDetails `json:"clock_details,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ActivityQuery when eager-loading is set.
 	Edges                 ActivityEdges `json:"edges"`
@@ -86,10 +89,11 @@ func (*Activity) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
-		&sql.NullString{}, // changed_field
+		&sql.NullString{}, // activity_type
 		&sql.NullBool{},   // is_create
 		&sql.NullString{}, // old_value
 		&sql.NullString{}, // new_value
+		&[]byte{},         // clock_details
 	}
 }
 
@@ -124,9 +128,9 @@ func (a *Activity) assignValues(values ...interface{}) error {
 		a.UpdateTime = value.Time
 	}
 	if value, ok := values[2].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field changed_field", values[2])
+		return fmt.Errorf("unexpected type %T for field activity_type", values[2])
 	} else if value.Valid {
-		a.ChangedField = activity.ChangedField(value.String)
+		a.ActivityType = activity.ActivityType(value.String)
 	}
 	if value, ok := values[3].(*sql.NullBool); !ok {
 		return fmt.Errorf("unexpected type %T for field is_create", values[3])
@@ -143,7 +147,15 @@ func (a *Activity) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		a.NewValue = value.String
 	}
-	values = values[6:]
+
+	if value, ok := values[6].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field clock_details", values[6])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &a.ClockDetails); err != nil {
+			return fmt.Errorf("unmarshal field clock_details: %v", err)
+		}
+	}
+	values = values[7:]
 	if len(values) == len(activity.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field activity_author", value)
@@ -198,14 +210,16 @@ func (a *Activity) String() string {
 	builder.WriteString(a.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", update_time=")
 	builder.WriteString(a.UpdateTime.Format(time.ANSIC))
-	builder.WriteString(", changed_field=")
-	builder.WriteString(fmt.Sprintf("%v", a.ChangedField))
+	builder.WriteString(", activity_type=")
+	builder.WriteString(fmt.Sprintf("%v", a.ActivityType))
 	builder.WriteString(", is_create=")
 	builder.WriteString(fmt.Sprintf("%v", a.IsCreate))
 	builder.WriteString(", old_value=")
 	builder.WriteString(a.OldValue)
 	builder.WriteString(", new_value=")
 	builder.WriteString(a.NewValue)
+	builder.WriteString(", clock_details=")
+	builder.WriteString(fmt.Sprintf("%v", a.ClockDetails))
 	builder.WriteByte(')')
 	return builder.String()
 }

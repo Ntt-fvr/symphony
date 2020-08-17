@@ -39,44 +39,71 @@ module keycloak_db {
   tags = local.tags
 }
 
+# generate random password for keycloak admin
+resource random_password keycloak_admin {
+  length  = 16
+  special = false
+}
+
 # keycloak is a identity and access manager
 resource helm_release keycloak {
   name       = "keycloak"
   repository = local.helm_repository.codecentric
   chart      = "keycloak"
-  version    = "8.2.2"
-  keyring    = ""
+  version    = "9.0.1"
 
   values = [<<EOT
-  keycloak:
-    replicas: 2
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: nginx
-        ingress.kubernetes.io/affinity: cookie
-      hosts:
-        - auth.${local.domains.symphony.name}
-    podDisruptionBudget:
-      minAvailable: 1
-    persistence:
-      dbVendor: mysql
-      dbName: ${module.keycloak_db.this_db_instance_name}
-      dbHost: ${module.keycloak_db.this_db_instance_address}
-      dbPort: ${module.keycloak_db.this_db_instance_port}
-      dbUser: ${module.keycloak_db.this_db_instance_username}
-    extraEnv: |
-      - name: JDBC_PARAMS
-        value: "useSSL=false"
-      - name: PROXY_ADDRESS_FORWARDING
-        value: "true"
+  replicas: 2
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      ingress.kubernetes.io/affinity: cookie
+    rules:
+      - host: auth.${local.domains.symphony.name}
+        paths:
+          - /
+    tls: []
+  podDisruptionBudget:
+    minAvailable: 1
+  extraEnv: |
+    - name: KEYCLOAK_USER
+      value: "admin"
+    - name: KEYCLOAK_STATISTICS
+      value: "all"
+    - name: JDBC_PARAMS
+      value: "useSSL=false"
+    - name: PROXY_ADDRESS_FORWARDING
+      value: "true"
+    - name: DB_VENDOR
+      value: "mysql"
+    - name: DB_ADDR
+      value: "${module.keycloak_db.this_db_instance_address}"
+    - name: DB_PORT
+      value: "${module.keycloak_db.this_db_instance_port}"
+    - name: DB_USER
+      value: "${module.keycloak_db.this_db_instance_username}"
+  extraEnvFrom: |
+    - secretRef:
+        name: keycloak-http
+    - secretRef:
+        name: keycloak-db
+  serviceMonitor:
+    enabled: true
+  postgresql:
+    enabled: false
   test:
     enabled: false
   EOT
   ]
 
   set_sensitive {
-    name  = "keycloak.persistence.dbPassword"
+    name  = "secrets.http.stringData.KEYCLOAK_PASSWORD"
+    value = random_password.keycloak_admin.result
+  }
+
+  set_sensitive {
+    name  = "secrets.db.stringData.DB_PASSWORD"
     value = module.keycloak_db.this_db_instance_password
   }
 }

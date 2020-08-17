@@ -14,7 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
-export type ActivityField = "ASSIGNEE" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
+export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type ActivityPost_activity$ref: FragmentReference;
 declare export opaque type ActivityPost_activity$fragmentType: ActivityPost_activity$ref;
@@ -24,7 +24,7 @@ export type ActivityPost_activity = {|
     +email: string
   |},
   +isCreate: boolean,
-  +changedField: ActivityField,
+  +activityType: ActivityField,
   +newRelatedNode: ?({|
     +__typename: "User",
     +id: string,
@@ -119,7 +119,7 @@ return {
     {
       "kind": "ScalarField",
       "alias": null,
-      "name": "changedField",
+      "name": "activityType",
       "args": null,
       "storageKey": null
     },
@@ -168,5 +168,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '16d8fd36f3a8edb2c9b89f28e5c853a8';
+(node/*: any*/).hash = 'd17349f40511e4424c6b43f0449af2be';
 module.exports = node;

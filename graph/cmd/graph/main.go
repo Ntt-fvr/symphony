@@ -15,10 +15,10 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -36,7 +36,7 @@ type cliFlags struct {
 	GRPCAddress     *net.TCPAddr
 	MySQLConfig     mysql.Config
 	AuthURL         *url.URL
-	EventConfig     pubsub.Config
+	EventPubsubURL  ev.TopicFactory
 	LogConfig       log.Config
 	TelemetryConfig telemetry.Config
 	Orc8rConfig     orc8r.Config
@@ -71,7 +71,13 @@ func main() {
 	).
 		Envar("WS_AUTH_URL").
 		URLVar(&cf.AuthURL)
-	pubsub.AddFlagsVar(kingpin.CommandLine, &cf.EventConfig)
+	kingpin.Flag(
+		"event.pubsub-url",
+		"event pubsub url",
+	).
+		Envar("EVENT_PUBSUB_URL").
+		Required().
+		SetValue(&cf.EventPubsubURL)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
 	orc8r.AddFlagsVar(kingpin.CommandLine, &cf.Orc8rConfig)

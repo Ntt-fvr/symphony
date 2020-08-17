@@ -5,151 +5,156 @@
 package ocgql
 
 import (
+	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/tag"
 )
 
-// The following server GraphQL measures are supported for use in custom views.
+// The following measures are supported for use in custom views.
 var (
-	ServerRequestCount = stats.Int64(
-		"graphql/server/request_count",
-		"Number of GraphQL requests started",
+	RequestTotal = stats.Int64(
+		"graphql/requests_total",
+		"Total number of requests",
 		stats.UnitDimensionless,
 	)
-	ServerResponseCount = stats.Int64(
-		"graphql/server/response_count",
-		"Number of GraphQL requests ended",
-		stats.UnitDimensionless,
-	)
-	ServerRequestLatency = stats.Float64(
-		"graphql/server/request_latency",
-		"Latency of GraphQL requests",
+	RequestLatency = stats.Float64(
+		"graphql/request_latency_milliseconds",
+		"Latency of requests",
 		stats.UnitMilliseconds,
 	)
-	ServerResolveCount = stats.Int64(
-		"graphql/server/resolve_count",
-		"Number of GraphQL resolves",
+	ResponseTotal = stats.Int64(
+		"graphql/responses_total",
+		"Total number of responses",
 		stats.UnitDimensionless,
 	)
-	ServerResolveLatency = stats.Float64(
-		"graphql/server/resolve_latency",
-		"Latency of GraphQL resolves",
+	ResolveTotal = stats.Int64(
+		"graphql/resolves_total",
+		"Total number of resolves",
+		stats.UnitDimensionless,
+	)
+	ResolveLatency = stats.Float64(
+		"graphql/resolve_latency_milliseconds",
+		"Latency of resolves",
 		stats.UnitMilliseconds,
 	)
-	ServerRequestComplexity = stats.Int64(
-		"graphql/server/request_complexity",
-		"Complexity of GraphQL requests",
+	DeprecatedResolveTotal = stats.Int64(
+		"graphql/deprecated_resolves_total",
+		"Total number of deprecated resolves",
+		stats.UnitDimensionless,
+	)
+	RequestComplexity = stats.Int64(
+		"graphql/request_complexities",
+		"Complexity of requests",
+		stats.UnitDimensionless,
+	)
+	NumSubscriptions = stats.Int64(
+		"graphql/current_subscriptions",
+		"Current number of subscriptions",
 		stats.UnitDimensionless,
 	)
 )
 
 // The following tags are applied to stats recorded by this package.
 var (
-	// Object is the GraphQL object being resolved.
-	Object = tag.MustNewKey("graphql.object")
+	// Operation is the operation (query, mutation or subscription).
+	Operation = tag.MustNewKey("operation")
 
-	// Field is the GraphQL object field being resolved.
-	Field = tag.MustNewKey("graphql.field")
+	// Object is the object being resolved.
+	Object = tag.MustNewKey("object")
 
-	// Error is the GraphQL exit error.
-	Error = tag.MustNewKey("graphql.error")
+	// Field is the field being resolved.
+	Field = tag.MustNewKey("field")
 
-	// Deprecated is whether the GraphQL object field being resolved is deprecated.
-	Deprecated = tag.MustNewKey("graphql.deprecated")
+	// Errors is the number of request/resolve errors.
+	Errors = tag.MustNewKey("errors")
 )
 
-// Default distributions used by views in this package.
+// The following tags are deprecated.
 var (
-	DefaultLatencyDistribution    = ochttp.DefaultLatencyDistribution
-	DefaultComplexityDistribution = view.Distribution(10, 50, 100, 250, 500, 1000, 5000, 10000, 50000, 100000, 500000)
+	GraphQLObject     = tag.MustNewKey("graphql.object")
+	GraphQLField      = tag.MustNewKey("graphql.field")
+	GraphQLDeprecated = tag.MustNewKey("graphql.deprecated")
 )
 
-// Package ocgql provides some convenience views for server measures.
+// Package ocgql provides some convenience views for measures.
 // You still need to register these views for data to actually be collected.
 var (
-	ServerRequestCountView = &view.View{
-		Name:        "graphql/server/request_count",
-		Description: "Count of GraphQL requests started",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerRequestCount,
+	RequestTotalView = &view.View{
+		Name:        RequestTotal.Name(),
+		Description: RequestTotal.Description(),
+		TagKeys:     []tag.Key{Operation},
+		Measure:     RequestTotal,
 		Aggregation: view.Count(),
 	}
-
-	ServerResponseCountView = &view.View{
-		Name:        "graphql/server/response_count",
-		Description: "Count of GraphQL requests ended",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerResponseCount,
+	RequestLatencyView = &view.View{
+		Name:        RequestLatency.Name(),
+		Description: RequestLatency.Description(),
+		Measure:     RequestLatency,
+		Aggregation: ochttp.DefaultLatencyDistribution,
+	}
+	ResponseTotalView = &view.View{
+		Name:        ResponseTotal.Name(),
+		Description: ResponseTotal.Description(),
+		TagKeys:     []tag.Key{Operation, Errors},
+		Measure:     ResponseTotal,
 		Aggregation: view.Count(),
 	}
-
-	ServerRequestLatencyView = &view.View{
-		Name:        "graphql/server/request_latency",
-		Description: "Latency distribution of GraphQL requests",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerRequestLatency,
-		Aggregation: DefaultLatencyDistribution,
-	}
-
-	ServerResponseCountByError = &view.View{
-		Name:        "graphql/server/response_count_by_error",
-		Description: "Count of GraphQL responses by error",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerResponseCount,
+	ResolveTotalView = &view.View{
+		Name:        ResolveTotal.Name(),
+		Description: ResolveTotal.Description(),
+		TagKeys:     []tag.Key{Object, Field, Errors},
+		Measure:     ResolveTotal,
 		Aggregation: view.Count(),
 	}
-
-	ServerResolveCountView = &view.View{
-		Name:        "graphql/server/resolve_count",
-		Description: "Count of GraphQL resolves",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerResolveCount,
+	ResolveLatencyView = &view.View{
+		Name:        ResolveLatency.Name(),
+		Description: ResolveLatency.Description(),
+		Measure:     ResolveLatency,
+		Aggregation: ocgrpc.DefaultMillisecondsDistribution,
+	}
+	DeprecatedResolveTotalView = &view.View{
+		Name:        DeprecatedResolveTotal.Name(),
+		Description: DeprecatedResolveTotal.Description(),
+		TagKeys:     []tag.Key{Object, Field},
+		Measure:     DeprecatedResolveTotal,
 		Aggregation: view.Count(),
 	}
-
-	ServerResolveLatencyView = &view.View{
-		Name:        "graphql/server/resolve_latency",
-		Description: "Latency distribution of GraphQL resolves",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerResolveLatency,
-		Aggregation: DefaultLatencyDistribution,
+	RequestComplexityView = &view.View{
+		Name:        RequestComplexity.Name(),
+		Description: RequestComplexity.Description(),
+		Measure:     RequestComplexity,
+		Aggregation: view.Distribution(10, 100, 1000, 5000, 10000, 50000, 100000, 1000000),
 	}
-
-	ServerResolveCountByError = &view.View{
-		Name:        "graphql/server/resolve_count_by_error",
-		Description: "Count of GraphQL resolves by error",
-		TagKeys:     []tag.Key{Error},
-		Measure:     ServerResolveCount,
-		Aggregation: view.Count(),
-	}
-
-	ServerResolveCountByObjectField = &view.View{
-		Name:        "graphql/server/resolve_count_by_object_field",
-		Description: "Count of GraphQL resolves by object and field",
-		TagKeys:     []tag.Key{Object, Field, Deprecated},
-		Measure:     ServerResolveCount,
-		Aggregation: view.Count(),
-	}
-
-	ServerRequestComplexityView = &view.View{
-		Name:        "graphql/server/request_complexity",
-		Description: "Complexity distribution of GraphQL requests",
-		Measure:     ServerRequestComplexity,
-		Aggregation: DefaultComplexityDistribution,
+	NumSubscriptionsView = &view.View{
+		Name:        NumSubscriptions.Name(),
+		Description: NumSubscriptions.Description(),
+		Measure:     NumSubscriptions,
+		Aggregation: view.LastValue(),
 	}
 )
 
-// DefaultServerViews are the default server views provided by this package.
-var DefaultServerViews = []*view.View{
-	ServerRequestCountView,
-	ServerResponseCountView,
-	ServerRequestLatencyView,
-	ServerResponseCountByError,
-	ServerResolveCountView,
-	ServerResolveLatencyView,
-	ServerResolveCountByError,
-	ServerResolveCountByObjectField,
-	ServerRequestComplexityView,
+// The following views are deprecated.
+var (
+	ResolveCountByObjectField = &view.View{
+		Name:        "graphql/server/resolve_count_by_object_field",
+		Description: "Count of GraphQL resolves by object and field",
+		TagKeys:     []tag.Key{GraphQLObject, GraphQLField, GraphQLDeprecated},
+		Measure:     ResolveTotal,
+		Aggregation: view.Count(),
+	}
+)
+
+// DefaultViews are the default views provided by this package.
+var DefaultViews = []*view.View{
+	RequestTotalView,
+	RequestLatencyView,
+	ResponseTotalView,
+	ResolveTotalView,
+	ResolveLatencyView,
+	DeprecatedResolveTotalView,
+	RequestComplexityView,
+	NumSubscriptionsView,
+	ResolveCountByObjectField,
 }

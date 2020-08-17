@@ -39,7 +39,7 @@ type woRower struct {
 
 var woDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
-func (er woRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error

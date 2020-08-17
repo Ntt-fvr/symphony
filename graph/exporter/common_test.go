@@ -31,8 +31,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/pubsub"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -108,8 +108,8 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver {
 	)
 	logger := logtest.NewTestLogger(t)
 	r := resolver.New(resolver.Config{
-		Logger:     logger,
-		Subscriber: pubsub.NewNopSubscriber(),
+		Logger:          logger,
+		ReceiverFactory: ev.ErrFactory{},
 	})
 	e := exporter{logger, equipmentRower{logger}}
 	return &TestExporterResolver{r, drv, client, e}
@@ -410,8 +410,8 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 
 	h, _ := importer.NewHandler(
 		importer.Config{
-			Logger:     logtest.NewTestLogger(t),
-			Subscriber: pubsub.NewNopSubscriber(),
+			Logger:          logtest.NewTestLogger(t),
+			ReceiverFactory: ev.ErrFactory{},
 		},
 	)
 	th := viewertest.TestHandler(t, h, client)
@@ -432,5 +432,6 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 	resp, err := http.DefaultClient.Do(req)
 	require.Nil(t, err)
 	require.Equal(t, resp.StatusCode, http.StatusOK)
-	resp.Body.Close()
+	err = resp.Body.Close()
+	require.NoError(t, err)
 }
