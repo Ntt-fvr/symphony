@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
     width: '416px',
     maxHeight: `calc(100% - ${cardTop} - 40px)`,
     borderRadius: '8px',
-    overflow: 'hidden',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   },
   cardHeader: {
     paddingBottom: '8px',
@@ -45,8 +46,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '4px',
   },
   cardContent: {
-    overflowY: 'auto',
+    overflowY: 'scroll',
     overflowX: 'hidden',
+    maxHeight: '600px',
     padding: '0',
   },
   workOrderBlock: {
