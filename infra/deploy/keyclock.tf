@@ -66,6 +66,9 @@ resource helm_release keycloak {
     tls: []
   podDisruptionBudget:
     minAvailable: 1
+  startupScripts:
+    keycloak-bcrypt.sh: |
+      ${indent(6, chomp(file("${path.module}/files/keycloak-bcrypt.sh")))}
   extraEnv: |
     - name: KEYCLOAK_USER
       value: "admin"
