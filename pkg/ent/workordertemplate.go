@@ -24,6 +24,8 @@ type WorkOrderTemplate struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
+	// AssigneeCanCompleteWorkOrder holds the value of the "assignee_can_complete_work_order" field.
+	AssigneeCanCompleteWorkOrder bool `json:"assignee_can_complete_work_order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderTemplateQuery when eager-loading is set.
 	Edges                    WorkOrderTemplateEdges `json:"edges"`
@@ -81,6 +83,7 @@ func (*WorkOrderTemplate) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&sql.NullBool{},   // assignee_can_complete_work_order
 	}
 }
 
@@ -114,7 +117,12 @@ func (wot *WorkOrderTemplate) assignValues(values ...interface{}) error {
 		wot.Description = new(string)
 		*wot.Description = value.String
 	}
-	values = values[2:]
+	if value, ok := values[2].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field assignee_can_complete_work_order", values[2])
+	} else if value.Valid {
+		wot.AssigneeCanCompleteWorkOrder = value.Bool
+	}
+	values = values[3:]
 	if len(values) == len(workordertemplate.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_type", value)
@@ -170,6 +178,8 @@ func (wot *WorkOrderTemplate) String() string {
 		builder.WriteString(", description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", assignee_can_complete_work_order=")
+	builder.WriteString(fmt.Sprintf("%v", wot.AssigneeCanCompleteWorkOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

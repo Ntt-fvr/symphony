@@ -234,10 +234,11 @@ type AddWorkOrderInput struct {
 }
 
 type AddWorkOrderTypeInput struct {
-	Name                string                              `json:"name"`
-	Description         *string                             `json:"description"`
-	Properties          []*PropertyTypeInput                `json:"properties"`
-	CheckListCategories []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	Name                         string                              `json:"name"`
+	Description                  *string                             `json:"description"`
+	Properties                   []*PropertyTypeInput                `json:"properties"`
+	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
 type CheckListCategoryDefinitionInput struct {
@@ -422,11 +423,12 @@ type EditWorkOrderInput struct {
 }
 
 type EditWorkOrderTypeInput struct {
-	ID                  int                                 `json:"id"`
-	Name                string                              `json:"name"`
-	Description         *string                             `json:"description"`
-	Properties          []*PropertyTypeInput                `json:"properties"`
-	CheckListCategories []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	ID                           int                                 `json:"id"`
+	Name                         string                              `json:"name"`
+	Description                  *string                             `json:"description"`
+	Properties                   []*PropertyTypeInput                `json:"properties"`
+	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
 type EquipmentFilterInput struct {

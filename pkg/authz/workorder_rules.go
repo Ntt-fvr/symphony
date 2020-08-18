@@ -19,6 +19,25 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
+// workOrderNotFoundError returns when accessing work order of mutation that doesn't exist.
+type workOrderNotFoundError struct {
+	err error
+}
+
+// Error implements the error interface.
+func (e *workOrderNotFoundError) Error() string {
+	return e.err.Error()
+}
+
+// isWorkOrderNotFound returns a boolean indicating whether the error is a work order not found error.
+func isWorkOrderNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	var e *workOrderNotFoundError
+	return errors.As(err, &e)
+}
+
 func isUserWOOwner(ctx context.Context, userID int, workOrder *ent.WorkOrder) (bool, error) {
 	ownerID, err := workOrder.QueryOwner().OnlyID(ctx)
 	if err != nil {
@@ -176,28 +195,53 @@ func isOwnerChanged(ctx context.Context, m *ent.WorkOrderMutation) (bool, error)
 	return false, nil
 }
 
-// AllowWorkOrderOwnerOrAssigneeWrite grants write permission if user is owner or assignee of workorder
-func AllowWorkOrderOwnerOrAssigneeWrite() privacy.MutationRule {
+func isStatusChangedToDone(ctx context.Context, m *ent.WorkOrderMutation) (bool, error) {
+	newStatus, ok := m.Status()
+	if !ok || newStatus != workorder.StatusDone {
+		return false, nil
+	}
+	if m.Op().Is(ent.OpCreate) {
+		return true, nil
+	}
+	oldStatus, err := m.OldStatus(ctx)
+	if err != nil {
+		return false, err
+	}
+	if oldStatus != newStatus {
+		return true, nil
+	}
+	return false, nil
+}
+
+func getMutationWorkOrder(ctx context.Context, m *ent.WorkOrderMutation) (*ent.WorkOrder, error) {
+	workOrderID, exists := m.ID()
+	if !exists {
+		return nil, &workOrderNotFoundError{err: errors.New("mutation does not apply on work order")}
+	}
+	workOrder, err := m.Client().WorkOrder.Get(ctx, workOrderID)
+	if ent.IsNotFound(err) {
+		return nil, &workOrderNotFoundError{err: err}
+	}
+	return workOrder, err
+}
+
+// AllowWorkOrderOwnerWrite grants write permission if user is owner of work order
+func AllowWorkOrderOwnerWrite() privacy.MutationRule {
 	return privacy.WorkOrderMutationRuleFunc(func(ctx context.Context, m *ent.WorkOrderMutation) error {
-		if m.Op().Is(ent.OpDeleteOne) {
-			return privacy.Skip
-		}
-		workOrderID, exists := m.ID()
-		if !exists {
+		if !m.Op().Is(ent.OpUpdateOne) {
 			return privacy.Skip
 		}
 		userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
 		if !ok {
 			return privacy.Skip
 		}
-		workOrder, err := m.Client().WorkOrder.Get(ctx, workOrderID)
+		workOrder, err := getMutationWorkOrder(ctx, m)
 		if err != nil {
-			if !ent.IsNotFound(err) {
+			if !isWorkOrderNotFound(err) {
 				return privacy.Denyf("failed to fetch work order: %w", err)
 			}
 			return privacy.Skip
 		}
-
 		isOwner, err := isUserWOOwner(ctx, userViewer.User().ID, workOrder)
 		if err != nil {
 			return privacy.Denyf(err.Error())
@@ -205,18 +249,56 @@ func AllowWorkOrderOwnerOrAssigneeWrite() privacy.MutationRule {
 		if isOwner {
 			return privacy.Allow
 		}
+		return privacy.Skip
+	})
+}
+
+// AllowWorkOrderAssigneeWrite grants write permission if user is assignee of work order
+func AllowWorkOrderAssigneeWrite() privacy.MutationRule {
+	return privacy.WorkOrderMutationRuleFunc(func(ctx context.Context, m *ent.WorkOrderMutation) error {
+		if !m.Op().Is(ent.OpUpdateOne) {
+			return privacy.Skip
+		}
+		userViewer, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+		if !ok {
+			return privacy.Skip
+		}
+		workOrder, err := getMutationWorkOrder(ctx, m)
+		if err != nil {
+			if !isWorkOrderNotFound(err) {
+				return privacy.Denyf("failed to fetch work order: %w", err)
+			}
+			return privacy.Skip
+		}
 		isAssignee, err := isUserWOAssignee(ctx, userViewer.User().ID, workOrder)
 		if err != nil {
 			return privacy.Denyf(err.Error())
+		}
+		if !isAssignee {
+			return privacy.Skip
 		}
 		ownerChanged, err := isOwnerChanged(ctx, m)
 		if err != nil {
 			return privacy.Denyf(err.Error())
 		}
-		if isAssignee && !ownerChanged {
-			return privacy.Allow
+		if ownerChanged {
+			return privacy.Skip
 		}
-		return privacy.Skip
+		statusChangedToDone, err := isStatusChangedToDone(ctx, m)
+		if err != nil {
+			return privacy.Denyf(err.Error())
+		}
+		if statusChangedToDone {
+			template, err := workOrder.QueryTemplate().
+				Only(ctx)
+			if err != nil {
+				return privacy.Denyf("failed to fetch template: %w", err)
+			}
+			if !template.AssigneeCanCompleteWorkOrder {
+				return privacy.Skip
+			}
+		}
+		return privacy.Allow
 	})
 }
 

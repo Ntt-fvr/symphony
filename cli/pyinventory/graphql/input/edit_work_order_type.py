@@ -19,4 +19,5 @@ class EditWorkOrderTypeInput(DataClassJsonMixin):
     checkListCategories: List[CheckListCategoryDefinitionInput]
     description: Optional[str] = None
     properties: Optional[List[PropertyTypeInput]] = None
+    assigneeCanCompleteWorkOrder: Optional[bool] = None
 

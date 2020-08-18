@@ -678,6 +678,7 @@ input AddWorkOrderTypeInput {
   properties: [PropertyTypeInput]
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 input EditWorkOrderTypeInput {
@@ -687,6 +688,7 @@ input EditWorkOrderTypeInput {
   properties: [PropertyTypeInput]
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 input AddWorkOrderInput {
@@ -1660,6 +1662,7 @@ type WorkOrderTemplate {
   description: String
   propertyTypes: [PropertyType]!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 """
@@ -1672,6 +1675,7 @@ type WorkOrderType implements Node {
   propertyTypes: [PropertyType]!
   numberOfWorkOrders: Int!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 """

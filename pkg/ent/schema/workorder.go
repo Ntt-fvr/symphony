@@ -28,6 +28,9 @@ func (WorkOrderTemplateMixin) Fields() []ent.Field {
 		field.Text("description").
 			Optional().
 			Nillable(),
+		field.Bool("assignee_can_complete_work_order").
+			Optional().
+			Default(true),
 	}
 }
 
@@ -242,7 +245,8 @@ func (WorkOrder) Policy() ent.Policy {
 		),
 		authz.WithMutationRules(
 			authz.WorkOrderWritePolicyRule(),
-			authz.AllowWorkOrderOwnerOrAssigneeWrite(),
+			authz.AllowWorkOrderOwnerWrite(),
+			authz.AllowWorkOrderAssigneeWrite(),
 		),
 	)
 }
