@@ -31,6 +31,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func toWorkOrderStatusPointer(status workorder.Status) *workorder.Status {
+	return &status
+}
+
 func createPort() models.EquipmentPortInput {
 	visibleLabel := "Eth1"
 	bandwidth := "10/100/1000BASE-T"
@@ -2001,4 +2005,36 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 			require.Equal(t, "StoreKeyToAdd", item.Files[1].StoreKey)
 		}
 	}
+}
+
+func TestAssigneeCannotCompleteWorkOrder(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
+		Name:                         "TypeName",
+		AssigneeCanCompleteWorkOrder: pointer.ToBool(false),
+	})
+	require.NoError(t, err)
+	assignee := viewer.MustGetOrCreateUser(ctx, "Assignee", user.RoleUser)
+	wo, err := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
+		Name:            "WoName",
+		WorkOrderTypeID: woType.ID,
+		AssigneeID:      pointer.ToInt(assignee.ID),
+	})
+	require.NoError(t, err)
+	ctx = viewertest.NewContext(
+		context.Background(),
+		r.client,
+		viewertest.WithUser("Assignee"),
+		viewertest.WithRole(user.RoleUser),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	_, err = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
+		ID:         wo.ID,
+		Name:       "NewName",
+		AssigneeID: pointer.ToInt(assignee.ID),
+		Status:     toWorkOrderStatusPointer(workorder.StatusDone),
+	})
+	require.Error(t, err)
 }
