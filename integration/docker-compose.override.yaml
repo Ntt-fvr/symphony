@@ -12,24 +12,24 @@ services:
   platform-server:
     command: yarn run start:dev
     volumes:
-      - ${HOME}/magma_certs:/magma_certs:ro
-      - ${XPLAT_FBC_DIR}/fbcnms-packages:/app/fbcnms-packages:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/platform-server/config:/app/fbcnms-projects/platform-server/config:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/platform-server/src:/app/fbcnms-projects/platform-server/src:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/platform-server/scripts:/app/fbcnms-projects/platform-server/scripts:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/platform-server/static:/app/fbcnms-projects/platform-server/static:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/platform-server/views:/app/fbcnms-projects/platform-server/views:delegated
+      - ~/magma_certs:/magma_certs:ro
+      - ../app/fbcnms-packages:/app/fbcnms-packages:delegated
+      - ../app/fbcnms-projects/platform-server/config:/app/fbcnms-projects/platform-server/config:delegated
+      - ../app/fbcnms-projects/platform-server/src:/app/fbcnms-projects/platform-server/src:delegated
+      - ../app/fbcnms-projects/platform-server/scripts:/app/fbcnms-projects/platform-server/scripts:delegated
+      - ../app/fbcnms-projects/platform-server/static:/app/fbcnms-projects/platform-server/static:delegated
+      - ../app/fbcnms-projects/platform-server/views:/app/fbcnms-projects/platform-server/views:delegated
 
   inventory:
     build:
       dockerfile: fbcnms-projects/inventory/Dockerfile.dev
     command: yarn run dev
     volumes:
-      - ${XPLAT_FBC_DIR}/fbcnms-packages:/app/fbcnms-packages:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/inventory/app:/app/fbcnms-projects/inventory/app:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/inventory/scripts:/app/fbcnms-projects/inventory/scripts:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/magmalte/app:/app/fbcnms-projects/magmalte/app:delegated
-      - ${XPLAT_FBC_DIR}/fbcnms-projects/hub/app:/app/fbcnms-projects/hub/app:delegated
+      - ../app/fbcnms-packages:/app/fbcnms-packages:delegated
+      - ../app/fbcnms-projects/inventory/app:/app/fbcnms-projects/inventory/app:delegated
+      - ../app/fbcnms-projects/inventory/scripts:/app/fbcnms-projects/inventory/scripts:delegated
+      - ../app/fbcnms-projects/magmalte/app:/app/fbcnms-projects/magmalte/app:delegated
+      - ../app/fbcnms-projects/hub/app:/app/fbcnms-projects/hub/app:delegated
 
   store:
     environment:
