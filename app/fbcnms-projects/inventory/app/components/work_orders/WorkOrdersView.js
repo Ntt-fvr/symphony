@@ -88,7 +88,11 @@ const WorkOrdersView = (props: Props) => {
           key: 'status',
           title: 'Status',
           getSortingValue: row => row.status,
-          render: row => formatMultiSelectValue(statusValues, row.status) ?? '',
+          render: row =>
+            formatMultiSelectValue(
+              statusValues.map(({value, label}) => ({value, label})),
+              row.status,
+            ) ?? '',
         },
         {
           key: 'creationDate',

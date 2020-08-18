@@ -33,6 +33,7 @@ const styles = () => ({
   deleteButton: {
     minWidth: 'unset',
     paddingTop: '2px',
+    height: '36px',
   },
 });
 
