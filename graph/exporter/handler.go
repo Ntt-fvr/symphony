@@ -13,11 +13,11 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -151,9 +151,11 @@ func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error("error in export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		return
 	}
 	if xlsx == nil {
 		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		return
 	}
 	err = xlsx.Write(w)
 	if err != nil {

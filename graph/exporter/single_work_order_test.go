@@ -12,11 +12,11 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -26,12 +26,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
+func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolver) *ent.WorkOrder {
 	prepareData(ctx, t, r)
-	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
 	// Add templates
-	typInput1 := models.AddWorkOrderTypeInput{
+	typInput := models.AddWorkOrderTypeInput{
 		Name:        "woTemplate1",
 		Description: pointer.ToString("woTemplate1 = desc"),
 		Properties: []*models.PropertyTypeInput{
@@ -46,28 +45,9 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 			},
 		},
 	}
-	typ1, _ := r.Mutation().AddWorkOrderType(ctx, typInput1)
-	propStrEnt := typ1.QueryPropertyTypes().Where(propertytype.Name(propStr)).OnlyX(ctx)
-	propStr2Ent := typ1.QueryPropertyTypes().Where(propertytype.Name(propStr2)).OnlyX(ctx)
-
-	typInput2 := models.AddWorkOrderTypeInput{
-		Name:        "woTemplate2",
-		Description: pointer.ToString("woTemplate2 = desc"),
-		Properties: []*models.PropertyTypeInput{
-			{
-				Name: propNameBool,
-				Type: "bool",
-			},
-			{
-				Name:     propNameInt,
-				Type:     "int",
-				IntValue: pointer.ToInt(100),
-			},
-		},
-	}
-	typ2, _ := r.Mutation().AddWorkOrderType(ctx, typInput2)
-	propBoolEnt := typ2.QueryPropertyTypes().Where(propertytype.Name(propNameBool)).OnlyX(ctx)
-	propIntEnt := typ2.QueryPropertyTypes().Where(propertytype.Name(propNameInt)).OnlyX(ctx)
+	typ, _ := r.Mutation().AddWorkOrderType(ctx, typInput)
+	propStrEnt := typ.QueryPropertyTypes().Where(propertytype.Name(propStr)).OnlyX(ctx)
+	propStr2Ent := typ.QueryPropertyTypes().Where(propertytype.Name(propStr2)).OnlyX(ctx)
 
 	projTypeInput := models.AddProjectTypeInput{
 		Name: "projTemplate",
@@ -134,10 +114,10 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 			}},
 	}}
 
-	woInput1 := models.AddWorkOrderInput{
+	woInput := models.AddWorkOrderInput{
 		Name:            "Work Order 1",
 		Description:     pointer.ToString("WO1 - description"),
-		WorkOrderTypeID: typ1.ID,
+		WorkOrderTypeID: typ.ID,
 		LocationID:      pointer.ToInt(r.client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx).ID),
 		ProjectID:       pointer.ToInt(proj.ID),
 		Properties: []*models.PropertyInput{
@@ -155,22 +135,22 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 		Priority:            &priority,
 		CheckListCategories: clcInputs,
 	}
-	wo1, _ := r.Mutation().AddWorkOrder(ctx, woInput1)
+	wo, _ := r.Mutation().AddWorkOrder(ctx, woInput)
 	ctxt := "Test Comment"
 	_, _ = r.Mutation().AddComment(ctx, models.CommentInput{
-		ID:         wo1.ID,
+		ID:         wo.ID,
 		EntityType: "WORK_ORDER",
 		Text:       ctxt,
 	})
 
 	_, _ = r.Mutation().AddComment(ctx, models.CommentInput{
-		ID:         wo1.ID,
+		ID:         wo.ID,
 		EntityType: "WORK_ORDER",
 		Text:       "Testing comment 2",
 	})
 
 	_, _ = r.client.Activity.Create().
-		SetWorkOrder(wo1).
+		SetWorkOrder(wo).
 		SetActivityType(activity.ActivityTypePriorityChanged).
 		SetOldValue(workorder.PriorityLow.String()).
 		SetNewValue(workorder.PriorityHigh.String()).
@@ -179,41 +159,12 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 
 	st = workorder.StatusPlanned
 	priority = workorder.PriorityMedium
-	woInput2 := models.AddWorkOrderInput{
-		Name:            "Work Order 2",
-		Description:     pointer.ToString("WO2 - description"),
-		WorkOrderTypeID: typ2.ID,
-		LocationID:      pointer.ToInt(r.client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx).ID),
-		Properties: []*models.PropertyInput{
-			{
-				PropertyTypeID: propIntEnt.ID,
-				IntValue:       pointer.ToInt(600),
-			},
-			{
-				PropertyTypeID: propBoolEnt.ID,
-				BooleanValue:   pointer.ToBool(true),
-			},
-		},
-		AssigneeID: &u2.ID,
-		Status:     &st,
-		Priority:   &priority,
-	}
-	wo2, _ := r.Mutation().AddWorkOrder(ctx, woInput2)
-	/*
-		Project 1 (of type 'projTemplate')
-			WO1 ( type woTemplate1). loc: parent, (string props)
-		WO2 ( type woTemplate2). loc: child (bool&int props)
-	*/
-	return woTestType{
-		*wo1,
-		*wo2,
-	}
+	return wo
 }
 
 func TestWoWithInvalidId(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
-
 	e := &exporterExcel{log, singleWoRower{log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
@@ -224,11 +175,11 @@ func TestWoWithInvalidId(t *testing.T) {
 
 	viewertest.SetDefaultViewerHeaders(req)
 	q := req.URL.Query()
-	q.Add("id", "11")
+	q.Add("id", "123")
 	req.URL.RawQuery = q.Encode()
-
 	res, err := http.DefaultClient.Do(req)
 	require.Equal(t, res.StatusCode, http.StatusInternalServerError)
+	require.NoError(t, err)
 	defer res.Body.Close()
 }
 
@@ -236,7 +187,6 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-
 	e := &exporterExcel{log, singleWoRower{log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
@@ -246,13 +196,10 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	require.NoError(t, err)
 
 	viewertest.SetDefaultViewerHeaders(req)
-
-	data := prepareSingleWOData(ctx, t, *r)
-	workOrder := data.wo1
+	workOrder := prepareSingleWOData(ctx, t, *r)
 	q := req.URL.Query()
 	q.Add("id", strconv.Itoa(workOrder.ID))
 	req.URL.RawQuery = q.Encode()
-
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
 	defer res.Body.Close()
