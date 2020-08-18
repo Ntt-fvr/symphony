@@ -58,7 +58,8 @@ resource helm_release keycloak {
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
-      ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/session-cookie-name: AUTH_SESSION_ID
     rules:
       - host: auth.${local.domains.symphony.name}
         paths:
