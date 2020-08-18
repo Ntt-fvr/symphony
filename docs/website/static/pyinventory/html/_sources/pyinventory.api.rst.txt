@@ -124,6 +124,14 @@ pyinventory.api.user module
    :undoc-members:
    :show-inheritance:
 
+pyinventory.api.work\_order\_type module
+----------------------------------------
+
+.. automodule:: pyinventory.api.work_order_type
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

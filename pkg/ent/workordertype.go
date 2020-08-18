@@ -23,6 +23,8 @@ type WorkOrderType struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
+	// AssigneeCanCompleteWorkOrder holds the value of the "assignee_can_complete_work_order" field.
+	AssigneeCanCompleteWorkOrder bool `json:"assignee_can_complete_work_order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WorkOrderTypeQuery when eager-loading is set.
 	Edges WorkOrderTypeEdges `json:"edges"`
@@ -85,6 +87,7 @@ func (*WorkOrderType) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&sql.NullBool{},   // assignee_can_complete_work_order
 	}
 }
 
@@ -110,6 +113,11 @@ func (wot *WorkOrderType) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		wot.Description = new(string)
 		*wot.Description = value.String
+	}
+	if value, ok := values[2].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field assignee_can_complete_work_order", values[2])
+	} else if value.Valid {
+		wot.AssigneeCanCompleteWorkOrder = value.Bool
 	}
 	return nil
 }
@@ -163,6 +171,8 @@ func (wot *WorkOrderType) String() string {
 		builder.WriteString(", description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", assignee_can_complete_work_order=")
+	builder.WriteString(fmt.Sprintf("%v", wot.AssigneeCanCompleteWorkOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

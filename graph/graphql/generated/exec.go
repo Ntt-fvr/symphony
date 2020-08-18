@@ -1213,6 +1213,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkOrderTemplate struct {
+		AssigneeCanCompleteWorkOrder func(childComplexity int) int
 		CheckListCategoryDefinitions func(childComplexity int) int
 		Description                  func(childComplexity int) int
 		Name                         func(childComplexity int) int
@@ -1220,6 +1221,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkOrderType struct {
+		AssigneeCanCompleteWorkOrder func(childComplexity int) int
 		CheckListCategoryDefinitions func(childComplexity int) int
 		Description                  func(childComplexity int) int
 		ID                           func(childComplexity int) int
@@ -7337,6 +7339,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkOrderSearchResult.WorkOrders(childComplexity), true
 
+	case "WorkOrderTemplate.assigneeCanCompleteWorkOrder":
+		if e.complexity.WorkOrderTemplate.AssigneeCanCompleteWorkOrder == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderTemplate.AssigneeCanCompleteWorkOrder(childComplexity), true
+
 	case "WorkOrderTemplate.checkListCategoryDefinitions":
 		if e.complexity.WorkOrderTemplate.CheckListCategoryDefinitions == nil {
 			break
@@ -7364,6 +7373,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkOrderTemplate.PropertyTypes(childComplexity), true
+
+	case "WorkOrderType.assigneeCanCompleteWorkOrder":
+		if e.complexity.WorkOrderType.AssigneeCanCompleteWorkOrder == nil {
+			break
+		}
+
+		return e.complexity.WorkOrderType.AssigneeCanCompleteWorkOrder(childComplexity), true
 
 	case "WorkOrderType.checkListCategoryDefinitions":
 		if e.complexity.WorkOrderType.CheckListCategoryDefinitions == nil {
@@ -8280,6 +8296,7 @@ input AddWorkOrderTypeInput {
   properties: [PropertyTypeInput]
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 input EditWorkOrderTypeInput {
@@ -8289,6 +8306,7 @@ input EditWorkOrderTypeInput {
   properties: [PropertyTypeInput]
     @uniqueField(typ: "property type", field: "Name")
   checkListCategories: [CheckListCategoryDefinitionInput!]
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 input AddWorkOrderInput {
@@ -9262,6 +9280,7 @@ type WorkOrderTemplate {
   description: String
   propertyTypes: [PropertyType]!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 """
@@ -9274,6 +9293,7 @@ type WorkOrderType implements Node {
   propertyTypes: [PropertyType]!
   numberOfWorkOrders: Int!
   checkListCategoryDefinitions: [CheckListCategoryDefinition!]!
+  assigneeCanCompleteWorkOrder: Boolean
 }
 
 """
@@ -40356,6 +40376,37 @@ func (ec *executionContext) _WorkOrderTemplate_checkListCategoryDefinitions(ctx 
 	return ec.marshalNCheckListCategoryDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCheckListCategoryDefinitionᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _WorkOrderTemplate_assigneeCanCompleteWorkOrder(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderTemplate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkOrderTemplate",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AssigneeCanCompleteWorkOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _WorkOrderType_id(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderType) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -40555,6 +40606,37 @@ func (ec *executionContext) _WorkOrderType_checkListCategoryDefinitions(ctx cont
 	res := resTmp.([]*ent.CheckListCategoryDefinition)
 	fc.Result = res
 	return ec.marshalNCheckListCategoryDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCheckListCategoryDefinitionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _WorkOrderType_assigneeCanCompleteWorkOrder(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderType) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "WorkOrderType",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AssigneeCanCompleteWorkOrder, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _WorkOrderTypeConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.WorkOrderTypeConnection) (ret graphql.Marshaler) {
@@ -43503,6 +43585,12 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
+		case "assigneeCanCompleteWorkOrder":
+			var err error
+			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -44924,6 +45012,12 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("checkListCategories"))
 			it.CheckListCategories, err = ec.unmarshalOCheckListCategoryDefinitionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCheckListCategoryDefinitionInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "assigneeCanCompleteWorkOrder":
+			var err error
+			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55688,6 +55782,8 @@ func (ec *executionContext) _WorkOrderTemplate(ctx context.Context, sel ast.Sele
 				}
 				return res
 			})
+		case "assigneeCanCompleteWorkOrder":
+			out.Values[i] = ec._WorkOrderTemplate_assigneeCanCompleteWorkOrder(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -55764,6 +55860,8 @@ func (ec *executionContext) _WorkOrderType(ctx context.Context, sel ast.Selectio
 				}
 				return res
 			})
+		case "assigneeCanCompleteWorkOrder":
+			out.Values[i] = ec._WorkOrderType_assigneeCanCompleteWorkOrder(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

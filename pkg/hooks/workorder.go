@@ -65,6 +65,7 @@ func addWorkOrderTemplate(
 		Create().
 		SetName(workOrderType.Name).
 		SetNillableDescription(workOrderType.Description).
+		SetAssigneeCanCompleteWorkOrder(workOrderType.AssigneeCanCompleteWorkOrder).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("creating work order template: %w", err)

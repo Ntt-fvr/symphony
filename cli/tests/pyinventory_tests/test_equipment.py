@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+import json
+from datetime import datetime
 
 from pyinventory.api.equipment import (
     add_equipment,
@@ -36,6 +38,9 @@ class TestEquipment(BaseTest):
 
     def setUp(self) -> None:
         super().setUp()
+        self.date_time_date = datetime.strptime("2020-08-16", "%Y-%m-%d").date()
+        self.date_time = datetime.strptime("2020-08-16T18:03", "%Y-%m-%dT%H:%M")
+        self.choices = ["11", "22"]
         self.port_type1 = add_equipment_port_type(
             self.client,
             name="port type 1",
@@ -84,7 +89,25 @@ class TestEquipment(BaseTest):
                     property_kind=PropertyKind.string,
                     default_raw_value=None,
                     is_fixed=False,
-                )
+                ),
+                PropertyDefinition(
+                    property_name="Date",
+                    property_kind=PropertyKind.date,
+                    default_raw_value=None,
+                    is_fixed=False,
+                ),
+                PropertyDefinition(
+                    property_name="DateTime",
+                    property_kind=PropertyKind.datetime_local,
+                    default_raw_value=None,
+                    is_fixed=False,
+                ),
+                PropertyDefinition(
+                    property_name="Choices",
+                    property_kind=PropertyKind.enum,
+                    default_raw_value=json.dumps(self.choices),
+                    is_fixed=False,
+                ),
             ],
             ports_dict={"tp_link_port": "port type 1"},
             position_list=[],
@@ -101,7 +124,12 @@ class TestEquipment(BaseTest):
             name="TPLinkRouter",
             equipment_type="Tp-Link T1600G",
             location=self.location,
-            properties_dict={"IP": "127.0.0.1"},
+            properties_dict={
+                "IP": "127.0.0.1",
+                "Date": self.date_time_date,
+                "DateTime": self.date_time,
+                "Choices": "11",
+            },
         )
         self.equipment_with_external_id = add_equipment(
             client=self.client,
@@ -146,6 +174,13 @@ class TestEquipment(BaseTest):
         )
         self.assertTrue("IP" in properties)
         self.assertEquals("127.0.0.1", properties["IP"])
+        self.assertTrue("Date" in properties)
+        self.assertEquals(self.date_time_date, properties["Date"])
+        self.assertTrue("DateTime" in properties)
+        self.assertEquals(self.date_time, properties["DateTime"])
+        self.assertTrue("Choices" in properties)
+        self.assertTrue(properties["Choices"] in self.choices)
+        self.assertEquals("11", properties["Choices"])
 
     def test_equipment_get_port(self) -> None:
         fetched_port = get_port(

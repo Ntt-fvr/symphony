@@ -229,7 +229,7 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			currRow++
 
 			for _, file := range files {
-				for j, date := range []string{file.Name, file.Type.String(), file.CreateTime.Format(timeLayout), file.ModifiedAt.Format(timeLayout), file.UploadedAt.Format(timeLayout), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation} {
+				for j, data := range []string{file.Name, file.Type.String(), file.CreateTime.Format(timeLayout), file.ModifiedAt.Format(timeLayout), file.UploadedAt.Format(timeLayout), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation} {
 					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
 				}
 				currRow++
@@ -257,7 +257,7 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	ownerEmail := owner.Email
+	ownerEmail = owner.Email
 
 	project, err := wo.QueryProject().Only(ctx)
 	if err != nil && !ent.IsNotFound(err) {
@@ -279,7 +279,7 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	woType := wType.Name
+	woType = wType.Name
 
 	if wo.Status == workorder.StatusDone {
 		closedDate = wo.CloseDate.Format(timeLayout)

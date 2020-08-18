@@ -56,7 +56,7 @@ def add_work_order_type(
         :param description: Work order type description
         :type description: str, optional
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
 
         :return: Work order type
         :rtype: :class:`~pyworkforce.common.data_class.WorkOrderType`

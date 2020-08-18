@@ -58,7 +58,8 @@ resource helm_release keycloak {
     enabled: true
     annotations:
       kubernetes.io/ingress.class: nginx
-      ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/session-cookie-name: AUTH_SESSION_ID
     rules:
       - host: auth.${local.domains.symphony.name}
         paths:
@@ -66,6 +67,9 @@ resource helm_release keycloak {
     tls: []
   podDisruptionBudget:
     minAvailable: 1
+  startupScripts:
+    keycloak-bcrypt.sh: |
+      ${indent(6, chomp(file("${path.module}/files/keycloak-bcrypt.sh")))}
   extraEnv: |
     - name: KEYCLOAK_USER
       value: "admin"

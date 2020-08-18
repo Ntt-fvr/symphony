@@ -20,7 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/require"
@@ -210,10 +210,9 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 	}
 }
 
-func TestEmptyWoExport(t *testing.T) {
+func TestWoWithInvalidId(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
-	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	e := &exporterExcel{log, singleWoRower{log}}
 	th := viewertest.TestHandler(t, e, r.client)
@@ -224,22 +223,16 @@ func TestEmptyWoExport(t *testing.T) {
 	require.NoError(t, err)
 
 	viewertest.SetDefaultViewerHeaders(req)
-
-	data := prepareSingleWOData(ctx, t, *r)
-	workOrder := data.wo2
 	q := req.URL.Query()
-	q.Add("id", strconv.Itoa(workOrder.ID))
+	q.Add("id", "11")
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
+	require.Equal(t, res.StatusCode, http.StatusInternalServerError)
 	defer res.Body.Close()
-
-	_, err = excelize.OpenReader(res.Body)
-	require.NoError(t, err)
 }
 
-func TestSingleWoExport(t *testing.T) {
+func TestSingleWorkOrderExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)

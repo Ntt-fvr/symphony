@@ -109,6 +109,13 @@ func Description(v string) predicate.WorkOrderType {
 	})
 }
 
+// AssigneeCanCompleteWorkOrder applies equality check predicate on the "assignee_can_complete_work_order" field. It's identical to AssigneeCanCompleteWorkOrderEQ.
+func AssigneeCanCompleteWorkOrder(v bool) predicate.WorkOrderType {
+	return predicate.WorkOrderType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAssigneeCanCompleteWorkOrder), v))
+	})
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.WorkOrderType {
 	return predicate.WorkOrderType(func(s *sql.Selector) {
@@ -342,6 +349,34 @@ func DescriptionEqualFold(v string) predicate.WorkOrderType {
 func DescriptionContainsFold(v string) predicate.WorkOrderType {
 	return predicate.WorkOrderType(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldDescription), v))
+	})
+}
+
+// AssigneeCanCompleteWorkOrderEQ applies the EQ predicate on the "assignee_can_complete_work_order" field.
+func AssigneeCanCompleteWorkOrderEQ(v bool) predicate.WorkOrderType {
+	return predicate.WorkOrderType(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAssigneeCanCompleteWorkOrder), v))
+	})
+}
+
+// AssigneeCanCompleteWorkOrderNEQ applies the NEQ predicate on the "assignee_can_complete_work_order" field.
+func AssigneeCanCompleteWorkOrderNEQ(v bool) predicate.WorkOrderType {
+	return predicate.WorkOrderType(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAssigneeCanCompleteWorkOrder), v))
+	})
+}
+
+// AssigneeCanCompleteWorkOrderIsNil applies the IsNil predicate on the "assignee_can_complete_work_order" field.
+func AssigneeCanCompleteWorkOrderIsNil() predicate.WorkOrderType {
+	return predicate.WorkOrderType(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAssigneeCanCompleteWorkOrder)))
+	})
+}
+
+// AssigneeCanCompleteWorkOrderNotNil applies the NotNil predicate on the "assignee_can_complete_work_order" field.
+func AssigneeCanCompleteWorkOrderNotNil() predicate.WorkOrderType {
+	return predicate.WorkOrderType(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAssigneeCanCompleteWorkOrder)))
 	})
 }
 

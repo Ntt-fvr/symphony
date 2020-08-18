@@ -8,9 +8,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 )

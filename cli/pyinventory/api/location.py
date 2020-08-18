@@ -132,7 +132,7 @@ def add_location(
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: Parent location in the chain does not exist
 
         :return: Location object
-        :rtype: :class:`~pyinventory.common.data_class.Location`
+        :rtype: :class:`~pysymphony.common.data_class.Location`
 
         **Example**
 
@@ -237,7 +237,7 @@ def get_location(
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: Location in the chain does not exist
 
         :return: Location object
-        :rtype: :class:`~pyinventory.common.data_class.Location`
+        :rtype: :class:`~pysymphony.common.data_class.Location`
 
         **Example**
 
@@ -298,7 +298,7 @@ def get_locations(client: SymphonyClient) -> Iterator[Location]:
     """This function returns all existing locations
 
         :return: Locations Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Location` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Location` ]
 
         **Example**
 
@@ -347,7 +347,7 @@ def get_location_children(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Location does not exist
 
         :return: Locations Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Location` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Location` ]
 
         **Example**
 
@@ -403,7 +403,7 @@ def edit_location(
     """This function returns edited location.
 
         :param location: Location object
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
         :param new_name: Location new name
         :type new_name: str, optional
         :param new_lat: Location new latitude
@@ -423,7 +423,7 @@ def edit_location(
             FailedOperationException: Internal inventory error
 
         :return: Location object
-        :rtype: :class:`~pyinventory.common.data_class.Location`
+        :rtype: :class:`~pysymphony.common.data_class.Location`
 
         **Example**
 
@@ -473,7 +473,7 @@ def delete_location(client: SymphonyClient, location: Location) -> None:
     """This delete existing location.
 
         :param location: Location object
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
 
         :raises:
             * LocationCannotBeDeletedWithDependency: Location has dependencies in one or more
@@ -520,7 +520,7 @@ def move_location(
             FailedOperationException: Internal inventory error
 
         :return: Location object
-        :rtype: :class:`~pyinventory.common.data_class.Location`
+        :rtype: :class:`~pysymphony.common.data_class.Location`
 
         **Example**
 
@@ -559,7 +559,7 @@ def get_location_by_external_id(client: SymphonyClient, external_id: str) -> Loc
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: Location does not exist
 
         :return: Location object
-        :rtype: :class:`~pyinventory.common.data_class.Location`
+        :rtype: :class:`~pysymphony.common.data_class.Location`
 
         **Example**
 
@@ -609,14 +609,14 @@ def get_location_documents(
     """This function returns locations documents.
 
         :param location: Location object
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
 
         :raises:
             * FailedOperationException: Internal inventory error
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: Location does not exist
 
         :return: Documents List
-        :rtype: List[ :class:`~pyinventory.common.data_class.Document` ]
+        :rtype: List[ :class:`~pysymphony.common.data_class.Document` ]
 
         **Example**
 

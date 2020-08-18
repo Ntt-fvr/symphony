@@ -74,7 +74,7 @@ def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equi
             * :meth:`~pyinventory.api.location.get_location`
             * :meth:`~pyinventory.api.location.add_location`
 
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
 
 
         :raises:
@@ -84,7 +84,7 @@ def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equi
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -104,7 +104,7 @@ def get_equipments(client: SymphonyClient) -> Iterator[Equipment]:
     """This function returns all existing equipments
 
         :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Equipment` ]
 
         **Example**
 
@@ -145,7 +145,7 @@ def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Eq
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -195,7 +195,7 @@ def get_equipment_properties(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
 
         :return: Dictionary of property name to property value
 
@@ -230,7 +230,7 @@ def get_equipments_by_type(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Equipment type with this ID does not exist
 
         :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Equipment` ]
 
         **Example**
 
@@ -266,7 +266,7 @@ def get_equipments_by_location(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Location with this ID does not exist
 
         :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Equipment` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Equipment` ]
 
         **Example**
 
@@ -306,7 +306,7 @@ def get_equipment_in_position(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type parent_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type parent_equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param position_name: Position name
         :type position_name: str
 
@@ -318,7 +318,7 @@ def get_equipment_in_position(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -363,7 +363,7 @@ def add_equipment(
             * :meth:`~pyinventory.api.location.get_location`
             * :meth:`~pyinventory.api.location.add_location`
 
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
         :param properties_dict: Dictionary of property name to property value
 
             * str - property name
@@ -380,7 +380,7 @@ def add_equipment(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -436,7 +436,7 @@ def edit_equipment(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param new_name: Equipment new name
         :type new_name: str, optional
         :param new_properties: Dictionary of property name to property value
@@ -451,7 +451,7 @@ def edit_equipment(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -551,7 +551,7 @@ def add_equipment_to_position(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type existing_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type existing_equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param position_name: Position name in the equipment type
         :type position_name: str
         :param properties_dict: Dictionary of property name to property value
@@ -571,7 +571,7 @@ def add_equipment_to_position(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -628,7 +628,7 @@ def delete_equipment(client: SymphonyClient, equipment: Equipment) -> None:
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
 
         :rtype: None
 
@@ -649,12 +649,12 @@ def search_for_equipments(
         :param limit: Search result limit
         :type limit: int
 
-        :return: Tuple[Iterator[ :class:`~pyinventory.common.data_class.Equipment` ], int]
+        :return: Tuple[Iterator[ :class:`~pysymphony.common.data_class.Equipment` ], int]
 
-            * Iterator[ :class:`~pyinventory.common.data_class.Equipment` ] - Equipments Iterator
+            * Iterator[ :class:`~pysymphony.common.data_class.Equipment` ] - Equipments Iterator
             * int - Total count of results
 
-        :rtype: Tuple[Iterator[ :class:`~pyinventory.common.data_class.Equipment` ], int]
+        :rtype: Tuple[Iterator[ :class:`~pysymphony.common.data_class.Equipment` ], int]
 
         **Example**
 
@@ -770,9 +770,9 @@ def copy_equipment_in_position(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param dest_parent_equipment: Parent equipment, destination to copy to
-        :type dest_parent_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type dest_parent_equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param dest_position_name: Destination position name
         :type dest_position_name: str
         :param new_external_id: New external ID for equipment
@@ -780,7 +780,7 @@ def copy_equipment_in_position(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -824,15 +824,15 @@ def copy_equipment(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param dest_location: Destination location to copy to
-        :type dest_location: :class:`~pyinventory.common.data_class.Location`
+        :type dest_location: :class:`~pysymphony.common.data_class.Location`
         :param new_external_id: External ID for new equipment
         :type new_external_id: str, optional
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -871,10 +871,10 @@ def get_equipment_type_of_equipment(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -910,7 +910,7 @@ def get_or_create_equipment(
             * :meth:`~pyinventory.api.location.get_location`
             * :meth:`~pyinventory.api.location.add_location`
 
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
         :param properties_dict: Dictionary of property name to property value
 
             * str - property name
@@ -927,7 +927,7 @@ def get_or_create_equipment(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 
@@ -984,7 +984,7 @@ def get_or_create_equipment_in_position(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type existing_equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type existing_equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param position_name: Position name
         :type position_name: str
         :param properties_dict: Dictionary of property name to property value
@@ -1003,7 +1003,7 @@ def get_or_create_equipment_in_position(
 
         :return: Equipment object, you can use the ID to access the equipment from the UI:
             https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~pyinventory.common.data_class.Equipment`
+        :rtype: :class:`~pysymphony.common.data_class.Equipment`
 
         **Example**
 

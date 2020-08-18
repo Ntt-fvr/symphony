@@ -699,7 +699,7 @@ def upload_site_survey(
         excel is as needed for upload.
 
         Args:
-            location ( `pyinventory.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
+            location ( `pysymphony.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
             name (str): name of the site survey
             completion_date (datetime.datetime object): the time the site survey was completed
             excel_file_path (str): the path for the excel with the site survey information
@@ -829,10 +829,10 @@ def get_site_surveys(client: SymphonyClient, location_id: str) -> List[SiteSurve
     """Retrieve all site survey completed in the location.
 
         Args:
-            location ( `pyinventory.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
+            location ( `pysymphony.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
 
         Returns:
-            List[ `pyinventory.common.data_class.SiteSurvey` ]
+            List[ `pysymphony.common.data_class.SiteSurvey` ]
 
         Raises:
             `pyinventory.exceptions.EntityNotFoundError`: location does not exist
