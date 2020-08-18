@@ -644,6 +644,7 @@ func (r mutationResolver) AddWorkOrderType(
 		Create().
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -686,7 +687,8 @@ func (r mutationResolver) EditWorkOrderType(
 	mutation := client.WorkOrderType.
 		UpdateOneID(input.ID).
 		SetName(input.Name).
-		SetNillableDescription(input.Description)
+		SetNillableDescription(input.Description).
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder)
 	currentCategories, err := wot.QueryCheckListCategoryDefinitions().IDs(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying checklist category definitions: id=%q", wot.ID)
