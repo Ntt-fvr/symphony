@@ -389,11 +389,12 @@ type EditReportFilterInput struct {
 }
 
 type EditUserInput struct {
-	ID        int          `json:"id"`
-	FirstName *string      `json:"firstName"`
-	LastName  *string      `json:"lastName"`
-	Status    *user.Status `json:"status"`
-	Role      *user.Role   `json:"role"`
+	ID           int                `json:"id"`
+	FirstName    *string            `json:"firstName"`
+	LastName     *string            `json:"lastName"`
+	Status       *user.Status       `json:"status"`
+	Role         *user.Role         `json:"role"`
+	DistanceUnit *user.DistanceUnit `json:"distanceUnit"`
 }
 
 type EditUsersGroupInput struct {

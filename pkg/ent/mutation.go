@@ -39123,6 +39123,7 @@ type UserMutation struct {
 	email                       *string
 	status                      *user.Status
 	role                        *user.Role
+	distance_unit               *user.DistanceUnit
 	clearedFields               map[string]struct{}
 	profile_photo               *int
 	clearedprofile_photo        bool
@@ -39552,6 +39553,43 @@ func (m *UserMutation) ResetRole() {
 	m.role = nil
 }
 
+// SetDistanceUnit sets the distance_unit field.
+func (m *UserMutation) SetDistanceUnit(uu user.DistanceUnit) {
+	m.distance_unit = &uu
+}
+
+// DistanceUnit returns the distance_unit value in the mutation.
+func (m *UserMutation) DistanceUnit() (r user.DistanceUnit, exists bool) {
+	v := m.distance_unit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDistanceUnit returns the old distance_unit value of the User.
+// If the User object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UserMutation) OldDistanceUnit(ctx context.Context) (v user.DistanceUnit, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDistanceUnit is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDistanceUnit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDistanceUnit: %w", err)
+	}
+	return oldValue.DistanceUnit, nil
+}
+
+// ResetDistanceUnit reset all changes of the "distance_unit" field.
+func (m *UserMutation) ResetDistanceUnit() {
+	m.distance_unit = nil
+}
+
 // SetProfilePhotoID sets the profile_photo edge to File by id.
 func (m *UserMutation) SetProfilePhotoID(id int) {
 	m.profile_photo = &id
@@ -39773,7 +39811,7 @@ func (m *UserMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, user.FieldCreateTime)
 	}
@@ -39797,6 +39835,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.role != nil {
 		fields = append(fields, user.FieldRole)
+	}
+	if m.distance_unit != nil {
+		fields = append(fields, user.FieldDistanceUnit)
 	}
 	return fields
 }
@@ -39822,6 +39863,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case user.FieldRole:
 		return m.Role()
+	case user.FieldDistanceUnit:
+		return m.DistanceUnit()
 	}
 	return nil, false
 }
@@ -39847,6 +39890,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldStatus(ctx)
 	case user.FieldRole:
 		return m.OldRole(ctx)
+	case user.FieldDistanceUnit:
+		return m.OldDistanceUnit(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -39911,6 +39956,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRole(v)
+		return nil
+	case user.FieldDistanceUnit:
+		v, ok := value.(user.DistanceUnit)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDistanceUnit(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -40006,6 +40058,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldRole:
 		m.ResetRole()
+		return nil
+	case user.FieldDistanceUnit:
+		m.ResetDistanceUnit()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

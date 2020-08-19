@@ -123,6 +123,20 @@ func (uu *UserUpdate) SetNillableRole(u *user.Role) *UserUpdate {
 	return uu
 }
 
+// SetDistanceUnit sets the distance_unit field.
+func (uu *UserUpdate) SetDistanceUnit(u user.DistanceUnit) *UserUpdate {
+	uu.mutation.SetDistanceUnit(u)
+	return uu
+}
+
+// SetNillableDistanceUnit sets the distance_unit field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDistanceUnit(u *user.DistanceUnit) *UserUpdate {
+	if u != nil {
+		uu.SetDistanceUnit(*u)
+	}
+	return uu
+}
+
 // SetProfilePhotoID sets the profile_photo edge to File by id.
 func (uu *UserUpdate) SetProfilePhotoID(id int) *UserUpdate {
 	uu.mutation.SetProfilePhotoID(id)
@@ -304,6 +318,11 @@ func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "role", err: fmt.Errorf("ent: validator failed for field \"role\": %w", err)}
 		}
 	}
+	if v, ok := uu.mutation.DistanceUnit(); ok {
+		if err := user.DistanceUnitValidator(v); err != nil {
+			return 0, &ValidationError{Name: "distance_unit", err: fmt.Errorf("ent: validator failed for field \"distance_unit\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -430,6 +449,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: user.FieldRole,
+		})
+	}
+	if value, ok := uu.mutation.DistanceUnit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: user.FieldDistanceUnit,
 		})
 	}
 	if uu.mutation.ProfilePhotoCleared() {
@@ -725,6 +751,20 @@ func (uuo *UserUpdateOne) SetNillableRole(u *user.Role) *UserUpdateOne {
 	return uuo
 }
 
+// SetDistanceUnit sets the distance_unit field.
+func (uuo *UserUpdateOne) SetDistanceUnit(uu user.DistanceUnit) *UserUpdateOne {
+	uuo.mutation.SetDistanceUnit(uu)
+	return uuo
+}
+
+// SetNillableDistanceUnit sets the distance_unit field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDistanceUnit(uu *user.DistanceUnit) *UserUpdateOne {
+	if uu != nil {
+		uuo.SetDistanceUnit(*uu)
+	}
+	return uuo
+}
+
 // SetProfilePhotoID sets the profile_photo edge to File by id.
 func (uuo *UserUpdateOne) SetProfilePhotoID(id int) *UserUpdateOne {
 	uuo.mutation.SetProfilePhotoID(id)
@@ -906,6 +946,11 @@ func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
 			return nil, &ValidationError{Name: "role", err: fmt.Errorf("ent: validator failed for field \"role\": %w", err)}
 		}
 	}
+	if v, ok := uuo.mutation.DistanceUnit(); ok {
+		if err := user.DistanceUnitValidator(v); err != nil {
+			return nil, &ValidationError{Name: "distance_unit", err: fmt.Errorf("ent: validator failed for field \"distance_unit\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -1030,6 +1075,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: user.FieldRole,
+		})
+	}
+	if value, ok := uuo.mutation.DistanceUnit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: user.FieldDistanceUnit,
 		})
 	}
 	if uuo.mutation.ProfilePhotoCleared() {

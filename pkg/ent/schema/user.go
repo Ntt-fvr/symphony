@@ -48,6 +48,12 @@ func (User) Fields() []ent.Field {
 				"Owner": "OWNER",
 			}).
 			Default("USER"),
+		field.Enum("distance_unit").
+			ValueMap(map[string]string{
+				"Kilometer": "KILOMETER",
+				"Mile":      "MILE",
+			}).
+			Default("KILOMETER"),
 	}
 }
 

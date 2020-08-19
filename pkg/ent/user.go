@@ -37,6 +37,8 @@ type User struct {
 	Status user.Status `json:"status,omitempty"`
 	// Role holds the value of the "role" field.
 	Role user.Role `json:"role,omitempty"`
+	// DistanceUnit holds the value of the "distance_unit" field.
+	DistanceUnit user.DistanceUnit `json:"distance_unit,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -121,6 +123,7 @@ func (*User) scanValues() []interface{} {
 		&sql.NullString{}, // email
 		&sql.NullString{}, // status
 		&sql.NullString{}, // role
+		&sql.NullString{}, // distance_unit
 	}
 }
 
@@ -175,6 +178,11 @@ func (u *User) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field role", values[7])
 	} else if value.Valid {
 		u.Role = user.Role(value.String)
+	}
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field distance_unit", values[8])
+	} else if value.Valid {
+		u.DistanceUnit = user.DistanceUnit(value.String)
 	}
 	return nil
 }
@@ -243,6 +251,8 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.Status))
 	builder.WriteString(", role=")
 	builder.WriteString(fmt.Sprintf("%v", u.Role))
+	builder.WriteString(", distance_unit=")
+	builder.WriteString(fmt.Sprintf("%v", u.DistanceUnit))
 	builder.WriteByte(')')
 	return builder.String()
 }

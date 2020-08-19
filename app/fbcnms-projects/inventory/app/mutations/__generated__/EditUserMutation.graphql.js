@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 803d7ec50b636d704a12040a2e0939f0
+ * @relayHash afa91ca275031c6ce3ea921122e767cf
  */
 
 /* eslint-disable */
@@ -15,6 +15,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type DistanceUnit = "KILOMETER" | "MILE" | "%future added value";
 export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
 export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
@@ -25,6 +26,7 @@ export type EditUserInput = {|
   lastName?: ?string,
   status?: ?UserStatus,
   role?: ?UserRole,
+  distanceUnit?: ?DistanceUnit,
 |};
 export type EditUserMutationVariables = {|
   input: EditUserInput
