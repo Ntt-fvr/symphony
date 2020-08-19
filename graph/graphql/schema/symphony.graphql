@@ -39,8 +39,8 @@ enum UserRole
 
 enum DistanceUnit
   @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
-  ACTIVE
-  DEACTIVATED
+  KILOMETER
+  MILE
 }
 
 type User implements Node & NamedNode {
@@ -375,6 +375,7 @@ input EditUserInput {
   lastName: String
   status: UserStatus
   role: UserRole
+  distanceUnit: DistanceUnit
 }
 
 input UpdateUserGroupsInput {

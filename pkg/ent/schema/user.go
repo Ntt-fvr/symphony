@@ -51,7 +51,7 @@ func (User) Fields() []ent.Field {
 		field.Enum("distance_unit").
 			ValueMap(map[string]string{
 				"Kilometer": "KILOMETER",
-				"Mile": "MILE",
+				"Mile":      "MILE",
 			}).
 			Default("KILOMETER"),
 	}

@@ -7665,8 +7665,8 @@ enum UserRole
 
 enum DistanceUnit
   @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
-  ACTIVE
-  DEACTIVATED
+  KILOMETER
+  MILE
 }
 
 type User implements Node & NamedNode {
@@ -8001,6 +8001,7 @@ input EditUserInput {
   lastName: String
   status: UserStatus
   role: UserRole
+  distanceUnit: DistanceUnit
 }
 
 input UpdateUserGroupsInput {
@@ -44802,6 +44803,14 @@ func (ec *executionContext) unmarshalInputEditUserInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "distanceUnit":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("distanceUnit"))
+			it.DistanceUnit, err = ec.unmarshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -62234,6 +62243,22 @@ func (ec *executionContext) unmarshalODistanceUnit2githubᚗcomᚋfacebookincuba
 }
 
 func (ec *executionContext) marshalODistanceUnit2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, sel ast.SelectionSet, v user.DistanceUnit) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, v interface{}) (*user.DistanceUnit, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(user.DistanceUnit)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, sel ast.SelectionSet, v *user.DistanceUnit) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	return v
 }
 
