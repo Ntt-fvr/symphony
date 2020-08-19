@@ -132,6 +132,20 @@ func (uc *UserCreate) SetNillableRole(u *user.Role) *UserCreate {
 	return uc
 }
 
+// SetDistanceUnit sets the distance_unit field.
+func (uc *UserCreate) SetDistanceUnit(uu user.DistanceUnit) *UserCreate {
+	uc.mutation.SetDistanceUnit(uu)
+	return uc
+}
+
+// SetNillableDistanceUnit sets the distance_unit field if the given value is not nil.
+func (uc *UserCreate) SetNillableDistanceUnit(uu *user.DistanceUnit) *UserCreate {
+	if uu != nil {
+		uc.SetDistanceUnit(*uu)
+	}
+	return uc
+}
+
 // SetProfilePhotoID sets the profile_photo edge to File by id.
 func (uc *UserCreate) SetProfilePhotoID(id int) *UserCreate {
 	uc.mutation.SetProfilePhotoID(id)
@@ -307,6 +321,15 @@ func (uc *UserCreate) preSave() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf("ent: validator failed for field \"role\": %w", err)}
 		}
 	}
+	if _, ok := uc.mutation.DistanceUnit(); !ok {
+		v := user.DefaultDistanceUnit
+		uc.mutation.SetDistanceUnit(v)
+	}
+	if v, ok := uc.mutation.DistanceUnit(); ok {
+		if err := user.DistanceUnitValidator(v); err != nil {
+			return &ValidationError{Name: "distance_unit", err: fmt.Errorf("ent: validator failed for field \"distance_unit\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -397,6 +420,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldRole,
 		})
 		u.Role = value
+	}
+	if value, ok := uc.mutation.DistanceUnit(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: user.FieldDistanceUnit,
+		})
+		u.DistanceUnit = value
 	}
 	if nodes := uc.mutation.ProfilePhotoIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
