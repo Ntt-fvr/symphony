@@ -124,15 +124,15 @@ func (uu *UserUpdate) SetNillableRole(u *user.Role) *UserUpdate {
 }
 
 // SetDistanceUnit sets the distance_unit field.
-func (uu *UserUpdate) SetDistanceUnit(uu user.DistanceUnit) *UserUpdate {
-	uu.mutation.SetDistanceUnit(uu)
+func (uu *UserUpdate) SetDistanceUnit(u user.DistanceUnit) *UserUpdate {
+	uu.mutation.SetDistanceUnit(u)
 	return uu
 }
 
 // SetNillableDistanceUnit sets the distance_unit field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDistanceUnit(uu *user.DistanceUnit) *UserUpdate {
-	if uu != nil {
-		uu.SetDistanceUnit(*uu)
+func (uu *UserUpdate) SetNillableDistanceUnit(u *user.DistanceUnit) *UserUpdate {
+	if u != nil {
+		uu.SetDistanceUnit(*u)
 	}
 	return uu
 }
