@@ -133,14 +133,14 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		if err != nil && !ent.IsNotFound(err) {
 			return err
 		}
-		row := strconv.Itoa(currRow)
-   	activityVal := "changed " + activity.ActivityType.String() + " from " + activity.OldValue + " to " + activity.NewValue
-   	if activity.IsCreate {
-   		activityVal := activity.ActivityType.String() + " set to " + activity.NewValue
-   	}
 		authorEmail := ""
 		if author != nil {
 			authorEmail = author.Email
+		}
+		row := strconv.Itoa(currRow)
+		activityVal := "changed " + activity.ActivityType.String() + " from " + activity.OldValue + " to " + activity.NewValue
+		if activity.IsCreate {
+			activityVal = activity.ActivityType.String() + " set to " + activity.NewValue
 		}
 		for j, data := range []string{authorEmail, activityVal, activity.CreateTime.Format(timeLayout), activity.UpdateTime.Format(timeLayout)} {
 			cell := columns[j] + row
@@ -166,7 +166,7 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
 		}
 		if item.HelpText != nil {
-			f.SetCellValue(sheetName, "B"+strconv.Itoa(currRow), *item.HelpText)
+			f.SetCellValue(sheetName, "E"+strconv.Itoa(currRow), *item.HelpText)
 		}
 		currRow++
 
@@ -182,7 +182,7 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			}
 			currRow++
 			for _, cellScan := range cellScans {
-				for j, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)}
+				for j, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)} {
 					f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), value)
 				}
 				currRow++
@@ -194,7 +194,7 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 			if err != nil {
 				return err
 			}
-			for _, header := range fileHeader {
+			for i, header := range fileHeader {
 				cell := columns[i] + strconv.Itoa(currRow)
 				f.SetCellValue(sheetName, cell, header)
 				setHeaderStyle(f, summarySheetName, cell)
