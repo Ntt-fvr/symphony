@@ -8,7 +8,10 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
+	"net/url"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/facebookincubator/symphony/graph/exporter"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
@@ -95,7 +98,18 @@ func (eh *ExportHandler) exportLocations(ctx context.Context, logger log.Logger,
 
 // writeRows writer rows into a blob with key as name.
 func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string) (err error) {
-	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{ContentType: "text/csv"})
+	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{
+		ContentType: "text/csv",
+		BeforeWrite: func(asFunc func(interface{}) bool) error {
+			var req *s3manager.UploadInput
+			if asFunc(&req) {
+				req.Tagging = aws.String(
+					url.QueryEscape("autoclean=true"),
+				)
+			}
+			return nil
+		},
+	})
 	if err != nil {
 		return fmt.Errorf("cannot create bucket writer: %w", err)
 	}
