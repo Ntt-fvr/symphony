@@ -76,7 +76,6 @@ func main() {
 		"export bucket url",
 	).
 		Envar("EXPORT_BUCKET_URL").
-		Required().
 		URLVar(&cf.ExportBlobURL)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)

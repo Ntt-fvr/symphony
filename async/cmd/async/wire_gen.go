@@ -28,6 +28,7 @@ import (
 import (
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "github.com/go-sql-driver/mysql"
+	_ "gocloud.dev/blob/s3blob"
 	_ "gocloud.dev/pubsub/mempubsub"
 	_ "gocloud.dev/pubsub/natspubsub"
 )
@@ -73,21 +74,12 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	bucket, cleanup5, err := newBucket(ctx, flags)
-	if err != nil {
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	v := newHandlers(bucket)
+	v := newHandlers()
 	handlerConfig := handler.Config{
 		Tenancy:  tenancy,
 		Features: variable,
 		Receiver: receiver,
 		Logger:   logger,
-		Bucket:   bucket,
 		Handlers: v,
 	}
 	handlerServer := handler.NewServer(handlerConfig)
@@ -98,16 +90,14 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	telemetryConfig := &flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
-		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup6, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	traceExporter, cleanup5, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
-		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -133,7 +123,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	logger2 := log.ProvideZapLogger(logger)
 	mainApplication := newApplication(handlerServer, serverServer, logger2, flags)
 	return mainApplication, func() {
-		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -197,15 +186,11 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket) []handler.NamedHandler {
+func newHandlers() []handler.NamedHandler {
 	return []handler.NamedHandler{
 		{
 			Name:    "activity_log",
 			Handler: handler.Func(handler.HandleActivityLog),
-		},
-		{
-			Name:    "export_task",
-			Handler: handler.NewExportHandler(bucket),
 		},
 	}
 }

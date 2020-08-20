@@ -70,7 +70,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
-		newBucket,
 		newHandlers,
 		newApplication,
 	)
@@ -124,15 +123,11 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket) []handler.NamedHandler {
+func newHandlers() []handler.NamedHandler {
 	return []handler.NamedHandler{
 		{
 			Name:    "activity_log",
 			Handler: handler.Func(handler.HandleActivityLog),
-		},
-		{
-			Name:    "export_task",
-			Handler: handler.NewExportHandler(bucket),
 		},
 	}
 }
