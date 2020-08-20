@@ -10,6 +10,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebook/ent/schema/index"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
 // PropertyType defines the property type schema.
@@ -205,19 +206,19 @@ func (Property) Edges() []ent.Edge {
 		edge.To("type", PropertyType.Type).
 			Unique().
 			Required().
-			StructTag(`gqlgen:"propertyType"`),
+			Annotations(entgql.MapsTo("propertyType")),
 		edge.From("location", Location.Type).
 			Unique().
 			Ref("properties").
-			StructTag(`gqlgen:"locationValue"`),
+			Annotations(entgql.MapsTo("locationValue")),
 		edge.From("equipment", Equipment.Type).
 			Unique().
 			Ref("properties").
-			StructTag(`gqlgen:"equipmentValue"`),
+			Annotations(entgql.MapsTo("equipmentValue")),
 		edge.From("service", Service.Type).
 			Unique().
 			Ref("properties").
-			StructTag(`gqlgen:"serviceValue"`),
+			Annotations(entgql.MapsTo("serviceValue")),
 		edge.From("equipment_port", EquipmentPort.Type).
 			Unique().
 			Ref("properties"),

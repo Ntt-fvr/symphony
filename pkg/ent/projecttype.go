@@ -31,11 +31,11 @@ type ProjectType struct {
 // ProjectTypeEdges holds the relations/edges for other nodes in the graph.
 type ProjectTypeEdges struct {
 	// Properties holds the value of the properties edge.
-	Properties []*PropertyType `gqlgen:"properties"`
+	Properties []*PropertyType
 	// WorkOrders holds the value of the work_orders edge.
-	WorkOrders []*WorkOrderDefinition `gqlgen:"workOrders"`
+	WorkOrders []*WorkOrderDefinition
 	// Projects holds the value of the projects edge.
-	Projects []*Project `gqlgen:"projects"`
+	Projects []*Project
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool

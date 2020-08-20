@@ -42,11 +42,11 @@ type LocationType struct {
 // LocationTypeEdges holds the relations/edges for other nodes in the graph.
 type LocationTypeEdges struct {
 	// Locations holds the value of the locations edge.
-	Locations []*Location `gqlgen:"locations"`
+	Locations []*Location
 	// PropertyTypes holds the value of the property_types edge.
-	PropertyTypes []*PropertyType `gqlgen:"propertyTypes"`
+	PropertyTypes []*PropertyType
 	// SurveyTemplateCategories holds the value of the survey_template_categories edge.
-	SurveyTemplateCategories []*SurveyTemplateCategory `gqlgen:"surveyTemplateCategories"`
+	SurveyTemplateCategories []*SurveyTemplateCategory
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
