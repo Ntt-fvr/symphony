@@ -9,7 +9,7 @@ package ent
 import (
 	"context"
 
-	"github.com/facebookincubator/ent/dialect"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 )
 

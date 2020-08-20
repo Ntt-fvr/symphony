@@ -10,9 +10,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -124,15 +124,15 @@ func (uu *UserUpdate) SetNillableRole(u *user.Role) *UserUpdate {
 }
 
 // SetDistanceUnit sets the distance_unit field.
-func (uu *UserUpdate) SetDistanceUnit(u user.DistanceUnit) *UserUpdate {
-	uu.mutation.SetDistanceUnit(u)
+func (uu *UserUpdate) SetDistanceUnit(value user.DistanceUnit) *UserUpdate {
+	uu.mutation.SetDistanceUnit(value)
 	return uu
 }
 
 // SetNillableDistanceUnit sets the distance_unit field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDistanceUnit(u *user.DistanceUnit) *UserUpdate {
-	if u != nil {
-		uu.SetDistanceUnit(*u)
+func (uu *UserUpdate) SetNillableDistanceUnit(value *user.DistanceUnit) *UserUpdate {
+	if value != nil {
+		uu.SetDistanceUnit(*value)
 	}
 	return uu
 }

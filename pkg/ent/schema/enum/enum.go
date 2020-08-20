@@ -10,7 +10,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/schema/field"
 )
 
 // Getter is the interface to get the value stored in an enum.

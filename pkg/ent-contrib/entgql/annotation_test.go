@@ -7,7 +7,7 @@ package entgql_test
 import (
 	"testing"
 
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/stretchr/testify/assert"
 )
