@@ -46,25 +46,21 @@ func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*exc
 		logger.Error("work order ID not found", zap.Error(err))
 		return nil, fmt.Errorf("work order ID not found: %w", err)
 	}
-
 	client := ent.FromContext(ctx)
 	wo, err := client.WorkOrder.Get(ctx, id)
 	if err != nil {
 		logger.Error("cannot query work order", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query work order")
 	}
-
 	if err := generateWoSummary(ctx, f, wo); err != nil {
 		logger.Error("cannot generate work order", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot generate work order")
 	}
-
 	checklists, err := wo.QueryCheckListCategories().All(ctx)
 	if err != nil {
 		logger.Error("cannot query checklist categories", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query checklist categories")
 	}
-
 	for i, checklist := range checklists {
 		sheetName := "CheckList" + strconv.Itoa(i+1)
 		f.NewSheet(sheetName)
