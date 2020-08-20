@@ -6,6 +6,7 @@ package handler
 
 import (
 	"context"
+	"encoding/csv"
 	"fmt"
 
 	"github.com/facebookincubator/symphony/graph/exporter"
@@ -13,76 +14,102 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/pkg/errors"
+	"github.com/google/uuid"
+	"github.com/hashicorp/go-multierror"
+	"go.uber.org/zap"
+	"gocloud.dev/blob"
 )
 
-func setStatus(ctx context.Context, id int, status exporttask.Status) error {
-	client := ent.FromContext(ctx)
-	err := client.ExportTask.
-		UpdateOneID(id).
-		SetStatus(status).
-		Exec(ctx)
-	if err != nil {
-		return fmt.Errorf("setting export task status %v failed: %w", status, err)
+// ExportHandler is the handler struct for export tasks.
+type ExportHandler struct {
+	bucket *blob.Bucket
+}
+
+// NewExportHandler returns an ExportHandler object with a bucket.
+func NewExportHandler(bucket *blob.Bucket) *ExportHandler {
+	return &ExportHandler{
+		bucket: bucket,
 	}
+}
+
+// Handle handles async exports.
+func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	if entry.Type != ent.TypeExportTask || !entry.Operation.Is(ent.OpCreate) {
+		return nil
+	}
+	task, err := ent.FromContext(ctx).ExportTask.Get(ctx, entry.CurrState.ID)
+	if err != nil {
+		logger.For(ctx).Error("cannot get export task", zap.Error(err), zap.Int("id", entry.CurrState.ID))
+		return err
+	}
+
+	// we are running a transaction, so the status update will not be visible
+	// TODO: check how to get not transactional ent client from a transactional one
+
+	var key string
+	switch task.Type {
+	case exporttask.TypeLocation:
+		key, err = eh.exportLocations(ctx, logger, task)
+	default:
+		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
+			logger.For(ctx).Error("cannot update task status", zap.Error(err))
+		}
+		return fmt.Errorf("unsupported entity type %s", task.Type)
+	}
+
+	mutation := task.Update()
+	if err != nil {
+		mutation.SetStatus(exporttask.StatusFailed)
+	} else {
+		mutation.SetStatus(exporttask.StatusSucceeded).
+			SetStoreKey(key)
+	}
+
+	if err := mutation.Exec(ctx); err != nil {
+		logger.For(ctx).Error("cannot update task status", zap.Error(err), zap.Int("id", task.ID))
+		return err
+	}
+
 	return nil
 }
 
-func getLocationRows(ctx context.Context, logger log.Logger, et *ent.ExportTask) ([][]string, error) {
+// exportLocations queries and writes rows to a file, returning the key.
+func (eh *ExportHandler) exportLocations(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
 	lr := exporter.LocationsRower{
 		Log:        logger,
 		Concurrent: false,
 	}
-
-	allRows, err := lr.Rows(ctx, et.Filters)
+	rows, err := lr.Rows(ctx, task.Filters)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return allRows, nil
+	key := uuid.New().String()
+	if err := eh.writeRows(ctx, key, rows); err != nil {
+		logger.For(ctx).Error("cannot write rows", zap.Error(err))
+		return "", err
+	}
+
+	return key, nil
 }
 
-func handleExportLocations(ctx context.Context, logger log.Logger, et *ent.ExportTask) error {
-	if err := setStatus(ctx, et.ID, exporttask.StatusInProgress); err != nil {
-		return err
-	}
-	_, err := getLocationRows(ctx, logger, et)
+// writeRows writer rows into a blob with key as name.
+func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string) (err error) {
+	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{ContentType: "text/csv"})
 	if err != nil {
-		return errors.Wrap(err, "failed to get locations rows")
+		return fmt.Errorf("cannot create bucket writer: %w", err)
 	}
-	//TODO: Write allRows to AWS S3
+
+	defer func() {
+		if cerr := b.Close(); cerr != nil {
+			cerr = fmt.Errorf("cannot close writer: %w", cerr)
+			err = multierror.Append(err, cerr).ErrorOrNil()
+		}
+	}()
+
+	if err := csv.NewWriter(b).WriteAll(rows); err != nil {
+		return fmt.Errorf("cannot write rows: %w", err)
+	}
+
 	return nil
-}
-
-func HandleExport(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
-	if entry.Type != ent.TypeExportTask || !entry.Operation.Is(ent.OpCreate) {
-		return nil
-	}
-
-	var (
-		err       error
-		statusErr error
-	)
-	client := ent.FromContext(ctx)
-	etID := entry.CurrState.ID
-	et, err := client.ExportTask.Get(ctx, etID)
-	if err != nil {
-		return err
-	}
-
-	switch et.Type {
-	case exporttask.TypeLocation:
-		err = handleExportLocations(ctx, logger, et)
-		if err != nil {
-			statusErr = setStatus(ctx, etID, exporttask.StatusFailed)
-		} else {
-			statusErr = setStatus(ctx, etID, exporttask.StatusSucceeded)
-		}
-		if statusErr != nil {
-			return statusErr
-		}
-		return err
-	default:
-		return errors.New("not supported entity for async export")
-	}
 }

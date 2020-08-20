@@ -8,6 +8,7 @@ import (
 	"context"
 	stdlog "log"
 	"net"
+	"net/url"
 	"os"
 	"syscall"
 
@@ -38,6 +39,7 @@ type cliFlags struct {
 	LogConfig       log.Config
 	TelemetryConfig telemetry.Config
 	TenancyConfig   viewer.Config
+	ExportBlobURL   *url.URL
 }
 
 func main() {
@@ -68,6 +70,13 @@ func main() {
 		Envar("EVENT_SUB_URL").
 		Required().
 		SetValue(&cf.EventSubURL)
+	kingpin.Flag(
+		"export-bucket-url",
+		"export bucket url",
+	).
+		Envar("EXPORT_BUCKET_URL").
+		Required().
+		URLVar(&cf.ExportBlobURL)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
 	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)

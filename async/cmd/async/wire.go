@@ -25,6 +25,7 @@ import (
 	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
+	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
 )
 
@@ -69,16 +70,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
-		wire.Value([]handler.NamedHandler{
-			{
-				Name:    "activity_log",
-				Handler: handler.Func(handler.HandleActivityLog),
-			},
-			{
-				Name:    "export",
-				Handler: handler.Func(handler.HandleExport),
-			},
-		}),
+		newBucket,
+		newHandlers,
 		newApplication,
 	)
 	return nil, nil, nil
@@ -121,4 +114,25 @@ func provideViews() []*view.View {
 
 func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 	return flags.EventSubURL
+}
+
+func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
+	bucket, err := blob.OpenBucket(ctx, flags.ExportBlobURL.String())
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
+	}
+	return bucket, func() { _ = bucket.Close() }, nil
+}
+
+func newHandlers(bucket *blob.Bucket) []handler.NamedHandler {
+	return []handler.NamedHandler{
+		{
+			Name:    "activity_log",
+			Handler: handler.Func(handler.HandleActivityLog),
+		},
+		{
+			Name:    "export_task",
+			Handler: handler.NewExportHandler(bucket),
+		},
+	}
 }
