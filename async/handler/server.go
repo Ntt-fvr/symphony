@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
-	"gocloud.dev/blob"
 	"gocloud.dev/runtimevar"
 )
 
@@ -50,7 +49,6 @@ type Server struct {
 	logger   log.Logger
 	tenancy  viewer.Tenancy
 	features *runtimevar.Variable
-	bucket   *blob.Bucket
 	handlers []NamedHandler
 }
 
@@ -60,7 +58,6 @@ type Config struct {
 	Features *runtimevar.Variable
 	Receiver ev.Receiver
 	Logger   log.Logger
-	Bucket   *blob.Bucket
 	Handlers []NamedHandler
 }
 
@@ -70,7 +67,6 @@ func NewServer(cfg Config) *Server {
 		features: cfg.Features,
 		logger:   cfg.Logger,
 		handlers: cfg.Handlers,
-		bucket:   cfg.Bucket,
 	}
 	srv.service, _ = ev.NewService(
 		ev.Config{
