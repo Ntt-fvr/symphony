@@ -6,6 +6,8 @@ require (
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
 	contrib.go.opencensus.io/integrations/ocsql v0.1.6
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.0 // indirect
 	github.com/99designs/gqlgen v0.12.2
 	github.com/AlekSi/pointer v1.1.0
 	github.com/Azure/azure-amqp-common-go/v2 v2.1.0 // indirect
