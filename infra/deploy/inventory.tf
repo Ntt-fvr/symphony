@@ -157,7 +157,7 @@ resource helm_release inventory {
     store_bucket_url     = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
     store_sa_name        = module.inventory_store_role.service_account_name
     store_rolearn        = module.inventory_store_role.role_arn
-    async_sa_name        = module.inventory_async_role.service_account_namespace
+    async_sa_name        = module.inventory_async_role.service_account_name
     async_rolearn        = module.inventory_async_role.role_arn
     export_bucket_prefix = local.inventory_exports_path
     orc8r_host           = "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}"

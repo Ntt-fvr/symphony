@@ -1,3 +1,7 @@
+output kubernetes_namespace {
+  value = kubernetes_namespace.this_namespace.id
+}
+
 output role_arn {
   value = try(
     module.this_team_iam[0].role_arn,
