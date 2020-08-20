@@ -11,7 +11,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 )
 
 const (

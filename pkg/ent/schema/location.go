@@ -5,10 +5,10 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
-	"github.com/facebookincubator/ent/schema/index"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
@@ -41,11 +41,11 @@ func (LocationType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("locations", Location.Type).
 			Ref("type").
-			StructTag(`gqlgen:"locations"`),
+			Annotations(entgql.Bind()),
 		edge.To("property_types", PropertyType.Type).
-			StructTag(`gqlgen:"propertyTypes"`),
+			Annotations(entgql.MapsTo("propertyTypes")),
 		edge.To("survey_template_categories", SurveyTemplateCategory.Type).
-			StructTag(`gqlgen:"surveyTemplateCategories"`),
+			Annotations(entgql.MapsTo("surveyTemplateCategories")),
 	}
 }
 
@@ -68,9 +68,9 @@ func (Location) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty().
-			Annotations(entgql.Annotation{
-				OrderField: "NAME",
-			}),
+			Annotations(
+				entgql.OrderField("NAME"),
+			),
 		field.String("external_id").
 			Unique().
 			Optional(),
@@ -93,35 +93,35 @@ func (Location) Edges() []ent.Edge {
 		edge.To("type", LocationType.Type).
 			Unique().
 			Required().
-			StructTag(`gqlgen:"locationType"`),
+			Annotations(entgql.MapsTo("locationType")),
 		edge.To("children", Location.Type).
-			StructTag(`gqlgen:"children"`).
+			Annotations(entgql.Bind()).
 			From("parent").
 			Unique().
-			StructTag(`gqlgen:"parentLocation"`),
+			Annotations(entgql.MapsTo("parentLocation")),
 		edge.To("files", File.Type).
-			StructTag(`gqlgen:"files,images"`),
+			Annotations(entgql.MapsTo("files", "images")),
 		edge.To("hyperlinks", Hyperlink.Type).
-			StructTag(`gqlgen:"hyperlinks"`),
+			Annotations(entgql.Bind()),
 		edge.To("equipment", Equipment.Type).
-			StructTag(`gqlgen:"equipments"`),
+			Annotations(entgql.MapsTo("equipments")),
 		edge.To("properties", Property.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.From("survey", Survey.Type).
 			Ref("location").
-			StructTag(`gqlgen:"surveys"`),
+			Annotations(entgql.MapsTo("surveys")),
 		edge.From("wifi_scan", SurveyWiFiScan.Type).
 			Ref("location").
-			StructTag(`gqlgen:"wifiData"`),
+			Annotations(entgql.MapsTo("wifiData")),
 		edge.From("cell_scan", SurveyCellScan.Type).
 			Ref("location").
-			StructTag(`gqlgen:"cellData"`),
+			Annotations(entgql.MapsTo("cellData")),
 		edge.From("work_orders", WorkOrder.Type).
 			Ref("location").
-			StructTag(`gqlgen:"workOrders"`),
+			Annotations(entgql.MapsTo("workOrders")),
 		edge.From("floor_plans", FloorPlan.Type).
 			Ref("location").
-			StructTag(`gqlgen:"floorPlans"`),
+			Annotations(entgql.MapsTo("floorPlans")),
 	}
 }
 

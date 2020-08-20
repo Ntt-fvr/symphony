@@ -13,10 +13,11 @@ import type {CheckListCategoryExpandingPanel_list} from '../components/checklist
 import type {ChecklistCategoryDefinition} from '../components/checklist/ChecklistCategoriesMutateState';
 import type {Equipment, Link} from './Equipment';
 import type {FileAttachmentType} from './FileAttachment.js';
+import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
 import type {ImageAttachmentType} from './ImageAttachment.js';
 import type {Location} from './Location';
 import type {NamedNode} from './EntUtils';
-import type {PriorityType, StatusType} from './FilterTypes';
+import type {PriorityType} from './FilterTypes';
 import type {Property} from './Property';
 import type {PropertyType} from './PropertyType';
 import type {ShortUser} from './EntUtils';
@@ -48,7 +49,7 @@ export type WorkOrder = {
   owner: ShortUser,
   creationDate: string,
   installDate: ?string,
-  status: StatusType,
+  status: GraphQLStatusType,
   priority: PriorityType,
   equipmentToAdd: Array<Equipment>,
   equipmentToRemove: Array<Equipment>,

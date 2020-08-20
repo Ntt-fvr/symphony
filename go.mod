@@ -14,9 +14,9 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/agnivade/levenshtein v1.1.0 // indirect
-	github.com/aws/aws-sdk-go v1.34.6
+	github.com/aws/aws-sdk-go v1.34.8
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebookincubator/ent v0.3.0
+	github.com/facebook/ent v0.4.1-0.20200820092101-fd481554a455
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
@@ -31,7 +31,7 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
-	github.com/prometheus/common v0.12.0
+	github.com/prometheus/common v0.13.0
 	github.com/prometheus/statsd_exporter v0.17.0 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f

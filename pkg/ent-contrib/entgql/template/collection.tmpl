@@ -15,12 +15,18 @@ import (
 
 {{ range $node := $.Nodes }}
 
-{{ $taggedEdges := dict }}
-{{- range $edge := $node.Edges }}
-	{{- with $tags := tagLookup $edge.StructTag "gqlgen" }}
-		{{- $taggedEdges = set $taggedEdges $edge.Name (list $edge.Type.Name $tags) }}
-	{{- end }}
-{{- end }}
+{{ $edges := dict }}
+{{ range $edge := $node.Edges }}
+	{{ if $annotation := $edge.Annotations.EntGQL }}
+		{{ if $annotation.Bind }}
+			{{ if $annotation.Mapping }}{{ fail "bind and mapping annotations are mutually exclusive" }}{{ end }}
+			{{ $edges = set $edges $edge.Name (list $edge.Type.Name (list $edge.Name)) }}
+		{{ end }}
+		{{ if $mapping := $annotation.Mapping }}
+			{{ $edges = set $edges $edge.Name (list $edge.Type.Name $mapping) }}
+		{{ end }}
+	{{ end }}
+{{ end }}
 
 {{ $receiver := $node.Receiver }}
 {{ $query := $node.QueryName }}
@@ -33,11 +39,11 @@ func ({{ $receiver }} *{{ $query }}) CollectFields(ctx context.Context, satisfie
 }
 
 func ({{ $receiver }} *{{ $query }}) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *{{ $query }} {
-	{{- with $taggedEdges }}
+	{{- with $edges }}
 		for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
 			switch field.Name {
 				{{- range $name, $values := . }}
-					case {{ range $i, $tag := split (index $values 1) "," }}{{ if gt $i 0 }}, {{ end }}"{{ $tag }}"{{ end }}:
+					case {{ range $i, $value := index $values 1 }}{{ if gt $i 0 }}, {{ end }}"{{ $value }}"{{ end }}:
 						{{ $receiver }} = {{ $receiver }}.With{{ pascal $name }}(func(query *{{ pascal (index $values 0) }}Query) {
 							query.collectField(ctx, field)
 						})

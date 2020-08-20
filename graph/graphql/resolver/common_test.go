@@ -13,7 +13,7 @@ import (
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/facebookincubator/ent/dialect"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/pkg/ent"

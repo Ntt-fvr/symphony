@@ -5,11 +5,11 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
-	"github.com/facebookincubator/ent/schema/index"
-	"github.com/facebookincubator/ent/schema/mixin"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
+	"github.com/facebook/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
@@ -38,9 +38,9 @@ func (WorkOrderTemplateMixin) Fields() []ent.Field {
 func (WorkOrderTemplateMixin) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("property_types", PropertyType.Type).
-			StructTag(`gqlgen:"propertyTypes"`),
+			Annotations(entgql.MapsTo("propertyTypes")),
 		edge.To("check_list_category_definitions", CheckListCategoryDefinition.Type).
-			StructTag(`gqlgen:"checkListCategoryDefinitions"`),
+			Annotations(entgql.MapsTo("checkListCategoryDefinitions")),
 	}
 }
 
@@ -146,17 +146,17 @@ func (WorkOrder) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 		field.Time("creation_date").
-			Annotations(entgql.Annotation{
-				OrderField: "CREATED_AT",
-			}),
+			Annotations(
+				entgql.OrderField("CREATED_AT"),
+			),
 		field.Int("index").
 			Optional(),
 		field.Time("close_date").
 			Optional().
 			Nillable().
-			Annotations(entgql.Annotation{
-				OrderField: "CLOSED_AT",
-			}),
+			Annotations(
+				entgql.OrderField("CLOSED_AT"),
+			),
 	}
 }
 
@@ -165,38 +165,38 @@ func (WorkOrder) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("type", WorkOrderType.Type).
 			Unique().
-			StructTag(`gqlgen:"workOrderType"`),
+			Annotations(entgql.MapsTo("workOrderType")),
 		edge.To("template", WorkOrderTemplate.Type).
 			Unique().
-			StructTag(`gqlgen:"workOrderTemplate"`),
+			Annotations(entgql.MapsTo("workOrderTemplate")),
 		edge.From("equipment", Equipment.Type).
 			Ref("work_order"),
 		edge.From("links", Link.Type).
 			Ref("work_order"),
 		edge.To("files", File.Type),
 		edge.To("hyperlinks", Hyperlink.Type).
-			StructTag(`gqlgen:"hyperlinks"`),
+			Annotations(entgql.Bind()),
 		edge.To("location", Location.Type).
 			Unique().
-			StructTag(`gqlgen:"location"`),
+			Annotations(entgql.Bind()),
 		edge.To("comments", Comment.Type).
-			StructTag(`gqlgen:"comments"`),
+			Annotations(entgql.Bind()),
 		edge.To("activities", Activity.Type).
-			StructTag(`gqlgen:"activities"`),
+			Annotations(entgql.Bind()),
 		edge.To("properties", Property.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.To("check_list_categories", CheckListCategory.Type).
-			StructTag(`gqlgen:"checkListCategories"`),
+			Annotations(entgql.MapsTo("checkListCategories")),
 		edge.From("project", Project.Type).
 			Ref("work_orders").
 			Unique().
-			StructTag(`gqlgen:"project"`),
+			Annotations(entgql.Bind()),
 		edge.To("owner", User.Type).
 			Required().
 			Unique().
-			StructTag(`gqlgen:"owner"`),
+			Annotations(entgql.Bind()),
 		edge.To("assignee", User.Type).
-			StructTag(`gqlgen:"assignedTo"`).
+			Annotations(entgql.MapsTo("assignedTo")).
 			Unique(),
 	}
 }
@@ -221,9 +221,7 @@ func (WorkOrder) Mixin() []ent.Mixin {
 		mixin.CreateTime{},
 		mixin.AnnotateFields(
 			mixin.UpdateTime{},
-			entgql.Annotation{
-				OrderField: "UPDATED_AT",
-			},
+			entgql.OrderField("UPDATED_AT"),
 		),
 	}
 }

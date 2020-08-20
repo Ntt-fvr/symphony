@@ -19,7 +19,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )

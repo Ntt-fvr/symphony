@@ -9,8 +9,8 @@ package user
 import (
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
@@ -870,6 +870,54 @@ func RoleNotIn(vs ...Role) predicate.User {
 			return
 		}
 		s.Where(sql.NotIn(s.C(FieldRole), v...))
+	})
+}
+
+// DistanceUnitEQ applies the EQ predicate on the "distance_unit" field.
+func DistanceUnitEQ(v DistanceUnit) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDistanceUnit), v))
+	})
+}
+
+// DistanceUnitNEQ applies the NEQ predicate on the "distance_unit" field.
+func DistanceUnitNEQ(v DistanceUnit) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDistanceUnit), v))
+	})
+}
+
+// DistanceUnitIn applies the In predicate on the "distance_unit" field.
+func DistanceUnitIn(vs ...DistanceUnit) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDistanceUnit), v...))
+	})
+}
+
+// DistanceUnitNotIn applies the NotIn predicate on the "distance_unit" field.
+func DistanceUnitNotIn(vs ...DistanceUnit) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDistanceUnit), v...))
 	})
 }
 

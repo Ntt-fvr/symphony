@@ -4,4 +4,4 @@
 
 package ent
 
-//go:generate go run github.com/facebookincubator/ent/cmd/entc generate --storage=sql --template ../../../template ./schema
+//go:generate go run github.com/facebook/ent/cmd/entc generate --storage=sql --template ../../../template ./schema

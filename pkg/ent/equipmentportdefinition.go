@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
@@ -44,7 +44,7 @@ type EquipmentPortDefinition struct {
 // EquipmentPortDefinitionEdges holds the relations/edges for other nodes in the graph.
 type EquipmentPortDefinitionEdges struct {
 	// EquipmentPortType holds the value of the equipment_port_type edge.
-	EquipmentPortType *EquipmentPortType `gqlgen:"portType"`
+	EquipmentPortType *EquipmentPortType
 	// Ports holds the value of the ports edge.
 	Ports []*EquipmentPort
 	// EquipmentType holds the value of the equipment_type edge.

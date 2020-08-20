@@ -36,7 +36,7 @@ const PowerSearchWorkOrderStatusFilter = (props: FilterProps) => {
       onRemoveFilter={onRemoveFilter}
       input={
         <MutipleSelectInput
-          options={statusValues}
+          options={statusValues.map(({value, label}) => ({value, label}))}
           onSubmit={onInputBlurred}
           onBlur={onInputBlurred}
           value={value.stringSet ?? []}

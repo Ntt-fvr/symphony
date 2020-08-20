@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func toStatusPointer(status user.Status) *user.Status {
+func toUserStatusPointer(status user.Status) *user.Status {
 	return &status
 }
 
@@ -32,7 +32,7 @@ func TestEditUser(t *testing.T) {
 	require.Empty(t, u.FirstName)
 
 	mr := r.Mutation()
-	u, err := mr.EditUser(ctx, models.EditUserInput{ID: u.ID, Status: toStatusPointer(user.StatusDeactivated), FirstName: pointer.ToString("John"), LastName: pointer.ToString("Doe")})
+	u, err := mr.EditUser(ctx, models.EditUserInput{ID: u.ID, Status: toUserStatusPointer(user.StatusDeactivated), FirstName: pointer.ToString("John"), LastName: pointer.ToString("Doe")})
 	require.NoError(t, err)
 	require.Equal(t, user.StatusDeactivated, u.Status)
 	require.Equal(t, "John", u.FirstName)

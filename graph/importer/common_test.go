@@ -8,8 +8,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/ent/dialect"
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"

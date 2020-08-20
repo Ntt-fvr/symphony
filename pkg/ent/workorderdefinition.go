@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
@@ -40,7 +40,7 @@ type WorkOrderDefinition struct {
 // WorkOrderDefinitionEdges holds the relations/edges for other nodes in the graph.
 type WorkOrderDefinitionEdges struct {
 	// Type holds the value of the type edge.
-	Type *WorkOrderType `gqlgen:"type"`
+	Type *WorkOrderType
 	// ProjectType holds the value of the project_type edge.
 	ProjectType *ProjectType
 	// ProjectTemplate holds the value of the project_template edge.

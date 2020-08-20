@@ -8,7 +8,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/graph/graphactions"
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/pkg/actions/core"

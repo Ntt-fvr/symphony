@@ -41,11 +41,9 @@ const useStyles = makeStyles(_theme => ({
     },
   },
   rightIcon: {
-    alignSelf: 'flex-end',
     marginLeft: '8px',
   },
   leftIcon: {
-    alignSelf: 'flex-start',
     marginRight: '8px',
   },
   hasRightIcon: {
@@ -67,15 +65,15 @@ const useStyles = makeStyles(_theme => ({
   secondaryGraySkin: {},
   disabled: {},
   containedVariant: {
-    height: '32px',
+    height: '36px',
     minWidth: '88px',
     padding: '4px 12px',
     borderRadius: '4px',
     '&$hasRightIcon': {
-      padding: '4px 6px 4px 12px',
+      padding: '4px 8px 4px 16px',
     },
     '&$hasLeftIcon': {
-      padding: '4px 12px 4px 6px',
+      padding: '4px 16px 4px 8px',
     },
     '&$primarySkin': {
       backgroundColor: symphony.palette.primary,
@@ -109,14 +107,20 @@ const useStyles = makeStyles(_theme => ({
     },
     '&$orangeSkin': {
       backgroundColor: symphony.palette.Y600,
-      '&:not($disabled) $buttonText': {
-        color: symphony.palette.white,
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.white,
+          fill: symphony.palette.white,
+        },
       },
     },
     '&$greenSkin': {
       backgroundColor: symphony.palette.G600,
-      '&:not($disabled) $buttonText': {
-        color: symphony.palette.white,
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.white,
+          fill: symphony.palette.white,
+        },
       },
     },
     '&$regularSkin': {

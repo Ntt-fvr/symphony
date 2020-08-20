@@ -14,8 +14,8 @@ import (
 	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql/errcode"
-	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/ent/dialect/sql/schema"
+	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
@@ -4480,7 +4480,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
 		Type:   "User",
-		Fields: make([]*Field, 8),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 5),
 	}
 	var buf []byte
@@ -4546,6 +4546,14 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[7] = &Field{
 		Type:  "user.Role",
 		Name:  "role",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(u.DistanceUnit); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "user.DistanceUnit",
+		Name:  "distance_unit",
 		Value: string(buf),
 	}
 	var ids []int

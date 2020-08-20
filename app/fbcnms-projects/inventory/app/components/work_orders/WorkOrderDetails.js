@@ -320,6 +320,8 @@ const WorkOrderDetails = ({
           locationId={locationId}
           onWorkOrderRemoved={onWorkOrderRemoved}
           onCancelClicked={onCancelClicked}
+          onPriorityChanged={value => _setWorkOrderDetail('priority', value)}
+          onStatusChanged={setWorkOrderStatus}
         />
         <FormContext.Consumer>
           {form => {

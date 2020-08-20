@@ -5,9 +5,9 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
 )
 
 // A floor plan is an image file that is mapped to a location on a map by

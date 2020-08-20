@@ -11,8 +11,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"

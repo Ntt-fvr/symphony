@@ -1087,6 +1087,7 @@ type ComplexityRoot struct {
 
 	User struct {
 		AuthID       func(childComplexity int) int
+		DistanceUnit func(childComplexity int) int
 		Email        func(childComplexity int) int
 		FirstName    func(childComplexity int) int
 		Groups       func(childComplexity int) int
@@ -6793,6 +6794,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.AuthID(childComplexity), true
 
+	case "User.distanceUnit":
+		if e.complexity.User.DistanceUnit == nil {
+			break
+		}
+
+		return e.complexity.User.DistanceUnit(childComplexity), true
+
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -7655,6 +7663,12 @@ enum UserRole
   OWNER
 }
 
+enum DistanceUnit
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.DistanceUnit") {
+  KILOMETER
+  MILE
+}
+
 type User implements Node & NamedNode {
   id: ID!
   authID: String!
@@ -7666,6 +7680,7 @@ type User implements Node & NamedNode {
   role: UserRole!
   profilePhoto: File
   groups: [UsersGroup]!
+  distanceUnit: DistanceUnit
 }
 
 enum UsersGroupStatus
@@ -7986,6 +8001,7 @@ input EditUserInput {
   lastName: String
   status: UserStatus
   role: UserRole
+  distanceUnit: DistanceUnit
 }
 
 input UpdateUserGroupsInput {
@@ -37936,6 +37952,37 @@ func (ec *executionContext) _User_groups(ctx context.Context, field graphql.Coll
 	return ec.marshalNUsersGroup2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUsersGroup(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _User_distanceUnit(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistanceUnit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(user.DistanceUnit)
+	fc.Result = res
+	return ec.marshalODistanceUnit2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _UserConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.UserConnection) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -43587,6 +43634,8 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 			}
 		case "assigneeCanCompleteWorkOrder":
 			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("assigneeCanCompleteWorkOrder"))
 			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
@@ -44754,6 +44803,14 @@ func (ec *executionContext) unmarshalInputEditUserInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "distanceUnit":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("distanceUnit"))
+			it.DistanceUnit, err = ec.unmarshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -45017,6 +45074,8 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 			}
 		case "assigneeCanCompleteWorkOrder":
 			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("assigneeCanCompleteWorkOrder"))
 			it.AssigneeCanCompleteWorkOrder, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
@@ -54891,6 +54950,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 				}
 				return res
 			})
+		case "distanceUnit":
+			out.Values[i] = ec._User_distanceUnit(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -62169,6 +62230,32 @@ func (ec *executionContext) unmarshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebook
 }
 
 func (ec *executionContext) marshalODiscoveryMethod2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, sel ast.SelectionSet, v *servicetype.DiscoveryMethod) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalODistanceUnit2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, v interface{}) (user.DistanceUnit, error) {
+	var res user.DistanceUnit
+	err := res.UnmarshalGQL(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODistanceUnit2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, sel ast.SelectionSet, v user.DistanceUnit) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, v interface{}) (*user.DistanceUnit, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(user.DistanceUnit)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODistanceUnit2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋuserᚐDistanceUnit(ctx context.Context, sel ast.SelectionSet, v *user.DistanceUnit) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

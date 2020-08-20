@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

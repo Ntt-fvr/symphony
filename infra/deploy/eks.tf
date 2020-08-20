@@ -108,7 +108,12 @@ module eks {
       )
       username = local.ctf_admin_user
       groups   = [local.ctf_admin_group]
-    }
+    },
+    {
+      rolearn  = module.springboard.role_arn
+      username = "springboard:master"
+      groups   = [module.springboard.subject_name]
+    },
   ]
 
   kubeconfig_name                      = "symphony-${local.environment}"

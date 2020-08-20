@@ -11,7 +11,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/stretchr/testify/require"

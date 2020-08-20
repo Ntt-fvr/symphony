@@ -7,8 +7,8 @@
 package migrate
 
 import (
-	"github.com/facebookincubator/ent/dialect/sql/schema"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebook/ent/schema/field"
 )
 
 var (
@@ -1597,6 +1597,7 @@ var (
 		{Name: "email", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "OWNER", "USER"}, Default: "USER"},
+		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

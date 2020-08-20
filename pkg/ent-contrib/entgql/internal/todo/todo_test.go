@@ -17,7 +17,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/enttest"

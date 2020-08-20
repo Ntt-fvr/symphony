@@ -5,8 +5,8 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/mixin"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
 )
 

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"

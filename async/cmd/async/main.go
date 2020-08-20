@@ -8,6 +8,7 @@ import (
 	"context"
 	stdlog "log"
 	"net"
+	"net/url"
 	"os"
 	"syscall"
 
@@ -26,6 +27,7 @@ import (
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "github.com/go-sql-driver/mysql"
+	_ "gocloud.dev/blob/s3blob"
 	_ "gocloud.dev/pubsub/mempubsub"
 	_ "gocloud.dev/pubsub/natspubsub"
 )
@@ -38,6 +40,7 @@ type cliFlags struct {
 	LogConfig       log.Config
 	TelemetryConfig telemetry.Config
 	TenancyConfig   viewer.Config
+	ExportBlobURL   *url.URL
 }
 
 func main() {
@@ -68,6 +71,12 @@ func main() {
 		Envar("EVENT_SUB_URL").
 		Required().
 		SetValue(&cf.EventSubURL)
+	kingpin.Flag(
+		"export-bucket-url",
+		"export bucket url",
+	).
+		Envar("EXPORT_BUCKET_URL").
+		URLVar(&cf.ExportBlobURL)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
 	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)

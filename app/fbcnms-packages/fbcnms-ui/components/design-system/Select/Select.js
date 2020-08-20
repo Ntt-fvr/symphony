@@ -26,9 +26,6 @@ import {useMemo} from 'react';
 const useStyles = makeStyles(() => ({
   root: {
     justifyContent: 'flex-start',
-    '&&': {
-      padding: '4px',
-    },
     border: `1px solid ${symphony.palette.D100}`,
     '&$disabled': {
       backgroundColor: symphony.palette.background,
@@ -46,6 +43,9 @@ const useStyles = makeStyles(() => ({
   formValue: {
     ...symphony.typography.body2,
   },
+  selectedValue: {
+    fontWeight: 500,
+  },
   menu: {
     margin: '8px 0px',
   },
@@ -61,12 +61,14 @@ type Props<TValue> = $ReadOnly<{|
   ...SelectMenuProps<TValue>,
 |}>;
 
+const INVERTED_TEXT_SKINS = ['primary', 'red', 'orange', 'green'];
+
 const Select = <TValue>(props: Props<TValue>) => {
   const {
     label,
     className,
     disabled: disabledProp,
-    skin,
+    skin = 'regular',
     tooltip,
     useEllipsis = true,
     variant,
@@ -79,6 +81,8 @@ const Select = <TValue>(props: Props<TValue>) => {
     () => (disabledProp ? disabledProp : contextDisabled),
     [disabledProp, contextDisabled],
   );
+  const isInverted = INVERTED_TEXT_SKINS.includes(skin);
+
   return (
     <BasePopoverTrigger
       popover={<SelectMenu {...selectMenuProps} className={classes.menu} />}>
@@ -89,14 +93,14 @@ const Select = <TValue>(props: Props<TValue>) => {
           })}
           ref={contextRef}
           onClick={onShow}
-          skin={skin ?? 'regular'}
+          skin={skin}
           variant={variant}
           disabled={disabled}
           rightIcon={ArrowDropDownIcon}
           rightIconClass={classNames({[classes.disabled]: disabled})}
           tooltip={tooltip}
           useEllipsis={useEllipsis}>
-          <Text variant="body2">
+          <Text color={isInverted ? 'light' : 'regular'} variant="body2">
             <span className={classes.label}>{label}</span>
             {selectedValue != null && !!label ? ': ' : null}
             {selectedValue != null ? (
@@ -104,6 +108,7 @@ const Select = <TValue>(props: Props<TValue>) => {
                 className={
                   classNames({
                     [classes.formValue]: !label,
+                    [classes.selectedValue]: label,
                     [classes.disabled]: !label && disabled,
                   }) || null
                 }>

@@ -7,7 +7,7 @@
 package workordertype
 
 import (
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 )
 
 const (

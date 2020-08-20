@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 )
@@ -35,9 +35,9 @@ type WorkOrderTemplate struct {
 // WorkOrderTemplateEdges holds the relations/edges for other nodes in the graph.
 type WorkOrderTemplateEdges struct {
 	// PropertyTypes holds the value of the property_types edge.
-	PropertyTypes []*PropertyType `gqlgen:"propertyTypes"`
+	PropertyTypes []*PropertyType
 	// CheckListCategoryDefinitions holds the value of the check_list_category_definitions edge.
-	CheckListCategoryDefinitions []*CheckListCategoryDefinition `gqlgen:"checkListCategoryDefinitions"`
+	CheckListCategoryDefinitions []*CheckListCategoryDefinition
 	// Type holds the value of the type edge.
 	Type *WorkOrderType
 	// loadedTypes holds the information for reporting if a

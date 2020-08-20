@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
@@ -46,19 +46,19 @@ type Project struct {
 // ProjectEdges holds the relations/edges for other nodes in the graph.
 type ProjectEdges struct {
 	// Type holds the value of the type edge.
-	Type *ProjectType `gqlgen:"type"`
+	Type *ProjectType
 	// Template holds the value of the template edge.
-	Template *ProjectTemplate `gqlgen:"template"`
+	Template *ProjectTemplate
 	// Location holds the value of the location edge.
-	Location *Location `gqlgen:"location"`
+	Location *Location
 	// Comments holds the value of the comments edge.
-	Comments []*Comment `gqlgen:"comments"`
+	Comments []*Comment
 	// WorkOrders holds the value of the work_orders edge.
-	WorkOrders []*WorkOrder `gqlgen:"workOrders"`
+	WorkOrders []*WorkOrder
 	// Properties holds the value of the properties edge.
-	Properties []*Property `gqlgen:"properties"`
+	Properties []*Property
 	// Creator holds the value of the creator edge.
-	Creator *User `gqlgen:"createdBy"`
+	Creator *User
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [7]bool
