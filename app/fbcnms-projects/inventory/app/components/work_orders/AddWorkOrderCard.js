@@ -207,7 +207,7 @@ const AddWorkOrderCard = (props: Props) => {
           owner: {id: '', email: ''},
           creationDate: '',
           installDate: '',
-          status: 'PENDING',
+          status: 'PLANNED',
           priority: 'NONE',
           equipmentToAdd: [],
           equipmentToRemove: [],
