@@ -183,6 +183,7 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
+	bucket = blob.PrefixedBucket(bucket, flags.ExportBucketPrefix)
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 

@@ -33,14 +33,15 @@ import (
 )
 
 type cliFlags struct {
-	HTTPAddr        *net.TCPAddr
-	MySQLConfig     mysql.Config
-	EventPubURL     ev.TopicFactory
-	EventSubURL     ev.TopicFactory
-	LogConfig       log.Config
-	TelemetryConfig telemetry.Config
-	TenancyConfig   viewer.Config
-	ExportBlobURL   *url.URL
+	HTTPAddr           *net.TCPAddr
+	MySQLConfig        mysql.Config
+	EventPubURL        ev.TopicFactory
+	EventSubURL        ev.TopicFactory
+	LogConfig          log.Config
+	TelemetryConfig    telemetry.Config
+	TenancyConfig      viewer.Config
+	ExportBlobURL      *url.URL
+	ExportBucketPrefix string
 }
 
 func main() {
@@ -77,6 +78,13 @@ func main() {
 	).
 		Envar("EXPORT_BUCKET_URL").
 		URLVar(&cf.ExportBlobURL)
+	kingpin.Flag(
+		"export-bucket-prefix",
+		"export bucket prefix",
+	).
+		Envar("EXPORT_BUCKET_PREFIX").
+		Default("exports/").
+		StringVar(&cf.ExportBucketPrefix)
 	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
 	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
 	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)
