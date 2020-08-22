@@ -212,26 +212,12 @@ func (r mutationResolver) internalAddWorkOrder(
 	input models.AddWorkOrderInput,
 	skipMandatoryPropertiesCheck bool,
 ) (*ent.WorkOrder, error) {
-	workOrderTemplate, err := r.addWorkOrderTemplate(ctx, input.WorkOrderTypeID)
-	if err != nil {
-		return nil, err
-	}
-	tPropInputs, err := r.convertToTemplatePropertyInputs(ctx, workOrderTemplate, input.Properties)
-	if err != nil {
-		return nil, fmt.Errorf("convert to template property inputs: %w", err)
-	}
-	skipMandatoryPropertiesCheck = skipMandatoryPropertiesCheck || viewer.FromContext(ctx).Features().Enabled(viewer.FeatureMandatoryPropertiesOnWorkOrderClose)
-	propInput, err := r.validatedPropertyInputsFromTemplate(ctx, tPropInputs, workOrderTemplate.ID, models.PropertyEntityWorkOrder, skipMandatoryPropertiesCheck)
-	if err != nil {
-		return nil, fmt.Errorf("validating property for template : %w", err)
-	}
 	mutation := r.ClientFrom(ctx).
 		WorkOrder.Create().
 		SetName(input.Name).
 		SetTypeID(input.WorkOrderTypeID).
 		SetNillableStatus(input.Status).
 		SetNillablePriority(input.Priority).
-		SetTemplateID(workOrderTemplate.ID).
 		SetNillableProjectID(input.ProjectID).
 		SetNillableLocationID(input.LocationID).
 		SetNillableDescription(input.Description).
@@ -251,6 +237,20 @@ func (r mutationResolver) internalAddWorkOrder(
 	if err != nil {
 		return nil, errors.Wrap(err, "creating work order")
 	}
+	tmpl, err := wo.QueryTemplate().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	tPropInputs, err := r.convertToTemplatePropertyInputs(ctx, tmpl, input.Properties)
+	if err != nil {
+		return nil, fmt.Errorf("convert to template property inputs: %w", err)
+	}
+	skipMandatoryPropertiesCheck = skipMandatoryPropertiesCheck || viewer.FromContext(ctx).Features().Enabled(viewer.FeatureMandatoryPropertiesOnWorkOrderClose)
+	propInput, err := r.validatedPropertyInputsFromTemplate(ctx, tPropInputs, tmpl.ID, models.PropertyEntityWorkOrder, skipMandatoryPropertiesCheck)
+	if err != nil {
+		return nil, fmt.Errorf("validating property for template : %w", err)
+	}
+
 	for _, clInput := range input.CheckListCategories {
 		_, err := r.createOrUpdateCheckListCategory(ctx, clInput, wo.ID)
 		if err != nil {
@@ -637,65 +637,6 @@ func (r mutationResolver) addWorkOrderTypeCategoryDefinitions(ctx context.Contex
 	return nil
 }
 
-func (r mutationResolver) addWorkOrderTemplate(
-	ctx context.Context,
-	workOrderTypeID int,
-) (*ent.WorkOrderTemplate, error) {
-	client := r.ClientFrom(ctx)
-	workOrderType, err := client.WorkOrderType.Query().
-		Where(workordertype.ID(workOrderTypeID)).
-		WithPropertyTypes().
-		WithCheckListCategoryDefinitions().
-		Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying work order type: %w", err)
-	}
-	workOrderTemplate, err := client.WorkOrderTemplate.
-		Create().
-		SetName(workOrderType.Name).
-		SetNillableDescription(workOrderType.Description).
-		Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("creating work order template: %w", err)
-	}
-	for _, pt := range workOrderType.Edges.PropertyTypes {
-		_, err := r.createTemplatePropertyType(ctx, pt, workOrderTemplate.ID, models.PropertyEntityWorkOrder)
-		if err != nil {
-			return nil, fmt.Errorf("creating property type: %w", err)
-		}
-	}
-	for _, categoryInput := range workOrderType.Edges.CheckListCategoryDefinitions {
-		cd, err := client.CheckListCategoryDefinition.Create().
-			SetTitle(categoryInput.Title).
-			SetDescription(categoryInput.Description).
-			SetWorkOrderTemplateID(workOrderTemplate.ID).
-			Save(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("creating check list category definition: %w", err)
-		}
-		checkLists, err := categoryInput.QueryCheckListItemDefinitions().All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, checkList := range checkLists {
-			_, err := client.CheckListItemDefinition.Create().
-				SetTitle(checkList.Title).
-				SetType(checkList.Type).
-				SetIndex(checkList.Index).
-				SetIsMandatory(checkList.IsMandatory).
-				SetNillableHelpText(checkList.HelpText).
-				SetNillableEnumValues(checkList.EnumValues).
-				SetNillableEnumSelectionModeValue(checkList.EnumSelectionModeValue).
-				SetCheckListCategoryDefinitionID(cd.ID).
-				Save(ctx)
-			if err != nil {
-				return nil, fmt.Errorf("creating check list item definition: %w", err)
-			}
-		}
-	}
-	return workOrderTemplate, err
-}
-
 func (r mutationResolver) AddWorkOrderType(
 	ctx context.Context, input models.AddWorkOrderTypeInput) (*ent.WorkOrderType, error) {
 	client := r.ClientFrom(ctx)
@@ -703,6 +644,7 @@ func (r mutationResolver) AddWorkOrderType(
 		Create().
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder).
 		Save(ctx)
 	if err != nil {
 		if ent.IsConstraintError(err) {
@@ -745,7 +687,8 @@ func (r mutationResolver) EditWorkOrderType(
 	mutation := client.WorkOrderType.
 		UpdateOneID(input.ID).
 		SetName(input.Name).
-		SetNillableDescription(input.Description)
+		SetNillableDescription(input.Description).
+		SetNillableAssigneeCanCompleteWorkOrder(input.AssigneeCanCompleteWorkOrder)
 	currentCategories, err := wot.QueryCheckListCategoryDefinitions().IDs(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying checklist category definitions: id=%q", wot.ID)

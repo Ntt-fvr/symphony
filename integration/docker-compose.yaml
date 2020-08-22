@@ -7,7 +7,7 @@ version: "3.7"
 services:
   platform-server:
     build:
-      context: ${XPLAT_FBC_DIR}
+      context: ../app
       dockerfile: fbcnms-projects/platform-server/Dockerfile
     environment:
       API_HOST: ${MAGMA_API_HOST:-api-staging.magma.etagecom.io}
@@ -30,7 +30,7 @@ services:
 
   inventory:
     build:
-      context: ${XPLAT_FBC_DIR}
+      context: ../app
       dockerfile: fbcnms-projects/inventory/Dockerfile
     networks:
       - public
@@ -41,7 +41,7 @@ services:
 
   graph:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: graph/Dockerfile
     image: integration_graph
     environment:
@@ -70,7 +70,7 @@ services:
 
   async:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: async/Dockerfile
     image: integration_async
     env_file:
@@ -101,14 +101,14 @@ services:
 
   jobrunner:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: jobrunner/Dockerfile
     networks:
       - private
 
   store:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: store/Dockerfile
     env_file:
       - conf/store.env
@@ -122,7 +122,7 @@ services:
 
   docs:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony/docs
+      context: ../docs
     ports:
       - 8090:80
     networks:
@@ -134,16 +134,15 @@ services:
 
   fluentd:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony/integration/fluentd
+      context: fluentd
     networks:
       - private
     volumes:
-      - ${PWD}/fluentd/:/fluentd/etc/:ro
+      - ./fluentd/:/fluentd/etc/:ro
     restart: on-failure
 
   nginx:
-    build:
-      context: nginx
+    image: nginx:alpine
     ports:
       - 443:443
       - 9000:9000
@@ -154,6 +153,10 @@ services:
       private:
         aliases:
           - fb-test.thesymphony.cloud
+    volumes:
+      - ./nginx/default.nginx:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certs/cert.pem:/etc/nginx/ssl/tls.crt:ro
+      - ./nginx/certs/key.pem:/etc/nginx/ssl/tls.key:ro
     healthcheck:
       test: curl -Ifk https://localhost/healthz
     restart: on-failure
@@ -165,7 +168,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: auth
     volumes:
-      - ${PWD}/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     security_opt:
       - seccomp:unconfined
     healthcheck:
@@ -196,13 +199,10 @@ services:
 
   prometheus:
     image: prom/prometheus
-    ports:
-      - 9090:9090
     networks:
-      - public
       - private
     volumes:
-      - ${PWD}/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     restart: on-failure
 
   nats:

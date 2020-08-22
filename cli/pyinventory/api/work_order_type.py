@@ -56,7 +56,7 @@ def add_work_order_type(
         :param description: Work order type description
         :type description: str, optional
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
 
         :return: Work order type
         :rtype: :class:`~pyworkforce.common.data_class.WorkOrderType`
@@ -237,7 +237,7 @@ def edit_work_order_type(
 
     new_property_type_inputs = []
     if new_properties_defaults:
-        property_types = WORK_ORDER_TYPES[work_order_type.name].property_types
+        property_types = work_order_type.property_types
         new_property_type_inputs = get_graphql_property_type_inputs(
             property_types, new_properties_defaults
         )

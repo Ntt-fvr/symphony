@@ -35,7 +35,7 @@ def get_all_links_and_port_names_of_equipment(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
 
         :raises:
             * `pyinventory.exceptions.EntityNotFoundError`: Link not found
@@ -43,10 +43,10 @@ def get_all_links_and_port_names_of_equipment(
 
         :return: Iterator of Tuple[Link, str]
 
-            * Link - :class:`~pyinventory.common.data_class.Link`
+            * Link - :class:`~pysymphony.common.data_class.Link`
             * str - port name
 
-        :rtype: Iterator[ Tuple[ :class:`~pyinventory.common.data_class.Link`, str ] ]
+        :rtype: Iterator[ Tuple[ :class:`~pysymphony.common.data_class.Link`, str ] ]
 
         **Example**
 
@@ -92,7 +92,7 @@ def add_link(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment_a: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment_a: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name_a: Name of the port in equipment A
         :type port_name_a: str
         :param equipment_b: Equipment object to connect, could be retrieved from
@@ -102,7 +102,7 @@ def add_link(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment_b: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment_b: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name_b: Name of the port in equipment B
         :type port_name_b: str
 
@@ -112,7 +112,7 @@ def add_link(
             * FailedOperationException: Internal inventory error
 
         :return: Link object
-        :rtype: :class:`~pyinventory.common.data_class.Link`
+        :rtype: :class:`~pysymphony.common.data_class.Link`
 
         **Example**
 
@@ -158,7 +158,7 @@ def get_links(client: SymphonyClient) -> Iterator[Link]:
     """This function returns all existing links
 
         :return: Links Iterator
-        :rtype: Iterator[ :class:`~pyinventory.common.data_class.Link` ]
+        :rtype: Iterator[ :class:`~pysymphony.common.data_class.Link` ]
 
         **Example**
 
@@ -197,7 +197,7 @@ def get_link_in_port_of_equipment(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param port_name: Name of the port in equipment
         :type port_name: str
 
@@ -206,7 +206,7 @@ def get_link_in_port_of_equipment(
             * FailedOperationException: Internal inventory error
 
         :return: Link object
-        :rtype: :class:`~pyinventory.common.data_class.Link`
+        :rtype: :class:`~pysymphony.common.data_class.Link`
 
         **Example**
 

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
@@ -36,11 +36,11 @@ type EquipmentPosition struct {
 // EquipmentPositionEdges holds the relations/edges for other nodes in the graph.
 type EquipmentPositionEdges struct {
 	// Definition holds the value of the definition edge.
-	Definition *EquipmentPositionDefinition `gqlgen:"definition"`
+	Definition *EquipmentPositionDefinition
 	// Parent holds the value of the parent edge.
-	Parent *Equipment `gqlgen:"parentEquipment"`
+	Parent *Equipment
 	// Attachment holds the value of the attachment edge.
-	Attachment *Equipment `gqlgen:"attachedEquipment"`
+	Attachment *Equipment
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool

@@ -11,11 +11,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	evmocks "github.com/facebookincubator/symphony/pkg/ev/mocks"
+	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/mock"

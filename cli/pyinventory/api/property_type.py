@@ -33,7 +33,7 @@ def get_property_types(
     """Get property types on specific entity.
 
         :param entity_type: Existing entity type
-        :type entity_type: :class:`~pyinventory.common.data_enum.Entity`
+        :type entity_type: :class:`~pysymphony.common.data_enum.Entity`
         :param entity_name: Existing entity name
         :type entity_name: str
 
@@ -41,7 +41,7 @@ def get_property_types(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: `entity_type` does not found or does not have property types
 
         :return: Sequence[PropertyDefinition]
-        :rtype: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :rtype: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
 
         **Example**
 
@@ -96,7 +96,7 @@ def get_property_type(
     """Get property type on specific entity.
 
         :param entity_type: Existing entity type
-        :type entity_type: :class:`~pyinventory.common.data_enum.Entity`
+        :type entity_type: :class:`~pysymphony.common.data_enum.Entity`
         :param entity_name: Existing entity name
         :type entity_name: str
         :param property_type_id: Existing property type ID
@@ -106,7 +106,7 @@ def get_property_type(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
 
         :return: PropertyDefinition object
-        :rtype: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :rtype: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         **Example**
 
@@ -137,7 +137,7 @@ def get_property_type_id(
     """Get property type ID on specific entity.
 
         :param entity_type: Existing entity type
-        :type entity_type: :class:`~pyinventory.common.data_enum.Entity`
+        :type entity_type: :class:`~pysymphony.common.data_enum.Entity`
         :param entity_name: Existing entity name
         :type entity_name: str
         :param property_type_name: Existing property type name
@@ -183,7 +183,7 @@ def get_property_type_by_external_id(
     """Get property type by external ID on specific entity.
 
         :param entity_type: Existing entity type
-        :type entity_type: :class:`~pyinventory.common.data_enum.Entity`
+        :type entity_type: :class:`~pysymphony.common.data_enum.Entity`
         :param entity_name: Existing entity name
         :type entity_name: str
         :param property_type_external_id: Existing property type external ID
@@ -193,7 +193,7 @@ def get_property_type_by_external_id(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Property type with external_id=`property_type_external_id` does not found
 
         :return: PropertyDefinition object
-        :rtype: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :rtype: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         **Example**
 
@@ -227,13 +227,13 @@ def edit_property_type(
     """Edit specific property type on specific entity. `entity_type` - ["LocationType", "EquipmentType", "ServiceType", "EquipmentPortType"]
 
         :param entity_type: Existing entity type
-        :type entity_type: :class:`~pyinventory.common.data_enum.Entity`
+        :type entity_type: :class:`~pysymphony.common.data_enum.Entity`
         :param entity_name: Existing entity name
         :type entity_name: str
         :param property_type_id: Existing property type ID
         :type property_type_id: str
         :param new_property_definition: New property definition
-        :type new_property_definition: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :type new_property_definition: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         :class:`~pyinventory.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
 

@@ -24,6 +24,7 @@ export type EditWorkOrderTypeInput = {|
   description?: ?string,
   properties?: ?$ReadOnlyArray<?PropertyTypeInput>,
   checkListCategories?: ?$ReadOnlyArray<CheckListCategoryDefinitionInput>,
+  assigneeCanCompleteWorkOrder?: ?boolean,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,
@@ -96,6 +97,7 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
   id
   name
   description
+  assigneeCanCompleteWorkOrder
   numberOfWorkOrders
   propertyTypes {
     id
@@ -246,6 +248,13 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "assigneeCanCompleteWorkOrder",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -417,12 +426,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5b6729858bf3a162924af31046dbe23e",
+    "cacheID": "4e3f87422e1e89f460a55060a274b995",
     "id": null,
     "metadata": {},
     "name": "EditWorkOrderTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
+    "text": "mutation EditWorkOrderTypeMutation(\n  $input: EditWorkOrderTypeInput!\n) {\n  editWorkOrderType(input: $input) {\n    id\n    name\n    description\n    ...AddEditWorkOrderTypeCard_workOrderType\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
   }
 };
 })();

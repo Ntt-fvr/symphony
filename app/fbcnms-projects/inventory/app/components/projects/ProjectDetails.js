@@ -41,6 +41,7 @@ import Select from '@fbcnms/ui/components/design-system/Select/Select';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
 import UserTypeahead from '../typeahead/UserTypeahead';
+import fbt from 'fbt/lib/fbt';
 import update from 'immutability-helper';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {FormContextProvider} from '../../common/FormContext';
@@ -107,6 +108,7 @@ const styles = (theme: Theme) => ({
     width: 'calc(100% + 48px)',
   },
   breadcrumbs: {
+    paddingBottom: '16px',
     flexGrow: 1,
   },
   propertiesGrid: {
@@ -117,9 +119,26 @@ const styles = (theme: Theme) => ({
   },
   nameHeader: {
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     marginBottom: '24px',
+    overflow: 'hidden',
+    flexBasis: 'auto',
+  },
+  topBar: {
+    width: '100%',
+    display: 'flex',
+  },
+  editFields: {
+    display: 'flex',
+    flexGrow: 1,
+  },
+  field: {
+    marginRight: '8px',
+    border: '0',
+  },
+  actionButtons: {
+    display: 'flex',
+    flexDirection: 'row',
   },
   commentsBoxContainer: {
     padding: '0px',
@@ -260,17 +279,32 @@ class ProjectDetails extends React.Component<Props, State> {
                       size="large"
                     />
                   </div>
-                  <ProjectMoreActionsButton
-                    className={classes.button}
-                    project={project}
-                    onProjectRemoved={onProjectRemoved}
-                  />
-                  <FormSaveCancelPanel
-                    onCancel={() =>
-                      this.props.history.push(this.props.match.url)
-                    }
-                    onSave={this.saveProject}
-                  />
+                  <div className={classes.topBar}>
+                    <div className={classes.editFields}>
+                      <Select
+                        className={classes.field}
+                        label={fbt('Priority', '')}
+                        options={priorityValues}
+                        selectedValue={project.priority}
+                        onChange={value =>
+                          this._setProjectDetail('priority', value)
+                        }
+                      />
+                    </div>
+                    <div className={classes.actionButtons}>
+                      <ProjectMoreActionsButton
+                        className={classes.button}
+                        project={project}
+                        onProjectRemoved={onProjectRemoved}
+                      />
+                      <FormSaveCancelPanel
+                        onCancel={() =>
+                          this.props.history.push(this.props.match.url)
+                        }
+                        onSave={this.saveProject}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className={classes.cards}>
                   <Grid container spacing={2}>
@@ -317,17 +351,6 @@ class ProjectDetails extends React.Component<Props, State> {
                                   this._locationChangedHandler(
                                     location?.id ?? null,
                                   )
-                                }
-                              />
-                            </FormField>
-                          </Grid>
-                          <Grid item xs={12} sm={6} lg={4} xl={4}>
-                            <FormField label="Priority">
-                              <Select
-                                options={priorityValues}
-                                selectedValue={project.priority}
-                                onChange={value =>
-                                  this._setProjectDetail('priority', value)
                                 }
                               />
                             </FormField>

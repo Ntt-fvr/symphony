@@ -33,17 +33,15 @@ type locationsFilterInput struct {
 	BoolValue     *bool                     `json:"boolValue"`
 }
 
-type locationsRower struct {
-	log log.Logger
+type LocationsRower struct {
+	Log        log.Logger
+	Concurrent bool
 }
 
-func (er locationsRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func getFilterInput(filtersParam string, logger *zap.Logger) ([]*models.LocationFilterInput, error) {
 	var (
-		logger           = er.log.For(ctx)
-		err              error
-		filterInput      []*models.LocationFilterInput
-		locationIDHeader = [...]string{bom + "Location ID"}
-		fixedHeaders     = [...]string{"External ID", "Latitude", "Longitude"}
+		filterInput []*models.LocationFilterInput
+		err         error
 	)
 	if filtersParam != "" {
 		filterInput, err = paramToLocationFilterInput(filtersParam)
@@ -52,6 +50,24 @@ func (er locationsRower) rows(ctx context.Context, filtersParam string) ([][]str
 			return nil, errors.Wrap(err, "cannot filter location")
 		}
 	}
+	return filterInput, nil
+}
+
+func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+	var (
+		logger           = lr.Log.For(ctx)
+		useConcurrency   = lr.Concurrent
+		filterInput      []*models.LocationFilterInput
+		locationIDHeader = [...]string{bom + "Location ID"}
+		fixedHeaders     = [...]string{"External ID", "Latitude", "Longitude"}
+	)
+
+	filterInput, err := getFilterInput(filtersParam, logger)
+	if err != nil {
+		logger.Error("cannot filter location", zap.Error(err))
+		return nil, errors.Wrap(err, "cannot filter location")
+	}
+
 	client := ent.FromContext(ctx)
 
 	locations, err := resolverutil.LocationSearch(ctx, client, filterInput, nil)
@@ -62,36 +78,25 @@ func (er locationsRower) rows(ctx context.Context, filtersParam string) ([][]str
 
 	locationsList := locations.Locations
 	allRows := make([][]string, len(locationsList)+1)
-
 	locationIDs := make([]int, len(locationsList))
 	for i, l := range locationsList {
 		locationIDs[i] = l.ID
 	}
 
 	var orderedLocTypes, propertyTypes []string
-	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
-	cg.Go(func(ctx context.Context) (err error) {
-		orderedLocTypes, err = locationTypeHierarchy(ctx, client)
-		if err != nil {
-			logger.Error("cannot query location types", zap.Error(err))
-			return errors.Wrap(err, "cannot query location types")
-		}
-		return nil
-	})
-	cg.Go(func(ctx context.Context) (err error) {
-		locationIDs := make([]int, len(locationsList))
-		for i, l := range locationsList {
-			locationIDs[i] = l.ID
-		}
-		propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
-		if err != nil {
-			logger.Error("cannot query property types", zap.Error(err))
-			return errors.Wrap(err, "cannot query property types")
-		}
-		return nil
-	})
-	if err := cg.Wait(); err != nil {
-		return nil, err
+	orderedLocTypes, err = locationTypeHierarchy(ctx, client)
+	if err != nil {
+		logger.Error("cannot query location types", zap.Error(err))
+		return nil, errors.Wrap(err, "cannot query location types")
+	}
+
+	for i, l := range locationsList {
+		locationIDs[i] = l.ID
+	}
+	propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
+	if err != nil {
+		logger.Error("cannot query property types", zap.Error(err))
+		return nil, errors.Wrap(err, "cannot query property types")
 	}
 
 	title := append(locationIDHeader[:], orderedLocTypes...)
@@ -99,40 +104,63 @@ func (er locationsRower) rows(ctx context.Context, filtersParam string) ([][]str
 	title = append(title, propertyTypes...)
 
 	allRows[0] = title
-	cg = ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
-	for i, value := range locationsList {
-		value, i := value, i
-		cg.Go(func(ctx context.Context) error {
-			row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes)
+	if useConcurrency {
+		cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
+		for i, value := range locationsList {
+			value, i := value, i
+			cg.Go(func(ctx context.Context) error {
+				row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes, true)
+				if err != nil {
+					return err
+				}
+				allRows[i+1] = row
+				return nil
+			})
+		}
+		if err := cg.Wait(); err != nil {
+			logger.Error("error in wait", zap.Error(err))
+			return nil, errors.WithMessage(err, "error in wait")
+		}
+	} else {
+		for i, value := range locationsList {
+			value, i := value, i
+			row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes, false)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			allRows[i+1] = row
-			return nil
-		})
-	}
-	if err := cg.Wait(); err != nil {
-		logger.Error("error in wait", zap.Error(err))
-		return nil, errors.WithMessage(err, "error in wait")
+		}
 	}
 	return allRows, nil
 }
 
-func locationToSlice(ctx context.Context, location *ent.Location, orderedLocTypes, propertyTypes []string) ([]string, error) {
+func locationToSlice(ctx context.Context, location *ent.Location, orderedLocTypes, propertyTypes []string, useConcurrency bool) ([]string, error) {
 	var (
 		lParents, properties []string
+		err                  error
 	)
-	g := ctxgroup.WithContext(ctx)
-	g.Go(func(ctx context.Context) (err error) {
+	if useConcurrency {
+		g := ctxgroup.WithContext(ctx)
+		g.Go(func(ctx context.Context) (err error) {
+			lParents, err = locationHierarchy(ctx, location, orderedLocTypes)
+			return err
+		})
+		g.Go(func(ctx context.Context) (err error) {
+			properties, err = propertiesSlice(ctx, location, propertyTypes, models.PropertyEntityLocation)
+			return err
+		})
+		if err := g.Wait(); err != nil {
+			return nil, err
+		}
+	} else {
 		lParents, err = locationHierarchy(ctx, location, orderedLocTypes)
-		return err
-	})
-	g.Go(func(ctx context.Context) (err error) {
+		if err != nil {
+			return nil, err
+		}
 		properties, err = propertiesSlice(ctx, location, propertyTypes, models.PropertyEntityLocation)
-		return err
-	})
-	if err := g.Wait(); err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
 	}
 	lat := fmt.Sprintf("%f", location.Latitude)
 	long := fmt.Sprintf("%f", location.Longitude)

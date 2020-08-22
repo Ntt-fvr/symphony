@@ -109,7 +109,7 @@ def add_location_image(
             * :meth:`~pyinventory.api.location.get_location`
             * :meth:`~pyinventory.api.location.add_location`
 
-        :type location: :class:`~pyinventory.common.data_class.Location`
+        :type location: :class:`~pysymphony.common.data_class.Location`
 
         :raises:
             FailedOperationException: on operation failure
@@ -133,7 +133,7 @@ def delete_document(client: SymphonyClient, document: Document) -> None:
     """This function deletes existing document.
 
         :param document: Document object
-        :type document: :class:`~pyinventory.common.data_class.Document`
+        :type document: :class:`~pysymphony.common.data_class.Document`
 
         :raises:
             FailedOperationException: on operation failure

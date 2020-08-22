@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "@fbcnms/babel-register": "^0.1.0",
-    "@fbcnms/hub": "^0.1.0",
     "@fbcnms/magmalte": "^0.1.0",
     "@fbcnms/strings": "^0.1.0",
     "@fbcnms/ui": "^0.1.0",

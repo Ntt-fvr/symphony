@@ -11,19 +11,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-
-	"github.com/facebookincubator/symphony/pkg/ent/file"
-	"github.com/facebookincubator/symphony/pkg/ent/privacy"
-
-	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/actions"
 	"github.com/facebookincubator/symphony/pkg/actions/core"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
@@ -33,12 +26,16 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -47,6 +44,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
+	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
@@ -3132,9 +3130,9 @@ func (r mutationResolver) DeleteFloorPlan(ctx context.Context, id int) (_ bool, 
 	return err == nil, err
 }
 
-func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int) (*ent.WorkOrder, error) {
-	client := r.ClientFrom(ctx).WorkOrder
-	wo, err := client.Get(ctx, id)
+func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int, input *models.TechnicianWorkOrderCheckInInput) (*ent.WorkOrder, error) {
+	client := r.ClientFrom(ctx)
+	wo, err := client.WorkOrder.Get(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("getting work order %q: %w", id, err)
 	}
@@ -3142,21 +3140,26 @@ func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int
 	if !ok {
 		return nil, gqlerror.Errorf("could not be executed in automation")
 	}
-	if wo.Status != workorder.StatusPlanned {
-		return wo, nil
-	}
 	if wo, err = wo.Update().
 		SetStatus(workorder.StatusPending).
 		Save(ctx); err != nil {
 		return nil, fmt.Errorf("updating work order %q status to pending: %w", id, err)
 	}
-	if _, err = r.AddComment(ctx, models.CommentInput{
-		EntityType: models.CommentEntityWorkOrder,
-		ID:         id,
-		Text:       v.User().Email + " checked-in",
-	}); err != nil {
-		return nil, fmt.Errorf("adding technician check-in comment: %w", err)
+
+	activityMutator := client.Activity.Create().
+		SetActivityType(activity.ActivityTypeClockIn).
+		SetIsCreate(false).
+		SetAuthorID(v.User().ID).
+		SetWorkOrderID(id)
+	if input != nil {
+		activityMutator = activityMutator.SetClockDetails(activity.ClockDetails{DistanceMeters: input.DistanceMeters})
 	}
+	_, err = activityMutator.Save(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("creating check-in activity on work order %q: %w", id, err)
+	}
+
 	return wo, nil
 }
 

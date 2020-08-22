@@ -31,6 +31,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func toWorkOrderStatusPointer(status workorder.Status) *workorder.Status {
+	return &status
+}
+
 func createPort() models.EquipmentPortInput {
 	visibleLabel := "Eth1"
 	bandwidth := "10/100/1000BASE-T"
@@ -468,7 +472,7 @@ func TestAddWorkOrderWithActivity(t *testing.T) {
 	v := viewer.FromContext(ctx).(*viewer.UserViewer)
 	act, err := r.client.Activity.Create().
 		SetWorkOrder(w).
-		SetChangedField(activity.ChangedFieldPriority).
+		SetActivityType(activity.ActivityTypePriorityChanged).
 		SetOldValue(workorder.PriorityLow.String()).
 		SetNewValue(workorder.PriorityHigh.String()).
 		SetAuthor(v.User()).
@@ -895,7 +899,7 @@ func TestExecuteWorkOrderInstallEquipmentMultilayer(t *testing.T) {
 		parentID := prevEquipmentPosition.QueryParent().OnlyIDX(ctx)
 		require.NoError(t, err)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-			Name:               string(i),
+			Name:               strconv.Itoa(i),
 			Type:               rootEquipmentType.ID,
 			Parent:             &parentID,
 			PositionDefinition: &defID,
@@ -949,7 +953,7 @@ func TestExecuteWorkOrderRemoveEquipmentMultilayer(t *testing.T) {
 		defID := position.QueryDefinition().OnlyIDX(ctx)
 		parentID := position.QueryParent().OnlyIDX(ctx)
 		equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-			Name:               string(i),
+			Name:               strconv.Itoa(i),
 			Type:               rootEquipmentType.ID,
 			Parent:             &parentID,
 			PositionDefinition: &defID,
@@ -1807,13 +1811,18 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	mr := r.Mutation()
 
 	w := createWorkOrder(ctx, t, *r, "Foo")
-	w, err := mr.TechnicianWorkOrderCheckIn(ctx, w.ID)
+	w, err := mr.TechnicianWorkOrderCheckIn(
+		ctx,
+		w.ID,
+		&models.TechnicianWorkOrderCheckInInput{DistanceMeters: pointer.ToFloat64(50)},
+	)
 	require.NoError(t, err)
 
 	assert.Equal(t, w.Status, workorder.StatusPending)
-	comments, err := w.QueryComments().All(ctx)
+
+	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)
-	assert.Len(t, comments, 1)
+	assert.Len(t, activities, 1)
 }
 
 func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
@@ -1996,4 +2005,36 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 			require.Equal(t, "StoreKeyToAdd", item.Files[1].StoreKey)
 		}
 	}
+}
+
+func TestAssigneeCannotCompleteWorkOrder(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
+		Name:                         "TypeName",
+		AssigneeCanCompleteWorkOrder: pointer.ToBool(false),
+	})
+	require.NoError(t, err)
+	assignee := viewer.MustGetOrCreateUser(ctx, "Assignee", user.RoleUser)
+	wo, err := mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
+		Name:            "WoName",
+		WorkOrderTypeID: woType.ID,
+		AssigneeID:      pointer.ToInt(assignee.ID),
+	})
+	require.NoError(t, err)
+	ctx = viewertest.NewContext(
+		context.Background(),
+		r.client,
+		viewertest.WithUser("Assignee"),
+		viewertest.WithRole(user.RoleUser),
+		viewertest.WithPermissions(authz.EmptyPermissions()))
+	_, err = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
+		ID:         wo.ID,
+		Name:       "NewName",
+		AssigneeID: pointer.ToInt(assignee.ID),
+		Status:     toWorkOrderStatusPointer(workorder.StatusDone),
+	})
+	require.Error(t, err)
 }

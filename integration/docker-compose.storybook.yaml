@@ -7,7 +7,7 @@ version: "3.7"
 services:
   storybook:
     build:
-      context: ${XPLAT_FBC_DIR}
+      context: ../app
       dockerfile: fbcnms-projects/storybook/Dockerfile
     ports:
       - 8090:80

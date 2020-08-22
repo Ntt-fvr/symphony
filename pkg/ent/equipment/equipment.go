@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 

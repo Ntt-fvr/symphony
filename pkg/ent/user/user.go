@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 )
 
 const (
@@ -36,6 +36,8 @@ const (
 	FieldStatus = "status"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
+	// FieldDistanceUnit holds the string denoting the distance_unit field in the database.
+	FieldDistanceUnit = "distance_unit"
 
 	// EdgeProfilePhoto holds the string denoting the profile_photo edge name in mutations.
 	EdgeProfilePhoto = "profile_photo"
@@ -96,6 +98,7 @@ var Columns = []string{
 	FieldEmail,
 	FieldStatus,
 	FieldRole,
+	FieldDistanceUnit,
 }
 
 var (
@@ -182,6 +185,32 @@ func RoleValidator(r Role) error {
 	}
 }
 
+// DistanceUnit defines the type for the distance_unit enum field.
+type DistanceUnit string
+
+// DistanceUnitKilometer is the default DistanceUnit.
+const DefaultDistanceUnit = DistanceUnitKilometer
+
+// DistanceUnit values.
+const (
+	DistanceUnitKilometer DistanceUnit = "KILOMETER"
+	DistanceUnitMile      DistanceUnit = "MILE"
+)
+
+func (du DistanceUnit) String() string {
+	return string(du)
+}
+
+// DistanceUnitValidator is a validator for the "distance_unit" field enum values. It is called by the builders before save.
+func DistanceUnitValidator(du DistanceUnit) error {
+	switch du {
+	case DistanceUnitKilometer, DistanceUnitMile:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for distance_unit field: %q", du)
+	}
+}
+
 // MarshalGQL implements graphql.Marshaler interface.
 func (s Status) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(s.String()))
@@ -214,6 +243,24 @@ func (r *Role) UnmarshalGQL(v interface{}) error {
 	*r = Role(str)
 	if err := RoleValidator(*r); err != nil {
 		return fmt.Errorf("%s is not a valid Role", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (du DistanceUnit) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(du.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (du *DistanceUnit) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", v)
+	}
+	*du = DistanceUnit(str)
+	if err := DistanceUnitValidator(*du); err != nil {
+		return fmt.Errorf("%s is not a valid DistanceUnit", str)
 	}
 	return nil
 }

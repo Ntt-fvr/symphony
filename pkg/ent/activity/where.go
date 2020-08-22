@@ -9,8 +9,8 @@ package activity
 import (
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
@@ -284,22 +284,22 @@ func UpdateTimeLTE(v time.Time) predicate.Activity {
 	})
 }
 
-// ChangedFieldEQ applies the EQ predicate on the "changed_field" field.
-func ChangedFieldEQ(v ChangedField) predicate.Activity {
+// ActivityTypeEQ applies the EQ predicate on the "activity_type" field.
+func ActivityTypeEQ(v ActivityType) predicate.Activity {
 	return predicate.Activity(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldChangedField), v))
+		s.Where(sql.EQ(s.C(FieldActivityType), v))
 	})
 }
 
-// ChangedFieldNEQ applies the NEQ predicate on the "changed_field" field.
-func ChangedFieldNEQ(v ChangedField) predicate.Activity {
+// ActivityTypeNEQ applies the NEQ predicate on the "activity_type" field.
+func ActivityTypeNEQ(v ActivityType) predicate.Activity {
 	return predicate.Activity(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldChangedField), v))
+		s.Where(sql.NEQ(s.C(FieldActivityType), v))
 	})
 }
 
-// ChangedFieldIn applies the In predicate on the "changed_field" field.
-func ChangedFieldIn(vs ...ChangedField) predicate.Activity {
+// ActivityTypeIn applies the In predicate on the "activity_type" field.
+func ActivityTypeIn(vs ...ActivityType) predicate.Activity {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -311,12 +311,12 @@ func ChangedFieldIn(vs ...ChangedField) predicate.Activity {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldChangedField), v...))
+		s.Where(sql.In(s.C(FieldActivityType), v...))
 	})
 }
 
-// ChangedFieldNotIn applies the NotIn predicate on the "changed_field" field.
-func ChangedFieldNotIn(vs ...ChangedField) predicate.Activity {
+// ActivityTypeNotIn applies the NotIn predicate on the "activity_type" field.
+func ActivityTypeNotIn(vs ...ActivityType) predicate.Activity {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -328,7 +328,7 @@ func ChangedFieldNotIn(vs ...ChangedField) predicate.Activity {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldChangedField), v...))
+		s.Where(sql.NotIn(s.C(FieldActivityType), v...))
 	})
 }
 
@@ -593,6 +593,20 @@ func NewValueEqualFold(v string) predicate.Activity {
 func NewValueContainsFold(v string) predicate.Activity {
 	return predicate.Activity(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldNewValue), v))
+	})
+}
+
+// ClockDetailsIsNil applies the IsNil predicate on the "clock_details" field.
+func ClockDetailsIsNil() predicate.Activity {
+	return predicate.Activity(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldClockDetails)))
+	})
+}
+
+// ClockDetailsNotNil applies the NotNil predicate on the "clock_details" field.
+func ClockDetailsNotNil() predicate.Activity {
+	return predicate.Activity(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldClockDetails)))
 	})
 }
 

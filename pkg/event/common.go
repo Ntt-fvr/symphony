@@ -45,6 +45,13 @@ func FindField(fields []*ent.Field, val string) (*ent.Field, bool) {
 	return nil, false
 }
 
+func GetEntID(entry LogEntry) int {
+	if entry.Operation.Is(ent.OpCreate) {
+		return entry.CurrState.ID
+	}
+	return entry.PrevState.ID
+}
+
 func GetDiffOfUniqueEdge(entry *LogEntry, edge string) (*int, *int, bool) {
 	var newIntVal, oldsIntVal *int
 	newEdges := entry.CurrState.Edges

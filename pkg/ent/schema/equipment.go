@@ -8,10 +8,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
-	"github.com/facebookincubator/ent/schema/index"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -34,12 +34,12 @@ func (EquipmentPortType) Fields() []ent.Field {
 func (EquipmentPortType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("property_types", PropertyType.Type).
-			StructTag(`gqlgen:"propertyTypes"`),
+			Annotations(entgql.MapsTo("propertyTypes")),
 		edge.To("link_property_types", PropertyType.Type).
-			StructTag(`gqlgen:"linkPropertyTypes"`),
+			Annotations(entgql.MapsTo("linkPropertyTypes")),
 		edge.From("port_definitions", EquipmentPortDefinition.Type).
 			Ref("equipment_port_type").
-			StructTag(`gqlgen:"numberOfPortDefinitions"`),
+			Annotations(entgql.MapsTo("numberOfPortDefinitions")),
 	}
 }
 
@@ -76,7 +76,7 @@ func (EquipmentPortDefinition) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("equipment_port_type", EquipmentPortType.Type).
 			Unique().
-			StructTag(`gqlgen:"portType"`),
+			Annotations(entgql.MapsTo("portType")),
 		edge.From("ports", EquipmentPort.Type).
 			Ref("definition"),
 		edge.From("equipment_type", EquipmentType.Type).
@@ -105,19 +105,19 @@ func (EquipmentPort) Edges() []ent.Edge {
 		edge.To("definition", EquipmentPortDefinition.Type).
 			Required().
 			Unique().
-			StructTag(`gqlgen:"definition"`),
+			Annotations(entgql.Bind()),
 		edge.From("parent", Equipment.Type).
 			Ref("ports").
 			Unique().
-			StructTag(`gqlgen:"parentEquipment"`),
+			Annotations(entgql.MapsTo("parentEquipment")),
 		edge.To("link", Link.Type).
 			Unique().
-			StructTag(`gqlgen:"link"`),
+			Annotations(entgql.Bind()),
 		edge.To("properties", Property.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.From("endpoints", ServiceEndpoint.Type).
 			Ref("port").
-			StructTag(`gqlgen:"serviceEndpoints"`),
+			Annotations(entgql.MapsTo("serviceEndpoints")),
 	}
 }
 
@@ -186,14 +186,18 @@ func (EquipmentPosition) Edges() []ent.Edge {
 		edge.To("definition", EquipmentPositionDefinition.Type).
 			Required().
 			Unique().
-			StructTag(`gqlgen:"definition"`),
+			Annotations(entgql.Bind()),
 		edge.From("parent", Equipment.Type).
 			Ref("positions").
 			Unique().
-			StructTag(`gqlgen:"parentEquipment"`),
+			Annotations(
+				entgql.MapsTo("parentEquipment"),
+			),
 		edge.To("attachment", Equipment.Type).
 			Unique().
-			StructTag(`gqlgen:"attachedEquipment"`),
+			Annotations(
+				entgql.MapsTo("attachedEquipment"),
+			),
 	}
 }
 
@@ -261,19 +265,19 @@ func (EquipmentType) Fields() []ent.Field {
 func (EquipmentType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("port_definitions", EquipmentPortDefinition.Type).
-			StructTag(`gqlgen:"portDefinitions"`),
+			Annotations(entgql.MapsTo("portDefinitions")),
 		edge.To("position_definitions", EquipmentPositionDefinition.Type).
-			StructTag(`gqlgen:"positionDefinitions"`),
+			Annotations(entgql.MapsTo("positionDefinitions")),
 		edge.To("property_types", PropertyType.Type).
-			StructTag(`gqlgen:"propertyTypes"`),
+			Annotations(entgql.MapsTo("propertyTypes")),
 		edge.From("equipment", Equipment.Type).
 			Ref("type").
-			StructTag(`gqlgen:"equipments"`),
+			Annotations(entgql.MapsTo("equipments")),
 		edge.To("category", EquipmentCategory.Type).
 			Unique().
-			StructTag(`gqlgen:"category"`),
+			Annotations(entgql.Bind()),
 		edge.To("service_endpoint_definitions", ServiceEndpointDefinition.Type).
-			StructTag(`gqlgen:"serviceEndpointDefinitions"`),
+			Annotations(entgql.MapsTo("serviceEndpointDefinitions")),
 	}
 }
 
@@ -296,16 +300,16 @@ func (Equipment) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty().
-			Annotations(entgql.Annotation{
-				OrderField: "NAME",
-			}),
+			Annotations(
+				entgql.OrderField("NAME"),
+			),
 		field.Enum("future_state").
 			GoType(enum.FutureState("")).
 			Optional().
 			Nillable().
-			Annotations(entgql.Annotation{
-				OrderField: "FUTURE_STATE",
-			}),
+			Annotations(
+				entgql.OrderField("FUTURE_STATE"),
+			),
 		field.String("device_id").
 			Optional().
 			Validate(func(s string) error {
@@ -326,28 +330,28 @@ func (Equipment) Edges() []ent.Edge {
 		edge.To("type", EquipmentType.Type).
 			Unique().
 			Required().
-			StructTag(`gqlgen:"equipmentType"`),
+			Annotations(entgql.MapsTo("equipmentType")),
 		edge.From("location", Location.Type).
 			Ref("equipment").
 			Unique().
-			StructTag(`gqlgen:"parentLocation"`),
+			Annotations(entgql.MapsTo("parentLocation")),
 		edge.From("parent_position", EquipmentPosition.Type).
 			Ref("attachment").
 			Unique().
-			StructTag(`gqlgen:"parentPosition"`),
+			Annotations(entgql.MapsTo("parentPosition")),
 		edge.To("positions", EquipmentPosition.Type).
-			StructTag(`gqlgen:"positions"`),
+			Annotations(entgql.Bind()),
 		edge.To("ports", EquipmentPort.Type).
-			StructTag(`gqlgen:"ports"`),
+			Annotations(entgql.Bind()),
 		edge.To("work_order", WorkOrder.Type).
 			Unique().
-			StructTag(`gqlgen:"workOrder"`),
+			Annotations(entgql.MapsTo("workOrder")),
 		edge.To("properties", Property.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.To("files", File.Type).
-			StructTag(`gqlgen:"files"`),
+			Annotations(entgql.Bind()),
 		edge.To("hyperlinks", Hyperlink.Type).
-			StructTag(`gqlgen:"hyperlinks"`),
+			Annotations(entgql.Bind()),
 		edge.From("endpoints", ServiceEndpoint.Type).
 			Ref("equipment"),
 	}

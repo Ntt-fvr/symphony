@@ -4,6 +4,9 @@ locals {
 
   # iam role path for service accounts
   eks_sa_role_path = "/service_accounts/${local.environment}/"
+
+  # worker asg desired capacity
+  eks_asg_capacity = terraform.workspace == "default" ? 5 : 3
 }
 
 # eks workers ssh key
@@ -57,10 +60,11 @@ module eks {
   worker_groups = [
     {
       instance_type        = "t3.xlarge"
-      asg_desired_capacity = 5
-      asg_min_size         = 5
-      asg_max_size         = 9
+      asg_desired_capacity = local.eks_asg_capacity
+      asg_min_size         = local.eks_asg_capacity
+      asg_max_size         = local.eks_asg_capacity * 3
       autoscaling_enabled  = true
+      termination_policies = ["OldestLaunchConfiguration", "Default"]
       tags = [
         {
           key                 = "k8s.io/cluster-autoscaler/enabled"
@@ -104,7 +108,12 @@ module eks {
       )
       username = local.ctf_admin_user
       groups   = [local.ctf_admin_group]
-    }
+    },
+    {
+      rolearn  = module.springboard.role_arn
+      username = "springboard:master"
+      groups   = [module.springboard.subject_name]
+    },
   ]
 
   kubeconfig_name                      = "symphony-${local.environment}"

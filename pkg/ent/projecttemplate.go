@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 )
@@ -33,9 +33,9 @@ type ProjectTemplate struct {
 // ProjectTemplateEdges holds the relations/edges for other nodes in the graph.
 type ProjectTemplateEdges struct {
 	// Properties holds the value of the properties edge.
-	Properties []*PropertyType `gqlgen:"properties"`
+	Properties []*PropertyType
 	// WorkOrders holds the value of the work_orders edge.
-	WorkOrders []*WorkOrderDefinition `gqlgen:"workOrders"`
+	WorkOrders []*WorkOrderDefinition
 	// Type holds the value of the type edge.
 	Type *ProjectType
 	// loadedTypes holds the information for reporting if a

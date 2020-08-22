@@ -27,6 +27,18 @@ resource aws_s3_bucket inventory_store {
   lifecycle_rule {
     enabled = true
 
+    tags = {
+      "autoclean" = "true"
+    }
+
+    expiration {
+      days = 7
+    }
+  }
+
+  lifecycle_rule {
+    enabled = true
+
     noncurrent_version_expiration {
       days = 180
     }

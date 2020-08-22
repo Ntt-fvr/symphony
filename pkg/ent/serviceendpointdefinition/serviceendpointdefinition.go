@@ -9,7 +9,7 @@ package serviceendpointdefinition
 import (
 	"time"
 
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 )
 
 const (

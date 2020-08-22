@@ -6,13 +6,17 @@ package ocgql_test
 
 import (
 	"context"
+	"errors"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/testserver"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/cenkalti/backoff/v4"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/stretchr/testify/suite"
 	"go.opencensus.io/trace"
@@ -22,20 +26,19 @@ type tracerTestSuite struct {
 	suite.Suite
 	sample bool
 	client *client.Client
-	spans  map[string]*trace.SpanData
+	server *testserver.TestServer
+	spans  sync.Map
 }
 
 func (s *tracerTestSuite) SetupSuite() {
 	srv := testserver.New()
 	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.Websocket{})
 	srv.Use(extension.FixedComplexityLimit(1000))
 	srv.SetCalculatedComplexity(100)
 	srv.Use(ocgql.Tracer{
 		AllowRoot: true,
 		Field:     true,
-		DefaultAttributes: []trace.Attribute{
-			trace.BoolAttribute("graphql.test.value", true),
-		},
 		Sampler: func(trace.SamplingParameters) trace.SamplingDecision {
 			return trace.SamplingDecision{Sample: s.sample}
 		},
@@ -50,6 +53,7 @@ func (s *tracerTestSuite) SetupSuite() {
 		},
 	)
 	s.client = client.New(srv)
+	s.server = srv
 	trace.RegisterExporter(s)
 }
 
@@ -59,51 +63,60 @@ func (s *tracerTestSuite) TearDownSuite() {
 
 func (s *tracerTestSuite) SetupTest() {
 	s.sample = true
-	s.spans = map[string]*trace.SpanData{}
+}
+
+func (s *tracerTestSuite) TearDownTest() {
+	s.spans = sync.Map{}
 }
 
 func (s *tracerTestSuite) ExportSpan(span *trace.SpanData) {
-	s.spans[span.Name] = span
+	s.spans.Store(span.Name, span)
+}
+
+func (s *tracerTestSuite) GetSpan(name string) *trace.SpanData {
+	span, ok := s.spans.Load(name)
+	if !ok {
+		return nil
+	}
+	return span.(*trace.SpanData)
 }
 
 func TestTracer(t *testing.T) {
 	suite.Run(t, &tracerTestSuite{})
 }
 
-func (s *tracerTestSuite) TestWithSampling() {
+func (s *tracerTestSuite) TestOperation() {
 	const (
 		query = "query($id: Int!) { name: find(id: $id) }"
 		id    = "42"
 	)
 	err := s.post(query, client.Var("id", id))
 	s.Require().NoError(err)
-	s.Assert().Len(s.spans, 3)
 
-	span, ok := s.spans["query"]
-	s.Require().True(ok)
-	s.Assert().EqualValues(trace.SpanKindServer, span.SpanKind)
-	s.Assert().Equal(query, span.Attributes["graphql.query"])
-	s.Assert().Equal(id, span.Attributes["graphql.vars.id"])
-	s.Assert().EqualValues(100, span.Attributes["graphql.complexity.value"])
-	s.Assert().EqualValues(1000, span.Attributes["graphql.complexity.limit"])
-	s.Assert().EqualValues(trace.StatusCodeOK, span.Code)
-	s.Assert().Empty(span.Message)
+	span := s.GetSpan("query")
+	s.Require().NotNil(span)
+	s.Require().Equal(query, span.Attributes["graphql.query"])
+	s.Require().Equal(id, span.Attributes["graphql.vars.id"])
+	s.Require().EqualValues(100, span.Attributes["graphql.complexity.value"])
+	s.Require().EqualValues(1000, span.Attributes["graphql.complexity.limit"])
+	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
+	s.Require().Empty(span.Message)
 
-	span, ok = s.spans["name"]
-	s.Require().True(ok)
+	span = s.GetSpan("name")
+	s.Require().NotNil(span)
 	for _, attr := range []string{"path", "name", "alias"} {
-		s.Assert().Equal("name", span.Attributes["graphql.field."+attr])
+		s.Require().Equal("name", span.Attributes["graphql.field."+attr])
 	}
-	s.Assert().EqualValues(trace.StatusCodeOK, span.Code)
-	s.Assert().Empty(span.Message)
+	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
+	s.Require().Empty(span.Message)
 }
 
 func (s *tracerTestSuite) TestWithoutSampling() {
 	s.sample = false
 	err := s.post("query { name }")
 	s.Require().NoError(err)
-	_, ok := s.spans["query"]
-	s.Assert().False(ok)
+	span := s.GetSpan("query")
+	s.Require().Nil(span)
 }
 
 func (s *tracerTestSuite) TestNamedOperation() {
@@ -111,35 +124,44 @@ func (s *tracerTestSuite) TestNamedOperation() {
 	err := s.post("query { name }",
 		client.Operation(op),
 	)
-	s.Assert().Error(err)
-
-	span, ok := s.spans[op]
-	s.Assert().True(ok)
-	s.Assert().EqualValues(trace.StatusCodeUnknown, span.Code)
-}
-
-func (s *tracerTestSuite) TestUnsupportedOperation() {
-	const query = "mutation { name }"
-	err := s.post(query)
 	s.Require().Error(err)
 
-	span, ok := s.spans["mutation"]
-	s.Require().True(ok)
-	s.Assert().EqualValues(trace.SpanKindServer, span.SpanKind)
-	s.Assert().Equal(query, span.Attributes["graphql.query"])
-	s.Assert().EqualValues(trace.StatusCodeUnknown, span.Code)
-	const message = "mutations are not supported"
-	s.Assert().Contains(span.Message, message)
-	s.Assert().Contains(err.Error(), message)
+	span := s.GetSpan(op)
+	s.Require().NotNil(span)
+	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
 }
 
-func (s *tracerTestSuite) TestDefaultAttributes() {
-	err := s.post("query { name }")
+func (s *tracerTestSuite) TestSubscription() {
+	sk := s.client.Websocket(`subscription { name }`)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		err := sk.Next(&struct{ Name string }{})
+		s.Require().NoError(err)
+	}()
+	s.server.SendNextSubscriptionMessage()
+	wg.Wait()
+	err := sk.Close()
 	s.Require().NoError(err)
 
-	span, ok := s.spans["query"]
-	s.Require().True(ok)
-	s.Assert().Equal(true, span.Attributes["graphql.test.value"])
+	ctx, cancel := context.WithTimeout(
+		context.Background(), time.Second,
+	)
+	defer cancel()
+	err = backoff.Retry(
+		func() error {
+			if s.GetSpan("subscription") == nil ||
+				s.GetSpan("subscription.response") == nil {
+				return errors.New("span not found")
+			}
+			return nil
+		},
+		backoff.WithContext(
+			backoff.NewConstantBackOff(10*time.Millisecond), ctx,
+		),
+	)
+	s.Require().NoError(err)
 }
 
 func (s *tracerTestSuite) post(query string, opts ...client.Option) error {

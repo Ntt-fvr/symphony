@@ -34,7 +34,7 @@ def delete_site_survey_image(client: SymphonyClient, survey: SiteSurvey) -> None
     """This function deletes image from existing site survey.
 
         Args:
-            survey ( `pyinventory.common.data_class.SiteSurvey` ): site survey object
+            survey ( `pysymphony.common.data_class.SiteSurvey` ): site survey object
 
         Raises:
             FailedOperationException: on operation failure

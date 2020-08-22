@@ -10,9 +10,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/ent/dialect/sql"
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -33,9 +33,9 @@ func (au *ActivityUpdate) Where(ps ...predicate.Activity) *ActivityUpdate {
 	return au
 }
 
-// SetChangedField sets the changed_field field.
-func (au *ActivityUpdate) SetChangedField(af activity.ChangedField) *ActivityUpdate {
-	au.mutation.SetChangedField(af)
+// SetActivityType sets the activity_type field.
+func (au *ActivityUpdate) SetActivityType(at activity.ActivityType) *ActivityUpdate {
+	au.mutation.SetActivityType(at)
 	return au
 }
 
@@ -90,6 +90,26 @@ func (au *ActivityUpdate) SetNillableNewValue(s *string) *ActivityUpdate {
 // ClearNewValue clears the value of new_value.
 func (au *ActivityUpdate) ClearNewValue() *ActivityUpdate {
 	au.mutation.ClearNewValue()
+	return au
+}
+
+// SetClockDetails sets the clock_details field.
+func (au *ActivityUpdate) SetClockDetails(ad activity.ClockDetails) *ActivityUpdate {
+	au.mutation.SetClockDetails(ad)
+	return au
+}
+
+// SetNillableClockDetails sets the clock_details field if the given value is not nil.
+func (au *ActivityUpdate) SetNillableClockDetails(ad *activity.ClockDetails) *ActivityUpdate {
+	if ad != nil {
+		au.SetClockDetails(*ad)
+	}
+	return au
+}
+
+// ClearClockDetails clears the value of clock_details.
+func (au *ActivityUpdate) ClearClockDetails() *ActivityUpdate {
+	au.mutation.ClearClockDetails()
 	return au
 }
 
@@ -154,9 +174,9 @@ func (au *ActivityUpdate) Save(ctx context.Context) (int, error) {
 		v := activity.UpdateDefaultUpdateTime()
 		au.mutation.SetUpdateTime(v)
 	}
-	if v, ok := au.mutation.ChangedField(); ok {
-		if err := activity.ChangedFieldValidator(v); err != nil {
-			return 0, &ValidationError{Name: "changed_field", err: fmt.Errorf("ent: validator failed for field \"changed_field\": %w", err)}
+	if v, ok := au.mutation.ActivityType(); ok {
+		if err := activity.ActivityTypeValidator(v); err != nil {
+			return 0, &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
 		}
 	}
 
@@ -234,11 +254,11 @@ func (au *ActivityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: activity.FieldUpdateTime,
 		})
 	}
-	if value, ok := au.mutation.ChangedField(); ok {
+	if value, ok := au.mutation.ActivityType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: activity.FieldChangedField,
+			Column: activity.FieldActivityType,
 		})
 	}
 	if value, ok := au.mutation.IsCreate(); ok {
@@ -272,6 +292,19 @@ func (au *ActivityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: activity.FieldNewValue,
+		})
+	}
+	if value, ok := au.mutation.ClockDetails(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: activity.FieldClockDetails,
+		})
+	}
+	if au.mutation.ClockDetailsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: activity.FieldClockDetails,
 		})
 	}
 	if au.mutation.AuthorCleared() {
@@ -362,9 +395,9 @@ type ActivityUpdateOne struct {
 	mutation *ActivityMutation
 }
 
-// SetChangedField sets the changed_field field.
-func (auo *ActivityUpdateOne) SetChangedField(af activity.ChangedField) *ActivityUpdateOne {
-	auo.mutation.SetChangedField(af)
+// SetActivityType sets the activity_type field.
+func (auo *ActivityUpdateOne) SetActivityType(at activity.ActivityType) *ActivityUpdateOne {
+	auo.mutation.SetActivityType(at)
 	return auo
 }
 
@@ -419,6 +452,26 @@ func (auo *ActivityUpdateOne) SetNillableNewValue(s *string) *ActivityUpdateOne 
 // ClearNewValue clears the value of new_value.
 func (auo *ActivityUpdateOne) ClearNewValue() *ActivityUpdateOne {
 	auo.mutation.ClearNewValue()
+	return auo
+}
+
+// SetClockDetails sets the clock_details field.
+func (auo *ActivityUpdateOne) SetClockDetails(ad activity.ClockDetails) *ActivityUpdateOne {
+	auo.mutation.SetClockDetails(ad)
+	return auo
+}
+
+// SetNillableClockDetails sets the clock_details field if the given value is not nil.
+func (auo *ActivityUpdateOne) SetNillableClockDetails(ad *activity.ClockDetails) *ActivityUpdateOne {
+	if ad != nil {
+		auo.SetClockDetails(*ad)
+	}
+	return auo
+}
+
+// ClearClockDetails clears the value of clock_details.
+func (auo *ActivityUpdateOne) ClearClockDetails() *ActivityUpdateOne {
+	auo.mutation.ClearClockDetails()
 	return auo
 }
 
@@ -483,9 +536,9 @@ func (auo *ActivityUpdateOne) Save(ctx context.Context) (*Activity, error) {
 		v := activity.UpdateDefaultUpdateTime()
 		auo.mutation.SetUpdateTime(v)
 	}
-	if v, ok := auo.mutation.ChangedField(); ok {
-		if err := activity.ChangedFieldValidator(v); err != nil {
-			return nil, &ValidationError{Name: "changed_field", err: fmt.Errorf("ent: validator failed for field \"changed_field\": %w", err)}
+	if v, ok := auo.mutation.ActivityType(); ok {
+		if err := activity.ActivityTypeValidator(v); err != nil {
+			return nil, &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
 		}
 	}
 
@@ -561,11 +614,11 @@ func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err err
 			Column: activity.FieldUpdateTime,
 		})
 	}
-	if value, ok := auo.mutation.ChangedField(); ok {
+	if value, ok := auo.mutation.ActivityType(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: activity.FieldChangedField,
+			Column: activity.FieldActivityType,
 		})
 	}
 	if value, ok := auo.mutation.IsCreate(); ok {
@@ -599,6 +652,19 @@ func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err err
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: activity.FieldNewValue,
+		})
+	}
+	if value, ok := auo.mutation.ClockDetails(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: activity.FieldClockDetails,
+		})
+	}
+	if auo.mutation.ClockDetailsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: activity.FieldClockDetails,
 		})
 	}
 	if auo.mutation.AuthorCleared() {

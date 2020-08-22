@@ -13,15 +13,13 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
-	"github.com/pkg/errors"
-
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/viewer"
-
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/log"
-
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -31,8 +29,18 @@ type exporter struct {
 	rower
 }
 
+type exporterExcel struct {
+	log log.Logger
+	excelFile
+}
+
+// Interface for creating an excel file
+type excelFile interface {
+	createExcelFile(context.Context, *url.URL) (*excelize.File, error)
+}
+
 type rower interface {
-	rows(ctx context.Context, filters string) ([][]string, error)
+	Rows(ctx context.Context, filters string) ([][]string, error)
 }
 
 func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
@@ -45,7 +53,6 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 	filtersParam := url.Query().Get("filters")
 	client := ent.FromContext(ctx)
 
-	filtersInput, err := json.Marshal(filtersParam)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot use filters")
 	}
@@ -60,7 +67,7 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 		Create().
 		SetType(etType).
 		SetStatus(exporttask.StatusPending).
-		SetFilters(string(filtersInput)).
+		SetFilters(filtersParam).
 		Save(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot create export task")
@@ -100,8 +107,9 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Error("error in async export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
+		} else {
+			m.writeExportTaskID(ctx, w, et.ID)
 		}
-		m.writeExportTaskID(ctx, w, et.ID)
 	} else {
 		filename := "export"
 		rout := mux.CurrentRoute(r)
@@ -115,7 +123,7 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		writer := csv.NewWriter(w)
 
 		filters := r.URL.Query().Get("filters")
-		rows, err := m.rows(ctx, filters)
+		rows, err := m.Rows(ctx, filters)
 		if err != nil {
 			log.Error("error in export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
@@ -125,6 +133,33 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
 		}
+	}
+}
+
+// ServerHTTP handles requests to returns an export Excel file with extension xlsx
+func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	filename := "exportExcel"
+	rout := mux.CurrentRoute(r)
+	if rout != nil {
+		filename = rout.GetName()
+	}
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename+"xlsx")
+	log := m.log.For(ctx)
+	xlsx, err := m.createExcelFile(ctx, r.URL)
+	if err != nil {
+		log.Error("error in export", zap.Error(err))
+		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		return
+	}
+	if xlsx == nil {
+		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		return
+	}
+	err = xlsx.Write(w)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
 	}
 }
 
@@ -139,9 +174,14 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 		{"ports", exporter{log, portsRower{log}}},
 		{"work_orders", exporter{log, woRower{log}}},
 		{"links", exporter{log, linksRower{log}}},
-		{"locations", exporter{log, locationsRower{log}}},
+		{"locations", exporter{log, LocationsRower{log, true}}},
 		{"services", exporter{log, servicesRower{log}}},
 	}
+
+	router.Path("/single_work_order").
+		Methods(http.MethodGet).
+		Handler(&exporterExcel{log, singleWoRower{log}}).
+		Name("single_work_order")
 
 	for _, route := range routes {
 		route := route

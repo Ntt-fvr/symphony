@@ -17,6 +17,21 @@ This is template for release notes
 
 
 ***
+## 3.1.1 - release date 17.8.2020
+### Features
+- PropertyType
+    - `edit_property_type` - Edit specific property type on specific entity
+    - `get_property_type_id` - Get property type ID on specific entity
+    - `get_property_types` - Get property types on specific entity
+    - `get_property_type` - Get property type on specific entity
+    - `get_property_type_by_external_id` - Get property type by external ID on specific entity
+### Bug fixes
+- `Unknown property type - enum` exception raised in `get_equipment_properties` call.
+  Added `enum`, `date` and `datetime_local` to `PropertyValueType`.
+***
+
+
+***
 ## 3.1.0 - release date 23.7.2020
 ### Features
 - Features

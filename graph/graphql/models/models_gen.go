@@ -234,10 +234,11 @@ type AddWorkOrderInput struct {
 }
 
 type AddWorkOrderTypeInput struct {
-	Name                string                              `json:"name"`
-	Description         *string                             `json:"description"`
-	Properties          []*PropertyTypeInput                `json:"properties"`
-	CheckListCategories []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	Name                         string                              `json:"name"`
+	Description                  *string                             `json:"description"`
+	Properties                   []*PropertyTypeInput                `json:"properties"`
+	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
 type CheckListCategoryDefinitionInput struct {
@@ -388,11 +389,12 @@ type EditReportFilterInput struct {
 }
 
 type EditUserInput struct {
-	ID        int          `json:"id"`
-	FirstName *string      `json:"firstName"`
-	LastName  *string      `json:"lastName"`
-	Status    *user.Status `json:"status"`
-	Role      *user.Role   `json:"role"`
+	ID           int                `json:"id"`
+	FirstName    *string            `json:"firstName"`
+	LastName     *string            `json:"lastName"`
+	Status       *user.Status       `json:"status"`
+	Role         *user.Role         `json:"role"`
+	DistanceUnit *user.DistanceUnit `json:"distanceUnit"`
 }
 
 type EditUsersGroupInput struct {
@@ -422,11 +424,12 @@ type EditWorkOrderInput struct {
 }
 
 type EditWorkOrderTypeInput struct {
-	ID                  int                                 `json:"id"`
-	Name                string                              `json:"name"`
-	Description         *string                             `json:"description"`
-	Properties          []*PropertyTypeInput                `json:"properties"`
-	CheckListCategories []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	ID                           int                                 `json:"id"`
+	Name                         string                              `json:"name"`
+	Description                  *string                             `json:"description"`
+	Properties                   []*PropertyTypeInput                `json:"properties"`
+	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
+	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
 type EquipmentFilterInput struct {
@@ -813,6 +816,10 @@ type TechnicianCheckListItemInput struct {
 	WifiData           []*SurveyWiFiScanData   `json:"wifiData"`
 	CellData           []*SurveyCellScanData   `json:"cellData"`
 	FilesData          []*FileInput            `json:"filesData"`
+}
+
+type TechnicianWorkOrderCheckInInput struct {
+	DistanceMeters *float64 `json:"distanceMeters"`
 }
 
 type TechnicianWorkOrderUploadInput struct {

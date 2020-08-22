@@ -11,6 +11,7 @@ from typing import Any, Callable, List, Mapping, Optional
 from dataclasses_json import DataClassJsonMixin
 
 from gql.gql.enum_utils import enum_field
+from ..enum.distance_unit import DistanceUnit
 from ..enum.user_role import UserRole
 from ..enum.user_status import UserStatus
 
@@ -19,6 +20,7 @@ class EditUserInput(DataClassJsonMixin):
     id: str
     status: Optional[UserStatus] = None
     role: Optional[UserRole] = None
+    distanceUnit: Optional[DistanceUnit] = None
     firstName: Optional[str] = None
     lastName: Optional[str] = None
 

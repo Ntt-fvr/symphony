@@ -41,15 +41,15 @@ def add_equipment_port_type(
         :param name: Equipment port type name
         :type name: str
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ])
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ])
         :param link_properties: List of property definitions
-        :type link_properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ])
+        :type link_properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ])
 
         :raises:
             FailedOperationException: Internal inventory error
 
         :return: EquipmentPortType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPortType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPortType`
 
         **Example**
 
@@ -112,7 +112,7 @@ def get_equipment_port_type(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: Equipment port type does not found
 
         :return: EquipmentPortType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPortType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPortType`
 
         **Example**
 
@@ -144,7 +144,7 @@ def edit_equipment_port_type(
     """This function edits an existing equipment port type.
 
         :param port_type: Existing eqipment port type object
-        :type port_type: :class:`~pyinventory.common.data_class.EquipmentPortType`
+        :type port_type: :class:`~pysymphony.common.data_class.EquipmentPortType`
         :param new_name: New name
         :type new_name: str
         :param new_properties: Dictionary of property name to property value
@@ -164,7 +164,7 @@ def edit_equipment_port_type(
             FailedOperationException: Internal inventory error
 
         :return: EquipmentPortType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentPortType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentPortType`
 
         **Example**
 

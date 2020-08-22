@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/ent/dialect"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"

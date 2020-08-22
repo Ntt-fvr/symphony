@@ -59,7 +59,7 @@ const ActivityPost = (props: Props) => {
 
   const shouldCapitalizeValue = () => {
     return (
-      activity.changedField === 'STATUS' || activity.changedField === 'PRIORITY'
+      activity.activityType === 'STATUS' || activity.activityType === 'PRIORITY'
     );
   };
 
@@ -76,10 +76,17 @@ const ActivityPost = (props: Props) => {
   };
 
   const genActivityMessage = () => {
-    if (activity.changedField === 'CREATION_DATE') {
+    if (activity.activityType === 'CREATION_DATE') {
       return (
         <span>
           <fbt desc="">created this work order</fbt>
+        </span>
+      );
+    }
+    if (activity.activityType === 'CLOCK_IN') {
+      return (
+        <span>
+          <fbt desc="">clocked in</fbt>
         </span>
       );
     }
@@ -99,7 +106,7 @@ const ActivityPost = (props: Props) => {
           <fbt desc="">
             set the{' '}
             <fbt:param name="changed field">
-              <span>{activity.changedField.toLowerCase()}</span>
+              <span>{activity.activityType.toLowerCase()}</span>
             </fbt:param>
             to{' '}
             <fbt:param name="new value">
@@ -120,7 +127,7 @@ const ActivityPost = (props: Props) => {
               </fbt:param>
               as an
               <fbt:param name="changed field">
-                <span>{activity.changedField.toLowerCase()}</span>
+                <span>{activity.activityType.toLowerCase()}</span>
               </fbt:param>
             </fbt>
           </span>
@@ -131,21 +138,21 @@ const ActivityPost = (props: Props) => {
           <fbt desc="">
             removed{' '}
             <fbt:param name="changed field">
-              <span>{activity.changedField.toLowerCase()}</span>
+              <span>{activity.activityType.toLowerCase()}</span>
             </fbt:param>
             value
           </fbt>
         </span>
       );
     }
-    if (activity.changedField === 'DESCRIPTION') {
+    if (activity.activityType === 'DESCRIPTION') {
       return (
         <span>
           <fbt desc="">changed the description</fbt>
         </span>
       );
     }
-    if (activity.changedField === 'NAME') {
+    if (activity.activityType === 'NAME') {
       return (
         <span>
           <fbt desc="">
@@ -162,7 +169,7 @@ const ActivityPost = (props: Props) => {
         <fbt desc="">
           changed the{' '}
           <fbt:param name="changed field">
-            <span>{activity.changedField.toLowerCase()}</span>
+            <span>{activity.activityType.toLowerCase()}</span>
           </fbt:param>
           from{' '}
           <fbt:param name="old value">
@@ -179,7 +186,7 @@ const ActivityPost = (props: Props) => {
 
   return (
     <div className={classes.textActivityPost}>
-      <ActivityCommentsIcon field={activity.changedField} />
+      <ActivityCommentsIcon field={activity.activityType} />
       <div className={classes.activityBody}>
         <Text variant="body2">
           <span className={classes.activityAuthor}>
@@ -206,7 +213,7 @@ export default createFragmentContainer(ActivityPost, {
         email
       }
       isCreate
-      changedField
+      activityType
       newRelatedNode {
         __typename
         ... on User {

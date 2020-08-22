@@ -11,8 +11,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -42,6 +42,20 @@ func (wotc *WorkOrderTemplateCreate) SetDescription(s string) *WorkOrderTemplate
 func (wotc *WorkOrderTemplateCreate) SetNillableDescription(s *string) *WorkOrderTemplateCreate {
 	if s != nil {
 		wotc.SetDescription(*s)
+	}
+	return wotc
+}
+
+// SetAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field.
+func (wotc *WorkOrderTemplateCreate) SetAssigneeCanCompleteWorkOrder(b bool) *WorkOrderTemplateCreate {
+	wotc.mutation.SetAssigneeCanCompleteWorkOrder(b)
+	return wotc
+}
+
+// SetNillableAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field if the given value is not nil.
+func (wotc *WorkOrderTemplateCreate) SetNillableAssigneeCanCompleteWorkOrder(b *bool) *WorkOrderTemplateCreate {
+	if b != nil {
+		wotc.SetAssigneeCanCompleteWorkOrder(*b)
 	}
 	return wotc
 }
@@ -145,6 +159,10 @@ func (wotc *WorkOrderTemplateCreate) preSave() error {
 	if _, ok := wotc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
+	if _, ok := wotc.mutation.AssigneeCanCompleteWorkOrder(); !ok {
+		v := workordertemplate.DefaultAssigneeCanCompleteWorkOrder
+		wotc.mutation.SetAssigneeCanCompleteWorkOrder(v)
+	}
 	return nil
 }
 
@@ -187,6 +205,14 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Column: workordertemplate.FieldDescription,
 		})
 		wot.Description = &value
+	}
+	if value, ok := wotc.mutation.AssigneeCanCompleteWorkOrder(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
+		})
+		wot.AssigneeCanCompleteWorkOrder = value
 	}
 	if nodes := wotc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

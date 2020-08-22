@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -59,9 +59,9 @@ type WorkOrder struct {
 // WorkOrderEdges holds the relations/edges for other nodes in the graph.
 type WorkOrderEdges struct {
 	// Type holds the value of the type edge.
-	Type *WorkOrderType `gqlgen:"workOrderType"`
+	Type *WorkOrderType
 	// Template holds the value of the template edge.
-	Template *WorkOrderTemplate `gqlgen:"workOrderTemplate"`
+	Template *WorkOrderTemplate
 	// Equipment holds the value of the equipment edge.
 	Equipment []*Equipment
 	// Links holds the value of the links edge.
@@ -69,23 +69,23 @@ type WorkOrderEdges struct {
 	// Files holds the value of the files edge.
 	Files []*File
 	// Hyperlinks holds the value of the hyperlinks edge.
-	Hyperlinks []*Hyperlink `gqlgen:"hyperlinks"`
+	Hyperlinks []*Hyperlink
 	// Location holds the value of the location edge.
-	Location *Location `gqlgen:"location"`
+	Location *Location
 	// Comments holds the value of the comments edge.
-	Comments []*Comment `gqlgen:"comments"`
+	Comments []*Comment
 	// Activities holds the value of the activities edge.
-	Activities []*Activity `gqlgen:"activities"`
+	Activities []*Activity
 	// Properties holds the value of the properties edge.
-	Properties []*Property `gqlgen:"properties"`
+	Properties []*Property
 	// CheckListCategories holds the value of the check_list_categories edge.
-	CheckListCategories []*CheckListCategory `gqlgen:"checkListCategories"`
+	CheckListCategories []*CheckListCategory
 	// Project holds the value of the project edge.
-	Project *Project `gqlgen:"project"`
+	Project *Project
 	// Owner holds the value of the owner edge.
-	Owner *User `gqlgen:"owner"`
+	Owner *User
 	// Assignee holds the value of the assignee edge.
-	Assignee *User `gqlgen:"assignedTo"`
+	Assignee *User
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [14]bool

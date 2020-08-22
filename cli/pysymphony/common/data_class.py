@@ -33,9 +33,15 @@ from ..graphql.enum.image_entity import ImageEntity
 
 
 ReturnType = TypeVar("ReturnType")
-PropertyValue = Union[date, float, int, str, bool, Tuple[float, float]]
+PropertyValue = Union[date, datetime, float, int, str, bool, Tuple[float, float]]
 PropertyValueType = Union[
-    Type[date], Type[float], Type[int], Type[str], Type[bool], Type[Tuple[float, float]]
+    Type[date],
+    Type[datetime],
+    Type[float],
+    Type[int],
+    Type[str],
+    Type[bool],
+    Type[Tuple[float, float]],
 ]
 
 
@@ -93,6 +99,9 @@ class DataTypeName(NamedTuple):
 
 TYPE_AND_FIELD_NAME = {
     "date": DataTypeName(data_type=date, graphql_field_name=("stringValue",)),
+    "datetime_local": DataTypeName(
+        data_type=datetime, graphql_field_name=("stringValue",)
+    ),
     "float": DataTypeName(data_type=float, graphql_field_name=("floatValue",)),
     "int": DataTypeName(data_type=int, graphql_field_name=("intValue",)),
     "email": DataTypeName(data_type=str, graphql_field_name=("stringValue",)),
@@ -102,6 +111,7 @@ TYPE_AND_FIELD_NAME = {
         data_type=tuple,  # type: ignore
         graphql_field_name=("latitudeValue", "longitudeValue"),
     ),
+    "enum": DataTypeName(data_type=str, graphql_field_name=("stringValue",)),
 }
 
 
@@ -112,7 +122,7 @@ class LocationType(NamedTuple):
         :param id: ID
         :type id: str
         :param property_types: PropertyTypes sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     name: str
@@ -156,7 +166,7 @@ class EquipmentType(NamedTuple):
         :param id: ID
         :type id: str
         :param property_types: PropertyDefinitions sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param position_definitions: EquipmentPositionDefinitionFragments sequence
         :type position_definitions: Sequence[ :class:`~pyinventory.graphql.fragment.equipment_position_definition.EquipmentPositionDefinitionFragment` ]
         :param port_definitions: EquipmentPortDefinitionFragments sequence
@@ -178,9 +188,9 @@ class EquipmentPortType(NamedTuple):
         :param name: Name
         :type name: str
         :param property_types: Property types sequence
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param link_property_types: Link property types sequence
-        :type link_property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type link_property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     id: str
@@ -244,9 +254,9 @@ class EquipmentPort(NamedTuple):
         :param properties: Properties sequence
         :type properties: Sequence[ :class:`~pyinventory.graphql.fragment.property.PropertyFragment` ]
         :param definition: EquipmentPortDefinition object
-        :type definition: :class:`~pyinventory.common.data_class.EquipmentPortDefinition`
+        :type definition: :class:`~pysymphony.common.data_class.EquipmentPortDefinition`
         :param link: Link object
-        :type link: :class:`~pyinventory.common.data_class.Link`
+        :type link: :class:`~pysymphony.common.data_class.Link`
     """
 
     id: str
@@ -281,7 +291,7 @@ class Service(NamedTuple):
         :param service_type_name: Existing service type name
         :type service_type_name: str
         :param customer: Customer object
-        :type customer: :class:`~pyinventory.common.data_class.Customer`, optional
+        :type customer: :class:`~pysymphony.common.data_class.Customer`, optional
         :param properties: Properties sequence
         :type properties: Sequence[ :class:`~pyinventory.graphql.fragment.property..PropertyFragment` ]
     """
@@ -342,9 +352,9 @@ class ServiceType(NamedTuple):
         :param has_customer: Customer existence flag
         :type has_customer: bool
         :param property_types: PropertyDefinitions sequence
-        :type property_types: Sequence[ :c;ass:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :c;ass:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param endpoint_definitions: ServiceEndpointDefinitions list
-        :type endpoint_definitions: List[ :class:`~pyinventory.common.data_class.ServiceEndpointDefinition` ]
+        :type endpoint_definitions: List[ :class:`~pysymphony.common.data_class.ServiceEndpointDefinition` ]
     """
 
     name: str
@@ -402,24 +412,24 @@ class SiteSurvey(NamedTuple):
         :type name: str
         :param survey_id: ID
         :type survey_id: str
-        :param completionTime: Complition time
-        :type completionTime: datetime
-        :param sourceFileId: Source file ID
-        :type sourceFileId: str, optional
-        :param sourceFileName: Source file name
-        :type sourceFileName: str, optional
-        :param sourceFileKey: Source file key
-        :type sourceFileKey: str, optional
-        :param id: Forms
-        :type id: Dict[str, Dict[str, Any]]
+        :param completion_time: Complition time
+        :type completion_time: datetime
+        :param source_file_id: Source file ID
+        :type source_file_id: str, optional
+        :param source_file_name: Source file name
+        :type source_file_name: str, optional
+        :param source_file_key: Source file key
+        :type source_file_key: str, optional
+        :param forms: Forms
+        :type forms: Dict[str, Dict[str, Any]]
     """
 
     name: str
     survey_id: str
-    completionTime: datetime
-    sourceFileId: Optional[str]
-    sourceFileName: Optional[str]
-    sourceFileKey: Optional[str]
+    completion_time: datetime
+    source_file_id: Optional[str]
+    source_file_name: Optional[str]
+    source_file_key: Optional[str]
     forms: Dict[str, Dict[str, Any]]
 
 
@@ -432,7 +442,7 @@ class WorkOrderType(NamedTuple):
         :param description: Work order type description
         :type description: str, optional
         :param property_types: PropertyTypes list
-        :type property_types: Sequence[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type property_types: Sequence[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
     """
 
     id: str

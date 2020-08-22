@@ -40,7 +40,7 @@ def add_service(
         :param service_type: Service type name
         :type service_type: str
         :param customer: Customer object
-        :type customer: :class:`~pyinventory.common.data_class.Customer`, optional
+        :type customer: :class:`~pysymphony.common.data_class.Customer`, optional
         :param properties_dict: Mapping of property name to property value
 
             * str - property name
@@ -52,7 +52,7 @@ def add_service(
             FailedOperationException: Internal inventory error
 
         :return: Service object
-        :rtype: :class:`~pyinventory.common.data_class.Service`
+        :rtype: :class:`~pysymphony.common.data_class.Service`
 
         **Example**
 
@@ -105,7 +105,7 @@ def get_service(client: SymphonyClient, id: str) -> Service:
             * FailedOperationException: Internal inventory error
 
         :return: Service object
-        :rtype: :class:`~pyinventory.common.data_class.Service`
+        :rtype: :class:`~pysymphony.common.data_class.Service`
 
         **Example**
 
@@ -147,7 +147,7 @@ def get_service_endpoints(
             * FailedOperationException: Internal inventory error
 
         :return: ServiceEndpoints List
-        :rtype: List[ :class:`~pyinventory.common.data_class.ServiceEndpoints` ]
+        :rtype: List[ :class:`~pysymphony.common.data_class.ServiceEndpoints` ]
 
         **Example**
 
@@ -180,7 +180,7 @@ def add_service_endpoint(
     """This function adds existing endpoint to existing service.
 
         :param service: Existing service object
-        :type service: :class:`~pyinventory.common.data_class.Service`
+        :type service: :class:`~pysymphony.common.data_class.Service`
         :param equipment_id: Existing equipment ID
         :type equipment_id: str
         :param endpoint_definition_id: Existing endpoint definition ID
@@ -232,7 +232,7 @@ def get_service_links(client: SymphonyClient, service_id: str) -> List[Link]:
             * FailedOperationException: Internal inventory error
 
         :return: Links List
-        :rtype: List[ :class:`~pyinventory.common.data_class.Link` ]
+        :rtype: List[ :class:`~pysymphony.common.data_class.Link` ]
 
         **Example**
 

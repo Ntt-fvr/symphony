@@ -49,7 +49,7 @@ def add_location_type(
         :param name: Location type name
         :type name: str
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param map_zoom_level: Map zoom level
         :type map_zoom_level: int
 
@@ -57,7 +57,7 @@ def add_location_type(
             FailedOperationException: Internal inventory error
 
         :return: LocationType object
-        :rtype: :class:`~pyinventory.common.data_class.LocationType`
+        :rtype: :class:`~pysymphony.common.data_class.LocationType`
 
         **Example**
 
@@ -102,7 +102,7 @@ def delete_locations_by_location_type(
     """Delete locatons by location type.
 
         :param location_type: LocationType object
-        :type location_type: :class:`~pyinventory.common.data_class.LocationType`
+        :type location_type: :class:`~pysymphony.common.data_class.LocationType`
 
         :raises:
             `pyinventory.exceptions.EntityNotFoundError`: `location_type` does not exist
@@ -148,7 +148,7 @@ def delete_location_type_with_locations(
     """Delete locaton type with existing locations.
 
         :param location_type: LocationType object
-        :type location_type: :class:`~pyinventory.common.data_class.LocationType`
+        :type location_type: :class:`~pysymphony.common.data_class.LocationType`
 
         :raises:
             `pyinventory.exceptions.EntityNotFoundError`: `location_type` does not exist

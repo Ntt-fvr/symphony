@@ -9,6 +9,7 @@ clusters:
 contexts:
 - context:
     cluster: ${cluster_name}
+    namespace: ${cluster_namespace}
     user: ${cluster_name}
   name: ${cluster_name}
 current-context: ${cluster_name}

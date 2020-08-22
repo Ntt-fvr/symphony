@@ -109,7 +109,7 @@ def get_or_create_equipment_type(
         :param category: Category name
         :type category: str
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param ports_dict: Dictionary of port name to port type name
 
             * str - port name
@@ -123,7 +123,7 @@ def get_or_create_equipment_type(
             FailedOperationException: Internal inventory error
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -224,7 +224,7 @@ def add_equipment_type(
         :param category: Category name
         :type category: str
         :param properties: List of property definitions
-        :type properties: List[ :class:`~pyinventory.common.data_class.PropertyDefinition` ]
+        :type properties: List[ :class:`~pysymphony.common.data_class.PropertyDefinition` ]
         :param ports_dict: Dictionary of port name to port type name
 
             * str - port name
@@ -238,7 +238,7 @@ def add_equipment_type(
             FailedOperationException: internal inventory error
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -316,7 +316,7 @@ def edit_equipment_type(
             FailedOperationException: internal inventory error
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -370,7 +370,7 @@ def copy_equipment_type(
             FailedOperationException: internal inventory error
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -436,7 +436,7 @@ def get_equipment_type_property_type(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: property type with id=`property_type_id` is not found
 
         :return: PropertyDefinition object
-        :rtype: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :rtype: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         **Example**
 
@@ -469,7 +469,7 @@ def get_equipment_type_property_type_by_external_id(
             :class:`~pyinventory.exceptions.EntityNotFoundError`: property type with external_id=`property_type_external_id` is not found
 
         :return: PropertyDefinition object
-        :rtype: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :rtype: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         **Example**
 
@@ -502,14 +502,14 @@ def edit_equipment_type_property_type(
         :param property_type_id: Existing property type ID
         :type property_type_id: str
         :param new_property_definition: New property definition
-        :type new_property_definition: :class:`~pyinventory.common.data_class.PropertyDefinition`
+        :type new_property_definition: :class:`~pysymphony.common.data_class.PropertyDefinition`
 
         :raises:
             * :class:`~pyinventory.exceptions.EntityNotFoundError`: if property type name is not found
             * FailedOperationException: internal inventory error
 
         :return: EquipmentType object
-        :rtype: :class:`~pyinventory.common.data_class.EquipmentType`
+        :rtype: :class:`~pysymphony.common.data_class.EquipmentType`
 
         **Example**
 
@@ -563,7 +563,7 @@ def delete_equipment_type_with_equipments(
     """Delete equipment type with existing equipments.
 
         :param equipment_type: Existing equipment type name
-        :type equipment_type: :class:`~pyinventory.common.data_class.EquipmentType`
+        :type equipment_type: :class:`~pysymphony.common.data_class.EquipmentType`
 
         :raises:
             :class:`~pyinventory.exceptions.EntityNotFoundError`: if equipment_type does not exist

@@ -25,7 +25,6 @@ const Automation = React.lazy(() => import('./automation/Automation'));
 const MagmaMain = React.lazy(() =>
   import('@fbcnms/magmalte/app/components/Main'),
 );
-const Hub = React.lazy(() => import('@fbcnms/hub/app/components/Main'));
 const Inventory = React.lazy(() => import('./Inventory'));
 const Settings = React.lazy(() => import('./settings/Settings'));
 const WorkOrdersMain = React.lazy(() => import('./work_orders/WorkOrdersMain'));
@@ -46,7 +45,6 @@ export default () => (
                     component={DeactivatedPage}
                   />
                   <Route path="/nms" component={MagmaMain} />
-                  <Route path="/hub" component={Hub} />
                   <Route path="/inventory" component={Inventory} />
                   <Route path="/workorders" component={WorkOrdersMain} />
                   <Route path="/admin/settings" component={Settings} />

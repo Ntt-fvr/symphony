@@ -7,9 +7,9 @@ package schema
 import (
 	"time"
 
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
@@ -24,27 +24,27 @@ func (Todo) Fields() []ent.Field {
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable().
-			Annotations(entgql.Annotation{
-				OrderField: "CREATED_AT",
-			}),
+			Annotations(
+				entgql.OrderField("CREATED_AT"),
+			),
 		field.Enum("status").
 			ValueMap(map[string]string{
 				"InProgress": "IN_PROGRESS",
 				"Completed":  "COMPLETED",
 			}).
-			Annotations(entgql.Annotation{
-				OrderField: "STATUS",
-			}),
+			Annotations(
+				entgql.OrderField("STATUS"),
+			),
 		field.Int("priority").
 			Default(0).
-			Annotations(entgql.Annotation{
-				OrderField: "PRIORITY",
-			}),
+			Annotations(
+				entgql.OrderField("PRIORITY"),
+			),
 		field.Text("text").
 			NotEmpty().
-			Annotations(entgql.Annotation{
-				OrderField: "TEXT",
-			}),
+			Annotations(
+				entgql.OrderField("TEXT"),
+			),
 	}
 }
 
@@ -52,9 +52,9 @@ func (Todo) Fields() []ent.Field {
 func (Todo) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("children", Todo.Type).
-			StructTag(`gqlgen:"children"`).
+			Annotations(entgql.Bind()).
 			From("parent").
-			StructTag(`gqlgen:"parent"`).
+			Annotations(entgql.Bind()).
 			Unique(),
 	}
 }

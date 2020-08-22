@@ -8,9 +8,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/event"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 )
@@ -63,7 +63,7 @@ func (r subscriptionResolver) workOrderSubscribe(ctx context.Context, event stri
 	}
 
 	go func() {
-		defer svc.Stop(context.Background())
+		defer svc.Stop(ctx)
 		err := svc.Run(ctx)
 		logger.Debug("subscription terminated", zap.Error(err))
 	}()

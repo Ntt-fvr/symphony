@@ -25,6 +25,7 @@ import (
 	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
+	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
 )
 
@@ -34,19 +35,25 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		wire.FieldsOf(new(*cliFlags),
 			"MySQLConfig",
 			"LogConfig",
-			"EventSubURL",
+			"EventPubURL",
 			"TelemetryConfig",
 			"TenancyConfig",
 		),
 		log.Provider,
 		newTenancy,
+		wire.Struct(
+			new(event.Eventer),
+			"*",
+		),
 		viewer.SyncFeatures,
 		newMySQLTenancy,
-		ev.ProvideReceiver,
+		ev.ProvideEmitter,
 		wire.Bind(
-			new(ev.ReceiverFactory),
+			new(ev.EmitterFactory),
 			new(ev.TopicFactory),
 		),
+		ev.ProvideReceiver,
+		provideReceiverFactory,
 		wire.InterfaceValue(
 			new(ev.EventObject),
 			event.LogEntry{},
@@ -63,9 +70,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
-		wire.Value([]handler.Handler{
-			handler.Func(handler.HandleActivityLog),
-		}),
+		newHandlers,
 		newApplication,
 	)
 	return nil, nil, nil
@@ -80,8 +85,8 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, nil)
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
@@ -104,4 +109,26 @@ func provideViews() []*view.View {
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views
+}
+
+func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
+	return flags.EventSubURL
+}
+
+func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
+	bucket, err := blob.OpenBucket(ctx, flags.ExportBlobURL.String())
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
+	}
+	bucket = blob.PrefixedBucket(bucket, flags.ExportBucketPrefix)
+	return bucket, func() { _ = bucket.Close() }, nil
+}
+
+func newHandlers() []handler.NamedHandler {
+	return []handler.NamedHandler{
+		{
+			Name:    "activity_log",
+			Handler: handler.Func(handler.HandleActivityLog),
+		},
+	}
 }

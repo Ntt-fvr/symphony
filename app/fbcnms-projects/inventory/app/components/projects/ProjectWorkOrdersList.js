@@ -75,7 +75,10 @@ const ProjectWorkOrdersList = (props: Props) => {
                 {row.workOrderType && row.workOrderType.name}
               </TableCell>
               <TableCell>
-                {formatMultiSelectValue(statusValues, row.status)}
+                {formatMultiSelectValue(
+                  statusValues.map(({value, label}) => ({value, label})),
+                  row.status,
+                )}
               </TableCell>
               <TableCell>{row.owner?.email}</TableCell>
               <TableCell>

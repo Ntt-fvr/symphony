@@ -12,18 +12,18 @@ services:
 
   test:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: integration/tests/Dockerfile
     volumes:
-      - ${FBCODE_FBC_DIR}/symphony:/src/symphony:delegated
+      - ./..:/src/symphony:delegated
     networks:
       - private
 
   pytest:
     build:
-      context: ${FBCODE_FBC_DIR}/symphony
+      context: ..
       dockerfile: cli/tests/Dockerfile
     volumes:
-      - ${FBCODE_FBC_DIR}/symphony:/src/symphony:delegated
+      - ./..:/src/symphony:delegated
     networks:
       - private

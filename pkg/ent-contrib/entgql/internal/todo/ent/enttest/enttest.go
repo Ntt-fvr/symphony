@@ -13,7 +13,7 @@ import (
 	// required by schema hooks.
 	_ "github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/runtime"
 
-	"github.com/facebookincubator/ent/dialect/sql/schema"
+	"github.com/facebook/ent/dialect/sql/schema"
 )
 
 type (

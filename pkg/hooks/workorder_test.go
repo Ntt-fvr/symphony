@@ -11,6 +11,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -22,7 +23,7 @@ import (
 type workOrderTestSuite struct {
 	suite.Suite
 	ctx    context.Context
-	client *ent.WorkOrderClient
+	client *ent.Client
 	user   *ent.User
 	typ    *ent.WorkOrderType
 }
@@ -33,7 +34,7 @@ func (s *workOrderTestSuite) SetupSuite() {
 		context.Background(),
 		client,
 	)
-	s.client = client.WorkOrder
+	s.client = client
 	u, ok := viewer.FromContext(s.ctx).(*viewer.UserViewer)
 	s.Require().True(ok)
 	s.user = u.User()
@@ -46,7 +47,7 @@ func (s *workOrderTestSuite) SetupSuite() {
 }
 
 func (s *workOrderTestSuite) CreateWorkOrder() *ent.WorkOrderCreate {
-	return s.client.Create().
+	return s.client.WorkOrder.Create().
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
 		SetType(s.typ)
@@ -111,7 +112,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			s.Assert().Nil(order.CloseDate)
 			ids = append(ids, order.ID)
 		}
-		n, err := s.client.Update().
+		n, err := s.client.WorkOrder.Update().
 			SetStatus(workorder.StatusDone).
 			Where(workorder.IDIn(ids...)).
 			Save(privacy.DecisionContext(
@@ -119,7 +120,7 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 			))
 		s.Require().NoError(err)
 		s.Assert().Equal(len(ids), n)
-		count, err := s.client.
+		count, err := s.client.WorkOrder.
 			Query().
 			Where(
 				workorder.IDIn(ids...),
@@ -130,6 +131,24 @@ func (s *workOrderTestSuite) TestWorkOrderCloseDate() {
 		s.Require().NoError(err)
 		s.Assert().Equal(len(ids), count)
 	})
+}
+
+func (s *workOrderTestSuite) TestWorkOrderAddedWithTemplate() {
+	_, err := s.client.PropertyType.Create().
+		SetName("str_prop").
+		SetType(propertytype.TypeString).
+		SetWorkOrderType(s.typ).
+		Save(s.ctx)
+	s.Require().NoError(err)
+	order, err := s.CreateWorkOrder().
+		SetName("antenna").
+		Save(s.ctx)
+	s.Require().NoError(err)
+	template, err := order.QueryTemplate().Only(s.ctx)
+	s.Require().NoError(err)
+	s.Equal("deploy", template.Name)
+	_, err = template.QueryPropertyTypes().Where(propertytype.Name("str_prop")).Only(s.ctx)
+	s.Require().NoError(err)
 }
 
 func TestWorkOrderHooks(t *testing.T) {

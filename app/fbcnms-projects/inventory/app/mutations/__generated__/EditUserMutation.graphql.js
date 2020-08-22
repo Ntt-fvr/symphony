@@ -14,6 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
+export type DistanceUnit = "KILOMETER" | "MILE" | "%future added value";
 export type PermissionValue = "BY_CONDITION" | "NO" | "YES" | "%future added value";
 export type UserRole = "ADMIN" | "OWNER" | "USER" | "%future added value";
 export type UserStatus = "ACTIVE" | "DEACTIVATED" | "%future added value";
@@ -24,6 +25,7 @@ export type EditUserInput = {|
   lastName?: ?string,
   status?: ?UserStatus,
   role?: ?UserRole,
+  distanceUnit?: ?DistanceUnit,
 |};
 export type EditUserMutationVariables = {|
   input: EditUserInput

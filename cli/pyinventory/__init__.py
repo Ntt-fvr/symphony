@@ -162,7 +162,12 @@ class InventoryClient(SymphonyClient):
         get_users,
         get_active_users,
     )
-    from .api.property_type import get_property_type_id
+    from .api.property_type import (
+        get_property_type_id,
+        get_property_types,
+        get_property_type,
+        get_property_type_by_external_id,
+    )
 
     from .api.features import get_enabled_features, set_feature
     from .api.work_order_type import (

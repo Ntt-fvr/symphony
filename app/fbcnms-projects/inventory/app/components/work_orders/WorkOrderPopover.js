@@ -225,7 +225,10 @@ const WorkOrderPopover = (props: Props) => {
                   {fbt('Status:', 'Work Order card "Status" field title')}
                 </strong>
                 <span>
-                  {formatMultiSelectValue(statusValues, workOrder.status)}
+                  {formatMultiSelectValue(
+                    statusValues.map(({value, label}) => ({value, label})),
+                    workOrder.status,
+                  )}
                 </span>
               </Text>
             </div>

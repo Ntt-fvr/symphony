@@ -170,12 +170,12 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 func traceStatus(err error) trace.Status {
 	var code int32
 	switch {
-	case err == nil:
+	case err == nil, errors.Is(err, context.Canceled):
 		return trace.Status{Code: trace.StatusCodeOK}
+	case errors.Is(err, ErrServiceStopped):
+		code = trace.StatusCodeFailedPrecondition
 	case errors.Is(err, context.DeadlineExceeded):
 		code = trace.StatusCodeDeadlineExceeded
-	case errors.Is(err, context.Canceled):
-		code = trace.StatusCodeCancelled
 	default:
 		code = trace.StatusCodeUnknown
 	}
@@ -200,12 +200,30 @@ func (s *Service) handle(evt *Event) {
 	}
 }
 
+func (s *Service) startSpan(ctx context.Context, name string) (context.Context, *trace.Span) {
+	return trace.StartSpan(ctx, name,
+		trace.WithSampler(func(p trace.SamplingParameters) trace.SamplingDecision {
+			return trace.SamplingDecision{
+				Sample: p.ParentContext.IsSampled(),
+			}
+		}),
+	)
+}
+
+func (Service) endSpan(span *trace.Span, err *error) {
+	span.SetStatus(traceStatus(*err))
+	span.End()
+}
+
 // ErrServiceStopped is returned by the Service's
 // Run method after a call to Stop.
 var ErrServiceStopped = errors.New("ev: Service stopped")
 
 // Run runs a receive loop breaking on error.
-func (s *Service) Run(ctx context.Context) error {
+func (s *Service) Run(ctx context.Context) (err error) {
+	ctx, span := s.startSpan(ctx, "Service.Run")
+	defer s.endSpan(span, &err)
+
 	if !s.sem.TryAcquire(1) {
 		return ErrServiceStopped
 	}
@@ -233,11 +251,8 @@ func (s *Service) Run(ctx context.Context) error {
 
 // Stop stops a running service.
 func (s *Service) Stop(ctx context.Context) (err error) {
-	ctx, span := trace.StartSpan(ctx, "Service.Stop")
-	defer func() {
-		span.SetStatus(traceStatus(err))
-		span.End()
-	}()
+	ctx, span := s.startSpan(ctx, "Service.Stop")
+	defer s.endSpan(span, &err)
 
 	defer func() {
 		err = multierror.Append(err,

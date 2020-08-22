@@ -8,9 +8,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 )
 
@@ -48,6 +48,12 @@ func (User) Fields() []ent.Field {
 				"Owner": "OWNER",
 			}).
 			Default("USER"),
+		field.Enum("distance_unit").
+			ValueMap(map[string]string{
+				"Kilometer": "KILOMETER",
+				"Mile":      "MILE",
+			}).
+			Default("KILOMETER"),
 	}
 }
 

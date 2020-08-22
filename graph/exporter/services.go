@@ -38,7 +38,7 @@ type servicesRower struct {
 	log log.Logger
 }
 
-func (er servicesRower) rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger      = er.log.For(ctx)
 		err         error

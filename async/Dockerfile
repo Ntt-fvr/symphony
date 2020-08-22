@@ -3,7 +3,7 @@
 # license that can be found in the LICENSE file.
 
 # Multi stage application builder
-FROM golang:1.14-alpine AS builder
+FROM golang:1.15-alpine AS builder
 
 # Install build tools
 RUN apk add --no-cache git gcc musl-dev
@@ -14,7 +14,9 @@ COPY go.* ./
 RUN go mod download
 
 # Copy shared components
+# TODO: temporary workaround until graph/exporter will be moved to pkg
 COPY pkg /src/symphony/pkg
+COPY graph /src/symphony/graph
 
 # Build services
 WORKDIR /src/symphony/async

@@ -19,14 +19,14 @@ func (a activityResolver) Author(ctx context.Context, obj *ent.Activity) (*ent.U
 	return author, ent.MaskNotFound(err)
 }
 
-func getNode(ctx context.Context, field activity.ChangedField, val string) (ent.Noder, error) {
+func getNode(ctx context.Context, field activity.ActivityType, val string) (ent.Noder, error) {
 	if val == "" {
 		return nil, nil
 	}
 	switch field {
-	case activity.ChangedFieldAssignee:
+	case activity.ActivityTypeAssigneeChanged:
 		fallthrough
-	case activity.ChangedFieldOwner:
+	case activity.ActivityTypeOwnerChanged:
 		client := ent.FromContext(ctx)
 		intID, err := strconv.Atoi(val)
 		if err != nil {
@@ -38,11 +38,11 @@ func getNode(ctx context.Context, field activity.ChangedField, val string) (ent.
 }
 
 func (a activityResolver) NewRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error) {
-	return getNode(ctx, obj.ChangedField, obj.NewValue)
+	return getNode(ctx, obj.ActivityType, obj.NewValue)
 }
 
 func (a activityResolver) OldRelatedNode(ctx context.Context, obj *ent.Activity) (ent.Noder, error) {
-	return getNode(ctx, obj.ChangedField, obj.OldValue)
+	return getNode(ctx, obj.ActivityType, obj.OldValue)
 }
 
 func (a activityResolver) WorkOrder(ctx context.Context, obj *ent.Activity) (*ent.WorkOrder, error) {

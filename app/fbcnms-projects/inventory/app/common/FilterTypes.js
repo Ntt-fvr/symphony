@@ -8,7 +8,8 @@
  * @format
  */
 
-export type StatusType = 'PENDING' | 'PLANNED' | 'DONE';
+import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
+
 export type PriorityType = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 
 export const priorityValues = [
@@ -53,7 +54,11 @@ export const doneStatus = {
   label: 'Done',
 };
 
-export const statusValues = [
+export const statusValues: Array<{|
+  key: string,
+  value: GraphQLStatusType,
+  label: string,
+|}> = [
   {
     key: 'planned',
     value: 'PLANNED',

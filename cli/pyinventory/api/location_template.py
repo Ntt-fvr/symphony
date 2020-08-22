@@ -53,13 +53,13 @@ def copy_equipment_with_all_attachments(
             * :meth:`~pyinventory.api.equipment.add_equipment`
             * :meth:`~pyinventory.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~pyinventory.common.data_class.Equipment`
+        :type equipment: :class:`~pysymphony.common.data_class.Equipment`
         :param dest_location: Location to copy equipment to, could be retrieved from
 
             * :meth:`~pyinventory.api.location.get_location`
             * :meth:`~pyinventory.api.location.add_location`
 
-        :type dest_location: :class:`~pyinventory.common.data_class.Location`
+        :type dest_location: :class:`~pysymphony.common.data_class.Location`
 
         :raises:
             FailedOperationException: Internal inventory error
@@ -67,10 +67,10 @@ def copy_equipment_with_all_attachments(
         :return: Dictionary of source equipment to new equipment,
             includes the equipment given as parameter and also all the equipments attached to it
 
-            * source equipment - :class:`~pyinventory.common.data_class.Equipment`
-            * new equipment - :class:`~pyinventory.common.data_class.Equipment`
+            * source equipment - :class:`~pysymphony.common.data_class.Equipment`
+            * new equipment - :class:`~pysymphony.common.data_class.Equipment`
 
-        :rtype: Iterator[ Tuple[ :class:`~pyinventory.common.data_class.Equipment`, str ] ]
+        :rtype: Iterator[ Tuple[ :class:`~pysymphony.common.data_class.Equipment`, str ] ]
     """
 
     result = {}

@@ -5,10 +5,11 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/ent/activity"
 )
 
 // Activity defines the location type schema.
@@ -19,16 +20,18 @@ type Activity struct {
 // Fields returns Activity fields.
 func (Activity) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("changed_field").
+		field.Enum("activity_type").
 			ValueMap(map[string]string{
-				"Status":       "STATUS",
-				"Priority":     "PRIORITY",
-				"Assignee":     "ASSIGNEE",
-				"CreationDate": "CREATION_DATE",
-				"Owner":        "OWNER",
-				"Name":         "NAME",
-				"Description":  "DESCRIPTION",
-			}),
+				"StatusChanged":       "STATUS",
+				"PriorityChanged":     "PRIORITY",
+				"AssigneeChanged":     "ASSIGNEE",
+				"CreationDateChanged": "CREATION_DATE",
+				"OwnerChanged":        "OWNER",
+				"NameChanged":         "NAME",
+				"DescriptionChanged":  "DESCRIPTION",
+				"ClockIn":             "CLOCK_IN",
+			}).
+			StorageKey("changed_field"),
 		field.Bool("is_create").
 			Default(false),
 		field.String("old_value").
@@ -37,6 +40,8 @@ func (Activity) Fields() []ent.Field {
 		field.String("new_value").
 			Optional().
 			Comment("raw value of the next state (enum, entID ..)"),
+		field.JSON("clock_details", activity.ClockDetails{}).
+			Optional(),
 	}
 }
 

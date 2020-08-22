@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
@@ -70,13 +70,13 @@ type Property struct {
 // PropertyEdges holds the relations/edges for other nodes in the graph.
 type PropertyEdges struct {
 	// Type holds the value of the type edge.
-	Type *PropertyType `gqlgen:"propertyType"`
+	Type *PropertyType
 	// Location holds the value of the location edge.
-	Location *Location `gqlgen:"locationValue"`
+	Location *Location
 	// Equipment holds the value of the equipment edge.
-	Equipment *Equipment `gqlgen:"equipmentValue"`
+	Equipment *Equipment
 	// Service holds the value of the service edge.
-	Service *Service `gqlgen:"serviceValue"`
+	Service *Service
 	// EquipmentPort holds the value of the equipment_port edge.
 	EquipmentPort *EquipmentPort
 	// Link holds the value of the link edge.

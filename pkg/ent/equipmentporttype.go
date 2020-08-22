@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
 )
 
@@ -34,11 +34,11 @@ type EquipmentPortType struct {
 // EquipmentPortTypeEdges holds the relations/edges for other nodes in the graph.
 type EquipmentPortTypeEdges struct {
 	// PropertyTypes holds the value of the property_types edge.
-	PropertyTypes []*PropertyType `gqlgen:"propertyTypes"`
+	PropertyTypes []*PropertyType
 	// LinkPropertyTypes holds the value of the link_property_types edge.
-	LinkPropertyTypes []*PropertyType `gqlgen:"linkPropertyTypes"`
+	LinkPropertyTypes []*PropertyType
 	// PortDefinitions holds the value of the port_definitions edge.
-	PortDefinitions []*EquipmentPortDefinition `gqlgen:"numberOfPortDefinitions"`
+	PortDefinitions []*EquipmentPortDefinition
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool

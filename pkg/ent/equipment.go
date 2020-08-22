@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
@@ -49,23 +49,23 @@ type Equipment struct {
 // EquipmentEdges holds the relations/edges for other nodes in the graph.
 type EquipmentEdges struct {
 	// Type holds the value of the type edge.
-	Type *EquipmentType `gqlgen:"equipmentType"`
+	Type *EquipmentType
 	// Location holds the value of the location edge.
-	Location *Location `gqlgen:"parentLocation"`
+	Location *Location
 	// ParentPosition holds the value of the parent_position edge.
-	ParentPosition *EquipmentPosition `gqlgen:"parentPosition"`
+	ParentPosition *EquipmentPosition
 	// Positions holds the value of the positions edge.
-	Positions []*EquipmentPosition `gqlgen:"positions"`
+	Positions []*EquipmentPosition
 	// Ports holds the value of the ports edge.
-	Ports []*EquipmentPort `gqlgen:"ports"`
+	Ports []*EquipmentPort
 	// WorkOrder holds the value of the work_order edge.
-	WorkOrder *WorkOrder `gqlgen:"workOrder"`
+	WorkOrder *WorkOrder
 	// Properties holds the value of the properties edge.
-	Properties []*Property `gqlgen:"properties"`
+	Properties []*Property
 	// Files holds the value of the files edge.
-	Files []*File `gqlgen:"files"`
+	Files []*File
 	// Hyperlinks holds the value of the hyperlinks edge.
-	Hyperlinks []*Hyperlink `gqlgen:"hyperlinks"`
+	Hyperlinks []*Hyperlink
 	// Endpoints holds the value of the endpoints edge.
 	Endpoints []*ServiceEndpoint
 	// loadedTypes holds the information for reporting if a

@@ -5,14 +5,15 @@
 package schema
 
 import (
-	"github.com/facebookincubator/ent"
-	"github.com/facebookincubator/ent/schema/edge"
-	"github.com/facebookincubator/ent/schema/field"
-	"github.com/facebookincubator/ent/schema/index"
-	"github.com/facebookincubator/ent/schema/mixin"
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
+	"github.com/facebook/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 // ProjectTemplateMixin defines the project template mixin schema.
@@ -35,9 +36,9 @@ func (ProjectTemplateMixin) Fields() []ent.Field {
 func (ProjectTemplateMixin) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("properties", PropertyType.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.To("work_orders", WorkOrderDefinition.Type).
-			StructTag(`gqlgen:"workOrders"`),
+			Annotations(entgql.MapsTo("workOrders")),
 	}
 }
 
@@ -86,7 +87,7 @@ func (ProjectType) Mixin() []ent.Mixin {
 func (ProjectType) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("projects", Project.Type).
-			StructTag(`gqlgen:"projects"`),
+			Annotations(entgql.Bind()),
 	}
 }
 
@@ -117,9 +118,9 @@ func (Project) Fields() []ent.Field {
 		field.String("name").
 			NotEmpty().
 			Unique().
-			Annotations(entgql.Annotation{
-				OrderField: "NAME",
-			}),
+			Annotations(
+				entgql.OrderField("NAME"),
+			),
 		field.Text("description").
 			Optional().
 			Nillable(),
@@ -143,23 +144,23 @@ func (Project) Edges() []ent.Edge {
 			Ref("projects").
 			Unique().
 			Required().
-			StructTag(`gqlgen:"type"`),
+			Annotations(entgql.Bind()),
 		edge.To("template", ProjectTemplate.Type).
 			Unique().
-			StructTag(`gqlgen:"template"`),
+			Annotations(entgql.Bind()),
 		edge.To("location", Location.Type).
 			Unique().
-			StructTag(`gqlgen:"location"`),
+			Annotations(entgql.Bind()),
 		edge.To("comments", Comment.Type).
-			StructTag(`gqlgen:"comments"`),
+			Annotations(entgql.Bind()),
 		edge.To("work_orders", WorkOrder.Type).
-			StructTag(`gqlgen:"workOrders"`),
+			Annotations(entgql.MapsTo("workOrders")),
 		edge.To("properties", Property.Type).
-			StructTag(`gqlgen:"properties"`),
+			Annotations(entgql.Bind()),
 		edge.To("creator", User.Type).
 			Comment("Being used as Owner in the UI").
 			Unique().
-			StructTag(`gqlgen:"createdBy"`),
+			Annotations(entgql.MapsTo("createdBy")),
 	}
 }
 
@@ -184,10 +185,15 @@ func (Project) Mixin() []ent.Mixin {
 		mixin.CreateTime{},
 		mixin.AnnotateFields(
 			mixin.UpdateTime{},
-			entgql.Annotation{
-				OrderField: "UPDATED_AT",
-			},
+			entgql.OrderField("UPDATED_AT"),
 		),
+	}
+}
+
+// Hooks returns project hooks.
+func (Project) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.ProjectAddTemplateHook(),
 	}
 }
 
@@ -222,7 +228,7 @@ func (WorkOrderDefinition) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("type", WorkOrderType.Type).
 			Unique().
-			StructTag(`gqlgen:"type"`),
+			Annotations(entgql.Bind()),
 		edge.From("project_type", ProjectType.Type).
 			Ref("work_orders").
 			Unique(),

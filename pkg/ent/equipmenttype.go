@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 )
@@ -36,17 +36,17 @@ type EquipmentType struct {
 // EquipmentTypeEdges holds the relations/edges for other nodes in the graph.
 type EquipmentTypeEdges struct {
 	// PortDefinitions holds the value of the port_definitions edge.
-	PortDefinitions []*EquipmentPortDefinition `gqlgen:"portDefinitions"`
+	PortDefinitions []*EquipmentPortDefinition
 	// PositionDefinitions holds the value of the position_definitions edge.
-	PositionDefinitions []*EquipmentPositionDefinition `gqlgen:"positionDefinitions"`
+	PositionDefinitions []*EquipmentPositionDefinition
 	// PropertyTypes holds the value of the property_types edge.
-	PropertyTypes []*PropertyType `gqlgen:"propertyTypes"`
+	PropertyTypes []*PropertyType
 	// Equipment holds the value of the equipment edge.
-	Equipment []*Equipment `gqlgen:"equipments"`
+	Equipment []*Equipment
 	// Category holds the value of the category edge.
-	Category *EquipmentCategory `gqlgen:"category"`
+	Category *EquipmentCategory
 	// ServiceEndpointDefinitions holds the value of the service_endpoint_definitions edge.
-	ServiceEndpointDefinitions []*ServiceEndpointDefinition `gqlgen:"serviceEndpointDefinitions"`
+	ServiceEndpointDefinitions []*ServiceEndpointDefinition
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [6]bool

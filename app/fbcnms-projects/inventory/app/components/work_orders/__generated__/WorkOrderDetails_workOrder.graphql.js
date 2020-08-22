@@ -39,6 +39,9 @@ export type WorkOrderDetails_workOrder = {|
     +name: string,
     +id: string,
   |},
+  +workOrderTemplate: ?{|
+    +assigneeCanCompleteWorkOrder: ?boolean
+  |},
   +location: ?{|
     +name: string,
     +id: string,
@@ -373,6 +376,24 @@ return {
       "selections": [
         (v1/*: any*/),
         (v0/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "WorkOrderTemplate",
+      "kind": "LinkedField",
+      "name": "workOrderTemplate",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "assigneeCanCompleteWorkOrder",
+          "storageKey": null
+        }
       ],
       "storageKey": null
     },
@@ -994,6 +1015,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'd7742c2ee385ac5e6a292c5f66746510';
+(node/*: any*/).hash = '0bd60b08ca0a8e1b232c494f4d55df88';
 
 module.exports = node;

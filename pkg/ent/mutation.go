@@ -64,7 +64,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 
-	"github.com/facebookincubator/ent"
+	"github.com/facebook/ent"
 )
 
 const (
@@ -703,10 +703,11 @@ type ActivityMutation struct {
 	id                *int
 	create_time       *time.Time
 	update_time       *time.Time
-	changed_field     *activity.ChangedField
+	activity_type     *activity.ActivityType
 	is_create         *bool
 	old_value         *string
 	new_value         *string
+	clock_details     *activity.ClockDetails
 	clearedFields     map[string]struct{}
 	author            *int
 	clearedauthor     bool
@@ -869,41 +870,41 @@ func (m *ActivityMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
-// SetChangedField sets the changed_field field.
-func (m *ActivityMutation) SetChangedField(af activity.ChangedField) {
-	m.changed_field = &af
+// SetActivityType sets the activity_type field.
+func (m *ActivityMutation) SetActivityType(at activity.ActivityType) {
+	m.activity_type = &at
 }
 
-// ChangedField returns the changed_field value in the mutation.
-func (m *ActivityMutation) ChangedField() (r activity.ChangedField, exists bool) {
-	v := m.changed_field
+// ActivityType returns the activity_type value in the mutation.
+func (m *ActivityMutation) ActivityType() (r activity.ActivityType, exists bool) {
+	v := m.activity_type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldChangedField returns the old changed_field value of the Activity.
+// OldActivityType returns the old activity_type value of the Activity.
 // If the Activity object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActivityMutation) OldChangedField(ctx context.Context) (v activity.ChangedField, err error) {
+func (m *ActivityMutation) OldActivityType(ctx context.Context) (v activity.ActivityType, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldChangedField is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldActivityType is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldChangedField requires an ID field in the mutation")
+		return v, fmt.Errorf("OldActivityType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChangedField: %w", err)
+		return v, fmt.Errorf("querying old value for OldActivityType: %w", err)
 	}
-	return oldValue.ChangedField, nil
+	return oldValue.ActivityType, nil
 }
 
-// ResetChangedField reset all changes of the "changed_field" field.
-func (m *ActivityMutation) ResetChangedField() {
-	m.changed_field = nil
+// ResetActivityType reset all changes of the "activity_type" field.
+func (m *ActivityMutation) ResetActivityType() {
+	m.activity_type = nil
 }
 
 // SetIsCreate sets the is_create field.
@@ -1043,6 +1044,56 @@ func (m *ActivityMutation) ResetNewValue() {
 	delete(m.clearedFields, activity.FieldNewValue)
 }
 
+// SetClockDetails sets the clock_details field.
+func (m *ActivityMutation) SetClockDetails(ad activity.ClockDetails) {
+	m.clock_details = &ad
+}
+
+// ClockDetails returns the clock_details value in the mutation.
+func (m *ActivityMutation) ClockDetails() (r activity.ClockDetails, exists bool) {
+	v := m.clock_details
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClockDetails returns the old clock_details value of the Activity.
+// If the Activity object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ActivityMutation) OldClockDetails(ctx context.Context) (v activity.ClockDetails, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldClockDetails is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldClockDetails requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClockDetails: %w", err)
+	}
+	return oldValue.ClockDetails, nil
+}
+
+// ClearClockDetails clears the value of clock_details.
+func (m *ActivityMutation) ClearClockDetails() {
+	m.clock_details = nil
+	m.clearedFields[activity.FieldClockDetails] = struct{}{}
+}
+
+// ClockDetailsCleared returns if the field clock_details was cleared in this mutation.
+func (m *ActivityMutation) ClockDetailsCleared() bool {
+	_, ok := m.clearedFields[activity.FieldClockDetails]
+	return ok
+}
+
+// ResetClockDetails reset all changes of the "clock_details" field.
+func (m *ActivityMutation) ResetClockDetails() {
+	m.clock_details = nil
+	delete(m.clearedFields, activity.FieldClockDetails)
+}
+
 // SetAuthorID sets the author edge to User by id.
 func (m *ActivityMutation) SetAuthorID(id int) {
 	m.author = &id
@@ -1135,15 +1186,15 @@ func (m *ActivityMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ActivityMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, activity.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, activity.FieldUpdateTime)
 	}
-	if m.changed_field != nil {
-		fields = append(fields, activity.FieldChangedField)
+	if m.activity_type != nil {
+		fields = append(fields, activity.FieldActivityType)
 	}
 	if m.is_create != nil {
 		fields = append(fields, activity.FieldIsCreate)
@@ -1153,6 +1204,9 @@ func (m *ActivityMutation) Fields() []string {
 	}
 	if m.new_value != nil {
 		fields = append(fields, activity.FieldNewValue)
+	}
+	if m.clock_details != nil {
+		fields = append(fields, activity.FieldClockDetails)
 	}
 	return fields
 }
@@ -1166,14 +1220,16 @@ func (m *ActivityMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case activity.FieldUpdateTime:
 		return m.UpdateTime()
-	case activity.FieldChangedField:
-		return m.ChangedField()
+	case activity.FieldActivityType:
+		return m.ActivityType()
 	case activity.FieldIsCreate:
 		return m.IsCreate()
 	case activity.FieldOldValue:
 		return m.OldValue()
 	case activity.FieldNewValue:
 		return m.NewValue()
+	case activity.FieldClockDetails:
+		return m.ClockDetails()
 	}
 	return nil, false
 }
@@ -1187,14 +1243,16 @@ func (m *ActivityMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreateTime(ctx)
 	case activity.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case activity.FieldChangedField:
-		return m.OldChangedField(ctx)
+	case activity.FieldActivityType:
+		return m.OldActivityType(ctx)
 	case activity.FieldIsCreate:
 		return m.OldIsCreate(ctx)
 	case activity.FieldOldValue:
 		return m.OldOldValue(ctx)
 	case activity.FieldNewValue:
 		return m.OldNewValue(ctx)
+	case activity.FieldClockDetails:
+		return m.OldClockDetails(ctx)
 	}
 	return nil, fmt.Errorf("unknown Activity field %s", name)
 }
@@ -1218,12 +1276,12 @@ func (m *ActivityMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
-	case activity.FieldChangedField:
-		v, ok := value.(activity.ChangedField)
+	case activity.FieldActivityType:
+		v, ok := value.(activity.ActivityType)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChangedField(v)
+		m.SetActivityType(v)
 		return nil
 	case activity.FieldIsCreate:
 		v, ok := value.(bool)
@@ -1245,6 +1303,13 @@ func (m *ActivityMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNewValue(v)
+		return nil
+	case activity.FieldClockDetails:
+		v, ok := value.(activity.ClockDetails)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClockDetails(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Activity field %s", name)
@@ -1282,6 +1347,9 @@ func (m *ActivityMutation) ClearedFields() []string {
 	if m.FieldCleared(activity.FieldNewValue) {
 		fields = append(fields, activity.FieldNewValue)
 	}
+	if m.FieldCleared(activity.FieldClockDetails) {
+		fields = append(fields, activity.FieldClockDetails)
+	}
 	return fields
 }
 
@@ -1302,6 +1370,9 @@ func (m *ActivityMutation) ClearField(name string) error {
 	case activity.FieldNewValue:
 		m.ClearNewValue()
 		return nil
+	case activity.FieldClockDetails:
+		m.ClearClockDetails()
+		return nil
 	}
 	return fmt.Errorf("unknown Activity nullable field %s", name)
 }
@@ -1317,8 +1388,8 @@ func (m *ActivityMutation) ResetField(name string) error {
 	case activity.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
-	case activity.FieldChangedField:
-		m.ResetChangedField()
+	case activity.FieldActivityType:
+		m.ResetActivityType()
 		return nil
 	case activity.FieldIsCreate:
 		m.ResetIsCreate()
@@ -1328,6 +1399,9 @@ func (m *ActivityMutation) ResetField(name string) error {
 		return nil
 	case activity.FieldNewValue:
 		m.ResetNewValue()
+		return nil
+	case activity.FieldClockDetails:
+		m.ResetClockDetails()
 		return nil
 	}
 	return fmt.Errorf("unknown Activity field %s", name)
@@ -39049,6 +39123,7 @@ type UserMutation struct {
 	email                       *string
 	status                      *user.Status
 	role                        *user.Role
+	distance_unit               *user.DistanceUnit
 	clearedFields               map[string]struct{}
 	profile_photo               *int
 	clearedprofile_photo        bool
@@ -39478,6 +39553,43 @@ func (m *UserMutation) ResetRole() {
 	m.role = nil
 }
 
+// SetDistanceUnit sets the distance_unit field.
+func (m *UserMutation) SetDistanceUnit(uu user.DistanceUnit) {
+	m.distance_unit = &uu
+}
+
+// DistanceUnit returns the distance_unit value in the mutation.
+func (m *UserMutation) DistanceUnit() (r user.DistanceUnit, exists bool) {
+	v := m.distance_unit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDistanceUnit returns the old distance_unit value of the User.
+// If the User object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UserMutation) OldDistanceUnit(ctx context.Context) (v user.DistanceUnit, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDistanceUnit is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDistanceUnit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDistanceUnit: %w", err)
+	}
+	return oldValue.DistanceUnit, nil
+}
+
+// ResetDistanceUnit reset all changes of the "distance_unit" field.
+func (m *UserMutation) ResetDistanceUnit() {
+	m.distance_unit = nil
+}
+
 // SetProfilePhotoID sets the profile_photo edge to File by id.
 func (m *UserMutation) SetProfilePhotoID(id int) {
 	m.profile_photo = &id
@@ -39699,7 +39811,7 @@ func (m *UserMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, user.FieldCreateTime)
 	}
@@ -39723,6 +39835,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.role != nil {
 		fields = append(fields, user.FieldRole)
+	}
+	if m.distance_unit != nil {
+		fields = append(fields, user.FieldDistanceUnit)
 	}
 	return fields
 }
@@ -39748,6 +39863,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case user.FieldRole:
 		return m.Role()
+	case user.FieldDistanceUnit:
+		return m.DistanceUnit()
 	}
 	return nil, false
 }
@@ -39773,6 +39890,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldStatus(ctx)
 	case user.FieldRole:
 		return m.OldRole(ctx)
+	case user.FieldDistanceUnit:
+		return m.OldDistanceUnit(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -39837,6 +39956,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRole(v)
+		return nil
+	case user.FieldDistanceUnit:
+		v, ok := value.(user.DistanceUnit)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDistanceUnit(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -39932,6 +40058,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldRole:
 		m.ResetRole()
+		return nil
+	case user.FieldDistanceUnit:
+		m.ResetDistanceUnit()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -43222,6 +43351,7 @@ type WorkOrderTemplateMutation struct {
 	id                                     *int
 	name                                   *string
 	description                            *string
+	assignee_can_complete_work_order       *bool
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -43399,6 +43529,56 @@ func (m *WorkOrderTemplateMutation) ResetDescription() {
 	delete(m.clearedFields, workordertemplate.FieldDescription)
 }
 
+// SetAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field.
+func (m *WorkOrderTemplateMutation) SetAssigneeCanCompleteWorkOrder(b bool) {
+	m.assignee_can_complete_work_order = &b
+}
+
+// AssigneeCanCompleteWorkOrder returns the assignee_can_complete_work_order value in the mutation.
+func (m *WorkOrderTemplateMutation) AssigneeCanCompleteWorkOrder() (r bool, exists bool) {
+	v := m.assignee_can_complete_work_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssigneeCanCompleteWorkOrder returns the old assignee_can_complete_work_order value of the WorkOrderTemplate.
+// If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTemplateMutation) OldAssigneeCanCompleteWorkOrder(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAssigneeCanCompleteWorkOrder is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAssigneeCanCompleteWorkOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssigneeCanCompleteWorkOrder: %w", err)
+	}
+	return oldValue.AssigneeCanCompleteWorkOrder, nil
+}
+
+// ClearAssigneeCanCompleteWorkOrder clears the value of assignee_can_complete_work_order.
+func (m *WorkOrderTemplateMutation) ClearAssigneeCanCompleteWorkOrder() {
+	m.assignee_can_complete_work_order = nil
+	m.clearedFields[workordertemplate.FieldAssigneeCanCompleteWorkOrder] = struct{}{}
+}
+
+// AssigneeCanCompleteWorkOrderCleared returns if the field assignee_can_complete_work_order was cleared in this mutation.
+func (m *WorkOrderTemplateMutation) AssigneeCanCompleteWorkOrderCleared() bool {
+	_, ok := m.clearedFields[workordertemplate.FieldAssigneeCanCompleteWorkOrder]
+	return ok
+}
+
+// ResetAssigneeCanCompleteWorkOrder reset all changes of the "assignee_can_complete_work_order" field.
+func (m *WorkOrderTemplateMutation) ResetAssigneeCanCompleteWorkOrder() {
+	m.assignee_can_complete_work_order = nil
+	delete(m.clearedFields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+}
+
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
 func (m *WorkOrderTemplateMutation) AddPropertyTypeIDs(ids ...int) {
 	if m.property_types == nil {
@@ -43536,12 +43716,15 @@ func (m *WorkOrderTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, workordertemplate.FieldName)
 	}
 	if m.description != nil {
 		fields = append(fields, workordertemplate.FieldDescription)
+	}
+	if m.assignee_can_complete_work_order != nil {
+		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
 	}
 	return fields
 }
@@ -43555,6 +43738,8 @@ func (m *WorkOrderTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case workordertemplate.FieldDescription:
 		return m.Description()
+	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
+		return m.AssigneeCanCompleteWorkOrder()
 	}
 	return nil, false
 }
@@ -43568,6 +43753,8 @@ func (m *WorkOrderTemplateMutation) OldField(ctx context.Context, name string) (
 		return m.OldName(ctx)
 	case workordertemplate.FieldDescription:
 		return m.OldDescription(ctx)
+	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
+		return m.OldAssigneeCanCompleteWorkOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderTemplate field %s", name)
 }
@@ -43590,6 +43777,13 @@ func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
@@ -43624,6 +43818,9 @@ func (m *WorkOrderTemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(workordertemplate.FieldDescription) {
 		fields = append(fields, workordertemplate.FieldDescription)
 	}
+	if m.FieldCleared(workordertemplate.FieldAssigneeCanCompleteWorkOrder) {
+		fields = append(fields, workordertemplate.FieldAssigneeCanCompleteWorkOrder)
+	}
 	return fields
 }
 
@@ -43641,6 +43838,9 @@ func (m *WorkOrderTemplateMutation) ClearField(name string) error {
 	case workordertemplate.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
+		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate nullable field %s", name)
 }
@@ -43655,6 +43855,9 @@ func (m *WorkOrderTemplateMutation) ResetField(name string) error {
 		return nil
 	case workordertemplate.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case workordertemplate.FieldAssigneeCanCompleteWorkOrder:
+		m.ResetAssigneeCanCompleteWorkOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderTemplate field %s", name)
@@ -43791,6 +43994,7 @@ type WorkOrderTypeMutation struct {
 	id                                     *int
 	name                                   *string
 	description                            *string
+	assignee_can_complete_work_order       *bool
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
@@ -43968,6 +44172,56 @@ func (m *WorkOrderTypeMutation) DescriptionCleared() bool {
 func (m *WorkOrderTypeMutation) ResetDescription() {
 	m.description = nil
 	delete(m.clearedFields, workordertype.FieldDescription)
+}
+
+// SetAssigneeCanCompleteWorkOrder sets the assignee_can_complete_work_order field.
+func (m *WorkOrderTypeMutation) SetAssigneeCanCompleteWorkOrder(b bool) {
+	m.assignee_can_complete_work_order = &b
+}
+
+// AssigneeCanCompleteWorkOrder returns the assignee_can_complete_work_order value in the mutation.
+func (m *WorkOrderTypeMutation) AssigneeCanCompleteWorkOrder() (r bool, exists bool) {
+	v := m.assignee_can_complete_work_order
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAssigneeCanCompleteWorkOrder returns the old assignee_can_complete_work_order value of the WorkOrderType.
+// If the WorkOrderType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTypeMutation) OldAssigneeCanCompleteWorkOrder(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAssigneeCanCompleteWorkOrder is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAssigneeCanCompleteWorkOrder requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAssigneeCanCompleteWorkOrder: %w", err)
+	}
+	return oldValue.AssigneeCanCompleteWorkOrder, nil
+}
+
+// ClearAssigneeCanCompleteWorkOrder clears the value of assignee_can_complete_work_order.
+func (m *WorkOrderTypeMutation) ClearAssigneeCanCompleteWorkOrder() {
+	m.assignee_can_complete_work_order = nil
+	m.clearedFields[workordertype.FieldAssigneeCanCompleteWorkOrder] = struct{}{}
+}
+
+// AssigneeCanCompleteWorkOrderCleared returns if the field assignee_can_complete_work_order was cleared in this mutation.
+func (m *WorkOrderTypeMutation) AssigneeCanCompleteWorkOrderCleared() bool {
+	_, ok := m.clearedFields[workordertype.FieldAssigneeCanCompleteWorkOrder]
+	return ok
+}
+
+// ResetAssigneeCanCompleteWorkOrder reset all changes of the "assignee_can_complete_work_order" field.
+func (m *WorkOrderTypeMutation) ResetAssigneeCanCompleteWorkOrder() {
+	m.assignee_can_complete_work_order = nil
+	delete(m.clearedFields, workordertype.FieldAssigneeCanCompleteWorkOrder)
 }
 
 // AddPropertyTypeIDs adds the property_types edge to PropertyType by ids.
@@ -44152,12 +44406,15 @@ func (m *WorkOrderTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTypeMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, workordertype.FieldName)
 	}
 	if m.description != nil {
 		fields = append(fields, workordertype.FieldDescription)
+	}
+	if m.assignee_can_complete_work_order != nil {
+		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
 	}
 	return fields
 }
@@ -44171,6 +44428,8 @@ func (m *WorkOrderTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case workordertype.FieldDescription:
 		return m.Description()
+	case workordertype.FieldAssigneeCanCompleteWorkOrder:
+		return m.AssigneeCanCompleteWorkOrder()
 	}
 	return nil, false
 }
@@ -44184,6 +44443,8 @@ func (m *WorkOrderTypeMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldName(ctx)
 	case workordertype.FieldDescription:
 		return m.OldDescription(ctx)
+	case workordertype.FieldAssigneeCanCompleteWorkOrder:
+		return m.OldAssigneeCanCompleteWorkOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown WorkOrderType field %s", name)
 }
@@ -44206,6 +44467,13 @@ func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case workordertype.FieldAssigneeCanCompleteWorkOrder:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAssigneeCanCompleteWorkOrder(v)
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)
@@ -44240,6 +44508,9 @@ func (m *WorkOrderTypeMutation) ClearedFields() []string {
 	if m.FieldCleared(workordertype.FieldDescription) {
 		fields = append(fields, workordertype.FieldDescription)
 	}
+	if m.FieldCleared(workordertype.FieldAssigneeCanCompleteWorkOrder) {
+		fields = append(fields, workordertype.FieldAssigneeCanCompleteWorkOrder)
+	}
 	return fields
 }
 
@@ -44257,6 +44528,9 @@ func (m *WorkOrderTypeMutation) ClearField(name string) error {
 	case workordertype.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case workordertype.FieldAssigneeCanCompleteWorkOrder:
+		m.ClearAssigneeCanCompleteWorkOrder()
+		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType nullable field %s", name)
 }
@@ -44271,6 +44545,9 @@ func (m *WorkOrderTypeMutation) ResetField(name string) error {
 		return nil
 	case workordertype.FieldDescription:
 		m.ResetDescription()
+		return nil
+	case workordertype.FieldAssigneeCanCompleteWorkOrder:
+		m.ResetAssigneeCanCompleteWorkOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown WorkOrderType field %s", name)

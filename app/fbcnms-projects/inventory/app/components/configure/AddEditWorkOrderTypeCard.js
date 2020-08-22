@@ -17,12 +17,14 @@ import type {WorkOrderType} from '../../common/WorkOrder';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@fbcnms/ui/components/design-system/Button';
 import CheckListCategoryExpandingPanel from '../checklist/checkListCategory/CheckListCategoryExpandingPanel';
+import Checkbox from '@fbcnms/ui/components/design-system/Checkbox/Checkbox';
 import ChecklistCategoriesMutateDispatchContext from '../checklist/ChecklistCategoriesMutateDispatchContext';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTable';
 import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
+import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
 import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useCallback, useReducer, useState} from 'react';
@@ -77,6 +79,14 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
     marginRight: '8px',
   },
+  assigneeCanCompleteContainer: {
+    marginTop: '16px',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginRight: '8px',
+  },
 }));
 
 type Props = $ReadOnly<{|
@@ -101,6 +111,8 @@ const AddEditWorkOrderTypeCard = ({
     id: workOrderType?.id ?? generateTempId(),
     name: workOrderType?.name ?? '',
     description: workOrderType?.description,
+    assigneeCanCompleteWorkOrder:
+      workOrderType?.assigneeCanCompleteWorkOrder ?? true,
     numberOfWorkOrders: workOrderType?.numberOfWorkOrders ?? 0,
     propertyTypes: [],
     checklistCategoryDefinitions: [],
@@ -166,6 +178,12 @@ const AddEditWorkOrderTypeCard = ({
     setEditingWorkOrderType(workOrder => ({
       ...workOrder,
       description,
+    }));
+
+  const assigneeCanCompleteChanged = selection =>
+    setEditingWorkOrderType(workOrder => ({
+      ...workOrder,
+      assigneeCanCompleteWorkOrder: selection === 'checked',
     }));
 
   const onSaveClicked = () => {
@@ -259,6 +277,21 @@ const AddEditWorkOrderTypeCard = ({
               onNameChange={nameChanged}
               onDescriptionChange={descriptionChanged}
             />
+            <div className={classes.assigneeCanCompleteContainer}>
+              <FormField>
+                <Checkbox
+                  className={classes.checkbox}
+                  title={fbt(
+                    'The assignee of the work order can complete it',
+                    '',
+                  )}
+                  checked={
+                    editingWorkOrderType.assigneeCanCompleteWorkOrder ?? true
+                  }
+                  onChange={assigneeCanCompleteChanged}
+                />
+              </FormField>
+            </div>
           </ExpandingPanel>
           <ExpandingPanel title="Properties">
             <PropertyTypesTableDispatcher.Provider
@@ -287,6 +320,7 @@ export default createFragmentContainer(withAlert(AddEditWorkOrderTypeCard), {
       id
       name
       description
+      assigneeCanCompleteWorkOrder
       numberOfWorkOrders
       propertyTypes {
         id

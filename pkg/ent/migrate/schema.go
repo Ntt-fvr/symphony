@@ -7,8 +7,8 @@
 package migrate
 
 import (
-	"github.com/facebookincubator/ent/dialect/sql/schema"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebook/ent/schema/field"
 )
 
 var (
@@ -34,10 +34,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
+		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CLOCK_IN", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
 		{Name: "is_create", Type: field.TypeBool},
 		{Name: "old_value", Type: field.TypeString, Nullable: true},
 		{Name: "new_value", Type: field.TypeString, Nullable: true},
+		{Name: "clock_details", Type: field.TypeJSON, Nullable: true},
 		{Name: "activity_author", Type: field.TypeInt, Nullable: true},
 		{Name: "work_order_activities", Type: field.TypeInt, Nullable: true},
 	}
@@ -49,14 +50,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "activities_users_author",
-				Columns: []*schema.Column{ActivitiesColumns[7]},
+				Columns: []*schema.Column{ActivitiesColumns[8]},
 
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "activities_work_orders_activities",
-				Columns: []*schema.Column{ActivitiesColumns[8]},
+				Columns: []*schema.Column{ActivitiesColumns[9]},
 
 				RefColumns: []*schema.Column{WorkOrdersColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1596,6 +1597,7 @@ var (
 		{Name: "email", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "OWNER", "USER"}, Default: "USER"},
+		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -1756,6 +1758,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
 		{Name: "work_order_template_type", Type: field.TypeInt, Nullable: true},
 	}
 	// WorkOrderTemplatesTable holds the schema information for the "work_order_templates" table.
@@ -1766,7 +1769,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "work_order_templates_work_order_types_type",
-				Columns: []*schema.Column{WorkOrderTemplatesColumns[3]},
+				Columns: []*schema.Column{WorkOrderTemplatesColumns[4]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1778,6 +1781,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
 	}
 	// WorkOrderTypesTable holds the schema information for the "work_order_types" table.
 	WorkOrderTypesTable = &schema.Table{

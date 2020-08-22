@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
 )
 
@@ -37,9 +37,9 @@ type Todo struct {
 // TodoEdges holds the relations/edges for other nodes in the graph.
 type TodoEdges struct {
 	// Parent holds the value of the parent edge.
-	Parent *Todo `gqlgen:"parent"`
+	Parent *Todo
 	// Children holds the value of the children edge.
-	Children []*Todo `gqlgen:"children"`
+	Children []*Todo
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool

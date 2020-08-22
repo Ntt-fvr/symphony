@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
-	"github.com/facebookincubator/ent/schema/field"
+	"github.com/facebook/ent/dialect/sql/sqlgraph"
+	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -54,9 +54,9 @@ func (ac *ActivityCreate) SetNillableUpdateTime(t *time.Time) *ActivityCreate {
 	return ac
 }
 
-// SetChangedField sets the changed_field field.
-func (ac *ActivityCreate) SetChangedField(af activity.ChangedField) *ActivityCreate {
-	ac.mutation.SetChangedField(af)
+// SetActivityType sets the activity_type field.
+func (ac *ActivityCreate) SetActivityType(at activity.ActivityType) *ActivityCreate {
+	ac.mutation.SetActivityType(at)
 	return ac
 }
 
@@ -98,6 +98,20 @@ func (ac *ActivityCreate) SetNewValue(s string) *ActivityCreate {
 func (ac *ActivityCreate) SetNillableNewValue(s *string) *ActivityCreate {
 	if s != nil {
 		ac.SetNewValue(*s)
+	}
+	return ac
+}
+
+// SetClockDetails sets the clock_details field.
+func (ac *ActivityCreate) SetClockDetails(ad activity.ClockDetails) *ActivityCreate {
+	ac.mutation.SetClockDetails(ad)
+	return ac
+}
+
+// SetNillableClockDetails sets the clock_details field if the given value is not nil.
+func (ac *ActivityCreate) SetNillableClockDetails(ad *activity.ClockDetails) *ActivityCreate {
+	if ad != nil {
+		ac.SetClockDetails(*ad)
 	}
 	return ac
 }
@@ -195,12 +209,12 @@ func (ac *ActivityCreate) preSave() error {
 		v := activity.DefaultUpdateTime()
 		ac.mutation.SetUpdateTime(v)
 	}
-	if _, ok := ac.mutation.ChangedField(); !ok {
-		return &ValidationError{Name: "changed_field", err: errors.New("ent: missing required field \"changed_field\"")}
+	if _, ok := ac.mutation.ActivityType(); !ok {
+		return &ValidationError{Name: "activity_type", err: errors.New("ent: missing required field \"activity_type\"")}
 	}
-	if v, ok := ac.mutation.ChangedField(); ok {
-		if err := activity.ChangedFieldValidator(v); err != nil {
-			return &ValidationError{Name: "changed_field", err: fmt.Errorf("ent: validator failed for field \"changed_field\": %w", err)}
+	if v, ok := ac.mutation.ActivityType(); ok {
+		if err := activity.ActivityTypeValidator(v); err != nil {
+			return &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
 		}
 	}
 	if _, ok := ac.mutation.IsCreate(); !ok {
@@ -250,13 +264,13 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 		})
 		a.UpdateTime = value
 	}
-	if value, ok := ac.mutation.ChangedField(); ok {
+	if value, ok := ac.mutation.ActivityType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: activity.FieldChangedField,
+			Column: activity.FieldActivityType,
 		})
-		a.ChangedField = value
+		a.ActivityType = value
 	}
 	if value, ok := ac.mutation.IsCreate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -281,6 +295,14 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Column: activity.FieldNewValue,
 		})
 		a.NewValue = value
+	}
+	if value, ok := ac.mutation.ClockDetails(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: activity.FieldClockDetails,
+		})
+		a.ClockDetails = value
 	}
 	if nodes := ac.mutation.AuthorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
