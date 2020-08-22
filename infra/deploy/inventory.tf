@@ -5,6 +5,8 @@ locals {
   inventory_namespace = "default"
   # reuse existing inventory tag when none was provided
   inventory_tag = var.inventory_tag == "" ? data.terraform_remote_state.current.outputs.inventory_tag : var.inventory_tag
+  # s3 bucket path where exports are placed.
+  inventory_exports_path = "exports/"
 }
 
 # inventory service data store
@@ -91,6 +93,31 @@ data aws_iam_policy_document inventory_store {
   }
 }
 
+# iam role for inventory async
+module inventory_async_role {
+  source                    = "./modules/irsa"
+  role_name_prefix          = "InventoryAsyncRole"
+  role_path                 = local.eks_sa_role_path
+  role_policy               = data.aws_iam_policy_document.inventory_async.json
+  service_account_name      = "${local.inventory_name}-async"
+  service_account_namespace = local.inventory_namespace
+  oidc_provider_arn         = module.eks.oidc_provider_arn
+  tags                      = local.tags
+}
+
+# policy required by inventory async service
+data aws_iam_policy_document inventory_async {
+  statement {
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.inventory_store.arn}/${local.inventory_exports_path}/*",
+    ]
+  }
+}
+
 # inventory application
 resource helm_release inventory {
   name                = local.inventory_name
@@ -99,7 +126,7 @@ resource helm_release inventory {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "inventory"
-  version             = "2.0.0"
+  version             = "2.1.0"
   keyring             = ""
   max_history         = 100
 
@@ -117,22 +144,25 @@ resource helm_release inventory {
       helm_release.fluentd_elasticsearch.name,
       helm_release.fluentd_elasticsearch.namespace,
     )
-    front_mapbox_token = jsondecode(data.aws_secretsmanager_secret_version.mapbox.secret_string)["access_token"]
-    front_db_name      = local.auth_db_name
-    front_db_host      = module.db.this_db_instance_address
-    front_db_port      = module.db.this_db_instance_port
-    front_db_user      = module.db.this_db_instance_username
-    graph_db_host      = module.graph_db.this_db_instance_address
-    graph_db_port      = module.graph_db.this_db_instance_port
-    graph_db_user      = module.graph_db.this_db_instance_username
-    graph_replicas     = 3
-    async_replicas     = 3
-    store_bucket_url   = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
-    store_sa_name      = module.inventory_store_role.service_account_name
-    store_rolearn      = module.inventory_store_role.role_arn
-    orc8r_host         = "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}"
-    grafana_address    = "orc8r-user-grafana.${kubernetes_namespace.orc8r.id}:3000"
-    nats_server_url    = format("nats://%s-client.%s", helm_release.nats.name, helm_release.nats.namespace)
+    front_mapbox_token   = jsondecode(data.aws_secretsmanager_secret_version.mapbox.secret_string)["access_token"]
+    front_db_name        = local.auth_db_name
+    front_db_host        = module.db.this_db_instance_address
+    front_db_port        = module.db.this_db_instance_port
+    front_db_user        = module.db.this_db_instance_username
+    graph_db_host        = module.graph_db.this_db_instance_address
+    graph_db_port        = module.graph_db.this_db_instance_port
+    graph_db_user        = module.graph_db.this_db_instance_username
+    graph_replicas       = 3
+    async_replicas       = 3
+    store_bucket_url     = format("s3://%s?region=%s", aws_s3_bucket.inventory_store.id, aws_s3_bucket.inventory_store.region)
+    store_sa_name        = module.inventory_store_role.service_account_name
+    store_rolearn        = module.inventory_store_role.role_arn
+    async_sa_name        = module.inventory_async_role.service_account_namespace
+    async_rolearn        = module.inventory_async_role.role_arn
+    export_bucket_prefix = local.inventory_exports_path
+    orc8r_host           = "orc8r-nginx-proxy.${kubernetes_namespace.orc8r.id}"
+    grafana_address      = "orc8r-user-grafana.${kubernetes_namespace.orc8r.id}:3000"
+    nats_server_url      = format("nats://%s-client.%s", helm_release.nats.name, helm_release.nats.namespace)
   })]
 
   set_sensitive {

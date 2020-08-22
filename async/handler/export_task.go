@@ -9,6 +9,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -100,6 +101,10 @@ func (eh *ExportHandler) exportLocations(ctx context.Context, logger log.Logger,
 func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string) (err error) {
 	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{
 		ContentType: "text/csv",
+		ContentDisposition: fmt.Sprintf(
+			"attachment; filename=export-%s.csv",
+			time.Now().Format(time.RFC3339),
+		),
 		BeforeWrite: func(asFunc func(interface{}) bool) error {
 			var req *s3manager.UploadInput
 			if asFunc(&req) {

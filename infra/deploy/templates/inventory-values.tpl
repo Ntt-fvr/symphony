@@ -65,10 +65,14 @@ graph:
       - name: NATS_SERVER_URL
         value: ${nats_server_url}
 async:
-  deploymentAnnotations:
-    sidecar.jaegertracing.io/inject: "true"
   podDisruptionBudget:
     enabled: true
+  serviceAccount:
+    name: ${async_sa_name}
+    annotations:
+      eks.amazonaws.com/role-arn: ${async_rolearn}
+  deploymentAnnotations:
+    sidecar.jaegertracing.io/inject: "true"
   replicas: ${async_replicas}
   image:
     repository: ${docker_registry}/async
@@ -81,6 +85,9 @@ async:
     event:
       pub_url: nats://graph.event
       sub_url: nats://graph.event?queue=async
+    export:
+      bucket_url: ${store_bucket_url}
+      bucket_prefix: ${export_bucket_prefix}
     extraEnvVars:
       - name: NATS_SERVER_URL
         value: ${nats_server_url}

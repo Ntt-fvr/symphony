@@ -399,6 +399,11 @@ async:
       pub_url: ""
       sub_url: ""
 
+    # Export configuration
+    export:
+      bucket_url: ""
+      bucket_prefix: ""
+
     # Additional key/value pairs to be used as environment variables
     extraEnvVars: []
 
