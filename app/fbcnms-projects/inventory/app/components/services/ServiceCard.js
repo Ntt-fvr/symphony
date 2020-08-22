@@ -8,8 +8,8 @@
  * @format
  */
 
-import type ServiceCard_service from './__generated__/ServiceCard_service.graphql';
 import type {ContextRouter} from 'react-router-dom';
+import type {ServiceCard_service} from './__generated__/ServiceCard_service.graphql';
 import type {WithStyles} from '@material-ui/core';
 
 import Card from '@fbcnms/ui/components/design-system/Card/Card';
@@ -30,7 +30,6 @@ import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 
 type Props = {
-  // $FlowFixMe (T62907961) Relay flow types
   service: ServiceCard_service,
 } & WithStyles<typeof styles> &
   ContextRouter;

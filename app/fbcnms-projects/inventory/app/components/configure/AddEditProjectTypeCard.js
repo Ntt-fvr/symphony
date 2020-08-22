@@ -9,12 +9,9 @@
  */
 
 import type {AddEditProjectTypeCard_editingProjectType} from './__generated__/AddEditProjectTypeCard_editingProjectType.graphql';
-// $FlowFixMe (T62907961) Relay flow types
-import type {AddProjectTypeMutationVariables} from '../../mutations/__generated__/AddWorkOrderTypeMutation.graphql';
+import type {CreateProjectTypeMutationVariables} from './mutations/__generated__/CreateProjectTypeMutation.graphql';
 import type {EditProjectTypeInput} from './mutations/__generated__/EditProjectTypeMutation.graphql';
-// $FlowFixMe (T62907961) Relay flow types
-import type {EditProjectTypeMutationVariables} from '../../mutations/__generated__/EditWorkOrderTypeMutation.graphql';
-import type {ProjectTypeWorkOrderTemplatesPanel_workOrderTypes} from './__generated__/ProjectTypeWorkOrderTemplatesPanel_workOrderTypes.graphql';
+import type {EditProjectTypeMutationVariables} from './mutations/__generated__/EditProjectTypeMutation.graphql';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@fbcnms/ui/components/design-system/Button';
@@ -59,19 +56,13 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = {
-  workOrderTypes: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes,
   editingProjectType: ?AddEditProjectTypeCard_editingProjectType,
   onCancelClicked: () => void,
   onProjectTypeSaved: () => void,
 };
 
 const AddEditProjectTypeCard = (props: Props) => {
-  const {
-    editingProjectType,
-    onCancelClicked,
-    onProjectTypeSaved,
-    workOrderTypes,
-  } = props;
+  const {editingProjectType, onCancelClicked, onProjectTypeSaved} = props;
   const enqueueSnackbar = useEnqueueSnackbar();
   const classes = useStyles();
   const initialProjectTypeInput: EditProjectTypeInput = useMemo(
@@ -94,7 +85,7 @@ const AddEditProjectTypeCard = (props: Props) => {
     initialProjectTypeInput,
   );
 
-  const deleteTempId = (definition: {id: ?string}) => {
+  const deleteTempId = <T: {id: ?string}>(definition: T): T => {
     const newDef = {...definition};
     if (definition.id && definition.id.includes('@tmp')) {
       newDef['id'] = undefined;
@@ -103,7 +94,7 @@ const AddEditProjectTypeCard = (props: Props) => {
   };
 
   const onAdd = useCallback(() => {
-    const variables: AddProjectTypeMutationVariables = {
+    const variables: CreateProjectTypeMutationVariables = {
       input: {
         name: projectTypeInput.name,
         description: projectTypeInput.description ?? undefined,
@@ -115,9 +106,7 @@ const AddEditProjectTypeCard = (props: Props) => {
     };
 
     const updater = store => {
-      // $FlowFixMe (T62907961) Relay flow types
       const rootQuery = store.getRoot();
-      // $FlowFixMe (T62907961) Relay flow types
       const newNode = store.getRootField('createProjectType');
       if (!newNode) {
         return;
@@ -126,16 +115,15 @@ const AddEditProjectTypeCard = (props: Props) => {
         rootQuery,
         'WorkOrderProjectTypesQuery_projectTypes',
       );
-      const edge = ConnectionHandler.createEdge(
-        // $FlowFixMe (T62907961) Relay flow types
-        store,
-        // $FlowFixMe (T62907961) Relay flow types
-        types,
-        newNode,
-        'ProjectTypesEdge',
-      );
-      // $FlowFixMe (T62907961) Relay flow types
-      ConnectionHandler.insertEdgeAfter(types, edge);
+      if (types != null) {
+        const edge = ConnectionHandler.createEdge(
+          store,
+          types,
+          newNode,
+          'ProjectTypesEdge',
+        );
+        ConnectionHandler.insertEdgeAfter(types, edge);
+      }
     };
 
     const callbacks = {
@@ -269,7 +257,11 @@ const AddEditProjectTypeCard = (props: Props) => {
             selectedWorkOrderTypeIds={(projectTypeInput.workOrders ?? []).map(
               wo => wo.type,
             )}
-            workOrderTypes={workOrderTypes}
+            workOrderTypes={
+              editingProjectType?.workOrders
+                ?.map(it => it?.type)
+                .filter(Boolean) ?? []
+            }
             onWorkOrderTypesSelected={ids => {
               setProjectTypeInput(
                 update(projectTypeInput, {

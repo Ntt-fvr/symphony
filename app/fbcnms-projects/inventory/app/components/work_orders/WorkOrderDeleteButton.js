@@ -90,7 +90,6 @@ class WorkOrderDeleteButton extends React.Component<Props> {
 
         const updater = store => {
           this.props.onWorkOrderRemoved();
-          // $FlowFixMe (T62907961) Relay flow types
           store.delete(workOrderId);
         };
 

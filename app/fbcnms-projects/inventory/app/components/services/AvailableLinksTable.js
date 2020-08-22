@@ -8,10 +8,10 @@
  * @format
  */
 
+import type {AvailableLinksTable_links} from './__generated__/AvailableLinksTable_links.graphql';
 import type {Equipment, EquipmentPort, Link} from '../../common/Equipment';
 import type {WithStyles} from '@material-ui/core';
 
-import AvailableLinksTable_links from './__generated__/AvailableLinksTable_links.graphql';
 import EquipmentBreadcrumbs from '../equipment/EquipmentBreadcrumbs';
 import React from 'react';
 import Text from '@fbcnms/ui/components/design-system/Text';
@@ -71,7 +71,6 @@ const styles = {
 
 type Props = {
   equipment: Equipment,
-  // $FlowFixMe (T62907961) Relay flow types
   links: AvailableLinksTable_links,
   selectedLink: ?Link,
   onLinkSelected: (link: Link) => void,
@@ -84,7 +83,6 @@ type LinkPorts = Link & {
 
 const showLinksByOrder = (
   srcEquipment: Equipment,
-  // $FlowFixMe (T62907961) Relay flow types
   links: AvailableLinksTable_links,
 ): Array<LinkPorts> => {
   return links
@@ -95,8 +93,8 @@ const showLinksByOrder = (
     }))
     .map(link => {
       if (
-        link.srcPort.parentEquipment.id != srcEquipment.id &&
-        !link.srcPort.parentEquipment.positionHierarchy
+        link.srcPort?.parentEquipment.id != srcEquipment.id &&
+        !link.srcPort?.parentEquipment.positionHierarchy
           .map(position => position.parentEquipment.id)
           .includes(srcEquipment.id)
       ) {
@@ -110,8 +108,8 @@ const showLinksByOrder = (
     })
     .sort((linkA, linkB) =>
       sortLexicographically(
-        linkA.srcPort.definition.name,
-        linkB.srcPort.definition.name,
+        linkA.srcPort?.definition.name ?? '',
+        linkB.srcPort?.definition.name ?? '',
       ),
     );
 };

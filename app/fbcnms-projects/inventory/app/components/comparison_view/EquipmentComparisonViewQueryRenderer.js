@@ -13,12 +13,12 @@ import type {
   FilterValue,
   FiltersQuery,
 } from './ComparisonViewTypes';
+import type {PowerSearchEquipmentResultsTable_equipment} from './__generated__/PowerSearchEquipmentResultsTable_equipment.graphql';
+import type {PowerSearchLinkFirstEquipmentResultsTable_equipment} from '../services/__generated__/PowerSearchLinkFirstEquipmentResultsTable_equipment.graphql';
 
 import * as React from 'react';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import PowerSearchBar from '../power_search/PowerSearchBar';
-import PowerSearchEquipmentResultsTable_equipment from './__generated__/PowerSearchEquipmentResultsTable_equipment.graphql';
-import PowerSearchLinkFirstEquipmentResultsTable_equipment from '../services/__generated__/PowerSearchLinkFirstEquipmentResultsTable_equipment.graphql';
 import SearchIcon from '@material-ui/icons/Search';
 import Text from '@fbcnms/ui/components/design-system/Text';
 import WizardContext from '@fbcnms/ui/components/design-system/Wizard/WizardContext';
@@ -66,9 +66,8 @@ type Props = {
   showExport?: boolean,
   initialFilters?: FiltersQuery,
   children: (props: {
-    equipment:  // $FlowFixMe (T62907961) Relay flow types
+    equipment:
       | PowerSearchEquipmentResultsTable_equipment
-      // $FlowFixMe (T62907961) Relay flow types
       | PowerSearchLinkFirstEquipmentResultsTable_equipment,
   }) => React.Element<*>,
 };

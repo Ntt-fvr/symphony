@@ -90,7 +90,6 @@ class ProjectMoreActionsButton extends React.Component<Props> {
 
         const updater = store => {
           this.props.onProjectRemoved();
-          // $FlowFixMe (T62907961) Relay flow types
           store.delete(projectId);
         };
 

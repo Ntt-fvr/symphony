@@ -8,9 +8,8 @@
  * @format
  */
 
+import type {ChecklistCategoriesStateType} from '../checklist/ChecklistCategoriesMutateState';
 import type {
-  // $FlowFixMe (T62907961) Relay flow types
-  CheckListCategoryTable_list,
   WorkOrderStatus as GraphQLWorkOrderStatus,
   WorkOrderDetails_workOrder,
 } from './__generated__/WorkOrderDetails_workOrder.graphql.js';
@@ -69,7 +68,7 @@ type Props = {
   workOrderName: string,
   workOrder: WorkOrderDetails_workOrder,
   properties: Array<Property>,
-  checkListCategories: CheckListCategoryTable_list,
+  checkListCategories: ChecklistCategoriesStateType,
   locationId: ?string,
   onWorkOrderRemoved: () => void,
   onCancelClicked: () => void,

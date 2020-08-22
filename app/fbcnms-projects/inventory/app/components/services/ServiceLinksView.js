@@ -9,14 +9,13 @@
  */
 
 import type {Link} from '../../common/Equipment';
+import type {ServiceLinksView_links} from './__generated__/ServiceLinksView_links.graphql';
 
 import * as React from 'react';
 import ServiceLinkDetails from './ServiceLinkDetails';
-import ServiceLinksView_links from './__generated__/ServiceLinksView_links.graphql';
 import {createFragmentContainer, graphql} from 'react-relay';
 
 type Props = {
-  // $FlowFixMe (T62907961) Relay flow types
   links: ServiceLinksView_links,
   onDeleteLink: ?(link: Link) => void,
 };

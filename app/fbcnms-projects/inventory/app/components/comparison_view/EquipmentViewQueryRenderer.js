@@ -78,7 +78,7 @@ const EquipmentViewQueryRenderer = (props: Props) => {
         return (
           <div className={classes.searchResults}>
             <PowerSearchEquipmentResultsTable
-              equipment={edges.map(edge => edge.node)}
+              equipment={edges.map(edge => edge.node).filter(Boolean)}
               onEquipmentSelected={equipment => {
                 ServerLogger.info(
                   LogEvents.EQUIPMENT_COMPARISON_VIEW_EQUIPMENT_CLICKED,

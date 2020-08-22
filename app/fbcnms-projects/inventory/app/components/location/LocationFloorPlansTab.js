@@ -104,14 +104,13 @@ export default function LocationFloorPlansTab(props: Props) {
         },
       },
       store => {
-        // $FlowFixMe (T62907961) Relay flow types
         const newNode = store.getRootField('addFloorPlan');
-        // $FlowFixMe (T62907961) Relay flow types
         const entityProxy = store.get(location.id);
-        // $FlowFixMe (T62907961) Relay flow types
-        const floorPlans = entityProxy.getLinkedRecords(FLOOR_PLANS_KEY) || [];
-        // $FlowFixMe (T62907961) Relay flow types
-        entityProxy.setLinkedRecords([...floorPlans, newNode], FLOOR_PLANS_KEY);
+        const floorPlans = entityProxy?.getLinkedRecords(FLOOR_PLANS_KEY) || [];
+        entityProxy?.setLinkedRecords(
+          [...floorPlans, newNode],
+          FLOOR_PLANS_KEY,
+        );
         setFile(null);
       },
     );
@@ -153,16 +152,12 @@ export default function LocationFloorPlansTab(props: Props) {
                     },
                   },
                   store => {
-                    // $FlowFixMe (T62907961) Relay flow types
                     const proxy = store.get(location.id);
                     const records = proxy
-                      // $FlowFixMe (T62907961) Relay flow types
-                      .getLinkedRecords(FLOOR_PLANS_KEY)
-                      // $FlowFixMe (T62907961) Relay flow types
-                      .filter(f => f && f.id !== floorPlan.id);
-                    // $FlowFixMe (T62907961) Relay flow types
-                    proxy.setLinkedRecords(records, FLOOR_PLANS_KEY);
-                    // $FlowFixMe (T62907961) Relay flow types
+                      ?.getLinkedRecords(FLOOR_PLANS_KEY)
+                      // $FlowFixMe this should likely be getDataID instead of id
+                      ?.filter(f => f && f?.id !== floorPlan.id);
+                    proxy?.setLinkedRecords(records ?? [], FLOOR_PLANS_KEY);
                     store.delete(floorPlan.id);
                     axios.delete(DocumentAPIUrls.delete_url(floorPlan.id));
                   },

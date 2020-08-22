@@ -77,7 +77,6 @@ class ProjectTypeDeleteButton extends React.Component<Props> {
         };
 
         const updater = store => {
-          // $FlowFixMe (T62907961) Relay flow types
           store.delete(projectTypeId);
         };
 

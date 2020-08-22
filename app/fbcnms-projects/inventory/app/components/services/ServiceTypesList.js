@@ -105,8 +105,7 @@ class ServiceTypesList extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    // $FlowFixMe (T62907961) Relay flow types
-    fetchQuery(RelayEnvironment, serviceTypesQuery).then(response => {
+    fetchQuery(RelayEnvironment, serviceTypesQuery, {}).then(response => {
       this.setState({
         serviceTypes: response.serviceTypes.edges.map(y => y.node),
       });

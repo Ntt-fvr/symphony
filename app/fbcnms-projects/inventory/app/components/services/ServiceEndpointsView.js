@@ -9,14 +9,13 @@
  */
 
 import type {ServiceEndpoint} from '../../common/Service';
+import type {ServiceEndpointsView_endpoints} from './__generated__/ServiceEndpointsView_endpoints.graphql';
 
 import * as React from 'react';
 import ServiceEndpointDetails from './ServiceEndpointDetails';
-import ServiceEndpointsView_endpoints from './__generated__/ServiceEndpointsView_endpoints.graphql';
 import {createFragmentContainer, graphql} from 'react-relay';
 
 type Props = {
-  // $FlowFixMe (T62907961) Relay flow types
   endpoints: ServiceEndpointsView_endpoints,
   onDeleteEndpoint: ?(endpoint: ServiceEndpoint) => void,
 };
