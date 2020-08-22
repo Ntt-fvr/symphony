@@ -28,7 +28,7 @@ type NavigationOption = $Keys<typeof NAVIGATION_OPTIONS>;
 
 type Props = ContextRouter & {
   locationDetails: Location,
-  hideTypes: boolean,
+  hideTypes?: boolean,
   navigateOnClick?: ?NavigationOption,
   size?: 'default' | 'small' | 'large',
 };

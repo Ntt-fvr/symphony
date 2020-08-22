@@ -102,7 +102,6 @@ const ProjectComparisonView = () => {
       <ErrorBoundary>
         <ProjectCard
           projectId={selectedProjectCardId}
-          onProjectExecuted={() => {}}
           onProjectRemoved={() => navigateToProject(null)}
         />
       </ErrorBoundary>

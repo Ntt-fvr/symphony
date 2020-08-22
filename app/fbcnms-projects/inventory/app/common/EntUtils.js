@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {FragmentReference} from 'relay-runtime';
+import type {FragmentReference, PayloadError} from 'relay-runtime';
 
 import shortid from 'shortid';
 import {camelCase, startCase, toUpper} from 'lodash';
@@ -84,11 +84,14 @@ export const isTempId = (id: string): boolean => {
   return id != null && (id.startsWith(ENT_TEMP_ID_PREFIX) || isNaN(id));
 };
 
-export const getGraphError = (error: Error): string => {
+export const getGraphError = (error: PayloadError): string => {
   if (error.hasOwnProperty('source')) {
     // eslint-disable-next-line no-warning-comments
     // $FlowFixMe verified there's sources T58630520
-    return error.source.errors[0].message;
+    const errors = error?.source?.errors;
+    if (errors?.length > 0 && errors[0].message) {
+      return errors[0].message;
+    }
   }
   return error.message;
 };

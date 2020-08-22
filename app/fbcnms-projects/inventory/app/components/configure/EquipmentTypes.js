@@ -122,7 +122,6 @@ const EquipmentTypes = () => {
     return (
       <div className={classes.paper}>
         <AddEditEquipmentTypeCard
-          open={showAddEditCard}
           onClose={hideNewEquipmentTypeCard}
           onSave={saveEquipment}
           editingEquipmentType={editingEquipmentType}

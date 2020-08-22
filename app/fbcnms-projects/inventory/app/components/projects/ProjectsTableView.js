@@ -8,7 +8,6 @@
  * @format
  */
 
-import type {ContextRouter} from 'react-router-dom';
 import type {ProjectsTableView_projects} from './__generated__/ProjectsTableView_projects.graphql';
 
 import Button from '@fbcnms/ui/components/design-system/Button';
@@ -31,7 +30,7 @@ const useStyles = makeStyles(() => ({
 type Props = {
   projects: ProjectsTableView_projects,
   onProjectSelected: string => void,
-} & ContextRouter;
+};
 
 const ProjectsTableView = (props: Props) => {
   const {projects, onProjectSelected} = props;

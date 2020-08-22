@@ -91,7 +91,7 @@ describe('<EquipmentPortsTable />', () => {
       <TestWrapper>
         <EquipmentPortsTable
           equipment={rootEq}
-          workOrderId={emptyFunction}
+          workOrderId={null}
           onPortEquipmentClicked={emptyFunction}
           onParentLocationClicked={emptyFunction}
           onWorkOrderSelected={emptyFunction}

@@ -35,7 +35,6 @@ type Props = {
   onPortDefinitionsChanged?: ?(
     newPorts: PortDefinitionsTable_portDefinitions,
   ) => void,
-  isEditMode: boolean,
 };
 
 const PortDefinitionsTable = (props: Props) => {

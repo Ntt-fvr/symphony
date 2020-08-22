@@ -54,7 +54,7 @@ const styles = theme => ({
 
 type Props = {
   images: PhotosGrid_images,
-  onImageDeleted: (img: PhotosGrid_images) => void,
+  onImageDeleted: (img: $ElementType<PhotosGrid_images, number>) => void,
 } & WithStyles<typeof styles>;
 
 class PhotosGrid extends React.Component<Props> {

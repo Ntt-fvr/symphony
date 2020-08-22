@@ -21,7 +21,6 @@ import {withStyles} from '@material-ui/core/styles';
 
 type Props = {
   projectId: ?string,
-  onProjectExecuted: () => void,
   onProjectRemoved: () => void,
 } & WithStyles<typeof styles> &
   ContextRouter;
@@ -56,12 +55,7 @@ class ProjectCard extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      projectId,
-      onProjectExecuted,
-      onProjectRemoved,
-    } = this.props;
+    const {classes, projectId, onProjectRemoved} = this.props;
     return (
       <>
         <InventoryQueryRenderer
@@ -75,8 +69,6 @@ class ProjectCard extends React.Component<Props, State> {
               <div className={classes.root}>
                 <ProjectDetails
                   project={project}
-                  onProjectExecuted={onProjectExecuted}
-                  navigateToWorkOrder={this.navigateToWorkOrder}
                   onProjectRemoved={onProjectRemoved}
                 />
               </div>

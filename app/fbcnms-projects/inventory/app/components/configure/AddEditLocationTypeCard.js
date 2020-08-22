@@ -12,6 +12,7 @@ import type {AddEditLocationTypeCard_editingLocationType} from './__generated__/
 import type {AddLocationTypeMutationResponse} from '../../mutations/__generated__/AddLocationTypeMutation.graphql';
 import type {LocationType} from '../../common/LocationType';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
+import type {PayloadError} from 'relay-runtime';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
@@ -314,7 +315,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   };
 
   editLocationType = () => {
-    const onError = (error: Error) => {
+    const onError = (error: PayloadError) => {
       this.setState({isSaving: false});
       const errorMessage = getGraphError(error);
       this.props.enqueueSnackbar(errorMessage, {

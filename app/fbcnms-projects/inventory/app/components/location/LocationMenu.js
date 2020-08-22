@@ -10,7 +10,6 @@
 
 import type {LocationMenu_location} from './__generated__/LocationMenu_location.graphql';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
-import type {WithSnackbarProps} from 'notistack';
 
 import LocationMoveDialog from './LocationMoveDialog';
 import OptionsPopoverButton from '../OptionsPopoverButton';
@@ -32,8 +31,7 @@ type Props = $ReadOnly<
     onLocationRemoved: (location: LocationMenu_location) => void,
     popoverMenuClassName?: ?string,
     onVisibilityChange?: (isVisible: boolean) => void,
-  |} & WithSnackbarProps &
-    WithAlert,
+  |} & WithAlert,
 >;
 
 const useStyles = makeStyles(() => ({

@@ -9,7 +9,6 @@
  */
 
 import type {LocationSiteSurveyTab_location} from './__generated__/LocationSiteSurveyTab_location.graphql.js';
-import type {WithStyles} from '@material-ui/core';
 
 import Card from '@fbcnms/ui/components/design-system/Card/Card';
 import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
@@ -32,7 +31,7 @@ import {useState} from 'react';
 
 type Props = {
   location: LocationSiteSurveyTab_location,
-} & WithStyles<typeof styles>;
+};
 
 const styles = {
   content: {

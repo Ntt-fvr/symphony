@@ -20,7 +20,7 @@ import {withStyles} from '@material-ui/core/styles';
 
 type Props = {
   img: ImageAttachment_img,
-  onImageDeleted: (img: ImageAttachment_img) => void,
+  onImageDeleted: (img: $ElementType<ImageAttachment_img, number>) => void,
 } & WithStyles<typeof styles>;
 
 type State = {
