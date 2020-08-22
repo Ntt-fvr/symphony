@@ -5164,10 +5164,10 @@ babel-plugin-react-docgen@^4.1.0:
     react-docgen "^5.0.0"
     recast "^0.14.7"
 
-babel-plugin-relay@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-relay/-/babel-plugin-relay-8.0.0.tgz#4e412fe085c1aaf6a7d458a653f7a1d249cce067"
-  integrity sha512-modTJugk/BKmrZedRMq2B2Dx7JU/CbBlI0OY/fcs4pdt4rN5nimQEhwuuytltCYnUOHny5a/VemZwVReiH+sKg==
+babel-plugin-relay@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-relay/-/babel-plugin-relay-10.0.1.tgz#7e0e12768018ed48f22c623cc1db456989c92647"
+  integrity sha512-0tNZFLVitUbNIHb/PuLYCqW3IvxQK8m5MomrOd5fRy4ljG86fV0KLARjedUQhwRQf32ELU7ODgXFazLza4yZYQ==
   dependencies:
     babel-plugin-macros "^2.0.0"
 
@@ -15951,14 +15951,6 @@ relay-compiler@^10.0.1:
     signedsource "^1.0.0"
     yargs "^15.3.1"
 
-relay-runtime@0.0.0-master-86f5456a:
-  version "0.0.0-master-86f5456a"
-  resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-0.0.0-master-86f5456a.tgz#c68284ddffee2f693929d509329d26c5b38f8b3d"
-  integrity sha512-Q9fhcxHxOswsofTnGHnbG3D0wIgxPhfUxLh4UY6sSH9u7xo37bFbexuas2W1+vj/a3shDngIrQEQHdScv1uFbg==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    fbjs "^1.0.0"
-
 relay-runtime@10.0.1, relay-runtime@^10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-10.0.1.tgz#c83bd7e6e37234ece2a62a254e37dd199a4f74f9"
@@ -15967,22 +15959,14 @@ relay-runtime@10.0.1, relay-runtime@^10.0.1:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
 
-relay-runtime@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/relay-runtime/-/relay-runtime-8.0.0.tgz#52585a7bf04a710bd1bc664bfb0a60dbff3ce6e1"
-  integrity sha512-lOaZ7K/weTuCIt3pWHkxUG8s7iohI4IyYj65YV4sB9iX6W0uMvt626BFJ4GvNXFmd+OrgNnXcvx1mqRFqJaV8A==
+relay-test-utils@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/relay-test-utils/-/relay-test-utils-10.0.1.tgz#3864c262153bcd09e21930c4d371ca16c421aeb9"
+  integrity sha512-lcXdvfk6cp/LRChodk4/LW4WyZTltnnzaKeIw+8M4Ht8/1a0R9XI22iyHNpH3jdYdmksyK5xZ1l2pkm7ipXmEA==
   dependencies:
     "@babel/runtime" "^7.0.0"
     fbjs "^1.0.0"
-
-relay-test-utils@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/relay-test-utils/-/relay-test-utils-8.0.0.tgz#798922dd0ac77246882be82305b6a13f099ddb5d"
-  integrity sha512-n7b9EahBLuUQeq8B7ixy7mpnZa8SxF1QoRy19s3c6bfKyunvs2+IoAfKwxcK1+qPkI9n2qKe7k4Qqb9EmuPUqA==
-  dependencies:
-    "@babel/runtime" "^7.0.0"
-    fbjs "^1.0.0"
-    relay-runtime "8.0.0"
+    relay-runtime "10.0.1"
 
 remark-external-links@^6.0.0:
   version "6.1.0"
