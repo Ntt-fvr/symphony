@@ -84,6 +84,7 @@ fragment AddEditProjectTypeCard_editingProjectType on ProjectType {
     type {
       id
       name
+      ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
     }
   }
   properties {
@@ -115,6 +116,11 @@ fragment ProjectTypeCard_projectType on ProjectType {
   workOrders {
     id
   }
+}
+
+fragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType {
+  id
+  name
 }
 */
 
@@ -358,12 +364,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "21a3b3c35805686a83d2b73b41e16c94",
+    "cacheID": "cecebef98b6c4e10c24b43dc8eafcddc",
     "id": null,
     "metadata": {},
     "name": "CreateProjectTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation CreateProjectTypeMutation(\n  $input: AddProjectTypeInput!\n) {\n  createProjectType(input: $input) {\n    ...ProjectTypeCard_projectType\n    ...AddEditProjectTypeCard_editingProjectType\n    id\n  }\n}\n\nfragment AddEditProjectTypeCard_editingProjectType on ProjectType {\n  id\n  name\n  description\n  workOrders {\n    id\n    type {\n      id\n      name\n    }\n  }\n  properties {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n  }\n}\n\nfragment ProjectTypeCard_projectType on ProjectType {\n  id\n  name\n  description\n  numberOfProjects\n  workOrders {\n    id\n  }\n}\n"
+    "text": "mutation CreateProjectTypeMutation(\n  $input: AddProjectTypeInput!\n) {\n  createProjectType(input: $input) {\n    ...ProjectTypeCard_projectType\n    ...AddEditProjectTypeCard_editingProjectType\n    id\n  }\n}\n\nfragment AddEditProjectTypeCard_editingProjectType on ProjectType {\n  id\n  name\n  description\n  workOrders {\n    id\n    type {\n      id\n      name\n      ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes\n    }\n  }\n  properties {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n  }\n}\n\nfragment ProjectTypeCard_projectType on ProjectType {\n  id\n  name\n  description\n  numberOfProjects\n  workOrders {\n    id\n  }\n}\n\nfragment ProjectTypeWorkOrderTemplatesPanel_workOrderTypes on WorkOrderType {\n  id\n  name\n}\n"
   }
 };
 })();

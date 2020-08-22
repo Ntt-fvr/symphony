@@ -309,6 +309,7 @@ export default createFragmentContainer(AddEditProjectTypeCard, {
         type {
           id
           name
+          ...ProjectTypeWorkOrderTemplatesPanel_workOrderTypes
         }
       }
       properties {

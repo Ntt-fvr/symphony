@@ -40,12 +40,19 @@ mutation DeleteHyperlinkMutation(
   }
 }
 
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
 fragment HyperlinkTableRow_hyperlink on Hyperlink {
   id
   category
   url
   displayName
   createTime
+  ...HyperlinkTableMenu_hyperlink
 }
 */
 
@@ -146,12 +153,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6d3eb01e9bc72b9836f465c1231e3598",
+    "cacheID": "0fc995c7813121e9e5a2debc4ac5f652",
     "id": null,
     "metadata": {},
     "name": "DeleteHyperlinkMutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n}\n"
+    "text": "mutation DeleteHyperlinkMutation(\n  $id: ID!\n) {\n  deleteHyperlink(id: $id) {\n    ...HyperlinkTableRow_hyperlink\n    id\n  }\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  ...HyperlinkTableMenu_hyperlink\n}\n"
   }
 };
 })();

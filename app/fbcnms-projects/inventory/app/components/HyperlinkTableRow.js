@@ -125,6 +125,7 @@ export default withStyles(styles)(
         url
         displayName
         createTime
+        ...HyperlinkTableMenu_hyperlink
       }
     `,
   }),

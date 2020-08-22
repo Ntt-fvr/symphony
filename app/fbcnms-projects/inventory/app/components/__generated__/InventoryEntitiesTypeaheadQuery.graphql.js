@@ -15,6 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type EquipmentBreadcrumbs_equipment$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
 export type InventoryEntitiesTypeaheadQueryVariables = {|
   name: string
 |};
@@ -36,6 +37,7 @@ export type InventoryEntitiesTypeaheadQueryResponse = {|
             +name: string
           |},
         |}>,
+        +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
       |} | {|
         +__typename: "Equipment",
         +id: string,
@@ -84,6 +86,7 @@ query InventoryEntitiesTypeaheadQuery(
               id
             }
           }
+          ...LocationBreadcrumbsTitle_locationDetails
         }
         ... on Equipment {
           id
@@ -130,6 +133,23 @@ fragment EquipmentBreadcrumbs_equipment on Equipment {
         id
         name
       }
+    }
+  }
+}
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
     }
   }
 }
@@ -276,6 +296,11 @@ return {
                           (v7/*: any*/)
                         ],
                         "storageKey": null
+                      },
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "LocationBreadcrumbsTitle_locationDetails"
                       }
                     ],
                     "type": "Location",
@@ -452,16 +477,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3ddd9cbf1bf3ea22f7232e8d225bf679",
+    "cacheID": "dbff9c200702d03998d923afcd6dc095",
     "id": null,
     "metadata": {},
     "name": "InventoryEntitiesTypeaheadQuery",
     "operationKind": "query",
-    "text": "query InventoryEntitiesTypeaheadQuery(\n  $name: String!\n) {\n  searchForNode(name: $name, first: 10) {\n    edges {\n      node {\n        __typename\n        ... on Location {\n          id\n          externalId\n          name\n          locationType {\n            name\n            id\n          }\n          locationHierarchy {\n            id\n            name\n            locationType {\n              name\n              id\n            }\n          }\n        }\n        ... on Equipment {\n          id\n          externalId\n          name\n          equipmentType {\n            name\n            id\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        id\n      }\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query InventoryEntitiesTypeaheadQuery(\n  $name: String!\n) {\n  searchForNode(name: $name, first: 10) {\n    edges {\n      node {\n        __typename\n        ... on Location {\n          id\n          externalId\n          name\n          locationType {\n            name\n            id\n          }\n          locationHierarchy {\n            id\n            name\n            locationType {\n              name\n              id\n            }\n          }\n          ...LocationBreadcrumbsTitle_locationDetails\n        }\n        ... on Equipment {\n          id\n          externalId\n          name\n          equipmentType {\n            name\n            id\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        id\n      }\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7738e72176118873e296e7140a8d048b';
+(node/*: any*/).hash = '9f94d06d3fb8a17c75633ca24ccd6f66';
 
 module.exports = node;

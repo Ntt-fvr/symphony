@@ -550,6 +550,7 @@ export default withRouter(
               comments {
                 ...CommentsActivitiesBox_comments
               }
+              ...ProjectMoreActionsButton_project
             }
           `,
         }),

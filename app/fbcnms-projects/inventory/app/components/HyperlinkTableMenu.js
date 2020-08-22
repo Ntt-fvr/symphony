@@ -125,7 +125,6 @@ export default withAlert(
           id
           displayName
           url
-          ...HyperlinkTableRow_hyperlink
         }
       `,
     }),

@@ -43,6 +43,7 @@ const inventoryEntitiesTypeaheadQuery = graphql`
                 name
               }
             }
+            ...LocationBreadcrumbsTitle_locationDetails
           }
           ... on Equipment {
             id

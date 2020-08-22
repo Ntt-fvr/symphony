@@ -14,6 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref = any;
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type AddEditProjectTypeCard_editingProjectType$ref: FragmentReference;
@@ -27,6 +28,7 @@ export type AddEditProjectTypeCard_editingProjectType = {|
     +type: {|
       +id: string,
       +name: string,
+      +$fragmentRefs: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$ref,
     |},
   |}>,
   +properties: $ReadOnlyArray<{|
@@ -107,7 +109,12 @@ return {
           "plural": false,
           "selections": [
             (v0/*: any*/),
-            (v1/*: any*/)
+            (v1/*: any*/),
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "ProjectTypeWorkOrderTemplatesPanel_workOrderTypes"
+            }
           ],
           "storageKey": null
         }
@@ -238,6 +245,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f6548d7e41754f5dac29d7233ec2629b';
+(node/*: any*/).hash = '5ca97f35079eff8213de17a78ba0e716';
 
 module.exports = node;
