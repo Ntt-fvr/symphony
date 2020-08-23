@@ -9,10 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"time"
 
+	"github.com/alecthomas/kong"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 const (
@@ -32,70 +34,43 @@ type operationMessage struct {
 }
 
 func main() {
-	dialer := websocket.DefaultDialer
-	kingpin.Flag(
-		"connect-timeout", "Maximum time allowed for connection.",
-	).
-		Default("30s").
-		DurationVar(&dialer.HandshakeTimeout)
-	kingpin.Flag(
-		"compressed",
-		"Enable websocket compression.",
-	).
-		BoolVar(&dialer.EnableCompression)
-	insecure := kingpin.Flag(
-		"insecure",
-		"Allow insecure server connections when using SSL.",
-	).
-		Short('k').
-		Bool()
-	verbose := kingpin.Flag(
-		"verbose",
-		"Make the operation more talkative.",
-	).
-		Short('v').
-		Bool()
-	auth := kingpin.Flag(
-		"auth",
-		"Server user and password.",
-	).
-		PlaceHolder("<user:password>").
-		Short('u').
-		Required().
-		String()
-	query := kingpin.Flag(
-		"query",
-		"Server subscription query.",
-	).
-		Short('q').
-		PlaceHolder("<query>").
-		Required().
-		String()
-	url := kingpin.Arg(
-		"url",
-		"Server url.",
-	).
-		Required().
-		URL()
-	kingpin.CommandLine.HelpFlag.Short('h')
-	kingpin.Parse()
+	var cli struct {
+		ConnectTimeout time.Duration `default:"30s" help:"Maximum time allowed for connection."`
+		Compressed     bool          `help:"Enable websocket compression."`
+		Insecure       bool          `short:"k" help:"Allow insecure server connections when using SSL."`
+		Verbose        bool          `short:"v" help:"Make the operation more talkative."`
+		User           string        `short:"u" xor:"auth" placeholder:"<user:password>" help:"Server user and password."`
+		Bearer         string        `xor:"auth" placeholder:"<token>" help:"OAuth 2 Bearer Token."`
+		Query          string        `short:"q" required placeholder:"<query>" help:"Server subscription query."`
+		URL            *url.URL      `arg required help:"Server URL."`
+	}
+	kong.Parse(&cli, kong.Description("A GraphQL subscription testing client."))
 
 	cfg := zap.NewDevelopmentConfig()
-	if !*verbose {
+	if !cli.Verbose {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
 	}
 	logger, _ := cfg.Build(zap.AddStacktrace(zap.FatalLevel + 1))
 
 	header := make(http.Header)
-	header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(*auth)))
+	if cli.User != "" {
+		header.Set("Authorization",
+			"Basic "+base64.StdEncoding.EncodeToString([]byte(cli.User)),
+		)
+	} else if cli.Bearer != "" {
+		header.Set("Authorization", "Bearer "+cli.Bearer)
+	}
 
+	dialer := websocket.DefaultDialer
+	dialer.HandshakeTimeout = cli.ConnectTimeout
+	dialer.EnableCompression = cli.Compressed
 	dialer.Subprotocols = []string{"graphql-ws"}
-	if *insecure {
+	if cli.Insecure {
 		dialer.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	logger.Debug("dialing to endpoint", zap.Stringer("url", *url))
-	conn, rsp, err := dialer.Dial((*url).String(), header)
+	logger.Debug("dialing to endpoint", zap.Stringer("url", cli.URL))
+	conn, rsp, err := dialer.Dial(cli.URL.String(), header)
 	if err != nil {
 		fields := []zap.Field{zap.Error(err)}
 		if rsp != nil {
@@ -111,8 +86,14 @@ func main() {
 	rsp.Body.Close()
 	defer conn.Close()
 
+	initMsg := operationMessage{Type: connectionInitMsg}
+	if authorization := header.Get("Authorization"); authorization != "" {
+		initMsg.Payload, _ = json.Marshal(map[string]string{
+			"Authorization": authorization,
+		})
+	}
 	logger.Debug("writing init message")
-	if err := conn.WriteJSON(operationMessage{Type: connectionInitMsg}); err != nil {
+	if err := conn.WriteJSON(initMsg); err != nil {
 		logger.Fatal("cannot write init message", zap.Error(err))
 	}
 
@@ -134,11 +115,11 @@ func main() {
 	}
 	logger.Debug("received keepalive message")
 
-	payload, err := json.Marshal(map[string]interface{}{"query": query})
+	payload, err := json.Marshal(map[string]string{"query": cli.Query})
 	if err != nil {
 		logger.Fatal("cannot marshal start message payload", zap.Error(err))
 	}
-	logger.Debug("writing start message", zap.Stringp("query", query))
+	logger.Debug("writing start message", zap.String("query", cli.Query))
 	if err = conn.WriteJSON(operationMessage{
 		Type:    startMsg,
 		ID:      "1",

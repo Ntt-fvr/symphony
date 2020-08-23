@@ -24,20 +24,20 @@ const (
 )
 
 // AddFlagsVar adds the flags used by this package to the Kingpin application.
-func AddFlagsVar(a *kingpin.Application, config *Config) {
+func AddFlagsVar(a *kingpin.Application, cfg *Config) {
 	a.Flag(LevelFlagName, LevelFlagHelp).
 		Envar(LevelFlagEnvar).
 		Default("info").
-		SetValue(&config.Level)
+		SetValue(&cfg.Level)
 	a.Flag(FormatFlagName, FormatFlagHelp).
 		Envar(FormatFlagEnvar).
 		Default("console").
-		SetValue(&config.Format)
+		EnumVar(&cfg.Format, "console", "json")
 }
 
 // AddFlags adds the flags used by this package to the Kingpin application.
 func AddFlags(a *kingpin.Application) *Config {
-	config := &Config{}
-	AddFlagsVar(a, config)
-	return config
+	cfg := &Config{}
+	AddFlagsVar(a, cfg)
+	return cfg
 }
