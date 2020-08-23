@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTestLogger(t *testing.T) {
-	assert.Implements(t, (*logtest.TestingT)(nil), &testing.T{})
-	assert.Implements(t, (*logtest.TestingT)(nil), &testing.B{})
+	require.Implements(t, (*logtest.TestingT)(nil), &testing.T{})
+	require.Implements(t, (*logtest.TestingT)(nil), &testing.B{})
 	logger := logtest.NewTestLogger(t)
-	assert.Equal(t, logger.Background(), logger.For(context.Background()))
+	require.Equal(t, logger.Background(), logger.For(context.Background()))
 }

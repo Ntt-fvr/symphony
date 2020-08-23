@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -21,9 +20,9 @@ func TestFlags(t *testing.T) {
 		"--" + log.LevelFlagName, "error",
 		"--" + log.FormatFlagName, "json",
 	})
-	assert.NoError(t, err)
-	assert.Equal(t, "error", c.Level.String())
-	assert.Equal(t, "json", c.Format.String())
+	require.NoError(t, err)
+	require.Equal(t, "error", c.Level.String())
+	require.Equal(t, "json", c.Format)
 }
 
 func TestEnvarFlags(t *testing.T) {
@@ -36,9 +35,9 @@ func TestEnvarFlags(t *testing.T) {
 	a := kingpin.New(t.Name(), "")
 	c := log.AddFlags(a)
 	_, err = a.Parse(nil)
-	assert.NoError(t, err)
-	assert.Equal(t, "debug", c.Level.String())
-	assert.Equal(t, "json", c.Format.String())
+	require.NoError(t, err)
+	require.Equal(t, "debug", c.Level.String())
+	require.Equal(t, "json", c.Format)
 }
 
 func TestBadFlags(t *testing.T) {
@@ -46,9 +45,9 @@ func TestBadFlags(t *testing.T) {
 		a := kingpin.New(t.Name(), "")
 		_ = log.AddFlags(a)
 		_, err := a.Parse([]string{
-			"--" + log.LevelFlagName, "fatal",
+			"--" + log.LevelFlagName, "foobar",
 		})
-		assert.EqualError(t, err, `unrecognized level: "fatal"`)
+		require.EqualError(t, err, `unrecognized level: "foobar"`)
 	})
 	t.Run("Format", func(t *testing.T) {
 		a := kingpin.New(t.Name(), "")
@@ -56,6 +55,6 @@ func TestBadFlags(t *testing.T) {
 		_, err := a.Parse([]string{
 			"--" + log.FormatFlagName, "fmt",
 		})
-		assert.EqualError(t, err, `unrecognized format: "fmt"`)
+		require.EqualError(t, err, `enum value must be one of console,json, got 'fmt'`)
 	})
 }

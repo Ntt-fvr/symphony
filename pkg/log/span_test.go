@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
@@ -44,8 +43,8 @@ func TestSpanCoreCheck(t *testing.T) {
 			level:   zap.DebugLevel,
 			expect: func(t *testing.T, spans []*trace.SpanData) {
 				require.Len(t, spans, 1)
-				assert.Empty(t, spans[0].Attributes)
-				assert.Empty(t, spans[0].Annotations)
+				require.Empty(t, spans[0].Attributes)
+				require.Empty(t, spans[0].Annotations)
 			},
 		},
 		{
@@ -53,7 +52,7 @@ func TestSpanCoreCheck(t *testing.T) {
 			sampler: trace.NeverSample(),
 			level:   zap.ErrorLevel,
 			expect: func(t *testing.T, spans []*trace.SpanData) {
-				assert.Empty(t, spans)
+				require.Empty(t, spans)
 			},
 		},
 		{
@@ -62,7 +61,7 @@ func TestSpanCoreCheck(t *testing.T) {
 			level:   zap.InfoLevel,
 			expect: func(t *testing.T, spans []*trace.SpanData) {
 				require.Len(t, spans, 1)
-				assert.Len(t, spans[0].Annotations, 1)
+				require.Len(t, spans[0].Annotations, 1)
 			},
 		},
 	}
@@ -105,26 +104,26 @@ func TestSpanCoreWith(t *testing.T) {
 
 	span.End()
 	spans := exporter.spans
-	assert.Len(t, spans, 1)
+	require.Len(t, spans, 1)
 
 	annotations := spans[0].Annotations
-	assert.Len(t, annotations, len(loggers))
+	require.Len(t, annotations, len(loggers))
 
-	assert.Len(t, annotations[0].Attributes, 2)
-	assert.Equal(t, "root", annotations[0].Attributes["root"])
+	require.Len(t, annotations[0].Attributes, 2)
+	require.Equal(t, "root", annotations[0].Attributes["root"])
 
-	assert.Len(t, annotations[1].Attributes, 3)
-	assert.Equal(t, "root", annotations[1].Attributes["root"])
-	assert.Equal(t, "left", annotations[1].Attributes["left"])
+	require.Len(t, annotations[1].Attributes, 3)
+	require.Equal(t, "root", annotations[1].Attributes["root"])
+	require.Equal(t, "left", annotations[1].Attributes["left"])
 
-	assert.Len(t, annotations[2].Attributes, 3)
-	assert.Equal(t, "root", annotations[2].Attributes["root"])
-	assert.Equal(t, "right", annotations[2].Attributes["right"])
+	require.Len(t, annotations[2].Attributes, 3)
+	require.Equal(t, "root", annotations[2].Attributes["root"])
+	require.Equal(t, "right", annotations[2].Attributes["right"])
 
-	assert.Len(t, annotations[3].Attributes, 4)
-	assert.Equal(t, "root", annotations[3].Attributes["root"])
-	assert.Equal(t, "left", annotations[3].Attributes["left"])
-	assert.Equal(t, "leaf", annotations[3].Attributes["leaf"])
+	require.Len(t, annotations[3].Attributes, 4)
+	require.Equal(t, "root", annotations[3].Attributes["root"])
+	require.Equal(t, "left", annotations[3].Attributes["left"])
+	require.Equal(t, "leaf", annotations[3].Attributes["leaf"])
 }
 
 type loggable struct{ bool }
@@ -176,29 +175,29 @@ func TestSpanCoreWrite(t *testing.T) {
 	annotations := spans[0].Annotations
 	require.Len(t, annotations, 1)
 	annotation := annotations[0]
-	assert.Equal(t, true, annotation.Attributes["b"])
-	assert.EqualValues(t, math.Float32bits(math.Pi), annotation.Attributes["f32"])
-	assert.EqualValues(t, math.Float64bits(math.E), annotation.Attributes["f64"])
-	assert.EqualValues(t, 0, annotation.Attributes["i"])
-	assert.EqualValues(t, -8, annotation.Attributes["i8"])
-	assert.EqualValues(t, -16, annotation.Attributes["i16"])
-	assert.EqualValues(t, -32, annotation.Attributes["i32"])
-	assert.EqualValues(t, -64, annotation.Attributes["i64"])
-	assert.EqualValues(t, 0xbadbeef, annotation.Attributes["ptr"])
-	assert.EqualValues(t, 0, annotation.Attributes["u"])
-	assert.EqualValues(t, 8, annotation.Attributes["u8"])
-	assert.EqualValues(t, 16, annotation.Attributes["u16"])
-	assert.EqualValues(t, 32, annotation.Attributes["u32"])
-	assert.EqualValues(t, 64, annotation.Attributes["u64"])
-	assert.Equal(t, "(1+1i)", annotation.Attributes["c64"])
-	assert.Equal(t, "(2+2i)", annotation.Attributes["c128"])
-	assert.Equal(t, "1.5s", annotation.Attributes["duration"])
-	assert.NotEmpty(t, annotation.Attributes["date"])
-	assert.Equal(t, "BQQD", annotation.Attributes["bin"])
-	assert.Equal(t, "\x01\x02\x03", annotation.Attributes["bytes"])
-	assert.Equal(t, "[1 2 3]", annotation.Attributes["numbers"])
-	assert.Equal(t, "[true true false]", annotation.Attributes["bools"])
-	assert.Equal(t, "map[loggable:yes]", annotation.Attributes["obj"])
+	require.Equal(t, true, annotation.Attributes["b"])
+	require.EqualValues(t, math.Float32bits(math.Pi), annotation.Attributes["f32"])
+	require.EqualValues(t, math.Float64bits(math.E), annotation.Attributes["f64"])
+	require.EqualValues(t, 0, annotation.Attributes["i"])
+	require.EqualValues(t, -8, annotation.Attributes["i8"])
+	require.EqualValues(t, -16, annotation.Attributes["i16"])
+	require.EqualValues(t, -32, annotation.Attributes["i32"])
+	require.EqualValues(t, -64, annotation.Attributes["i64"])
+	require.EqualValues(t, 0xbadbeef, annotation.Attributes["ptr"])
+	require.EqualValues(t, 0, annotation.Attributes["u"])
+	require.EqualValues(t, 8, annotation.Attributes["u8"])
+	require.EqualValues(t, 16, annotation.Attributes["u16"])
+	require.EqualValues(t, 32, annotation.Attributes["u32"])
+	require.EqualValues(t, 64, annotation.Attributes["u64"])
+	require.Equal(t, "(1+1i)", annotation.Attributes["c64"])
+	require.Equal(t, "(2+2i)", annotation.Attributes["c128"])
+	require.Equal(t, "1.5s", annotation.Attributes["duration"])
+	require.NotEmpty(t, annotation.Attributes["date"])
+	require.Equal(t, "BQQD", annotation.Attributes["bin"])
+	require.Equal(t, "\x01\x02\x03", annotation.Attributes["bytes"])
+	require.Equal(t, "[1 2 3]", annotation.Attributes["numbers"])
+	require.Equal(t, "[true true false]", annotation.Attributes["bools"])
+	require.Equal(t, "map[loggable:yes]", annotation.Attributes["obj"])
 }
 
 func TestSpanCoreOnPanic(t *testing.T) {
@@ -208,12 +207,12 @@ func TestSpanCoreOnPanic(t *testing.T) {
 		trace.WithSampler(trace.AlwaysSample()))
 
 	logger := zap.New(newSpanCore(span), zap.AddStacktrace(zap.PanicLevel))
-	assert.Panics(t, func() { logger.Panic("oh no!") })
+	require.Panics(t, func() { logger.Panic("oh no!") })
 	span.End()
 
 	spans := exporter.spans
 	require.Len(t, spans, 1)
-	assert.Equal(t, true, spans[0].Attributes["error"])
+	require.Equal(t, true, spans[0].Attributes["error"])
 	annotations := spans[0].Annotations
 	require.Len(t, annotations, 1)
 	var annotation *trace.Annotation
@@ -227,11 +226,11 @@ func TestSpanCoreOnPanic(t *testing.T) {
 		return false
 	})
 	require.NotNil(t, annotation.Attributes)
-	assert.Equal(t, "panic", annotation.Attributes["level"])
-	assert.NotEmpty(t, annotation.Attributes["stack"])
+	require.Equal(t, "panic", annotation.Attributes["level"])
+	require.NotEmpty(t, annotation.Attributes["stack"])
 }
 
 func TestSpanCoreSync(t *testing.T) {
 	core := newSpanCore(nil)
-	assert.NoError(t, core.Sync())
+	require.NoError(t, core.Sync())
 }

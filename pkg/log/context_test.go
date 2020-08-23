@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
 )
@@ -22,7 +22,7 @@ func TestLoggerFieldContext(t *testing.T) {
 	ctx = log.NewFieldsContext(ctx, zap.String("lang", "go"))
 	logger.For(ctx).Info("test message", zap.Int("speed", 42))
 
-	assert.Equal(t, 1, o.
+	require.Equal(t, 1, o.
 		FilterMessage("test message").
 		FilterField(zap.String("name", "test")).
 		FilterField(zap.String("lang", "go")).

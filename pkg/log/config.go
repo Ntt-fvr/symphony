@@ -11,52 +11,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// AllowedLevel is a settable identifier for the
-// minimum level a log entry must have.
-type AllowedLevel zapcore.Level
-
-// String returns a ASCII representation of the allowed log level.
-func (l AllowedLevel) String() string {
-	return (zapcore.Level)(l).String()
-}
-
-// Set updates the value of the allowed level.
-func (l *AllowedLevel) Set(s string) error {
-	var level zapcore.Level
-	if err := level.Set(s); err != nil {
-		return err
-	}
-	if level > zapcore.ErrorLevel {
-		return fmt.Errorf("unrecognized level: %q", s)
-	}
-	*l = AllowedLevel(level)
-	return nil
-}
-
-// AllowedFormat is a settable identifier for the output
-// format that the logger can have.
-type AllowedFormat string
-
-// String returns a ASCII representation of the allowed log format.
-func (f AllowedFormat) String() string {
-	return string(f)
-}
-
-// Set updates the value of the allowed format.
-func (f *AllowedFormat) Set(s string) error {
-	switch s {
-	case "console", "json":
-		*f = AllowedFormat(s)
-	default:
-		return fmt.Errorf("unrecognized format: %q", s)
-	}
-	return nil
-}
-
 // Config is a struct containing configurable settings for the logger.
 type Config struct {
-	Level  AllowedLevel  `env:"LEVEL" long:"level" default:"info" description:"Only log messages with the given severity or above."`
-	Format AllowedFormat `env:"FORMAT" long:"format" default:"console" choice:"console" choice:"json" description:"Output format of log messages."`
+	Level  zapcore.Level `name:"log.level" env:"LOG_LEVEL" default:"info" help:"Only log messages with the given severity or above."`
+	Format string        `name:"log.format" env:"LOG_FORMAT" default:"console" enum:"console,json" help:"Output format of log messages."`
 }
 
 // empty returns true when the config is equal to its zero value.
@@ -78,7 +36,7 @@ func New(config Config) (Logger, error) {
 	default:
 		return nil, fmt.Errorf("unrecognized format: %q", config.Format)
 	}
-	cfg.Level = zap.NewAtomicLevelAt(zapcore.Level(config.Level))
+	cfg.Level = zap.NewAtomicLevelAt(config.Level)
 	logger, err := cfg.Build(zap.AddStacktrace(zap.DPanicLevel))
 	if err != nil {
 		return nil, fmt.Errorf("building logger: %w", err)

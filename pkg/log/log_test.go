@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
@@ -19,15 +18,15 @@ import (
 func TestDefaultLogger(t *testing.T) {
 	core, o := observer.New(zap.InfoLevel)
 	logger := log.NewDefaultLogger(zap.New(core))
-	assert.Implements(t, (*log.Logger)(nil), logger)
+	require.Implements(t, (*log.Logger)(nil), logger)
 
 	msg := "context-less"
 	logger.Background().Info(msg)
-	assert.Len(t, o.TakeAll(), 1)
+	require.Len(t, o.TakeAll(), 1)
 
 	ctx := context.Background()
 	logger.For(ctx).Warn(msg)
-	assert.Equal(t, 1, o.FilterMessage(msg).Len())
+	require.Equal(t, 1, o.FilterMessage(msg).Len())
 
 	exporter := &testExporter{}
 	trace.RegisterExporter(exporter)
@@ -40,18 +39,18 @@ func TestDefaultLogger(t *testing.T) {
 	logger.For(ctx).Info(msg, field)
 	span.End()
 
-	assert.Equal(t, 1, o.FilterField(field).FilterMessage(msg).Len())
+	require.Equal(t, 1, o.FilterField(field).FilterMessage(msg).Len())
 	spans := exporter.spans
 	require.Len(t, spans, 1)
 	annotations := spans[0].Annotations
 	require.Len(t, annotations, 1)
-	assert.Equal(t, msg, annotations[0].Message)
-	assert.EqualValues(t, 42, annotations[0].Attributes["result"])
+	require.Equal(t, msg, annotations[0].Message)
+	require.EqualValues(t, 42, annotations[0].Attributes["result"])
 }
 
 func TestNopFactory(t *testing.T) {
 	logger := log.NewNopLogger()
-	assert.Implements(t, (*log.Logger)(nil), logger)
-	assert.EqualValues(t, zap.NewNop(), logger.Background())
-	assert.EqualValues(t, zap.NewNop(), logger.For(context.Background()))
+	require.Implements(t, (*log.Logger)(nil), logger)
+	require.EqualValues(t, zap.NewNop(), logger.Background())
+	require.EqualValues(t, zap.NewNop(), logger.For(context.Background()))
 }
