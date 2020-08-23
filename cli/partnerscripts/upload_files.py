@@ -9,8 +9,8 @@ import os
 import sys
 from typing import Generator
 
-from pyinventory import InventoryClient
-from pyinventory.api.file import add_file
+from psym import InventoryClient
+from psym.api.file import add_file
 
 
 def list_dir(directory_path: str) -> Generator[str, None, None]:

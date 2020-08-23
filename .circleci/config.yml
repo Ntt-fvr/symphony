@@ -219,12 +219,12 @@ commands:
           paths:
             - ~/.cache/yarn
 
-  pyinventory-setup:
+  psym-setup:
     steps:
       - run:
           name: Install PyInvenory requirements
           <<: *clidir
-          command: sudo python3 setup_pyinventory.py install
+          command: sudo python3 setup.py install
 
   validate-gql:
     parameters:
@@ -413,24 +413,24 @@ jobs:
           name: Start containers
           command: docker-compose up -d --scale tests=0 --scale pytests=0 --scale testimio=0
       - run:
-         name: Run go tests
-         command: docker-compose run --use-aliases -e GOTESTSUM_JUNITFILE=integration.xml tests
+          name: Run go tests
+          command: docker-compose run --use-aliases -e GOTESTSUM_JUNITFILE=integration.xml tests
       - run:
           name: Run Testimio tests
           command: docker-compose run --use-aliases -e GOTESTSUM_JUNITFILE=testimio.xml testimio
       - run:
-         name: Run python tests
-         command: docker-compose run --use-aliases -e XML_OUTPUT_DIRECTORY=. pytests
+          name: Run python tests
+          command: docker-compose run --use-aliases -e XML_OUTPUT_DIRECTORY=. pytests
       - run:
-         name: Collect tests results
-         command: |
-           mv integration/tests/integration.xml ~/test-results/
-           mv cli/TEST-*.xml ~/test-results/
-         when: always
+          name: Collect tests results
+          command: |
+            mv integration/tests/integration.xml ~/test-results/
+            mv cli/TEST-*.xml ~/test-results/
+          when: always
       - run:
-         name: Stop and remove containers
-         command: docker-compose down
-         when: always
+          name: Stop and remove containers
+          command: docker-compose down
+          when: always
       - *storetestdir
 
   promote-images:
@@ -588,22 +588,16 @@ jobs:
       schema_directory:
         default: ../graph/graphql/schema
         type: string
-      pyinventory_package:
-        default: pyinventory
-        type: string
-      pysymphony_package:
-        default: pysymphony
+      psym_package:
+        default: psym
         type: string
     executor: python
     steps:
       - checkout
-      - pyinventory-setup
+      - psym-setup
       - validate-gql:
           schema_directory: <<parameters.schema_directory>>
-          package_name: <<parameters.pyinventory_package>>
-      - validate-gql:
-          schema_directory: <<parameters.schema_directory>>
-          package_name: <<parameters.pysymphony_package>>
+          package_name: <<parameters.psym_package>>
       - run:
           name: To fix this test
           command: |
@@ -619,7 +613,7 @@ jobs:
     executor: python
     steps:
       - checkout
-      - pyinventory-setup
+      - psym-setup
       - run:
           name: mypy check
           <<: *clidir
@@ -629,7 +623,7 @@ jobs:
     executor: python
     steps:
       - checkout
-      - pyinventory-setup
+      - psym-setup
       - run:
           name: python formatting check
           <<: *clidir
@@ -639,7 +633,7 @@ jobs:
     executor: python
     steps:
       - checkout
-      - pyinventory-setup
+      - psym-setup
       - run:
           name: flake8 check
           <<: *clidir
@@ -808,7 +802,7 @@ workflows:
   deploy:
     when:
       and:
-        - equal: [ master, << pipeline.git.branch >> ]
+        - equal: [master, << pipeline.git.branch >>]
         - << pipeline.parameters.deploy >>
     jobs:
       - tfdiff:

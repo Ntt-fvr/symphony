@@ -6,9 +6,9 @@ import argparse
 import sys
 from typing import List
 
-from pyinventory import InventoryClient
-from pyinventory.api.user import get_users
-from pyinventory.common.data_class import User
+from psym import InventoryClient
+from psym.api.user import get_users
+from psym.common.data_class import User
 
 
 if __name__ == "__main__":

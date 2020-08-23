@@ -7,8 +7,8 @@ import sys
 import time
 
 import requests
-from pysymphony import SymphonyClient
-from pysymphony.common.endpoint import LOCALHOST_SERVER
+from psym.client import SymphonyClient
+from psym.common.endpoint import LOCALHOST_SERVER
 
 from .constant import PLATFORM_SERVER_HEALTH_CHECK_URL, TestMode
 

@@ -2,7 +2,7 @@
 
 from distutils.version import LooseVersion
 
-from pyinventory.common.constant import __version__ as pyinventory_version
+from psym.common.constant import __version__ as psym_version
 from schema_versioning_utils import (
     add_current_schema_with_version,
     get_minimal_supported_version,
@@ -12,9 +12,7 @@ from schema_versioning_utils import (
 
 if __name__ == "__main__":
     minimal_version = get_minimal_supported_version("graphql_schema_versions")
-    latest_version = max(
-        LooseVersion(minimal_version), LooseVersion(pyinventory_version)
-    )
+    latest_version = max(LooseVersion(minimal_version), LooseVersion(psym_version))
     version_elements = latest_version.version
     version_elements = version_elements + [0] * (4 - len(version_elements))
     version_elements[-1] = version_elements[-1] + 1

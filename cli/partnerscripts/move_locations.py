@@ -6,8 +6,8 @@
 import argparse
 import sys
 
-from pyinventory import InventoryClient
-from pyinventory.api.location import move_location
+from psym import InventoryClient
+from psym.api.location import move_location
 
 
 if __name__ == "__main__":

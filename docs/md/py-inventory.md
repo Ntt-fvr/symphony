@@ -29,7 +29,7 @@ pip install pyinventory-<version>-py3-none-any.whl
 * First connect to inventory with your credentials
 
 ```python
-from pyinventory import InventoryClient
+from psym import InventoryClient
 # since inventory is multi tenant system you will need to insert which partner you connect as
 client = InventoryClient(email, password, tenant_name)
 ```
@@ -55,7 +55,7 @@ This excel uses different validations using the json file to make sure that the 
 
 In order to create it:
 ```python
-from pyinventory.site_survey import export_to_excel
+from psym.site_survey import export_to_excel
 export_to_excel('survey_schemas/ipt_site.json', '~/site_survey.xlsx')
 ```
 
@@ -63,7 +63,7 @@ After the cotractor fills the excel with the information, you can use pyinventor
 to upload it to the correct location in iventory. You can choose the name of TSS and
 when it was completed (could be useful if you upload old TSS)
 ```python
-from pyinventory import InventoryClient
+from psym import InventoryClient
 from datetime import datetime
 client = InventoryClient(email, password, "fb-test")
 location = client.get_location(('Building', 'Asia-10037'))
@@ -80,7 +80,7 @@ easier debugging later.
 
 * Example
 ```python
-from pyinventory.reporter import InventoryReporter, FailedOperationException
+from psym.reporter import InventoryReporter, FailedOperationException
 reporter = InventoryReporter(csvOutPath, csvErrPath)
 client = InventoryClient(email, password, "fb-test", reporter=reporter)
 try:
@@ -96,8 +96,8 @@ except FailedOperationException as e:
 import unicodecsv as csv
 import sys
 from collections import namedtuple
-from pyinventory import InventoryClient
-from pyinventory.reporter import InventoryReporter, FailedOperationException
+from psym import InventoryClient
+from psym.reporter import InventoryReporter, FailedOperationException
 
 
 def import_tx_row(client, data_identifier, data):
