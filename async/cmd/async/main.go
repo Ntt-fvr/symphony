@@ -77,6 +77,7 @@ func main() {
 		"export bucket url",
 	).
 		Envar("EXPORT_BUCKET_URL").
+		Required().
 		URLVar(&cf.ExportBlobURL)
 	kingpin.Flag(
 		"export-bucket-prefix",
