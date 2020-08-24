@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/alecthomas/kong"
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -58,14 +59,31 @@ const (
 // Config is a struct containing configurable telemetry settings.
 type Config struct {
 	Trace struct {
-		ExporterName        string
-		SamplingProbability float64
-		TraceExporterOptions
-	}
+		ExporterName         string  `name:"exporter" env:"TELEMETRY_TRACE_EXPORTER" default:"nop" enum:"${trace_exporters}" help:"Exporter to use when exporting telemetry trace data."`
+		SamplingProbability  float64 `name:"sampling_probability" env:"TELEMETRY_TRACE_SAMPLING_PROBABILITY" default:"1.0" help:"Sampling probability for trace creation."`
+		TraceExporterOptions `embed:""`
+	} `prefix:"telemetry.trace." embed:""`
 	View struct {
-		ExporterName string
-		ViewExporterOptions
+		ExporterName        string `name:"exporter" env:"TELEMETRY_VIEW_EXPORTER" default:"prometheus" enum:"${view_exporters}" help:"Exporter to use when exporting telemetry metrics data."`
+		ViewExporterOptions `embed:""`
+	} `prefix:"telemetry.view." embed:""`
+}
+
+// Apply implements kong.Option interface.
+func (Config) Apply(k *kong.Kong) error {
+	vars := kong.Vars{
+		"service_name": func() string {
+			exec, _ := os.Executable()
+			return filepath.Base(exec)
+		}(),
+		"trace_exporters": strings.Join(
+			AvailableTraceExporters(), ",",
+		),
+		"view_exporters": strings.Join(
+			AvailableViewExporters(), ",",
+		),
 	}
+	return vars.Apply(k)
 }
 
 // TraceExporterHelp is the help description for the telemetry.trace.exporter flag.

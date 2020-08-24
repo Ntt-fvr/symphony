@@ -9,17 +9,19 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewJaegerExporter(t *testing.T) {
 	err := os.Setenv("JAEGER_AGENT_ENDPOINT", "localhost:6831")
 	require.NoError(t, err)
-	defer os.Unsetenv("JAEGER_AGENT_ENDPOINT")
+	defer func() {
+		err := os.Unsetenv("JAEGER_AGENT_ENDPOINT")
+		require.NoError(t, err)
+	}()
 	exporter, err := telemetry.GetTraceExporter("jaeger",
 		telemetry.TraceExporterOptions{ServiceName: t.Name()},
 	)
-	assert.NoError(t, err)
-	assert.NotNil(t, exporter)
+	require.NoError(t, err)
+	require.NotNil(t, exporter)
 }
