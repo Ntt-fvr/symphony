@@ -7,11 +7,11 @@ package main
 import (
 	"context"
 	stdlog "log"
-	"net"
 	"net/url"
 	"os"
 	"syscall"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
@@ -21,8 +21,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"gopkg.in/alecthomas/kingpin.v2"
-
 	"go.uber.org/zap"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
@@ -33,63 +31,20 @@ import (
 )
 
 type cliFlags struct {
-	HTTPAddr           *net.TCPAddr
-	MySQLConfig        mysql.Config
-	EventPubURL        ev.TopicFactory
-	EventSubURL        ev.TopicFactory
-	LogConfig          log.Config
-	TelemetryConfig    telemetry.Config
-	TenancyConfig      viewer.Config
-	ExportBlobURL      *url.URL
-	ExportBucketPrefix string
+	HTTPAddr           string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MySQLConfig        mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
+	EventPubURL        ev.TopicFactory  `name:"event.pub-url" env:"EVENT_PUB_URL" required:"" placeholder:"URL" help:"Event publish URL."`
+	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
+	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
+	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
+	LogConfig          log.Config       `embed:""`
+	TelemetryConfig    telemetry.Config `embed:""`
+	TenancyConfig      viewer.Config    `embed:""`
 }
 
 func main() {
 	var cf cliFlags
-	kingpin.HelpFlag.Short('h')
-	kingpin.Flag(
-		"mysql.dsn",
-		"mysql connection string",
-	).
-		Envar("MYSQL_DSN").
-		Required().
-		SetValue(&cf.MySQLConfig)
-	kingpin.Flag(
-		"web.listen-address",
-		"Web address to listen on",
-	).
-		Default(":http").
-		TCPVar(&cf.HTTPAddr)
-	kingpin.Flag(
-		"event.pub-url", "events pub url").
-		Envar("EVENT_PUB_URL").
-		Required().
-		SetValue(&cf.EventPubURL)
-	kingpin.Flag(
-		"event.sub-url",
-		"events sub url",
-	).
-		Envar("EVENT_SUB_URL").
-		Required().
-		SetValue(&cf.EventSubURL)
-	kingpin.Flag(
-		"export-bucket-url",
-		"export bucket url",
-	).
-		Envar("EXPORT_BUCKET_URL").
-		Required().
-		URLVar(&cf.ExportBlobURL)
-	kingpin.Flag(
-		"export-bucket-prefix",
-		"export bucket prefix",
-	).
-		Envar("EXPORT_BUCKET_PREFIX").
-		Default("exports/").
-		StringVar(&cf.ExportBucketPrefix)
-	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
-	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
-	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)
-	kingpin.Parse()
+	kong.Parse(&cf, cf.TelemetryConfig)
 
 	ctx := ctxutil.WithSignal(
 		context.Background(),
