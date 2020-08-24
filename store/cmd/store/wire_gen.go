@@ -33,19 +33,14 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	if err != nil {
 		return nil, nil, err
 	}
-	bucket, cleanup2, err := newBucket(ctx, flags)
+	zapLogger := log.ProvideZapLogger(logger)
+	handlerConfig, cleanup2, err := newHandlerConfig(ctx, logger, flags)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	string2 := newBucketName(flags)
-	handlerConfig := handler.Config{
-		Logger:     logger,
-		Bucket:     bucket,
-		BucketName: string2,
-	}
 	handlerHandler := handler.New(handlerConfig)
-	zapLogger := xserver.NewRequestLogger(logger)
+	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := _wireValue
 	v2 := xserver.DefaultViews()
 	telemetryConfig := &flags.TelemetryConfig
@@ -66,7 +61,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
-		RequestLogger:         zapLogger,
+		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
 		Views:                 v2,
 		ViewExporter:          exporter,
@@ -77,7 +72,12 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Driver:                defaultDriver,
 	}
 	serverServer := server.New(handlerHandler, options)
-	mainApplication := newApp(logger, serverServer, flags)
+	string2 := flags.ListenAddress
+	mainApplication := &application{
+		Logger: zapLogger,
+		server: serverServer,
+		addr:   string2,
+	}
 	return mainApplication, func() {
 		cleanup3()
 		cleanup2()
@@ -93,22 +93,14 @@ var (
 
 // wire.go:
 
-func newApp(logger log.Logger, server2 *server.Server, flags *cliFlags) *application {
-	return &application{
-		Logger: logger.Background(),
-		server: server2,
-		addr:   flags.ListenAddress,
-	}
-}
-
-func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
+func newHandlerConfig(ctx context.Context, logger log.Logger, flags *cliFlags) (handler.Config, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
+		return handler.Config{}, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
-	return bucket, func() { _ = bucket.Close() }, nil
-}
-
-func newBucketName(flags *cliFlags) string {
-	return flags.BucketURL.Host
+	return handler.Config{
+		Logger:     logger,
+		Bucket:     bucket,
+		BucketName: flags.BucketURL.Host,
+	}, func() { _ = bucket.Close() }, nil
 }
