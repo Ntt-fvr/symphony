@@ -47,8 +47,12 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, entry ev
 		return err
 	}
 
-	// we are running a transaction, so the status update will not be visible
-	// TODO: check how to get not transactional ent client from a transactional one
+	if err := task.Update().
+		SetStatus(exporttask.StatusInProgress).
+		Exec(ctx); err != nil {
+		logger.For(ctx).Error("cannot update task status", zap.Error(err), zap.Int("id", task.ID))
+		return err
+	}
 
 	var key string
 	switch task.Type {
