@@ -107,9 +107,9 @@ func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Serve
 	var app application
 	app.Logger = logger.Background()
 	app.http.Server = httpServer
-	app.http.addr = flags.HTTPAddress.String()
+	app.http.addr = flags.HTTPAddress
 	app.grpc.Server = grpcServer
-	app.grpc.addr = flags.GRPCAddress.String()
+	app.grpc.addr = flags.GRPCAddress
 	return &app
 }
 

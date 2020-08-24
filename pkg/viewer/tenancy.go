@@ -30,8 +30,8 @@ import (
 )
 
 type Config struct {
-	TenantMaxConn int
-	FeaturesURL   *url.URL
+	TenantMaxConn int      `name:"tenancy.db_max_conn" env:"TENANCY_DB_MAX_CONN" default:"1" help:"Max connections to database per tenant."`
+	FeaturesURL   *url.URL `name:"features.url" env:"FEATURES_URL" placeholder:"URL" help:"URL to fetch tenant features."`
 }
 
 // AddFlagsVar adds the flags used by this package to the Kingpin application.

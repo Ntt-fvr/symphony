@@ -15,9 +15,9 @@ import (
 
 // Config configures orc8r http client.
 type Config struct {
-	Host string
-	Cert string
-	PKey string
+	Host string `prefix:"orc8r." env:"ORC8R_HOST" help:"Orchestrator host."`
+	Cert string `prefix:"orc8r." env:"ORC8R_CERT" type:"path" help:"Orchestrator certificate."`
+	PKey string `prefix:"orc8r." env:"ORC8R_PKEY" type:"path" help:"Orchestrator private key."`
 }
 
 // NewClient returns an http client to use for orc8r communication.
