@@ -13,7 +13,6 @@ import (
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 const (
@@ -84,62 +83,6 @@ func (Config) Apply(k *kong.Kong) error {
 		),
 	}
 	return vars.Apply(k)
-}
-
-// TraceExporterHelp is the help description for the telemetry.trace.exporter flag.
-func TraceExporterHelp() string {
-	return "Exporter to use when exporting telemetry trace data. One of [" +
-		strings.Join(AvailableTraceExporters(), ", ") + "]"
-}
-
-// ViewExporterHelp is the help description for the telemetry.view.exporter flag.
-func ViewExporterHelp() string {
-	return "Exporter to use when exporting telemetry metrics data. One of [" +
-		strings.Join(AvailableViewExporters(), ", ") + "]"
-}
-
-// AddFlagsVar adds the flags used by this package to the Kingpin application.
-func AddFlagsVar(a *kingpin.Application, config *Config) {
-	a.Flag(TraceExporterFlag, TraceExporterHelp()).
-		Envar(TraceExporterEnvar).
-		Default("nop").
-		EnumVar(
-			&config.Trace.ExporterName,
-			AvailableTraceExporters()...,
-		)
-	a.Flag(TraceServiceFlag, TraceServiceHelp).
-		Envar(TraceServiceEnvar).
-		Default(func() string {
-			exec, _ := os.Executable()
-			return filepath.Base(exec)
-		}()).
-		StringVar(&config.Trace.ServiceName)
-	config.Trace.Tags = map[string]string{}
-	a.Flag(TraceTagsFlag, TraceTagsHelp).
-		Envar(TraceTagsEnvar).
-		StringMapVar(&config.Trace.Tags)
-	a.Flag(TraceSamplingProbabilityFlag, TraceSamplingProbabilityHelp).
-		Envar(TraceSamplingProbabilityEnvar).
-		Default("1.0").
-		Float64Var(&config.Trace.SamplingProbability)
-	a.Flag(ViewExporterFlag, ViewExporterHelp()).
-		Envar(ViewExporterEnvar).
-		Default("prometheus").
-		EnumVar(
-			&config.View.ExporterName,
-			AvailableViewExporters()...,
-		)
-	config.View.Labels = map[string]string{}
-	a.Flag(ViewLabelsFlag, ViewLabelsHelp).
-		Envar(ViewLabelsEnvar).
-		StringMapVar(&config.View.Labels)
-}
-
-// AddFlags adds the flags used by this package to the Kingpin application.
-func AddFlags(a *kingpin.Application) *Config {
-	config := &Config{}
-	AddFlagsVar(a, config)
-	return config
 }
 
 // ProvideTraceExporter is a wire provider that produces trace exporter from config.

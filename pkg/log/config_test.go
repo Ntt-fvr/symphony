@@ -28,8 +28,8 @@ func TestConfigParse(t *testing.T) {
 		parser, err := kong.New(&cfg)
 		require.NoError(t, err)
 		_, err = parser.Parse([]string{
-			"--" + log.LevelFlagName, "error",
-			"--" + log.FormatFlagName, "json",
+			"--log.level", "error",
+			"--log.format", "json",
 		})
 		require.NoError(t, err)
 		require.Equal(t, zap.ErrorLevel, cfg.Level)
@@ -40,7 +40,7 @@ func TestConfigParse(t *testing.T) {
 		parser, err := kong.New(&cfg)
 		require.NoError(t, err)
 		_, err = parser.Parse([]string{
-			"--" + log.LevelFlagName, "foo",
+			"--log.level", "foo",
 		})
 		require.Error(t, err)
 	})
@@ -49,7 +49,7 @@ func TestConfigParse(t *testing.T) {
 		parser, err := kong.New(&cfg)
 		require.NoError(t, err)
 		_, err = parser.Parse([]string{
-			"--" + log.FormatFlagName, "bar",
+			"--log.format", "bar",
 		})
 		require.Error(t, err)
 	})
