@@ -8,12 +8,10 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/graph/cmd/entscript/migrations"
-	"github.com/facebookincubator/symphony/pkg/log"
+	"go.uber.org/zap"
 )
 
-type migrationFunc func(ctx context.Context, logger log.Logger) error
-
-var migrationMap = map[string]migrationFunc{
+var migrationMap = map[string]func(context.Context, *zap.Logger) error{
 	"sample":                    migrations.MigrateSample,
 	"migrate_project_templates": migrations.MigrateProjectTemplates,
 }
