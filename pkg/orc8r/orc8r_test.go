@@ -12,10 +12,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 func TestFixedHostTransport(t *testing.T) {
@@ -45,16 +45,17 @@ func TestFlags(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = os.Remove(f.Name()) }()
 
-	a := kingpin.New(t.Name(), "")
-	c := orc8r.AddFlags(a)
+	var cfg orc8r.Config
+	parser, err := kong.New(&cfg)
+	require.NoError(t, err)
 	const host = "localtest.me"
-	_, err = a.Parse([]string{
+	_, err = parser.Parse([]string{
 		"--orc8r.host", host,
 		"--orc8r.cert", f.Name(),
 		"--orc8r.pkey", f.Name(),
 	})
 	require.NoError(t, err)
-	assert.Equal(t, host, c.Host)
-	assert.Equal(t, f.Name(), c.Cert)
-	assert.Equal(t, f.Name(), c.PKey)
+	assert.Equal(t, host, cfg.Host)
+	assert.Equal(t, f.Name(), cfg.Cert)
+	assert.Equal(t, f.Name(), cfg.PKey)
 }

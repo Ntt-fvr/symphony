@@ -13,8 +13,6 @@ import (
 	"strings"
 	"sync"
 
-	"gopkg.in/alecthomas/kingpin.v2"
-
 	"github.com/facebook/ent/dialect"
 	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -30,25 +28,8 @@ import (
 )
 
 type Config struct {
-	TenantMaxConn int
-	FeaturesURL   *url.URL
-}
-
-// AddFlagsVar adds the flags used by this package to the Kingpin application.
-func AddFlagsVar(a *kingpin.Application, config *Config) {
-	a.Flag(
-		"tenancy.db_max_conn",
-		"max connections to database per tenant",
-	).
-		Envar("TENANCY_DB_MAX_CONN").
-		Required().
-		IntVar(&config.TenantMaxConn)
-	a.Flag(
-		"features.url",
-		"url to fetch features for all tenants",
-	).
-		Envar("FEATURES_URL").
-		URLVar(&config.FeaturesURL)
+	TenantMaxConn int      `name:"tenancy.db_max_conn" env:"TENANCY_DB_MAX_CONN" default:"1" help:"Max connections to database per tenant."`
+	FeaturesURL   *url.URL `name:"features.url" env:"FEATURES_URL" placeholder:"URL" help:"URL to fetch tenant features."`
 }
 
 // Tenancy provides tenant client for key.

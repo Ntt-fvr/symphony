@@ -14,8 +14,8 @@ import (
 
 // TraceExporterOptions defines a set of options shared between trace exporters.
 type TraceExporterOptions struct {
-	ServiceName string
-	Tags        map[string]string
+	ServiceName string            `name:"service" env:"TELEMETRY_TRACE_SERVICE" default:"${service_name}" help:"Traced service name."`
+	Tags        map[string]string `env:"TELEMETRY_TRACE_TAGS" help:"Fixed set of tags to add to every trace."`
 }
 
 // TraceExporterInitFunc is the function that is called to initialize a trace exporter.

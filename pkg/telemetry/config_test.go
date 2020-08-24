@@ -8,39 +8,39 @@ import (
 	"os"
 	"testing"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 func TestFlags(t *testing.T) {
-	a := kingpin.New(t.Name(), "")
-	c := telemetry.AddFlags(a)
-	_, err := a.Parse([]string{
+	var cfg telemetry.Config
+	parser, err := kong.New(&cfg, cfg)
+	require.NoError(t, err)
+	_, err = parser.Parse([]string{
 		"--" + telemetry.TraceExporterFlag, "nop",
 		"--" + telemetry.TraceSamplingProbabilityFlag, "0.5",
 		"--" + telemetry.TraceServiceFlag, t.Name(),
-		"--" + telemetry.TraceTagsFlag, "one:1",
+		"--" + telemetry.TraceTagsFlag, "one=1",
 		"--" + telemetry.TraceTagsFlag, "two=2",
 		"--" + telemetry.ViewExporterFlag, "nop",
-		"--" + telemetry.ViewLabelsFlag, "three:3",
+		"--" + telemetry.ViewLabelsFlag, "three=3",
 	})
 	require.NoError(t, err)
-	assert.Equal(t, "nop", c.Trace.ExporterName)
-	assert.Equal(t, 0.5, c.Trace.SamplingProbability)
-	assert.Equal(t, t.Name(), c.Trace.ServiceName)
-	assert.Equal(t, map[string]string{"one": "1", "two": "2"}, c.Trace.Tags)
-	assert.Equal(t, "nop", c.View.ExporterName)
-	assert.Equal(t, map[string]string{"three": "3"}, c.View.Labels)
+	require.Equal(t, "nop", cfg.Trace.ExporterName)
+	require.Equal(t, 0.5, cfg.Trace.SamplingProbability)
+	require.Equal(t, t.Name(), cfg.Trace.ServiceName)
+	require.Equal(t, map[string]string{"one": "1", "two": "2"}, cfg.Trace.Tags)
+	require.Equal(t, "nop", cfg.View.ExporterName)
+	require.Equal(t, map[string]string{"three": "3"}, cfg.View.Labels)
 }
 
 func TestEnvarFlags(t *testing.T) {
 	vars := map[string]string{
-		telemetry.TraceExporterEnvar:            "nop",
-		telemetry.TraceSamplingProbabilityEnvar: "0.2",
-		telemetry.TraceServiceEnvar:             t.Name(),
-		telemetry.ViewExporterEnvar:             "nop",
+		"TELEMETRY_TRACE_EXPORTER":             "nop",
+		"TELEMETRY_TRACE_SAMPLING_PROBABILITY": "0.2",
+		"TELEMETRY_TRACE_SERVICE":              t.Name(),
+		"TELEMETRY_VIEW_EXPORTER":              "nop",
 	}
 	for key, value := range vars {
 		err := os.Setenv(key, value)
@@ -48,37 +48,43 @@ func TestEnvarFlags(t *testing.T) {
 	}
 	defer func() {
 		for key := range vars {
-			os.Unsetenv(key)
+			err := os.Unsetenv(key)
+			require.NoError(t, err)
 		}
 	}()
-	a := kingpin.New(t.Name(), "")
-	c := telemetry.AddFlags(a)
-	_, err := a.Parse(nil)
+	var cfg telemetry.Config
+	parser, err := kong.New(&cfg, cfg)
 	require.NoError(t, err)
-	assert.Equal(t, "nop", c.Trace.ExporterName)
-	assert.Equal(t, 0.2, c.Trace.SamplingProbability)
-	assert.Equal(t, t.Name(), c.Trace.ServiceName)
-	assert.Equal(t, "nop", c.View.ExporterName)
+	_, err = parser.Parse(nil)
+	require.NoError(t, err)
+	require.Equal(t, "nop", cfg.Trace.ExporterName)
+	require.Equal(t, 0.2, cfg.Trace.SamplingProbability)
+	require.Equal(t, t.Name(), cfg.Trace.ServiceName)
+	require.Equal(t, "nop", cfg.View.ExporterName)
 }
 
 func TestProvider(t *testing.T) {
 	err := os.Setenv("JAEGER_AGENT_ENDPOINT", "localhost:6831")
 	require.NoError(t, err)
-	defer os.Unsetenv("JAEGER_AGENT_ENDPOINT")
-	a := kingpin.New(t.Name(), "")
-	c := telemetry.AddFlags(a)
-	_, err = a.Parse([]string{
+	defer func() {
+		err := os.Unsetenv("JAEGER_AGENT_ENDPOINT")
+		require.NoError(t, err)
+	}()
+	var cfg telemetry.Config
+	parser, err := kong.New(&cfg, cfg)
+	require.NoError(t, err)
+	_, err = parser.Parse([]string{
 		"--" + telemetry.TraceExporterFlag, "jaeger",
 		"--" + telemetry.ViewExporterFlag, "prometheus",
 	})
 	require.NoError(t, err)
-	te, flusher, err := telemetry.ProvideTraceExporter(c)
+	te, flusher, err := telemetry.ProvideTraceExporter(&cfg)
 	require.NoError(t, err)
-	assert.NotNil(t, te)
-	assert.NotNil(t, flusher)
-	sampler := telemetry.ProvideTraceSampler(c)
-	assert.NotNil(t, sampler)
-	ve, err := telemetry.ProvideViewExporter(c)
+	require.NotNil(t, te)
+	require.NotNil(t, flusher)
+	sampler := telemetry.ProvideTraceSampler(&cfg)
+	require.NotNil(t, sampler)
+	ve, err := telemetry.ProvideViewExporter(&cfg)
 	require.NoError(t, err)
-	assert.NotNil(t, ve)
+	require.NotNil(t, ve)
 }

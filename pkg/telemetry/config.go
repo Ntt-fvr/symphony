@@ -9,10 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/alecthomas/kong"
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 const (
@@ -58,70 +58,31 @@ const (
 // Config is a struct containing configurable telemetry settings.
 type Config struct {
 	Trace struct {
-		ExporterName        string
-		SamplingProbability float64
-		TraceExporterOptions
-	}
+		ExporterName         string  `name:"exporter" env:"TELEMETRY_TRACE_EXPORTER" default:"nop" enum:"${trace_exporters}" help:"Exporter to use when exporting telemetry trace data."`
+		SamplingProbability  float64 `name:"sampling_probability" env:"TELEMETRY_TRACE_SAMPLING_PROBABILITY" default:"1.0" help:"Sampling probability for trace creation."`
+		TraceExporterOptions `embed:""`
+	} `prefix:"telemetry.trace." embed:""`
 	View struct {
-		ExporterName string
-		ViewExporterOptions
-	}
+		ExporterName        string `name:"exporter" env:"TELEMETRY_VIEW_EXPORTER" default:"prometheus" enum:"${view_exporters}" help:"Exporter to use when exporting telemetry metrics data."`
+		ViewExporterOptions `embed:""`
+	} `prefix:"telemetry.view." embed:""`
 }
 
-// TraceExporterHelp is the help description for the telemetry.trace.exporter flag.
-func TraceExporterHelp() string {
-	return "Exporter to use when exporting telemetry trace data. One of [" +
-		strings.Join(AvailableTraceExporters(), ", ") + "]"
-}
-
-// ViewExporterHelp is the help description for the telemetry.view.exporter flag.
-func ViewExporterHelp() string {
-	return "Exporter to use when exporting telemetry metrics data. One of [" +
-		strings.Join(AvailableViewExporters(), ", ") + "]"
-}
-
-// AddFlagsVar adds the flags used by this package to the Kingpin application.
-func AddFlagsVar(a *kingpin.Application, config *Config) {
-	a.Flag(TraceExporterFlag, TraceExporterHelp()).
-		Envar(TraceExporterEnvar).
-		Default("nop").
-		EnumVar(
-			&config.Trace.ExporterName,
-			AvailableTraceExporters()...,
-		)
-	a.Flag(TraceServiceFlag, TraceServiceHelp).
-		Envar(TraceServiceEnvar).
-		Default(func() string {
+// Apply implements kong.Option interface.
+func (Config) Apply(k *kong.Kong) error {
+	vars := kong.Vars{
+		"service_name": func() string {
 			exec, _ := os.Executable()
 			return filepath.Base(exec)
-		}()).
-		StringVar(&config.Trace.ServiceName)
-	config.Trace.Tags = map[string]string{}
-	a.Flag(TraceTagsFlag, TraceTagsHelp).
-		Envar(TraceTagsEnvar).
-		StringMapVar(&config.Trace.Tags)
-	a.Flag(TraceSamplingProbabilityFlag, TraceSamplingProbabilityHelp).
-		Envar(TraceSamplingProbabilityEnvar).
-		Default("1.0").
-		Float64Var(&config.Trace.SamplingProbability)
-	a.Flag(ViewExporterFlag, ViewExporterHelp()).
-		Envar(ViewExporterEnvar).
-		Default("prometheus").
-		EnumVar(
-			&config.View.ExporterName,
-			AvailableViewExporters()...,
-		)
-	config.View.Labels = map[string]string{}
-	a.Flag(ViewLabelsFlag, ViewLabelsHelp).
-		Envar(ViewLabelsEnvar).
-		StringMapVar(&config.View.Labels)
-}
-
-// AddFlags adds the flags used by this package to the Kingpin application.
-func AddFlags(a *kingpin.Application) *Config {
-	config := &Config{}
-	AddFlagsVar(a, config)
-	return config
+		}(),
+		"trace_exporters": strings.Join(
+			AvailableTraceExporters(), ",",
+		),
+		"view_exporters": strings.Join(
+			AvailableViewExporters(), ",",
+		),
+	}
+	return vars.Apply(k)
 }
 
 // ProvideTraceExporter is a wire provider that produces trace exporter from config.

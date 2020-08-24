@@ -82,7 +82,7 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	app.logger = logger
 	app.server = server
 	app.http.Server = http
-	app.http.addr = flags.HTTPAddr.String()
+	app.http.addr = flags.HTTPAddr
 	return &app
 }
 
@@ -117,7 +117,7 @@ func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
-	bucket, err := blob.OpenBucket(ctx, flags.ExportBlobURL.String())
+	bucket, err := blob.OpenBucket(ctx, flags.ExportBucketURL.String())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
