@@ -13,7 +13,7 @@ import (
 
 // ViewExporterOptions defines a set of options shared between view exporters.
 type ViewExporterOptions struct {
-	Labels map[string]string
+	Labels map[string]string `env:"TELEMETRY_VIEW_LABELS" help:"Fixed set of labels to add to every view."`
 }
 
 // ViewExporterInitFunc is the function that is called to initialize a view exporter.

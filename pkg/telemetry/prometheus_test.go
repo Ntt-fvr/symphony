@@ -8,13 +8,13 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewPrometheusExporter(t *testing.T) {
 	exporter, err := telemetry.NewPrometheusExporter(
 		telemetry.ViewExporterOptions{},
 	)
-	assert.NoError(t, err)
-	assert.NotNil(t, exporter)
+	require.NoError(t, err)
+	require.NotNil(t, exporter)
 }

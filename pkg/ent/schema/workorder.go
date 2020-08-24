@@ -120,7 +120,10 @@ type WorkOrder struct {
 func (WorkOrder) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
-			NotEmpty(),
+			NotEmpty().
+			Annotations(entgql.Annotation{
+				OrderField: "NAME",
+			}),
 		field.Enum("status").
 			ValueMap(
 				map[string]string{

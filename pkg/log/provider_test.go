@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
@@ -21,8 +20,8 @@ func TestProvider(t *testing.T) {
 	logger, restorer, err := log.ProvideLogger(log.Config{})
 	require.NoError(t, err)
 	defer restorer()
-	assert.Equal(t, logger.Background(), log.ProvideZapLogger(logger))
-	assert.Equal(t, logger.Background(), zap.L())
+	require.Equal(t, logger.Background(), log.ProvideZapLogger(logger))
+	require.Equal(t, logger.Background(), zap.L())
 	stdlog.Println("suppressed message")
-	assert.Zero(t, buf.Len())
+	require.Zero(t, buf.Len())
 }

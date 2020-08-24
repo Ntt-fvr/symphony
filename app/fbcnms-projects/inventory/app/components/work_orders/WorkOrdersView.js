@@ -8,7 +8,9 @@
  * @format
  */
 
-import type {WorkOrdersView_workOrder} from './__generated__/WorkOrdersView_workOrder.graphql';
+import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
+import type {WorkOrdersViewPaginationQuery} from './__generated__/WorkOrdersViewPaginationQuery.graphql';
+import type {WorkOrdersView_query$key} from './__generated__/WorkOrdersView_query.graphql';
 
 import Button from '@fbcnms/ui/components/design-system/Button';
 import DateTimeFormat from '../../common/DateTimeFormat';
@@ -19,31 +21,135 @@ import Table from '@fbcnms/ui/components/design-system/Table/Table';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
-import {createFragmentContainer, graphql} from 'react-relay';
+import {TABLE_SORT_ORDER} from '@fbcnms/ui/components/design-system/Table/TableContext';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
-import {prioritySortingValues, statusValues} from '../../common/FilterTypes';
+import {graphql} from 'react-relay';
+import {makeStyles} from '@material-ui/styles';
+import {statusValues} from '../../common/FilterTypes';
 import {useHistory} from 'react-router';
+import {usePaginationFragment} from 'react-relay/hooks';
 
-type Props = {
-  workOrder: WorkOrdersView_workOrder,
+const useStyles = makeStyles(() => ({
+  table: {
+    height: '100%',
+  },
+}));
+
+export const WORK_ORDERS_PAGE_SIZE = 15;
+
+type Props = $ReadOnly<{|
+  workOrders: WorkOrdersView_query$key,
   onWorkOrderSelected: string => void,
-};
+  orderBy: WorkOrderOrder,
+  onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
+|}>;
 
 const WorkOrdersView = (props: Props) => {
-  const {workOrder, onWorkOrderSelected} = props;
+  const {onWorkOrderSelected, onOrderChanged, orderBy} = props;
+  const classes = useStyles();
+
+  const {data, loadNext} = usePaginationFragment<WorkOrdersViewPaginationQuery>(
+    graphql`
+      fragment WorkOrdersView_query on Query
+        @argumentDefinitions(
+          first: {type: "Int"}
+          orderBy: {type: "WorkOrderOrder"}
+          filterBy: {type: "[WorkOrderFilterInput!]"}
+          cursor: {type: "Cursor"}
+        )
+        @refetchable(queryName: "WorkOrdersViewPaginationQuery") {
+        workOrders(
+          after: $cursor
+          first: $first
+          orderBy: $orderBy
+          filterBy: $filterBy
+        ) @connection(key: "WorkOrdersView_workOrders") {
+          totalCount
+          edges {
+            node {
+              id
+              name
+              description
+              owner {
+                id
+                email
+              }
+              creationDate
+              installDate
+              status
+              assignedTo {
+                id
+                email
+              }
+              location {
+                id
+                name
+              }
+              workOrderType {
+                id
+                name
+              }
+              project {
+                id
+                name
+              }
+              closeDate
+              priority
+            }
+          }
+        }
+      }
+    `,
+    props.workOrders,
+  );
+
   const history = useHistory();
 
-  const data = useMemo(() => workOrder.map(wo => ({...wo, key: wo.id})), [
-    workOrder,
-  ]);
+  const workOrdersData = useMemo(
+    () =>
+      data?.workOrders?.edges.map(edge => ({...edge.node, key: edge.node.id})),
+    [data],
+  );
 
-  if (workOrder.length === 0) {
+  if (workOrdersData == null || workOrdersData.length === 0) {
     return <div />;
   }
 
   return (
     <Table
-      data={data}
+      className={classes.table}
+      data={workOrdersData}
+      onSortChanged={newSortSettings =>
+        onOrderChanged({
+          direction:
+            newSortSettings.order === TABLE_SORT_ORDER.ascending
+              ? 'ASC'
+              : 'DESC',
+          field: newSortSettings.columnKey === 'name' ? 'NAME' : 'UPDATED_AT',
+        })
+      }
+      paginationSettings={{
+        loadNext: onCompleted => {
+          loadNext(WORK_ORDERS_PAGE_SIZE, {
+            onComplete: () => onCompleted && onCompleted(),
+          });
+        },
+        pageSize: WORK_ORDERS_PAGE_SIZE,
+        totalRowsCount: data.workOrders.totalCount,
+      }}
+      sortSettings={
+        orderBy.field === 'NAME'
+          ? {
+              columnKey: 'name',
+              order:
+                orderBy.direction === 'ASC'
+                  ? TABLE_SORT_ORDER.ascending
+                  : TABLE_SORT_ORDER.descending,
+              overrideSorting: true,
+            }
+          : undefined
+      }
+      stretchHeight={true}
       columns={[
         {
           key: 'name',
@@ -58,13 +164,11 @@ const WorkOrdersView = (props: Props) => {
         {
           key: 'type',
           title: `${fbt('Template', '')}`,
-          getSortingValue: row => row.workOrderType?.name,
           render: row => row.workOrderType?.name ?? '',
         },
         {
           key: 'project',
           title: 'Project',
-          getSortingValue: row => row.project?.name,
           render: row =>
             row.project ? (
               <Button
@@ -81,13 +185,11 @@ const WorkOrdersView = (props: Props) => {
         {
           key: 'owner',
           title: 'Owner',
-          getSortingValue: row => row.owner.email,
           render: row => row.owner.email ?? '',
         },
         {
           key: 'status',
           title: 'Status',
-          getSortingValue: row => row.status,
           render: row =>
             formatMultiSelectValue(
               statusValues.map(({value, label}) => ({value, label})),
@@ -97,19 +199,16 @@ const WorkOrdersView = (props: Props) => {
         {
           key: 'creationDate',
           title: 'Creation Time',
-          getSortingValue: row => row.creationDate,
           render: row => DateTimeFormat.dateTime(row.creationDate),
         },
         {
           key: 'dueDate',
           title: 'Due Date',
-          getSortingValue: row => row.installDate,
           render: row => DateTimeFormat.dateOnly(row.installDate),
         },
         {
           key: 'location',
           title: 'Location',
-          getSortingValue: row => row.location?.name,
           render: row =>
             row.location ? (
               <LocationLink
@@ -122,19 +221,16 @@ const WorkOrdersView = (props: Props) => {
         {
           key: 'assignee',
           title: 'Assignee',
-          getSortingValue: row => row.assignedTo?.email,
           render: row => row.assignedTo?.email || null,
         },
         {
           key: 'priority',
           title: 'Priority',
-          getSortingValue: row => prioritySortingValues[row.priority],
           render: row => <PriorityTag priority={row.priority} />,
         },
         {
           key: 'closeDate',
           title: 'Close Time',
-          getSortingValue: row => row.closeDate,
           render: row => DateTimeFormat.dateTime(row.closeDate),
         },
       ]}
@@ -142,37 +238,4 @@ const WorkOrdersView = (props: Props) => {
   );
 };
 
-export default createFragmentContainer(WorkOrdersView, {
-  workOrder: graphql`
-    fragment WorkOrdersView_workOrder on WorkOrder @relay(plural: true) {
-      id
-      name
-      description
-      owner {
-        id
-        email
-      }
-      creationDate
-      installDate
-      status
-      assignedTo {
-        id
-        email
-      }
-      location {
-        id
-        name
-      }
-      workOrderType {
-        id
-        name
-      }
-      project {
-        id
-        name
-      }
-      closeDate
-      priority
-    }
-  `,
-});
+export default WorkOrdersView;

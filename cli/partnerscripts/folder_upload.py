@@ -6,8 +6,8 @@
 import argparse
 import sys
 
-from pyinventory import InventoryClient
-from pyinventory.api.file import add_files
+from psym import InventoryClient
+from psym.api.file import add_files
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ import (
 	"gocloud.dev/runtimevar/constantvar"
 )
 
-func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handlers []handler.NamedHandler) *handler.Server {
+func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handlers []handler.Handler) *handler.Server {
 	return handler.NewServer(handler.Config{
 		Tenancy: viewer.NewFixedTenancy(client),
 		Features: constantvar.New(viewer.TenantFeatures{
@@ -72,12 +72,12 @@ func TestServer(t *testing.T) {
 		cancel()
 		return nil
 	})
-	server := newTestServer(t, client, receiver, []handler.NamedHandler{
-		{
+	server := newTestServer(t, client, receiver, []handler.Handler{
+		handler.New(handler.HandleConfig{
 			Name:    "handler",
 			Handler: h,
 		},
-	})
+		)})
 	var wg sync.WaitGroup
 	defer server.Shutdown(ctx)
 	wg.Add(1)
@@ -106,13 +106,12 @@ func TestServerBadData(t *testing.T) {
 
 	client := viewertest.NewTestClient(t)
 	server := newTestServer(t, client, receiver,
-		[]handler.NamedHandler{
-			{
+		[]handler.Handler{
+			handler.New(handler.HandleConfig{
 				Name:    "handler",
 				Handler: handler.Func(func(context.Context, log.Logger, event.LogEntry) error { return nil }),
-			},
-		},
-	)
+			}),
+		})
 	err := server.HandleEvent(ctx, &ev.Event{
 		Tenant: viewertest.DefaultTenant,
 		Name:   event.EntMutation,
@@ -141,12 +140,12 @@ func TestServerHandlerError(t *testing.T) {
 		cancel()
 		return errors.New("operation failed")
 	})
-	server := newTestServer(t, client, receiver, []handler.NamedHandler{
-		{
+	server := newTestServer(t, client, receiver, []handler.Handler{
+		handler.New(handler.HandleConfig{
 			Name:    "handler",
 			Handler: h,
 		},
-	})
+		)})
 	var wg sync.WaitGroup
 	defer server.Shutdown(ctx)
 	wg.Add(1)
@@ -185,12 +184,12 @@ func TestServerHandlerNoError(t *testing.T) {
 		cancel()
 		return nil
 	})
-	server := newTestServer(t, client, receiver, []handler.NamedHandler{
-		{
+	server := newTestServer(t, client, receiver, []handler.Handler{
+		handler.New(handler.HandleConfig{
 			Name:    "handler",
 			Handler: h,
 		},
-	})
+		)})
 	var wg sync.WaitGroup
 	defer server.Shutdown(ctx)
 	wg.Add(1)

@@ -30,21 +30,20 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		xserver.ServiceSet,
 		xserver.DefaultViews,
 		wire.Value([]health.Checker(nil)),
-		handler.Set,
-		newBucket,
-		newBucketName,
+		newHandlerConfig,
+		handler.Provider,
 	)
 	return nil, nil, nil
 }
 
-func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
-	bucket, err := blob.OpenBucket(ctx, flags.BlobURL.String())
+func newHandlerConfig(ctx context.Context, logger log.Logger, flags *cliFlags) (handler.Config, func(), error) {
+	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
+		return handler.Config{}, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
-	return bucket, func() { _ = bucket.Close() }, nil
-}
-
-func newBucketName(flags *cliFlags) string {
-	return flags.BlobURL.Host
+	return handler.Config{
+		Logger:     logger,
+		Bucket:     bucket,
+		BucketName: flags.BucketURL.Host,
+	}, func() { _ = bucket.Close() }, nil
 }

@@ -16,12 +16,14 @@ import type {TableSettings, TableSortSettings} from './TableContext';
 import * as React from 'react';
 import SymphonyTheme from '../../../theme/symphony';
 import TableContent from './TableContent';
+import TableFooter from './TableFooter';
 import TableHeader from './TableHeader';
 import classNames from 'classnames';
 import symphony from '../../../theme/symphony';
 import useVerticalScrollingEffect from '../hooks/useVerticalScrollingEffect';
 import {AutoSizer} from 'react-virtualized';
 import {TableContextProvider} from './TableContext';
+import {TablePaginationContextProvider} from './TablePaginationContext';
 import {TableSelectionContextProvider} from './TableSelectionContext';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useMemo, useRef, useState} from 'react';
@@ -117,6 +119,7 @@ export type TableVariantTypes = $Keys<typeof TABLE_VARIANT_TYPES>;
 export type TableDesignProps = $ReadOnly<{|
   showSelection?: boolean,
   className?: string,
+  stretchHeight?: boolean,
   variant?: TableVariantTypes,
   dataRowsSeparator?: RowsSeparationTypes,
   dataRowClassName?: string,
@@ -126,6 +129,13 @@ export type TableSelectionProps = $ReadOnly<{|
   selectedIds?: $ReadOnlyArray<TableRowId>,
   onSelectionChanged?: SelectionCallbackType,
 |}>;
+
+export type TablePaginationProps = $ReadOnly<{|
+  loadNext?: ?(onCompleted: ?() => void) => void,
+  pageSize: number,
+  totalRowsCount: number,
+|}>;
+
 /*
   detailsCard:
     When passed, will be shown on as part of the table content.
@@ -140,6 +150,7 @@ type Props<T> = $ReadOnly<{|
   onActiveRowIdChanged?: ActiveCallbackType,
   detailsCard?: ?React.Node,
   resizableColumns?: boolean,
+  paginationSettings?: ?TablePaginationProps,
   ...TableDesignProps,
   ...TableSelectionProps,
 |}>;
@@ -159,8 +170,10 @@ const Table = <T>(props: Props<T>) => {
     onSortChanged,
     dataRowClassName,
     dataRowsSeparator,
+    stretchHeight = false,
     detailsCard,
     resizableColumns = false,
+    paginationSettings,
   } = props;
   const classes = useStyles();
   const [dataColumns, setDataColumns] = useState([]);
@@ -196,10 +209,14 @@ const Table = <T>(props: Props<T>) => {
     false,
   );
 
-  const renderChildren = (width: number) => (
+  const renderChildren = (width: number, height: ?number) => (
     <div
       className={classNames(classes.root, classes[variant], className)}
-      style={{width}}>
+      style={{
+        width,
+        height: stretchHeight ? height : 'auto',
+        maxHeight: stretchHeight ? 'none' : '100%',
+      }}>
       <div
         className={classNames(classes.tableContainer, {
           [classes.expanded]: !detailsCard,
@@ -219,6 +236,9 @@ const Table = <T>(props: Props<T>) => {
             cellClassName={classes.cell}
             fwdRef={bodyRef}
           />
+          {paginationSettings != null ? (
+            <TableFooter {...paginationSettings} />
+          ) : null}
         </table>
       </div>
       {detailsCard ? (
@@ -238,28 +258,35 @@ const Table = <T>(props: Props<T>) => {
       sort: propSortSettings,
       resizableColumns,
     }),
-    [onActiveRowIdChanged, propSortSettings, showSelection, resizableColumns],
+    [showSelection, onActiveRowIdChanged, propSortSettings, resizableColumns],
   );
 
   return (
-    <AutoSizer disableHeight>
-      {({width}: {width: number}) => (
+    <AutoSizer disableHeight={stretchHeight === false}>
+      {({width, height}: {width: number, height: ?number}) => (
         <TableContextProvider
           width={width}
           settings={contextValue}
           columns={columns}>
-          {contextValue.showSelection || contextValue.clickableRows ? (
-            <TableSelectionContextProvider
-              allIds={allIds}
-              activeId={activeRowId}
-              onActiveChanged={onActiveRowIdChanged}
-              selectedIds={selectedIds ?? []}
-              onSelectionChanged={onSelectionChanged}>
-              {renderChildren(width)}
-            </TableSelectionContextProvider>
-          ) : (
-            renderChildren(width)
-          )}
+          <TablePaginationContextProvider
+            {...(paginationSettings ?? {
+              pageSize: data.length,
+              totalRowsCount: data.length,
+            })}
+            loadedDataCount={data.length}>
+            {contextValue.showSelection || contextValue.clickableRows ? (
+              <TableSelectionContextProvider
+                allIds={allIds}
+                activeId={activeRowId}
+                onActiveChanged={onActiveRowIdChanged}
+                selectedIds={selectedIds ?? []}
+                onSelectionChanged={onSelectionChanged}>
+                {renderChildren(width, height)}
+              </TableSelectionContextProvider>
+            ) : (
+              renderChildren(width, height)
+            )}
+          </TablePaginationContextProvider>
         </TableContextProvider>
       )}
     </AutoSizer>

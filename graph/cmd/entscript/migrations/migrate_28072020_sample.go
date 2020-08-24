@@ -9,11 +9,10 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/log"
 	"go.uber.org/zap"
 )
 
-func MigrateSample(ctx context.Context, logger log.Logger) error {
+func MigrateSample(ctx context.Context, logger *zap.Logger) error {
 	client := ent.FromContext(ctx)
 	group, err := client.UsersGroup.
 		Create().
@@ -22,6 +21,6 @@ func MigrateSample(ctx context.Context, logger log.Logger) error {
 	if err != nil {
 		return fmt.Errorf("cannot create users group: %w", err)
 	}
-	logger.For(ctx).Info("users group created", zap.Int("ID", group.ID))
+	logger.Info("users group created", zap.Int("ID", group.ID))
 	return nil
 }

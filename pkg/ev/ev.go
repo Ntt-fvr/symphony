@@ -325,13 +325,28 @@ func (f TopicFactory) String() string {
 	return string(f)
 }
 
-// Set updates the value of the topic factory.
-func (f *TopicFactory) Set(value string) error {
+// MarshalText marshals the topic factory to text.
+func (f TopicFactory) MarshalText() ([]byte, error) {
+	return []byte(f.String()), nil
+}
+
+// UnmarshalText unmarshals text to a topic factory.
+func (f *TopicFactory) UnmarshalText(text []byte) error {
+	return f.unmarshalText(string(text))
+}
+
+// unmarshalText unmarshals a string to a topic factory.
+func (f *TopicFactory) unmarshalText(value string) error {
 	if _, err := url.Parse(value); err != nil {
 		return err
 	}
 	*f = TopicFactory(value)
 	return nil
+}
+
+// Set updates the value of the topic factory.
+func (f *TopicFactory) Set(value string) error {
+	return f.unmarshalText(value)
 }
 
 // ErrFactory is a factory that always errors when

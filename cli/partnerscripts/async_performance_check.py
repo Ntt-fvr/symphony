@@ -11,8 +11,8 @@ from asyncio.events import AbstractEventLoop
 from datetime import datetime
 from typing import Sequence, Tuple
 
-from pyinventory import InventoryClient
-from pyinventory.common.data_class import Location
+from psym import InventoryClient
+from psym.common.data_class import Location
 
 from .utils import (
     Timer,

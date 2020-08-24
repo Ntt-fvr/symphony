@@ -13,6 +13,7 @@ import type {TableColumnType} from './TableHeader';
 import type {TableRowDataType} from './Table';
 
 import * as React from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TableRowCheckbox from './TableRowCheckbox';
 import Text from '../Text';
 import classNames from 'classnames';
@@ -21,10 +22,16 @@ import {TABLE_SORT_ORDER, useTable} from './TableContext';
 import {makeStyles} from '@material-ui/styles';
 import {sortMixed} from '../../../utils/displayUtils';
 import {useEffect, useState} from 'react';
+import {usePagination} from './TablePaginationContext';
 import {useSelection} from './TableSelectionContext';
 import {useTableCommonStyles} from './TableCommons';
 
 const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: symphony.palette.white,
+    position: 'relative',
+  },
   row: {
     borderLeft: `2px solid transparent`,
     backgroundColor: symphony.palette.white,
@@ -66,6 +73,18 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '12px',
   },
   textualCell: {},
+  loadingContainer: {
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: symphony.palette.D50,
+    opacity: 0.5,
+  },
 }));
 
 export const ROW_SEPARATOR_TYPES = {
@@ -97,13 +116,18 @@ const TableContent = <T>(props: Props<T>) => {
   } = props;
   const classes = useStyles();
   const commonClasses = useTableCommonStyles();
-  const {settings, width: tableWidth} = useTable();
+  const {settings, width: tableWidth, isLoading} = useTable();
   const {activeId, setActiveId} = useSelection();
-
+  const {minResultsBound, maxResultsBound} = usePagination();
   const [sortedData, setSortedData] = useState<Array<TableRowDataType<T>>>([]);
 
   useEffect(() => {
     const sortSettings = settings.sort;
+    if (sortSettings?.overrideSorting === true) {
+      setSortedData(data.slice());
+      return;
+    }
+
     const sortingColumn =
       sortSettings && columns.find(col => col.key == sortSettings.columnKey);
     const getSortingValue = sortingColumn?.getSortingValue;
@@ -129,69 +153,76 @@ const TableContent = <T>(props: Props<T>) => {
   }, [columns, data, settings.sort]);
 
   return (
-    <tbody ref={fwdRef}>
-      {sortedData.map((d, rowIndex) => {
-        const rowId = d.key ?? rowIndex;
-        return (
-          <tr
-            key={`row_${rowIndex}`}
-            title={d.tooltip}
-            onClick={() => {
-              if (setActiveId == null) {
-                return;
-              }
-              const newActiveId = rowId !== activeId ? rowId : null;
-              setActiveId(newActiveId);
-            }}
-            className={classNames(
-              classes.row,
-              dataRowClassName,
-              d.className,
-              classes[rowsSeparator],
-              {
-                [classes.hoverHighlighting]: settings.clickableRows,
-                [classes.activeRow]: rowId === activeId,
-                [classes.disabled]: d.disabled,
-              },
-            )}>
-            {settings.showSelection && (
-              <td className={classes.checkBox}>
-                {d.disabled !== true ? <TableRowCheckbox id={rowId} /> : null}
-              </td>
-            )}
-            {columns
-              .filter(col => !col.hidden)
-              .map((col, colIndex) => {
-                const renderedCol = col.render(d);
-                return (
-                  <td
-                    title={col.tooltip && col.tooltip(d)}
-                    key={`col_${colIndex}_${d.key ?? rowIndex}`}
-                    id={`column${colIndex}`}
-                    className={classNames(
-                      commonClasses.cell,
-                      col.className,
-                      cellClassName,
-                    )}
-                    style={{
-                      width:
-                        tableWidth != null && settings.columnWidths
-                          ? settings.columnWidths[colIndex].width
-                          : undefined,
-                    }}>
-                    <Text
-                      color="inherit"
-                      className={classes.textualCell}
-                      useEllipsis={true}
-                      variant="body2">
-                      {renderedCol}
-                    </Text>
-                  </td>
-                );
-              })}
-          </tr>
-        );
-      })}
+    <tbody className={classes.root} ref={fwdRef}>
+      {isLoading && (
+        <div className={classes.loadingContainer}>
+          <CircularProgress size={24} />
+        </div>
+      )}
+      {sortedData
+        .slice(minResultsBound - 1, maxResultsBound)
+        .map((d, rowIndex) => {
+          const rowId = d.key ?? rowIndex;
+          return (
+            <tr
+              key={`row_${rowIndex}`}
+              title={d.tooltip}
+              onClick={() => {
+                if (setActiveId == null) {
+                  return;
+                }
+                const newActiveId = rowId !== activeId ? rowId : null;
+                setActiveId(newActiveId);
+              }}
+              className={classNames(
+                classes.row,
+                dataRowClassName,
+                d.className,
+                classes[rowsSeparator],
+                {
+                  [classes.hoverHighlighting]: settings.clickableRows,
+                  [classes.activeRow]: rowId === activeId,
+                  [classes.disabled]: d.disabled,
+                },
+              )}>
+              {settings.showSelection && (
+                <td className={classes.checkBox}>
+                  {d.disabled !== true ? <TableRowCheckbox id={rowId} /> : null}
+                </td>
+              )}
+              {columns
+                .filter(col => !col.hidden)
+                .map((col, colIndex) => {
+                  const renderedCol = col.render(d);
+                  return (
+                    <td
+                      title={col.tooltip && col.tooltip(d)}
+                      key={`col_${colIndex}_${d.key ?? rowIndex}`}
+                      id={`column${colIndex}`}
+                      className={classNames(
+                        commonClasses.cell,
+                        col.className,
+                        cellClassName,
+                      )}
+                      style={{
+                        width:
+                          tableWidth != null && settings.columnWidths
+                            ? settings.columnWidths[colIndex].width
+                            : undefined,
+                      }}>
+                      <Text
+                        color="inherit"
+                        className={classes.textualCell}
+                        useEllipsis={true}
+                        variant="body2">
+                        {renderedCol}
+                      </Text>
+                    </td>
+                  );
+                })}
+            </tr>
+          );
+        })}
     </tbody>
   );
 };

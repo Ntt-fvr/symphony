@@ -14,7 +14,8 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/agnivade/levenshtein v1.1.0 // indirect
-	github.com/aws/aws-sdk-go v1.34.8
+	github.com/alecthomas/kong v0.2.11
+	github.com/aws/aws-sdk-go v1.34.9
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/facebook/ent v0.4.1-0.20200820092101-fd481554a455
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
@@ -23,7 +24,7 @@ require (
 	github.com/google/addlicense v0.0.0-20200422172452-68a83edd47bc // indirect
 	github.com/google/uuid v1.1.1
 	github.com/google/wire v0.4.0
-	github.com/gorilla/mux v1.7.4
+	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.1
 	github.com/hashicorp/go-multierror v1.1.0
@@ -56,6 +57,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70 // indirect
 	google.golang.org/grpc v1.31.0
 	google.golang.org/protobuf v1.25.0
-	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

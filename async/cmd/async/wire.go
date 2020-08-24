@@ -70,6 +70,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
+		newBucket,
 		newHandlers,
 		newApplication,
 	)
@@ -81,7 +82,7 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	app.logger = logger
 	app.server = server
 	app.http.Server = http
-	app.http.addr = flags.HTTPAddr.String()
+	app.http.addr = flags.HTTPAddr
 	return &app
 }
 
@@ -116,7 +117,7 @@ func provideReceiverFactory(flags *cliFlags) ev.ReceiverFactory {
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
-	bucket, err := blob.OpenBucket(ctx, flags.ExportBlobURL.String())
+	bucket, err := blob.OpenBucket(ctx, flags.ExportBucketURL.String())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
@@ -124,11 +125,15 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers() []handler.NamedHandler {
-	return []handler.NamedHandler{
-		{
+func newHandlers(bucket *blob.Bucket) []handler.Handler {
+	return []handler.Handler{
+		handler.New(handler.HandleConfig{
 			Name:    "activity_log",
 			Handler: handler.Func(handler.HandleActivityLog),
-		},
+		}),
+		handler.New(handler.HandleConfig{
+			Name:    "export_task",
+			Handler: handler.NewExportHandler(bucket),
+		}, handler.WithTransaction(false)),
 	}
 }

@@ -45,9 +45,8 @@ func TestExports(t *testing.T) {
 func (s *exportTestSuite) TestLocations() {
 	task, err := s.createExportTask(s.ctx, s.client, exporttask.TypeLocation)
 	s.Require().NoError(err)
-	event := s.createLogEntry(task.ID)
-
-	err = s.handler.Handle(s.ctx, s.logger, event)
+	evt := s.createLogEntry(task.ID)
+	err = s.handler.Handle(s.ctx, s.logger, evt)
 	s.Require().NoError(err)
 
 	task, err = s.client.ExportTask.Get(s.ctx, task.ID)
@@ -55,18 +54,17 @@ func (s *exportTestSuite) TestLocations() {
 	s.Require().NotNil(task.StoreKey)
 	s.Require().Equal(exporttask.StatusSucceeded, task.Status)
 
-	r, err := s.bucket.NewReader(s.ctx, *task.StoreKey, nil)
+	attrs, err := s.bucket.Attributes(s.ctx, *task.StoreKey)
 	s.Require().NoError(err)
-	defer r.Close()
-	s.Require().Equal("text/csv", r.ContentType())
+	s.Require().Equal("text/csv", attrs.ContentType)
+	s.Require().NotEmpty(attrs.ContentDisposition)
 }
 
 func (s *exportTestSuite) TestBadLocations() {
 	task, err := s.createExportTask(s.ctx, s.client, exporttask.TypeEquipment)
 	s.Require().NoError(err)
-	event := s.createLogEntry(task.ID)
-
-	err = s.handler.Handle(s.ctx, s.logger, event)
+	evt := s.createLogEntry(task.ID)
+	err = s.handler.Handle(s.ctx, s.logger, evt)
 	s.Require().Error(err)
 
 	task, err = s.client.ExportTask.Query().Only(s.ctx)

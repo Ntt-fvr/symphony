@@ -13,7 +13,7 @@ SPHINX_PATH = os.path.join(BASEPATH, "sphinx/")
 
 def export_doc():
     subprocess.run(
-        ["sphinx-build", "-M", "html", ".", "../../docs/website/static/pyinventory"],
+        ["sphinx-build", "-M", "html", ".", "../../docs/website/static/psym"],
         cwd=SPHINX_PATH,
     )
 

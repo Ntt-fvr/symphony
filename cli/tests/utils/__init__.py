@@ -7,8 +7,8 @@ import sys
 import time
 
 import requests
-from pysymphony import SymphonyClient
-from pysymphony.common.endpoint import LOCALHOST_SERVER
+from psym.client import SymphonyClient
+from psym.common.endpoint import LOCALHOST_SERVER
 
 from .constant import PLATFORM_SERVER_HEALTH_CHECK_URL, TestMode
 
@@ -30,12 +30,14 @@ def wait_for_platform() -> None:
         return
     platform_server_health_check = PLATFORM_SERVER_HEALTH_CHECK_URL
     if TEST_MODE == TestMode.LOCAL:
-        platform_server_health_check = "http://fb-test.localtest.me/healthz"
+        platform_server_health_check = "https://fb-test.localtest.me/healthz"
 
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         try:
-            response = requests.get(platform_server_health_check, timeout=0.5)
+            response = requests.get(
+                platform_server_health_check, timeout=0.5, verify=False
+            )
             if response.status_code == 200:
                 return
             print(

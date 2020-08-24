@@ -6,7 +6,7 @@
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
-BUILDDIR      = ../../docs/website/static/pyinventory
+BUILDDIR      = ../../docs/website/static/psym
 
 # Put it first so that "make" without argument is like "make help".
 help:

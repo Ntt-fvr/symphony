@@ -12,7 +12,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
-	"github.com/facebookincubator/symphony/pkg/log"
 	"go.uber.org/zap"
 )
 
@@ -97,7 +96,7 @@ func addProjectTemplate(
 }
 
 // Migrate Project Template
-func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
+func MigrateProjectTemplates(ctx context.Context, logger *zap.Logger) error {
 	client := ent.FromContext(ctx)
 	projectIds, err := client.Project.Query().
 		Where(project.Not(project.HasTemplate())).
@@ -105,7 +104,7 @@ func MigrateProjectTemplates(ctx context.Context, logger log.Logger) error {
 	if err != nil {
 		return fmt.Errorf("failed to query project ids: %w", err)
 	}
-	logger.For(ctx).Info("projects with no templates", zap.Int("count", len(projectIds)))
+	logger.Info("projects with no templates", zap.Int("count", len(projectIds)))
 	for _, projectID := range projectIds {
 		projectTypeID, err := client.ProjectType.Query().
 			Where(projecttype.HasProjectsWith(project.ID(projectID))).

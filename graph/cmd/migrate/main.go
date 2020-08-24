@@ -8,51 +8,54 @@ import (
 	"context"
 	"os"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebook/ent/dialect"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/migrate"
+	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	entmigrate "github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/log"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	kingpin.HelpFlag.Short('h')
-	drv := kingpin.Flag("db-driver", "database driver name").Default("mysql").String()
-	dsn := kingpin.Flag("db-dsn", "data source name").Required().String()
-	dropColumn := kingpin.Flag("drop-column", "enable column drop").Bool()
-	dropIndex := kingpin.Flag("drop-index", "enable index drop").Bool()
-	fixture := kingpin.Flag("fixture", "run ent@v0.1.0 migrate fixture").Bool()
-	dryRun := kingpin.Flag("dry-run", "run in dry run mode").Bool()
-	tenantName := kingpin.Flag("tenant", "target specific tenant").String()
-	logcfg := log.AddFlags(kingpin.CommandLine)
-	kingpin.Parse()
+	var cli struct {
+		Driver     string     `name:"db-driver" default:"mysql" help:"Database driver name."`
+		DSN        string     `name:"db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
+		DropColumn bool       `help:"Enable column drop."`
+		DropIndex  bool       `help:"Enable index drop."`
+		Fixture    bool       `help:"Run ent@v0.1.0 migrate fixture."`
+		DryRun     bool       `help:"Run in dry run mode."`
+		Tenant     string     `placeholder:"<tenant>" help:"Target specific tenant."`
+		LogConfig  log.Config `embed:""`
+	}
+	kong.Parse(&cli)
 
-	logger, _, _ := log.ProvideLogger(*logcfg)
-	driver, err := sql.Open(*drv, *dsn)
+	logger, _, _ := log.ProvideLogger(cli.LogConfig)
+	driver, err := sql.Open(cli.Driver, cli.DSN)
 	if err != nil {
 		logger.Background().Fatal("opening database", zap.Error(err))
 	}
 
+	ctx := ctxutil.WithSignal(context.Background(), os.Interrupt)
 	tenants, err := graphgrpc.NewTenantService(
 		func(context.Context) graphgrpc.ExecQueryer {
 			return driver.DB()
 		},
-	).List(context.Background(), &empty.Empty{})
+	).List(ctx, &empty.Empty{})
 	if err != nil {
 		logger.Background().Fatal("listing tenants", zap.Error(err))
 	}
 
 	names := make([]string, 0, len(tenants.Tenants))
 	for _, tenant := range tenants.Tenants {
-		if *tenantName == "" || *tenantName == tenant.Name {
+		if cli.Tenant == "" || cli.Tenant == tenant.Name {
 			names = append(names, tenant.Name)
 		}
 	}
@@ -61,12 +64,12 @@ func main() {
 		Logger: logger,
 		Driver: dialect.Debug(driver),
 		Options: []schema.MigrateOption{
-			schema.WithFixture(*fixture),
-			schema.WithDropColumn(*dropColumn),
-			schema.WithDropIndex(*dropIndex),
+			schema.WithFixture(cli.Fixture),
+			schema.WithDropColumn(cli.DropColumn),
+			schema.WithDropIndex(cli.DropIndex),
 		},
 	}
-	if *dryRun {
+	if cli.DryRun {
 		cfg.Creator = func(driver dialect.Driver) migrate.Creator {
 			entSchema := entmigrate.NewSchema(driver)
 			return migrate.CreatorFunc(func(ctx context.Context, opts ...schema.MigrateOption) error {
@@ -75,7 +78,7 @@ func main() {
 		}
 	}
 
-	if err := migrate.NewMigrator(cfg).Migrate(context.Background(), names...); err != nil {
-		os.Exit(1)
+	if err := migrate.NewMigrator(cfg).Migrate(ctx, names...); err != nil {
+		logger.For(ctx).Fatal("migration terminated", zap.Error(err))
 	}
 }

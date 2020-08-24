@@ -42,6 +42,12 @@ spec:
               value: {{ required ".Values.async.spec.event.pub_url is required" .Values.async.spec.event.pub_url | quote }}
             - name: EVENT_SUB_URL
               value: {{ required ".Values.async.spec.event.sub_url is required" .Values.async.spec.event.sub_url | quote }}
+            - name: EXPORT_BUCKET_URL
+              value: {{ required ".Values.async.spec.export.bucket_url is required" .Values.async.spec.export.bucket_url | quote }}
+            {{- with .Values.async.spec.export.bucket_prefix }}
+            - name: EXPORT_BUCKET_PREFIX
+              value: {{ . | quote }}
+            {{- end }}
             {{- with .Values.async.spec.tenancy.tenantMaxDBConn }}
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}

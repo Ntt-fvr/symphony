@@ -7,48 +7,31 @@ package main
 import (
 	"context"
 	stdlog "log"
-	"net"
 	"net/url"
 	"os"
 	"syscall"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"go.uber.org/zap"
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	_ "gocloud.dev/blob/s3blob"
 )
 
 type cliFlags struct {
-	ListenAddress   *net.TCPAddr
-	BlobURL         *url.URL
-	LogConfig       log.Config
-	TelemetryConfig telemetry.Config
+	ListenAddress   string           `prefix:"web." default:":http" help:"Address to listen on."`
+	BucketURL       *url.URL         `env:"BUCKET_URL" required:"" help:"Blob bucket URL."`
+	LogConfig       log.Config       `embed:""`
+	TelemetryConfig telemetry.Config `embed:""`
 }
 
 func main() {
 	var cf cliFlags
-	kingpin.HelpFlag.Short('h')
-	kingpin.Flag(
-		"web.listen-address",
-		"Address to listen on.",
-	).
-		Default(":http").
-		TCPVar(&cf.ListenAddress)
-	kingpin.Flag(
-		"bucket-url",
-		"Blob bucket url",
-	).
-		Envar("BUCKET_URL").
-		Required().
-		URLVar(&cf.BlobURL)
-	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
-	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
-	kingpin.Parse()
+	kong.Parse(&cf, &cf.TelemetryConfig)
 
 	ctx := ctxutil.WithSignal(
 		context.Background(),
@@ -62,7 +45,7 @@ func main() {
 	defer cleanup()
 
 	app.Info("starting application",
-		zap.Stringer("address", cf.ListenAddress),
+		zap.String("address", cf.ListenAddress),
 	)
 	err = app.run(ctx)
 	app.Info("terminating application", zap.Error(err))
@@ -71,14 +54,14 @@ func main() {
 type application struct {
 	*zap.Logger
 	server *server.Server
-	addr   *net.TCPAddr
+	addr   string
 }
 
 func (app *application) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(context.Context) error {
-		err := app.server.ListenAndServe(app.addr.String())
+		err := app.server.ListenAndServe(app.addr)
 		app.Debug("server terminated", zap.Error(err))
 		return err
 	})

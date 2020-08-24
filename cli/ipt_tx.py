@@ -4,8 +4,8 @@ import sys
 from collections import namedtuple
 
 import unicodecsv as csv
-from pyinventory import InventoryClient
-from pyinventory.reporter import FailedOperationException, InventoryReporter
+from psym import InventoryClient
+from psym.reporter import FailedOperationException, InventoryReporter
 
 
 def import_tx_row(client, data_identifier, data):

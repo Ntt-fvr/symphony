@@ -14,7 +14,6 @@ import (
 	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-
 	"github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 )
@@ -27,14 +26,24 @@ func (c *Config) String() string {
 	return (*mysql.Config)(c).FormatDSN()
 }
 
-// Set updates the value of a config.
-func (c *Config) Set(value string) error {
-	cfg, err := mysql.ParseDSN(value)
+// MarshalText marshals the Config to text.
+func (c *Config) MarshalText() ([]byte, error) {
+	return []byte(c.String()), nil
+}
+
+// UnmarshalText unmarshals text to a Config.
+func (c *Config) UnmarshalText(text []byte) error {
+	cfg, err := mysql.ParseDSN(string(text))
 	if err != nil {
 		return fmt.Errorf("cannot parse dsn: %w", err)
 	}
 	*c = *(*Config)(cfg)
 	return nil
+}
+
+// Set sets the Config for the flag.Value interface.
+func (c *Config) Set(value string) error {
+	return c.UnmarshalText([]byte(value))
 }
 
 // Open new connection and start stats recorder.

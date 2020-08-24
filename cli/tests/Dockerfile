@@ -5,7 +5,7 @@
 FROM python:3.7
 
 COPY cli/ ./
-RUN python setup_pyinventory.py -q install
+RUN python setup.py -q install
 
 # Switch to symphony directory
 WORKDIR /src/symphony/cli

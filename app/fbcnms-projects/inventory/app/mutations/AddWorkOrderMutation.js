@@ -21,7 +21,7 @@ import type {SelectorStoreUpdater} from 'relay-runtime';
 const mutation = graphql`
   mutation AddWorkOrderMutation($input: AddWorkOrderInput!) {
     addWorkOrder(input: $input) {
-      ...WorkOrdersView_workOrder @relay(mask: false)
+      id
     }
   }
 `;

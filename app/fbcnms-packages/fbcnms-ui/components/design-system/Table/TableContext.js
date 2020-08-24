@@ -32,6 +32,7 @@ export type TableSortOrders = $Keys<typeof TABLE_SORT_ORDER>;
 export type TableSortSettings = $ReadOnly<{|
   columnKey: string,
   order: TableSortOrders,
+  overrideSorting?: ?boolean,
 |}>;
 
 export type TableSettings = $ReadOnly<{|
@@ -45,6 +46,8 @@ export type TableSettings = $ReadOnly<{|
 export type TableContextValue = $ReadOnly<{|
   settings: TableSettings,
   setSortSettings: (?TableSortSettings) => void,
+  isLoading: boolean,
+  setIsLoading: (isLoading: boolean) => void,
   changeColumnWidthByDelta: (colIndex: number, deltaX: number) => void,
   width: ?number,
 |}>;
@@ -57,6 +60,8 @@ const TableContext = createContext<TableContextValue>({
     columnWidths: null,
   },
   setSortSettings: emptyFunction,
+  isLoading: false,
+  setIsLoading: emptyFunction,
   changeColumnWidthByDelta: emptyFunction,
   width: null,
 });
@@ -132,9 +137,9 @@ const calculateColumnWidthPixels = <T>(
 
 export function TableContextProvider<T>(props: Props<T>) {
   const {children, settings, width, columns} = props;
+  const [isLoading, setIsLoading] = useState(false);
   const [sortSettings, setSortSettings] = useState<?TableSortSettings>(null);
   const [columnWidths, setColumnWidths] = useState<?TableColumnWidths>(null);
-
   useEffect(() => setSortSettings(settings.sort), [settings.sort]);
   useEffect(() => setColumnWidths(calculateColumnWidthPixels(width, columns)), [
     columns,
@@ -186,6 +191,8 @@ export function TableContextProvider<T>(props: Props<T>) {
           columnWidths,
         },
         setSortSettings,
+        isLoading,
+        setIsLoading,
         changeColumnWidthByDelta,
         width,
       }}>

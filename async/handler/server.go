@@ -37,8 +37,53 @@ func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntr
 	return f(ctx, logger, entry)
 }
 
-// NamedHandler contains the handler to run on every event with the name handler for tracking purposes
-type NamedHandler struct {
+// handler contains the handler to run on every event, with the name handler for tracking purposes and transactional flag.
+type handler struct {
+	name          string
+	handler       Handler
+	transactional bool
+}
+
+// Handle handles incoming events and sets span.
+func (h handler) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	ctx, span := trace.StartSpan(ctx, h.name)
+	defer span.End()
+	span.AddAttributes(
+		trace.StringAttribute("operation", entry.Operation.String()),
+		trace.StringAttribute("type", entry.Type),
+		trace.Int64Attribute("ent_id", int64(event.GetEntID(entry))),
+	)
+	if h.transactional {
+		return h.runHandlerWithTransaction(ctx, logger, entry)
+	}
+	return h.handler.Handle(ctx, logger, entry)
+}
+
+// handler options.
+type Option func(*handler)
+
+// New returns a new handler from HandlerConfig and options.
+func New(config HandleConfig, opts ...Option) Handler {
+	handler := handler{
+		name:          config.Name,
+		handler:       config.Handler,
+		transactional: true,
+	}
+	for _, opt := range opts {
+		opt(&handler)
+	}
+	return handler
+}
+
+// WithTransaction sets the transaction field for an Handler.
+func WithTransaction(b bool) Option {
+	return func(h *handler) {
+		h.transactional = b
+	}
+}
+
+// HandleConfig contains the configuration for a Handler.
+type HandleConfig struct {
 	Name    string
 	Handler Handler
 }
@@ -49,7 +94,7 @@ type Server struct {
 	logger   log.Logger
 	tenancy  viewer.Tenancy
 	features *runtimevar.Variable
-	handlers []NamedHandler
+	handlers []Handler
 }
 
 // Config defines the async server config.
@@ -58,7 +103,7 @@ type Config struct {
 	Features *runtimevar.Variable
 	Receiver ev.Receiver
 	Logger   log.Logger
-	Handlers []NamedHandler
+	Handlers []Handler
 }
 
 func NewServer(cfg Config) *Server {
@@ -135,21 +180,14 @@ func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.
 	ctx = authz.NewContext(ctx, permissions)
 
 	for _, h := range s.handlers {
-		if err := s.runHandlerWithTransaction(ctx, h, entry); err != nil {
+		if err := h.Handle(ctx, s.logger, entry); err != nil {
 			s.logger.For(ctx).Error("running handler", zap.Error(err))
 		}
 	}
 	return nil
 }
 
-func (s *Server) runHandlerWithTransaction(ctx context.Context, h NamedHandler, entry event.LogEntry) error {
-	ctx, span := trace.StartSpan(ctx, h.Name)
-	defer span.End()
-	span.AddAttributes(
-		trace.StringAttribute("operation", entry.Operation.String()),
-		trace.StringAttribute("type", entry.Type),
-		trace.Int64Attribute("ent_id", int64(event.GetEntID(entry))),
-	)
+func (h *handler) runHandlerWithTransaction(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
 	tx, err := ent.FromContext(ctx).Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("creating transaction: %w", err)
@@ -162,7 +200,7 @@ func (s *Server) runHandlerWithTransaction(ctx context.Context, h NamedHandler, 
 		}
 	}()
 	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.Handler.Handle(ctx, s.logger, entry); err != nil {
+	if err := h.handler.Handle(ctx, logger, entry); err != nil {
 		if r := tx.Rollback(); r != nil {
 			err = fmt.Errorf("rolling back transaction: %v", r)
 		}

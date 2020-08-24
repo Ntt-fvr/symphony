@@ -10,7 +10,7 @@ from unittest import TestLoader, TestSuite, TextTestRunner
 
 from xmlrunner import XMLTestRunner
 
-from . import pyinventory_tests, pyworkforce_tests, utils
+from . import psym_tests, utils
 from .utils.constant import TESTS_PATTERN, XML_OUTPUT_DIRECTORY, TestMode
 
 
@@ -60,8 +60,7 @@ if __name__ == "__main__":
     loader = TestLoader()
     loader.testNamePatterns = [args.pattern]  # type: ignore
     suite_list: List[TestSuite] = []
-    suite_list.append(loader.loadTestsFromModule(pyinventory_tests))
-    suite_list.append(loader.loadTestsFromModule(pyworkforce_tests))
+    suite_list.append(loader.loadTestsFromModule(psym_tests))
     suite: TestSuite = TestSuite(suite_list)
 
     runner: TextTestRunner = TextTestRunner(verbosity=2)

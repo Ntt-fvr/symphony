@@ -22,6 +22,7 @@ import symphony from '../../../theme/symphony';
 import {TABLE_SORT_ORDER, useTable} from './TableContext';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo, useState} from 'react';
+import {usePagination} from './TablePaginationContext';
 import {useTableCommonStyles} from './TableCommons';
 
 const useStyles = makeStyles(() => ({
@@ -138,16 +139,23 @@ const TableHeader = <T>({
     setSortSettings,
     changeColumnWidthByDelta,
     width: tableWidth,
+    isLoading,
   } = useTable();
+  const {setPageNumber} = usePagination();
   const [draggingColumnKey, setDraggingColumnKey] = useState(null);
 
   const shownColumns = useMemo(() => columns.filter(col => !col.hidden), [
     columns,
   ]);
 
+  const isColumnSortable = useCallback(
+    (col: TableColumnType<T>) => !isLoading && col.getSortingValue != null,
+    [isLoading],
+  );
+
   const getSortIcon = useCallback(
     col => {
-      if (!col.getSortingValue) {
+      if (!isColumnSortable(col)) {
         return null;
       }
 
@@ -164,7 +172,7 @@ const TableHeader = <T>({
         </div>
       );
     },
-    [classes.hidden, classes.sortIcon, sort],
+    [classes.hidden, classes.sortIcon, isColumnSortable, sort],
   );
 
   const handleSortChange = useCallback(
@@ -179,11 +187,12 @@ const TableHeader = <T>({
         order: newSortingOrder,
       };
       setSortSettings(newSortSettings);
+      setPageNumber(1);
       if (onSortChanged) {
         onSortChanged(newSortSettings);
       }
     },
-    [onSortChanged, setSortSettings, sort],
+    [onSortChanged, setPageNumber, setSortSettings, sort],
   );
 
   return (
@@ -203,7 +212,7 @@ const TableHeader = <T>({
               col.titleClassName,
               cellClassName,
               {
-                [classes.sortableCell]: col.getSortingValue != null,
+                [classes.sortableCell]: isColumnSortable(col),
                 [classes.isOnColumnResize]: draggingColumnKey != null,
               },
             )}
@@ -216,7 +225,7 @@ const TableHeader = <T>({
             <div
               className={classes.cellContent}
               onClick={
-                col.getSortingValue != null
+                isColumnSortable(col)
                   ? () => handleSortChange(col.key)
                   : undefined
               }>

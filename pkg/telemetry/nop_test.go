@@ -8,16 +8,16 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNopExporter(t *testing.T) {
 	_, err := telemetry.GetTraceExporter("nop",
 		telemetry.TraceExporterOptions{},
 	)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	_, err = telemetry.GetViewExporter("nop",
 		telemetry.ViewExporterOptions{},
 	)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }

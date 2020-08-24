@@ -10,14 +10,13 @@ import (
 	"net/http"
 
 	"go.opencensus.io/plugin/ochttp"
-	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 // Config configures orc8r http client.
 type Config struct {
-	Host string
-	Cert string
-	PKey string
+	Host string `name:"orc8r.host" env:"ORC8R_HOST" help:"Orchestrator host."`
+	Cert string `name:"orc8r.cert" env:"ORC8R_CERT" type:"path" help:"Orchestrator certificate."`
+	PKey string `name:"orc8r.pkey" env:"ORC8R_PKEY" type:"path" help:"Orchestrator private key."`
 }
 
 // NewClient returns an http client to use for orc8r communication.
@@ -49,24 +48,4 @@ func (t *Transport) RoundTrip(r *http.Request) (*http.Response, error) {
 	req.URL.Host = t.Host
 	req.URL.Scheme = "https"
 	return t.Base.RoundTrip(r)
-}
-
-// AddFlagsVar adds the flags used by this package to the Kingpin application.
-func AddFlagsVar(a *kingpin.Application, config *Config) {
-	a.Flag("orc8r.host", "orchestrator host").
-		Envar("ORC8R_HOST").
-		StringVar(&config.Host)
-	a.Flag("orc8r.cert", "orchestrator certificate").
-		Envar("ORC8R_CERT").
-		StringVar(&config.Cert)
-	a.Flag("orc8r.pkey", "orchestrator private key").
-		Envar("ORC8R_PKEY").
-		StringVar(&config.PKey)
-}
-
-// AddFlags adds the flags used by this package to the Kingpin application.
-func AddFlags(a *kingpin.Application) *Config {
-	config := &Config{}
-	AddFlagsVar(a, config)
-	return config
 }

@@ -37,7 +37,6 @@ const mutation = graphql`
         email
       }
       ...WorkOrderDetails_workOrder
-      ...WorkOrdersView_workOrder
     }
   }
 `;

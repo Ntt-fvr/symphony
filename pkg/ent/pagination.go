@@ -10288,6 +10288,16 @@ var (
 			}
 		},
 	}
+	// WorkOrderOrderFieldName orders WorkOrder by name.
+	WorkOrderOrderFieldName = &WorkOrderOrderField{
+		field: workorder.FieldName,
+		toCursor: func(wo *WorkOrder) Cursor {
+			return Cursor{
+				ID:    wo.ID,
+				Value: wo.Name,
+			}
+		},
+	}
 	// WorkOrderOrderFieldCreationDate orders WorkOrder by creation_date.
 	WorkOrderOrderFieldCreationDate = &WorkOrderOrderField{
 		field: workorder.FieldCreationDate,
@@ -10316,6 +10326,8 @@ func (f WorkOrderOrderField) String() string {
 	switch f.field {
 	case workorder.FieldUpdateTime:
 		str = "UPDATED_AT"
+	case workorder.FieldName:
+		str = "NAME"
 	case workorder.FieldCreationDate:
 		str = "CREATED_AT"
 	case workorder.FieldCloseDate:
@@ -10338,6 +10350,8 @@ func (f *WorkOrderOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "UPDATED_AT":
 		*f = *WorkOrderOrderFieldUpdateTime
+	case "NAME":
+		*f = *WorkOrderOrderFieldName
 	case "CREATED_AT":
 		*f = *WorkOrderOrderFieldCreationDate
 	case "CLOSED_AT":

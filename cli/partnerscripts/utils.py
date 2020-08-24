@@ -5,13 +5,9 @@
 import time
 from typing import List, Optional, Tuple
 
-from pyinventory import InventoryClient
-from pyinventory.api.location import (
-    edit_location,
-    get_location_by_external_id,
-    get_locations,
-)
-from pyinventory.common.data_class import Location
+from psym import InventoryClient
+from psym.api.location import edit_location, get_location_by_external_id, get_locations
+from psym.common.data_class import Location
 
 
 def is_empty_excel_cell(value: str) -> bool:

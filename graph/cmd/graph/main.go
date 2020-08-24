@@ -13,6 +13,7 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -24,7 +25,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "gocloud.dev/pubsub/mempubsub"
@@ -32,57 +32,20 @@ import (
 )
 
 type cliFlags struct {
-	HTTPAddress     *net.TCPAddr
-	GRPCAddress     *net.TCPAddr
-	MySQLConfig     mysql.Config
-	AuthURL         *url.URL
-	EventPubsubURL  ev.TopicFactory
-	LogConfig       log.Config
-	TelemetryConfig telemetry.Config
-	Orc8rConfig     orc8r.Config
-	TenancyConfig   viewer.Config
+	HTTPAddress     string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	GRPCAddress     string           `name:"grpc.listen-address" default:":https" help:"GRPC address to listen on."`
+	MySQLConfig     mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
+	AuthURL         *url.URL         `name:"web.ws-auth-url" env:"WS_AUTH_URL" placeholder:"URL" help:"Websocket authentication URL."`
+	EventPubsubURL  ev.TopicFactory  `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
+	LogConfig       log.Config       `embed:""`
+	TelemetryConfig telemetry.Config `embed:""`
+	Orc8rConfig     orc8r.Config     `embed:""`
+	TenancyConfig   viewer.Config    `embed:""`
 }
 
 func main() {
 	var cf cliFlags
-	kingpin.HelpFlag.Short('h')
-	kingpin.Flag(
-		"web.listen-address",
-		"Web address to listen on",
-	).
-		Default(":http").
-		TCPVar(&cf.HTTPAddress)
-	kingpin.Flag(
-		"grpc.listen-address",
-		"GRPC address to listen on",
-	).
-		Default(":https").
-		TCPVar(&cf.GRPCAddress)
-	kingpin.Flag(
-		"mysql.dsn",
-		"mysql connection string",
-	).
-		Envar("MYSQL_DSN").
-		Required().
-		SetValue(&cf.MySQLConfig)
-	kingpin.Flag(
-		"web.ws-auth-url",
-		"websocket authentication url",
-	).
-		Envar("WS_AUTH_URL").
-		URLVar(&cf.AuthURL)
-	kingpin.Flag(
-		"event.pubsub-url",
-		"event pubsub url",
-	).
-		Envar("EVENT_PUBSUB_URL").
-		Required().
-		SetValue(&cf.EventPubsubURL)
-	log.AddFlagsVar(kingpin.CommandLine, &cf.LogConfig)
-	telemetry.AddFlagsVar(kingpin.CommandLine, &cf.TelemetryConfig)
-	orc8r.AddFlagsVar(kingpin.CommandLine, &cf.Orc8rConfig)
-	viewer.AddFlagsVar(kingpin.CommandLine, &cf.TenancyConfig)
-	kingpin.Parse()
+	kong.Parse(&cf, cf.TelemetryConfig)
 
 	ctx := ctxutil.WithSignal(
 		context.Background(),
@@ -96,8 +59,8 @@ func main() {
 	defer cleanup()
 
 	app.Info("starting application",
-		zap.Stringer("http", cf.HTTPAddress),
-		zap.Stringer("grpc", cf.GRPCAddress),
+		zap.String("http", cf.HTTPAddress),
+		zap.String("grpc", cf.GRPCAddress),
 	)
 	err = app.run(ctx)
 	app.Info("terminating application", zap.Error(err))
