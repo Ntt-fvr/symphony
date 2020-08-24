@@ -27,13 +27,13 @@ import (
 func main() {
 	var cli struct {
 		Driver     string     `name:"db-driver" default:"mysql" help:"Database driver name."`
-		DSN        string     `name:"db-dsn" placeholder:"<dsn>" required help:"Data source name."`
+		DSN        string     `name:"db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
 		DropColumn bool       `help:"Enable column drop."`
 		DropIndex  bool       `help:"Enable index drop."`
 		Fixture    bool       `help:"Run ent@v0.1.0 migrate fixture."`
 		DryRun     bool       `help:"Run in dry run mode."`
 		Tenant     string     `placeholder:"<tenant>" help:"Target specific tenant."`
-		LogConfig  log.Config `embed`
+		LogConfig  log.Config `embed:""`
 	}
 	kong.Parse(&cli)
 

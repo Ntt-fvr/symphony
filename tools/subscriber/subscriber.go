@@ -41,8 +41,8 @@ func main() {
 		Verbose        bool          `short:"v" help:"Make the operation more talkative."`
 		User           string        `short:"u" xor:"auth" placeholder:"<user:password>" help:"Server user and password."`
 		Bearer         string        `xor:"auth" placeholder:"<token>" help:"OAuth 2 Bearer Token."`
-		Query          string        `short:"q" required placeholder:"<query>" help:"Server subscription query."`
-		URL            *url.URL      `arg required help:"Server URL."`
+		Query          string        `short:"q" required:"" placeholder:"<query>" help:"Server subscription query."`
+		URL            *url.URL      `arg:"" required:"" help:"Server URL."`
 	}
 	kong.Parse(&cli, kong.Description("A GraphQL subscription testing client."))
 
