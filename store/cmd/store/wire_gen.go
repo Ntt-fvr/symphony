@@ -33,20 +33,19 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	if err != nil {
 		return nil, nil, err
 	}
-	zapLogger := log.ProvideZapLogger(logger)
 	bucket, cleanup2, err := newBucket(ctx, flags)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	string2 := flags.ListenAddress
+	string2 := newBucketName(flags)
 	handlerConfig := handler.Config{
 		Logger:     logger,
 		Bucket:     bucket,
 		BucketName: string2,
 	}
 	handlerHandler := handler.New(handlerConfig)
-	xserverZapLogger := xserver.NewRequestLogger(logger)
+	zapLogger := xserver.NewRequestLogger(logger)
 	v := _wireValue
 	v2 := xserver.DefaultViews()
 	telemetryConfig := &flags.TelemetryConfig
@@ -67,7 +66,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
-		RequestLogger:         xserverZapLogger,
+		RequestLogger:         zapLogger,
 		HealthChecks:          v,
 		Views:                 v2,
 		ViewExporter:          exporter,
@@ -78,11 +77,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Driver:                defaultDriver,
 	}
 	serverServer := server.New(handlerHandler, options)
-	mainApplication := &application{
-		Logger: zapLogger,
-		server: serverServer,
-		addr:   string2,
-	}
+	mainApplication := newApp(logger, serverServer, flags)
 	return mainApplication, func() {
 		cleanup3()
 		cleanup2()
@@ -98,10 +93,22 @@ var (
 
 // wire.go:
 
+func newApp(logger log.Logger, server2 *server.Server, flags *cliFlags) *application {
+	return &application{
+		Logger: logger.Background(),
+		server: server2,
+		addr:   flags.ListenAddress,
+	}
+}
+
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
 	return bucket, func() { _ = bucket.Close() }, nil
+}
+
+func newBucketName(flags *cliFlags) string {
+	return flags.BucketURL.Host
 }

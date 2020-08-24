@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/store/handler"
 	"github.com/google/wire"
@@ -20,9 +21,7 @@ import (
 
 func newApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
-		wire.Struct(new(application), "*"),
 		wire.FieldsOf(new(*cliFlags),
-			"ListenAddress",
 			"LogConfig",
 			"TelemetryConfig",
 		),
@@ -31,9 +30,19 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		xserver.DefaultViews,
 		wire.Value([]health.Checker(nil)),
 		handler.Set,
+		newApp,
 		newBucket,
+		newBucketName,
 	)
 	return nil, nil, nil
+}
+
+func newApp(logger log.Logger, server *server.Server, flags *cliFlags) *application {
+	return &application{
+		Logger: logger.Background(),
+		server: server,
+		addr:   flags.ListenAddress,
+	}
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
@@ -42,4 +51,8 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
 	return bucket, func() { _ = bucket.Close() }, nil
+}
+
+func newBucketName(flags *cliFlags) string {
+	return flags.BucketURL.Host
 }
