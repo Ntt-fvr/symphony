@@ -9,6 +9,7 @@
  */
 
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
+import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 
 import AddWorkOrderCard from './AddWorkOrderCard';
 import AddWorkOrderDialog from './AddWorkOrderDialog';
@@ -59,8 +60,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const QUERY_LIMIT = 100;
-
 const selectedStatusValues = statusValues
   .filter(status => status.key !== doneStatus.key)
   .map(status => status.value);
@@ -75,12 +74,15 @@ const defaultStatusFilter = getPredefinedFilterSetWithValues(
 
 const WorkOrderComparisonView = () => {
   const [filters, setFilters] = useState([defaultStatusFilter]);
+  const [orderBy, setOrderBy] = useState<WorkOrderOrder>({
+    direction: 'ASC',
+    field: 'NAME',
+  });
   const [dialogKey, setDialogKey] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resultsDisplayMode, setResultsDisplayMode] = useState(
     DisplayOptions.table,
   );
-  const [count, setCount] = useState((0: number));
   const {match, history, location} = useRouter();
   const classes = useStyles();
 
@@ -141,8 +143,9 @@ const WorkOrderComparisonView = () => {
     () =>
       shouldRenderTable === false ? null : (
         <WorkOrderComparisonViewQueryRenderer
-          limit={QUERY_LIMIT}
           filters={filters}
+          orderBy={orderBy}
+          onOrderChanged={setOrderBy}
           onWorkOrderSelected={selectedWorkOrderCardId =>
             navigateToWorkOrder(selectedWorkOrderCardId)
           }
@@ -151,10 +154,15 @@ const WorkOrderComparisonView = () => {
               ? DisplayOptions.map
               : DisplayOptions.table
           }
-          onQueryReturn={c => setCount(c)}
         />
       ),
-    [filters, navigateToWorkOrder, resultsDisplayMode, shouldRenderTable],
+    [
+      filters,
+      navigateToWorkOrder,
+      orderBy,
+      resultsDisplayMode,
+      shouldRenderTable,
+    ],
   );
 
   if (selectedWorkOrderTypeId != null) {
@@ -205,22 +213,6 @@ const WorkOrderComparisonView = () => {
           onFiltersChanged={filters => setFilters(filters)}
           exportPath={'/work_orders'}
           entity={'WORK_ORDER'}
-          footer={
-            count !== 0
-              ? count > QUERY_LIMIT
-                ? fbt(
-                    '1 to ' +
-                      fbt.param('size of page', QUERY_LIMIT) +
-                      ' of ' +
-                      fbt.param('total number possible rows', count),
-                    'header to indicate partial results',
-                  )
-                : fbt(
-                    '1 to ' + fbt.param('number of results in page', count),
-                    'header to indicate number of results',
-                  )
-              : null
-          }
         />
       </div>
     ),
@@ -240,22 +232,24 @@ const WorkOrderComparisonView = () => {
 
   return (
     <ErrorBoundary>
-      <InventoryView
-        permissions={{entity: 'workorder'}}
-        header={header}
-        className={classes.workOrderComparisonView}
-        onViewToggleClicked={setResultsDisplayMode}>
-        {workOrdersTable}
-        <AddWorkOrderDialog
-          key={`new_work_order_${dialogKey}`}
-          open={dialogOpen}
-          onClose={hideDialog}
-          onWorkOrderTypeSelected={typeId => {
-            navigateToAddWorkOrder(typeId);
-            setDialogOpen(false);
-          }}
-        />
-      </InventoryView>
+      <InventorySuspense>
+        <InventoryView
+          permissions={{entity: 'workorder'}}
+          header={header}
+          className={classes.workOrderComparisonView}
+          onViewToggleClicked={setResultsDisplayMode}>
+          {workOrdersTable}
+          <AddWorkOrderDialog
+            key={`new_work_order_${dialogKey}`}
+            open={dialogOpen}
+            onClose={hideDialog}
+            onWorkOrderTypeSelected={typeId => {
+              navigateToAddWorkOrder(typeId);
+              setDialogOpen(false);
+            }}
+          />
+        </InventoryView>
+      </InventorySuspense>
     </ErrorBoundary>
   );
 };

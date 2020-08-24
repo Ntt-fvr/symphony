@@ -8,15 +8,18 @@
  * @format
  */
 
+import type {WorkOrderComparisonViewQueryRendererSearchQuery} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
+import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
+
 import ComparisonViewNoResults from '../comparison_view/ComparisonViewNoResults';
-import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import React from 'react';
 import WorkOrdersMap from './WorkOrdersMap';
-import WorkOrdersView from './WorkOrdersView';
+import WorkOrdersView, {WORK_ORDERS_PAGE_SIZE} from './WorkOrdersView';
 import classNames from 'classnames';
 import {DisplayOptions} from '../InventoryViewContainer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
 
@@ -44,26 +47,28 @@ const useStyles = makeStyles(theme => ({
 type Props = $ReadOnly<{|
   className?: string,
   onWorkOrderSelected: (workOrderId: string) => void,
-  limit?: number,
   filters: Array<any>,
+  orderBy: WorkOrderOrder,
   displayMode?: DisplayOptionTypes,
-  onQueryReturn?: (resultCount: number) => void,
+  onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
 |}>;
 
 const workOrderSearchQuery = graphql`
   query WorkOrderComparisonViewQueryRendererSearchQuery(
     $limit: Int
     $filters: [WorkOrderFilterInput!]!
+    $orderBy: WorkOrderOrder
   ) {
-    workOrders(
-      first: $limit
-      orderBy: {direction: DESC, field: UPDATED_AT}
+    ...WorkOrdersView_query
+      @arguments(first: $limit, orderBy: $orderBy, filterBy: $filters)
+    workOrdersMap: workOrders(
+      orderBy: $orderBy
       filterBy: $filters
+      first: 100
     ) {
       totalCount
       edges {
         node {
-          ...WorkOrdersView_workOrder
           ...WorkOrdersMap_workOrders
         }
       }
@@ -75,48 +80,55 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
   const classes = useStyles();
   const {
     filters,
-    limit,
     onWorkOrderSelected,
     displayMode,
     className,
-    onQueryReturn,
+    orderBy,
+    onOrderChanged,
   } = props;
 
+  const response = useLazyLoadQuery<WorkOrderComparisonViewQueryRendererSearchQuery>(
+    workOrderSearchQuery,
+    {
+      limit: WORK_ORDERS_PAGE_SIZE,
+      filters: filters.map(f => ({
+        filterType: f.name.toUpperCase(),
+        operator: f.operator.toUpperCase(),
+        stringValue: f.stringValue,
+        propertyValue: f.propertyValue,
+        idSet: f.idSet,
+        stringSet: f.stringSet,
+      })),
+      orderBy,
+    },
+  );
+
+  if (response == null || response.workOrdersMap == null) {
+    return null;
+  }
+
+  const {totalCount} = response.workOrdersMap;
+  if (totalCount === 0) {
+    return <ComparisonViewNoResults />;
+  }
+
   return (
-    <InventoryQueryRenderer
-      query={workOrderSearchQuery}
-      variables={{
-        limit: limit,
-        filters: filters.map(f => ({
-          filterType: f.name.toUpperCase(),
-          operator: f.operator.toUpperCase(),
-          stringValue: f.stringValue,
-          propertyValue: f.propertyValue,
-          idSet: f.idSet,
-          stringSet: f.stringSet,
-        })),
-      }}
-      render={props => {
-        const {totalCount, edges} = props.workOrders;
-        onQueryReturn && onQueryReturn(totalCount);
-        if (totalCount === 0) {
-          return <ComparisonViewNoResults />;
-        }
-        const workOrders = edges.map(edge => edge.node);
-        return (
-          <div className={classNames(classes.root, className)}>
-            {displayMode === DisplayOptions.map ? (
-              <WorkOrdersMap workOrders={workOrders} />
-            ) : (
-              <WorkOrdersView
-                workOrder={workOrders}
-                onWorkOrderSelected={onWorkOrderSelected}
-              />
-            )}
-          </div>
-        );
-      }}
-    />
+    <div className={classNames(classes.root, className)}>
+      {displayMode === DisplayOptions.map ? (
+        <WorkOrdersMap
+          workOrders={response.workOrdersMap.edges
+            .filter(Boolean)
+            .map(edge => edge.node)}
+        />
+      ) : (
+        <WorkOrdersView
+          workOrders={response}
+          onWorkOrderSelected={onWorkOrderSelected}
+          orderBy={orderBy}
+          onOrderChanged={onOrderChanged}
+        />
+      )}
+    </div>
   );
 };
 

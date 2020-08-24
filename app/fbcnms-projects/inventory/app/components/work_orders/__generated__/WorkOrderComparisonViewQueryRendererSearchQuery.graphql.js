@@ -6,7 +6,7 @@
 
  /**
  * @flow
- * @relayHash 88e73aab5c3b2f90e46b8b4c1f6748d3
+ * @relayHash 1e8cbdad15123382197921d04d3cb18c
  */
 
 /* eslint-disable */
@@ -16,10 +16,12 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type WorkOrdersMap_workOrders$ref = any;
-type WorkOrdersView_workOrder$ref = any;
+type WorkOrdersView_query$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
+export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
 export type WorkOrderFilterType = "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "WORK_ORDER_ASSIGNED_TO" | "WORK_ORDER_CLOSE_DATE" | "WORK_ORDER_CREATION_DATE" | "WORK_ORDER_LOCATION_INST" | "WORK_ORDER_NAME" | "WORK_ORDER_OWNED_BY" | "WORK_ORDER_PRIORITY" | "WORK_ORDER_STATUS" | "WORK_ORDER_TYPE" | "%future added value";
+export type WorkOrderOrderField = "CLOSED_AT" | "CREATED_AT" | "NAME" | "UPDATED_AT" | "%future added value";
 export type WorkOrderFilterInput = {|
   filterType: WorkOrderFilterType,
   operator: FilterOperator,
@@ -51,19 +53,25 @@ export type PropertyTypeInput = {|
   isMandatory?: ?boolean,
   isDeleted?: ?boolean,
 |};
+export type WorkOrderOrder = {|
+  direction: OrderDirection,
+  field?: ?WorkOrderOrderField,
+|};
 export type WorkOrderComparisonViewQueryRendererSearchQueryVariables = {|
   limit?: ?number,
   filters: $ReadOnlyArray<WorkOrderFilterInput>,
+  orderBy?: ?WorkOrderOrder,
 |};
 export type WorkOrderComparisonViewQueryRendererSearchQueryResponse = {|
-  +workOrders: {|
+  +workOrdersMap: {|
     +totalCount: number,
     +edges: $ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentRefs: WorkOrdersView_workOrder$ref & WorkOrdersMap_workOrders$ref
+        +$fragmentRefs: WorkOrdersMap_workOrders$ref
       |}
     |}>,
-  |}
+  |},
+  +$fragmentRefs: WorkOrdersView_query$ref,
 |};
 export type WorkOrderComparisonViewQueryRendererSearchQuery = {|
   variables: WorkOrderComparisonViewQueryRendererSearchQueryVariables,
@@ -76,12 +84,13 @@ export type WorkOrderComparisonViewQueryRendererSearchQuery = {|
 query WorkOrderComparisonViewQueryRendererSearchQuery(
   $limit: Int
   $filters: [WorkOrderFilterInput!]!
+  $orderBy: WorkOrderOrder
 ) {
-  workOrders(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {
+  ...WorkOrdersView_query_10glCF
+  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {
     totalCount
     edges {
       node {
-        ...WorkOrdersView_workOrder
         ...WorkOrdersMap_workOrders
         id
       }
@@ -115,35 +124,48 @@ fragment WorkOrdersMap_workOrders on WorkOrder {
   }
 }
 
-fragment WorkOrdersView_workOrder on WorkOrder {
-  id
-  name
-  description
-  owner {
-    id
-    email
+fragment WorkOrdersView_query_10glCF on Query {
+  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {
+    totalCount
+    edges {
+      node {
+        id
+        name
+        description
+        owner {
+          id
+          email
+        }
+        creationDate
+        installDate
+        status
+        assignedTo {
+          id
+          email
+        }
+        location {
+          id
+          name
+        }
+        workOrderType {
+          id
+          name
+        }
+        project {
+          id
+          name
+        }
+        closeDate
+        priority
+        __typename
+      }
+      cursor
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
   }
-  creationDate
-  installDate
-  status
-  assignedTo {
-    id
-    email
-  }
-  location {
-    id
-    name
-  }
-  workOrderType {
-    id
-    name
-  }
-  project {
-    id
-    name
-  }
-  closeDate
-  priority
 }
 */
 
@@ -160,51 +182,72 @@ var v0 = [
     "name": "filters",
     "type": "[WorkOrderFilterInput!]!",
     "defaultValue": null
+  },
+  {
+    "kind": "LocalArgument",
+    "name": "orderBy",
+    "type": "WorkOrderOrder",
+    "defaultValue": null
   }
 ],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "filterBy",
-    "variableName": "filters"
-  },
-  {
-    "kind": "Variable",
-    "name": "first",
-    "variableName": "limit"
-  },
+v1 = {
+  "kind": "Variable",
+  "name": "filterBy",
+  "variableName": "filters"
+},
+v2 = {
+  "kind": "Variable",
+  "name": "orderBy",
+  "variableName": "orderBy"
+},
+v3 = [
+  (v1/*: any*/),
   {
     "kind": "Literal",
-    "name": "orderBy",
-    "value": {
-      "direction": "DESC",
-      "field": "UPDATED_AT"
-    }
-  }
+    "name": "first",
+    "value": 100
+  },
+  (v2/*: any*/)
 ],
-v2 = {
+v4 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "totalCount",
   "args": null,
   "storageKey": null
 },
-v3 = {
+v5 = [
+  (v1/*: any*/),
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "limit"
+  },
+  (v2/*: any*/)
+],
+v6 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "id",
   "args": null,
   "storageKey": null
 },
-v4 = {
+v7 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "name",
   "args": null,
   "storageKey": null
 },
-v5 = [
-  (v3/*: any*/),
+v8 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "description",
+  "args": null,
+  "storageKey": null
+},
+v9 = [
+  (v6/*: any*/),
   {
     "kind": "ScalarField",
     "alias": null,
@@ -213,10 +256,51 @@ v5 = [
     "storageKey": null
   }
 ],
-v6 = [
-  (v3/*: any*/),
-  (v4/*: any*/)
-];
+v10 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "owner",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "User",
+  "plural": false,
+  "selections": (v9/*: any*/)
+},
+v11 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "installDate",
+  "args": null,
+  "storageKey": null
+},
+v12 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "status",
+  "args": null,
+  "storageKey": null
+},
+v13 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "assignedTo",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "User",
+  "plural": false,
+  "selections": (v9/*: any*/)
+},
+v14 = [
+  (v6/*: any*/),
+  (v7/*: any*/)
+],
+v15 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "priority",
+  "args": null,
+  "storageKey": null
+};
 return {
   "kind": "Request",
   "fragment": {
@@ -228,14 +312,14 @@ return {
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": null,
+        "alias": "workOrdersMap",
         "name": "workOrders",
         "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "WorkOrderConnection",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
+          (v4/*: any*/),
           {
             "kind": "LinkedField",
             "alias": null,
@@ -256,11 +340,6 @@ return {
                 "selections": [
                   {
                     "kind": "FragmentSpread",
-                    "name": "WorkOrdersView_workOrder",
-                    "args": null
-                  },
-                  {
-                    "kind": "FragmentSpread",
                     "name": "WorkOrdersMap_workOrders",
                     "args": null
                   }
@@ -269,6 +348,11 @@ return {
             ]
           }
         ]
+      },
+      {
+        "kind": "FragmentSpread",
+        "name": "WorkOrdersView_query",
+        "args": (v5/*: any*/)
       }
     ]
   },
@@ -282,11 +366,11 @@ return {
         "alias": null,
         "name": "workOrders",
         "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v5/*: any*/),
         "concreteType": "WorkOrderConnection",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
+          (v4/*: any*/),
           {
             "kind": "LinkedField",
             "alias": null,
@@ -305,25 +389,10 @@ return {
                 "concreteType": "WorkOrder",
                 "plural": false,
                 "selections": [
-                  (v3/*: any*/),
-                  (v4/*: any*/),
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "description",
-                    "args": null,
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "LinkedField",
-                    "alias": null,
-                    "name": "owner",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "User",
-                    "plural": false,
-                    "selections": (v5/*: any*/)
-                  },
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v10/*: any*/),
                   {
                     "kind": "ScalarField",
                     "alias": null,
@@ -331,30 +400,152 @@ return {
                     "args": null,
                     "storageKey": null
                   },
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
                   {
-                    "kind": "ScalarField",
+                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "installDate",
+                    "name": "location",
+                    "storageKey": null,
                     "args": null,
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "status",
-                    "args": null,
-                    "storageKey": null
+                    "concreteType": "Location",
+                    "plural": false,
+                    "selections": (v14/*: any*/)
                   },
                   {
                     "kind": "LinkedField",
                     "alias": null,
-                    "name": "assignedTo",
+                    "name": "workOrderType",
                     "storageKey": null,
                     "args": null,
-                    "concreteType": "User",
+                    "concreteType": "WorkOrderType",
                     "plural": false,
-                    "selections": (v5/*: any*/)
+                    "selections": (v14/*: any*/)
                   },
+                  {
+                    "kind": "LinkedField",
+                    "alias": null,
+                    "name": "project",
+                    "storageKey": null,
+                    "args": null,
+                    "concreteType": "Project",
+                    "plural": false,
+                    "selections": (v14/*: any*/)
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "name": "closeDate",
+                    "args": null,
+                    "storageKey": null
+                  },
+                  (v15/*: any*/),
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "name": "__typename",
+                    "args": null,
+                    "storageKey": null
+                  }
+                ]
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "name": "cursor",
+                "args": null,
+                "storageKey": null
+              }
+            ]
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "name": "pageInfo",
+            "storageKey": null,
+            "args": null,
+            "concreteType": "PageInfo",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "name": "endCursor",
+                "args": null,
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "name": "hasNextPage",
+                "args": null,
+                "storageKey": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "LinkedHandle",
+        "alias": null,
+        "name": "workOrders",
+        "args": (v5/*: any*/),
+        "handle": "connection",
+        "key": "WorkOrdersView_workOrders",
+        "filters": [
+          "orderBy",
+          "filterBy"
+        ]
+      },
+      {
+        "kind": "LinkedField",
+        "alias": "workOrdersMap",
+        "name": "workOrders",
+        "storageKey": null,
+        "args": (v3/*: any*/),
+        "concreteType": "WorkOrderConnection",
+        "plural": false,
+        "selections": [
+          (v4/*: any*/),
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "name": "edges",
+            "storageKey": null,
+            "args": null,
+            "concreteType": "WorkOrderEdge",
+            "plural": true,
+            "selections": [
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "name": "node",
+                "storageKey": null,
+                "args": null,
+                "concreteType": "WorkOrder",
+                "plural": false,
+                "selections": [
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v10/*: any*/),
+                  (v12/*: any*/),
+                  (v15/*: any*/),
+                  {
+                    "kind": "LinkedField",
+                    "alias": null,
+                    "name": "project",
+                    "storageKey": null,
+                    "args": null,
+                    "concreteType": "Project",
+                    "plural": false,
+                    "selections": [
+                      (v6/*: any*/)
+                    ]
+                  },
+                  (v13/*: any*/),
+                  (v11/*: any*/),
                   {
                     "kind": "LinkedField",
                     "alias": null,
@@ -364,8 +555,8 @@ return {
                     "concreteType": "Location",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/),
-                      (v4/*: any*/),
+                      (v6/*: any*/),
+                      (v7/*: any*/),
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -381,40 +572,6 @@ return {
                         "storageKey": null
                       }
                     ]
-                  },
-                  {
-                    "kind": "LinkedField",
-                    "alias": null,
-                    "name": "workOrderType",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "WorkOrderType",
-                    "plural": false,
-                    "selections": (v6/*: any*/)
-                  },
-                  {
-                    "kind": "LinkedField",
-                    "alias": null,
-                    "name": "project",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "Project",
-                    "plural": false,
-                    "selections": (v6/*: any*/)
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "closeDate",
-                    "args": null,
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "priority",
-                    "args": null,
-                    "storageKey": null
                   }
                 ]
               }
@@ -428,11 +585,11 @@ return {
     "operationKind": "query",
     "name": "WorkOrderComparisonViewQueryRendererSearchQuery",
     "id": null,
-    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n) {\n  workOrders(first: $limit, orderBy: {direction: DESC, field: UPDATED_AT}, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersView_workOrder\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_workOrder on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  assignedTo {\n    id\n    email\n  }\n  location {\n    id\n    name\n  }\n  workOrderType {\n    id\n    name\n  }\n  project {\n    id\n    name\n  }\n  closeDate\n  priority\n}\n",
+    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n  $orderBy: WorkOrderOrder\n) {\n  ...WorkOrdersView_query_10glCF\n  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_query_10glCF on Query {\n  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        description\n        owner {\n          id\n          email\n        }\n        creationDate\n        installDate\n        status\n        assignedTo {\n          id\n          email\n        }\n        location {\n          id\n          name\n        }\n        workOrderType {\n          id\n          name\n        }\n        project {\n          id\n          name\n        }\n        closeDate\n        priority\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '2225ff9a404c426ff65b9d358f50d973';
+(node/*: any*/).hash = '8babf724aba113f11a4f4013cd7a5dc3';
 module.exports = node;

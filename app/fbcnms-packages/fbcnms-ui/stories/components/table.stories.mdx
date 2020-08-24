@@ -12,43 +12,69 @@ import {TABLE_VARIANT_TYPES} from '../../components/design-system/Table/Table';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo, useState} from 'react';
 
-export const DATA = [
-  {
-    key: '1',
-    firstName: 'Meghan',
-    lastName: 'Bishop',
-    age: 32,
-    startingDate: new Date('Febuary 13, 2020'),
-    city: 'Tel Aviv',
-  },
-  {
-    key: '2',
-    title: 'Dr.',
-    firstName: 'Sara',
-    lastName: 'Porter',
-    age: 21,
-    startingDate: new Date('Febuary 28, 1999'),
-    city: 'Raanana',
-  },
-  {
-    key: '3',
-    title: 'Don',
-    firstName: 'Dolev',
-    lastName: 'Hadar',
-    age: 22,
-    startingDate: new Date('May 02, 1990'),
-    city: 'Tel Aviv',
-  },
-  {
-    key: '4',
-    title: 'Mr.',
-    firstName: 'Walter',
-    lastName: 'Jenning',
-    age: 76,
-    startingDate: new Date('July 11, 2001'),
-    city: 'Ramat Gan',
-  },
+export const FIRST_NAMES = [
+  'Meghan',
+  'Sara',
+  'Dolev',
+  'Walter',
+  'Harlan',
+  'Hakim',
+  'Ibrar',
+  'Walter',
+  'Karl',
+  'Sara',
+  'Caitlin',
+  'Emil',
 ];
+
+export const LAST_NAMES = [
+  'Bishop',
+  'Porter',
+  'Hadar',
+  'Jenning',
+  'Decker',
+  'Cortes',
+  'Brooks',
+  'Jenning',
+  'Noble',
+  'Porter',
+  'Tran',
+  'Haigh',
+];
+
+export const CITIES = [
+  'Raanana',
+  'Tel Aviv',
+  'Ramat Gan',
+  'Austin',
+  'Rosh HaHayin',
+  'Portland',
+  'New York',
+];
+
+export const STARTING_DATES = [
+  new Date('Febuary 13, 2020'),
+  new Date('Febuary 28, 1999'),
+  new Date('May 02, 1990'),
+  new Date('July 11, 2001'),
+  new Date('Febuary 16, 2020'),
+  new Date('March 5, 1999'),
+];
+
+export const TITILES = ['Mr.', 'Ms.', 'Dr.', 'Don', ''];
+
+export const generateRandomRow = () => ({
+  key: Math.floor(Math.random() * 1000000),
+  firstName: FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)],
+  lastName: LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)],
+  age: Math.floor(Math.random() * 110) + 10,
+  startingDate:
+    STARTING_DATES[Math.floor(Math.random() * STARTING_DATES.length)],
+  city: CITIES[Math.floor(Math.random() * CITIES.length)],
+  title: TITILES[Math.floor(Math.random() * TITILES.length)],
+});
+
+export const DATA = [...Array(16).fill().map(generateRandomRow)];
 
 export const useStyles = makeStyles(() => ({
   root: {
@@ -94,7 +120,14 @@ In addition, you can customize the look with the `variant` and `dataRowsSeparato
       const [showSelection, setShowSelection] = useState(false);
       const [resizableColumns, setResizableColumns] = useState(false);
       const [selectedIds, setSelectedIds] = useState([]);
+      const [paginationKey, setPaginationKey] = useState(0);
+      const [showPagination, setShowPagination] = useState(false);
       const [showSorting, setShowSorting] = useState(false);
+      const [sortSettings, setSortSettings] = useState({
+        columnKey: 'title',
+        order: TABLE_SORT_ORDER.ascending,
+      });
+      const [data, setData] = useState(DATA.slice(0, 4));
       const columns = useMemo(
         () => [
           {
@@ -168,14 +201,25 @@ In addition, you can customize the look with the `variant` and `dataRowsSeparato
       const [showDetailsCard, setShowDetailsCard] = useState(false);
       const tableProps = useMemo(
         () => ({
-          data: DATA,
+          data,
           columns: columns,
           variant: tableVariant,
           dataRowsSeparator: rowsSeparator,
-          sortSettings: showSorting
+          sortSettings: showSorting ? sortSettings : undefined,
+          onSortChanged: newSettings => setSortSettings(newSettings),
+          paginationSettings: showPagination
             ? {
-                columnKey: 'title',
-                order: TABLE_SORT_ORDER.ascending,
+                loadNext: onCompleted => {
+                  setTimeout(() => {
+                    onCompleted();
+                    setData(DATA.slice(0, data.length + 4));
+                  }, 300);
+                },
+                loadPrevious: onCompleted => {
+                  onCompleted();
+                },
+                pageSize: 4,
+                totalRowsCount: 16,
               }
             : undefined,
           resizableColumns,
@@ -210,6 +254,9 @@ In addition, you can customize the look with the `variant` and `dataRowsSeparato
           showSorting,
           resizableColumns,
           tableVariant,
+          showPagination,
+          data,
+          sortSettings,
         ],
       );
       return (
@@ -240,6 +287,14 @@ In addition, you can customize the look with the `variant` and `dataRowsSeparato
               title="With Selection"
               onChange={selection =>
                 setShowSelection(selection === 'checked' ? true : false)
+              }
+            />
+            <Checkbox
+              className={classes.optionCheckbox}
+              title="With Pagination"
+              checked={showPagination}
+              onChange={selection =>
+                setShowPagination(selection === 'checked' ? true : false)
               }
             />
             <Checkbox
