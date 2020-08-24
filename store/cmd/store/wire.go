@@ -32,19 +32,14 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		wire.Value([]health.Checker(nil)),
 		handler.Set,
 		newBucket,
-		newBucketName,
 	)
 	return nil, nil, nil
 }
 
 func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
-	bucket, err := blob.OpenBucket(ctx, flags.BlobURL.String())
+	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
 	return bucket, func() { _ = bucket.Close() }, nil
-}
-
-func newBucketName(flags *cliFlags) string {
-	return flags.BlobURL.Host
 }
