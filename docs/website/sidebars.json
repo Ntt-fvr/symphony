@@ -3,7 +3,6 @@
     "General": [
       "team-processes",
       "release-notes",
-      "permission-model"
     ],
     "Inventory": [
       "inventory-intro",
@@ -17,6 +16,9 @@
     "Mobile App": [
       "mobile-app-intro",
       "mobile-app-flow"
+    ],
+     "Administrative tools": [
+      "user-management"
     ],
     "API": [
       "py-inventory",
