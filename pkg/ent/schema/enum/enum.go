@@ -166,3 +166,80 @@ func (fs *FutureState) UnmarshalGQL(v interface{}) error {
 func (fs FutureState) MarshalGQL(w io.Writer) {
 	_ = MarshalGQL(w, fs)
 }
+
+// WorkOrderStatus is the status of a work order.
+type WorkOrderStatus int
+
+// Possible work order status options.
+const (
+	WorkOrderStatusPlanned    WorkOrderStatus = 10
+	WorkOrderStatusInProgress WorkOrderStatus = 20
+	WorkOrderStatusSubmitted  WorkOrderStatus = 30
+	WorkOrderStatusClosed     WorkOrderStatus = 40
+	WorkOrderStatusBlocked    WorkOrderStatus = 50
+)
+
+// ValidateWorkOrderStatus will validate that the given value is from the wo options
+func ValidateWorkOrderStatus(v int) error {
+	switch WorkOrderStatus(v) {
+	case WorkOrderStatusPlanned,
+		WorkOrderStatusInProgress,
+		WorkOrderStatusSubmitted,
+		WorkOrderStatusClosed,
+		WorkOrderStatusBlocked:
+		return nil
+	default:
+		return fmt.Errorf("%d is not a valid work order status", v)
+	}
+}
+
+// String is a string representation of the WO
+func (wos WorkOrderStatus) String() string {
+	switch wos {
+	case WorkOrderStatusPlanned:
+		return "PLANNED"
+	case WorkOrderStatusInProgress:
+		return "IN_PROGRESS"
+	case WorkOrderStatusSubmitted:
+		return "SUBMITTED"
+	case WorkOrderStatusClosed:
+		return "CLOSED"
+	case WorkOrderStatusBlocked:
+		return "BLOCKED"
+	default:
+		return ""
+	}
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (wos *WorkOrderStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return errors.New("enums must be strings")
+	}
+
+	switch str {
+	case "PLANNED":
+		*wos = WorkOrderStatusPlanned
+		return nil
+	case "IN_PROGRESS", "PENDING":
+		*wos = WorkOrderStatusInProgress
+		return nil
+	case "SUBMITTED":
+		*wos = WorkOrderStatusSubmitted
+		return nil
+	case "CLOSED", "DONE":
+		*wos = WorkOrderStatusClosed
+		return nil
+	case "BLOCKED":
+		*wos = WorkOrderStatusBlocked
+		return nil
+	default:
+		return fmt.Errorf("%s is not a valid WorkOrderStatus", str)
+	}
+}
+
+// MarshalGQL implements graphql.Marshaller interface.
+func (wos WorkOrderStatus) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, wos)
+}
