@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package xserver
+package xserver_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/trace"
@@ -20,7 +21,7 @@ import (
 
 func TestLoggerMiddleware(t *testing.T) {
 	core, o := observer.New(zap.InfoLevel)
-	logger := NewZapLogger(zap.New(core))
+	logger := xserver.NewZapLogger(zap.New(core))
 	ctx, span := trace.StartSpan(context.Background(), "test")
 	defer span.End()
 

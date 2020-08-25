@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package ctxgroup
+package ctxgroup_test
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/sync/semaphore"
 )
@@ -17,7 +18,7 @@ import (
 func TestParallel(t *testing.T) {
 	var (
 		v = make([]int, 128)
-		g = WithContext(context.Background())
+		g = ctxgroup.WithContext(context.Background())
 	)
 	for i := 1; i <= len(v); i++ {
 		i := i
@@ -38,7 +39,7 @@ func TestLimited(t *testing.T) {
 	ctx := context.Background()
 	t.Run("Execution", func(t *testing.T) {
 		limit := int64(runtime.NumCPU())
-		g := WithContext(ctx, MaxConcurrency(limit))
+		g := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(limit))
 		sem := semaphore.NewWeighted(limit)
 		for i := int64(0); i < limit*4; i++ {
 			g.Go(func(context.Context) error {
@@ -53,7 +54,7 @@ func TestLimited(t *testing.T) {
 	})
 	t.Run("BadLimit", func(t *testing.T) {
 		assert.Panics(t, func() {
-			WithContext(ctx, MaxConcurrency(0))
+			ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(0))
 		})
 	})
 }
@@ -73,7 +74,7 @@ func TestZero(t *testing.T) {
 	}
 	for _, tt := range tests {
 		var (
-			g = WithContext(context.Background())
+			g = ctxgroup.WithContext(context.Background())
 			e error
 		)
 		for _, err := range tt.errs {
@@ -88,7 +89,7 @@ func TestZero(t *testing.T) {
 }
 
 func TestWithContext(t *testing.T) {
-	g := WithContext(context.Background())
+	g := ctxgroup.WithContext(context.Background())
 	g.Go(func(ctx context.Context) error {
 		return errors.New("execution failure")
 	})

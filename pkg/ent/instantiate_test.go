@@ -2,30 +2,33 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package enttest
+package ent_test
 
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"testing"
+	"time"
 
+	"github.com/facebook/ent/dialect"
+	"github.com/facebookincubator/symphony/pkg/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
-
-	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/stretchr/testify/require"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func TestInstantiation(t *testing.T) {
-	db, name, err := testdb.Open()
-	require.NoError(t, err)
-	db.SetMaxOpenConns(1)
-	client := NewClient(t,
-		WithOptions(ent.Driver(sql.OpenDB(name, db))),
+	client := enttest.Open(t, dialect.SQLite,
+		fmt.Sprintf("file:%s-%d?mode=memory&cache=shared&_fk=1",
+			t.Name(), time.Now().UnixNano(),
+		),
 	)
 
-	ctx := privacy.DecisionContext(context.Background(), privacy.Allow)
+	ctx := privacy.DecisionContext(
+		context.Background(), privacy.Allow,
+	)
 	typ := client.LocationType.
 		Create().
 		SetName("planet").

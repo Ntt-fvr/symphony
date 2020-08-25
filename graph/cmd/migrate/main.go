@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"os"
+	"time"
 
 	"github.com/alecthomas/kong"
 	"github.com/facebook/ent/dialect"
@@ -16,18 +17,18 @@ import (
 	"github.com/facebookincubator/symphony/graph/migrate"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	entmigrate "github.com/facebookincubator/symphony/pkg/ent/migrate"
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	"github.com/facebookincubator/symphony/pkg/log"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
-
-	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	var cli struct {
 		Driver     string     `name:"db-driver" default:"mysql" help:"Database driver name."`
 		DSN        string     `name:"db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
+		WaitForDB  bool       `name:"wait-for-db" help:"Wait for database to be ready."`
 		DropColumn bool       `help:"Enable column drop."`
 		DropIndex  bool       `help:"Enable index drop."`
 		Fixture    bool       `help:"Run ent@v0.1.0 migrate fixture."`
@@ -44,25 +45,48 @@ func main() {
 	}
 
 	ctx := ctxutil.WithSignal(context.Background(), os.Interrupt)
-	tenants, err := graphgrpc.NewTenantService(
-		func(context.Context) graphgrpc.ExecQueryer {
-			return driver.DB()
-		},
-	).List(ctx, &empty.Empty{})
-	if err != nil {
-		logger.Background().Fatal("listing tenants", zap.Error(err))
+	db := driver.DB()
+
+	if cli.WaitForDB {
+		logger := logger.For(ctx)
+		logger.Info("waiting for database")
+		ticker := time.NewTicker(250 * time.Millisecond)
+	loop:
+		for {
+			select {
+			case <-ctx.Done():
+				logger.Fatal("database wait interrupted", zap.Error(ctx.Err()))
+			case <-ticker.C:
+				if err := db.PingContext(ctx); err == nil {
+					ticker.Stop()
+					logger.Info("database is ready")
+					break loop
+				}
+			}
+		}
 	}
 
-	names := make([]string, 0, len(tenants.Tenants))
-	for _, tenant := range tenants.Tenants {
-		if cli.Tenant == "" || cli.Tenant == tenant.Name {
+	var names []string
+	if cli.Tenant == "" {
+		tenants, err := graphgrpc.NewTenantService(
+			graphgrpc.FixedDBProvider(driver.DB()),
+		).List(ctx, &empty.Empty{})
+		if err != nil {
+			logger.Background().Fatal("listing tenants", zap.Error(err))
+		}
+		names = make([]string, 0, len(tenants.Tenants))
+		for _, tenant := range tenants.Tenants {
 			names = append(names, tenant.Name)
 		}
+	} else {
+		names = append(names, cli.Tenant)
 	}
 
 	cfg := migrate.MigratorConfig{
 		Logger: logger,
-		Driver: dialect.Debug(driver),
+		Driver: dialect.Debug(driver,
+			logger.For(ctx).Sugar().Info,
+		),
 		Options: []schema.MigrateOption{
 			schema.WithFixture(cli.Fixture),
 			schema.WithDropColumn(cli.DropColumn),
