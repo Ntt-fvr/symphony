@@ -34,9 +34,7 @@ func (s *tenantSuite) SetupTest() {
 	db, mock, err := sqlmock.New()
 	s.Require().NoError(err)
 	s.svc = graphgrpc.NewTenantService(
-		func(context.Context) graphgrpc.ExecQueryer {
-			return db
-		},
+		graphgrpc.FixedDBProvider(db),
 	)
 	s.mock = mock
 }

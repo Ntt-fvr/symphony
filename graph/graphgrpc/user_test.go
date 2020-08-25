@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/facebook/ent/dialect/sql"
@@ -37,7 +38,7 @@ func newTestClient(t *testing.T) *ent.Client {
 
 func TestUserService_Create(t *testing.T) {
 	client := newTestClient(t)
-	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	us := graphgrpc.NewUserService(viewer.NewFixedTenancy(client))
 	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 
@@ -59,7 +60,7 @@ func TestUserService_Create(t *testing.T) {
 
 func TestUserService_Delete(t *testing.T) {
 	client := newTestClient(t)
-	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	us := graphgrpc.NewUserService(viewer.NewFixedTenancy(client))
 	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)
@@ -80,7 +81,7 @@ func TestUserService_Delete(t *testing.T) {
 
 func TestUserService_CreateAfterDelete(t *testing.T) {
 	client := newTestClient(t)
-	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	us := graphgrpc.NewUserService(viewer.NewFixedTenancy(client))
 	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)

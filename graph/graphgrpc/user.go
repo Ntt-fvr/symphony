@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
@@ -18,17 +19,14 @@ import (
 
 const UserServiceName = "UserService"
 
-type (
-	// UserService is a user service.
-	UserService struct{ Client UserProvider }
-
-	// UserProvider returns an ent client given a context and tenant
-	UserProvider func(context.Context, string) (*ent.Client, error)
-)
+// UserService is a user service.
+type UserService struct {
+	tenancy viewer.Tenancy
+}
 
 // NewUserService create a new user service.
-func NewUserService(provider UserProvider) UserService {
-	return UserService{provider}
+func NewUserService(tenancy viewer.Tenancy) UserService {
+	return UserService{tenancy}
 }
 
 // Create a user by authID, tenantID and required role.
@@ -40,7 +38,7 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 		return nil, status.Error(codes.InvalidArgument, "missing auth id")
 	}
 
-	client, err := s.Client(ctx, input.Tenant)
+	client, err := s.tenancy.ClientFor(ctx, input.Tenant)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -77,7 +75,7 @@ func (s UserService) Delete(ctx context.Context, input *schema.UserInput) (*empt
 		return nil, status.Error(codes.InvalidArgument, "missing auth id")
 	}
 
-	client, err := s.Client(ctx, input.Tenant)
+	client, err := s.tenancy.ClientFor(ctx, input.Tenant)
 	if err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
