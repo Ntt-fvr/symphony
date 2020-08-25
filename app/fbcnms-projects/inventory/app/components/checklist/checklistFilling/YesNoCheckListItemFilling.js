@@ -13,7 +13,7 @@ import type {YesNoResponse} from '../../work_orders/__generated__/WorkOrderDetai
 
 import * as React from 'react';
 import CommonStrings from '@fbcnms/strings/Strings';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../../common/FormContext';

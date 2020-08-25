@@ -17,9 +17,9 @@ import type {
 import type {Property} from '../../common/Property';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import React from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import WorkOrderDeleteButton from './WorkOrderDeleteButton';
 import WorkOrderSaveButton from './WorkOrderSaveButton';
 import fbt from 'fbt';

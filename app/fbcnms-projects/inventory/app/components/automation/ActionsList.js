@@ -11,9 +11,9 @@
 import * as React from 'react';
 import ActionsHead from './ActionsHead';
 import ActionsListCard from './ActionsListCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Grid from '@material-ui/core/Grid';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router';
 

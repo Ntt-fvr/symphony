@@ -9,10 +9,10 @@
  */
 import type {Equipment, EquipmentPosition} from '../../common/Equipment';
 import type {EquipmentType} from '../../common/EquipmentType';
-import type {TabProps} from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -20,7 +20,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import EquipmentTypesList from '../EquipmentTypesList';
 import LocationEquipments from '../location/LocationEquipments';
 import MoveEquipmentToPositionMutation from '../../mutations/MoveEquipmentToPositionMutation';
-import TabsBar from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import usePermissions from '../admin/userManagement/utils/usePermissions';
 import {createFragmentContainer, graphql} from 'react-relay';

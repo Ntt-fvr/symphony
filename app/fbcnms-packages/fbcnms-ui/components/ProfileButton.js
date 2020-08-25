@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Popout from '@fbcnms/ui/components/Popout';
 import ProfileIcon from '../icons/ProfileIcon';
 import React, {useContext, useState} from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {Events, GeneralLogger} from '@fbcnms/ui/utils/Logging';
 import {makeStyles} from '@material-ui/styles';

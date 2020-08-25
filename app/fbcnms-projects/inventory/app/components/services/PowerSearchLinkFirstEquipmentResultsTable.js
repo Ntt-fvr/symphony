@@ -13,7 +13,7 @@ import type {PowerSearchLinkFirstEquipmentResultsTable_equipment} from './__gene
 
 import EquipmentBreadcrumbs from '../equipment/EquipmentBreadcrumbs';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {AutoSizer, Column, Table} from 'react-virtualized';

@@ -16,13 +16,13 @@ import type {
 import * as React from 'react';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import IconButton from '@symphony/design-system/components/IconButton';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
-import {DeleteIcon, EditIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = $ReadOnly<{|

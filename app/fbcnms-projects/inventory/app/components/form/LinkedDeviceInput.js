@@ -8,9 +8,9 @@
  * @format
  */
 
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import React from 'react';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = {

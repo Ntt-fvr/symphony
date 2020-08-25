@@ -14,7 +14,7 @@ import type {LocationCellScanCoverageMap_cellData} from './__generated__/Locatio
 
 import * as React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import {makeStyles} from '@material-ui/styles';
 

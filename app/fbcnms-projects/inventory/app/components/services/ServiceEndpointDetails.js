@@ -16,7 +16,7 @@ import EndpointIcon from '@fbcnms/ui/icons/EndpointIcon';
 import EquipmentBreadcrumbs from '../equipment/EquipmentBreadcrumbs';
 import OptionsPopoverButton from '../OptionsPopoverButton';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import camelCase from 'lodash/camelCase';
 import classNames from 'classnames';
 import fbt from 'fbt';

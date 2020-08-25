@@ -9,7 +9,7 @@
  */
 
 import React, {useState} from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router';

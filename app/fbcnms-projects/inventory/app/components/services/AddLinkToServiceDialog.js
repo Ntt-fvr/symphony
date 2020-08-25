@@ -13,7 +13,7 @@ import type {PowerSearchLinkFirstEquipmentResultsTable_equipment} from './__gene
 import type {WithStyles} from '@material-ui/core';
 
 import AvailableLinksTable from './AvailableLinksTable';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -21,10 +21,10 @@ import EquipmentComparisonViewQueryRenderer from '../comparison_view/EquipmentCo
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import PowerSearchLinkFirstEquipmentResultsTable from './PowerSearchLinkFirstEquipmentResultsTable';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@fbcnms/ui/theme/symphony';
-import {WizardContextProvider} from '@fbcnms/ui/components/design-system/Wizard/WizardContext';
+import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {graphql} from 'react-relay';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';

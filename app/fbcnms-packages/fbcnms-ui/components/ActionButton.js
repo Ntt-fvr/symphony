@@ -8,10 +8,10 @@
  * @format
  */
 
-import AddIcon from './design-system/Icons/Actions/AddIcon';
-import IconButton from './design-system/IconButton';
+import AddIcon from '@symphony/design-system/icons/Actions/AddIcon';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
-import RemoveIcon from './design-system/Icons/Actions/RemoveIcon';
+import RemoveIcon from '@symphony/design-system/icons/Actions/RemoveIcon';
 
 type Props = $ReadOnly<{|
   action: 'add' | 'remove',

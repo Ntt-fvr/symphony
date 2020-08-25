@@ -7,12 +7,12 @@
  * @flow
  * @format
  */
-import type {ButtonProps} from '@fbcnms/ui/components/design-system/Button';
+import type {ButtonProps} from '@symphony/design-system/components/Button';
 import type {Property} from '../../common/Property';
 import type {PropertyType} from '../../common/PropertyType';
 
 import React from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import classNames from 'classnames';
 import update from 'immutability-helper';
 import {isJSON} from '@fbcnms/ui/utils/displayUtils';

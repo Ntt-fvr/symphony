@@ -14,7 +14,7 @@ import type {MutationCallbacks} from '../../../mutations/MutationCallbacks.js';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import EditUserDialog from '@fbcnms/ui/components/auth/EditUserDialog';
@@ -29,7 +29,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import axios from 'axios';
 import {UserRoles} from '@fbcnms/auth/types';
 

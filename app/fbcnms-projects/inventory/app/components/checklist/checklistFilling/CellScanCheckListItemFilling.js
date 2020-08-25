@@ -10,11 +10,11 @@
 
 import type {CellScanCheckListItemData} from '../checkListCategory/ChecklistItemsDialogMutateState';
 import type {CheckListItemFillingProps} from './CheckListItemFilling';
-import type {TableRowDataType} from '@fbcnms/ui/components/design-system/Table/Table';
+import type {TableRowDataType} from '@symphony/design-system/components/Table/Table';
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 
 type CellData = $NonMaybeType<

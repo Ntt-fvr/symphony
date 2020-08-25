@@ -11,7 +11,7 @@
 import type {Service} from '../../common/Service';
 import type {Theme, WithStyles} from '@material-ui/core';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import EquipmentServicesTableMenu from './EquipmentServicesTableMenu';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';

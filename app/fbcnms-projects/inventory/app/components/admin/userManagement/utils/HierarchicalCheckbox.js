@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Checkbox from '@fbcnms/ui/components/design-system/Checkbox/Checkbox';
+import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import classNames from 'classnames';
 import useSideEffectCallback from './useSideEffectCallback';
 import {

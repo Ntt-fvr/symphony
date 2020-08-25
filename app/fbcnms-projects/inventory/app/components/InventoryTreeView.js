@@ -15,7 +15,7 @@ import * as React from 'react';
 import InventoryTreeNode from './InventoryTreeNode';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import RelayEnvironment from '../common/RelayEnvironment';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {FormContextProvider} from '../common/FormContext';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';

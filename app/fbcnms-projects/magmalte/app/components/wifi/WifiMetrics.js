@@ -24,7 +24,7 @@ import MagmaV1API from '@fbcnms/magma-api/client/WebClient';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Select from '@material-ui/core/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TimeRangeSelector from '@fbcnms/ui/insights/TimeRangeSelector';
 import WifiSelectMesh from './WifiSelectMesh';
 import nullthrows from '@fbcnms/util/nullthrows';

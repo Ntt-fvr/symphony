@@ -25,7 +25,7 @@ import Divider from '@material-ui/core/Divider';
 import EditActionsRuleMutation from '../../mutations/EditActionsRuleMutation';
 import Grid from '@material-ui/core/Grid';
 import React from 'react';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import TriggerFilterRow from './TriggerFilterRow';
 
 import {graphql, useFragment} from 'react-relay/hooks';

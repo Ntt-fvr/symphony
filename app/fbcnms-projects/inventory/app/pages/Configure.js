@@ -7,7 +7,7 @@
  * @flow strict-local
  * @format
  */
-import type {TabProps} from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import EquipmentPortTypes from '../components/configure/EquipmentPortTypes';
@@ -17,7 +17,7 @@ import InventorySuspense from '../common/InventorySuspense';
 import LocationTypes from '../components/configure/LocationTypes';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import ServiceTypes from '../components/configure/ServiceTypes';
-import TabsBar from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {Redirect, Route, Switch} from 'react-router-dom';

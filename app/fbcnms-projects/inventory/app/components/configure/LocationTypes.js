@@ -14,7 +14,7 @@ import type {
 } from './__generated__/LocationTypesQuery.graphql';
 
 import AddEditLocationTypeCard from './AddEditLocationTypeCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 import DroppableTableBody from '../draggable/DroppableTableBody';

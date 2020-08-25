@@ -17,7 +17,7 @@ import * as React from 'react';
 import MapView from 'inventory/app/components/map/MapView';
 import SiteSurveyQuestionReplyCellData from './SiteSurveyQuestionReplyCellData';
 import SiteSurveyQuestionReplyWifiData from './SiteSurveyQuestionReplyWifiData';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import nullthrows from '@fbcnms/util/nullthrows';
 import {DocumentAPIUrls} from '../../common/DocumentAPI';

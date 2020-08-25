@@ -20,7 +20,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ListItem from '@material-ui/core/ListItem';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {withStyles, withTheme} from '@material-ui/core/styles';

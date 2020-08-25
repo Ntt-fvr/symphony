@@ -8,14 +8,14 @@
  * @format
  */
 
-import type {OptionProps} from '@fbcnms/ui/components/design-system/Select/SelectMenu';
+import type {OptionProps} from '@symphony/design-system/components/Select/SelectMenu';
 import type {PropertyKind} from '../../mutations/__generated__/AddEquipmentPortTypeMutation.graphql';
 import type {PropertyType} from '../../common/PropertyType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import PropertyTypesTableDispatcher from './context/property_types/PropertyTypesTableDispatcher';
 import React, {useContext, useMemo} from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import inventoryTheme from '../../common/theme';
 import {PropertyTypeLabels} from '../PropertyTypeLabels';
 import {makeStyles} from '@material-ui/styles';

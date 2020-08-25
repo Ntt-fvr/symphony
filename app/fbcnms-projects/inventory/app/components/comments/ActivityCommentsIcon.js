@@ -9,7 +9,7 @@
  */
 
 import type {ActivityField} from './__generated__/ActivityPost_activity.graphql';
-import type {SvgIconStyleProps} from '@fbcnms/ui/components/design-system/Icons/SvgIcon';
+import type {SvgIconStyleProps} from '@symphony/design-system/icons/SvgIcon';
 
 import * as React from 'react';
 import symphony from '@fbcnms/ui/theme/symphony';
@@ -18,7 +18,7 @@ import {
   MessageIcon,
   PlannedIcon,
   ProfileIcon,
-} from '@fbcnms/ui/components/design-system/Icons';
+} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

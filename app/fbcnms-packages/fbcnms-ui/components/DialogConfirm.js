@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import DoneIcon from '@material-ui/icons/Done';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import symphony from '../theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 

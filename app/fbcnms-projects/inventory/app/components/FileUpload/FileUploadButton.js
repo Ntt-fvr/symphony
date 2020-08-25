@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import fbt from 'fbt';
 import shortid from 'shortid';
 import {FilesUploadContext} from '../context/FilesUploadContextProvider';

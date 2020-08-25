@@ -24,7 +24,7 @@ import CSVFileExport from '../CSVFileExport';
 import FilterBookmark from '../FilterBookmark';
 import FiltersTypeahead from '../comparison_view/FiltersTypeahead';
 import PowerSearchContext from './PowerSearchContext';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import update from 'immutability-helper';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';

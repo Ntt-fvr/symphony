@@ -10,7 +10,7 @@
 
 import React from 'react';
 import SectionedCard from '../../components/SectionedCard';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {STORY_CATEGORIES} from '../storybookUtils';
 import {storiesOf} from '@storybook/react';
 

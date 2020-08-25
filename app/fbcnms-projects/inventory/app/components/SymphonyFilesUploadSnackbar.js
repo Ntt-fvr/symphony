@@ -8,7 +8,7 @@
  * @format
  */
 
-import FilesUploadSnackbar from '@fbcnms/ui/components/design-system/Experimental/FilesUploadSnackbar';
+import FilesUploadSnackbar from '@symphony/design-system/components/Experimental/FilesUploadSnackbar';
 import React, {useContext, useEffect, useState} from 'react';
 import {FilesUploadContext} from './context/FilesUploadContextProvider';
 

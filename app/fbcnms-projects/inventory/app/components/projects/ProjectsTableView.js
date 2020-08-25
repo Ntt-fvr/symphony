@@ -11,11 +11,11 @@
 import type {ContextRouter} from 'react-router-dom';
 import type {ProjectsTableView_projects} from './__generated__/ProjectsTableView_projects.graphql';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import LocationLink from '../location/LocationLink';
 import PriorityTag from '../work_orders/PriorityTag';
 import React, {useMemo} from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

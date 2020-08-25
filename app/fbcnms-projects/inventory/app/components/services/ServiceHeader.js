@@ -11,8 +11,8 @@
 import type {Service} from '../../common/Service';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import Button from '@symphony/design-system/components/Button';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import React from 'react';
 import ServiceDeleteButton from './ServiceDeleteButton';
 import symphony from '@fbcnms/ui/theme/symphony';

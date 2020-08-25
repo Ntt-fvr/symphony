@@ -11,9 +11,9 @@
 import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import GroupMembersList from '../utils/GroupMembersList';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {TOGGLE_BUTTON_DISPLAY} from '../utils/ListItem';

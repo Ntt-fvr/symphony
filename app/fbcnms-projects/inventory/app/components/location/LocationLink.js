@@ -10,7 +10,7 @@
 
 import type {ContextRouter} from 'react-router-dom';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import React from 'react';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {withRouter} from 'react-router-dom';

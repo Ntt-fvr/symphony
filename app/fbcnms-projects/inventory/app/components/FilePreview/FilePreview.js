@@ -14,7 +14,7 @@ import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import * as React from 'react';
 import DocumentMenu from '../DocumentMenu';
 import ImageDialog from '../ImageDialog';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
@@ -23,7 +23,7 @@ import {DocumentAPIUrls} from '../../common/DocumentAPI';
 import {
   WIDE_DIMENSION_HEIGHT_PX,
   WIDE_DIMENSION_WIDTH_PX,
-} from '@fbcnms/ui/components/design-system/Experimental/FileUpload/FileUploadArea';
+} from '@symphony/design-system/components/Experimental/FileUpload/FileUploadArea';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 

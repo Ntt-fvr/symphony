@@ -12,16 +12,16 @@ import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryR
 import type {WorkOrdersViewPaginationQuery} from './__generated__/WorkOrdersViewPaginationQuery.graphql';
 import type {WorkOrdersView_query$key} from './__generated__/WorkOrdersView_query.graphql';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DateTimeFormat from '../../common/DateTimeFormat';
 import LocationLink from '../location/LocationLink';
 import PriorityTag from './PriorityTag';
 import React, {useMemo} from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
-import {TABLE_SORT_ORDER} from '@fbcnms/ui/components/design-system/Table/TableContext';
+import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

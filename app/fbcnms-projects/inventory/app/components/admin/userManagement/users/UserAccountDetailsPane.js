@@ -11,12 +11,12 @@
 import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import Button from '@symphony/design-system/components/Button';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
 import Grid from '@material-ui/core/Grid';
 import Strings from '@fbcnms/strings/Strings';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useState} from 'react';

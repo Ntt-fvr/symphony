@@ -9,8 +9,8 @@
  */
 
 import * as React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import {SearchIcon} from '@fbcnms/ui/components/design-system/Icons';
+import Text from '@symphony/design-system/components/Text';
+import {SearchIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

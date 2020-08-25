@@ -14,9 +14,9 @@ import type {
 } from './__generated__/LocationFloorPlansTab_location.graphql';
 
 import AddFloorPlanMutation from '../../mutations/AddFloorPlanMutation';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import DeleteFloorPlanMutation from '../../mutations/DeleteFloorPlanMutation';
 import FileAttachment from '../FileAttachment';
 import FileUploadButton from '../FileUpload/FileUploadButton';

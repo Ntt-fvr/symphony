@@ -13,7 +13,7 @@ import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React, {useState} from 'react';
 import axios from 'axios';

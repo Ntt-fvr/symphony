@@ -10,7 +10,7 @@
 
 import type {aggregated_maximum_bitrate, apn} from '@fbcnms/magma-api';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import MagmaV1API from '@fbcnms/magma-api/client/WebClient';
 import React from 'react';
 import {

@@ -11,19 +11,19 @@
 import type {PermissionsPolicyBase} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import PermissionsPoliciesTable from '../policies/PermissionsPoliciesTable';
 import Strings from '@fbcnms/strings/Strings';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
-import {ROW_SEPARATOR_TYPES} from '@fbcnms/ui/components/design-system/Table/TableContent';
-import {TABLE_VARIANT_TYPES} from '@fbcnms/ui/components/design-system/Table/Table';
+import {ROW_SEPARATOR_TYPES} from '@symphony/design-system/components/Table/TableContent';
+import {TABLE_VARIANT_TYPES} from '@symphony/design-system/components/Table/Table';
 import {makeStyles} from '@material-ui/styles';
 import {
   unwrapPermissionsPolicies,

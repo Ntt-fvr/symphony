@@ -12,13 +12,13 @@ import type {WithStyles} from '@material-ui/core';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CSVFileUpload from './CSVFileUpload';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogConfirm from '@fbcnms/ui/components/DialogConfirm';
 import DialogError from '@fbcnms/ui/components/DialogError';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import UploadAnywayDialog from '@fbcnms/ui/components/UploadAnywayDialog';
 import UploadErrorsList from '@fbcnms/ui/components/UploadErrorsList';
 import axios from 'axios';

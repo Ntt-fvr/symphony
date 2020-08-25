@@ -15,7 +15,7 @@ import type {
 
 import * as React from 'react';
 import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';

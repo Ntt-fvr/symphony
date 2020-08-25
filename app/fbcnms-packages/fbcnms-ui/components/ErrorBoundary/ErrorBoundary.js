@@ -12,7 +12,7 @@ import type {WithStyles} from '@material-ui/core';
 
 import * as React from 'react';
 import ErrorIcon from '@material-ui/icons/Error';
-import Text from '../design-system/Text';
+import Text from '@symphony/design-system/components//Text';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = {

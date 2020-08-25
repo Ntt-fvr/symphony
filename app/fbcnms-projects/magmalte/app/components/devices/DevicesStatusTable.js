@@ -9,7 +9,7 @@
  */
 import type {symphony_device} from '@fbcnms/magma-api';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DevicesEditManagedDeviceDialog from './DevicesEditManagedDeviceDialog';
 import DevicesManagedDeviceRow from './DevicesManagedDeviceRow';
 import DevicesMetricsDialog from './DevicesMetricsDialog';

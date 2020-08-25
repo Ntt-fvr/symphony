@@ -11,7 +11,7 @@
 import AddIcon from '@material-ui/icons/Add';
 import ExpandingPanel from '../../components/ExpandingPanel';
 import React from 'react';
-import Text from '../../components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {STORY_CATEGORIES} from '../storybookUtils';
 import {storiesOf} from '@storybook/react';
 

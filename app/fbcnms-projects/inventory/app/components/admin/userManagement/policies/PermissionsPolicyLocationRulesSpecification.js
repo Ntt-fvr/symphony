@@ -11,10 +11,10 @@
 import type {LocationCUDPermissions} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import LocationTypesTokenizer from '../../../../common/LocationTypesTokenizer';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Select from '@symphony/design-system/components/Select/Select';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import {
@@ -24,7 +24,7 @@ import {
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo, useState} from 'react';
 import {useEffect} from 'react';
-import {useFormAlertsContext} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
+import {useFormAlertsContext} from '@symphony/design-system/components/Form/FormAlertsContext';
 
 const ERROR_MESSAGE_HEIGHT = '6px';
 

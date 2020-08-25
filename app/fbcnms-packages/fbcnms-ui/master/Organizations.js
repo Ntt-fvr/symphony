@@ -11,7 +11,7 @@
 import type {OrganizationPlainAttributes} from '@fbcnms/sequelize-models/models/organization';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditUserDialog from '@fbcnms/ui/components/auth/EditUserDialog';
 import IconButton from '@material-ui/core/IconButton';

@@ -11,17 +11,17 @@
 import * as React from 'react';
 import Autosuggest from 'react-autosuggest';
 import CancelIcon from '@material-ui/icons/Cancel';
-import FormAction from './design-system/Form/FormAction';
-import InputAffix from './design-system/Input/InputAffix';
-import Text from './design-system/Text';
-import TextInput from './design-system/Input/TextInput';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import InputAffix from '@symphony/design-system/components/Input/InputAffix';
+import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import Tooltip from '@material-ui/core/Tooltip';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import symphony from '../theme/symphony';
 import useFollowElement from './useFollowElement';
 import {blue05} from '../theme/colors';
 import {makeStyles, useTheme} from '@material-ui/styles';
-import {useFormElementContext} from '@fbcnms/ui/components/design-system/Form/FormElementContext';
+import {useFormElementContext} from '@symphony/design-system/components/Form/FormElementContext';
 import {useMemo, useRef, useState} from 'react';
 
 const autoSuggestStyles = theme => ({

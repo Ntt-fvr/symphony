@@ -11,7 +11,7 @@
 import CheckIcon from '@material-ui/icons/Check';
 import EditIcon from '@material-ui/icons/Edit';
 import React, {useState} from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import {makeStyles} from '@material-ui/styles';
 

@@ -11,23 +11,23 @@
 import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsGroupManagePoliciesDialog, {
   DIALOG_TITLE,
 } from './PermissionsGroupManagePoliciesDialog';
 import PermissionsPoliciesTable from '../policies/PermissionsPoliciesTable';
 import PermissionsPolicyRulesDisplay from '../policies/PermissionsPolicyRulesDisplay';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import Text from '@symphony/design-system/components/Text';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
-import {NewTabIcon} from '@fbcnms/ui/components/design-system/Icons';
-import {POSITION} from '@fbcnms/ui/components/design-system/Dialog/DialogFrame';
-import {ROW_SEPARATOR_TYPES} from '@fbcnms/ui/components/design-system/Table/TableContent';
-import {TABLE_VARIANT_TYPES} from '@fbcnms/ui/components/design-system/Table/Table';
+import {NewTabIcon} from '@symphony/design-system/icons';
+import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
+import {ROW_SEPARATOR_TYPES} from '@symphony/design-system/components/Table/TableContent';
+import {TABLE_VARIANT_TYPES} from '@symphony/design-system/components/Table/Table';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo, useState} from 'react';
-import {useDialogShowingContext} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
+import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {wrapRawPermissionsPolicies} from '../data/PermissionsPolicies';
 
 const useStyles = makeStyles(() => ({

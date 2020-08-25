@@ -13,7 +13,7 @@ import type {ProjectLink} from './AppDrawerProjectNavigation';
 import AppsIcon from '@material-ui/icons/Apps';
 import Popout from '../Popout';
 import React from 'react';
-import Text from '../design-system/Text';
+import Text from '@symphony/design-system/components//Text';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 import {useRouter} from '../../hooks';

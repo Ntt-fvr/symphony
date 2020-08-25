@@ -11,9 +11,9 @@
 import type {ToggleButtonDisplay} from './ListItem';
 
 import * as React from 'react';
-import CheckIcon from '@fbcnms/ui/components/design-system/Icons/Indications/CheckIcon';
+import CheckIcon from '@symphony/design-system/icons/Indications/CheckIcon';
 import ListItem from './ListItem';
-import PlusIcon from '@fbcnms/ui/components/design-system/Icons/Actions/PlusIcon';
+import PlusIcon from '@symphony/design-system/icons/Actions/PlusIcon';
 import Strings from '@fbcnms/strings/Strings';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';

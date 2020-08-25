@@ -12,12 +12,12 @@ import type {UsersGroup} from '../data/UsersGroups';
 import type {UsersGroupStatus} from '../data/__generated__/PermissionsPoliciesSearchQuery.graphql';
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import Card from '@symphony/design-system/components/Card/Card';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
 import Grid from '@material-ui/core/Grid';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import Select from '@symphony/design-system/components/Select/Select';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
 import {GROUP_STATUSES} from '../utils/UserManagementUtils';
 import {isTempId} from '../../../../common/EntUtils';

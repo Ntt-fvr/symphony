@@ -11,10 +11,10 @@
 import type {PermissionsPolicy} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
 import Grid from '@material-ui/core/Grid';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 

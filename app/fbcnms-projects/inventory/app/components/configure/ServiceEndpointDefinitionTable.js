@@ -11,13 +11,13 @@
 import type {ServiceEndpointDefinition} from '../../common/ServiceType';
 import type {WithStyles} from '@material-ui/core';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import IconButton from '@symphony/design-system/components/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 // $FlowFixMe - it exists
@@ -33,7 +33,7 @@ import TextField from '@material-ui/core/TextField';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import update from 'immutability-helper';
-import {DeleteIcon, PlusIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'react-relay';
 import {generateTempId, isTempId} from '../../common/EntUtils';
 import {removeItem, updateItem} from '@fbcnms/util/arrays';

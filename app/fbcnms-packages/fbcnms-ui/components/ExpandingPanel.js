@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useState} from 'react';

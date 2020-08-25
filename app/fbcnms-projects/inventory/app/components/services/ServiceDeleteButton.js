@@ -17,9 +17,9 @@ import type {Service} from '../../common/Service';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 
-import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
+import DeleteIcon from '@symphony/design-system/icons/Actions/DeleteIcon';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
-import IconButton from '@fbcnms/ui//components/design-system/IconButton';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React from 'react';
 import RemoveServiceMutation from '../../mutations/RemoveServiceMutation';
 import nullthrows from '@fbcnms/util/nullthrows';

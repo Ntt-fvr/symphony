@@ -9,9 +9,9 @@
  */
 import type {WithStyles} from '@material-ui/core';
 
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import React from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import {withStyles} from '@material-ui/core/styles';
 
 type Props = {

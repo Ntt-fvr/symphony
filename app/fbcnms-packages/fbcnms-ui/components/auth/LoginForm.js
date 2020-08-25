@@ -10,13 +10,13 @@
 
 import type {ElementRef} from 'react';
 
-import Button from '../design-system/Button';
+import Button from '@symphony/design-system/components//Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import FormLabel from '@material-ui/core/FormLabel';
 import React from 'react';
-import Text from '../design-system/Text';
+import Text from '@symphony/design-system/components//Text';
 import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
 

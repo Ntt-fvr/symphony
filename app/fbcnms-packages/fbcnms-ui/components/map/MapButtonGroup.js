@@ -12,7 +12,7 @@ import * as React from 'react';
 import MapButton from '@fbcnms/ui/components/map/MapButton';
 import MapToggleButtonGroup from '@fbcnms/ui/components/map/MapToggleButtonGroup';
 import MapToggleContainer from '@fbcnms/ui/components/map/MapToggleContainer';
-import Text from '../design-system/Text';
+import Text from '@symphony/design-system/components//Text';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
 

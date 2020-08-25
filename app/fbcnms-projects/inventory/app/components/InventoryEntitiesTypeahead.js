@@ -16,7 +16,7 @@ import * as React from 'react';
 import EquipmentBreadcrumbs from './equipment/EquipmentBreadcrumbs';
 import LocationBreadcrumbsTitle from './location/LocationBreadcrumbsTitle';
 import RelayEnvironment from '../common/RelayEnvironment.js';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Typeahead from '@fbcnms/ui/components/Typeahead';
 import {NAVIGATION_OPTIONS} from './location/LocationBreadcrumbsTitle';
 import {debounce} from 'lodash';

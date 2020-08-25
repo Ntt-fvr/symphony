@@ -15,7 +15,7 @@ import type {WithStyles} from '@material-ui/core';
 import Link from '@fbcnms/ui/components/Link';
 import LocationLink from '../location/LocationLink';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {AutoSizer, Column, Table} from 'react-virtualized';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {discoveryMethods} from '../../common/Service';

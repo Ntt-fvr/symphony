@@ -14,7 +14,7 @@ import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import PermissionsPolicyLocationRulesSection from './PermissionsPolicyLocationRulesSection';
 import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
-import Switch from '@fbcnms/ui/components/design-system/switch/Switch';
+import Switch from '@symphony/design-system/components/switch/Switch';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import {

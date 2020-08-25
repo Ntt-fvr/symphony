@@ -8,11 +8,11 @@
  * @format
  */
 
-import type {TableRowDataType} from '@fbcnms/ui/components/design-system/Table/Table';
+import type {TableRowDataType} from '@symphony/design-system/components/Table/Table';
 import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import withSuspense from '../../../../common/withSuspense';
 import {GROUP_STATUSES} from '../utils/UserManagementUtils';

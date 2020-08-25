@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {FocusEvent} from '@fbcnms/ui/components/design-system/Input/TextInput';
+import type {FocusEvent} from '@symphony/design-system/components/Input/TextInput';
 import type {Property} from '../../common/Property';
 import type {PropertyType} from '../../common/PropertyType';
 import type {WithStyles} from '@material-ui/core';
@@ -17,13 +17,13 @@ import * as React from 'react';
 import EnumPropertySelectValueInput from './EnumPropertySelectValueInput';
 import EnumPropertyValueInput from './EnumPropertyValueInput';
 import FormContext from '../../common/FormContext';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import GPSPropertyValueInput from './GPSPropertyValueInput';
 import NodePropertyInput from '../NodePropertyInput';
 import RangePropertyValueInput from './RangePropertyValueInput';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import Select from '@symphony/design-system/components/Select/Select';
+import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import update from 'immutability-helper';
 import {getPropertyValue} from '../../common/Property';

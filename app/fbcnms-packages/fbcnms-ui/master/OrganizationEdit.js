@@ -12,7 +12,7 @@ import type {Organization} from './Organizations';
 import type {SSOSelectedType} from '@fbcnms/types/auth';
 import type {Tab} from '@fbcnms/types/tabs';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -27,7 +27,7 @@ import Paper from '@material-ui/core/Paper';
 import React from 'react';
 import SaveIcon from '@material-ui/icons/Save';
 import Select from '@material-ui/core/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import TypedSelect from '@fbcnms/ui/components/TypedSelect';
 import axios from 'axios';

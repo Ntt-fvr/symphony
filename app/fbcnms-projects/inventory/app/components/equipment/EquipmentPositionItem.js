@@ -21,13 +21,13 @@ import type {WithStyles} from '@material-ui/core';
 
 import ActionButton from '@fbcnms/ui/components/ActionButton';
 import AddToEquipmentDialog from './AddToEquipmentDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CommonStrings from '@fbcnms/strings/Strings';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import React from 'react';
 import RemoveEquipmentFromPositionMutation from '../../mutations/RemoveEquipmentFromPositionMutation';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';

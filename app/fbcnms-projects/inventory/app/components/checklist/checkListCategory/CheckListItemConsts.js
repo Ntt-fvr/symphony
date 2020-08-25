@@ -11,7 +11,7 @@
 import type {CheckListItemDefinitionProps} from '../checklistDefinition/CheckListItemDefinition';
 import type {CheckListItemFillingProps} from '../checklistFilling/CheckListItemFilling';
 import type {CheckListItemType} from '../../work_orders/__generated__/WorkOrderDetails_workOrder.graphql';
-import type {SvgIconStyleProps} from '@fbcnms/ui/components/design-system/Icons/SvgIcon';
+import type {SvgIconStyleProps} from '@symphony/design-system/icons/SvgIcon';
 
 import * as React from 'react';
 import BasicCheckListItemDefinition from '../checklistDefinition/BasicCheckListItemDefinition';
@@ -35,7 +35,7 @@ import {
   TextIcon,
   WifiIcon,
   YesNoIcon,
-} from '@fbcnms/ui/components/design-system/Icons';
+} from '@symphony/design-system/icons';
 
 export type CheckListItemConfigsType = {
   [CheckListItemType]: {|

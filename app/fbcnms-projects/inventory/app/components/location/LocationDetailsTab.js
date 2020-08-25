@@ -11,8 +11,8 @@
 import type {Equipment} from '../../common/Equipment';
 import type {Location} from '../../common/Location.js';
 
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import LocationDetailsCard from './LocationDetailsCard';
 import LocationEquipmentCard from './LocationEquipmentCard';

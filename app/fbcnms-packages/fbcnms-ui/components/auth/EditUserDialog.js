@@ -23,7 +23,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, {useCallback, useContext, useMemo, useState} from 'react';
 import Select from '@material-ui/core/Select';
-import SymphonySelect from '@fbcnms/ui/components/design-system/Select/Select';
+import SymphonySelect from '@symphony/design-system/components/Select/Select';
 import TextField from '@material-ui/core/TextField';
 import renderList from '@fbcnms/util/renderList';
 import {UserRoles} from '@fbcnms/auth/types';

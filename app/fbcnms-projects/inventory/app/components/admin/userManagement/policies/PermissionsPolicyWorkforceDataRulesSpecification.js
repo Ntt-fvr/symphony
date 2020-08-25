@@ -11,10 +11,10 @@
 import type {WorkforcePolicy} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import ProjectTemplatesTokenizer from '../../../../common/ProjectTemplatesTokenizer';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Select from '@symphony/design-system/components/Select/Select';
+import Text from '@symphony/design-system/components/Text';
 import WorkOrderTemplatesTokenizer from '../../../../common/WorkOrderTemplatesTokenizer';
 import classNames from 'classnames';
 import fbt from 'fbt';
@@ -23,7 +23,7 @@ import {PERMISSION_RULE_VALUES} from '../data/PermissionsPolicies';
 import {makeStyles} from '@material-ui/styles';
 import {permissionRuleValue2Bool} from '../data/PermissionsPolicies';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {useFormAlertsContext} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
+import {useFormAlertsContext} from '@symphony/design-system/components/Form/FormAlertsContext';
 
 const useStyles = makeStyles(() => ({
   policySpecificationContainer: {

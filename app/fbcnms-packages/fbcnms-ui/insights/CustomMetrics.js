@@ -10,7 +10,7 @@
 
 import AppBar from '@material-ui/core/AppBar';
 import AsyncMetric from '../insights/AsyncMetric';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Close from '@material-ui/icons/Close';

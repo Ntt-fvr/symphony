@@ -15,7 +15,7 @@ import ListAltIcon from '@material-ui/icons/ListAlt';
 import MapButtonGroup from '@fbcnms/ui/components/map/MapButtonGroup';
 import MapIcon from '@material-ui/icons/Map';
 import React from 'react';
-import Text from '../../components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {STORY_CATEGORIES} from '../storybookUtils';
 import {makeStyles} from '@material-ui/styles';
 import {storiesOf} from '@storybook/react';

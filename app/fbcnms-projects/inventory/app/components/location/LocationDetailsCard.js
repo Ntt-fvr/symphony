@@ -12,12 +12,12 @@ import type {Location} from '../../common/Location.js';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import LocationDetailsCardProperty from './LocationDetailsCardProperty';
 import LocationMapSnippet from './LocationMapSnippet';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';

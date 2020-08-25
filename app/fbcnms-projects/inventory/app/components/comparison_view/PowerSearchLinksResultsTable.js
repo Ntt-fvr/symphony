@@ -20,7 +20,7 @@ import AppContext from '@fbcnms/ui/context/AppContext';
 import Box from '@material-ui/core/Box';
 import EquipmentBreadcrumbs from '../equipment/EquipmentBreadcrumbs';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {AutoSizer, Column, Table} from 'react-virtualized';

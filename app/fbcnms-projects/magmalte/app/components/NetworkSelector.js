@@ -16,7 +16,7 @@ import NetworkContext from './context/NetworkContext';
 import Popout from '@fbcnms/ui/components/Popout';
 import React, {useContext, useState} from 'react';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import classNames from 'classnames';
 import {colors} from '../theme/default';

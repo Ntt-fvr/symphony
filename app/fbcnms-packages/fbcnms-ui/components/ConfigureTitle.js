@@ -11,7 +11,7 @@
 import type {WithStyles} from '@material-ui/core';
 
 import React from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {gray13} from '../theme/colors';
 import {withStyles} from '@material-ui/core/styles';
 

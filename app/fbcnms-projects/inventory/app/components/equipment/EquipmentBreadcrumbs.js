@@ -14,7 +14,7 @@ import type {WithStyles} from '@material-ui/core';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';

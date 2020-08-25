@@ -9,7 +9,7 @@
  */
 
 import AddNetworkDialog from './AddNetworkDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DeleteIcon from '@material-ui/icons/Delete';
 import DialogWithConfirmationPhrase from '@fbcnms/ui/components/DialogWithConfirmationPhrase';
 import EditIcon from '@material-ui/icons/Edit';

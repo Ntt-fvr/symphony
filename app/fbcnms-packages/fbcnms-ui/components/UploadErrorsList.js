@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Table from './design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 

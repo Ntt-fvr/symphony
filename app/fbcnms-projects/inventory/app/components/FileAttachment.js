@@ -20,7 +20,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import React from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import nullthrows from 'nullthrows';
 import symphony from '@fbcnms/ui/theme/symphony';

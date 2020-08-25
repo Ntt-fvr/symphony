@@ -13,7 +13,7 @@ import type {Theme, WithStyles} from '@material-ui/core';
 import * as React from 'react';
 import Autosuggest from 'react-autosuggest';
 import ClearIcon from '@material-ui/icons/Clear';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {
   blue05,

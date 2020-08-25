@@ -15,7 +15,7 @@ import type {
 import type {ChecklistItemsDialogMutateStateActionType} from './ChecklistItemsDialogMutateAction';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CheckListTableFilling from '../checklistFilling/CheckListTableFilling';
 import ChecklistDefinitionsList from '../checklistDefinition/ChecklistDefinitionsList';
 import ChecklistItemsDialogMutateDispatchContext from './ChecklistItemsDialogMutateDispatchContext';
@@ -23,12 +23,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import Strings from '@fbcnms/strings/Strings';
-import TabsBar from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
-import {PlusIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {PlusIcon} from '@symphony/design-system/icons';
 import {getInitialState, reducer} from './ChecklistItemsDialogMutateReducer';
 import {makeStyles} from '@material-ui/styles';
 import {useReducer, useState} from 'react';

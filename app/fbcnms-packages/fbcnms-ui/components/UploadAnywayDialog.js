@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 
 type Props = {

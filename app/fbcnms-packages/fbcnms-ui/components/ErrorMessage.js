@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(_theme => ({

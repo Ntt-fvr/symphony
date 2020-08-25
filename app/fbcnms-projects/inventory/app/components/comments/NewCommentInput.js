@@ -14,9 +14,9 @@ import type {
 } from '../../mutations/__generated__/AddCommentMutation.graphql';
 
 import AddCommentMutation from '../../mutations/AddCommentMutation';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import React, {useState} from 'react';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 

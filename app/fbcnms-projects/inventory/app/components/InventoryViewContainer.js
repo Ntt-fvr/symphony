@@ -9,14 +9,14 @@
  */
 
 import type {PermissionEnforcement} from './admin/userManagement/utils/usePermissions';
-import type {ViewContainerProps} from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import type {ViewContainerProps} from '@symphony/design-system/components/View/ViewContainer';
 
 import * as React from 'react';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import MapIcon from '@material-ui/icons/Map';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import {FormContextProvider} from '../common/FormContext';
-import {VARIANTS} from '@fbcnms/ui/components/design-system/View/ViewBody';
+import {VARIANTS} from '@symphony/design-system/components/View/ViewBody';
 import {useMemo, useState} from 'react';
 
 export const DisplayOptions = {

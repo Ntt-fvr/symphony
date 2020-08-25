@@ -16,11 +16,11 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Popover from '@material-ui/core/Popover';
 import React, {useMemo, useRef, useState} from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 // flowlint untyped-import:off
 import fbt from 'fbt';
-import useResize from './design-system/hooks/useResize';
+import useResize from '@symphony/design-system/hooks/useResize';
 import {gray8} from '@fbcnms/ui/theme/colors';
 import {makeStyles} from '@material-ui/styles';
 

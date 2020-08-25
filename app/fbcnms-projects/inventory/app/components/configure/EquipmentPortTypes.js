@@ -13,7 +13,7 @@ import type {EquipmentPortTypeItem_equipmentPortType} from './__generated__/Equi
 import type {WithStyles} from '@material-ui/core';
 
 import AddEditEquipmentPortTypeCard from './AddEditEquipmentPortTypeCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 import EquipmentPortTypeItem from './EquipmentPortTypeItem';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';

@@ -13,7 +13,7 @@ import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
 import EntDetails from './EntDetails';
 import EntSearchBar from './EntSearchBar';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {AppContextProvider} from '@fbcnms/ui/context/AppContext';
 import {Route} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';

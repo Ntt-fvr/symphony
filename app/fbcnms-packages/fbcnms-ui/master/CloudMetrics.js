@@ -18,7 +18,7 @@ import CardContent from '@material-ui/core/CardContent';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TimeRangeSelector from '@fbcnms/ui/insights/TimeRangeSelector';
 
 import {makeStyles} from '@material-ui/styles';

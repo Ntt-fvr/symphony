@@ -8,13 +8,13 @@
  * @format
  */
 
-import type {RadioOption} from '@fbcnms/ui/components/design-system/RadioGroup/RadioGroup';
+import type {RadioOption} from '@symphony/design-system/components/RadioGroup/RadioGroup';
 import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import RadioGroup from '@fbcnms/ui/components/design-system/RadioGroup/RadioGroup';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

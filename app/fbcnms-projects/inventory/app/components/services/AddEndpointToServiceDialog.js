@@ -14,7 +14,7 @@ import type {ServicePanel_service} from './__generated__/ServicePanel_service.gr
 import type {WithStyles} from '@material-ui/core';
 
 import AvailablePortsTable from '../AvailablePortsTable';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -23,12 +23,12 @@ import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import PowerSearchLinkFirstEquipmentResultsTable from './PowerSearchLinkFirstEquipmentResultsTable';
 import React from 'react';
 import Strings from '@fbcnms/strings/Strings';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {OperatorMap} from '../comparison_view/ComparisonViewTypes';
-import {WizardContextProvider} from '@fbcnms/ui/components/design-system/Wizard/WizardContext';
+import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {generateTempId} from '../../common/EntUtils';
 import {graphql} from 'react-relay';
 

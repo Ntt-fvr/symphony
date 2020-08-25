@@ -15,7 +15,7 @@ import InventoryErrorBoundary from '../../common/InventoryErrorBoundary';
 import PowerSearchBarRouter from './PowerSearchBarRouter';
 import PowerSearchFilterSubjectDropDown from '../power_search/PowerSearchFilterSubjectDropDown';
 import React, {useState} from 'react';
-import ViewHeader from '@fbcnms/ui/components/design-system/View/ViewHeader';
+import ViewHeader from '@symphony/design-system/components/View/ViewHeader';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {EntityTypeMap} from './ComparisonViewTypes';

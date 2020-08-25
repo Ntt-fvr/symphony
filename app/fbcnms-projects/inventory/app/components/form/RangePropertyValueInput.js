@@ -8,13 +8,13 @@
  * @format
  */
 
-import type {FocusEvent} from '@fbcnms/ui/components/design-system/Input/TextInput';
+import type {FocusEvent} from '@symphony/design-system/components/Input/TextInput';
 
 import FormContext from '../../common/FormContext';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import InputAffix from '@fbcnms/ui/components/design-system/Input/InputAffix';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import InputAffix from '@symphony/design-system/components/Input/InputAffix';
 import React from 'react';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 

@@ -11,7 +11,7 @@
 import type {Equipment, EquipmentPosition} from '../../common/Equipment';
 import type {EquipmentType} from '../../common/EquipmentType';
 
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import EquipmentPositionsGrid from './EquipmentPositionsGrid';
 import React from 'react';

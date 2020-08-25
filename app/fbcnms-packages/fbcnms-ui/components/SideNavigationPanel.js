@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '../theme/symphony';
 import {makeStyles} from '@material-ui/styles';

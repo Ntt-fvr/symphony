@@ -10,14 +10,14 @@
 
 import type {Node} from 'react';
 
-import Button from '../design-system/Button';
-import Checkbox from '../design-system/Checkbox/Checkbox';
+import Button from '@symphony/design-system/components//Button';
+import Checkbox from '@symphony/design-system/components//Checkbox/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import React, {useState} from 'react';
-import Text from '../design-system/Text';
+import Text from '@symphony/design-system/components//Text';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

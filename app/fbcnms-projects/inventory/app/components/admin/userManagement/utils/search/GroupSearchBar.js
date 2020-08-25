@@ -11,7 +11,7 @@
 
 import * as React from 'react';
 import GroupSearchBox from './GroupSearchBox';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {useGroupSearchContext} from './GroupSearchContext';

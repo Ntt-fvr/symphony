@@ -11,12 +11,12 @@
 import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import GroupSearchBar from '../utils/search/GroupSearchBar';
 import GroupsSearchEmptyState from '../utils/search/GroupsSearchEmptyState';
 import NoGroupsEmptyState from '../utils/NoGroupsEmptyState';
 import UserGroupsList from '../utils/UserGroupsList';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
 import {
   GroupSearchContextProvider,

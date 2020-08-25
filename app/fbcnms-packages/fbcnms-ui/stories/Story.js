@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Text from '../components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

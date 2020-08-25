@@ -14,7 +14,7 @@ import type {LocationType} from '../common/LocationType';
 import type {WithStyles} from '@material-ui/core';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CSVUploadDialog from './CSVUploadDialog';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -26,7 +26,7 @@ import LocationTypesList from './LocationTypesList';
 import React from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {LogEvents, ServerLogger} from '../common/LoggingUtils';
 import {withStyles} from '@material-ui/core/styles';
 

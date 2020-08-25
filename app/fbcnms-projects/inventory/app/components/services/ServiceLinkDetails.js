@@ -14,7 +14,7 @@ import ActiveEquipmentIcon from '@fbcnms/ui/icons/ActiveEquipmentIcon';
 import EquipmentIcon from '@fbcnms/ui/icons/EquipmentIcon';
 import OptionsPopoverButton from '../OptionsPopoverButton';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';

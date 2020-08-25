@@ -16,7 +16,7 @@ import type {Link} from '../../common/Equipment';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {Theme} from '@material-ui/core';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -25,7 +25,7 @@ import EditLinkMutation from '../../mutations/EditLinkMutation';
 import PropertiesAddEditSection from '../form/PropertiesAddEditSection';
 import React, {useCallback, useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import update from 'immutability-helper';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {getInitialPropertyFromType} from '../../common/PropertyType';

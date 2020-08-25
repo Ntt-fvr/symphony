@@ -12,15 +12,15 @@ import type {CheckListItem} from '../checkListCategory/ChecklistItemsDialogMutat
 import type {CheckListItemType} from '../../work_orders/__generated__/WorkOrderDetails_workOrder.graphql';
 import type {Node} from 'react';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
-import Checkbox from '@fbcnms/ui/components/design-system/Checkbox/Checkbox';
+import Button from '@symphony/design-system/components/Button';
+import Checkbox from '@symphony/design-system/components/Checkbox/Checkbox';
 import ChecklistItemsDialogMutateDispatchContext from '../checkListCategory/ChecklistItemsDialogMutateDispatchContext';
-import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
+import DeleteIcon from '@symphony/design-system/icons/Actions/DeleteIcon';
 import Grid from '@material-ui/core/Grid';
 import React, {useContext} from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import Select from '@symphony/design-system/components/Select/Select';
+import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';

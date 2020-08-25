@@ -15,8 +15,8 @@ import type {
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import Button from '@symphony/design-system/components/Button';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import MarkSiteSurveyNeededMutation from '../../mutations/MarkSiteSurveyNeededMutation';
 import React from 'react';
 import nullthrows from '@fbcnms/util/nullthrows';

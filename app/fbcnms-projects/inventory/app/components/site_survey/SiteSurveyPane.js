@@ -16,7 +16,7 @@ import React, {useMemo, useState} from 'react';
 import Select from '@material-ui/core/Select';
 import SiteSurveyField from './SiteSurveyField';
 import SiteSurveyQuestionReply from './SiteSurveyQuestionReply';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';

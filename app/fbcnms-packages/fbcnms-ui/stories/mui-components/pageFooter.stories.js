@@ -10,7 +10,7 @@
 
 import PageFooter from '../../components/PageFooter';
 import React from 'react';
-import Text from '../../components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {STORY_CATEGORIES} from '../storybookUtils';
 import {storiesOf} from '@storybook/react';
 

@@ -8,11 +8,11 @@
  * @format
  */
 
-import type {FormFieldProps} from '@fbcnms/ui/components/design-system/FormField/FormField';
+import type {FormFieldProps} from '@symphony/design-system/components/FormField/FormField';
 import type {PermissionEnforcement} from '../components/admin/userManagement/utils/usePermissions';
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import usePermissions from '../components/admin/userManagement/utils/usePermissions';
 
 type Props = $ReadOnly<{|

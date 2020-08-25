@@ -9,7 +9,7 @@
  */
 
 import React, {useCallback, useState} from 'react';
-import Text from './design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import classNames from 'classnames';
 import symphony from '../theme/symphony';

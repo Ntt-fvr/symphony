@@ -11,7 +11,7 @@
 import Button from '@material-ui/core/Button';
 import React, {useState} from 'react';
 import SideBar from '../../components/layout/SideBar';
-import Text from '../../components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import TopPageBar from '../../components/layout/TopPageBar';
 import {STORY_CATEGORIES} from '../storybookUtils';
 import {makeStyles} from '@material-ui/styles';

@@ -9,15 +9,15 @@
  */
 
 import type {PermissionsPolicy} from '../data/PermissionsPolicies';
-import type {TabProps} from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsPolicyInventoryCatalogRulesTab from './PermissionsPolicyInventoryCatalogRulesTab';
 import PermissionsPolicyInventoryDataRulesTab from './PermissionsPolicyInventoryDataRulesTab';
 import PermissionsPolicyWorkforceDataRulesTab from './PermissionsPolicyWorkforceDataRulesTab';
 import PermissionsPolicyWorkforceTemplatesRulesTab from './PermissionsPolicyWorkforceTemplatesRulesTab';
-import TabsBar from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {POLICY_TYPES} from '../utils/UserManagementUtils';

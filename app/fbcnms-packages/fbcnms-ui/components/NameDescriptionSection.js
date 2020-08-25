@@ -8,11 +8,11 @@
  * @format
  */
 
-import FormField from './design-system/FormField/FormField';
-import NameInput from '@fbcnms/ui/components/design-system/Form/NameInput';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import NameInput from '@symphony/design-system/components/Form/NameInput';
 import React from 'react';
-import Text from './design-system/Text';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import Text from '@symphony/design-system/components/Text';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 

@@ -8,7 +8,7 @@
  * @format
  */
 
-import Button from './design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';

@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 
-import Button from './design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = {
