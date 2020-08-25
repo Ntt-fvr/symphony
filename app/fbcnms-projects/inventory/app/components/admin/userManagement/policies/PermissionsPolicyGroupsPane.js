@@ -11,17 +11,17 @@
 import type {PermissionsPolicy} from '../data/PermissionsPolicies';
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import GroupSearchBar from '../utils/search/GroupSearchBar';
-import InfoTinyIcon from '@fbcnms/ui/components/design-system/Icons/Indications/InfoTinyIcon';
+import InfoTinyIcon from '@symphony/design-system/icons/Indications/InfoTinyIcon';
 import PermissionsPolicyGroupsList from './PermissionsPolicyGroupsList';
-import Switch from '@fbcnms/ui/components/design-system/switch/Switch';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import Switch from '@symphony/design-system/components/switch/Switch';
+import Text from '@symphony/design-system/components/Text';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
-import {GroupIcon} from '@fbcnms/ui/components/design-system/Icons/';
+import {GroupIcon} from '@symphony/design-system/icons';
 import {GroupSearchContextProvider} from '../utils/search/GroupSearchContext';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';

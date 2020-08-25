@@ -14,7 +14,7 @@ import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ServicesView from './ServicesView';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 

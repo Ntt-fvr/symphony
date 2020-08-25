@@ -10,13 +10,13 @@
 
 import type {ChecklistCategoriesStateType} from '../ChecklistCategoriesMutateState';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CheckListCategoryItemsDialog from './CheckListCategoryItemsDialog';
 import ChecklistCategoriesMutateDispatchContext from '../ChecklistCategoriesMutateDispatchContext';
-import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
+import DeleteIcon from '@symphony/design-system/icons/Actions/DeleteIcon';
 import React, {useContext, useMemo, useState} from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import Table from '@symphony/design-system/components/Table/Table';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {isChecklistItemDone} from '../ChecklistUtils';
 import {makeStyles} from '@material-ui/styles';

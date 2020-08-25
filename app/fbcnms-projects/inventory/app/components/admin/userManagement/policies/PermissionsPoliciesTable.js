@@ -13,12 +13,12 @@ import type {
   TableDesignProps,
   TableRowDataType,
   TableSelectionProps,
-} from '@fbcnms/ui/components/design-system/Table/Table';
+} from '@symphony/design-system/components/Table/Table';
 
 import * as React from 'react';
-import LockIcon from '@fbcnms/ui/components/design-system/Icons/Indications/LockIcon';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import LockIcon from '@symphony/design-system/icons/Indications/LockIcon';
+import Table from '@symphony/design-system/components/Table/Table';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

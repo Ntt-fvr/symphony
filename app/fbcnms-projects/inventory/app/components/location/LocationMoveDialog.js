@@ -8,17 +8,17 @@
  * @format
  */
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
+import IconButton from '@symphony/design-system/components/IconButton';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
-import RadioGroup from '@fbcnms/ui/components/design-system/RadioGroup/RadioGroup';
+import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup';
 import React, {useState} from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
-import {CloseIcon} from '@fbcnms/ui/components/design-system/Icons';
+import Text from '@symphony/design-system/components/Text';
+import {CloseIcon} from '@symphony/design-system/icons';
 
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';

@@ -9,9 +9,9 @@
  */
 
 import * as React from 'react';
-import CloseIcon from '@fbcnms/ui/components/design-system/Icons/Navigation/CloseIcon';
-import InputAffix from '@fbcnms/ui/components/design-system/Input/InputAffix';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import CloseIcon from '@symphony/design-system/icons/Navigation/CloseIcon';
+import InputAffix from '@symphony/design-system/components/Input/InputAffix';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import {useUserSearchContext} from './UserSearchContext';
 

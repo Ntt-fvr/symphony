@@ -14,7 +14,7 @@ import type {CheckListItemEnumSelectionMode} from '../../work_orders/__generated
 
 import CheckListItemDefinitionBase from './CheckListItemDefinitionBase';
 import React from 'react';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import Select from '@symphony/design-system/components/Select/Select';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import fbt from 'fbt';

@@ -10,23 +10,23 @@
 
 import type {PositionDefinitionsAddEditTable_positionDefinition} from './__generated__/PositionDefinitionsAddEditTable_positionDefinition.graphql';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CardSection from '../CardSection';
 import DraggableTableRow from '../draggable/DraggableTableRow';
 import DroppableTableBody from '../draggable/DroppableTableBody';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback} from 'react';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 import inventoryTheme from '../../common/theme';
 import update from 'immutability-helper';
-import {DeleteIcon, PlusIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {reorder} from '../draggable/DraggableUtils';

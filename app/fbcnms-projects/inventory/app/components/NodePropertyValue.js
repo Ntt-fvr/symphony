@@ -11,7 +11,7 @@
 import type {NamedNode} from '../common/EntUtils';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import {InventoryAPIUrls} from '../common/InventoryAPI';
 import {useHistory} from 'react-router';
 

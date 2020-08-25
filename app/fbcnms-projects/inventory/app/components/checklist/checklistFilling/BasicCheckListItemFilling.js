@@ -11,7 +11,7 @@
 import type {CheckListItemFillingProps} from './CheckListItemFilling';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../../common/FormContext';

@@ -17,7 +17,7 @@ import React, {useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
-import {ThreeDotsHorizontalIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {ThreeDotsHorizontalIcon} from '@symphony/design-system/icons';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {moveLocation} from '../../mutations/MoveLocationMutation';

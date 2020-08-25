@@ -14,7 +14,7 @@ import type {
 } from './__generated__/EquipmentTypesQuery.graphql';
 
 import AddEditEquipmentTypeCard from './AddEditEquipmentTypeCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 import EquipmentTypeItem from './EquipmentTypeItem';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';

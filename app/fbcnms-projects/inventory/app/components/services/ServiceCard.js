@@ -12,8 +12,8 @@ import type {ContextRouter} from 'react-router-dom';
 import type {ServiceCard_service} from './__generated__/ServiceCard_service.graphql';
 import type {WithStyles} from '@material-ui/core';
 
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 
 import Grid from '@material-ui/core/Grid';
 

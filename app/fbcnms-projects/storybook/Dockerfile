@@ -11,7 +11,7 @@ COPY fbcnms-packages /src/fbcnms-packages
 # install assets
 RUN yarn install --frozen-lockfile && yarn cache clean
 
-WORKDIR /src/fbcnms-packages/fbcnms-ui/
+WORKDIR /src/fbcnms-packages/symphony-design-system
 
 # build project
 RUN rm -rf storybook-static && yarn build-storybook -s public
@@ -23,7 +23,7 @@ FROM nginx:alpine
 RUN apk add --no-cache curl
 
 # copy build artifacts
-COPY --from=builder /src/fbcnms-packages/fbcnms-ui/storybook-static /www/data
+COPY --from=builder /src/fbcnms-packages/symphony-design-system/storybook-static /www/data
 
 # copy nginx config
 COPY fbcnms-projects/storybook/nginx/default.nginx /etc/nginx/conf.d/default.conf

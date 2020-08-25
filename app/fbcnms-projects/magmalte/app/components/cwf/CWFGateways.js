@@ -12,7 +12,7 @@ import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {cwf_gateway} from '@fbcnms/magma-api';
 
 import AddGatewayDialog from '../AddGatewayDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CWFEditGatewayDialog from './CWFEditGatewayDialog';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import DeleteIcon from '@material-ui/icons/Delete';

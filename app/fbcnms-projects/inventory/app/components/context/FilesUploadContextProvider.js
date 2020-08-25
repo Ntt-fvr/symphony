@@ -9,11 +9,11 @@
  */
 'use strict';
 
-import type {FileItem} from '@fbcnms/ui/components/design-system/Experimental/FilesUploadSnackbar';
+import type {FileItem} from '@symphony/design-system/components/Experimental/FilesUploadSnackbar';
 
 import * as React from 'react';
 import emptyFunction from '@fbcnms/util/emptyFunction';
-import {FileUploadStatuses} from '@fbcnms/ui/components/design-system/Experimental/FileUploadStatus';
+import {FileUploadStatuses} from '@symphony/design-system/components/Experimental/FileUploadStatus';
 import {Map as immMap} from 'immutable';
 import {useState} from 'react';
 

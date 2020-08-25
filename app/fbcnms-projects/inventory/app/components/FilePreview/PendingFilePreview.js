@@ -9,13 +9,13 @@
  */
 
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {
   WIDE_DIMENSION_HEIGHT_PX,
   WIDE_DIMENSION_WIDTH_PX,
-} from '@fbcnms/ui/components/design-system/Experimental/FileUpload/FileUploadArea';
+} from '@symphony/design-system/components/Experimental/FileUpload/FileUploadArea';
 import {makeStyles} from '@material-ui/styles';
 
 const PROGRESS_WIDTH = 70;

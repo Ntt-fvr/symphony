@@ -11,7 +11,7 @@
 import type {Entry} from '@fbcnms/ui/components/Tokenizer';
 import type {FilterValue} from './ComparisonViewTypes';
 
-import WizardContext from '@fbcnms/ui/components/design-system/Wizard/WizardContext';
+import WizardContext from '@symphony/design-system/components/Wizard/WizardContext';
 import {useContext} from 'react';
 
 export function useTokens(value: FilterValue): Array<Entry> {

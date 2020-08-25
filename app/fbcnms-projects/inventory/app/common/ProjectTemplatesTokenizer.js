@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {TokenizerDisplayProps} from '@fbcnms/ui/components/design-system/Token/Tokenizer';
+import type {TokenizerDisplayProps} from '@symphony/design-system/components/Token/Tokenizer';
 
 import * as React from 'react';
 import StaticNamedNodesTokenizer from './StaticNamedNodesTokenizer';

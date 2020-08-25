@@ -11,14 +11,14 @@
 import type {
   ErrorHandlingProps,
   PermissionHandlingProps,
-} from '@fbcnms/ui/components/design-system/Form/FormAction';
+} from '@symphony/design-system/components/Form/FormAction';
 import type {PermissionEnforcement} from './admin/userManagement/utils/usePermissions';
 
 import * as React from 'react';
-import PopoverMenu from '@fbcnms/ui/components/design-system/Select/PopoverMenu';
+import PopoverMenu from '@symphony/design-system/components/Select/PopoverMenu';
 import classNames from 'classnames';
 import usePermissions from './admin/userManagement/utils/usePermissions';
-import {ThreeDotsVerticalIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {ThreeDotsVerticalIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo} from 'react';
 

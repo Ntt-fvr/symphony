@@ -11,19 +11,19 @@
 import type {SurveyTemplateCategory} from '../../common/LocationType';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import DeleteIcon from '@fbcnms/ui/components/design-system/Icons/Actions/DeleteIcon';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
-import PlusIcon from '@fbcnms/ui/components/design-system/Icons/Actions/PlusIcon';
+import Button from '@symphony/design-system/components/Button';
+import DeleteIcon from '@symphony/design-system/icons/Actions/DeleteIcon';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import IconButton from '@symphony/design-system/components/IconButton';
+import PlusIcon from '@symphony/design-system/icons/Actions/PlusIcon';
 import SurveyTemplateQuestionsDialog from './SurveyTemplateQuestionsDialog';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
 
 import inventoryTheme from '../../common/theme';

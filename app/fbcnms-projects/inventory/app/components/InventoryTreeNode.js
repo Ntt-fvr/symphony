@@ -14,7 +14,7 @@ import type {Location} from '../common/Location';
 import * as React from 'react';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {Suspense, useEffect, useState} from 'react';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';

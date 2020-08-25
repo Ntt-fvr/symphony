@@ -14,24 +14,24 @@ import type {
   RemoveEquipmentMutationResponse,
   RemoveEquipmentMutationVariables,
 } from '../../mutations/__generated__/RemoveEquipmentMutation.graphql';
-import type {TableRowDataType} from '@fbcnms/ui/components/design-system/Table/Table';
+import type {TableRowDataType} from '@symphony/design-system/components/Table/Table';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CommonStrings from '@fbcnms/strings/Strings';
 import DeviceStatusCircle from '@fbcnms/ui/components/icons/DeviceStatusCircle';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback, useContext, useMemo} from 'react';
 import RemoveEquipmentMutation from '../../mutations/RemoveEquipmentMutation';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
-import {DeleteIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {DeleteIcon} from '@symphony/design-system/icons';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {capitalize} from '@fbcnms/util/strings';
 import {createFragmentContainer, graphql} from 'react-relay';

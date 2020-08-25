@@ -18,7 +18,7 @@ import React, {useContext} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
 import WorkOrderComparisonView from './WorkOrderComparisonView';
 import WorkOrderConfigure from './WorkOrderConfigure';
-import {DialogShowingContextProvider} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
+import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 import {WorkOrdersNavListItems} from './WorkOrdersNavListItems';

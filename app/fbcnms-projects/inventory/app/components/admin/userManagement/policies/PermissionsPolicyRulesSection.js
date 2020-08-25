@@ -17,7 +17,7 @@ import * as React from 'react';
 import HierarchicalCheckbox, {
   HIERARCHICAL_RELATION,
 } from '../utils/HierarchicalCheckbox';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import {

@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import ReactJson from 'react-json-view';
 import SettingsIcon from '@material-ui/icons/Settings';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import {colors, typography} from '../theme/default';
 import {makeStyles} from '@material-ui/styles';

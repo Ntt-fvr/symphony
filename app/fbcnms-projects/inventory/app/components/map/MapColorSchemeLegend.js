@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import {fade} from '@material-ui/core/styles/colorManipulator';
 import {makeStyles} from '@material-ui/styles';

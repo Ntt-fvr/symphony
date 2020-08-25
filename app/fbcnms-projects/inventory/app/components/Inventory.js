@@ -22,7 +22,7 @@ import LocationsMap from './map/LocationsMap';
 import MainNavListItems from './MainNavListItems';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import ServicesMain from './services/ServicesMain';
-import {DialogShowingContextProvider} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
+import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';

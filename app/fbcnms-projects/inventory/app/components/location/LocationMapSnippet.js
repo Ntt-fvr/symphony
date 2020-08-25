@@ -10,7 +10,7 @@
 
 import MapView from '../map/MapView';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {locationToGeoJson} from '../map/MapUtil';
 import {makeStyles} from '@material-ui/styles';

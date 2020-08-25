@@ -12,7 +12,7 @@ import type {EquipmentPosition} from '../../common/Equipment';
 import type {EquipmentType} from '../../common/EquipmentType';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@material-ui/core/Card';
 import EquipmentBreadcrumbs from './EquipmentBreadcrumbs';
 import EquipmentDetails from './EquipmentDetails';
@@ -20,7 +20,7 @@ import EquipmentDocumentsCard from './EquipmentDocumentsCard';
 import EquipmentPortsTable from './EquipmentPortsTable';
 import EquipmentServicesTable from './EquipmentServicesTable';
 import ErrorMessage from '@fbcnms/ui/components/ErrorMessage';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import React, {useContext, useState} from 'react';

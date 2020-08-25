@@ -12,14 +12,14 @@ import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
-import FileUploadArea from '@fbcnms/ui/components/design-system/Experimental/FileUpload/FileUploadArea';
+import Button from '@symphony/design-system/components/Button';
+import FileUploadArea from '@symphony/design-system/components/Experimental/FileUpload/FileUploadArea';
 import FileUploadButton from '../../../FileUpload/FileUploadButton';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
+import FormField from '@symphony/design-system/components/FormField/FormField';
 import FormFieldTextInput from '../utils/FormFieldTextInput';
 import Grid from '@material-ui/core/Grid';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
@@ -27,10 +27,10 @@ import {DocumentAPIUrls} from '../../../../common/DocumentAPI';
 import {FormContextProvider} from '../../../../common/FormContext';
 import {GROUP_STATUSES, USER_ROLES} from '../utils/UserManagementUtils';
 import {Prompt} from 'react-router-dom';
-import {SQUARE_DIMENSION_PX} from '@fbcnms/ui/components/design-system/Experimental/FileUpload/FileUploadArea';
+import {SQUARE_DIMENSION_PX} from '@symphony/design-system/components/Experimental/FileUpload/FileUploadArea';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useContext, useEffect, useMemo, useState} from 'react';
-import {useMessageShowingContext} from '@fbcnms/ui/components/design-system/Dialog/MessageShowingContext';
+import {useMessageShowingContext} from '@symphony/design-system/components/Dialog/MessageShowingContext';
 
 const useStyles = makeStyles(() => ({
   root: {

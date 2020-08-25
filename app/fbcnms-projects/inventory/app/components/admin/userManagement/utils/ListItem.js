@@ -8,10 +8,10 @@
  * @format
  */
 
-import type {ButtonSkin} from '@fbcnms/ui/components/design-system/Button';
+import type {ButtonSkin} from '@symphony/design-system/components/Button';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import classNames from 'classnames';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useState} from 'react';

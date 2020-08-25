@@ -14,15 +14,15 @@ import type {
 } from './__generated__/WorkOrderTypesQuery.graphql';
 
 import AddEditWorkOrderTypeCard from './AddEditWorkOrderTypeCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryView from '../InventoryViewContainer';
 import React, {useMemo, useState} from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
+import Table from '@symphony/design-system/components/Table/Table';
 import fbt from 'fbt';
 import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
-import {TABLE_SORT_ORDER} from '@fbcnms/ui/components/design-system/Table/TableContext';
+import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';

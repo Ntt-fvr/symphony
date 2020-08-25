@@ -22,8 +22,8 @@ import PermissionsPolicyRulesSection, {
   DataRuleTitle,
 } from './PermissionsPolicyRulesSection';
 import PermissionsPolicyWorkforceDataRulesSpecification from './PermissionsPolicyWorkforceDataRulesSpecification';
-import Switch from '@fbcnms/ui/components/design-system/switch/Switch';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Switch from '@symphony/design-system/components/switch/Switch';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

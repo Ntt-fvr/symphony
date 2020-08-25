@@ -8,16 +8,16 @@
  * @format
  */
 
-import type {TabProps} from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import type {TabProps} from '@symphony/design-system/components/Tabs/TabsBar';
 import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
-import TabsBar from '@fbcnms/ui/components/design-system/Tabs/TabsBar';
+import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import UserAccountPane from './UserAccountPane';
 import UserGroupsPane from './UserGroupsPane';
 import UserProfilePane from './UserProfilePane';
 import fbt from 'fbt';
-import {MessageShowingContextProvider} from '@fbcnms/ui/components/design-system/Dialog/MessageShowingContext';
+import {MessageShowingContextProvider} from '@symphony/design-system/components/Dialog/MessageShowingContext';
 import {PERMISSION_GROUPS_VIEW_NAME} from '../groups/PermissionsGroupsView';
 import {
   Redirect,

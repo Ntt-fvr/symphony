@@ -14,11 +14,11 @@ import type {EditProjectTypeInput} from './mutations/__generated__/EditProjectTy
 import type {EditProjectTypeMutationVariables} from './mutations/__generated__/EditProjectTypeMutation.graphql';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CreateProjectTypeMutation from './mutations/CreateProjectTypeMutation';
 import EditProjectTypeMutation from './mutations/EditProjectTypeMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
 import ProjectTypeWorkOrderTemplatesPanel from './ProjectTypeWorkOrderTemplatesPanel';
 import PropertyTypeTable from '../form/PropertyTypeTable';

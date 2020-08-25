@@ -14,13 +14,13 @@ import type {
   InventoryEntsPolicy,
   WorkforceCUDPermissions,
 } from '../data/PermissionsPolicies';
-import type {FormAlertsContextType} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
-import type {PermissionHandlingProps} from '@fbcnms/ui/components/design-system/Form/FormAction';
+import type {FormAlertsContextType} from '@symphony/design-system/components/Form/FormAlertsContext';
+import type {PermissionHandlingProps} from '@symphony/design-system/components/Form/FormAction';
 import type {UserPermissions} from '../../../MainContext';
 
 import fbt from 'fbt';
 import {permissionRuleValue2Bool} from '../data/PermissionsPolicies';
-import {useFormAlertsContext} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
+import {useFormAlertsContext} from '@symphony/design-system/components/Form/FormAlertsContext';
 import {useMainContext} from '../../../MainContext';
 
 type BasePermissionEnforcement = $ReadOnly<{|

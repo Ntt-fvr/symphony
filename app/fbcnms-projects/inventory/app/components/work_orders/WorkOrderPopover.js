@@ -21,7 +21,7 @@ import * as React from 'react';
 import DateTimeFormat from '../../common/DateTimeFormat';
 import EditWorkOrderMutation from '../../mutations/EditWorkOrderMutation';
 import Strings from '@fbcnms/strings/Strings';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import UserTypeahead from '../typeahead/UserTypeahead';
 import classNames from 'classnames';
 import fbt from 'fbt';

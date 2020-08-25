@@ -14,8 +14,8 @@ import type {
 } from './__generated__/EquipmentDocumentsCard_equipment.graphql';
 
 import AddHyperlinkButton from '../AddHyperlinkButton';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import DocumentsAddButton from '../DocumentsAddButton';
 import EntityDocumentsTable from '../EntityDocumentsTable';
 import React, {useMemo} from 'react';

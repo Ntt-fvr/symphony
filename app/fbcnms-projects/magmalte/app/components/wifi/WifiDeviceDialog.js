@@ -18,7 +18,7 @@ import type {
 } from '@fbcnms/magma-api';
 
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';

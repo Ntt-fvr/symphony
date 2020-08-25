@@ -15,10 +15,10 @@ import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Card from '@material-ui/core/Card';
 import ErrorMessage from '@fbcnms/ui/components/ErrorMessage';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import InventoryQueryRenderer from '../../components/InventoryQueryRenderer';
 import LocationBreadcrumbsTitle from './LocationBreadcrumbsTitle';
 import LocationCoverageMapTab from './LocationCoverageMapTab';

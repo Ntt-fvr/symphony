@@ -11,7 +11,7 @@
 import Grid from '@material-ui/core/Grid';
 import LinkedDeviceInput from './LinkedDeviceInput';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = {

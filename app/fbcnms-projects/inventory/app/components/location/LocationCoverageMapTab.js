@@ -15,7 +15,7 @@ import type {Location} from '../../common/Location.js';
 import type {LocationCoverageMapTabQueryResponse} from './__generated__/LocationCoverageMapTabQuery.graphql.js';
 
 import * as colors from '@fbcnms/ui/theme/colors';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';
@@ -25,7 +25,7 @@ import MapColorSchemeLegend from '../map/MapColorSchemeLegend';
 import MenuItem from '@material-ui/core/MenuItem';
 import React, {useState} from 'react';
 import Select from '@material-ui/core/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import amber from '@material-ui/core/colors/amber';
 import green from '@material-ui/core/colors/green';
 import lime from '@material-ui/core/colors/lime';

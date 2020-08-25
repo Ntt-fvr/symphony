@@ -10,7 +10,7 @@
 
 import type {WifiGateway} from './WifiUtils';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import MagmaV1API from '@fbcnms/magma-api/client/WebClient';
@@ -23,7 +23,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import WifiDeviceDialog from './WifiDeviceDialog';
 import WifiMeshDialog from './WifiMeshDialog';

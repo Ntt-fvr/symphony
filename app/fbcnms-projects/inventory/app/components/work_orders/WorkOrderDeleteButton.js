@@ -17,7 +17,7 @@ import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import React from 'react';

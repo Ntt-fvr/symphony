@@ -9,8 +9,8 @@
  */
 
 import * as React from 'react';
-import FormField from '@fbcnms/ui/components/design-system/FormField/FormField';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import FormField from '@symphony/design-system/components/FormField/FormField';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import useSideEffectCallback from './useSideEffectCallback';
 import {useEffect, useState} from 'react';
 

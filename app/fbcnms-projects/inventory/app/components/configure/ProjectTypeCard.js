@@ -9,12 +9,12 @@
  */
 import type {ProjectTypeCard_projectType} from './__generated__/ProjectTypeCard_projectType.graphql';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import ProjectTypeDeleteButton from './ProjectTypeDeleteButton';
 import ProjectTypeWorkOrdersCount from './ProjectTypeWorkOrdersCount';
 import React, {useMemo} from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

@@ -7,12 +7,12 @@
  * @flow
  * @format
  */
-import type {NavigatableView} from '@fbcnms/ui/components/design-system/View/NavigatableViews';
+import type {NavigatableView} from '@symphony/design-system/components/View/NavigatableViews';
 
 import * as React from 'react';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import InventorySuspense from '../../../common/InventorySuspense';
-import NavigatableViews from '@fbcnms/ui/components/design-system/View/NavigatableViews';
+import NavigatableViews from '@symphony/design-system/components/View/NavigatableViews';
 import NewUserDialog from './users/NewUserDialog';
 import PermissionsGroupCard from './groups/PermissionsGroupCard';
 import PermissionsGroupsView, {
@@ -23,12 +23,12 @@ import PermissionsPoliciesView, {
   PERMISSION_POLICIES_VIEW_NAME,
 } from './policies/PermissionsPoliciesView';
 import PermissionsPolicyCard from './policies/PermissionsPolicyCard';
-import PopoverMenu from '@fbcnms/ui/components/design-system/Select/PopoverMenu';
+import PopoverMenu from '@symphony/design-system/components/Select/PopoverMenu';
 import Strings from '@fbcnms/strings/Strings';
 import UsersView from './users/UsersView';
 import fbt from 'fbt';
 import {ALL_USERS_PATH_PARAM, USER_PATH_PARAM} from './users/UsersTable';
-import {DialogShowingContextProvider} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
+import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FormContextProvider} from '../../../common/FormContext';
 import {NEW_DIALOG_PARAM, POLICY_TYPES} from './utils/UserManagementUtils';
 import {useCallback, useMemo, useState} from 'react';

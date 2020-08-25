@@ -13,7 +13,7 @@ import type {ServiceTypeItem_serviceType} from './__generated__/ServiceTypeItem_
 import type {WithStyles} from '@material-ui/core';
 
 import AddEditServiceTypeCard from './AddEditServiceTypeCard';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ConfigueTitle from '@fbcnms/ui/components/ConfigureTitle';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryQueryRenderer from '../InventoryQueryRenderer';

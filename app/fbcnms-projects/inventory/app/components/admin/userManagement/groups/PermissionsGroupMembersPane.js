@@ -11,15 +11,15 @@
 import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import PermissionsGroupMembersList from './PermissionsGroupMembersList';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import UserSearchBox from '../utils/search/UserSearchBox';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
-import {ProfileIcon} from '@fbcnms/ui/components/design-system/Icons/';
+import {ProfileIcon} from '@symphony/design-system/icons';
 import {
   UserSearchContextProvider,
   useUserSearchContext,

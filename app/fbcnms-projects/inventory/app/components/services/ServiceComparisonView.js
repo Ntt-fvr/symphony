@@ -11,12 +11,12 @@
 import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
 import AddServiceDialog from './AddServiceDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import PowerSearchBar from '../power_search/PowerSearchBar';
 import React, {useCallback, useState} from 'react';
 import ServiceComparisonViewQueryRenderer from './ServiceComparisonViewQueryRenderer';
-import ViewHeader from '@fbcnms/ui/components/design-system/View/ViewHeader';
+import ViewHeader from '@symphony/design-system/components/View/ViewHeader';
 import fbt from 'fbt';
 import useFilterBookmarks from '../comparison_view/hooks/filterBookmarksHook';
 import useLocationTypes from '../comparison_view/hooks/locationTypesHook';

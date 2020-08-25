@@ -11,11 +11,11 @@
 import type {
   Entries,
   TokenizerDisplayProps,
-} from '@fbcnms/ui/components/design-system/Token/Tokenizer';
+} from '@symphony/design-system/components/Token/Tokenizer';
 import type {NamedNode} from './EntUtils';
 
 import * as React from 'react';
-import Tokenizer from '@fbcnms/ui/components/design-system/Token/Tokenizer';
+import Tokenizer from '@symphony/design-system/components/Token/Tokenizer';
 import withSuspense from './withSuspense';
 import {useCallback, useMemo, useState} from 'react';
 

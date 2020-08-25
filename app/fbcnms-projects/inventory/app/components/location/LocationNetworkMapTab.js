@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
+import Card from '@symphony/design-system/components/Card/Card';
 import InventoryQueryRenderer from '../../components/InventoryQueryRenderer';
 import LocationEquipmentTopology from './LocationEquipmentTopology';
 import {graphql} from 'react-relay';

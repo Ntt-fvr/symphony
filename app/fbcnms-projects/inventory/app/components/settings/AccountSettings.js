@@ -13,7 +13,7 @@ import type {AccountSettings_UserQuery} from './__generated__/AccountSettings_Us
 import * as React from 'react';
 import InventorySuspense from '../../common/InventorySuspense';
 import UserAccountPane from '../admin/userManagement/users/UserAccountPane';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {graphql, useLazyLoadQuery} from 'react-relay/hooks';

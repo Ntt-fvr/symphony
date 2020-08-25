@@ -11,9 +11,9 @@
 import type {ChecklistCategoriesStateType} from '../ChecklistCategoriesMutateState';
 
 import * as React from 'react';
-import AddIcon from '@fbcnms/ui/components/design-system/Icons/Actions/AddIcon';
+import AddIcon from '@symphony/design-system/icons/Actions/AddIcon';
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import CheckListCategoryTable from './CheckListCategoryTable';
 import ChecklistCategoriesMutateDispatchContext from '../ChecklistCategoriesMutateDispatchContext';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';

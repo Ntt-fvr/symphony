@@ -14,7 +14,7 @@ import type {FileAttachmentType} from '../../../common/FileAttachment';
 import * as React from 'react';
 import ChecklistItemsDialogMutateDispatchContext from '../checkListCategory/ChecklistItemsDialogMutateDispatchContext';
 import FilePreview from '../../FilePreview/FilePreview';
-import FileUploadArea from '@fbcnms/ui/components/design-system/Experimental/FileUpload/FileUploadArea';
+import FileUploadArea from '@symphony/design-system/components/Experimental/FileUpload/FileUploadArea';
 import FileUploadButton from '../../FileUpload/FileUploadButton';
 import PendingFilePreview from '../../FilePreview/PendingFilePreview';
 import {generateTempId} from '../../../common/EntUtils';

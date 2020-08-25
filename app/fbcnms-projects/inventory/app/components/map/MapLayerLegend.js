@@ -10,7 +10,7 @@
 
 import Checkbox from '@material-ui/core/Checkbox';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import update from 'immutability-helper';
 import {makeStyles} from '@material-ui/styles';
 

@@ -11,7 +11,7 @@
 import React from 'react';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import {makeStyles} from '@material-ui/styles';
 

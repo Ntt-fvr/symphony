@@ -8,7 +8,7 @@
  * @format
  */
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DateTimeFormat from '../common/DateTimeFormat.js';
 import InventoryQueryRenderer from './InventoryQueryRenderer';
 import React from 'react';

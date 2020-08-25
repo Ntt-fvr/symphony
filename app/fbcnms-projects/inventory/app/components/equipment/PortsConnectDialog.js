@@ -14,7 +14,7 @@ import type {Property} from '../../common/Property';
 import type {WithStyles} from '@material-ui/core';
 
 import AvailablePortsTable from '../AvailablePortsTable';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import EquipmentComparisonViewQueryRenderer from '../comparison_view/EquipmentComparisonViewQueryRenderer';
@@ -30,7 +30,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import nullthrows from '@fbcnms/util/nullthrows';
 import update from 'immutability-helper';
-import {WizardContextProvider} from '@fbcnms/ui/components/design-system/Wizard/WizardContext';
+import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {getInitialPropertyFromType} from '../../common/PropertyType';
 import {graphql} from 'react-relay';
 import {sortPropertiesByIndex} from '../../common/Property';

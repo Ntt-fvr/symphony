@@ -12,7 +12,7 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import Typography from '@material-ui/core/Typography';
 import {QueryRenderer} from 'react-relay';
 import {graphql} from 'relay-runtime';

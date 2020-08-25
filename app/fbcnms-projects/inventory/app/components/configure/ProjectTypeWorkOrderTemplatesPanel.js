@@ -11,12 +11,12 @@
 import type {ProjectTypeWorkOrderTemplatesPanel_workOrderTypes} from './__generated__/ProjectTypeWorkOrderTemplatesPanel_workOrderTypes.graphql';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import ProjectTypeSelectWorkOrdersDialog from './ProjectTypeSelectWorkOrdersDialog';
 import React, {useState} from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import nullthrows from 'nullthrows';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

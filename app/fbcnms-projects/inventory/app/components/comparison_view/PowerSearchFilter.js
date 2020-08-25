@@ -14,7 +14,7 @@ import * as React from 'react';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
 import PowerSearchOperatorComponent from './PowerSearchOperatorComponent';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {getOperatorLabel} from './FilterUtils';
 import {makeStyles} from '@material-ui/styles';
 

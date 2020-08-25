@@ -9,7 +9,7 @@
  */
 
 import * as React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import {gray7} from '@fbcnms/ui/theme/colors';
 import {makeStyles} from '@material-ui/styles';

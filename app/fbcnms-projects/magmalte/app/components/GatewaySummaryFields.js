@@ -10,7 +10,7 @@
 
 import type {GatewayV1} from './GatewayUtils';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Check from '@material-ui/icons/Check';
 import DeviceStatusCircle from '@fbcnms/ui/components/icons/DeviceStatusCircle';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -21,7 +21,7 @@ import FormField from './FormField';
 import Input from '@material-ui/core/Input';
 import MagmaV1API from '@fbcnms/magma-api/client/WebClient';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import moment from 'moment';
 
 import nullthrows from '@fbcnms/util/nullthrows';

@@ -16,7 +16,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 import FieldsTable from './FieldsTable';
 import React, {useState} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {QueryRenderer} from 'react-relay';
 import {graphql} from 'relay-runtime';

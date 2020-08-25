@@ -14,7 +14,7 @@ import type {AggregatedCellScan} from '../location/coverage_map/cell_scan/Locati
 
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import {makeStyles} from '@material-ui/styles';
 

@@ -11,7 +11,7 @@ import useRouter from '@fbcnms/ui/hooks/useRouter';
 
 import AddProjectCard from './AddProjectCard';
 import AddProjectDialog from './AddProjectDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventoryView, {DisplayOptions} from '../InventoryViewContainer';

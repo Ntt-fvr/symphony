@@ -13,7 +13,7 @@ import type {ActivityPost_activity} from './__generated__/ActivityPost_activity.
 import ActivityCommentsIcon from './ActivityCommentsIcon';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

@@ -10,8 +10,8 @@
 
 import type {LocationSiteSurveyTab_location} from './__generated__/LocationSiteSurveyTab_location.graphql.js';
 
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import LocationSiteSurvey from './LocationSiteSurvey';

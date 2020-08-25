@@ -9,13 +9,13 @@
  */
 
 import type {CheckListItem} from '../checkListCategory/ChecklistItemsDialogMutateState';
-import type {TableRowDataType} from '@fbcnms/ui/components/design-system/Table/Table';
+import type {TableRowDataType} from '@symphony/design-system/components/Table/Table';
 
 import CheckListItemFilling from './CheckListItemFilling';
 import ChecklistItemsDialogMutateDispatchContext from '../checkListCategory/ChecklistItemsDialogMutateDispatchContext';
 import React, {useContext} from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Table from '@symphony/design-system/components/Table/Table';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

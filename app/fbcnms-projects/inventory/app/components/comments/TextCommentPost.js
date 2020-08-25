@@ -15,7 +15,7 @@ import type {WithSnackbarProps} from 'notistack';
 import ActivityCommentsIcon from './ActivityCommentsIcon';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 
 import symphony from '@fbcnms/ui/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';

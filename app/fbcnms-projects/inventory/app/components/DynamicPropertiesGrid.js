@@ -14,7 +14,7 @@ import type {WithStyles} from '@material-ui/core';
 
 import PropertyFormField from './form/PropertyFormField';
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {getInitialPropertyFromType} from '../common/PropertyType';
 import {

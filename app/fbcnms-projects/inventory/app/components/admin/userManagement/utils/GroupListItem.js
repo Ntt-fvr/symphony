@@ -12,9 +12,9 @@ import type {AssigenmentButtonProp} from './MemberListItem';
 import type {UsersGroup} from '../data/UsersGroups';
 
 import * as React from 'react';
-import GroupIcon from '@fbcnms/ui/components/design-system/Icons/Indications/GroupIcon';
+import GroupIcon from '@symphony/design-system/icons/Indications/GroupIcon';
 import MemberListItem from './MemberListItem';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
 import symphony from '@fbcnms/ui/theme/symphony';

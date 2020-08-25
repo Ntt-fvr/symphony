@@ -13,7 +13,7 @@ import type {Operator} from './ComparisonViewTypes';
 import * as React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {OperatorMap} from './ComparisonViewTypes';
 import {dateValues, getOperatorLabel} from './FilterUtils';
 import {makeStyles} from '@material-ui/styles';

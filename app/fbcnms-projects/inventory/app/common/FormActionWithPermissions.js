@@ -8,11 +8,11 @@
  * @format
  */
 
-import type {FormActionProps} from '@fbcnms/ui/components/design-system/Form/FormAction';
+import type {FormActionProps} from '@symphony/design-system/components/Form/FormAction';
 import type {PermissionEnforcement} from '../components/admin/userManagement/utils/usePermissions';
 
 import * as React from 'react';
-import FormAction from '@fbcnms/ui/components/design-system/Form/FormAction';
+import FormAction from '@symphony/design-system/components/Form/FormAction';
 import usePermissions from '../components/admin/userManagement/utils/usePermissions';
 
 type Props = $ReadOnly<{|

@@ -17,11 +17,11 @@ import type {
 import ActionsAddDialog from './ActionsAddDialog';
 import ActionsCard from './ActionsCard';
 import ActionsHead from './ActionsHead';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import Grid from '@material-ui/core/Grid';
 import React, {useState} from 'react';
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {graphql, useLazyLoadQuery} from 'react-relay/hooks';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router';

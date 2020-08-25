@@ -29,7 +29,7 @@ import RemoveSiteSurveyMutation from '../../mutations/RemoveSiteSurveyMutation';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import axios from 'axios';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DocumentAPIUrls} from '../../common/DocumentAPI';

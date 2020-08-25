@@ -11,12 +11,12 @@
 import type {
   TableRowDataType,
   TableRowId,
-} from '@fbcnms/ui/components/design-system/Table/Table';
+} from '@symphony/design-system/components/Table/Table';
 import type {User} from '../utils/UserManagementUtils';
 
 import * as React from 'react';
-import Table from '@fbcnms/ui/components/design-system/Table/Table';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Table from '@symphony/design-system/components/Table/Table';
+import Text from '@symphony/design-system/components/Text';
 import UserDetailsCard from './UserDetailsCard';
 import UserViewer from './UserViewer';
 import fbt from 'fbt';

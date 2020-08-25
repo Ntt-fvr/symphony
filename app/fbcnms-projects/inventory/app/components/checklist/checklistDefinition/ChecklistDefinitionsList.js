@@ -17,7 +17,7 @@ import classNames from 'classnames';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {DragDropContext, Droppable} from 'react-beautiful-dnd';
 import {Draggable} from 'react-beautiful-dnd';
-import {ReorderIcon} from '@fbcnms/ui/components/design-system/Icons';
+import {ReorderIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {sortByIndex} from '../../draggable/DraggableUtils';
 import {useFormContext} from '../../../common/FormContext';

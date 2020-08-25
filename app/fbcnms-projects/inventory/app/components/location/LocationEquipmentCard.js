@@ -10,9 +10,9 @@
 
 import type {Equipment} from '../../common/Equipment';
 
-import Button from '@fbcnms/ui/components/design-system/Button';
-import Card from '@fbcnms/ui/components/design-system/Card/Card';
-import CardHeader from '@fbcnms/ui/components/design-system/Card/CardHeader';
+import Button from '@symphony/design-system/components/Button';
+import Card from '@symphony/design-system/components/Card/Card';
+import CardHeader from '@symphony/design-system/components/Card/CardHeader';
 import EquipmentTable from '../equipment/EquipmentTable';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import React from 'react';

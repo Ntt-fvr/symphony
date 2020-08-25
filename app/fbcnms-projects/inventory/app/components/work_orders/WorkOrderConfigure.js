@@ -9,10 +9,10 @@
  */
 
 import InventorySuspense from '../../common/InventorySuspense';
-import NavigatableViews from '@fbcnms/ui/components/design-system/View/NavigatableViews';
+import NavigatableViews from '@symphony/design-system/components/View/NavigatableViews';
 import React, {useMemo} from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import WorkOrderProjectTypes from '../configure/WorkOrderProjectTypes';
 import WorkOrderTypes from '../configure/WorkOrderTypes';
 import fbt from 'fbt';

@@ -11,8 +11,8 @@
 import type {CheckListItemFillingProps} from './CheckListItemFilling';
 
 import * as React from 'react';
-import MultiSelect from '@fbcnms/ui/components/design-system/Select/MultiSelect';
-import Select from '@fbcnms/ui/components/design-system/Select/Select';
+import MultiSelect from '@symphony/design-system/components/Select/MultiSelect';
+import Select from '@symphony/design-system/components/Select/Select';
 import fbt from 'fbt';
 import {enumStringToArray} from '../ChecklistUtils';
 import {makeStyles} from '@material-ui/styles';

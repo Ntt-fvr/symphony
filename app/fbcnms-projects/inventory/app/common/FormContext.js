@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {FormAlertsContextType} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
+import type {FormAlertsContextType} from '@symphony/design-system/components/Form/FormAlertsContext';
 import type {PermissionEnforcement} from '../components/admin/userManagement/utils/usePermissions';
 
 import * as React from 'react';
@@ -17,7 +17,7 @@ import {
   DEFAULT_CONTEXT_VALUE as DEFAULT_ALERTS,
   FormAlertsContextProvider,
   useFormAlertsContext,
-} from '@fbcnms/ui/components/design-system/Form/FormAlertsContext';
+} from '@symphony/design-system/components/Form/FormAlertsContext';
 import {createContext, useContext} from 'react';
 
 type FromContextType = $ReadOnly<{|

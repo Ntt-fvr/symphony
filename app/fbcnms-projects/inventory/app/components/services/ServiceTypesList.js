@@ -13,7 +13,7 @@ import type {ServiceTypesListQuery_serviceType} from './__generated__/ServiceTyp
 import type {WithStyles} from '@material-ui/core';
 
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -24,7 +24,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import React from 'react';
 import RelayEnvironment from '../../common/RelayEnvironment.js';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@fbcnms/ui/theme/symphony';
 import {fetchQuery, graphql} from 'relay-runtime';

@@ -13,7 +13,7 @@ import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryR
 
 import AddWorkOrderCard from './AddWorkOrderCard';
 import AddWorkOrderDialog from './AddWorkOrderDialog';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import ErrorBoundary from '@fbcnms/ui/components/ErrorBoundary/ErrorBoundary';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import InventorySuspense from '../../common/InventorySuspense';
