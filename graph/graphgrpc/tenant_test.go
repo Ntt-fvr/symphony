@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package graphgrpc
+package graphgrpc_test
 
 import (
 	"context"
@@ -11,120 +11,125 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func TestTenantServer_Create(t *testing.T) {
+type tenantSuite struct {
+	suite.Suite
+	mock sqlmock.Sqlmock
+	ctx  context.Context
+	svc  graphgrpc.TenantService
+}
+
+func (s *tenantSuite) SetupSuite() {
+	s.ctx = context.Background()
+}
+
+func (s *tenantSuite) SetupTest() {
 	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	ts := NewTenantService(func(context.Context) ExecQueryer { return db })
+	s.Require().NoError(err)
+	s.svc = graphgrpc.NewTenantService(
+		func(context.Context) graphgrpc.ExecQueryer {
+			return db
+		},
+	)
+	s.mock = mock
+}
 
-	tenant, err := ts.Create(context.Background(), &wrappers.StringValue{Value: ""})
-	require.Nil(t, tenant)
-	require.IsType(t, codes.InvalidArgument, status.Code(err))
+func TestTenantSuite(t *testing.T) {
+	suite.Run(t, &tenantSuite{})
+}
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
+func (s *tenantSuite) TestTenantCreate() {
+	tenant, err := s.svc.Create(s.ctx, &wrappers.StringValue{Value: ""})
+	s.Require().Nil(tenant)
+	s.Require().IsType(codes.InvalidArgument, status.Code(err))
+
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	tenant, err = ts.Create(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.Nil(t, tenant)
-	require.IsType(t, codes.AlreadyExists, status.Code(err))
+	tenant, err = s.svc.Create(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().Nil(tenant)
+	s.Require().IsType(codes.AlreadyExists, status.Code(err))
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
-	mock.ExpectExec(regexp.QuoteMeta("CREATE DATABASE `tenant_foo`")).
+	s.mock.ExpectExec(regexp.QuoteMeta("CREATE DATABASE `tenant_foo`")).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	tenant, err = ts.Create(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.NoError(t, err)
-	require.NotNil(t, tenant)
-	require.Equal(t, "foo", tenant.Id)
-	require.Equal(t, "foo", tenant.Name)
+	tenant, err = s.svc.Create(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().NoError(err)
+	s.Require().Equal("foo", tenant.Id)
+	s.Require().Equal("foo", tenant.Name)
 }
 
-func TestTenantServer_Get(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	ts := NewTenantService(func(context.Context) ExecQueryer { return db })
+func (s *tenantSuite) TestTenantGet() {
+	tenant, err := s.svc.Get(s.ctx, &wrappers.StringValue{Value: ""})
+	s.Require().Nil(tenant)
+	s.Require().IsType(codes.InvalidArgument, status.Code(err))
 
-	tenant, err := ts.Get(context.Background(), &wrappers.StringValue{Value: ""})
-	require.Nil(t, tenant)
-	require.IsType(t, codes.InvalidArgument, status.Code(err))
-
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	tenant, err = ts.Get(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.NoError(t, err)
-	require.NotNil(t, tenant)
-	require.Equal(t, "foo", tenant.Id)
-	require.Equal(t, "foo", tenant.Name)
+	tenant, err = s.svc.Get(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().NoError(err)
+	s.Require().Equal("foo", tenant.Id)
+	s.Require().Equal("foo", tenant.Name)
 }
 
-func TestTenantServer_Truncate(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	ts := NewTenantService(func(context.Context) ExecQueryer { return db })
+func (s *tenantSuite) TestTenantTruncate() {
+	_, err := s.svc.Truncate(s.ctx, &wrappers.StringValue{Value: ""})
+	s.Require().IsType(codes.InvalidArgument, status.Code(err))
 
-	_, err = ts.Truncate(context.Background(), &wrappers.StringValue{Value: ""})
-	require.IsType(t, codes.InvalidArgument, status.Code(err))
-
-	mock.ExpectQuery(regexp.QuoteMeta(
+	s.mock.ExpectQuery(regexp.QuoteMeta(
 		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
 	)).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	result := sqlmock.NewResult(0, 0)
-	mock.ExpectExec("SET FOREIGN_KEY_CHECKS=0").WillReturnResult(result)
+	s.mock.ExpectExec("SET FOREIGN_KEY_CHECKS=0").WillReturnResult(result)
 	for _, table := range migrate.Tables {
 		query := fmt.Sprintf("DELETE FROM `tenant_foo`.`%s`", table.Name)
-		mock.ExpectExec(query).WillReturnResult(result)
+		s.mock.ExpectExec(query).WillReturnResult(result)
 	}
-	mock.ExpectExec("SET FOREIGN_KEY_CHECKS=1").WillReturnResult(result)
-	_, err = ts.Truncate(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.NoError(t, err)
+	s.mock.ExpectExec("SET FOREIGN_KEY_CHECKS=1").WillReturnResult(result)
+	_, err = s.svc.Truncate(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().NoError(err)
 }
 
-func TestTenantServer_Delete(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	ts := NewTenantService(func(context.Context) ExecQueryer { return db })
+func (s *tenantSuite) TestTenantDelete() {
+	_, err := s.svc.Delete(s.ctx, &wrappers.StringValue{Value: ""})
+	s.Require().IsType(codes.InvalidArgument, status.Code(err))
 
-	_, err = ts.Delete(context.Background(), &wrappers.StringValue{Value: ""})
-	require.IsType(t, codes.InvalidArgument, status.Code(err))
-
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
-	_, err = ts.Delete(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.IsType(t, codes.NotFound, status.Code(err))
+	_, err = s.svc.Delete(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().IsType(codes.NotFound, status.Code(err))
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?")).
 		WithArgs("tenant_foo").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	mock.ExpectExec(regexp.QuoteMeta("DROP DATABASE `tenant_foo`")).
+	s.mock.ExpectExec(regexp.QuoteMeta("DROP DATABASE `tenant_foo`")).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	_, err = ts.Delete(context.Background(), &wrappers.StringValue{Value: "foo"})
-	require.NoError(t, err)
+	_, err = s.svc.Delete(s.ctx, &wrappers.StringValue{Value: "foo"})
+	s.Require().NoError(err)
 }
 
-func TestTenantServer_List(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	ts := NewTenantService(func(context.Context) ExecQueryer { return db })
-
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?")).
+func (s *tenantSuite) TestTenantList() {
+	s.mock.ExpectQuery(regexp.QuoteMeta("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?")).
 		WithArgs("tenant_%").
 		WillReturnRows(sqlmock.NewRows([]string{"SCHEMA_NAME"}).AddRow("tenant_foo").AddRow("tenant_bar"))
-	res, err := ts.List(context.Background(), nil)
-	require.NoError(t, err)
-	require.Len(t, res.Tenants, 2)
-	require.Equal(t, "foo", res.Tenants[0].Id)
-	require.Equal(t, "foo", res.Tenants[0].Name)
-	require.Equal(t, "bar", res.Tenants[1].Id)
-	require.Equal(t, "bar", res.Tenants[1].Name)
+	res, err := s.svc.List(s.ctx, nil)
+	s.Require().NoError(err)
+	s.Require().Len(res.Tenants, 2)
+	s.Require().Equal("foo", res.Tenants[0].Id)
+	s.Require().Equal("foo", res.Tenants[0].Name)
+	s.Require().Equal("bar", res.Tenants[1].Id)
+	s.Require().Equal("bar", res.Tenants[1].Name)
 }

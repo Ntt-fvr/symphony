@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package graphgrpc
+package graphgrpc_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/facebook/ent/dialect/sql"
@@ -36,8 +37,8 @@ func newTestClient(t *testing.T) *ent.Client {
 
 func TestUserService_Create(t *testing.T) {
 	client := newTestClient(t)
-	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
+	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 
 	u, err := us.Create(ctx, &schema.AddUserInput{Tenant: "", Id: "XXX", IsOwner: false})
@@ -58,8 +59,8 @@ func TestUserService_Create(t *testing.T) {
 
 func TestUserService_Delete(t *testing.T) {
 	client := newTestClient(t)
-	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
+	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)
 	require.Equal(t, user.StatusActive, u.Status)
@@ -79,8 +80,8 @@ func TestUserService_Delete(t *testing.T) {
 
 func TestUserService_CreateAfterDelete(t *testing.T) {
 	client := newTestClient(t)
-	us := NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
-	ctx, err := CreateServiceContext(context.Background(), viewertest.DefaultTenant, UserServiceName, user.RoleAdmin)
+	us := graphgrpc.NewUserService(func(context.Context, string) (*ent.Client, error) { return client, nil })
+	ctx, err := graphgrpc.CreateServiceContext(context.Background(), viewertest.DefaultTenant, graphgrpc.UserServiceName, user.RoleAdmin)
 	require.NoError(t, err)
 	u := client.User.Create().SetAuthID("YYY").SaveX(ctx)
 	require.Equal(t, user.StatusActive, u.Status)
