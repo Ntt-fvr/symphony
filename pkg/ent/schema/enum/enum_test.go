@@ -110,3 +110,19 @@ func TestEnum(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateWorkOrderStatus(t *testing.T) {
+	workOrderStatusOptions := []enum.WorkOrderStatus{
+		enum.WorkOrderStatusPlanned,
+		enum.WorkOrderStatusInProgress,
+		enum.WorkOrderStatusSubmitted,
+		enum.WorkOrderStatusClosed,
+		enum.WorkOrderStatusBlocked,
+	}
+	for _, n := range workOrderStatusOptions {
+		err := enum.ValidateWorkOrderStatus(int(n))
+		require.NoError(t, err)
+	}
+	err := enum.ValidateWorkOrderStatus(22)
+	assert.EqualError(t, err, "22 is not a valid work order status")
+}
