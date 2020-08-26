@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package recovery
+package recovery_test
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/server/recovery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -36,7 +37,7 @@ func TestRecoveryHandler(t *testing.T) {
 		Once()
 	defer recoverer.AssertExpectations(t)
 
-	handler := &Handler{
+	handler := &recovery.Handler{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}),

@@ -39,9 +39,12 @@ func newServer(tenancy viewer.Tenancy, db *sql.DB, logger log.Logger, registry *
 		grpc.StatsHandler(&ocgrpc.ServerHandler{}),
 	)
 	schema.RegisterTenantServiceServer(s,
-		NewTenantService(func(ctx context.Context) ExecQueryer {
-			return sqltx.FromContext(ctx)
-		}),
+		NewMigrateService(
+			NewTenantService(func(ctx context.Context) ExecQueryer {
+				return sqltx.FromContext(ctx)
+			}),
+			tenancy,
+		),
 	)
 	schema.RegisterActionsAlertServiceServer(s,
 		NewActionsAlertService(func(ctx context.Context, tenantID string) (*actions.Client, error) {
@@ -63,7 +66,7 @@ func newServer(tenancy viewer.Tenancy, db *sql.DB, logger log.Logger, registry *
 			return actions.NewClient(exc), nil
 		}),
 	)
-	schema.RegisterUserServiceServer(s, NewUserService(tenancy.ClientFor))
+	schema.RegisterUserServiceServer(s, NewUserService(tenancy))
 
 	reflection.Register(s)
 	err := view.Register(ocgrpc.DefaultServerViews...)

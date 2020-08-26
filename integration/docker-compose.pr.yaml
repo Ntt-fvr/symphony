@@ -45,11 +45,25 @@ services:
     environment:
       - WS_AUTH_URL=http://front/user/me
     depends_on:
+      - migrate
       - mysql
       - nats
       - async
     healthcheck: &healthcheck
       test: curl -If localhost/healthz/liveness
+    restart: on-failure
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: graph/Dockerfile
+    entrypoint: /bin/migrate
+    command:
+      - "--db-dsn=root:root@tcp(mysql:3306)/?charset=utf8&parseTime=true"
+      - "--wait-for-db"
+      - "--tenant=fb-test"
+    depends_on:
+      - mysql
     restart: on-failure
 
   async:

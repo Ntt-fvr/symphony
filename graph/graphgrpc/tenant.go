@@ -21,7 +21,7 @@ import (
 
 type (
 	// TenantService is a tenant service.
-	TenantService struct{ DB Provider }
+	TenantService struct{ db DBProvider }
 
 	// ExecQueryer wraps QueryContext and ExecContext methods.
 	ExecQueryer interface {
@@ -29,12 +29,19 @@ type (
 		ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
 	}
 
-	// Provider provides a db from context.
-	Provider func(context.Context) ExecQueryer
+	// DBProvider provides a db from context.
+	DBProvider func(context.Context) ExecQueryer
 )
 
+// FixedDBProvider is a provider returning a fixed db.
+func FixedDBProvider(db ExecQueryer) DBProvider {
+	return func(context.Context) ExecQueryer {
+		return db
+	}
+}
+
 // NewTenantService create a new tenant service.
-func NewTenantService(provider Provider) TenantService {
+func NewTenantService(provider DBProvider) TenantService {
 	return TenantService{provider}
 }
 
@@ -50,7 +57,7 @@ func (s TenantService) Create(ctx context.Context, name *wrappers.StringValue) (
 		return nil, status.Errorf(codes.AlreadyExists, "tenant %q exists", name.Value)
 	}
 
-	if _, err := s.DB(ctx).ExecContext(ctx, fmt.Sprintf("CREATE DATABASE `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_bin", viewer.DBName(name.Value))); err != nil {
+	if _, err := s.db(ctx).ExecContext(ctx, fmt.Sprintf("CREATE DATABASE `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_bin", viewer.DBName(name.Value))); err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
 	return &schema.Tenant{Id: name.Value, Name: name.Value}, nil
@@ -58,7 +65,7 @@ func (s TenantService) Create(ctx context.Context, name *wrappers.StringValue) (
 
 // List all tenants.
 func (s TenantService) List(ctx context.Context, _ *empty.Empty) (*schema.TenantList, error) {
-	rows, err := s.DB(ctx).QueryContext(ctx,
+	rows, err := s.db(ctx).QueryContext(ctx,
 		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?", viewer.DBName("%"),
 	)
 	if err != nil {
@@ -103,7 +110,7 @@ func (s TenantService) Truncate(ctx context.Context, name *wrappers.StringValue)
 	case !exist:
 		return nil, status.Errorf(codes.NotFound, "missing tenant %s", name.Value)
 	}
-	db, dbname := s.DB(ctx), viewer.DBName(name.Value)
+	db, dbname := s.db(ctx), viewer.DBName(name.Value)
 	if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=0"); err != nil {
 		return nil, status.FromContextError(err).Err()
 	}
@@ -131,7 +138,7 @@ func (s TenantService) Delete(ctx context.Context, name *wrappers.StringValue) (
 	case !exist:
 		return nil, status.Errorf(codes.NotFound, "missing tenant %s", name.Value)
 	}
-	if _, err := s.DB(ctx).ExecContext(ctx,
+	if _, err := s.db(ctx).ExecContext(ctx,
 		fmt.Sprintf("DROP DATABASE `%s`", viewer.DBName(name.Value)),
 	); err != nil {
 		return nil, status.FromContextError(err).Err()
@@ -140,7 +147,7 @@ func (s TenantService) Delete(ctx context.Context, name *wrappers.StringValue) (
 }
 
 func (s TenantService) exist(ctx context.Context, name string) (bool, error) {
-	rows, err := s.DB(ctx).QueryContext(ctx,
+	rows, err := s.db(ctx).QueryContext(ctx,
 		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", viewer.DBName(name),
 	)
 	if err != nil {

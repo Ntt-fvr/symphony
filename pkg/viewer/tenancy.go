@@ -6,7 +6,6 @@ package viewer
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net/url"
 	"runtime"
@@ -16,13 +15,10 @@ import (
 	"github.com/facebook/ent/dialect"
 	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/log"
 	pkgmysql "github.com/facebookincubator/symphony/pkg/mysql"
 
 	"github.com/go-sql-driver/mysql"
-	"go.opencensus.io/trace"
-	"go.uber.org/zap"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"
 )
@@ -112,6 +108,7 @@ type MySQLTenancy struct {
 	logger        log.Logger
 	config        *mysql.Config
 	tenantMaxConn int
+	mu            sync.Mutex
 	closers       []func()
 }
 
@@ -144,34 +141,19 @@ func (m *MySQLTenancy) SetLogger(logger log.Logger) {
 }
 
 // ClientFor implements Tenancy interface.
-func (m *MySQLTenancy) ClientFor(ctx context.Context, name string) (*ent.Client, error) {
-	client := ent.NewClient(ent.Driver(entsql.OpenDB(dialect.MySQL, m.dbFor(name))))
-	if err := m.migrate(ctx, client); err != nil {
-		return nil, err
-	}
-	return client, nil
-}
-
-func (m *MySQLTenancy) migrate(ctx context.Context, client *ent.Client) error {
-	ctx, span := trace.StartSpan(ctx, "tenancy.Migrate")
-	defer span.End()
-	if err := client.Schema.Create(ctx,
-		migrate.WithFixture(false),
-		migrate.WithGlobalUniqueID(true),
-	); err != nil {
-		m.logger.For(ctx).Error("tenancy migrate", zap.Error(err))
-		span.SetStatus(trace.Status{Code: trace.StatusCodeUnknown, Message: err.Error()})
-		return fmt.Errorf("running tenancy migration: %w", err)
-	}
-	return nil
-}
-
-func (m *MySQLTenancy) dbFor(name string) *sql.DB {
-	m.config.DBName = DBName(name)
-	db := pkgmysql.Open(m.config.FormatDSN())
+func (m *MySQLTenancy) ClientFor(_ context.Context, name string) (*ent.Client, error) {
+	config := *m.config
+	config.DBName = DBName(name)
+	db := pkgmysql.Open(config.FormatDSN())
 	db.SetMaxOpenConns(m.tenantMaxConn)
+
+	m.mu.Lock()
 	m.closers = append(m.closers, pkgmysql.RecordStats(db))
-	return db
+	m.mu.Unlock()
+
+	return ent.NewClient(
+		ent.Driver(entsql.OpenDB(dialect.MySQL, db)),
+	), nil
 }
 
 // DBName returns the prefixed database name in order to avoid collision with MySQL internal databases.

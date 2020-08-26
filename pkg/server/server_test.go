@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package server
+package server_test
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -30,7 +31,7 @@ func TestListenAndServe(t *testing.T) {
 		Once()
 	defer td.AssertExpectations(t)
 
-	s := New(http.NotFoundHandler(), &Options{Driver: &td})
+	s := server.New(http.NotFoundHandler(), &server.Options{Driver: &td})
 	err := s.ListenAndServe(":8080")
 	require.NoError(t, err)
 }
@@ -115,7 +116,7 @@ func TestMiddleware(t *testing.T) {
 	handler := http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
 		panic(errors.New("bad handler"))
 	})
-	s := New(handler, &Options{
+	s := server.New(handler, &server.Options{
 		RequestLogger:         &tl,
 		ViewExporter:          &tv,
 		TraceExporter:         &te,
@@ -126,17 +127,6 @@ func TestMiddleware(t *testing.T) {
 	})
 	err := s.ListenAndServe(":8080")
 	assert.NoError(t, err)
-}
-
-func TestEmptyServer(t *testing.T) {
-	s := New(nil, nil)
-	require.NotNil(t, s)
-	assert.NoError(t, s.Shutdown(context.Background()))
-
-	s.init()
-	assert.IsType(t, (*DefaultDriver)(nil), s.driver)
-	assert.Equal(t, http.DefaultServeMux, s.handler)
-	assert.NoError(t, s.Shutdown(context.Background()))
 }
 
 type testDriver struct {

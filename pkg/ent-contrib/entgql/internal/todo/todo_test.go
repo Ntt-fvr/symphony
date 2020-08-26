@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package todo
+package todo_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -17,15 +18,16 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/AlekSi/pointer"
-	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
+	gen "github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/todo"
-	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/stretchr/testify/suite"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type todoTestSuite struct {
@@ -56,15 +58,14 @@ const (
 )
 
 func (s *todoTestSuite) SetupTest() {
-	db, name, err := testdb.Open()
-	s.Require().NoError(err)
-	db.SetMaxOpenConns(1)
-
-	ec := enttest.NewClient(s.T(),
-		enttest.WithOptions(ent.Driver(sql.OpenDB(name, db))),
+	ec := enttest.Open(s.T(), dialect.SQLite,
+		fmt.Sprintf("file:%s-%d?mode=memory&cache=shared&_fk=1",
+			s.T().Name(), time.Now().UnixNano(),
+		),
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
 	)
-	srv := handler.New(NewExecutableSchema(New(ec)))
+
+	srv := handler.New(gen.NewExecutableSchema(gen.New(ec)))
 	srv.AddTransport(transport.POST{})
 	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	s.Client = client.New(srv)

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package sqltx
+package sqltx_test
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/facebookincubator/symphony/pkg/grpc-middleware/sqltx"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -39,10 +40,10 @@ func TestServerInterceptor(t *testing.T) {
 func (s *testServerInterceptorSuite) TestCommit() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectCommit()
-	_, _ = UnaryServerInterceptor(s.db)(
+	_, _ = sqltx.UnaryServerInterceptor(s.db)(
 		context.Background(), nil, nil,
 		func(ctx context.Context, _ interface{}) (interface{}, error) {
-			tx := FromContext(ctx)
+			tx := sqltx.FromContext(ctx)
 			s.Assert().NotNil(tx)
 			return nil, nil
 		},
@@ -52,7 +53,7 @@ func (s *testServerInterceptorSuite) TestCommit() {
 func (s *testServerInterceptorSuite) TestBadCommit() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectCommit().WillReturnError(errors.New("bad commit"))
-	_, err := UnaryServerInterceptor(s.db)(
+	_, err := sqltx.UnaryServerInterceptor(s.db)(
 		context.Background(), nil, nil,
 		func(context.Context, interface{}) (interface{}, error) {
 			return nil, nil
@@ -65,7 +66,7 @@ func (s *testServerInterceptorSuite) TestBadCommit() {
 func (s *testServerInterceptorSuite) TestRollback() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectRollback()
-	_, _ = UnaryServerInterceptor(s.db)(
+	_, _ = sqltx.UnaryServerInterceptor(s.db)(
 		context.Background(), nil, nil,
 		func(context.Context, interface{}) (interface{}, error) {
 			return nil, errors.New("bad request")
@@ -76,7 +77,7 @@ func (s *testServerInterceptorSuite) TestRollback() {
 func (s *testServerInterceptorSuite) TestNoTx() {
 	errBadConn := errors.New("bad conn")
 	s.mock.ExpectBegin().WillReturnError(errBadConn)
-	_, err := UnaryServerInterceptor(s.db)(
+	_, err := sqltx.UnaryServerInterceptor(s.db)(
 		context.Background(), nil, nil,
 		func(context.Context, interface{}) (interface{}, error) {
 			s.Require().FailNow("invoked handler")
@@ -92,7 +93,7 @@ func (s *testServerInterceptorSuite) TestRecovery() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectRollback()
 	s.Assert().Panics(func() {
-		_, _ = UnaryServerInterceptor(s.db)(
+		_, _ = sqltx.UnaryServerInterceptor(s.db)(
 			context.Background(), nil, nil,
 			func(context.Context, interface{}) (interface{}, error) {
 				panic("fatal")

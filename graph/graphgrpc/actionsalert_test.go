@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package graphgrpc
+package graphgrpc_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
 	"github.com/facebookincubator/symphony/pkg/actions"
 	"github.com/facebookincubator/symphony/pkg/actions/action/mockaction"
@@ -85,7 +86,7 @@ func TestActionsAlertServiceClient_Receive(t *testing.T) {
 		},
 	}
 
-	as := NewActionsAlertService(func(ctx context.Context, tenantID string) (*actions.Client, error) {
+	as := graphgrpc.NewActionsAlertService(func(ctx context.Context, tenantID string) (*actions.Client, error) {
 		return actions.NewClient(testExecutor), nil
 	})
 

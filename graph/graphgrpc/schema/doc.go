@@ -3,5 +3,6 @@
 // license that can be found in the LICENSE file.
 
 //go:generate protoc --go_out=plugins=grpc,paths=source_relative:. rpc.proto
+//go:generate go run github.com/vektra/mockery/cmd/mockery -all -case underscore
 
 package schema
