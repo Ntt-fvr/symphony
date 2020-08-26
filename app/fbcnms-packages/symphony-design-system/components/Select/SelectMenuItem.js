@@ -9,6 +9,7 @@
  */
 
 import type {
+  EditLocksHandlingProps,
   ErrorHandlingProps,
   PermissionHandlingProps,
 } from '../Form/FormAction';
@@ -79,6 +80,7 @@ export type SelectMenuItemBaseProps<TValue> = $ReadOnly<{|
   disabled?: boolean,
   skin?: 'regular' | 'red',
   ...PermissionHandlingProps,
+  ...EditLocksHandlingProps,
   ...ErrorHandlingProps,
 |}>;
 

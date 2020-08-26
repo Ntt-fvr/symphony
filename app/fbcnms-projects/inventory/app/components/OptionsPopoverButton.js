@@ -9,6 +9,7 @@
  */
 
 import type {
+  EditLocksHandlingProps,
   ErrorHandlingProps,
   PermissionHandlingProps,
 } from '@symphony/design-system/components/Form/FormAction';
@@ -28,6 +29,7 @@ export type MenuOption = $ReadOnly<{|
   disabled?: ?boolean,
   permissions?: ?PermissionEnforcement,
   ...PermissionHandlingProps,
+  ...EditLocksHandlingProps,
   ...ErrorHandlingProps,
 |}>;
 
@@ -97,6 +99,7 @@ const OptionsPopoverButton = (props: Props) => {
       value: optIndex,
       disabled: opt.disabled === true || optIsMissingPermissions(opt),
       ignorePermissions: opt.ignorePermissions ?? opt.permissions != null,
+      ignoreEditLocks: opt.ignoreEditLocks,
       hideOnMissingPermissions: opt.hideOnMissingPermissions,
     }));
 
