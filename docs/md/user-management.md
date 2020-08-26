@@ -228,35 +228,25 @@ Mandatory fields are marked with a \*.
 
 In order to create a new user, perform the following steps:
 
-          1.
-###### Click the **User &amp; Roles** option (1).
-          2.
-###### Click the **Add User** button (2).
+###### 1) Click the **User &amp; Roles** option (1).
+###### 2) Click the **Add User** button (2).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+20.png' width=1000> <br>
 
 **Figure 20: User &amp; Roles**
 
-_Result:_
-
-The **New User Account** screen appears:
+_Result:_ The **New User Account** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+21.png' width=1000> <br>
 
 **Figure 21: New User Account Screen**
 
-          1.
-###### Enter the **Personal Details** (3).
-          2.
-###### Set the user **Role** (4).
-          3.
-###### Enter the **Account Details** (5).
-          4.
-###### Click the **Save** button (6).
+###### 1) Enter the **Personal Details** (3).
+###### 2) Set the user **Role** (4).
+###### 3) Enter the **Account Details** (5).
+###### 4) Click the **Save** button (6).
 
-_Result:_
-
-A new user is created.
+_Result:_ A new user is created.
 
 ## Create a new Group
 
@@ -264,82 +254,60 @@ A new user is created.
 
 In order to create a new group, perform the following steps:
 
-          1.
-###### Click the **Groups** option (1).
-
-          1.
-###### Click the **Create Group** button (2).
+###### 1) Click the **Groups** option (1).
+###### 2) Click the **Create Group** button (2).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+22.png' width=1000> <br>
 
 **Figure 22: Groups**
 
-_Result:_
-
-The **New Group** screen appears:
+_Result:_ The **New Group** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+23.png' width=1000> <br>
 
 **Figure 23: New Group Screen**
 
-          1.
-###### Enter the **Group Details** (3).
-          2.
-###### To add policies now, click the **Manage Policies** button (4).
+###### 1) Enter the **Group Details** (3).
+###### 2) To add policies now, click the **Manage Policies** button (4).
 
 **note**
 
 To add policies to the group at a later date, see the **Creating New Policies** section.
 
-_Result:_
-
-The **Manage Policies** screen appears:
+_Result:_ The **Manage Policies** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+24.png' width=1000> <br>
 
 **Figure 24: Manage Policies**
 
-          1.
-###### Click the **Policy Name** checkbox (5) to select all policies or click a specific checkbox (6) to select a specific policy (one or more).
-          2.
-###### Click the **Update** button (7).
+###### 1) Click the **Policy Name** checkbox (5) to select all policies or click a specific checkbox (6) to select a specific policy (one or more).
+###### 2) Click the **Update** button (7).
 
-_Result:_
-
-The **New Group** screen reappears with the selected policies:
+_Result:_ The **New Group** screen reappears with the selected policies:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+25.png' width=1000> <br>
 
 **Figure 25: New Group Screen**
 
-          1.
 ###### Using the search field (8), enter the letters of the user to add as a member.
 
-_Result:_
-
-A list of users that match the entered letters appears (9).
+_Result:_ A list of users that match the entered letters appears (9).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+26.png' width=1000> <br>
 
 **Figure 26: User to Add as Members**
 
-          1.
 ###### Click the **+Add** button (10) of the desired user/s to add as members.
 
-_Result:_
-
-The desired user or users are **added** (11) as members.
+_Result:_ The desired user or users are **added** (11) as members.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+27.png' width=600> <br>
 
 **Figure 27: Added Users**
 
-          1.
 ###### Click the **Save** button (12).
 
-_Result:_
-
-A new group with the added members is created.
+_Result:_ A new group with the added members is created.
  
  
 ## Creating New Policies
@@ -352,25 +320,19 @@ The following sections describe how to create a new inventory and workforce poli
 
 In order to create a new inventory policy, perform the following steps:
 
-          1.
-###### Click the **Policies** option (1).
-
-          1.
-###### Click the **Create Policy** button (2).
+###### 1) Click the **Policies** option (1).
+###### 2) Click the **Create Policy** button (2).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+28.png' width=1300> <br>
 
 **Figure 28: Policies**
 
-_Result:_
+_Result:_ A drop-down to select which policy to create appears:
 
-A dropdown to select which policy to create appears:
-
-<img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+29.png' width=1000> <br>
+<img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+29.png' width=1300> <br>
 
 **Figure 29: Policy Selection**
 
-          1.
 ###### Click the **Inventory Policy** option (3).
 
 _Result:_
@@ -381,50 +343,36 @@ The **New Policy** screen appears:
 
 **Figure 30: New Policy Screen**
 
-          1.
-###### Enter the **Policy Details** (4).
-          2.
-###### Set the Inventory data permissions and select all locations or specific locations (5).
-          3.
-###### Click the **Inventory Catalog** tab (6).
+###### 1) Enter the **Policy Details** (4).
+###### 2) Set the Inventory data permissions and select all locations or specific locations (5).
+###### 3) Click the **Inventory Catalog** tab (6).
 
-_Result:_
-
-The Inventory catalog permissions (7) appear:
+_Result:_ The Inventory catalog permissions (7) appear:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+31.png' width=1000> <br>
 
 **Figure 31: Inventory Catalog Permissions**
 
-          1.
-###### Set the Inventory catalog permissions (7).
-          2.
-###### Using the search field (8), enter the letters of the group to add.
+###### 1) Set the Inventory catalog permissions (7).
+###### 2) Using the search field (8), enter the letters of the group to add.
 
-_Result:_
-
-A list of groups that match the entered letters appears (9).
+_Result:_ A list of groups that match the entered letters appears (9).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+32.png' width=1000> <br>
 
 **Figure 32: Groups to Add**
 
-          1.
 ###### Click the **+Add** button (10) of the desired group/s to add.
 
-_Result:_
-
-The desired group or groups are **added** (11).
+_Result:_ The desired group or groups are **added** (11).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+33.png' width=600> <br>
 
 **Figure 33: Added Groups**
 
-          1.
 ###### Click the **Save** button (12).
 
 _Result:_
-
 - A new policy is created.
 - The added group or groups are attached to the policy.
 - All the users in the added group or groups inherit the policy permissions.
@@ -435,67 +383,49 @@ _Result:_
 
 In order to create a new workforce policy, perform the following steps:
 
-          1.
-###### Perform steps **a** to **b** as they are described in the **Creating a New Inventory Policy** section
-          2.
-###### Click the **Workforce Policy** option (1).
+###### 1) Perform steps **a** to **b** as they are described in the **Creating a New Inventory Policy** section
+###### 2) Click the **Workforce Policy** option (1).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+34.png' width=1200> <br>
 
 **Figure 34: Policy Selection**
 
-_Result:_
-
-The **New Policy** screen appears:
+_Result:_ The **New Policy** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+35.png' width=1000> <br>
 
 **Figure 35: New Policy Screen**
 
-          1.
-###### Enter the **Policy Details** (2).
-          2.
-###### Set the workforce data permissions and select all work orders and project types or specific work orders and project types (3).
-          3.
-###### Click the **Workforces Template** tab (4).
+###### 1) Enter the **Policy Details** (2).
+###### 2) Set the workforce data permissions and select all work orders and project types or specific work orders and project types (3).
+###### 3) Click the **Workforces Template** tab (4).
 
-_Result:_
-
-The workforces template permissions (5) appear:
+_Result:_ The workforces template permissions (5) appear:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+36.png' width=1000> <br>
 
 **Figure 36: Attachments Screen with Uploaded Photo**
 
-          1.
-###### Set the workforce templates permissions (5).
-          2.
-###### Using the search field (6), enter the letters of the group to add.
+###### 1) Set the workforce templates permissions (5).
+###### 2) Using the search field (6), enter the letters of the group to add.
 
-_Result:_
-
-A list of groups that match the entered letters appears (7).
+_Result:_ A list of groups that match the entered letters appears (7).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+37.png' width=1000> <br>
 
 **Figure 37: Groups to Add**
 
-          1.
 ###### Click the **+Add** button (8) of the desired group/s to add.
 
-_Result:_
-
-The desired group or groups are **added** (11).
+_Result:_ The desired group or groups are **added** (11).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+38.png' width=600> <br>
 
 **Figure 38: Added Groups**
 
-          1.
 ###### Click the **Save** button (10).
 
-_Result:_
-
+_Result:_ 
 - A new policy is created.
 - The added group or groups are attached to the policy.
 - All the users in the added group or groups inherit the policy permissions.
@@ -506,66 +436,49 @@ _Result:_
 
 In order to edit group policies, perform the following steps:
 
-          1.
 ###### Click the **Groups** option (1).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+39.png' width=1000> <br>
 
 **Figure 39: Groups**
 
-_Result:_
-
-The **Group** screen appears:
+_Result:_ The **Group** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+40.png' width=1000> <br>
 
 **Figure 40: Group Screen**
 
-          1.
+ 
 ###### Click the desired group from the displayed list (2).
 
-_Result:_
-
-The Group Detailsscreen appears:
+_Result:_ The Group Detailsscreen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+41.png' width=1000> <br>
 
 **Figure 41: Group Details Screen**
 
-          1.
 ###### Click the desired policy from the displayed list (3).
 
-_Result:_
-
-The Policy Permissions screen appears:
+_Result:_ The Policy Permissions screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+42.png' width=600> <br>
 
 **Figure 42: Policy Permissions Screen**
 
-          1.
 ###### Click the **Edit Policy** button (4).
 
-_Result:_
-
-The Policy Details screen opens in a new tab:
+_Result:_ The Policy Details screen opens in a new tab:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/Administrative+tools/User+Management/Roles+%26+Policies/Figures/Figure+43.PNG' width=1000> <br>
 
 **Figure 43: Policy Details Screen**
 
-          1.
-###### If necessary, edit the **Policy Details** (5).
-          2.
-###### If necessary, edit the policy permissions (6).
-          3.
-###### If necessary, add or remove **Groups** (7).
-          4.
-###### Click the **Save** button (8).
+###### 1) If necessary, edit the **Policy Details** (5).
+###### 2) If necessary, edit the policy permissions (6).
+###### 3) If necessary, add or remove **Groups** (7).
+###### 4) Click the **Save** button (8).
 
-_Result:_
-
-A new policy is edited and updated.
+_Result:_ A new policy is edited and updated.
 
 **note**
 
