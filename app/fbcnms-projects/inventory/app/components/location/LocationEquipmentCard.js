@@ -59,8 +59,12 @@ const LocationEquipmentCard = (props: Props) => {
         Equipment
       </CardHeader>
       <EquipmentTable
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
         equipments={equipments}
         selectedWorkOrderId={selectedWorkOrderId}
+        // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+        // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
         onEquipmentSelected={onEquipmentSelected}
         onWorkOrderSelected={onWorkOrderSelected}
       />

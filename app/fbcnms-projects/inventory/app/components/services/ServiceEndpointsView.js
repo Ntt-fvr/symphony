@@ -26,6 +26,7 @@ const ServiceEndpointsView = (props: Props) => {
   return (
     <div>
       {endpoints
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
         .sort((e1, e2) => e1.definition.index - e2.definition.index)
         .map(endpoint => (
           <ServiceEndpointDetails

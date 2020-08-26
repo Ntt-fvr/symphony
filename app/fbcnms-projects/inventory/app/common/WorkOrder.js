@@ -131,5 +131,6 @@ export function useWorkOrderTemplateNodes(): $ReadOnlyArray<WorkOrderTemplateNod
   const workOrderTemplates = workOrderTemplatesData
     .map(p => p.node)
     .filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return workOrderTemplates;
 }

@@ -48,6 +48,7 @@ const WorkOrdersView = (props: Props) => {
   const {onWorkOrderSelected, onOrderChanged, orderBy} = props;
   const classes = useStyles();
 
+  // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
   const {data, loadNext} = usePaginationFragment<WorkOrdersViewPaginationQuery>(
     graphql`
       fragment WorkOrdersView_query on Query
@@ -131,6 +132,7 @@ const WorkOrdersView = (props: Props) => {
       paginationSettings={{
         loadNext: onCompleted => {
           loadNext(WORK_ORDERS_PAGE_SIZE, {
+            // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
             onComplete: () => onCompleted && onCompleted(),
           });
         },

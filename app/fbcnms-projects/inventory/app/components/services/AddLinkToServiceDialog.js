@@ -152,7 +152,11 @@ class AddLinkToServiceDialog extends React.Component<Props, State> {
         return (
           <div className={classes.searchResults}>
             <EquipmentComparisonViewQueryRenderer limit={50}>
-              {props => <EquipmentTable {...props} />}
+              {
+               
+                  // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                props => <EquipmentTable {...props} />}
             </EquipmentComparisonViewQueryRenderer>
           </div>
         );

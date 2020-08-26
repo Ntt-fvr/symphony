@@ -68,16 +68,19 @@ class EquipmentTypeItem extends React.Component<Props> {
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
                   key={equipmentType.id}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   propertyTypes={equipmentType.propertyTypes}
                 />
               </div>
               <div className={classes.section}>
                 <PositionDefinitionsTable
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   positionDefinitions={equipmentType.positionDefinitions}
                 />
               </div>
               <div className={classes.section}>
                 <PortDefinitionsTable
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   portDefinitions={equipmentType.portDefinitions}
                 />
               </div>

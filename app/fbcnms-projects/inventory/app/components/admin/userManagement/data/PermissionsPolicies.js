@@ -506,5 +506,6 @@ export function usePermissionsPolicy(policyId: string): ?PermissionsPolicy {
   const data = useLazyLoadQuery<PermissionsPoliciesSearchQuery>(policyQuery, {
     policyId,
   });
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   return data.policy == null ? null : response2PermissionsPolicy(data.policy);
 }

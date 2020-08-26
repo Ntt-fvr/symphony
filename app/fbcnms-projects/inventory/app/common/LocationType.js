@@ -69,5 +69,6 @@ export function useLocationTypeNodes(): $ReadOnlyArray<LocationTypeNode> {
   );
   const locationTypesData = response.locationTypes?.edges || [];
   const locationTypes = locationTypesData.map(p => p.node).filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return locationTypes;
 }

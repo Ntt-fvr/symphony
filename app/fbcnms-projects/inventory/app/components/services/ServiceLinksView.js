@@ -27,7 +27,13 @@ const ServiceLinksView = (props: Props) => {
     <div>
       {links.map(link => (
         <ServiceLinkDetails
+          // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
           link={link}
+          // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
           onDeleteLink={onDeleteLink ? () => onDeleteLink(link) : null}
         />
       ))}

@@ -67,6 +67,7 @@ const CommentsActivitiesBox = (props: Props) => {
   );
 };
 
+// $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
 export default withAlert(
   withSnackbar(
     createFragmentContainer(CommentsActivitiesBox, {

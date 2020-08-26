@@ -67,6 +67,7 @@ class ServiceTypeItem extends React.Component<Props> {
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
                   key={serviceType.id}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   propertyTypes={serviceType.propertyTypes}
                 />
               </div>

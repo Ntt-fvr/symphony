@@ -121,6 +121,8 @@ class ServiceTypes extends React.Component<Props, State> {
                   open={showAddEditCard}
                   onClose={this.hideAddEditServiceTypeCard}
                   onSave={this.saveService}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                  // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
                   editingServiceType={editingServiceType}
                 />
               </div>

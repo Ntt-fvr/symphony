@@ -134,6 +134,10 @@ class InventoryEntitiesTypeahead extends React.Component<Props, State> {
             render: () => {
               return (
                 <div className={classes.breadcrumbsContainer}>
+                  {/* $FlowFixMe[incompatible-variance] $FlowFixMe T74239404
+                    * Found via relay types */}
+                  {/* $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via
+                    * relay types */}
                   <EquipmentBreadcrumbs equipment={node} size="small" />
                 </div>
               );
@@ -148,6 +152,9 @@ class InventoryEntitiesTypeahead extends React.Component<Props, State> {
             render: () => (
               <div className={classes.breadcrumbsContainer}>
                 <LocationBreadcrumbsTitle
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                  // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
                   locationDetails={node}
                   size="small"
                   hideTypes={true}

@@ -98,6 +98,7 @@ class LocationTypeItem extends React.Component<Props> {
               <div className={classes.properties}>
                 <DynamicPropertyTypesGrid
                   key={locationType.id}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   propertyTypes={locationType.propertyTypes}
                 />
               </div>

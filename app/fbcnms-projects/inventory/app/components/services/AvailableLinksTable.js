@@ -98,12 +98,22 @@ const showLinksByOrder = (
           .map(position => position.parentEquipment.id)
           .includes(srcEquipment.id)
       ) {
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
         return {
           ...link,
+          // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
           srcPort: link.dstPort,
+          // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
           dstPort: link.srcPort,
         };
       }
+      // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
+      // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+      // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
       return link;
     })
     .sort((linkA, linkB) =>

@@ -116,6 +116,8 @@ class EquipmentPortTypes extends React.Component<Props, State> {
                   open={showAddEditCard}
                   onClose={this.hideNewEquipmentPortTypeCard}
                   onSave={this.savePort}
+                  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   editingEquipmentPortType={editingEquipmentPortType}
                 />
               </div>

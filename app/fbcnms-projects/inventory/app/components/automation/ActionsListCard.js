@@ -111,6 +111,7 @@ function RuleRow(props: {rule: ActionsListCard_actionsRule$key}) {
   const relativePath = useRelativePath();
   const {history} = useRouter();
   const classes = useStyles();
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const rule: ActionsListCard_actionsRule = useFragment<ActionsListCard_actionsRule>(
     actionRuleFragment,
     props.rule,

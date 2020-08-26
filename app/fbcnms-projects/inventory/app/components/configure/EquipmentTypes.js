@@ -124,6 +124,8 @@ const EquipmentTypes = () => {
         <AddEditEquipmentTypeCard
           onClose={hideNewEquipmentTypeCard}
           onSave={saveEquipment}
+          // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+          // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
           editingEquipmentType={editingEquipmentType}
         />
       </div>

@@ -62,5 +62,6 @@ export function useProjectTemplateNodes(): $ReadOnlyArray<ProjectTemplateNode> {
   const projectTemplates = projectTemplatesData
     .map(p => p.node)
     .filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return projectTemplates;
 }

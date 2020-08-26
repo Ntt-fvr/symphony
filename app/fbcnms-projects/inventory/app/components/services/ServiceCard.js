@@ -73,6 +73,7 @@ const styles = _ => ({
 });
 
 const ServiceCard = (props: Props) => {
+  // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
   const {classes, service, history, match} = props;
   const [detailsPanelShown, setDetailsPanelShown] = useState(false);
   const panelRef = useRef();

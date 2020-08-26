@@ -61,6 +61,7 @@ export function useUsersGroup(groupId: string): UsersGroup {
   const data = useLazyLoadQuery<UsersGroupsSearchQuery>(groupQuery, {
     groupId,
   });
+  // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
   return data.group;
 }
 

@@ -179,6 +179,7 @@ const EquipmentComparisonViewQueryRenderer = (props: Props) => {
             );
           }
           return children({
+            // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
             equipment: edges.map(edge => edge.node),
           });
         }}

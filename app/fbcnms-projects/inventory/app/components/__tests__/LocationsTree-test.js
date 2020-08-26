@@ -44,7 +44,7 @@ afterEach(cleanup);
 
 const MOCK_RESOLVER = {
   Location(ctx) {
-    switch (ctx.path.join('.')) {
+    switch (ctx.path?.join('.')) {
       case 'location':
       case 'locations.edges.node':
         // root location
@@ -68,7 +68,7 @@ const MOCK_RESOLVER = {
     }
   },
   LocationType(ctx) {
-    switch (ctx.path.join('.')) {
+    switch (ctx.path?.join('.')) {
       case 'location.locationType':
       case 'locations.edges.node.locationType':
         // root location

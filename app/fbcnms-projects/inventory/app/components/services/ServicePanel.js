@@ -286,6 +286,7 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
             )
           }>
           <ServiceEndpointsView
+            // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
             endpoints={service.endpoints}
             onDeleteEndpoint={hideEditButtons ? null : onDeleteEndpoint}
           />
@@ -310,6 +311,7 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
           )
         }>
         <ServiceLinksView
+          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
           links={service.links}
           onDeleteLink={hideEditButtons ? null : onDeleteLink}
         />

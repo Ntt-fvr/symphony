@@ -118,6 +118,8 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
         <WorkOrdersMap
           workOrders={response.workOrdersMap.edges
             .filter(Boolean)
+            // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+            // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
             .map(edge => edge.node)}
         />
       ) : (

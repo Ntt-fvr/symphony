@@ -28,6 +28,7 @@ const propertiesQuery = graphql`
 `;
 
 const usePropertyFilters = (entityType: EntityType): ?Array<PropertyType> => {
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const propertiesResponse = useGraphQL(RelayEnvironment, propertiesQuery, {
     entityType: entityType.toString().toUpperCase(),
   });
