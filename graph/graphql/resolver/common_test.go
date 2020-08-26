@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolver
+package resolver_test
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
+	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
@@ -40,11 +41,11 @@ type TestResolver struct {
 type option func(*options)
 
 type options struct {
-	opts    []Option
+	opts    []resolver.Option
 	factory ev.Factory
 }
 
-func withResolverOptions(opts ...Option) option {
+func withResolverOptions(opts ...resolver.Option) option {
 	return func(o *options) {
 		o.opts = append(o.opts, opts...)
 	}
@@ -83,7 +84,7 @@ func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 	eventer := event.Eventer{Logger: logger, Emitter: emitter}
 	eventer.HookTo(c)
 
-	r := New(Config{
+	r := resolver.New(resolver.Config{
 		Logger:          logger,
 		ReceiverFactory: factory,
 	}, o.opts...)

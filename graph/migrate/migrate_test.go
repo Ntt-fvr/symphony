@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package migrate
+package migrate_test
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebookincubator/symphony/graph/migrate"
 
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -51,10 +52,10 @@ func TestMigrator(t *testing.T) {
 		Times(len(tenants))
 	defer c.AssertExpectations(t)
 
-	err = NewMigrator(MigratorConfig{
+	err = migrate.NewMigrator(migrate.MigratorConfig{
 		Driver:  drv,
 		Logger:  logtest.NewTestLogger(t),
-		Creator: func(dialect.Driver) Creator { return &c },
+		Creator: func(dialect.Driver) migrate.Creator { return &c },
 	}).Migrate(context.Background(), "foo", "bar", "baz")
 	assert.NoError(t, err)
 }
@@ -76,10 +77,10 @@ func TestMigratorError(t *testing.T) {
 		Once()
 	defer c.AssertExpectations(t)
 
-	err = NewMigrator(MigratorConfig{
+	err = migrate.NewMigrator(migrate.MigratorConfig{
 		Driver:  drv,
 		Logger:  logtest.NewTestLogger(t),
-		Creator: func(dialect.Driver) Creator { return &c },
+		Creator: func(dialect.Driver) migrate.Creator { return &c },
 	}).Migrate(context.Background(), "foo", "bar", "baz")
 	assert.EqualError(t, err, "migrating schema: bad database")
 }

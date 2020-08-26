@@ -28,11 +28,6 @@ type (
 	projectResolver         struct{}
 )
 
-var (
-	errNoProjectType = gqlerror.Errorf("project type doesn't exist")
-	errNoProject     = gqlerror.Errorf("project doesn't exist")
-)
-
 func (projectTemplateResolver) Properties(ctx context.Context, obj *ent.ProjectTemplate) ([]*ent.PropertyType, error) {
 	properties, err := obj.QueryProperties().All(ctx)
 	if err != nil {
@@ -193,7 +188,7 @@ func (r mutationResolver) DeleteProjectType(ctx context.Context, id int) (bool, 
 	}
 	if err := client.ProjectType.DeleteOneID(id).Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
-			return false, errNoProjectType
+			return false, gqlerror.Errorf("project type doesn't exist")
 		}
 		return false, fmt.Errorf("deleting project type: %w", err)
 	}
@@ -407,7 +402,7 @@ func (r mutationResolver) DeleteProject(ctx context.Context, id int) (bool, erro
 	}
 	if err := client.Project.DeleteOneID(id).Exec(ctx); err != nil {
 		if ent.IsNotFound(err) {
-			return false, errNoProject
+			return false, gqlerror.Errorf("project doesn't exist")
 		}
 		return false, fmt.Errorf("deleting project: %w", err)
 	}

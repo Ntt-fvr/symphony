@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolver
+package resolver_test
 
 import (
 	"context"
@@ -33,7 +33,7 @@ type linkSearchDataModels struct {
 	l2   int
 }
 
-type linkSearchHirerchyDataModels struct {
+type linkSearchHierarchyDataModels struct {
 	e1 int
 	e2 int
 	e3 int
@@ -174,7 +174,7 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 	}
 }
 
-func prepareLinkDataByHirerchy(ctx context.Context, r *TestResolver) linkSearchHirerchyDataModels {
+func prepareLinkDataByHirerchy(ctx context.Context, r *TestResolver) linkSearchHierarchyDataModels {
 	mr := r.Mutation()
 	locType, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "loc_type",
@@ -270,7 +270,7 @@ func prepareLinkDataByHirerchy(ctx context.Context, r *TestResolver) linkSearchH
 		},
 	})
 
-	return linkSearchHirerchyDataModels{
+	return linkSearchHierarchyDataModels{
 		e1.ID,
 		e2.ID,
 		e3.ID,

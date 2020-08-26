@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolver
+package resolver_test
 
 import (
 	"context"
@@ -262,7 +262,7 @@ func TestProjectMutation(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, deleted)
 	deleted, err = mutation.DeleteProjectType(ctx, typ.ID)
-	assert.EqualError(t, err, errNoProjectType.Error(), "project type cannot be deleted twice")
+	assert.EqualError(t, err, "input: project type doesn't exist")
 	assert.False(t, deleted)
 }
 

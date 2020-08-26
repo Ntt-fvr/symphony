@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolver
+package resolver_test
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
@@ -193,7 +194,7 @@ func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
 	require.Len(t, propTypes, 8)
 	for _, propType := range propTypes {
 		pRawVal, err := ptr.RawValue(ctx, propType)
-		require.NotNil(t, pRawVal)
+		require.NoError(t, err)
 		rawVal := *pRawVal
 		require.NoError(t, err)
 		switch propType.Name {
@@ -355,7 +356,7 @@ func TestOrc8rStatusEquipment(t *testing.T) {
 		Host: uri.Host,
 	}
 	r := newTestResolver(t, withResolverOptions(
-		WithOrc8rClient(orc8rClient),
+		resolver.WithOrc8rClient(orc8rClient),
 	))
 	defer r.Close()
 
