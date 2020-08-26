@@ -75,8 +75,8 @@ const defaultStatusFilter = getPredefinedFilterSetWithValues(
 const WorkOrderComparisonView = () => {
   const [filters, setFilters] = useState([defaultStatusFilter]);
   const [orderBy, setOrderBy] = useState<WorkOrderOrder>({
-    direction: 'ASC',
-    field: 'NAME',
+    direction: 'DESC',
+    field: 'UPDATED_AT',
   });
   const [dialogKey, setDialogKey] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
