@@ -60,6 +60,9 @@ node_modules/mapbox-gl/dist/mapbox-gl.js.flow
 .*/node_modules/relay-runtime/.*
 .*/node_modules/react-relay/.*
 .*/node_modules/react-beautiful-dnd/.*
+# T74239404 Due to using the experimental relay branch, the compile and
+# generated code don't always match in flow types.
+.*/__generated__/.*graphql.js
 
 [lints]
 all=warn
