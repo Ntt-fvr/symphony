@@ -46,7 +46,7 @@
     "@fbcnms/webpack-config": "^0.1.0",
     "@testing-library/react": "^9.4.0",
     "@testing-library/react-hooks": "^3.2.1",
-    "flow-bin": "0.128.0",
+    "flow-bin": "0.131.0",
     "identity-obj-proxy": "^3.0.0",
     "json-server": "^0.16.1",
     "nodemon": "^1.18.10",
