@@ -42,6 +42,7 @@ require (
 	github.com/vektah/dataloaden v0.3.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.0.1
 	github.com/vektra/mockery v1.1.2 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
 	go.opencensus.io v0.22.4
 	go.uber.org/zap v1.15.0
 	gocloud.dev v0.20.0
