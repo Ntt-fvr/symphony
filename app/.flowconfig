@@ -41,13 +41,10 @@
 ; graphql has flow errors that dont match our version. fixed in master,
 ; remove this when we update it
 .*/node_modules/express-graphql/.*
-.*/node_modules/graphql/.*
 
 [untyped]
 .*/node_modules/express-graphql/.*
-.*/node_modules/graphql/.*
 .*/node_modules/mapbox-gl/src/.*
-<PROJECT_ROOT>/fbcnms-packages/fbcnms-ui/insights/Alarms/.*
 
 [options]
 esproposal.optional_chaining=enable
@@ -57,9 +54,7 @@ node_modules/mapbox-gl/flow-typed
 node_modules/mapbox-gl/dist/mapbox-gl.js.flow
 
 [declarations]
-.*/node_modules/relay-runtime/.*
-.*/node_modules/react-relay/.*
-.*/node_modules/react-beautiful-dnd/.*
+.*/node_modules/.*
 # T74239404 Due to using the experimental relay branch, the compile and
 # generated code don't always match in flow types.
 .*/__generated__/.*graphql.js
@@ -69,9 +64,6 @@ all=warn
 
 # There is an ESLint rule for this
 unclear-type=off
-
-# We dont want this -- see https://github.com/facebook/flow/issues/7473
-dynamic-export=off
 
 sketchy-null=off
 sketchy-null-number=warn
@@ -90,4 +82,4 @@ untyped-import
 untyped-type-import
 
 [version]
-^0.128.0
+0.131.0
