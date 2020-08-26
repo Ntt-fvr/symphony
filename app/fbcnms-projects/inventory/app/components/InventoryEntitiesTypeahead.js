@@ -135,9 +135,9 @@ class InventoryEntitiesTypeahead extends React.Component<Props, State> {
               return (
                 <div className={classes.breadcrumbsContainer}>
                   {/* $FlowFixMe[incompatible-variance] $FlowFixMe T74239404
-                    * Found via relay types */}
+                   * Found via relay types */}
                   {/* $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via
-                    * relay types */}
+                   * relay types */}
                   <EquipmentBreadcrumbs equipment={node} size="small" />
                 </div>
               );

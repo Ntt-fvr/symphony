@@ -72,7 +72,7 @@ class PhotosGrid extends React.Component<Props> {
               {images.map(img => (
                 <GridListTile key={img.id}>
                   {/* $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via
-                    * relay types */}
+                   * relay types */}
                   <ImageAttachment img={img} onImageDeleted={onImageDeleted} />
                 </GridListTile>
               ))}

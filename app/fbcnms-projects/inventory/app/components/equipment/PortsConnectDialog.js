@@ -185,10 +185,10 @@ class PortsConnectDialog extends React.Component<Props, State> {
           <div className={classes.searchResults}>
             <EquipmentComparisonViewQueryRenderer limit={50}>
               {
-               
-                  // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
-                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
-                props => <EquipmentTable {...props} />}
+                // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                props => <EquipmentTable {...props} />
+              }
             </EquipmentComparisonViewQueryRenderer>
           </div>
         );

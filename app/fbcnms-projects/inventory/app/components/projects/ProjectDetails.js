@@ -449,7 +449,7 @@ class ProjectDetails extends React.Component<Props, State> {
                         detailsPaneClass={classes.commentsBoxContainer}
                         className={classes.card}>
                         {/* $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found
-                          * via relay types */}
+                         * via relay types */}
                         <CommentsActivitiesBox
                           boxElementsClass={classes.inExpandingPanelFix}
                           commentsLogClass={classes.commentsLog}

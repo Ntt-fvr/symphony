@@ -239,7 +239,7 @@ const AddServiceDetails = (props: Props) => {
       }}>
       <DialogTitle className={classes.dialogTitle}>
         {/* $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay
-          * types */}
+         * types */}
         <Text variant="h6">{service.serviceType.name}</Text>
       </DialogTitle>
       <DialogContent className={classes.serviceCreateDialogContent}>

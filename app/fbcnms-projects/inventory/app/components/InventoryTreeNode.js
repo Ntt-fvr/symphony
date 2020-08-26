@@ -169,23 +169,24 @@ function InventoryTreeNodeChildren(props: Props) {
       {
         // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
         data.location.children
-        // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
-        .slice()
-        .filter(Boolean)
-        .sort((x, y) => sortLexicographically(x.name ?? '', y.name ?? ''))
-        .map(childLocation => (
-          <InventoryTreeNode
-            key={childLocation.id}
-            onClick={onClick}
-            selectedHierarchy={selectedHierarchy}
-            // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
-            // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
-            element={childLocation}
-            parent={element}
-            depth={depth}
-            getHoverRightContent={getHoverRightContent}
-          />
-        ))}
+          // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
+          .slice()
+          .filter(Boolean)
+          .sort((x, y) => sortLexicographically(x.name ?? '', y.name ?? ''))
+          .map(childLocation => (
+            <InventoryTreeNode
+              key={childLocation.id}
+              onClick={onClick}
+              selectedHierarchy={selectedHierarchy}
+              // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+              // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+              element={childLocation}
+              parent={element}
+              depth={depth}
+              getHoverRightContent={getHoverRightContent}
+            />
+          ))
+      }
     </div>
   );
 }

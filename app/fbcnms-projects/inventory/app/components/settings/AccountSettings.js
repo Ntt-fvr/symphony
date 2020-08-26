@@ -65,7 +65,7 @@ function UserAccountWrapper() {
       }}>
       <div className={classes.settingsPage}>
         {/* $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay
-          * types */}
+         * types */}
         <UserAccountPane user={loggedInUser} isForCurrentUserSettings={true} />
       </div>
     </ViewContainer>
