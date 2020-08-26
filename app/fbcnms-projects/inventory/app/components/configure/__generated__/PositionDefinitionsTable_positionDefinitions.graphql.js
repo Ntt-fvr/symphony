@@ -34,44 +34,46 @@ export type PositionDefinitionsTable_positionDefinitions$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "PositionDefinitionsTable_positionDefinitions",
-  "type": "EquipmentPositionDefinition",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "PositionDefinitionsTable_positionDefinitions",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "visibleLabel",
       "args": null,
+      "kind": "ScalarField",
+      "name": "visibleLabel",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPositionDefinition",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'e380bf28ed2fa9bb1090ea936f6e7b25';
+
 module.exports = node;

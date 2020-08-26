@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash e2ebaf6750af599b5ad5530334994e0a
  */
 
 /* eslint-disable */
@@ -16,6 +15,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type EquipmentBreadcrumbs_equipment$ref = any;
+type LocationBreadcrumbsTitle_locationDetails$ref = any;
 export type InventoryEntitiesTypeaheadQueryVariables = {|
   name: string
 |};
@@ -37,6 +37,7 @@ export type InventoryEntitiesTypeaheadQueryResponse = {|
             +name: string
           |},
         |}>,
+        +$fragmentRefs: LocationBreadcrumbsTitle_locationDetails$ref,
       |} | {|
         +__typename: "Equipment",
         +id: string,
@@ -85,6 +86,7 @@ query InventoryEntitiesTypeaheadQuery(
               id
             }
           }
+          ...LocationBreadcrumbsTitle_locationDetails
         }
         ... on Equipment {
           id
@@ -134,15 +136,31 @@ fragment EquipmentBreadcrumbs_equipment on Equipment {
     }
   }
 }
+
+fragment LocationBreadcrumbsTitle_locationDetails on Location {
+  id
+  name
+  locationType {
+    name
+    id
+  }
+  locationHierarchy {
+    id
+    name
+    locationType {
+      name
+      id
+    }
+  }
+}
 */
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name",
-    "type": "String!",
-    "defaultValue": null
+    "name": "name"
   }
 ],
 v1 = [
@@ -158,305 +176,317 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "__typename",
   "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "externalId",
   "args": null,
+  "kind": "ScalarField",
+  "name": "externalId",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v6 = [
   (v5/*: any*/)
 ],
 v7 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationType",
-  "storageKey": null,
   "args": null,
   "concreteType": "LocationType",
+  "kind": "LinkedField",
+  "name": "locationType",
   "plural": false,
-  "selections": (v6/*: any*/)
+  "selections": (v6/*: any*/),
+  "storageKey": null
 },
 v8 = [
   (v5/*: any*/),
   (v3/*: any*/)
 ],
 v9 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationType",
-  "storageKey": null,
   "args": null,
   "concreteType": "LocationType",
+  "kind": "LinkedField",
+  "name": "locationType",
   "plural": false,
-  "selections": (v8/*: any*/)
+  "selections": (v8/*: any*/),
+  "storageKey": null
 },
 v10 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationHierarchy",
-  "storageKey": null,
   "args": null,
   "concreteType": "Location",
+  "kind": "LinkedField",
+  "name": "locationHierarchy",
   "plural": true,
   "selections": [
     (v3/*: any*/),
     (v5/*: any*/),
     (v9/*: any*/)
-  ]
+  ],
+  "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "InventoryEntitiesTypeaheadQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "InventoryEntitiesTypeaheadQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "searchForNode",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "SearchNodesConnection",
+        "kind": "LinkedField",
+        "name": "searchForNode",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "SearchNodeEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": null,
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   {
                     "kind": "InlineFragment",
-                    "type": "Location",
                     "selections": [
                       (v3/*: any*/),
                       (v4/*: any*/),
                       (v5/*: any*/),
                       (v7/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "locationHierarchy",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "Location",
+                        "kind": "LinkedField",
+                        "name": "locationHierarchy",
                         "plural": true,
                         "selections": [
                           (v3/*: any*/),
                           (v5/*: any*/),
                           (v7/*: any*/)
-                        ]
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "args": null,
+                        "kind": "FragmentSpread",
+                        "name": "LocationBreadcrumbsTitle_locationDetails"
                       }
-                    ]
+                    ],
+                    "type": "Location",
+                    "abstractKey": null
                   },
                   {
                     "kind": "InlineFragment",
-                    "type": "Equipment",
                     "selections": [
                       (v3/*: any*/),
                       (v4/*: any*/),
                       (v5/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "equipmentType",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "EquipmentType",
+                        "kind": "LinkedField",
+                        "name": "equipmentType",
                         "plural": false,
-                        "selections": (v6/*: any*/)
+                        "selections": (v6/*: any*/),
+                        "storageKey": null
                       },
                       {
+                        "args": null,
                         "kind": "FragmentSpread",
-                        "name": "EquipmentBreadcrumbs_equipment",
-                        "args": null
+                        "name": "EquipmentBreadcrumbs_equipment"
                       }
-                    ]
+                    ],
+                    "type": "Equipment",
+                    "abstractKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "InventoryEntitiesTypeaheadQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "searchForNode",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "SearchNodesConnection",
+        "kind": "LinkedField",
+        "name": "searchForNode",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "SearchNodeEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": null,
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   {
                     "kind": "InlineFragment",
-                    "type": "Location",
                     "selections": [
                       (v4/*: any*/),
                       (v5/*: any*/),
                       (v9/*: any*/),
                       (v10/*: any*/)
-                    ]
+                    ],
+                    "type": "Location",
+                    "abstractKey": null
                   },
                   {
                     "kind": "InlineFragment",
-                    "type": "Equipment",
                     "selections": [
                       (v4/*: any*/),
                       (v5/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "equipmentType",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "EquipmentType",
+                        "kind": "LinkedField",
+                        "name": "equipmentType",
                         "plural": false,
-                        "selections": (v8/*: any*/)
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
                       },
                       (v10/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "positionHierarchy",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "EquipmentPosition",
+                        "kind": "LinkedField",
+                        "name": "positionHierarchy",
                         "plural": true,
                         "selections": [
                           (v3/*: any*/),
                           {
-                            "kind": "LinkedField",
                             "alias": null,
-                            "name": "definition",
-                            "storageKey": null,
                             "args": null,
                             "concreteType": "EquipmentPositionDefinition",
+                            "kind": "LinkedField",
+                            "name": "definition",
                             "plural": false,
                             "selections": [
                               (v3/*: any*/),
                               (v5/*: any*/),
                               {
-                                "kind": "ScalarField",
                                 "alias": null,
-                                "name": "visibleLabel",
                                 "args": null,
+                                "kind": "ScalarField",
+                                "name": "visibleLabel",
                                 "storageKey": null
                               }
-                            ]
+                            ],
+                            "storageKey": null
                           },
                           {
-                            "kind": "LinkedField",
                             "alias": null,
-                            "name": "parentEquipment",
-                            "storageKey": null,
                             "args": null,
                             "concreteType": "Equipment",
+                            "kind": "LinkedField",
+                            "name": "parentEquipment",
                             "plural": false,
                             "selections": [
                               (v3/*: any*/),
                               (v5/*: any*/),
                               {
-                                "kind": "LinkedField",
                                 "alias": null,
-                                "name": "equipmentType",
-                                "storageKey": null,
                                 "args": null,
                                 "concreteType": "EquipmentType",
+                                "kind": "LinkedField",
+                                "name": "equipmentType",
                                 "plural": false,
                                 "selections": [
                                   (v3/*: any*/),
                                   (v5/*: any*/)
-                                ]
+                                ],
+                                "storageKey": null
                               }
-                            ]
+                            ],
+                            "storageKey": null
                           }
-                        ]
+                        ],
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "type": "Equipment",
+                    "abstractKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "InventoryEntitiesTypeaheadQuery",
+    "cacheID": "dbff9c200702d03998d923afcd6dc095",
     "id": null,
-    "text": "query InventoryEntitiesTypeaheadQuery(\n  $name: String!\n) {\n  searchForNode(name: $name, first: 10) {\n    edges {\n      node {\n        __typename\n        ... on Location {\n          id\n          externalId\n          name\n          locationType {\n            name\n            id\n          }\n          locationHierarchy {\n            id\n            name\n            locationType {\n              name\n              id\n            }\n          }\n        }\n        ... on Equipment {\n          id\n          externalId\n          name\n          equipmentType {\n            name\n            id\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        id\n      }\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "InventoryEntitiesTypeaheadQuery",
+    "operationKind": "query",
+    "text": "query InventoryEntitiesTypeaheadQuery(\n  $name: String!\n) {\n  searchForNode(name: $name, first: 10) {\n    edges {\n      node {\n        __typename\n        ... on Location {\n          id\n          externalId\n          name\n          locationType {\n            name\n            id\n          }\n          locationHierarchy {\n            id\n            name\n            locationType {\n              name\n              id\n            }\n          }\n          ...LocationBreadcrumbsTitle_locationDetails\n        }\n        ... on Equipment {\n          id\n          externalId\n          name\n          equipmentType {\n            name\n            id\n          }\n          ...EquipmentBreadcrumbs_equipment\n        }\n        id\n      }\n    }\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7738e72176118873e296e7140a8d048b';
+(node/*: any*/).hash = '9f94d06d3fb8a17c75633ca24ccd6f66';
+
 module.exports = node;

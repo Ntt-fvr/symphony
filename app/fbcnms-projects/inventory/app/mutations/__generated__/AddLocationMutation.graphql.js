@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 3570004cdabb801a286c72f16e73ae81
  */
 
 /* eslint-disable */
@@ -105,66 +104,62 @@ mutation AddLocationMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddLocationInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "externalId",
   "args": null,
+  "kind": "ScalarField",
+  "name": "externalId",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationType",
-  "storageKey": null,
   "args": null,
   "concreteType": "LocationType",
+  "kind": "LinkedField",
+  "name": "locationType",
   "plural": false,
   "selections": [
     (v1/*: any*/),
     (v3/*: any*/)
-  ]
+  ],
+  "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "numChildren",
   "args": null,
+  "kind": "ScalarField",
+  "name": "numChildren",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "siteSurveyNeeded",
   "args": null,
+  "kind": "ScalarField",
+  "name": "siteSurveyNeeded",
   "storageKey": null
 },
 v7 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "addLocation",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -173,6 +168,8 @@ v7 = [
       }
     ],
     "concreteType": "Location",
+    "kind": "LinkedField",
+    "name": "addLocation",
     "plural": false,
     "selections": [
       (v1/*: any*/),
@@ -182,12 +179,11 @@ v7 = [
       (v5/*: any*/),
       (v6/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "children",
-        "storageKey": null,
         "args": null,
         "concreteType": "Location",
+        "kind": "LinkedField",
+        "name": "children",
         "plural": true,
         "selections": [
           (v1/*: any*/),
@@ -196,36 +192,41 @@ v7 = [
           (v4/*: any*/),
           (v5/*: any*/),
           (v6/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddLocationMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v7/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddLocationMutation",
+    "selections": (v7/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddLocationMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v7/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddLocationMutation",
+    "cacheID": "316e1dc785c097fa566962839546f610",
     "id": null,
-    "text": "mutation AddLocationMutation(\n  $input: AddLocationInput!\n) {\n  addLocation(input: $input) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n    children {\n      id\n      externalId\n      name\n      locationType {\n        id\n        name\n      }\n      numChildren\n      siteSurveyNeeded\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddLocationMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddLocationMutation(\n  $input: AddLocationInput!\n) {\n  addLocation(input: $input) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n    children {\n      id\n      externalId\n      name\n      locationType {\n        id\n        name\n      }\n      numChildren\n      siteSurveyNeeded\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '6f4409b93601426ac35ab303fcdaea26';
+
 module.exports = node;

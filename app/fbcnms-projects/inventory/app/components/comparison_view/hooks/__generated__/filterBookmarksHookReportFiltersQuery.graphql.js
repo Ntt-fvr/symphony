@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash b589da368c8117eeb1f8a791f8f26c88
  */
 
 /* eslint-disable */
@@ -97,10 +96,9 @@ query filterBookmarksHookReportFiltersQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "entity",
-    "type": "FilterEntity!",
-    "defaultValue": null
+    "name": "entity"
   }
 ],
 v1 = [
@@ -111,173 +109,169 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "entity",
   "args": null,
+  "kind": "ScalarField",
+  "name": "entity",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "operator",
   "args": null,
+  "kind": "ScalarField",
+  "name": "operator",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "key",
   "args": null,
+  "kind": "ScalarField",
+  "name": "key",
   "storageKey": null
 },
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "filterType",
   "args": null,
+  "kind": "ScalarField",
+  "name": "filterType",
   "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "idSet",
   "args": null,
+  "kind": "ScalarField",
+  "name": "idSet",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringSet",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringSet",
   "storageKey": null
 },
 v11 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "boolValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "boolValue",
   "storageKey": null
 },
 v12 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "index",
   "args": null,
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 },
 v13 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v14 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v15 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v16 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v17 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v18 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v19 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v20 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 },
 v21 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isDeleted",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isDeleted",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "filterBookmarksHookReportFiltersQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "filterBookmarksHookReportFiltersQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "reportFilters",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "ReportFilter",
+        "kind": "LinkedField",
+        "name": "reportFilters",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "filters",
-            "storageKey": null,
             "args": null,
             "concreteType": "GeneralFilter",
+            "kind": "LinkedField",
+            "name": "filters",
             "plural": true,
             "selections": [
               (v5/*: any*/),
@@ -288,12 +282,11 @@ return {
               (v10/*: any*/),
               (v11/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "propertyValue",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "propertyValue",
                 "plural": false,
                 "selections": [
                   (v12/*: any*/),
@@ -308,38 +301,42 @@ return {
                   (v19/*: any*/),
                   (v20/*: any*/),
                   (v21/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "filterBookmarksHookReportFiltersQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "reportFilters",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "ReportFilter",
+        "kind": "LinkedField",
+        "name": "reportFilters",
         "plural": true,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "filters",
-            "storageKey": null,
             "args": null,
             "concreteType": "GeneralFilter",
+            "kind": "LinkedField",
+            "name": "filters",
             "plural": true,
             "selections": [
               (v5/*: any*/),
@@ -350,12 +347,11 @@ return {
               (v10/*: any*/),
               (v11/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "propertyValue",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "propertyValue",
                 "plural": false,
                 "selections": [
                   (v12/*: any*/),
@@ -371,23 +367,28 @@ return {
                   (v20/*: any*/),
                   (v21/*: any*/),
                   (v2/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "filterBookmarksHookReportFiltersQuery",
+    "cacheID": "797f209d647b456c395be4621112f083",
     "id": null,
-    "text": "query filterBookmarksHookReportFiltersQuery(\n  $entity: FilterEntity!\n) {\n  reportFilters(entity: $entity) {\n    id\n    name\n    entity\n    filters {\n      operator\n      key\n      filterType\n      stringValue\n      idSet\n      stringSet\n      boolValue\n      propertyValue {\n        index\n        name\n        type\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isDeleted\n        id\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "filterBookmarksHookReportFiltersQuery",
+    "operationKind": "query",
+    "text": "query filterBookmarksHookReportFiltersQuery(\n  $entity: FilterEntity!\n) {\n  reportFilters(entity: $entity) {\n    id\n    name\n    entity\n    filters {\n      operator\n      key\n      filterType\n      stringValue\n      idSet\n      stringSet\n      boolValue\n      propertyValue {\n        index\n        name\n        type\n        stringValue\n        intValue\n        booleanValue\n        floatValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        isDeleted\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '19ea160f56380b4a7d93b2b0df38b959';
+
 module.exports = node;

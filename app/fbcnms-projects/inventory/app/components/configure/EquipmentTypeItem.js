@@ -68,16 +68,19 @@ class EquipmentTypeItem extends React.Component<Props> {
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
                   key={equipmentType.id}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   propertyTypes={equipmentType.propertyTypes}
                 />
               </div>
               <div className={classes.section}>
                 <PositionDefinitionsTable
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   positionDefinitions={equipmentType.positionDefinitions}
                 />
               </div>
               <div className={classes.section}>
                 <PortDefinitionsTable
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   portDefinitions={equipmentType.portDefinitions}
                 />
               </div>
@@ -102,7 +105,6 @@ class EquipmentTypeItem extends React.Component<Props> {
                 this.props.alert('Error: ' + error.source?.errors[0]?.message);
               },
             },
-            // $FlowFixMe (T62907961) Relay flow types
             store => store.delete(this.props.equipmentType.id),
           );
         }

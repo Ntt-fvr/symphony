@@ -14,6 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+type HyperlinkTableMenu_hyperlink$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type HyperlinkTableRow_hyperlink$ref: FragmentReference;
 declare export opaque type HyperlinkTableRow_hyperlink$fragmentType: HyperlinkTableRow_hyperlink$ref;
@@ -23,6 +24,7 @@ export type HyperlinkTableRow_hyperlink = {|
   +url: string,
   +displayName: ?string,
   +createTime: any,
+  +$fragmentRefs: HyperlinkTableMenu_hyperlink$ref,
   +$refType: HyperlinkTableRow_hyperlink$ref,
 |};
 export type HyperlinkTableRow_hyperlink$data = HyperlinkTableRow_hyperlink;
@@ -35,49 +37,56 @@ export type HyperlinkTableRow_hyperlink$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "HyperlinkTableRow_hyperlink",
-  "type": "Hyperlink",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "HyperlinkTableRow_hyperlink",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "category",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "url",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "displayName",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "createTime",
       "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "HyperlinkTableMenu_hyperlink"
     }
-  ]
+  ],
+  "type": "Hyperlink",
+  "abstractKey": null
 };
 // prettier-ignore
-(node/*: any*/).hash = '2d5c354e88fc77b9dda1bf10b0d518fa';
+(node/*: any*/).hash = '12532e9e490dca8b3ac9d28fe9d58718';
+
 module.exports = node;

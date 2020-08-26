@@ -129,6 +129,7 @@ const FilePreview = ({
       <ImageDialog
         onClose={() => setIsPreviewDialogOpen(false)}
         open={isPreviewDialogOpen}
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
         img={file}
       />
     </div>

@@ -155,13 +155,15 @@ class PowerSearchEquipmentResultsTable extends React.Component<Props> {
           showSelfEquipment={false}
           onParentLocationClicked={
             onRowSelected
-              ? null
+              ? // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                null
               : (locationId: string) =>
                   window.open(InventoryAPIUrls.location(locationId))
           }
           onEquipmentClicked={
             onRowSelected
-              ? null
+              ? // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+                null
               : (equipmentId: string) =>
                   window.open(InventoryAPIUrls.equipment(equipmentId))
           }

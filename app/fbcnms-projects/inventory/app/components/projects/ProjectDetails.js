@@ -386,6 +386,9 @@ class ProjectDetails extends React.Component<Props, State> {
                               <div className={classes.separator} />
 
                               <LocationBreadcrumbsTitle
+                                // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                                // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                                 locationDetails={location}
                                 size="small"
                                 navigateOnClick={NAVIGATION_OPTIONS.NEW_TAB}
@@ -416,6 +419,7 @@ class ProjectDetails extends React.Component<Props, State> {
                       </ExpandingPanel>
                       <ExpandingPanel title="Work Orders">
                         <ProjectWorkOrdersList
+                          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                           workOrders={project.workOrders}
                           onNavigateToWorkOrder={this.navigateToWorkOrder}
                         />
@@ -444,11 +448,14 @@ class ProjectDetails extends React.Component<Props, State> {
                         title="Comments"
                         detailsPaneClass={classes.commentsBoxContainer}
                         className={classes.card}>
+                        {/* $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found
+                         * via relay types */}
                         <CommentsActivitiesBox
                           boxElementsClass={classes.inExpandingPanelFix}
                           commentsLogClass={classes.commentsLog}
                           relatedEntityId={project.id}
                           relatedEntityType="PROJECT"
+                          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                           comments={this.props.project.comments}
                         />
                       </ExpandingPanel>
@@ -550,6 +557,7 @@ export default withRouter(
               comments {
                 ...CommentsActivitiesBox_comments
               }
+              ...ProjectMoreActionsButton_project
             }
           `,
         }),

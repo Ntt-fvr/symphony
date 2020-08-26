@@ -48,100 +48,102 @@ export type ProjectWorkOrdersList_workOrders$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ProjectWorkOrdersList_workOrders",
-  "type": "WorkOrder",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ProjectWorkOrdersList_workOrders",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "workOrderType",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkOrderType",
+      "kind": "LinkedField",
+      "name": "workOrderType",
       "plural": false,
       "selections": [
         (v1/*: any*/),
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "description",
       "args": null,
+      "kind": "ScalarField",
+      "name": "description",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "owner",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "owner",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "email",
           "args": null,
+          "kind": "ScalarField",
+          "name": "email",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "creationDate",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "installDate",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "status",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "priority",
       "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrder",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '50a592240f38b75d0859f49f5a89fa3e';
+
 module.exports = node;

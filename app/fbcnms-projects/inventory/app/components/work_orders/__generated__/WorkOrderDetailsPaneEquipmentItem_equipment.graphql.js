@@ -56,17 +56,17 @@ export type WorkOrderDetailsPaneEquipmentItem_equipment$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
@@ -74,91 +74,93 @@ v2 = [
   (v1/*: any*/)
 ];
 return {
-  "kind": "Fragment",
-  "name": "WorkOrderDetailsPaneEquipmentItem_equipment",
-  "type": "Equipment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "WorkOrderDetailsPaneEquipmentItem_equipment",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipmentType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentType",
+      "kind": "LinkedField",
+      "name": "equipmentType",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "parentLocation",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "parentLocation",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "locationType",
-          "storageKey": null,
           "args": null,
           "concreteType": "LocationType",
+          "kind": "LinkedField",
+          "name": "locationType",
           "plural": false,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "parentPosition",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPosition",
+      "kind": "LinkedField",
+      "name": "parentPosition",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "definition",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPositionDefinition",
+          "kind": "LinkedField",
+          "name": "definition",
           "plural": false,
           "selections": [
             (v1/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "visibleLabel",
               "args": null,
+              "kind": "ScalarField",
+              "name": "visibleLabel",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "parentEquipment",
-          "storageKey": null,
           "args": null,
           "concreteType": "Equipment",
+          "kind": "LinkedField",
+          "name": "parentEquipment",
           "plural": false,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '50466f4314e67740e00fa80dc786d8e8';
+
 module.exports = node;

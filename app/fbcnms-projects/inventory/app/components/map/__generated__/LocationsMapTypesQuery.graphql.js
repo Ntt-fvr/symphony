@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 52284b6d63204f84e17e43b314827f8d
  */
 
 /* eslint-disable */
@@ -68,54 +67,48 @@ query LocationsMapTypesQuery {
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "locationTypes",
-    "storageKey": null,
     "args": null,
     "concreteType": "LocationTypeConnection",
+    "kind": "LinkedField",
+    "name": "locationTypes",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationTypeEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "LocationType",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               (v0/*: any*/),
               (v1/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "locations",
-                "storageKey": "locations(enforceHasLatLong:true)",
                 "args": [
                   {
                     "kind": "Literal",
@@ -124,80 +117,89 @@ v2 = [
                   }
                 ],
                 "concreteType": "LocationConnection",
+                "kind": "LinkedField",
+                "name": "locations",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "edges",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "LocationEdge",
+                    "kind": "LinkedField",
+                    "name": "edges",
                     "plural": true,
                     "selections": [
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "node",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "Location",
+                        "kind": "LinkedField",
+                        "name": "node",
                         "plural": false,
                         "selections": [
                           (v0/*: any*/),
                           (v1/*: any*/),
                           {
-                            "kind": "ScalarField",
                             "alias": null,
-                            "name": "latitude",
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "latitude",
                             "storageKey": null
                           },
                           {
-                            "kind": "ScalarField",
                             "alias": null,
-                            "name": "longitude",
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "longitude",
                             "storageKey": null
                           }
-                        ]
+                        ],
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": "locations(enforceHasLatLong:true)"
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "LocationsMapTypesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
-    "selections": (v2/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "LocationsMapTypesQuery",
+    "selections": (v2/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "LocationsMapTypesQuery",
-    "argumentDefinitions": [],
     "selections": (v2/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "LocationsMapTypesQuery",
+    "cacheID": "0e41817fc169df5a2583e6d61aaa4853",
     "id": null,
-    "text": "query LocationsMapTypesQuery {\n  locationTypes {\n    edges {\n      node {\n        id\n        name\n        locations(enforceHasLatLong: true) {\n          edges {\n            node {\n              id\n              name\n              latitude\n              longitude\n            }\n          }\n        }\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "LocationsMapTypesQuery",
+    "operationKind": "query",
+    "text": "query LocationsMapTypesQuery {\n  locationTypes {\n    edges {\n      node {\n        id\n        name\n        locations(enforceHasLatLong: true) {\n          edges {\n            node {\n              id\n              name\n              latitude\n              longitude\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'fc689b6b48f62c12d1c96d10d3f80c7c';
+
 module.exports = node;

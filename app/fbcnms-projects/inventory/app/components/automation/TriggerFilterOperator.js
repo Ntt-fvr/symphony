@@ -36,6 +36,7 @@ type Props = {|
 |};
 
 export default function TriggerFilterOperator(props: Props) {
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const data = useFragment<TriggerFilterOperator_data>(query, props.filter);
   const supportedOperators = data.supportedOperators;
   return (

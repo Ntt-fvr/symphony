@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 34457bc3724841da77080612f2818c1f
  */
 
 /* eslint-disable */
@@ -141,39 +140,35 @@ mutation EditServiceTypeMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "data",
-    "type": "ServiceTypeEditData!",
-    "defaultValue": null
+    "name": "data"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "index",
   "args": null,
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 },
 v4 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "editServiceType",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -182,191 +177,197 @@ v4 = [
       }
     ],
     "concreteType": "ServiceType",
+    "kind": "LinkedField",
+    "name": "editServiceType",
     "plural": false,
     "selections": [
       (v1/*: any*/),
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "propertyTypes",
-        "storageKey": null,
         "args": null,
         "concreteType": "PropertyType",
+        "kind": "LinkedField",
+        "name": "propertyTypes",
         "plural": true,
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "type",
             "args": null,
+            "kind": "ScalarField",
+            "name": "type",
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "nodeType",
             "args": null,
+            "kind": "ScalarField",
+            "name": "nodeType",
             "storageKey": null
           },
           (v3/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "stringValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "intValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "booleanValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "floatValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "latitudeValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "longitudeValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "rangeFromValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "rangeToValue",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "isEditable",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "isInstanceProperty",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "isMandatory",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "category",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "isDeleted",
             "args": null,
+            "kind": "ScalarField",
+            "name": "isDeleted",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "endpointDefinitions",
-        "storageKey": null,
         "args": null,
         "concreteType": "ServiceEndpointDefinition",
+        "kind": "LinkedField",
+        "name": "endpointDefinitions",
         "plural": true,
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "role",
             "args": null,
+            "kind": "ScalarField",
+            "name": "role",
             "storageKey": null
           },
           (v3/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "equipmentType",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentType",
+            "kind": "LinkedField",
+            "name": "equipmentType",
             "plural": false,
             "selections": [
               (v1/*: any*/),
               (v2/*: any*/)
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditServiceTypeMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v4/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditServiceTypeMutation",
+    "selections": (v4/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditServiceTypeMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v4/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditServiceTypeMutation",
+    "cacheID": "3984f144e425508adc8a9cd4300606dd",
     "id": null,
-    "text": "mutation EditServiceTypeMutation(\n  $data: ServiceTypeEditData!\n) {\n  editServiceType(data: $data) {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    endpointDefinitions {\n      id\n      name\n      role\n      index\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditServiceTypeMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditServiceTypeMutation(\n  $data: ServiceTypeEditData!\n) {\n  editServiceType(data: $data) {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    endpointDefinitions {\n      id\n      name\n      role\n      index\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '52080020a26a9e4e43dc488816bd10eb';
+
 module.exports = node;

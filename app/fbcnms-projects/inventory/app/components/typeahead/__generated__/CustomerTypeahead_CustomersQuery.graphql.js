@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash f3cdf937dd6146cc44ffb9ebb07a76ba
  */
 
 /* eslint-disable */
@@ -55,18 +54,14 @@ query CustomerTypeahead_CustomersQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "limit",
-    "type": "Int",
-    "defaultValue": null
+    "name": "limit"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "customers",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -75,79 +70,85 @@ v1 = [
       }
     ],
     "concreteType": "CustomerConnection",
+    "kind": "LinkedField",
+    "name": "customers",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "CustomerEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "Customer",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "id",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "name",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "externalId",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "externalId",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "CustomerTypeahead_CustomersQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "CustomerTypeahead_CustomersQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "CustomerTypeahead_CustomersQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "CustomerTypeahead_CustomersQuery",
+    "cacheID": "91b991cf7b98760ae4b59c784df7fac4",
     "id": null,
-    "text": "query CustomerTypeahead_CustomersQuery(\n  $limit: Int\n) {\n  customers(first: $limit) {\n    edges {\n      node {\n        id\n        name\n        externalId\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "CustomerTypeahead_CustomersQuery",
+    "operationKind": "query",
+    "text": "query CustomerTypeahead_CustomersQuery(\n  $limit: Int\n) {\n  customers(first: $limit) {\n    edges {\n      node {\n        id\n        name\n        externalId\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '18df0202c887393e4158102ab7e9ba4c';
+
 module.exports = node;

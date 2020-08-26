@@ -496,6 +496,9 @@ const WorkOrderDetails = ({
                               Location
                             </Text>
                             <LocationBreadcrumbsTitle
+                              // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                              // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                              // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                               locationDetails={location}
                               size="small"
                               navigateOnClick={NAVIGATION_OPTIONS.NEW_TAB}
@@ -560,6 +563,7 @@ const WorkOrderDetails = ({
                       <EntityDocumentsTable
                         entityType="WORK_ORDER"
                         entityId={workOrder.id}
+                        // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                         files={[
                           ...propsWorkOrder.files,
                           ...propsWorkOrder.images,
@@ -622,6 +626,7 @@ const WorkOrderDetails = ({
                         commentsLogClass={classes.commentsLog}
                         relatedEntityId={propsWorkOrder.id}
                         relatedEntityType="WORK_ORDER"
+                        // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                         comments={propsWorkOrder.comments}
                         activities={propsWorkOrder.activities}
                       />

@@ -279,6 +279,7 @@ class PortDefinitionsAddEditTable extends React.Component<Props, State> {
     const response = await fetchQuery(
       RelayEnvironment,
       equipmentPortTypesQuery,
+      {},
     );
     return response.equipmentPortTypes.edges
       .map(edge => edge.node)

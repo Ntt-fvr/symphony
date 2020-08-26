@@ -42,77 +42,79 @@ export type ServiceEquipmentTopology_endpoints$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ServiceEquipmentTopology_endpoints",
-  "type": "ServiceEndpoint",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ServiceEquipmentTopology_endpoints",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "definition",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceEndpointDefinition",
+      "kind": "LinkedField",
+      "name": "definition",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "role",
           "args": null,
+          "kind": "ScalarField",
+          "name": "role",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipment",
-      "storageKey": null,
       "args": null,
       "concreteType": "Equipment",
+      "kind": "LinkedField",
+      "name": "equipment",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "positionHierarchy",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPosition",
+          "kind": "LinkedField",
+          "name": "positionHierarchy",
           "plural": true,
           "selections": [
             {
-              "kind": "LinkedField",
               "alias": null,
-              "name": "parentEquipment",
-              "storageKey": null,
               "args": null,
               "concreteType": "Equipment",
+              "kind": "LinkedField",
+              "name": "parentEquipment",
               "plural": false,
               "selections": [
                 (v0/*: any*/)
-              ]
+              ],
+              "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ServiceEndpoint",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '085a9519bd88793b015ab955f716fb5f';
+
 module.exports = node;

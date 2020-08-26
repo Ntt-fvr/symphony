@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash fed592c78e90ce375867fc0308a37f6c
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveProjectMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "deleteProject",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "deleteProject",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveProjectMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveProjectMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveProjectMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveProjectMutation",
+    "cacheID": "c843a2d8671a62e56fe15c9435d570b7",
     "id": null,
-    "text": "mutation RemoveProjectMutation(\n  $id: ID!\n) {\n  deleteProject(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveProjectMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveProjectMutation(\n  $id: ID!\n) {\n  deleteProject(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '7424ca24008e15a923f89b3fbc822395';
+
 module.exports = node;

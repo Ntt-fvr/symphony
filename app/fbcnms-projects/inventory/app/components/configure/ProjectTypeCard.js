@@ -7,7 +7,7 @@
  * @flow
  * @format
  */
-import type ProjectTypeCard_projectType from './__generated__/ProjectTypeCard_projectType.graphql';
+import type {ProjectTypeCard_projectType} from './__generated__/ProjectTypeCard_projectType.graphql';
 
 import Button from '@symphony/design-system/components/Button';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
@@ -71,7 +71,6 @@ const useStyles = makeStyles(() => ({
 
 type Props = $ReadOnly<{|
   className?: string,
-  // $FlowFixMe (T62907961) Relay flow types
   projectType: ProjectTypeCard_projectType,
   onEditClicked: () => void,
 |}>;
@@ -109,7 +108,7 @@ const ProjectTypeCard = ({className, projectType, onEditClicked}: Props) => {
               disabled={!!deleteButtonDisabledTooltip}
               tooltip={deleteButtonDisabledTooltip}
               className={classes.iconButton}
-              projectType={projectType}
+              projectType={{id: projectType.id, name: projectType.name}}
             />
           </div>
           <Text className={classes.description}>{description}</Text>

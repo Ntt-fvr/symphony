@@ -65,6 +65,7 @@ export default function TriggerFilterRow(props: TriggerFilterProps) {
   const {trigger, ruleFilter, onChange} = props;
   const classes = useStyles();
 
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const data: TriggerFilterRow_data = useFragment<TriggerFilterRow_data>(
     query,
     trigger,

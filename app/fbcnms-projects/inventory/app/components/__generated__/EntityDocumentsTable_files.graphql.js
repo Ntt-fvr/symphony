@@ -32,21 +32,23 @@ export type EntityDocumentsTable_files$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "EntityDocumentsTable_files",
-  "type": "File",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "EntityDocumentsTable_files",
   "selections": [
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "DocumentTable_files",
-      "args": null
+      "name": "DocumentTable_files"
     }
-  ]
+  ],
+  "type": "File",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'bf947c22e479b0150cc5e2861374aa18';
+
 module.exports = node;

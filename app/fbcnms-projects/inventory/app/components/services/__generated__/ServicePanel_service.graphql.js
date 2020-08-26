@@ -67,17 +67,17 @@ export type ServicePanel_service$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
@@ -85,136 +85,138 @@ v2 = [
   (v1/*: any*/)
 ];
 return {
-  "kind": "Fragment",
-  "name": "ServicePanel_service",
-  "type": "Service",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServicePanel_service",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "externalId",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "status",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "customer",
-      "storageKey": null,
       "args": null,
       "concreteType": "Customer",
+      "kind": "LinkedField",
+      "name": "customer",
       "plural": false,
       "selections": [
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "serviceType",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceType",
+      "kind": "LinkedField",
+      "name": "serviceType",
       "plural": false,
       "selections": [
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "discoveryMethod",
           "args": null,
+          "kind": "ScalarField",
+          "name": "discoveryMethod",
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "endpointDefinitions",
-          "storageKey": null,
           "args": null,
           "concreteType": "ServiceEndpointDefinition",
+          "kind": "LinkedField",
+          "name": "endpointDefinitions",
           "plural": true,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "role",
               "args": null,
+              "kind": "ScalarField",
+              "name": "role",
               "storageKey": null
             },
             {
-              "kind": "LinkedField",
               "alias": null,
-              "name": "equipmentType",
-              "storageKey": null,
               "args": null,
               "concreteType": "EquipmentType",
+              "kind": "LinkedField",
+              "name": "equipmentType",
               "plural": false,
-              "selections": (v2/*: any*/)
+              "selections": (v2/*: any*/),
+              "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "links",
-      "storageKey": null,
       "args": null,
       "concreteType": "Link",
+      "kind": "LinkedField",
+      "name": "links",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceLinksView_links",
-          "args": null
+          "name": "ServiceLinksView_links"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "endpoints",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceEndpoint",
+      "kind": "LinkedField",
+      "name": "endpoints",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "definition",
-          "storageKey": null,
           "args": null,
           "concreteType": "ServiceEndpointDefinition",
+          "kind": "LinkedField",
+          "name": "definition",
           "plural": false,
-          "selections": (v2/*: any*/)
+          "selections": (v2/*: any*/),
+          "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceEndpointsView_endpoints",
-          "args": null
+          "name": "ServiceEndpointsView_endpoints"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Service",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'ff14440bf865c0fada807dcbe20fc346';
+
 module.exports = node;

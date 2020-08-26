@@ -32,30 +32,32 @@ export type ProjectTypeWorkOrderTemplatesPanel_workOrderTypes$key = $ReadOnlyArr
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ProjectTypeWorkOrderTemplatesPanel_workOrderTypes",
-  "type": "WorkOrderType",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ProjectTypeWorkOrderTemplatesPanel_workOrderTypes",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "name",
       "args": null,
+      "kind": "ScalarField",
+      "name": "name",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrderType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'b8387d4894b17459891a362d8757d82f';
+
 module.exports = node;

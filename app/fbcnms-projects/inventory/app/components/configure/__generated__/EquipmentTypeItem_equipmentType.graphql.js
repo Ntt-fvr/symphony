@@ -45,83 +45,85 @@ export type EquipmentTypeItem_equipmentType$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "EquipmentTypeItem_equipmentType",
-  "type": "EquipmentType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "EquipmentTypeItem_equipmentType",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "DynamicPropertyTypesGrid_propertyTypes",
-          "args": null
+          "name": "DynamicPropertyTypesGrid_propertyTypes"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "positionDefinitions",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPositionDefinition",
+      "kind": "LinkedField",
+      "name": "positionDefinitions",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "PositionDefinitionsTable_positionDefinitions",
-          "args": null
+          "name": "PositionDefinitionsTable_positionDefinitions"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "portDefinitions",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPortDefinition",
+      "kind": "LinkedField",
+      "name": "portDefinitions",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "PortDefinitionsTable_portDefinitions",
-          "args": null
+          "name": "PortDefinitionsTable_portDefinitions"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfEquipment",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfEquipment",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'c31a356dc2022425956e57facd0ae246';
+
 module.exports = node;

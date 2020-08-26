@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 1d6de5ab9baa3a169a092ec43543c52c
  */
 
 /* eslint-disable */
@@ -66,16 +65,14 @@ fragment EquipmentPropertiesCard_position on EquipmentPosition {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "position_id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "position_id"
   },
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "work_order_id",
-    "type": "ID",
-    "defaultValue": null
+    "name": "work_order_id"
   }
 ],
 v1 = [
@@ -91,140 +88,143 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveEquipmentFromPositionMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveEquipmentFromPositionMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "removeEquipmentFromPosition",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "EquipmentPosition",
+        "kind": "LinkedField",
+        "name": "removeEquipmentFromPosition",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "EquipmentPropertiesCard_position",
-            "args": null
+            "name": "EquipmentPropertiesCard_position"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveEquipmentFromPositionMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "removeEquipmentFromPosition",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "EquipmentPosition",
+        "kind": "LinkedField",
+        "name": "removeEquipmentFromPosition",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "definition",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentPositionDefinition",
+            "kind": "LinkedField",
+            "name": "definition",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "index",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "index",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "visibleLabel",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "visibleLabel",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "attachedEquipment",
-            "storageKey": null,
             "args": null,
             "concreteType": "Equipment",
+            "kind": "LinkedField",
+            "name": "attachedEquipment",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "futureState",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "futureState",
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "workOrder",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkOrder",
+                "kind": "LinkedField",
+                "name": "workOrder",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "status",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveEquipmentFromPositionMutation",
+    "cacheID": "381d939307cf8bd437332eaa104f83bf",
     "id": null,
-    "text": "mutation RemoveEquipmentFromPositionMutation(\n  $position_id: ID!\n  $work_order_id: ID\n) {\n  removeEquipmentFromPosition(positionId: $position_id, workOrderId: $work_order_id) {\n    ...EquipmentPropertiesCard_position\n    id\n  }\n}\n\nfragment EquipmentPropertiesCard_position on EquipmentPosition {\n  id\n  definition {\n    id\n    name\n    index\n    visibleLabel\n  }\n  attachedEquipment {\n    id\n    name\n    futureState\n    workOrder {\n      id\n      status\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveEquipmentFromPositionMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveEquipmentFromPositionMutation(\n  $position_id: ID!\n  $work_order_id: ID\n) {\n  removeEquipmentFromPosition(positionId: $position_id, workOrderId: $work_order_id) {\n    ...EquipmentPropertiesCard_position\n    id\n  }\n}\n\nfragment EquipmentPropertiesCard_position on EquipmentPosition {\n  id\n  definition {\n    id\n    name\n    index\n    visibleLabel\n  }\n  attachedEquipment {\n    id\n    name\n    futureState\n    workOrder {\n      id\n      status\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd186a2a7a210e4281b5091e52bc5138b';
+
 module.exports = node;

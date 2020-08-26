@@ -43,74 +43,76 @@ export type ServiceTypeItem_serviceType$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ServiceTypeItem_serviceType",
-  "type": "ServiceType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServiceTypeItem_serviceType",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "discoveryMethod",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "PropertyTypeFormField_propertyType",
-          "args": null
+          "name": "PropertyTypeFormField_propertyType"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "endpointDefinitions",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceEndpointDefinition",
+      "kind": "LinkedField",
+      "name": "endpointDefinitions",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions",
-          "args": null
+          "name": "ServiceEndpointDefinitionStaticTable_serviceEndpointDefinitions"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfServices",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfServices",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "ServiceType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'bdd10c4d5e7ee31784df58baac76728d';
+
 module.exports = node;

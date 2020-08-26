@@ -41,58 +41,60 @@ export type PowerSearchLinkFirstEquipmentResultsTable_equipment$key = $ReadOnlyA
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "PowerSearchLinkFirstEquipmentResultsTable_equipment",
-  "type": "Equipment",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "PowerSearchLinkFirstEquipmentResultsTable_equipment",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "futureState",
       "args": null,
+      "kind": "ScalarField",
+      "name": "futureState",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipmentType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentType",
+      "kind": "LinkedField",
+      "name": "equipmentType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "EquipmentBreadcrumbs_equipment",
-      "args": null
+      "name": "EquipmentBreadcrumbs_equipment"
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '1716ce00a6510aae7310a382182ce067';
+
 module.exports = node;

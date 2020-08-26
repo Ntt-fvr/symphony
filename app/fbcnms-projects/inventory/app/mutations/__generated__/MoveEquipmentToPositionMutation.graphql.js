@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 77d821ccb140ff3554894ccdb10b435c
  */
 
 /* eslint-disable */
@@ -66,27 +65,22 @@ fragment EquipmentPropertiesCard_position on EquipmentPosition {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "kind": "LocalArgument",
-    "name": "parent_equipment_id",
-    "type": "ID!",
-    "defaultValue": null
-  },
-  {
-    "kind": "LocalArgument",
-    "name": "position_definition_id",
-    "type": "ID!",
-    "defaultValue": null
-  },
-  {
-    "kind": "LocalArgument",
-    "name": "equipment_id",
-    "type": "ID!",
-    "defaultValue": null
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "equipment_id"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "parent_equipment_id"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "position_definition_id"
+},
+v3 = [
   {
     "kind": "Variable",
     "name": "equipmentId",
@@ -103,141 +97,152 @@ v1 = [
     "variableName": "position_definition_id"
   }
 ],
-v2 = {
-  "kind": "ScalarField",
+v4 = {
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
-v3 = {
-  "kind": "ScalarField",
+v5 = {
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
-    "name": "MoveEquipmentToPositionMutation",
-    "type": "Mutation",
     "metadata": null,
-    "argumentDefinitions": (v0/*: any*/),
+    "name": "MoveEquipmentToPositionMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "moveEquipmentToPosition",
-        "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "EquipmentPosition",
+        "kind": "LinkedField",
+        "name": "moveEquipmentToPosition",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "EquipmentPropertiesCard_position",
-            "args": null
+            "name": "EquipmentPropertiesCard_position"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "MoveEquipmentToPositionMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "moveEquipmentToPosition",
-        "storageKey": null,
-        "args": (v1/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "EquipmentPosition",
+        "kind": "LinkedField",
+        "name": "moveEquipmentToPosition",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
+          (v4/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "definition",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentPositionDefinition",
+            "kind": "LinkedField",
+            "name": "definition",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "index",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "index",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "visibleLabel",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "visibleLabel",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "attachedEquipment",
-            "storageKey": null,
             "args": null,
             "concreteType": "Equipment",
+            "kind": "LinkedField",
+            "name": "attachedEquipment",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "futureState",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "futureState",
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "workOrder",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkOrder",
+                "kind": "LinkedField",
+                "name": "workOrder",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v4/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "status",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "MoveEquipmentToPositionMutation",
+    "cacheID": "9f089b846a7e737acc53a8a73b30e9b2",
     "id": null,
-    "text": "mutation MoveEquipmentToPositionMutation(\n  $parent_equipment_id: ID!\n  $position_definition_id: ID!\n  $equipment_id: ID!\n) {\n  moveEquipmentToPosition(parentEquipmentId: $parent_equipment_id, positionDefinitionId: $position_definition_id, equipmentId: $equipment_id) {\n    ...EquipmentPropertiesCard_position\n    id\n  }\n}\n\nfragment EquipmentPropertiesCard_position on EquipmentPosition {\n  id\n  definition {\n    id\n    name\n    index\n    visibleLabel\n  }\n  attachedEquipment {\n    id\n    name\n    futureState\n    workOrder {\n      id\n      status\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "MoveEquipmentToPositionMutation",
+    "operationKind": "mutation",
+    "text": "mutation MoveEquipmentToPositionMutation(\n  $parent_equipment_id: ID!\n  $position_definition_id: ID!\n  $equipment_id: ID!\n) {\n  moveEquipmentToPosition(parentEquipmentId: $parent_equipment_id, positionDefinitionId: $position_definition_id, equipmentId: $equipment_id) {\n    ...EquipmentPropertiesCard_position\n    id\n  }\n}\n\nfragment EquipmentPropertiesCard_position on EquipmentPosition {\n  id\n  definition {\n    id\n    name\n    index\n    visibleLabel\n  }\n  attachedEquipment {\n    id\n    name\n    futureState\n    workOrder {\n      id\n      status\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '56b02f3e8af0b38080dd01ef75b4e682';
+
 module.exports = node;

@@ -41,79 +41,81 @@ export type SiteSurveyPane_survey$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "SiteSurveyPane_survey",
-  "type": "Survey",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "SiteSurveyPane_survey",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "completionTimestamp",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "surveyResponses",
-      "storageKey": null,
       "args": null,
       "concreteType": "SurveyQuestion",
+      "kind": "LinkedField",
+      "name": "surveyResponses",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "id",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "questionText",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "formName",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "formIndex",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "questionIndex",
           "args": null,
+          "kind": "ScalarField",
+          "name": "questionIndex",
           "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "SiteSurveyQuestionReply_question",
-          "args": null
+          "name": "SiteSurveyQuestionReply_question"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Survey",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'abb3682eadcff198afba66898e28a2a0';
+
 module.exports = node;

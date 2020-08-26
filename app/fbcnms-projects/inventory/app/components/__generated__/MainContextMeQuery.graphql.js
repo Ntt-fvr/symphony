@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 2a24cd041918bb90fe78819130e62069
  */
 
 /* eslint-disable */
@@ -303,10 +302,10 @@ query MainContextMeQuery {
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isAllowed",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isAllowed",
   "storageKey": null
 },
 v1 = [
@@ -315,382 +314,385 @@ v1 = [
 v2 = [
   (v0/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "locationTypeIds",
     "args": null,
+    "kind": "ScalarField",
+    "name": "locationTypeIds",
     "storageKey": null
   }
 ],
 v3 = [
   {
-    "kind": "LinkedField",
     "alias": null,
+    "args": null,
+    "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
     "name": "create",
-    "storageKey": null,
-    "args": null,
-    "concreteType": "BasicPermissionRule",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
+    "args": null,
+    "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
     "name": "update",
-    "storageKey": null,
-    "args": null,
-    "concreteType": "BasicPermissionRule",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "delete",
-    "storageKey": null,
     "args": null,
     "concreteType": "BasicPermissionRule",
+    "kind": "LinkedField",
+    "name": "delete",
     "plural": false,
-    "selections": (v1/*: any*/)
+    "selections": (v1/*: any*/),
+    "storageKey": null
   }
 ],
 v4 = [
   (v0/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "projectTypeIds",
     "args": null,
+    "kind": "ScalarField",
+    "name": "projectTypeIds",
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "workOrderTypeIds",
     "args": null,
+    "kind": "ScalarField",
+    "name": "workOrderTypeIds",
     "storageKey": null
   }
 ],
 v5 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "me",
-    "storageKey": null,
     "args": null,
     "concreteType": "Viewer",
+    "kind": "LinkedField",
+    "name": "me",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "user",
-        "storageKey": null,
         "args": null,
         "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "user",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "id",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "authID",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "email",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "firstName",
-            "args": null,
             "storageKey": null
           },
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "lastName",
             "args": null,
+            "kind": "ScalarField",
+            "name": "lastName",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "permissions",
-        "storageKey": null,
         "args": null,
         "concreteType": "PermissionSettings",
+        "kind": "LinkedField",
+        "name": "permissions",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "adminPolicy",
-            "storageKey": null,
             "args": null,
             "concreteType": "AdministrativePolicy",
+            "kind": "LinkedField",
+            "name": "adminPolicy",
             "plural": false,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "access",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "BasicPermissionRule",
+                "kind": "LinkedField",
+                "name": "access",
                 "plural": false,
-                "selections": (v1/*: any*/)
+                "selections": (v1/*: any*/),
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "inventoryPolicy",
-            "storageKey": null,
             "args": null,
             "concreteType": "InventoryPolicy",
+            "kind": "LinkedField",
+            "name": "inventoryPolicy",
             "plural": false,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "read",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "BasicPermissionRule",
+                "kind": "LinkedField",
+                "name": "read",
                 "plural": false,
-                "selections": (v1/*: any*/)
+                "selections": (v1/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "location",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "LocationCUD",
+                "kind": "LinkedField",
+                "name": "location",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "LocationPermissionRule",
+                    "kind": "LinkedField",
                     "name": "create",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "LocationPermissionRule",
                     "plural": false,
-                    "selections": (v2/*: any*/)
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "LocationPermissionRule",
+                    "kind": "LinkedField",
                     "name": "update",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "LocationPermissionRule",
                     "plural": false,
-                    "selections": (v2/*: any*/)
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "delete",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "LocationPermissionRule",
+                    "kind": "LinkedField",
+                    "name": "delete",
                     "plural": false,
-                    "selections": (v2/*: any*/)
+                    "selections": (v2/*: any*/),
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
+                "args": null,
+                "concreteType": "CUD",
+                "kind": "LinkedField",
                 "name": "equipment",
-                "storageKey": null,
-                "args": null,
-                "concreteType": "CUD",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
+                "args": null,
+                "concreteType": "CUD",
+                "kind": "LinkedField",
                 "name": "equipmentType",
-                "storageKey": null,
-                "args": null,
-                "concreteType": "CUD",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
+                "args": null,
+                "concreteType": "CUD",
+                "kind": "LinkedField",
                 "name": "locationType",
-                "storageKey": null,
-                "args": null,
-                "concreteType": "CUD",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
+                "args": null,
+                "concreteType": "CUD",
+                "kind": "LinkedField",
                 "name": "portType",
-                "storageKey": null,
-                "args": null,
-                "concreteType": "CUD",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "serviceType",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "CUD",
+                "kind": "LinkedField",
+                "name": "serviceType",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "workforcePolicy",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkforcePolicy",
+            "kind": "LinkedField",
+            "name": "workforcePolicy",
             "plural": false,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "read",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkforcePermissionRule",
+                "kind": "LinkedField",
+                "name": "read",
                 "plural": false,
-                "selections": (v4/*: any*/)
+                "selections": (v4/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "templates",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "CUD",
+                "kind": "LinkedField",
+                "name": "templates",
                 "plural": false,
-                "selections": (v3/*: any*/)
+                "selections": (v3/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "data",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkforceCUD",
+                "kind": "LinkedField",
+                "name": "data",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "WorkforcePermissionRule",
+                    "kind": "LinkedField",
                     "name": "create",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "WorkforcePermissionRule",
                     "plural": false,
-                    "selections": (v4/*: any*/)
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "WorkforcePermissionRule",
+                    "kind": "LinkedField",
                     "name": "update",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "WorkforcePermissionRule",
                     "plural": false,
-                    "selections": (v4/*: any*/)
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "WorkforcePermissionRule",
+                    "kind": "LinkedField",
                     "name": "delete",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "WorkforcePermissionRule",
                     "plural": false,
-                    "selections": (v4/*: any*/)
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
+                    "args": null,
+                    "concreteType": "WorkforcePermissionRule",
+                    "kind": "LinkedField",
                     "name": "assign",
-                    "storageKey": null,
-                    "args": null,
-                    "concreteType": "WorkforcePermissionRule",
                     "plural": false,
-                    "selections": (v4/*: any*/)
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "transferOwnership",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "WorkforcePermissionRule",
+                    "kind": "LinkedField",
+                    "name": "transferOwnership",
                     "plural": false,
-                    "selections": (v4/*: any*/)
+                    "selections": (v4/*: any*/),
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "MainContextMeQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
-    "selections": (v5/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "MainContextMeQuery",
+    "selections": (v5/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "MainContextMeQuery",
-    "argumentDefinitions": [],
     "selections": (v5/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "MainContextMeQuery",
+    "cacheID": "1fa0122a04b3135f23f40b34900228c9",
     "id": null,
-    "text": "query MainContextMeQuery {\n  me {\n    user {\n      id\n      authID\n      email\n      firstName\n      lastName\n    }\n    permissions {\n      adminPolicy {\n        access {\n          isAllowed\n        }\n      }\n      inventoryPolicy {\n        read {\n          isAllowed\n        }\n        location {\n          create {\n            isAllowed\n            locationTypeIds\n          }\n          update {\n            isAllowed\n            locationTypeIds\n          }\n          delete {\n            isAllowed\n            locationTypeIds\n          }\n        }\n        equipment {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipmentType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        locationType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        portType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        serviceType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n      }\n      workforcePolicy {\n        read {\n          isAllowed\n          projectTypeIds\n          workOrderTypeIds\n        }\n        templates {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        data {\n          create {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          update {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          delete {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          assign {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          transferOwnership {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n        }\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "MainContextMeQuery",
+    "operationKind": "query",
+    "text": "query MainContextMeQuery {\n  me {\n    user {\n      id\n      authID\n      email\n      firstName\n      lastName\n    }\n    permissions {\n      adminPolicy {\n        access {\n          isAllowed\n        }\n      }\n      inventoryPolicy {\n        read {\n          isAllowed\n        }\n        location {\n          create {\n            isAllowed\n            locationTypeIds\n          }\n          update {\n            isAllowed\n            locationTypeIds\n          }\n          delete {\n            isAllowed\n            locationTypeIds\n          }\n        }\n        equipment {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        equipmentType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        locationType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        portType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        serviceType {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n      }\n      workforcePolicy {\n        read {\n          isAllowed\n          projectTypeIds\n          workOrderTypeIds\n        }\n        templates {\n          create {\n            isAllowed\n          }\n          update {\n            isAllowed\n          }\n          delete {\n            isAllowed\n          }\n        }\n        data {\n          create {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          update {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          delete {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          assign {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n          transferOwnership {\n            isAllowed\n            projectTypeIds\n            workOrderTypeIds\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '33bb95f9ddd2b1f43b8b0b4e0926aeb9';
+
 module.exports = node;

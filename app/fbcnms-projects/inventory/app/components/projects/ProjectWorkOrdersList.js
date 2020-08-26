@@ -26,7 +26,6 @@ import {makeStyles} from '@material-ui/styles';
 import {priorityValues, statusValues} from '../../common/FilterTypes';
 
 type Props = {
-  onSelect: (workOrder: WorkOrder) => void,
   onNavigateToWorkOrder: (workOrderId: string) => void,
   workOrders: Array<WorkOrder>,
 };

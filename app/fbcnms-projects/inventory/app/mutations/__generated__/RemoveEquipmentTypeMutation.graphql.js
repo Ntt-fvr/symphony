@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 0798b383924849432e2ffa211550dacd
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveEquipmentTypeMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "removeEquipmentType",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "removeEquipmentType",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveEquipmentTypeMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveEquipmentTypeMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveEquipmentTypeMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveEquipmentTypeMutation",
+    "cacheID": "6352e52373e03fae9a28c8bf9d37e0fb",
     "id": null,
-    "text": "mutation RemoveEquipmentTypeMutation(\n  $id: ID!\n) {\n  removeEquipmentType(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveEquipmentTypeMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveEquipmentTypeMutation(\n  $id: ID!\n) {\n  removeEquipmentType(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '11b09437ff00a0fb11b78dcc441c853f';
+
 module.exports = node;

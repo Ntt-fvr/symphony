@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash ffb175e42511b7ca919edf525852f8a6
  */
 
 /* eslint-disable */
@@ -149,18 +148,14 @@ mutation AddWorkOrderMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "AddWorkOrderInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "addWorkOrder",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -169,43 +164,49 @@ v1 = [
       }
     ],
     "concreteType": "WorkOrder",
+    "kind": "LinkedField",
+    "name": "addWorkOrder",
     "plural": false,
     "selections": [
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "id",
         "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "AddWorkOrderMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "AddWorkOrderMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AddWorkOrderMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "AddWorkOrderMutation",
+    "cacheID": "ee2594628e3b68db6a7ef05aa66bc864",
     "id": null,
-    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "AddWorkOrderMutation",
+    "operationKind": "mutation",
+    "text": "mutation AddWorkOrderMutation(\n  $input: AddWorkOrderInput!\n) {\n  addWorkOrder(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'a0413f2e12266ba09820d28eaa879aa5';
+
 module.exports = node;

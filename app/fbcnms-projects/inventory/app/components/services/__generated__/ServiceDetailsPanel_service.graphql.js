@@ -84,158 +84,155 @@ export type ServiceDetailsPanel_service$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isInstanceProperty",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isInstanceProperty",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "nodeType",
   "args": null,
+  "kind": "ScalarField",
+  "name": "nodeType",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v11 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v12 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 },
 v13 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isMandatory",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "ServiceDetailsPanel_service",
-  "type": "Service",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServiceDetailsPanel_service",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "externalId",
       "args": null,
+      "kind": "ScalarField",
+      "name": "externalId",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "customer",
-      "storageKey": null,
       "args": null,
       "concreteType": "Customer",
+      "kind": "LinkedField",
+      "name": "customer",
       "plural": false,
       "selections": [
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "serviceType",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceType",
+      "kind": "LinkedField",
+      "name": "serviceType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "propertyTypes",
-          "storageKey": null,
           "args": null,
           "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "propertyTypes",
           "plural": true,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "index",
               "args": null,
+              "kind": "ScalarField",
+              "name": "index",
               "storageKey": null
             },
             (v2/*: any*/),
@@ -250,27 +247,27 @@ return {
             (v11/*: any*/),
             (v12/*: any*/),
             (v13/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "properties",
-      "storageKey": null,
       "args": null,
       "concreteType": "Property",
+      "kind": "LinkedField",
+      "name": "properties",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "propertyType",
-          "storageKey": null,
           "args": null,
           "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "propertyType",
           "plural": false,
           "selections": [
             (v0/*: any*/),
@@ -278,16 +275,17 @@ return {
             (v3/*: any*/),
             (v4/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "isEditable",
               "args": null,
+              "kind": "ScalarField",
+              "name": "isEditable",
               "storageKey": null
             },
             (v2/*: any*/),
             (v13/*: any*/),
             (v5/*: any*/)
-          ]
+          ],
+          "storageKey": null
         },
         (v5/*: any*/),
         (v6/*: any*/),
@@ -298,23 +296,27 @@ return {
         (v11/*: any*/),
         (v12/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "nodeValue",
-          "storageKey": null,
           "args": null,
           "concreteType": null,
+          "kind": "LinkedField",
+          "name": "nodeValue",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Service",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '39439285ff6128595bf98f4f3032fcd2';
+
 module.exports = node;

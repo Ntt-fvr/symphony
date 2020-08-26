@@ -42,7 +42,7 @@ const groupsQuery = graphql`
 `;
 
 export function useUsersGroups(): $ReadOnlyArray<UsersGroup> {
-  const data = useLazyLoadQuery<UsersGroupsQuery>(groupsQuery);
+  const data = useLazyLoadQuery<UsersGroupsQuery>(groupsQuery, {});
   const groupsData = data.usersGroups?.edges || [];
   return groupsData.map(p => p.node).filter(Boolean);
 }
@@ -61,6 +61,7 @@ export function useUsersGroup(groupId: string): UsersGroup {
   const data = useLazyLoadQuery<UsersGroupsSearchQuery>(groupQuery, {
     groupId,
   });
+  // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
   return data.group;
 }
 

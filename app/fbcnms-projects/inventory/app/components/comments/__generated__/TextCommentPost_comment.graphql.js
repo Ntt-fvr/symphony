@@ -36,53 +36,55 @@ export type TextCommentPost_comment$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "TextCommentPost_comment",
-  "type": "Comment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "TextCommentPost_comment",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "id",
       "args": null,
+      "kind": "ScalarField",
+      "name": "id",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "author",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "author",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "email",
           "args": null,
+          "kind": "ScalarField",
+          "name": "email",
           "storageKey": null
         }
-      ]
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "text",
-      "args": null,
+      ],
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "createTime",
       "args": null,
+      "kind": "ScalarField",
+      "name": "text",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Comment",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '2dc0bd1e406e6fde1cdd0196b9b245eb';
+
 module.exports = node;

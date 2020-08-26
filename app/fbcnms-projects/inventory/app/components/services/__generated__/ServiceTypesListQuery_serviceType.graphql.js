@@ -34,35 +34,37 @@ export type ServiceTypesListQuery_serviceType$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "ServiceTypesListQuery_serviceType",
-  "type": "ServiceType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ServiceTypesListQuery_serviceType",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "discoveryMethod",
       "args": null,
+      "kind": "ScalarField",
+      "name": "discoveryMethod",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "ServiceType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '746b4b7d14876a363b38950f2f7ab94d';
+
 module.exports = node;

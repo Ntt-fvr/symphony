@@ -66,7 +66,11 @@ const EquipmentComparisonView = () => {
           <EquipmentComparisonViewQueryRenderer
             limit={QUERY_LIMIT}
             showExport={equipmentExportEnabled}>
-            {props => <EquipmentTable {...props} />}
+            {
+              // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+              // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+              props => <EquipmentTable {...props} />
+            }
           </EquipmentComparisonViewQueryRenderer>
         </div>
       </div>

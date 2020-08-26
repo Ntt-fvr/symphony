@@ -59,114 +59,117 @@ export type ActivityPost_activity$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "email",
   "args": null,
+  "kind": "ScalarField",
+  "name": "email",
   "storageKey": null
 },
 v2 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "__typename",
     "args": null,
+    "kind": "ScalarField",
+    "name": "__typename",
     "storageKey": null
   },
   {
     "kind": "InlineFragment",
-    "type": "User",
     "selections": [
       (v0/*: any*/),
       (v1/*: any*/)
-    ]
+    ],
+    "type": "User",
+    "abstractKey": null
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "ActivityPost_activity",
-  "type": "Activity",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ActivityPost_activity",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "author",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "author",
       "plural": false,
       "selections": [
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "isCreate",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "activityType",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
+      "args": null,
+      "concreteType": null,
+      "kind": "LinkedField",
       "name": "newRelatedNode",
-      "storageKey": null,
-      "args": null,
-      "concreteType": null,
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "concreteType": null,
       "kind": "LinkedField",
-      "alias": null,
       "name": "oldRelatedNode",
-      "storageKey": null,
-      "args": null,
-      "concreteType": null,
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "oldValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "newValue",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "createTime",
       "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Activity",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd17349f40511e4424c6b43f0449af2be';
+
 module.exports = node;

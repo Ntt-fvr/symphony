@@ -36,49 +36,51 @@ export type DocumentTable_hyperlinks$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "DocumentTable_hyperlinks",
-  "type": "Hyperlink",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "DocumentTable_hyperlinks",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "category",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "url",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "displayName",
       "args": null,
+      "kind": "ScalarField",
+      "name": "displayName",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "HyperlinkTableRow_hyperlink",
-      "args": null
+      "name": "HyperlinkTableRow_hyperlink"
     }
-  ]
+  ],
+  "type": "Hyperlink",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'c9ea5f1896114cd428384654f0979a5e';
+
 module.exports = node;

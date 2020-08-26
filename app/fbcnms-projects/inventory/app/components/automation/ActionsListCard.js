@@ -76,6 +76,7 @@ const actionRuleFragment = graphql`
 export default function ActionsListCard() {
   const data: ActionsListCard_rulesQueryResponse = useLazyLoadQuery<ActionsListCard_rulesQuery>(
     query,
+    {},
   );
 
   const rules = (data.actionsRules?.results || []).filter(Boolean);
@@ -110,6 +111,7 @@ function RuleRow(props: {rule: ActionsListCard_actionsRule$key}) {
   const relativePath = useRelativePath();
   const {history} = useRouter();
   const classes = useStyles();
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const rule: ActionsListCard_actionsRule = useFragment<ActionsListCard_actionsRule>(
     actionRuleFragment,
     props.rule,
@@ -125,7 +127,6 @@ function RuleRow(props: {rule: ActionsListCard_actionsRule$key}) {
           enqueueSnackbar('Rule deleted successfully', {variant: 'success'});
         },
       },
-      // $FlowFixMe (T62907961) Relay flow types
       store => store.delete(rule.id),
     );
   };

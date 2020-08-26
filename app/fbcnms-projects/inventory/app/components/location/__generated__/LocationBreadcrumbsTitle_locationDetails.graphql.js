@@ -43,58 +43,60 @@ export type LocationBreadcrumbsTitle_locationDetails$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationType",
-  "storageKey": null,
   "args": null,
   "concreteType": "LocationType",
+  "kind": "LinkedField",
+  "name": "locationType",
   "plural": false,
   "selections": [
     (v1/*: any*/)
-  ]
+  ],
+  "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "LocationBreadcrumbsTitle_locationDetails",
-  "type": "Location",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "LocationBreadcrumbsTitle_locationDetails",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     (v2/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationHierarchy",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "locationHierarchy",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         (v2/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '807c6b11117d3143cb9babd7a3239785';
+
 module.exports = node;

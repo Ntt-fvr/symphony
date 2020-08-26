@@ -36,46 +36,48 @@ export type DynamicPropertiesGrid_properties$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "DynamicPropertiesGrid_properties",
-  "type": "Property",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "DynamicPropertiesGrid_properties",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyType",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyType",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "id",
           "args": null,
+          "kind": "ScalarField",
+          "name": "id",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "index",
           "args": null,
+          "kind": "ScalarField",
+          "name": "index",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "PropertyFormField_property",
-      "args": null
+      "name": "PropertyFormField_property"
     }
-  ]
+  ],
+  "type": "Property",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '7b83547f439381a2346b2b5c487b5134';
+
 module.exports = node;

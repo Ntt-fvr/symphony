@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 5032d23ed3e00f99cb55d535976b39de
  */
 
 /* eslint-disable */
@@ -102,64 +101,64 @@ fragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {
 
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "description",
   "args": null,
+  "kind": "ScalarField",
+  "name": "description",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "__typename",
   "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "cursor",
   "args": null,
+  "kind": "ScalarField",
+  "name": "cursor",
   "storageKey": null
 },
 v5 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "pageInfo",
-  "storageKey": null,
   "args": null,
   "concreteType": "PageInfo",
+  "kind": "LinkedField",
+  "name": "pageInfo",
   "plural": false,
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "endCursor",
       "args": null,
+      "kind": "ScalarField",
+      "name": "endCursor",
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "hasNextPage",
       "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
       "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 },
 v6 = [
   {
@@ -169,67 +168,62 @@ v6 = [
   }
 ],
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "index",
   "args": null,
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isMandatory",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "title",
   "args": null,
+  "kind": "ScalarField",
+  "name": "title",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "WorkOrderTypesQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": [],
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "WorkOrderTypesQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "workOrderTypes",
-        "name": "__Configure_workOrderTypes_connection",
-        "storageKey": null,
         "args": null,
         "concreteType": "WorkOrderTypeConnection",
+        "kind": "LinkedField",
+        "name": "__Configure_workOrderTypes_connection",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrderTypeEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkOrderType",
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
@@ -237,195 +231,196 @@ return {
                   (v2/*: any*/),
                   (v3/*: any*/),
                   {
+                    "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AddEditWorkOrderTypeCard_workOrderType",
-                    "args": null
+                    "name": "AddEditWorkOrderTypeCard_workOrderType"
                   }
-                ]
+                ],
+                "storageKey": null
               },
               (v4/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           (v5/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "WorkOrderTypesQuery",
-    "argumentDefinitions": [],
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "workOrderTypes",
-        "storageKey": "workOrderTypes(first:500)",
         "args": (v6/*: any*/),
         "concreteType": "WorkOrderTypeConnection",
+        "kind": "LinkedField",
+        "name": "workOrderTypes",
         "plural": false,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "edges",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrderTypeEdge",
+            "kind": "LinkedField",
+            "name": "edges",
             "plural": true,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "node",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkOrderType",
+                "kind": "LinkedField",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   (v0/*: any*/),
                   (v1/*: any*/),
                   (v2/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "assigneeCanCompleteWorkOrder",
-                    "args": null,
                     "storageKey": null
                   },
                   {
+                    "alias": null,
+                    "args": null,
                     "kind": "ScalarField",
-                    "alias": null,
                     "name": "numberOfWorkOrders",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "propertyTypes",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "PropertyType",
+                    "kind": "LinkedField",
+                    "name": "propertyTypes",
                     "plural": true,
                     "selections": [
                       (v0/*: any*/),
                       (v1/*: any*/),
                       (v7/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "nodeType",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "nodeType",
                         "storageKey": null
                       },
                       (v8/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "stringValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "intValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "booleanValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "floatValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "latitudeValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "longitudeValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "rangeFromValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "rangeToValue",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "isEditable",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "isEditable",
                         "storageKey": null
                       },
                       (v9/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "isInstanceProperty",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "isDeleted",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "category",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "category",
                         "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "checkListCategoryDefinitions",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "CheckListCategoryDefinition",
+                    "kind": "LinkedField",
+                    "name": "checkListCategoryDefinitions",
                     "plural": true,
                     "selections": [
                       (v0/*: any*/),
                       (v10/*: any*/),
                       (v2/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "checklistItemDefinitions",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "CheckListItemDefinition",
+                        "kind": "LinkedField",
+                        "name": "checklistItemDefinitions",
                         "plural": true,
                         "selections": [
                           (v0/*: any*/),
@@ -434,55 +429,58 @@ return {
                           (v8/*: any*/),
                           (v9/*: any*/),
                           {
-                            "kind": "ScalarField",
                             "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
                             "name": "enumValues",
-                            "args": null,
                             "storageKey": null
                           },
                           {
-                            "kind": "ScalarField",
                             "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
                             "name": "enumSelectionMode",
-                            "args": null,
                             "storageKey": null
                           },
                           {
-                            "kind": "ScalarField",
                             "alias": null,
-                            "name": "helpText",
                             "args": null,
+                            "kind": "ScalarField",
+                            "name": "helpText",
                             "storageKey": null
                           }
-                        ]
+                        ],
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   (v3/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               (v4/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           (v5/*: any*/)
-        ]
+        ],
+        "storageKey": "workOrderTypes(first:500)"
       },
       {
-        "kind": "LinkedHandle",
         "alias": null,
-        "name": "workOrderTypes",
         "args": (v6/*: any*/),
+        "filters": null,
         "handle": "connection",
         "key": "Configure_workOrderTypes",
-        "filters": null
+        "kind": "LinkedHandle",
+        "name": "workOrderTypes"
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "WorkOrderTypesQuery",
+    "cacheID": "12b61a73235873fd45bb0999215e8d0b",
     "id": null,
-    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n",
     "metadata": {
       "connection": [
         {
@@ -494,10 +492,14 @@ return {
           ]
         }
       ]
-    }
+    },
+    "name": "WorkOrderTypesQuery",
+    "operationKind": "query",
+    "text": "query WorkOrderTypesQuery {\n  workOrderTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        description\n        ...AddEditWorkOrderTypeCard_workOrderType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditWorkOrderTypeCard_workOrderType on WorkOrderType {\n  id\n  name\n  description\n  assigneeCanCompleteWorkOrder\n  numberOfWorkOrders\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    isEditable\n    isMandatory\n    isInstanceProperty\n    isDeleted\n    category\n  }\n  checkListCategoryDefinitions {\n    id\n    title\n    description\n    checklistItemDefinitions {\n      id\n      title\n      type\n      index\n      isMandatory\n      enumValues\n      enumSelectionMode\n      helpText\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '3ccc96c93793d16a4cd794405847c2f5';
+
 module.exports = node;

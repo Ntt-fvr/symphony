@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash ecf91b236fa569770b84820fc827982e
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation DeleteUsersGroupMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "deleteUsersGroup",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "deleteUsersGroup",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "DeleteUsersGroupMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeleteUsersGroupMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeleteUsersGroupMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "DeleteUsersGroupMutation",
+    "cacheID": "e1bcc1775bd82a9733b673febe0b2e23",
     "id": null,
-    "text": "mutation DeleteUsersGroupMutation(\n  $id: ID!\n) {\n  deleteUsersGroup(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "DeleteUsersGroupMutation",
+    "operationKind": "mutation",
+    "text": "mutation DeleteUsersGroupMutation(\n  $id: ID!\n) {\n  deleteUsersGroup(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'c5029d4e245f8583c35fafee471a4157';
+
 module.exports = node;

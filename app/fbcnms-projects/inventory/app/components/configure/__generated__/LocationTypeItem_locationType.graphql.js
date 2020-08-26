@@ -38,58 +38,60 @@ export type LocationTypeItem_locationType$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "LocationTypeItem_locationType",
-  "type": "LocationType",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "LocationTypeItem_locationType",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "index",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyTypes",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyTypes",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "DynamicPropertyTypesGrid_propertyTypes",
-          "args": null
+          "name": "DynamicPropertyTypesGrid_propertyTypes"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfLocations",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfLocations",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "LocationType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'dbc429726327dcfb05c2a80d49cfa429';
+
 module.exports = node;

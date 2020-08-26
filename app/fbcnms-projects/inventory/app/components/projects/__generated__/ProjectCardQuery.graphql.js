@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash dc9565579ffef7ca88966d4597b9343f
  */
 
 /* eslint-disable */
@@ -139,6 +138,7 @@ fragment ProjectDetails_project on Project {
     ...CommentsActivitiesBox_comments
     id
   }
+  ...ProjectMoreActionsButton_project
 }
 
 fragment ProjectMoreActionsButton_project on Project {
@@ -182,10 +182,9 @@ fragment TextCommentPost_comment on Comment {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "projectId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "projectId"
   }
 ],
 v1 = [
@@ -196,38 +195,38 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "__typename",
   "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "description",
   "args": null,
+  "kind": "ScalarField",
+  "name": "description",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "email",
   "args": null,
+  "kind": "ScalarField",
+  "name": "email",
   "storageKey": null
 },
 v7 = [
@@ -239,243 +238,242 @@ v8 = [
   (v3/*: any*/)
 ],
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "priority",
   "args": null,
+  "kind": "ScalarField",
+  "name": "priority",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v11 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v12 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v13 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v14 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v15 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v16 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v17 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "ProjectCardQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "ProjectCardQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "project",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "Project",
             "selections": [
               {
+                "args": null,
                 "kind": "FragmentSpread",
-                "name": "ProjectMoreActionsButton_project",
-                "args": null
+                "name": "ProjectMoreActionsButton_project"
               },
               {
+                "args": null,
                 "kind": "FragmentSpread",
-                "name": "ProjectDetails_project",
-                "args": null
+                "name": "ProjectDetails_project"
               }
-            ]
+            ],
+            "type": "Project",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ProjectCardQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "project",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "Project",
             "selections": [
               (v4/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "numberOfWorkOrders",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "numberOfWorkOrders",
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "type",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ProjectType",
+                "kind": "LinkedField",
+                "name": "type",
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
                   (v4/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               (v5/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "createdBy",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "User",
+                "kind": "LinkedField",
+                "name": "createdBy",
                 "plural": false,
-                "selections": (v7/*: any*/)
+                "selections": (v7/*: any*/),
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "location",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Location",
+                "kind": "LinkedField",
+                "name": "location",
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
                   (v4/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "latitude",
-                    "args": null,
                     "storageKey": null
                   },
                   {
+                    "alias": null,
+                    "args": null,
                     "kind": "ScalarField",
-                    "alias": null,
                     "name": "longitude",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "locationType",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "LocationType",
+                    "kind": "LinkedField",
+                    "name": "locationType",
                     "plural": false,
                     "selections": [
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "mapType",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "mapType",
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "mapZoomLevel",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "mapZoomLevel",
                         "storageKey": null
                       },
                       (v3/*: any*/),
                       (v4/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "locationHierarchy",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "Location",
+                    "kind": "LinkedField",
+                    "name": "locationHierarchy",
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
                       (v4/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "locationType",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "LocationType",
+                        "kind": "LinkedField",
+                        "name": "locationType",
                         "plural": false,
-                        "selections": (v8/*: any*/)
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               },
               (v9/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "properties",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Property",
+                "kind": "LinkedField",
+                "name": "properties",
                 "plural": true,
                 "selections": [
                   (v3/*: any*/),
@@ -488,63 +486,62 @@ return {
                   (v16/*: any*/),
                   (v17/*: any*/),
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "nodeValue",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "nodeValue",
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
                       (v3/*: any*/),
                       (v4/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "propertyType",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "PropertyType",
+                    "kind": "LinkedField",
+                    "name": "propertyType",
                     "plural": false,
                     "selections": [
                       (v3/*: any*/),
                       (v4/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "type",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "nodeType",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "isEditable",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "isMandatory",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "isInstanceProperty",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "isInstanceProperty",
                         "storageKey": null
                       },
                       (v10/*: any*/),
@@ -555,120 +552,127 @@ return {
                       (v15/*: any*/),
                       (v16/*: any*/),
                       (v17/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "workOrders",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "WorkOrder",
+                "kind": "LinkedField",
+                "name": "workOrders",
                 "plural": true,
                 "selections": [
                   (v3/*: any*/),
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "workOrderType",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "WorkOrderType",
+                    "kind": "LinkedField",
+                    "name": "workOrderType",
                     "plural": false,
-                    "selections": (v8/*: any*/)
+                    "selections": (v8/*: any*/),
+                    "storageKey": null
                   },
                   (v4/*: any*/),
                   (v5/*: any*/),
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "owner",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "User",
+                    "kind": "LinkedField",
+                    "name": "owner",
                     "plural": false,
-                    "selections": (v7/*: any*/)
+                    "selections": (v7/*: any*/),
+                    "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "creationDate",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "installDate",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "status",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
                     "storageKey": null
                   },
                   (v9/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "comments",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Comment",
+                "kind": "LinkedField",
+                "name": "comments",
                 "plural": true,
                 "selections": [
                   (v3/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "createTime",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "createTime",
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "author",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "User",
+                    "kind": "LinkedField",
+                    "name": "author",
                     "plural": false,
                     "selections": [
                       (v6/*: any*/),
                       (v3/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "text",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "text",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "type": "Project",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "ProjectCardQuery",
+    "cacheID": "e056eb1879fd6a3d8bebe023edcc1d7d",
     "id": null,
-    "text": "query ProjectCardQuery(\n  $projectId: ID!\n) {\n  project: node(id: $projectId) {\n    __typename\n    ... on Project {\n      ...ProjectMoreActionsButton_project\n      ...ProjectDetails_project\n    }\n    id\n  }\n}\n\nfragment CommentsActivitiesBox_comments on Comment {\n  ...CommentsActivitiesLog_comments\n}\n\nfragment CommentsActivitiesLog_comments on Comment {\n  id\n  createTime\n  ...TextCommentPost_comment\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment ProjectDetails_project on Project {\n  id\n  name\n  description\n  createdBy {\n    id\n    email\n  }\n  type {\n    name\n    id\n  }\n  location {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      mapType\n      mapZoomLevel\n      id\n    }\n    ...LocationBreadcrumbsTitle_locationDetails\n  }\n  priority\n  properties {\n    id\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isMandatory\n      isInstanceProperty\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n    }\n  }\n  workOrders {\n    ...ProjectWorkOrdersList_workOrders\n    id\n  }\n  comments {\n    ...CommentsActivitiesBox_comments\n    id\n  }\n}\n\nfragment ProjectMoreActionsButton_project on Project {\n  id\n  name\n  numberOfWorkOrders\n  type {\n    id\n  }\n}\n\nfragment ProjectWorkOrdersList_workOrders on WorkOrder {\n  id\n  workOrderType {\n    name\n    id\n  }\n  name\n  description\n  owner {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  priority\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "ProjectCardQuery",
+    "operationKind": "query",
+    "text": "query ProjectCardQuery(\n  $projectId: ID!\n) {\n  project: node(id: $projectId) {\n    __typename\n    ... on Project {\n      ...ProjectMoreActionsButton_project\n      ...ProjectDetails_project\n    }\n    id\n  }\n}\n\nfragment CommentsActivitiesBox_comments on Comment {\n  ...CommentsActivitiesLog_comments\n}\n\nfragment CommentsActivitiesLog_comments on Comment {\n  id\n  createTime\n  ...TextCommentPost_comment\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment ProjectDetails_project on Project {\n  id\n  name\n  description\n  createdBy {\n    id\n    email\n  }\n  type {\n    name\n    id\n  }\n  location {\n    id\n    name\n    latitude\n    longitude\n    locationType {\n      mapType\n      mapZoomLevel\n      id\n    }\n    ...LocationBreadcrumbsTitle_locationDetails\n  }\n  priority\n  properties {\n    id\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isMandatory\n      isInstanceProperty\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n    }\n  }\n  workOrders {\n    ...ProjectWorkOrdersList_workOrders\n    id\n  }\n  comments {\n    ...CommentsActivitiesBox_comments\n    id\n  }\n  ...ProjectMoreActionsButton_project\n}\n\nfragment ProjectMoreActionsButton_project on Project {\n  id\n  name\n  numberOfWorkOrders\n  type {\n    id\n  }\n}\n\nfragment ProjectWorkOrdersList_workOrders on WorkOrder {\n  id\n  workOrderType {\n    name\n    id\n  }\n  name\n  description\n  owner {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  priority\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4e882cb1745fd90983186a7b66242bfa';
+
 module.exports = node;

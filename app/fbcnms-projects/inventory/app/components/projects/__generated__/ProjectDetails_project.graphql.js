@@ -16,6 +16,7 @@
 import type { ReaderFragment } from 'relay-runtime';
 type CommentsActivitiesBox_comments$ref = any;
 type LocationBreadcrumbsTitle_locationDetails$ref = any;
+type ProjectMoreActionsButton_project$ref = any;
 type ProjectWorkOrdersList_workOrders$ref = any;
 export type ProjectPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
@@ -84,6 +85,7 @@ export type ProjectDetails_project = {|
   +comments: $ReadOnlyArray<?{|
     +$fragmentRefs: CommentsActivitiesBox_comments$ref
   |}>,
+  +$fragmentRefs: ProjectMoreActionsButton_project$ref,
   +$refType: ProjectDetails_project$ref,
 |};
 export type ProjectDetails_project$data = ProjectDetails_project;
@@ -97,194 +99,192 @@ export type ProjectDetails_project$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "ProjectDetails_project",
-  "type": "Project",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ProjectDetails_project",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "description",
       "args": null,
+      "kind": "ScalarField",
+      "name": "description",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "createdBy",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "createdBy",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "email",
           "args": null,
+          "kind": "ScalarField",
+          "name": "email",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "type",
-      "storageKey": null,
       "args": null,
       "concreteType": "ProjectType",
+      "kind": "LinkedField",
+      "name": "type",
       "plural": false,
       "selections": [
         (v1/*: any*/),
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "latitude",
-          "args": null,
           "storageKey": null
         },
         {
+          "alias": null,
+          "args": null,
           "kind": "ScalarField",
-          "alias": null,
           "name": "longitude",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "locationType",
-          "storageKey": null,
           "args": null,
           "concreteType": "LocationType",
+          "kind": "LinkedField",
+          "name": "locationType",
           "plural": false,
           "selections": [
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "mapType",
               "args": null,
+              "kind": "ScalarField",
+              "name": "mapType",
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "mapZoomLevel",
               "args": null,
+              "kind": "ScalarField",
+              "name": "mapZoomLevel",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "LocationBreadcrumbsTitle_locationDetails",
-          "args": null
+          "name": "LocationBreadcrumbsTitle_locationDetails"
         }
-      ]
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "priority",
-      "args": null,
+      ],
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "properties",
-      "storageKey": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
+      "storageKey": null
+    },
+    {
+      "alias": null,
       "args": null,
       "concreteType": "Property",
+      "kind": "LinkedField",
+      "name": "properties",
       "plural": true,
       "selections": [
         (v0/*: any*/),
@@ -297,62 +297,61 @@ return {
         (v8/*: any*/),
         (v9/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "nodeValue",
-          "storageKey": null,
           "args": null,
           "concreteType": null,
+          "kind": "LinkedField",
+          "name": "nodeValue",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "propertyType",
-          "storageKey": null,
           "args": null,
           "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "propertyType",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "type",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "nodeType",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "isEditable",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
+              "args": null,
+              "kind": "ScalarField",
               "name": "isMandatory",
-              "args": null,
               "storageKey": null
             },
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "isInstanceProperty",
               "args": null,
+              "kind": "ScalarField",
+              "name": "isInstanceProperty",
               "storageKey": null
             },
             (v2/*: any*/),
@@ -363,45 +362,55 @@ return {
             (v7/*: any*/),
             (v8/*: any*/),
             (v9/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "workOrders",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkOrder",
+      "kind": "LinkedField",
+      "name": "workOrders",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "ProjectWorkOrdersList_workOrders",
-          "args": null
+          "name": "ProjectWorkOrdersList_workOrders"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "comments",
-      "storageKey": null,
       "args": null,
       "concreteType": "Comment",
+      "kind": "LinkedField",
+      "name": "comments",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "CommentsActivitiesBox_comments",
-          "args": null
+          "name": "CommentsActivitiesBox_comments"
         }
-      ]
+      ],
+      "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "ProjectMoreActionsButton_project"
     }
-  ]
+  ],
+  "type": "Project",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '288b5bcaa92dfb5095dd6cd8c0cfe4c8';
+(node/*: any*/).hash = '0179af8cca9961f93220280185dd1236';
+
 module.exports = node;

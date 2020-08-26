@@ -40,74 +40,76 @@ export type SiteSurveyQuestionReplyCellData_data$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "SiteSurveyQuestionReplyCellData_data",
-  "type": "SurveyQuestion",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "SiteSurveyQuestionReplyCellData_data",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "cellData",
-      "storageKey": null,
       "args": null,
       "concreteType": "SurveyCellScan",
+      "kind": "LinkedField",
+      "name": "cellData",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "networkType",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "signalStrength",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "baseStationID",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "cellID",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "locationAreaCode",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "mobileCountryCode",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "mobileNetworkCode",
           "args": null,
+          "kind": "ScalarField",
+          "name": "mobileNetworkCode",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "SurveyQuestion",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '586ccb85b3fc3c5e37ce3014c2a26c0b';
+
 module.exports = node;

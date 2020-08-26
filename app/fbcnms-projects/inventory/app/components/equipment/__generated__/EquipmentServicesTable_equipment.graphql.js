@@ -45,76 +45,78 @@ export type EquipmentServicesTable_equipment$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Fragment",
-  "name": "EquipmentServicesTable_equipment",
-  "type": "Equipment",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "EquipmentServicesTable_equipment",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "services",
-      "storageKey": null,
       "args": null,
       "concreteType": "Service",
+      "kind": "LinkedField",
+      "name": "services",
       "plural": true,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "externalId",
           "args": null,
+          "kind": "ScalarField",
+          "name": "externalId",
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "customer",
-          "storageKey": null,
           "args": null,
           "concreteType": "Customer",
+          "kind": "LinkedField",
+          "name": "customer",
           "plural": false,
           "selections": [
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "serviceType",
-          "storageKey": null,
           "args": null,
           "concreteType": "ServiceType",
+          "kind": "LinkedField",
+          "name": "serviceType",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '26ffdbf9cc9e158c631da821bc4d0393';
+
 module.exports = node;

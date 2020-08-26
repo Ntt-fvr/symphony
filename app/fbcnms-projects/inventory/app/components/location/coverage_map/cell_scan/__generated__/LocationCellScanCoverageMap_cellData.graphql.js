@@ -39,72 +39,74 @@ export type LocationCellScanCoverageMap_cellData$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "LocationCellScanCoverageMap_cellData",
-  "type": "SurveyCellScan",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "LocationCellScanCoverageMap_cellData",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "latitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "longitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "networkType",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "signalStrength",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "mobileCountryCode",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "mobileNetworkCode",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "operator",
       "args": null,
+      "kind": "ScalarField",
+      "name": "operator",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "SurveyCellScan",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = 'd94c9d40f7baef9bcd50963bcb149e0e';
+
 module.exports = node;

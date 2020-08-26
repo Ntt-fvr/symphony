@@ -60,6 +60,7 @@ export default function Actions() {
   const history = useHistory();
   const data: Actions_ActionsQueryResponse = useLazyLoadQuery<Actions_ActionsQuery>(
     query,
+    {},
   );
   const results = data.actionsTriggers?.results;
   if (!results) {

@@ -10,6 +10,8 @@
 
 import type {CommentsActivitiesLog_activities} from './__generated__/CommentsActivitiesLog_activities.graphql.js';
 import type {CommentsActivitiesLog_comments} from './__generated__/CommentsActivitiesLog_comments.graphql.js';
+import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
+import type {WithSnackbarProps} from 'notistack';
 
 import ActivityPost from './ActivityPost';
 import AppContext from '@fbcnms/ui/context/AppContext';
@@ -28,7 +30,9 @@ type Props = $ReadOnly<{|
   activities: CommentsActivitiesLog_activities,
   className?: string,
   postClassName?: string,
-|}>;
+|}> &
+  WithAlert &
+  WithSnackbarProps;
 
 const useStyles = makeStyles(() => ({
   commentsLog: {

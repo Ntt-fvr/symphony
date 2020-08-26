@@ -41,67 +41,69 @@ export type LocationsTree_location$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "LocationsTree_location",
-  "type": "Location",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "LocationsTree_location",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "externalId",
       "args": null,
+      "kind": "ScalarField",
+      "name": "externalId",
       "storageKey": null
     },
     (v1/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationType",
-      "storageKey": null,
       "args": null,
       "concreteType": "LocationType",
+      "kind": "LinkedField",
+      "name": "locationType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "numChildren",
-      "args": null,
+      ],
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "siteSurveyNeeded",
       "args": null,
+      "kind": "ScalarField",
+      "name": "numChildren",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "siteSurveyNeeded",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Location",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '5f66e0c34ff91e14429645285c63ea7f';
+
 module.exports = node;

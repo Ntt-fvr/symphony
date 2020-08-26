@@ -12,6 +12,7 @@ import type {AddEditLocationTypeCard_editingLocationType} from './__generated__/
 import type {AddLocationTypeMutationResponse} from '../../mutations/__generated__/AddLocationTypeMutation.graphql';
 import type {LocationType} from '../../common/LocationType';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
+import type {PayloadError} from 'relay-runtime';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
 import type {WithStyles} from '@material-ui/core';
@@ -314,7 +315,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
   };
 
   editLocationType = () => {
-    const onError = (error: Error) => {
+    const onError = (error: PayloadError) => {
       this.setState({isSaving: false});
       const errorMessage = getGraphError(error);
       this.props.enqueueSnackbar(errorMessage, {
@@ -382,9 +383,7 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
       },
     };
     const updater = store => {
-      // $FlowFixMe (T62907961) Relay flow types
       const rootQuery = store.getRoot();
-      // $FlowFixMe (T62907961) Relay flow types
       const newNode = store.getRootField('addLocationType');
       if (!newNode) {
         return;
@@ -393,16 +392,15 @@ class AddEditLocationTypeCard extends React.Component<Props, State> {
         rootQuery,
         'Catalog_locationTypes',
       );
-      const edge = ConnectionHandler.createEdge(
-        // $FlowFixMe (T62907961) Relay flow types
-        store,
-        // $FlowFixMe (T62907961) Relay flow types
-        types,
-        newNode,
-        'LocationTypesEdge',
-      );
-      // $FlowFixMe - Surfaced when Relay flow types were added. Help fix.
-      ConnectionHandler.insertEdgeBefore(types, edge);
+      if (types != null) {
+        const edge = ConnectionHandler.createEdge(
+          store,
+          types,
+          newNode,
+          'LocationTypesEdge',
+        );
+        ConnectionHandler.insertEdgeBefore(types, edge);
+      }
     };
     AddLocationTypeMutation(variables, callbacks, updater);
   };

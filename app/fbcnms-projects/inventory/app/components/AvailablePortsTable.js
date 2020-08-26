@@ -8,10 +8,10 @@
  * @format
  */
 
+import type {AvailablePortsTable_ports} from './__generated__/AvailablePortsTable_ports.graphql';
 import type {Equipment, EquipmentPort} from '../common/Equipment';
 import type {WithStyles} from '@material-ui/core';
 
-import AvailablePortsTable_ports from './__generated__/AvailablePortsTable_ports.graphql';
 import EquipmentBreadcrumbs from './equipment/EquipmentBreadcrumbs';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
@@ -80,7 +80,6 @@ const styles = {
 
 type Props = {
   equipment: Equipment,
-  // $FlowFixMe (T62907961) Relay flow types
   ports: AvailablePortsTable_ports,
   selectedPort: ?EquipmentPort,
   onPortSelected?: (port: EquipmentPort) => void,

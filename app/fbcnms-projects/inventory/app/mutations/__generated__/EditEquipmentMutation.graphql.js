@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash b802626d7e6506c543b8baed2e8be162
  */
 
 /* eslint-disable */
@@ -87,10 +86,9 @@ fragment EquipmentTable_equipments on Equipment {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "EditEquipmentInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
@@ -101,144 +99,147 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditEquipmentMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditEquipmentMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "editEquipment",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Equipment",
+        "kind": "LinkedField",
+        "name": "editEquipment",
         "plural": false,
         "selections": [
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "EquipmentTable_equipments",
-            "args": null
+            "name": "EquipmentTable_equipments"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditEquipmentMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "editEquipment",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "Equipment",
+        "kind": "LinkedField",
+        "name": "editEquipment",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "futureState",
             "args": null,
+            "kind": "ScalarField",
+            "name": "futureState",
             "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "equipmentType",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentType",
+            "kind": "LinkedField",
+            "name": "equipmentType",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "workOrder",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrder",
+            "kind": "LinkedField",
+            "name": "workOrder",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "status",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "status",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "device",
-            "storageKey": null,
             "args": null,
             "concreteType": "Device",
+            "kind": "LinkedField",
+            "name": "device",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "up",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "up",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "services",
-            "storageKey": null,
             "args": null,
             "concreteType": "Service",
+            "kind": "LinkedField",
+            "name": "services",
             "plural": true,
             "selections": [
               (v2/*: any*/)
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditEquipmentMutation",
+    "cacheID": "9512f9185772e3c00ca44687062590ca",
     "id": null,
-    "text": "mutation EditEquipmentMutation(\n  $input: EditEquipmentInput!\n) {\n  editEquipment(input: $input) {\n    ...EquipmentTable_equipments\n    id\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  device {\n    up\n  }\n  services {\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditEquipmentMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditEquipmentMutation(\n  $input: EditEquipmentInput!\n) {\n  editEquipment(input: $input) {\n    ...EquipmentTable_equipments\n    id\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  device {\n    up\n  }\n  services {\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'ada7d8e59770e9396458e1647916ae79';
+
 module.exports = node;

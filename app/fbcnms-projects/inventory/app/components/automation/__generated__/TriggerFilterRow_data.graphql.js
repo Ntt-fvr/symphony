@@ -41,69 +41,71 @@ export type TriggerFilterRow_data$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "TriggerFilterRow_data",
-  "type": "ActionsTrigger",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "TriggerFilterRow_data",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "triggerID",
       "args": null,
+      "kind": "ScalarField",
+      "name": "triggerID",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "supportedFilters",
-      "storageKey": null,
       "args": null,
       "concreteType": "ActionsFilter",
+      "kind": "LinkedField",
+      "name": "supportedFilters",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "filterID",
-          "args": null,
           "storageKey": null
         },
         {
+          "alias": null,
+          "args": null,
           "kind": "ScalarField",
-          "alias": null,
           "name": "description",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "supportedOperators",
-          "storageKey": null,
           "args": null,
           "concreteType": "ActionsOperator",
+          "kind": "LinkedField",
+          "name": "supportedOperators",
           "plural": true,
           "selections": [
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "operatorID",
               "args": null,
+              "kind": "ScalarField",
+              "name": "operatorID",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "TriggerFilterOperator_data",
-          "args": null
+          "name": "TriggerFilterOperator_data"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "ActionsTrigger",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '47c9db7480b461fd45c11dc90763638e';
+
 module.exports = node;

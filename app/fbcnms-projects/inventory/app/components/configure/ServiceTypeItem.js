@@ -67,6 +67,7 @@ class ServiceTypeItem extends React.Component<Props> {
               <div className={classes.section}>
                 <DynamicPropertyTypesGrid
                   key={serviceType.id}
+                  // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                   propertyTypes={serviceType.propertyTypes}
                 />
               </div>
@@ -108,18 +109,17 @@ class ServiceTypeItem extends React.Component<Props> {
             },
           },
           store => {
-            // $FlowFixMe (T62907961) Relay flow types
             const rootQuery = store.getRoot();
             const serviceTypes = ConnectionHandler.getConnection(
               rootQuery,
               'ServiceTypes_serviceTypes',
             );
-            ConnectionHandler.deleteNode(
-              // $FlowFixMe (T62907961) Relay flow types
-              serviceTypes,
-              this.props.serviceType.id,
-            );
-            // $FlowFixMe (T62907961) Relay flow types
+            if (serviceTypes != null) {
+              ConnectionHandler.deleteNode(
+                serviceTypes,
+                this.props.serviceType.id,
+              );
+            }
             store.delete(this.props.serviceType.id);
           },
         );

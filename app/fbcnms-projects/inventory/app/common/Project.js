@@ -56,10 +56,12 @@ export type ProjectTemplateNode = $Exact<NamedNode>;
 export function useProjectTemplateNodes(): $ReadOnlyArray<ProjectTemplateNode> {
   const response = useLazyLoadQuery<ProjectTemplateNodesQuery>(
     projectTemplateNodesQuery,
+    {},
   );
   const projectTemplatesData = response.projectTypes?.edges || [];
   const projectTemplates = projectTemplatesData
     .map(p => p.node)
     .filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return projectTemplates;
 }

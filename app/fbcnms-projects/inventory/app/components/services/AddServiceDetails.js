@@ -148,7 +148,12 @@ const AddServiceDetails = (props: Props) => {
   const getService = () => {
     if (!serviceState) {
       const serviceType = data.node;
+      // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+      // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
       const initialProps = (serviceType.propertyTypes || [])
+        // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
+        // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+        // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
         .map(propType => getInitialPropertyFromType(propType))
         .sort(sortPropertiesByIndex);
       const service = {
@@ -158,6 +163,9 @@ const AddServiceDetails = (props: Props) => {
         serviceType: serviceType,
         properties: initialProps,
       };
+      // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+      // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+      // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
       setServiceState(service);
       return service;
     }
@@ -184,6 +192,7 @@ const AddServiceDetails = (props: Props) => {
 
   const saveService = () => {
     const {name, externalId, customer, properties} = nullthrows(service);
+    // $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay types
     const serviceTypeId = nullthrows(service?.serviceType.id);
     const variables: AddServiceMutationVariables = {
       data: {
@@ -229,6 +238,8 @@ const AddServiceDetails = (props: Props) => {
         action: 'create',
       }}>
       <DialogTitle className={classes.dialogTitle}>
+        {/* $FlowFixMe[incompatible-use] $FlowFixMe T74239404 Found via relay
+         * types */}
         <Text variant="h6">{service.serviceType.name}</Text>
       </DialogTitle>
       <DialogContent className={classes.serviceCreateDialogContent}>
@@ -239,6 +250,9 @@ const AddServiceDetails = (props: Props) => {
                 <NameInput
                   value={(serviceState && serviceState.name) || ''}
                   onChange={event =>
+                    // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                    // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                    // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
                     setServiceState({...service, name: event.target.value})
                   }
                 />
@@ -251,6 +265,9 @@ const AddServiceDetails = (props: Props) => {
                     type="string"
                     className={classes.detailInput}
                     onChange={event =>
+                      // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                      // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                      // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
                       setServiceState({
                         ...service,
                         externalId: event.target.value,
@@ -264,6 +281,9 @@ const AddServiceDetails = (props: Props) => {
                   <CustomerTypeahead
                     className={classes.detailInput}
                     onCustomerSelection={customer =>
+                      // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+                      // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+                      // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
                       setServiceState({...service, customer: customer})
                     }
                     required={false}

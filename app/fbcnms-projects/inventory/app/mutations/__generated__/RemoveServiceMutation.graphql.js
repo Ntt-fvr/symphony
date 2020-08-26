@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 9235d6c3a917b84b519c4fc1fb43500b
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation RemoveServiceMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "removeService",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "removeService",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "RemoveServiceMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "RemoveServiceMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "RemoveServiceMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "RemoveServiceMutation",
+    "cacheID": "f0ccb340d8c08e67a78932389d50f269",
     "id": null,
-    "text": "mutation RemoveServiceMutation(\n  $id: ID!\n) {\n  removeService(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "RemoveServiceMutation",
+    "operationKind": "mutation",
+    "text": "mutation RemoveServiceMutation(\n  $id: ID!\n) {\n  removeService(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '0e33b688caed9845743fa09141151ba7';
+
 module.exports = node;

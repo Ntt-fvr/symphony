@@ -47,17 +47,17 @@ export type ProjectsTableView_projects$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
@@ -65,71 +65,73 @@ v2 = [
   (v1/*: any*/)
 ];
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ProjectsTableView_projects",
-  "type": "Project",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ProjectsTableView_projects",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "createdBy",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "createdBy",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "email",
           "args": null,
+          "kind": "ScalarField",
+          "name": "email",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
-      "selections": (v2/*: any*/)
+      "selections": (v2/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "type",
-      "storageKey": null,
       "args": null,
       "concreteType": "ProjectType",
+      "kind": "LinkedField",
+      "name": "type",
       "plural": false,
-      "selections": (v2/*: any*/)
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "priority",
-      "args": null,
+      "selections": (v2/*: any*/),
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "numberOfWorkOrders",
       "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "numberOfWorkOrders",
       "storageKey": null
     }
-  ]
+  ],
+  "type": "Project",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '3c5cdac7da5dcdb9c638764e19361524';
+
 module.exports = node;

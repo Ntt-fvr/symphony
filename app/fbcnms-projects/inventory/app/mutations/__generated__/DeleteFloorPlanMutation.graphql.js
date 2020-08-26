@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 0c8f467d878da619303e63b30f7cf458
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation DeleteFloorPlanMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "deleteFloorPlan",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "deleteFloorPlan",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "DeleteFloorPlanMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeleteFloorPlanMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeleteFloorPlanMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "DeleteFloorPlanMutation",
+    "cacheID": "ce127dc69d554c46c04e244adc40c341",
     "id": null,
-    "text": "mutation DeleteFloorPlanMutation(\n  $id: ID!\n) {\n  deleteFloorPlan(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "DeleteFloorPlanMutation",
+    "operationKind": "mutation",
+    "text": "mutation DeleteFloorPlanMutation(\n  $id: ID!\n) {\n  deleteFloorPlan(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '398cf21649438ad9454a4cdcb7c81c89';
+
 module.exports = node;

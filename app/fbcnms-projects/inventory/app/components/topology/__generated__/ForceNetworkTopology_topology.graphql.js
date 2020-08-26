@@ -43,64 +43,66 @@ export type ForceNetworkTopology_topology$key = {
 const node/*: ReaderFragment*/ = (function(){
 var v0 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "id",
     "args": null,
+    "kind": "ScalarField",
+    "name": "id",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Fragment",
-  "name": "ForceNetworkTopology_topology",
-  "type": "NetworkTopology",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "ForceNetworkTopology_topology",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "nodes",
-      "storageKey": null,
       "args": null,
       "concreteType": null,
+      "kind": "LinkedField",
+      "name": "nodes",
       "plural": true,
-      "selections": (v0/*: any*/)
+      "selections": (v0/*: any*/),
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "links",
-      "storageKey": null,
       "args": null,
       "concreteType": "TopologyLink",
+      "kind": "LinkedField",
+      "name": "links",
       "plural": true,
       "selections": [
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "source",
-          "storageKey": null,
           "args": null,
           "concreteType": null,
+          "kind": "LinkedField",
+          "name": "source",
           "plural": false,
-          "selections": (v0/*: any*/)
+          "selections": (v0/*: any*/),
+          "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "target",
-          "storageKey": null,
           "args": null,
           "concreteType": null,
+          "kind": "LinkedField",
+          "name": "target",
           "plural": false,
-          "selections": (v0/*: any*/)
+          "selections": (v0/*: any*/),
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "NetworkTopology",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '63b721aff87697366221cbc6250df26e';
+
 module.exports = node;

@@ -118,6 +118,7 @@ const LocationTypes = () => {
     locationTypes,
   }: LocationTypesQueryResponse = useLazyLoadQuery<LocationTypesQuery>(
     locationTypesQuery,
+    {},
   );
 
   const locationTypesData: Array<ResponseLocationType> =
@@ -155,6 +156,7 @@ const LocationTypes = () => {
           open={showAddEditCard}
           onClose={hideNewLocationTypeCard}
           onSave={saveLocation}
+          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
           editingLocationType={editingLocationType}
         />
       </div>

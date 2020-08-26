@@ -8,7 +8,6 @@
  * @format
  */
 
-import type {ContextRouter} from 'react-router-dom';
 import type {ServicesView_service} from './__generated__/ServicesView_service.graphql.js';
 import type {WithStyles} from '@material-ui/core';
 
@@ -69,8 +68,7 @@ const styles = theme => ({
 type Props = {
   onServiceSelected: (serviceId: string) => void,
   service: ServicesView_service,
-} & WithStyles<typeof styles> &
-  ContextRouter;
+} & WithStyles<typeof styles>;
 
 class ServicesView extends React.Component<Props> {
   _headerRenderer = ({label}) => {

@@ -47,112 +47,114 @@ export type SiteSurveyQuestionReply_question$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "SiteSurveyQuestionReply_question",
-  "type": "SurveyQuestion",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "SiteSurveyQuestionReply_question",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "questionFormat",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "longitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "latitude",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "boolData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "textData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "emailData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "phoneData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "floatData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "intData",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "dateData",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "photoData",
-      "storageKey": null,
       "args": null,
       "concreteType": "File",
+      "kind": "LinkedField",
+      "name": "photoData",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "storeKey",
           "args": null,
+          "kind": "ScalarField",
+          "name": "storeKey",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "SiteSurveyQuestionReplyWifiData_data",
-      "args": null
+      "name": "SiteSurveyQuestionReplyWifiData_data"
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "SiteSurveyQuestionReplyCellData_data",
-      "args": null
+      "name": "SiteSurveyQuestionReplyCellData_data"
     }
-  ]
+  ],
+  "type": "SurveyQuestion",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '4d9d45828bc4b9296fdd9b8347017e18';
+
 module.exports = node;

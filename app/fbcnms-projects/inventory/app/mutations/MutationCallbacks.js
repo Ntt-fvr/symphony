@@ -9,8 +9,9 @@
  */
 
 'use strict';
+import type {PayloadError} from 'relay-runtime';
 
 export type MutationCallbacks<R> = ?{
-  onCompleted?: (response: R, errors: Array<Error>) => void,
+  onCompleted?: (response: R, errors: ?Array<PayloadError>) => void,
   onError?: ?(error: Error) => void,
 };

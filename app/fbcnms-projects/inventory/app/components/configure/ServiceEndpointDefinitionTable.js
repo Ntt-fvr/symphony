@@ -252,7 +252,11 @@ class ServiceEndpointDefinitionTable extends React.Component<Props, State> {
   }
 
   async getEquipmentTypes(): Promise<Array<EquipmentTypeOption>> {
-    const response = await fetchQuery(RelayEnvironment, equipmentTypesQuery);
+    const response = await fetchQuery(
+      RelayEnvironment,
+      equipmentTypesQuery,
+      {},
+    );
     return response.equipmentTypes.edges
       .map(edge => edge.node)
       .filter(Boolean)

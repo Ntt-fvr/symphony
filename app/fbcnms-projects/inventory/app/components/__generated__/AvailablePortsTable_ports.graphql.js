@@ -46,82 +46,84 @@ export type AvailablePortsTable_ports$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "AvailablePortsTable_ports",
-  "type": "EquipmentPort",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "AvailablePortsTable_ports",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "parentEquipment",
-      "storageKey": null,
       "args": null,
       "concreteType": "Equipment",
+      "kind": "LinkedField",
+      "name": "parentEquipment",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "EquipmentBreadcrumbs_equipment",
-          "args": null
+          "name": "EquipmentBreadcrumbs_equipment"
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "definition",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPortDefinition",
+      "kind": "LinkedField",
+      "name": "definition",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "portType",
-          "storageKey": null,
           "args": null,
           "concreteType": "EquipmentPortType",
+          "kind": "LinkedField",
+          "name": "portType",
           "plural": false,
           "selections": [
             (v1/*: any*/)
-          ]
+          ],
+          "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "visibleLabel",
           "args": null,
+          "kind": "ScalarField",
+          "name": "visibleLabel",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPort",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '28fb7ac76ca11ecf2ff60dae1869a25b';
+
 module.exports = node;

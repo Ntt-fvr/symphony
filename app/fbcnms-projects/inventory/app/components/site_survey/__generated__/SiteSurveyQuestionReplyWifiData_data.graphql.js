@@ -38,67 +38,69 @@ export type SiteSurveyQuestionReplyWifiData_data$key = {
 
 
 const node/*: ReaderFragment*/ = {
-  "kind": "Fragment",
-  "name": "SiteSurveyQuestionReplyWifiData_data",
-  "type": "SurveyQuestion",
-  "metadata": null,
   "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "SiteSurveyQuestionReplyWifiData_data",
   "selections": [
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "wifiData",
-      "storageKey": null,
       "args": null,
       "concreteType": "SurveyWiFiScan",
+      "kind": "LinkedField",
+      "name": "wifiData",
       "plural": true,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "band",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "bssid",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "channel",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "frequency",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
+          "args": null,
+          "kind": "ScalarField",
           "name": "strength",
-          "args": null,
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "ssid",
           "args": null,
+          "kind": "ScalarField",
+          "name": "ssid",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "SurveyQuestion",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '2d96d30d887d78992884a1de2ceca46c';
+
 module.exports = node;

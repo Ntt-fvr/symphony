@@ -56,122 +56,124 @@ export type ServicesView_service$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ServicesView_service",
-  "type": "Service",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "ServicesView_service",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "externalId",
-      "args": null,
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
-      "alias": null,
       "name": "status",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "customer",
-      "storageKey": null,
       "args": null,
       "concreteType": "Customer",
+      "kind": "LinkedField",
+      "name": "customer",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "serviceType",
-      "storageKey": null,
       "args": null,
       "concreteType": "ServiceType",
+      "kind": "LinkedField",
+      "name": "serviceType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "discoveryMethod",
           "args": null,
+          "kind": "ScalarField",
+          "name": "discoveryMethod",
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "propertyTypes",
-          "storageKey": null,
           "args": null,
           "concreteType": "PropertyType",
+          "kind": "LinkedField",
+          "name": "propertyTypes",
           "plural": true,
           "selections": [
             {
+              "args": null,
               "kind": "FragmentSpread",
-              "name": "PropertyTypeFormField_propertyType",
-              "args": null
+              "name": "PropertyTypeFormField_propertyType"
             },
             {
+              "args": null,
               "kind": "FragmentSpread",
-              "name": "DynamicPropertiesGrid_propertyTypes",
-              "args": null
+              "name": "DynamicPropertiesGrid_propertyTypes"
             }
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "properties",
-      "storageKey": null,
       "args": null,
       "concreteType": "Property",
+      "kind": "LinkedField",
+      "name": "properties",
       "plural": true,
       "selections": [
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "PropertyFormField_property",
-          "args": null
+          "name": "PropertyFormField_property"
         },
         {
+          "args": null,
           "kind": "FragmentSpread",
-          "name": "DynamicPropertiesGrid_properties",
-          "args": null
+          "name": "DynamicPropertiesGrid_properties"
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Service",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '082bbb9aa27247bc35148e31b2a04903';
+
 module.exports = node;

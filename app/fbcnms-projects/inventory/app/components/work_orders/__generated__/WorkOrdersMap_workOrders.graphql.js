@@ -56,130 +56,132 @@ export type WorkOrdersMap_workOrders$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v2 = [
   (v0/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "email",
     "args": null,
+    "kind": "ScalarField",
+    "name": "email",
     "storageKey": null
   }
 ];
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "WorkOrdersMap_workOrders",
-  "type": "WorkOrder",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "WorkOrdersMap_workOrders",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "description",
       "args": null,
+      "kind": "ScalarField",
+      "name": "description",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "owner",
-      "storageKey": null,
       "args": null,
       "concreteType": "User",
-      "plural": false,
-      "selections": (v2/*: any*/)
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "status",
-      "args": null,
-      "storageKey": null
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "priority",
-      "args": null,
-      "storageKey": null
-    },
-    {
       "kind": "LinkedField",
+      "name": "owner",
+      "plural": false,
+      "selections": (v2/*: any*/),
+      "storageKey": null
+    },
+    {
       "alias": null,
-      "name": "project",
-      "storageKey": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "priority",
+      "storageKey": null
+    },
+    {
+      "alias": null,
       "args": null,
       "concreteType": "Project",
+      "kind": "LinkedField",
+      "name": "project",
       "plural": false,
       "selections": [
         (v0/*: any*/)
-      ]
-    },
-    {
-      "kind": "LinkedField",
-      "alias": null,
-      "name": "assignedTo",
-      "storageKey": null,
-      "args": null,
-      "concreteType": "User",
-      "plural": false,
-      "selections": (v2/*: any*/)
-    },
-    {
-      "kind": "ScalarField",
-      "alias": null,
-      "name": "installDate",
-      "args": null,
+      ],
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "location",
-      "storageKey": null,
+      "args": null,
+      "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "assignedTo",
+      "plural": false,
+      "selections": (v2/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "installDate",
+      "storageKey": null
+    },
+    {
+      "alias": null,
       "args": null,
       "concreteType": "Location",
+      "kind": "LinkedField",
+      "name": "location",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "latitude",
           "args": null,
+          "kind": "ScalarField",
+          "name": "latitude",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "longitude",
           "args": null,
+          "kind": "ScalarField",
+          "name": "longitude",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "WorkOrder",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '40e62c63b30e3cfbbc07e2f8c19f283d';
+
 module.exports = node;

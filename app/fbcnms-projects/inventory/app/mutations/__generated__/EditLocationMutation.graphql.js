@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 9ee3aa081f68df68868f3fdad1d645e1
  */
 
 /* eslint-disable */
@@ -82,32 +81,28 @@ mutation EditLocationMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "EditLocationInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v3 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "editLocation",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -116,72 +111,78 @@ v3 = [
       }
     ],
     "concreteType": "Location",
+    "kind": "LinkedField",
+    "name": "editLocation",
     "plural": false,
     "selections": [
       (v1/*: any*/),
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "externalId",
         "args": null,
+        "kind": "ScalarField",
+        "name": "externalId",
         "storageKey": null
       },
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "locationType",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationType",
+        "kind": "LinkedField",
+        "name": "locationType",
         "plural": false,
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/)
-        ]
-      },
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "numChildren",
-        "args": null,
+        ],
         "storageKey": null
       },
       {
-        "kind": "ScalarField",
         "alias": null,
-        "name": "siteSurveyNeeded",
         "args": null,
+        "kind": "ScalarField",
+        "name": "numChildren",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "siteSurveyNeeded",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditLocationMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v3/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditLocationMutation",
+    "selections": (v3/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditLocationMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v3/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditLocationMutation",
+    "cacheID": "01a0edaaa07f73bb81f41dd06f83bdd2",
     "id": null,
-    "text": "mutation EditLocationMutation(\n  $input: EditLocationInput!\n) {\n  editLocation(input: $input) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditLocationMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditLocationMutation(\n  $input: EditLocationInput!\n) {\n  editLocation(input: $input) {\n    id\n    externalId\n    name\n    locationType {\n      id\n      name\n    }\n    numChildren\n    siteSurveyNeeded\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '85cc5be722818bbc1fbdbafbaa30f9ca';
+
 module.exports = node;

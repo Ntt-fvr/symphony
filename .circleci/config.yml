@@ -581,7 +581,7 @@ jobs:
       - run:
           name: flow typecheck
           <<: *appdir
-          command: yarn run flow
+          command: yarn run flow stop && yarn run flow
 
   validate-gql-test:
     parameters:
@@ -697,9 +697,7 @@ workflows:
           <<: *onlypr
       - unit
       - flowtest
-      - yarntest:
-          requires:
-            - flowtest
+      - yarntest
       - docker-publish:
           name: graph/publish
           context: symphony

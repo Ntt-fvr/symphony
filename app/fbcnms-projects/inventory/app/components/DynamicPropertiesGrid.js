@@ -26,7 +26,7 @@ import {withStyles} from '@material-ui/core/styles';
 type Props = {
   properties: Array<Property>,
   propertyTypes: Array<PropertyType>,
-  hideTitle: boolean,
+  hideTitle?: boolean,
 } & WithStyles<typeof styles>;
 
 const styles = theme => ({

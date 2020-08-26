@@ -56,7 +56,7 @@ const reportFilterQuery = graphql`
 
 const useFilterBookmarks = (entity: FilterEntity): Array<SavedSearchConfig> => {
   const filterBookmarksResponse = useGraphQL(
-    // $FlowFixMe (T62907961) Relay flow types
+    // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
     RelayEnvironment,
     reportFilterQuery,
     {entity: entity},

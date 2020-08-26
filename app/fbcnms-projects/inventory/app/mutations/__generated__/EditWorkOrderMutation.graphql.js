@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash d3bd88bead91f3a9c7acdd669a4b4063
  */
 
 /* eslint-disable */
@@ -293,12 +292,19 @@ fragment FileAttachment_file on File {
   ...ImageDialog_img
 }
 
+fragment HyperlinkTableMenu_hyperlink on Hyperlink {
+  id
+  displayName
+  url
+}
+
 fragment HyperlinkTableRow_hyperlink on Hyperlink {
   id
   category
   url
   displayName
   createTime
+  ...HyperlinkTableMenu_hyperlink
 }
 
 fragment ImageDialog_img on File {
@@ -667,10 +673,9 @@ fragment WorkOrderDetails_workOrder on WorkOrder {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input",
-    "type": "EditWorkOrderInput!",
-    "defaultValue": null
+    "name": "input"
   }
 ],
 v1 = [
@@ -681,31 +686,31 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "description",
   "args": null,
+  "kind": "ScalarField",
+  "name": "description",
   "storageKey": null
 },
 v5 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "email",
   "args": null,
+  "kind": "ScalarField",
+  "name": "email",
   "storageKey": null
 },
 v6 = [
@@ -713,113 +718,113 @@ v6 = [
   (v5/*: any*/)
 ],
 v7 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "owner",
-  "storageKey": null,
   "args": null,
   "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "owner",
   "plural": false,
-  "selections": (v6/*: any*/)
+  "selections": (v6/*: any*/),
+  "storageKey": null
 },
 v8 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "creationDate",
   "args": null,
+  "kind": "ScalarField",
+  "name": "creationDate",
   "storageKey": null
 },
 v9 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "installDate",
   "args": null,
+  "kind": "ScalarField",
+  "name": "installDate",
   "storageKey": null
 },
 v10 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "status",
   "args": null,
+  "kind": "ScalarField",
+  "name": "status",
   "storageKey": null
 },
 v11 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "priority",
   "args": null,
+  "kind": "ScalarField",
+  "name": "priority",
   "storageKey": null
 },
 v12 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "assignedTo",
-  "storageKey": null,
   "args": null,
   "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "assignedTo",
   "plural": false,
-  "selections": (v6/*: any*/)
+  "selections": (v6/*: any*/),
+  "storageKey": null
 },
 v13 = [
   (v3/*: any*/),
   (v2/*: any*/)
 ],
 v14 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitude",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitude",
   "storageKey": null
 },
 v15 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitude",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitude",
   "storageKey": null
 },
 v16 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationHierarchy",
-  "storageKey": null,
   "args": null,
   "concreteType": "Location",
+  "kind": "LinkedField",
+  "name": "locationHierarchy",
   "plural": true,
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "locationType",
-      "storageKey": null,
       "args": null,
       "concreteType": "LocationType",
+      "kind": "LinkedField",
+      "name": "locationType",
       "plural": false,
-      "selections": (v13/*: any*/)
+      "selections": (v13/*: any*/),
+      "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 },
 v17 = [
   (v2/*: any*/),
   (v3/*: any*/)
 ],
 v18 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "equipmentType",
-  "storageKey": null,
   "args": null,
   "concreteType": "EquipmentType",
+  "kind": "LinkedField",
+  "name": "equipmentType",
   "plural": false,
-  "selections": (v17/*: any*/)
+  "selections": (v17/*: any*/),
+  "storageKey": null
 },
 v19 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "visibleLabel",
   "args": null,
+  "kind": "ScalarField",
+  "name": "visibleLabel",
   "storageKey": null
 },
 v20 = [
@@ -827,154 +832,154 @@ v20 = [
   (v3/*: any*/),
   (v18/*: any*/),
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "parentLocation",
-    "storageKey": null,
     "args": null,
     "concreteType": "Location",
+    "kind": "LinkedField",
+    "name": "parentLocation",
     "plural": false,
     "selections": [
       (v2/*: any*/),
       (v3/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "locationType",
-        "storageKey": null,
         "args": null,
         "concreteType": "LocationType",
+        "kind": "LinkedField",
+        "name": "locationType",
         "plural": false,
-        "selections": (v17/*: any*/)
+        "selections": (v17/*: any*/),
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "parentPosition",
-    "storageKey": null,
     "args": null,
     "concreteType": "EquipmentPosition",
+    "kind": "LinkedField",
+    "name": "parentPosition",
     "plural": false,
     "selections": [
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "definition",
-        "storageKey": null,
         "args": null,
         "concreteType": "EquipmentPositionDefinition",
+        "kind": "LinkedField",
+        "name": "definition",
         "plural": false,
         "selections": [
           (v3/*: any*/),
           (v19/*: any*/),
           (v2/*: any*/)
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "parentEquipment",
-        "storageKey": null,
         "args": null,
         "concreteType": "Equipment",
+        "kind": "LinkedField",
+        "name": "parentEquipment",
         "plural": false,
-        "selections": (v17/*: any*/)
+        "selections": (v17/*: any*/),
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ],
 v21 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "futureState",
   "args": null,
+  "kind": "ScalarField",
+  "name": "futureState",
   "storageKey": null
 },
 v22 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "type",
   "args": null,
+  "kind": "ScalarField",
+  "name": "type",
   "storageKey": null
 },
 v23 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "index",
   "args": null,
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 },
 v24 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "stringValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "stringValue",
   "storageKey": null
 },
 v25 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "intValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "intValue",
   "storageKey": null
 },
 v26 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "booleanValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "booleanValue",
   "storageKey": null
 },
 v27 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "floatValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "floatValue",
   "storageKey": null
 },
 v28 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v29 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitudeValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v30 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeFromValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v31 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "rangeToValue",
   "args": null,
+  "kind": "ScalarField",
+  "name": "rangeToValue",
   "storageKey": null
 },
 v32 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "isMandatory",
   "args": null,
+  "kind": "ScalarField",
+  "name": "isMandatory",
   "storageKey": null
 },
 v33 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "category",
   "args": null,
+  "kind": "ScalarField",
+  "name": "category",
   "storageKey": null
 },
 v34 = [
@@ -982,10 +987,10 @@ v34 = [
   (v3/*: any*/),
   (v22/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "nodeType",
     "args": null,
+    "kind": "ScalarField",
+    "name": "nodeType",
     "storageKey": null
   },
   (v23/*: any*/),
@@ -998,55 +1003,54 @@ v34 = [
   (v30/*: any*/),
   (v31/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "isEditable",
     "args": null,
+    "kind": "ScalarField",
+    "name": "isEditable",
     "storageKey": null
   },
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "isInstanceProperty",
     "args": null,
+    "kind": "ScalarField",
+    "name": "isInstanceProperty",
     "storageKey": null
   },
   (v32/*: any*/),
   (v33/*: any*/),
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "isDeleted",
     "args": null,
+    "kind": "ScalarField",
+    "name": "isDeleted",
     "storageKey": null
   }
 ],
 v35 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "__typename",
   "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
 v36 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "properties",
-  "storageKey": null,
   "args": null,
   "concreteType": "Property",
+  "kind": "LinkedField",
+  "name": "properties",
   "plural": true,
   "selections": [
     (v2/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "propertyType",
-      "storageKey": null,
       "args": null,
       "concreteType": "PropertyType",
+      "kind": "LinkedField",
+      "name": "propertyType",
       "plural": false,
-      "selections": (v34/*: any*/)
+      "selections": (v34/*: any*/),
+      "storageKey": null
     },
     (v24/*: any*/),
     (v25/*: any*/),
@@ -1057,270 +1061,271 @@ v36 = {
     (v30/*: any*/),
     (v31/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "nodeValue",
-      "storageKey": null,
       "args": null,
       "concreteType": null,
+      "kind": "LinkedField",
+      "name": "nodeValue",
       "plural": false,
       "selections": [
         (v35/*: any*/),
         (v2/*: any*/),
         (v3/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 },
 v37 = [
   (v2/*: any*/),
   (v21/*: any*/),
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "ports",
-    "storageKey": null,
     "args": null,
     "concreteType": "EquipmentPort",
+    "kind": "LinkedField",
+    "name": "ports",
     "plural": true,
     "selections": [
       (v2/*: any*/),
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "definition",
-        "storageKey": null,
         "args": null,
         "concreteType": "EquipmentPortDefinition",
+        "kind": "LinkedField",
+        "name": "definition",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v19/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "portType",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentPortType",
+            "kind": "LinkedField",
+            "name": "portType",
             "plural": false,
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "linkPropertyTypes",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "PropertyType",
+                "kind": "LinkedField",
+                "name": "linkPropertyTypes",
                 "plural": true,
-                "selections": (v34/*: any*/)
+                "selections": (v34/*: any*/),
+                "storageKey": null
               },
               (v2/*: any*/)
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "parentEquipment",
-        "storageKey": null,
         "args": null,
         "concreteType": "Equipment",
+        "kind": "LinkedField",
+        "name": "parentEquipment",
         "plural": false,
         "selections": [
           (v2/*: any*/),
           (v3/*: any*/),
           (v21/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "equipmentType",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentType",
+            "kind": "LinkedField",
+            "name": "equipmentType",
             "plural": false,
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "portDefinitions",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "EquipmentPortDefinition",
+                "kind": "LinkedField",
+                "name": "portDefinitions",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v19/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "bandwidth",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "bandwidth",
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "portType",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "EquipmentPortType",
+                    "kind": "LinkedField",
+                    "name": "portType",
                     "plural": false,
-                    "selections": (v17/*: any*/)
+                    "selections": (v17/*: any*/),
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           (v16/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "positionHierarchy",
-            "storageKey": null,
             "args": null,
             "concreteType": "EquipmentPosition",
+            "kind": "LinkedField",
+            "name": "positionHierarchy",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "definition",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "EquipmentPositionDefinition",
+                "kind": "LinkedField",
+                "name": "definition",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v19/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "parentEquipment",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Equipment",
+                "kind": "LinkedField",
+                "name": "parentEquipment",
                 "plural": false,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v18/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "serviceEndpoints",
-        "storageKey": null,
         "args": null,
         "concreteType": "ServiceEndpoint",
+        "kind": "LinkedField",
+        "name": "serviceEndpoints",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "definition",
-            "storageKey": null,
             "args": null,
             "concreteType": "ServiceEndpointDefinition",
+            "kind": "LinkedField",
+            "name": "definition",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "role",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "role",
                 "storageKey": null
               },
               (v2/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "service",
-            "storageKey": null,
             "args": null,
             "concreteType": "Service",
+            "kind": "LinkedField",
+            "name": "service",
             "plural": false,
-            "selections": (v13/*: any*/)
+            "selections": (v13/*: any*/),
+            "storageKey": null
           },
           (v2/*: any*/)
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   },
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "workOrder",
-    "storageKey": null,
     "args": null,
     "concreteType": "WorkOrder",
+    "kind": "LinkedField",
+    "name": "workOrder",
     "plural": false,
     "selections": [
       (v2/*: any*/),
       (v10/*: any*/)
-    ]
+    ],
+    "storageKey": null
   },
   (v36/*: any*/),
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "services",
-    "storageKey": null,
     "args": null,
     "concreteType": "Service",
+    "kind": "LinkedField",
+    "name": "services",
     "plural": true,
-    "selections": (v17/*: any*/)
+    "selections": (v17/*: any*/),
+    "storageKey": null
   }
 ],
 v38 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "fileName",
   "args": null,
+  "kind": "ScalarField",
+  "name": "fileName",
   "storageKey": null
 },
 v39 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "sizeInBytes",
   "args": null,
+  "kind": "ScalarField",
+  "name": "sizeInBytes",
   "storageKey": null
 },
 v40 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "uploaded",
   "args": null,
+  "kind": "ScalarField",
+  "name": "uploaded",
   "storageKey": null
 },
 v41 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "fileType",
   "args": null,
+  "kind": "ScalarField",
+  "name": "fileType",
   "storageKey": null
 },
 v42 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "storeKey",
   "args": null,
+  "kind": "ScalarField",
+  "name": "storeKey",
   "storageKey": null
 },
 v43 = [
@@ -1333,66 +1338,64 @@ v43 = [
   (v42/*: any*/)
 ],
 v44 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "createTime",
   "args": null,
+  "kind": "ScalarField",
+  "name": "createTime",
   "storageKey": null
 },
 v45 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "author",
-  "storageKey": null,
   "args": null,
   "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "author",
   "plural": false,
   "selections": [
     (v5/*: any*/),
     (v2/*: any*/)
-  ]
+  ],
+  "storageKey": null
 },
 v46 = [
   (v35/*: any*/),
   (v2/*: any*/),
   {
     "kind": "InlineFragment",
-    "type": "User",
     "selections": [
       (v5/*: any*/)
-    ]
+    ],
+    "type": "User",
+    "abstractKey": null
   }
 ],
 v47 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "title",
   "args": null,
+  "kind": "ScalarField",
+  "name": "title",
   "storageKey": null
 },
 v48 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "timestamp",
   "args": null,
+  "kind": "ScalarField",
+  "name": "timestamp",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "EditWorkOrderMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "EditWorkOrderMutation",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "editWorkOrder",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "WorkOrder",
+        "kind": "LinkedField",
+        "name": "editWorkOrder",
         "plural": false,
         "selections": [
           (v2/*: any*/),
@@ -1405,26 +1408,29 @@ return {
           (v11/*: any*/),
           (v12/*: any*/),
           {
+            "args": null,
             "kind": "FragmentSpread",
-            "name": "WorkOrderDetails_workOrder",
-            "args": null
+            "name": "WorkOrderDetails_workOrder"
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "EditWorkOrderMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "editWorkOrder",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": "WorkOrder",
+        "kind": "LinkedField",
+        "name": "editWorkOrder",
         "plural": false,
         "selections": [
           (v2/*: any*/),
@@ -1437,40 +1443,39 @@ return {
           (v11/*: any*/),
           (v12/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "workOrderType",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrderType",
+            "kind": "LinkedField",
+            "name": "workOrderType",
             "plural": false,
-            "selections": (v13/*: any*/)
+            "selections": (v13/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "workOrderTemplate",
-            "storageKey": null,
             "args": null,
             "concreteType": "WorkOrderTemplate",
+            "kind": "LinkedField",
+            "name": "workOrderTemplate",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "assigneeCanCompleteWorkOrder",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "assigneeCanCompleteWorkOrder",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "location",
-            "storageKey": null,
             "args": null,
             "concreteType": "Location",
+            "kind": "LinkedField",
+            "name": "location",
             "plural": false,
             "selections": [
               (v3/*: any*/),
@@ -1478,249 +1483,248 @@ return {
               (v14/*: any*/),
               (v15/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "locationType",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "LocationType",
+                "kind": "LinkedField",
+                "name": "locationType",
                 "plural": false,
                 "selections": [
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "mapType",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "mapType",
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "mapZoomLevel",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "mapZoomLevel",
                     "storageKey": null
                   },
                   (v2/*: any*/),
                   (v3/*: any*/)
-                ]
+                ],
+                "storageKey": null
               },
               (v16/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
+            "args": null,
+            "concreteType": "Equipment",
+            "kind": "LinkedField",
             "name": "equipmentToAdd",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "Equipment",
             "plural": true,
-            "selections": (v20/*: any*/)
+            "selections": (v20/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
+            "args": null,
+            "concreteType": "Equipment",
+            "kind": "LinkedField",
             "name": "equipmentToRemove",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "Equipment",
             "plural": true,
-            "selections": (v20/*: any*/)
+            "selections": (v20/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
+            "args": null,
+            "concreteType": "Link",
+            "kind": "LinkedField",
             "name": "linksToAdd",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "Link",
             "plural": true,
-            "selections": (v37/*: any*/)
+            "selections": (v37/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "linksToRemove",
-            "storageKey": null,
             "args": null,
             "concreteType": "Link",
+            "kind": "LinkedField",
+            "name": "linksToRemove",
             "plural": true,
-            "selections": (v37/*: any*/)
+            "selections": (v37/*: any*/),
+            "storageKey": null
           },
           (v36/*: any*/),
           {
-            "kind": "LinkedField",
             "alias": null,
+            "args": null,
+            "concreteType": "File",
+            "kind": "LinkedField",
             "name": "images",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "File",
             "plural": true,
-            "selections": (v43/*: any*/)
+            "selections": (v43/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
+            "args": null,
+            "concreteType": "File",
+            "kind": "LinkedField",
             "name": "files",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "File",
             "plural": true,
-            "selections": (v43/*: any*/)
+            "selections": (v43/*: any*/),
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "hyperlinks",
-            "storageKey": null,
             "args": null,
             "concreteType": "Hyperlink",
+            "kind": "LinkedField",
+            "name": "hyperlinks",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               (v33/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "url",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "url",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "displayName",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "displayName",
                 "storageKey": null
               },
               (v44/*: any*/)
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "comments",
-            "storageKey": null,
             "args": null,
             "concreteType": "Comment",
+            "kind": "LinkedField",
+            "name": "comments",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               (v44/*: any*/),
               (v45/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "text",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "text",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "activities",
-            "storageKey": null,
             "args": null,
             "concreteType": "Activity",
+            "kind": "LinkedField",
+            "name": "activities",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               (v44/*: any*/),
               (v45/*: any*/),
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "isCreate",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "activityType",
-                "args": null,
                 "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
+                "args": null,
+                "concreteType": null,
+                "kind": "LinkedField",
                 "name": "newRelatedNode",
-                "storageKey": null,
-                "args": null,
-                "concreteType": null,
                 "plural": false,
-                "selections": (v46/*: any*/)
-              },
-              {
-                "kind": "LinkedField",
-                "alias": null,
-                "name": "oldRelatedNode",
-                "storageKey": null,
-                "args": null,
-                "concreteType": null,
-                "plural": false,
-                "selections": (v46/*: any*/)
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "name": "oldValue",
-                "args": null,
+                "selections": (v46/*: any*/),
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "newValue",
                 "args": null,
+                "concreteType": null,
+                "kind": "LinkedField",
+                "name": "oldRelatedNode",
+                "plural": false,
+                "selections": (v46/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "oldValue",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "newValue",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "project",
-            "storageKey": null,
             "args": null,
             "concreteType": "Project",
+            "kind": "LinkedField",
+            "name": "project",
             "plural": false,
             "selections": [
               (v3/*: any*/),
               (v2/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "type",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "ProjectType",
+                "kind": "LinkedField",
+                "name": "type",
                 "plural": false,
-                "selections": (v17/*: any*/)
+                "selections": (v17/*: any*/),
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           },
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "checkListCategories",
-            "storageKey": null,
             "args": null,
             "concreteType": "CheckListCategory",
+            "kind": "LinkedField",
+            "name": "checkListCategories",
             "plural": true,
             "selections": [
               (v2/*: any*/),
               (v47/*: any*/),
               (v4/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "checkList",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "CheckListItem",
+                "kind": "LinkedField",
+                "name": "checkList",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
@@ -1729,65 +1733,64 @@ return {
                   (v22/*: any*/),
                   (v47/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "helpText",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "checked",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "enumValues",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "enumValues",
                     "storageKey": null
                   },
                   (v24/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "enumSelectionMode",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "selectedEnumValues",
-                    "args": null,
                     "storageKey": null
                   },
                   {
+                    "alias": null,
+                    "args": null,
                     "kind": "ScalarField",
-                    "alias": null,
                     "name": "yesNoResponse",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "files",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "File",
+                    "kind": "LinkedField",
+                    "name": "files",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       (v38/*: any*/),
                       (v39/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "modified",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "modified",
                         "storageKey": null
                       },
                       (v40/*: any*/),
@@ -1795,236 +1798,242 @@ return {
                       (v42/*: any*/),
                       (v33/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "annotation",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "annotation",
                         "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "cellData",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "SurveyCellScan",
+                    "kind": "LinkedField",
+                    "name": "cellData",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "networkType",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "networkType",
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "signalStrength",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "signalStrength",
                         "storageKey": null
                       },
                       (v48/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "baseStationID",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "networkID",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "systemID",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "cellID",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "locationAreaCode",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "mobileCountryCode",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "mobileNetworkCode",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "primaryScramblingCode",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "operator",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "arfcn",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "physicalCellID",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "trackingAreaCode",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "timingAdvance",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "earfcn",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "uarfcn",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "uarfcn",
                         "storageKey": null
                       },
                       (v14/*: any*/),
                       (v15/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   },
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "wifiData",
-                    "storageKey": null,
                     "args": null,
                     "concreteType": "SurveyWiFiScan",
+                    "kind": "LinkedField",
+                    "name": "wifiData",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       (v48/*: any*/),
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "frequency",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "channel",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "bssid",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "strength",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "ssid",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "band",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
                         "name": "channelWidth",
-                        "args": null,
                         "storageKey": null
                       },
                       {
-                        "kind": "ScalarField",
                         "alias": null,
-                        "name": "capabilities",
                         "args": null,
+                        "kind": "ScalarField",
+                        "name": "capabilities",
                         "storageKey": null
                       },
                       (v14/*: any*/),
                       (v15/*: any*/)
-                    ]
+                    ],
+                    "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "EditWorkOrderMutation",
+    "cacheID": "37ae3dfe934831de5f8d8a0ee3939ffe",
     "id": null,
-    "text": "mutation EditWorkOrderMutation(\n  $input: EditWorkOrderInput!\n) {\n  editWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    priority\n    assignedTo {\n      id\n      email\n    }\n    ...WorkOrderDetails_workOrder\n  }\n}\n\nfragment ActivityPost_activity on Activity {\n  id\n  author {\n    email\n    id\n  }\n  isCreate\n  activityType\n  newRelatedNode {\n    __typename\n    ... on User {\n      id\n      email\n    }\n    id\n  }\n  oldRelatedNode {\n    __typename\n    ... on User {\n      id\n      email\n    }\n    id\n  }\n  oldValue\n  newValue\n  createTime\n}\n\nfragment CommentsActivitiesBox_activities on Activity {\n  ...CommentsActivitiesLog_activities\n}\n\nfragment CommentsActivitiesBox_comments on Comment {\n  ...CommentsActivitiesLog_comments\n}\n\nfragment CommentsActivitiesLog_activities on Activity {\n  id\n  createTime\n  ...ActivityPost_activity\n}\n\nfragment CommentsActivitiesLog_comments on Comment {\n  id\n  createTime\n  ...TextCommentPost_comment\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n\nfragment WorkOrderDetailsPaneEquipmentItem_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  parentLocation {\n    id\n    name\n    locationType {\n      id\n      name\n    }\n  }\n  parentPosition {\n    id\n    definition {\n      name\n      visibleLabel\n      id\n    }\n    parentEquipment {\n      id\n      name\n    }\n  }\n}\n\nfragment WorkOrderDetailsPaneLinkItem_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n          portType {\n            id\n            name\n          }\n        }\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment WorkOrderDetailsPane_workOrder on WorkOrder {\n  id\n  name\n  equipmentToAdd {\n    id\n    ...WorkOrderDetailsPaneEquipmentItem_equipment\n  }\n  equipmentToRemove {\n    id\n    ...WorkOrderDetailsPaneEquipmentItem_equipment\n  }\n  linksToAdd {\n    id\n    ...WorkOrderDetailsPaneLinkItem_link\n  }\n  linksToRemove {\n    id\n    ...WorkOrderDetailsPaneLinkItem_link\n  }\n}\n\nfragment WorkOrderDetails_workOrder on WorkOrder {\n  id\n  name\n  description\n  workOrderType {\n    name\n    id\n  }\n  workOrderTemplate {\n    assigneeCanCompleteWorkOrder\n  }\n  location {\n    name\n    id\n    latitude\n    longitude\n    locationType {\n      mapType\n      mapZoomLevel\n      id\n    }\n    ...LocationBreadcrumbsTitle_locationDetails\n  }\n  owner {\n    id\n    email\n  }\n  assignedTo {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  priority\n  ...WorkOrderDetailsPane_workOrder\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  comments {\n    ...CommentsActivitiesBox_comments\n    id\n  }\n  activities {\n    ...CommentsActivitiesBox_activities\n    id\n  }\n  project {\n    name\n    id\n    type {\n      id\n      name\n    }\n  }\n  checkListCategories {\n    id\n    title\n    description\n    checkList {\n      id\n      index\n      isMandatory\n      type\n      title\n      helpText\n      checked\n      enumValues\n      stringValue\n      enumSelectionMode\n      selectedEnumValues\n      yesNoResponse\n      files {\n        id\n        fileName\n        sizeInBytes\n        modified\n        uploaded\n        fileType\n        storeKey\n        category\n        annotation\n      }\n      cellData {\n        id\n        networkType\n        signalStrength\n        timestamp\n        baseStationID\n        networkID\n        systemID\n        cellID\n        locationAreaCode\n        mobileCountryCode\n        mobileNetworkCode\n        primaryScramblingCode\n        operator\n        arfcn\n        physicalCellID\n        trackingAreaCode\n        timingAdvance\n        earfcn\n        uarfcn\n        latitude\n        longitude\n      }\n      wifiData {\n        id\n        timestamp\n        frequency\n        channel\n        bssid\n        strength\n        ssid\n        band\n        channelWidth\n        capabilities\n        latitude\n        longitude\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "EditWorkOrderMutation",
+    "operationKind": "mutation",
+    "text": "mutation EditWorkOrderMutation(\n  $input: EditWorkOrderInput!\n) {\n  editWorkOrder(input: $input) {\n    id\n    name\n    description\n    owner {\n      id\n      email\n    }\n    creationDate\n    installDate\n    status\n    priority\n    assignedTo {\n      id\n      email\n    }\n    ...WorkOrderDetails_workOrder\n  }\n}\n\nfragment ActivityPost_activity on Activity {\n  id\n  author {\n    email\n    id\n  }\n  isCreate\n  activityType\n  newRelatedNode {\n    __typename\n    ... on User {\n      id\n      email\n    }\n    id\n  }\n  oldRelatedNode {\n    __typename\n    ... on User {\n      id\n      email\n    }\n    id\n  }\n  oldValue\n  newValue\n  createTime\n}\n\nfragment CommentsActivitiesBox_activities on Activity {\n  ...CommentsActivitiesLog_activities\n}\n\nfragment CommentsActivitiesBox_comments on Comment {\n  ...CommentsActivitiesLog_comments\n}\n\nfragment CommentsActivitiesLog_activities on Activity {\n  id\n  createTime\n  ...ActivityPost_activity\n}\n\nfragment CommentsActivitiesLog_comments on Comment {\n  id\n  createTime\n  ...TextCommentPost_comment\n}\n\nfragment DocumentTable_files on File {\n  id\n  fileName\n  category\n  ...FileAttachment_file\n}\n\nfragment DocumentTable_hyperlinks on Hyperlink {\n  id\n  category\n  url\n  displayName\n  ...HyperlinkTableRow_hyperlink\n}\n\nfragment EntityDocumentsTable_files on File {\n  ...DocumentTable_files\n}\n\nfragment EntityDocumentsTable_hyperlinks on Hyperlink {\n  ...DocumentTable_hyperlinks\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment FileAttachment_file on File {\n  id\n  fileName\n  sizeInBytes\n  uploaded\n  fileType\n  storeKey\n  category\n  ...ImageDialog_img\n}\n\nfragment HyperlinkTableMenu_hyperlink on Hyperlink {\n  id\n  displayName\n  url\n}\n\nfragment HyperlinkTableRow_hyperlink on Hyperlink {\n  id\n  category\n  url\n  displayName\n  createTime\n  ...HyperlinkTableMenu_hyperlink\n}\n\nfragment ImageDialog_img on File {\n  storeKey\n  fileName\n}\n\nfragment LocationBreadcrumbsTitle_locationDetails on Location {\n  id\n  name\n  locationType {\n    name\n    id\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n}\n\nfragment TextCommentPost_comment on Comment {\n  id\n  author {\n    email\n    id\n  }\n  text\n  createTime\n}\n\nfragment WorkOrderDetailsPaneEquipmentItem_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  parentLocation {\n    id\n    name\n    locationType {\n      id\n      name\n    }\n  }\n  parentPosition {\n    id\n    definition {\n      name\n      visibleLabel\n      id\n    }\n    parentEquipment {\n      id\n      name\n    }\n  }\n}\n\nfragment WorkOrderDetailsPaneLinkItem_link on Link {\n  id\n  futureState\n  ports {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n      portType {\n        linkPropertyTypes {\n          id\n          name\n          type\n          nodeType\n          index\n          stringValue\n          intValue\n          booleanValue\n          floatValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n          isEditable\n          isInstanceProperty\n          isMandatory\n          category\n          isDeleted\n        }\n        id\n      }\n    }\n    parentEquipment {\n      id\n      name\n      futureState\n      equipmentType {\n        id\n        name\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n          portType {\n            id\n            name\n          }\n        }\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    serviceEndpoints {\n      definition {\n        role\n        id\n      }\n      service {\n        name\n        id\n      }\n      id\n    }\n  }\n  workOrder {\n    id\n    status\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  services {\n    id\n    name\n  }\n}\n\nfragment WorkOrderDetailsPane_workOrder on WorkOrder {\n  id\n  name\n  equipmentToAdd {\n    id\n    ...WorkOrderDetailsPaneEquipmentItem_equipment\n  }\n  equipmentToRemove {\n    id\n    ...WorkOrderDetailsPaneEquipmentItem_equipment\n  }\n  linksToAdd {\n    id\n    ...WorkOrderDetailsPaneLinkItem_link\n  }\n  linksToRemove {\n    id\n    ...WorkOrderDetailsPaneLinkItem_link\n  }\n}\n\nfragment WorkOrderDetails_workOrder on WorkOrder {\n  id\n  name\n  description\n  workOrderType {\n    name\n    id\n  }\n  workOrderTemplate {\n    assigneeCanCompleteWorkOrder\n  }\n  location {\n    name\n    id\n    latitude\n    longitude\n    locationType {\n      mapType\n      mapZoomLevel\n      id\n    }\n    ...LocationBreadcrumbsTitle_locationDetails\n  }\n  owner {\n    id\n    email\n  }\n  assignedTo {\n    id\n    email\n  }\n  creationDate\n  installDate\n  status\n  priority\n  ...WorkOrderDetailsPane_workOrder\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      index\n      stringValue\n      intValue\n      booleanValue\n      floatValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isEditable\n      isInstanceProperty\n      isMandatory\n      category\n      isDeleted\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n  images {\n    ...EntityDocumentsTable_files\n    id\n  }\n  files {\n    ...EntityDocumentsTable_files\n    id\n  }\n  hyperlinks {\n    ...EntityDocumentsTable_hyperlinks\n    id\n  }\n  comments {\n    ...CommentsActivitiesBox_comments\n    id\n  }\n  activities {\n    ...CommentsActivitiesBox_activities\n    id\n  }\n  project {\n    name\n    id\n    type {\n      id\n      name\n    }\n  }\n  checkListCategories {\n    id\n    title\n    description\n    checkList {\n      id\n      index\n      isMandatory\n      type\n      title\n      helpText\n      checked\n      enumValues\n      stringValue\n      enumSelectionMode\n      selectedEnumValues\n      yesNoResponse\n      files {\n        id\n        fileName\n        sizeInBytes\n        modified\n        uploaded\n        fileType\n        storeKey\n        category\n        annotation\n      }\n      cellData {\n        id\n        networkType\n        signalStrength\n        timestamp\n        baseStationID\n        networkID\n        systemID\n        cellID\n        locationAreaCode\n        mobileCountryCode\n        mobileNetworkCode\n        primaryScramblingCode\n        operator\n        arfcn\n        physicalCellID\n        trackingAreaCode\n        timingAdvance\n        earfcn\n        uarfcn\n        latitude\n        longitude\n      }\n      wifiData {\n        id\n        timestamp\n        frequency\n        channel\n        bssid\n        strength\n        ssid\n        band\n        channelWidth\n        capabilities\n        latitude\n        longitude\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '3233ea0b99861f51dfd94ba01367ad35';
+
 module.exports = node;

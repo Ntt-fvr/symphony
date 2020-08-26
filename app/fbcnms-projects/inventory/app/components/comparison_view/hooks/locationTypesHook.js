@@ -29,7 +29,7 @@ const locationTypesQuery = graphql`
 
 const useLocationTypes = () => {
   const locationTypesResponse = useGraphQL(
-    // $FlowFixMe (T62907961) Relay flow types
+    // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
     RelayEnvironment,
     locationTypesQuery,
     {},

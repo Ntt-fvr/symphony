@@ -40,70 +40,72 @@ export type ImageAttachment_img$key = {
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "ImageAttachment_img",
-  "type": "File",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "ImageAttachment_img",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "fileName",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "sizeInBytes",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "uploaded",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "fileType",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "storeKey",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "category",
       "args": null,
+      "kind": "ScalarField",
+      "name": "category",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "ImageDialog_img",
-      "args": null
+      "name": "ImageDialog_img"
     }
-  ]
+  ],
+  "type": "File",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '94d064d47a4a69874394dea293d6bf62';
+
 module.exports = node;

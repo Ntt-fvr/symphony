@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 7a7940224d59e10f2cb45e2716e1eadb
  */
 
 /* eslint-disable */
@@ -134,10 +133,9 @@ fragment EquipmentBreadcrumbs_equipment on Equipment {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "equipmentId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "equipmentId"
   }
 ],
 v1 = [
@@ -148,59 +146,59 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "visibleLabel",
   "args": null,
+  "kind": "ScalarField",
+  "name": "visibleLabel",
   "storageKey": null
 },
 v5 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "equipmentType",
-  "storageKey": null,
   "args": null,
   "concreteType": "EquipmentType",
+  "kind": "LinkedField",
+  "name": "equipmentType",
   "plural": false,
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "portDefinitions",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPortDefinition",
+      "kind": "LinkedField",
+      "name": "portDefinitions",
       "plural": true,
       "selections": [
         (v2/*: any*/),
         (v3/*: any*/),
         (v4/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "bandwidth",
           "args": null,
+          "kind": "ScalarField",
+          "name": "bandwidth",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 },
 v6 = [
   {
@@ -210,249 +208,254 @@ v6 = [
   }
 ],
 v7 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "equipmentType",
-  "storageKey": null,
   "args": null,
   "concreteType": "EquipmentType",
+  "kind": "LinkedField",
+  "name": "equipmentType",
   "plural": false,
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/)
-  ]
+  ],
+  "storageKey": null
 },
 v8 = [
   (v3/*: any*/),
   (v2/*: any*/)
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "PortsConnectDialogQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "PortsConnectDialogQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "equipment",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "Equipment",
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               (v5/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "descendentsIncludingSelf",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Equipment",
+                "kind": "LinkedField",
+                "name": "descendentsIncludingSelf",
                 "plural": true,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "ports",
-                    "storageKey": "ports(availableOnly:true)",
                     "args": (v6/*: any*/),
                     "concreteType": "EquipmentPort",
+                    "kind": "LinkedField",
+                    "name": "ports",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       {
+                        "args": null,
                         "kind": "FragmentSpread",
-                        "name": "AvailablePortsTable_ports",
-                        "args": null
+                        "name": "AvailablePortsTable_ports"
                       }
-                    ]
+                    ],
+                    "storageKey": "ports(availableOnly:true)"
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "type": "Equipment",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "PortsConnectDialogQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "equipment",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "Equipment",
             "selections": [
               (v3/*: any*/),
               (v5/*: any*/),
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "descendentsIncludingSelf",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "Equipment",
+                "kind": "LinkedField",
+                "name": "descendentsIncludingSelf",
                 "plural": true,
                 "selections": [
                   {
-                    "kind": "LinkedField",
                     "alias": null,
-                    "name": "ports",
-                    "storageKey": "ports(availableOnly:true)",
                     "args": (v6/*: any*/),
                     "concreteType": "EquipmentPort",
+                    "kind": "LinkedField",
+                    "name": "ports",
                     "plural": true,
                     "selections": [
                       (v2/*: any*/),
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "parentEquipment",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "Equipment",
+                        "kind": "LinkedField",
+                        "name": "parentEquipment",
                         "plural": false,
                         "selections": [
                           (v2/*: any*/),
                           (v3/*: any*/),
                           (v7/*: any*/),
                           {
-                            "kind": "LinkedField",
                             "alias": null,
-                            "name": "locationHierarchy",
-                            "storageKey": null,
                             "args": null,
                             "concreteType": "Location",
+                            "kind": "LinkedField",
+                            "name": "locationHierarchy",
                             "plural": true,
                             "selections": [
                               (v2/*: any*/),
                               (v3/*: any*/),
                               {
-                                "kind": "LinkedField",
                                 "alias": null,
-                                "name": "locationType",
-                                "storageKey": null,
                                 "args": null,
                                 "concreteType": "LocationType",
+                                "kind": "LinkedField",
+                                "name": "locationType",
                                 "plural": false,
-                                "selections": (v8/*: any*/)
+                                "selections": (v8/*: any*/),
+                                "storageKey": null
                               }
-                            ]
+                            ],
+                            "storageKey": null
                           },
                           {
-                            "kind": "LinkedField",
                             "alias": null,
-                            "name": "positionHierarchy",
-                            "storageKey": null,
                             "args": null,
                             "concreteType": "EquipmentPosition",
+                            "kind": "LinkedField",
+                            "name": "positionHierarchy",
                             "plural": true,
                             "selections": [
                               (v2/*: any*/),
                               {
-                                "kind": "LinkedField",
                                 "alias": null,
-                                "name": "definition",
-                                "storageKey": null,
                                 "args": null,
                                 "concreteType": "EquipmentPositionDefinition",
+                                "kind": "LinkedField",
+                                "name": "definition",
                                 "plural": false,
                                 "selections": [
                                   (v2/*: any*/),
                                   (v3/*: any*/),
                                   (v4/*: any*/)
-                                ]
+                                ],
+                                "storageKey": null
                               },
                               {
-                                "kind": "LinkedField",
                                 "alias": null,
-                                "name": "parentEquipment",
-                                "storageKey": null,
                                 "args": null,
                                 "concreteType": "Equipment",
+                                "kind": "LinkedField",
+                                "name": "parentEquipment",
                                 "plural": false,
                                 "selections": [
                                   (v2/*: any*/),
                                   (v3/*: any*/),
                                   (v7/*: any*/)
-                                ]
+                                ],
+                                "storageKey": null
                               }
-                            ]
+                            ],
+                            "storageKey": null
                           }
-                        ]
+                        ],
+                        "storageKey": null
                       },
                       {
-                        "kind": "LinkedField",
                         "alias": null,
-                        "name": "definition",
-                        "storageKey": null,
                         "args": null,
                         "concreteType": "EquipmentPortDefinition",
+                        "kind": "LinkedField",
+                        "name": "definition",
                         "plural": false,
                         "selections": [
                           (v2/*: any*/),
                           (v3/*: any*/),
                           {
-                            "kind": "LinkedField",
                             "alias": null,
-                            "name": "portType",
-                            "storageKey": null,
                             "args": null,
                             "concreteType": "EquipmentPortType",
+                            "kind": "LinkedField",
+                            "name": "portType",
                             "plural": false,
-                            "selections": (v8/*: any*/)
+                            "selections": (v8/*: any*/),
+                            "storageKey": null
                           },
                           (v4/*: any*/)
-                        ]
+                        ],
+                        "storageKey": null
                       }
-                    ]
+                    ],
+                    "storageKey": "ports(availableOnly:true)"
                   },
                   (v2/*: any*/)
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "type": "Equipment",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "PortsConnectDialogQuery",
+    "cacheID": "8fdde062488221d39c665a6e42f8024b",
     "id": null,
-    "text": "query PortsConnectDialogQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n        }\n      }\n      descendentsIncludingSelf {\n        ports(availableOnly: true) {\n          id\n          ...AvailablePortsTable_ports\n        }\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment AvailablePortsTable_ports on EquipmentPort {\n  id\n  parentEquipment {\n    id\n    name\n    ...EquipmentBreadcrumbs_equipment\n  }\n  definition {\n    id\n    name\n    portType {\n      name\n      id\n    }\n    visibleLabel\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "PortsConnectDialogQuery",
+    "operationKind": "query",
+    "text": "query PortsConnectDialogQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n        portDefinitions {\n          id\n          name\n          visibleLabel\n          bandwidth\n        }\n      }\n      descendentsIncludingSelf {\n        ports(availableOnly: true) {\n          id\n          ...AvailablePortsTable_ports\n        }\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment AvailablePortsTable_ports on EquipmentPort {\n  id\n  parentEquipment {\n    id\n    name\n    ...EquipmentBreadcrumbs_equipment\n  }\n  definition {\n    id\n    name\n    portType {\n      name\n      id\n    }\n    visibleLabel\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'c2720725715bdc302478913f6e21b303';
+
 module.exports = node;

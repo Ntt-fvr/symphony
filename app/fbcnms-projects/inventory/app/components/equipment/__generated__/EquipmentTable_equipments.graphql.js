@@ -50,102 +50,104 @@ export type EquipmentTable_equipments$key = $ReadOnlyArray<{
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "EquipmentTable_equipments",
-  "type": "Equipment",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "EquipmentTable_equipments",
   "selections": [
     (v0/*: any*/),
     (v1/*: any*/),
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "futureState",
       "args": null,
+      "kind": "ScalarField",
+      "name": "futureState",
       "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "equipmentType",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentType",
+      "kind": "LinkedField",
+      "name": "equipmentType",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/)
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "workOrder",
-      "storageKey": null,
       "args": null,
       "concreteType": "WorkOrder",
+      "kind": "LinkedField",
+      "name": "workOrder",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "status",
           "args": null,
+          "kind": "ScalarField",
+          "name": "status",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "device",
-      "storageKey": null,
       "args": null,
       "concreteType": "Device",
+      "kind": "LinkedField",
+      "name": "device",
       "plural": false,
       "selections": [
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "up",
           "args": null,
+          "kind": "ScalarField",
+          "name": "up",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "services",
-      "storageKey": null,
       "args": null,
       "concreteType": "Service",
+      "kind": "LinkedField",
+      "name": "services",
       "plural": true,
       "selections": [
         (v0/*: any*/)
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "Equipment",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'ad1708fe40398b5cab77735cbd8a6417';
+
 module.exports = node;

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 06dc9eb32f3b1b07af4ecc9112bc4675
  */
 
 /* eslint-disable */
@@ -85,10 +84,9 @@ query InventoryTreeNodeWithChildrenQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
@@ -99,60 +97,59 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "externalId",
   "args": null,
+  "kind": "ScalarField",
+  "name": "externalId",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 },
 v5 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "locationType",
-  "storageKey": null,
   "args": null,
   "concreteType": "LocationType",
+  "kind": "LinkedField",
+  "name": "locationType",
   "plural": false,
   "selections": [
     (v2/*: any*/),
     (v4/*: any*/)
-  ]
+  ],
+  "storageKey": null
 },
 v6 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "numChildren",
   "args": null,
+  "kind": "ScalarField",
+  "name": "numChildren",
   "storageKey": null
 },
 v7 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "siteSurveyNeeded",
   "args": null,
+  "kind": "ScalarField",
+  "name": "siteSurveyNeeded",
   "storageKey": null
 },
 v8 = {
-  "kind": "LinkedField",
   "alias": null,
-  "name": "children",
-  "storageKey": null,
   "args": null,
   "concreteType": "Location",
+  "kind": "LinkedField",
+  "name": "children",
   "plural": true,
   "selections": [
     (v2/*: any*/),
@@ -161,29 +158,26 @@ v8 = {
     (v5/*: any*/),
     (v6/*: any*/),
     (v7/*: any*/)
-  ]
+  ],
+  "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "InventoryTreeNodeWithChildrenQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "InventoryTreeNodeWithChildrenQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "Location",
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
@@ -192,37 +186,41 @@ return {
               (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/)
-            ]
+            ],
+            "type": "Location",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "InventoryTreeNodeWithChildrenQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "Location",
             "selections": [
               (v3/*: any*/),
               (v4/*: any*/),
@@ -230,21 +228,26 @@ return {
               (v6/*: any*/),
               (v7/*: any*/),
               (v8/*: any*/)
-            ]
+            ],
+            "type": "Location",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "InventoryTreeNodeWithChildrenQuery",
+    "cacheID": "f2a3ee030a5c930d342ca595e38ceb80",
     "id": null,
-    "text": "query InventoryTreeNodeWithChildrenQuery(\n  $id: ID!\n) {\n  location: node(id: $id) {\n    __typename\n    ... on Location {\n      id\n      externalId\n      name\n      locationType {\n        id\n        name\n      }\n      numChildren\n      siteSurveyNeeded\n      children {\n        id\n        externalId\n        name\n        locationType {\n          id\n          name\n        }\n        numChildren\n        siteSurveyNeeded\n      }\n    }\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "InventoryTreeNodeWithChildrenQuery",
+    "operationKind": "query",
+    "text": "query InventoryTreeNodeWithChildrenQuery(\n  $id: ID!\n) {\n  location: node(id: $id) {\n    __typename\n    ... on Location {\n      id\n      externalId\n      name\n      locationType {\n        id\n        name\n      }\n      numChildren\n      siteSurveyNeeded\n      children {\n        id\n        externalId\n        name\n        locationType {\n          id\n          name\n        }\n        numChildren\n        siteSurveyNeeded\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '76a5d4ca2dafaf7f713fd3916fc4420a';
+
 module.exports = node;

@@ -52,98 +52,100 @@ export type EquipmentPropertiesCard_position$key = {
 
 const node/*: ReaderFragment*/ = (function(){
 var v0 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v1 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "name",
   "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "EquipmentPropertiesCard_position",
-  "type": "EquipmentPosition",
   "metadata": {
     "mask": false
   },
-  "argumentDefinitions": [],
+  "name": "EquipmentPropertiesCard_position",
   "selections": [
     (v0/*: any*/),
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "definition",
-      "storageKey": null,
       "args": null,
       "concreteType": "EquipmentPositionDefinition",
+      "kind": "LinkedField",
+      "name": "definition",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "index",
           "args": null,
+          "kind": "ScalarField",
+          "name": "index",
           "storageKey": null
         },
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "visibleLabel",
           "args": null,
+          "kind": "ScalarField",
+          "name": "visibleLabel",
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
-      "kind": "LinkedField",
       "alias": null,
-      "name": "attachedEquipment",
-      "storageKey": null,
       "args": null,
       "concreteType": "Equipment",
+      "kind": "LinkedField",
+      "name": "attachedEquipment",
       "plural": false,
       "selections": [
         (v0/*: any*/),
         (v1/*: any*/),
         {
-          "kind": "ScalarField",
           "alias": null,
-          "name": "futureState",
           "args": null,
+          "kind": "ScalarField",
+          "name": "futureState",
           "storageKey": null
         },
         {
-          "kind": "LinkedField",
           "alias": null,
-          "name": "workOrder",
-          "storageKey": null,
           "args": null,
           "concreteType": "WorkOrder",
+          "kind": "LinkedField",
+          "name": "workOrder",
           "plural": false,
           "selections": [
             (v0/*: any*/),
             {
-              "kind": "ScalarField",
               "alias": null,
-              "name": "status",
               "args": null,
+              "kind": "ScalarField",
+              "name": "status",
               "storageKey": null
             }
-          ]
+          ],
+          "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     }
-  ]
+  ],
+  "type": "EquipmentPosition",
+  "abstractKey": null
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'd1e6f2ef9ef3182e98188066491a9856';
+
 module.exports = node;

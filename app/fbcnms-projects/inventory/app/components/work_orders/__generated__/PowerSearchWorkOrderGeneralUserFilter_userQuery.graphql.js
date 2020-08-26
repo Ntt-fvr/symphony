@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 20694d2e138114c652f15b438b8aace0
  */
 
 /* eslint-disable */
@@ -88,18 +87,14 @@ query PowerSearchWorkOrderGeneralUserFilter_userQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "filters",
-    "type": "[UserFilterInput!]!",
-    "defaultValue": null
+    "name": "filters"
   }
 ],
 v1 = [
   {
-    "kind": "LinkedField",
     "alias": null,
-    "name": "users",
-    "storageKey": null,
     "args": [
       {
         "kind": "Variable",
@@ -113,72 +108,78 @@ v1 = [
       }
     ],
     "concreteType": "UserConnection",
+    "kind": "LinkedField",
+    "name": "users",
     "plural": false,
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": null,
-        "name": "edges",
-        "storageKey": null,
         "args": null,
         "concreteType": "UserEdge",
+        "kind": "LinkedField",
+        "name": "edges",
         "plural": true,
         "selections": [
           {
-            "kind": "LinkedField",
             "alias": null,
-            "name": "node",
-            "storageKey": null,
             "args": null,
             "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "node",
             "plural": false,
             "selections": [
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "id",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "id",
                 "storageKey": null
               },
               {
-                "kind": "ScalarField",
                 "alias": null,
-                "name": "email",
                 "args": null,
+                "kind": "ScalarField",
+                "name": "email",
                 "storageKey": null
               }
-            ]
+            ],
+            "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "PowerSearchWorkOrderGeneralUserFilter_userQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "PowerSearchWorkOrderGeneralUserFilter_userQuery",
+    "selections": (v1/*: any*/),
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "PowerSearchWorkOrderGeneralUserFilter_userQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "query",
-    "name": "PowerSearchWorkOrderGeneralUserFilter_userQuery",
+    "cacheID": "34a9f9096cfb7d28bfb720f8ce62afa8",
     "id": null,
-    "text": "query PowerSearchWorkOrderGeneralUserFilter_userQuery(\n  $filters: [UserFilterInput!]!\n) {\n  users(first: 10, filterBy: $filters) {\n    edges {\n      node {\n        id\n        email\n      }\n    }\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "PowerSearchWorkOrderGeneralUserFilter_userQuery",
+    "operationKind": "query",
+    "text": "query PowerSearchWorkOrderGeneralUserFilter_userQuery(\n  $filters: [UserFilterInput!]!\n) {\n  users(first: 10, filterBy: $filters) {\n    edges {\n      node {\n        id\n        email\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '32481b562d44f21de3acd5b2b9325a8a';
+
 module.exports = node;

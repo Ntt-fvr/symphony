@@ -68,7 +68,7 @@ const styles = () => ({
 
 type Props = {
   file: FileAttachment_file,
-  onDocumentDeleted: (file: FileAttachment_file) => void,
+  onDocumentDeleted: (file: $ElementType<FileAttachment_file, number>) => void,
 } & WithStyles<typeof styles>;
 
 type State = {

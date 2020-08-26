@@ -180,6 +180,7 @@ const LocationCoverageMapTab = (props: Props) => {
             {selectedMap === MAP_WIFI ? (
               <LocationWiFiScanCoverageMap
                 location={location}
+                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                 wifiData={props.location.wifiData}
                 circleLayerStyles={wifiCircleLayerStyles}
                 selector={getSelector()}
@@ -197,6 +198,7 @@ const LocationCoverageMapTab = (props: Props) => {
             ) : (
               <LocationCellScanCoverageMap
                 location={location}
+                // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
                 cellData={props.location.cellData}
                 circleLayerStyles={cellCircleLayerStyles}
                 heatmapLayerStyles={cellHeatmapLayerStyles}

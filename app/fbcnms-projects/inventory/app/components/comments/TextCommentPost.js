@@ -9,6 +9,8 @@
  */
 
 import type {TextCommentPost_comment} from './__generated__/TextCommentPost_comment.graphql.js';
+import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
+import type {WithSnackbarProps} from 'notistack';
 
 import ActivityCommentsIcon from './ActivityCommentsIcon';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
@@ -23,7 +25,8 @@ import {withSnackbar} from 'notistack';
 
 type Props = {
   comment: TextCommentPost_comment,
-};
+} & WithAlert &
+  WithSnackbarProps;
 
 const useStyles = makeStyles(() => ({
   textCommentPost: {

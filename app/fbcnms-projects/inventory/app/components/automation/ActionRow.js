@@ -59,6 +59,7 @@ type Props = {|
 export default function ActionRow(props: Props) {
   const {trigger, ruleAction, onChange} = props;
   const classes = useStyles();
+  // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
   const data: ActionRow_data = useFragment<ActionRow_data>(query, trigger);
 
   const defaultRuleAction: RuleAction = {

@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash d7fd158f964542694e7512b8d5bfba1c
  */
 
 /* eslint-disable */
@@ -39,17 +38,14 @@ mutation DeletePermissionsPolicyMutation(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "id",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "id"
   }
 ],
 v1 = [
   {
-    "kind": "ScalarField",
     "alias": null,
-    "name": "deletePermissionsPolicy",
     "args": [
       {
         "kind": "Variable",
@@ -57,34 +53,39 @@ v1 = [
         "variableName": "id"
       }
     ],
+    "kind": "ScalarField",
+    "name": "deletePermissionsPolicy",
     "storageKey": null
   }
 ];
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "DeletePermissionsPolicyMutation",
-    "type": "Mutation",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
-    "selections": (v1/*: any*/)
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "DeletePermissionsPolicyMutation",
+    "selections": (v1/*: any*/),
+    "type": "Mutation",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeletePermissionsPolicyMutation",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
-    "operationKind": "mutation",
-    "name": "DeletePermissionsPolicyMutation",
+    "cacheID": "86d74c4ec8af552134ed5cdedcdaf8f1",
     "id": null,
-    "text": "mutation DeletePermissionsPolicyMutation(\n  $id: ID!\n) {\n  deletePermissionsPolicy(id: $id)\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "DeletePermissionsPolicyMutation",
+    "operationKind": "mutation",
+    "text": "mutation DeletePermissionsPolicyMutation(\n  $id: ID!\n) {\n  deletePermissionsPolicy(id: $id)\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '14f797ed5eccde6161e1583e51596f09';
+
 module.exports = node;

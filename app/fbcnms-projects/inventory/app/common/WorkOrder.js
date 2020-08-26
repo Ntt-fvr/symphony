@@ -125,10 +125,12 @@ export type WorkOrderTemplateNode = $Exact<NamedNode>;
 export function useWorkOrderTemplateNodes(): $ReadOnlyArray<WorkOrderTemplateNode> {
   const response = useLazyLoadQuery<WorkOrderTemplateNodesQuery>(
     workOrderTemplateNodesQuery,
+    {},
   );
   const workOrderTemplatesData = response.workOrderTypes?.edges || [];
   const workOrderTemplates = workOrderTemplatesData
     .map(p => p.node)
     .filter(Boolean);
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
   return workOrderTemplates;
 }

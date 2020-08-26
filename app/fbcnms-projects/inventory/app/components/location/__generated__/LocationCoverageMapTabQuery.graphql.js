@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 1931547eb5dd8b93d17fa5f5bd47bafc
  */
 
 /* eslint-disable */
@@ -84,10 +83,9 @@ fragment LocationWiFiScanCoverageMap_wifiData on SurveyWiFiScan {
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "locationId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "locationId"
   }
 ],
 v1 = [
@@ -98,232 +96,237 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "latitude",
   "args": null,
+  "kind": "ScalarField",
+  "name": "latitude",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "longitude",
   "args": null,
+  "kind": "ScalarField",
+  "name": "longitude",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "LocationCoverageMapTabQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "LocationCoverageMapTabQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "Location",
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "cellData",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "SurveyCellScan",
+                "kind": "LinkedField",
+                "name": "cellData",
                 "plural": true,
                 "selections": [
                   {
+                    "args": null,
                     "kind": "FragmentSpread",
-                    "name": "LocationCellScanCoverageMap_cellData",
-                    "args": null
+                    "name": "LocationCellScanCoverageMap_cellData"
                   }
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "wifiData",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "SurveyWiFiScan",
+                "kind": "LinkedField",
+                "name": "wifiData",
                 "plural": true,
                 "selections": [
                   {
+                    "args": null,
                     "kind": "FragmentSpread",
-                    "name": "LocationWiFiScanCoverageMap_wifiData",
-                    "args": null
+                    "name": "LocationWiFiScanCoverageMap_wifiData"
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "type": "Location",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "LocationCoverageMapTabQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "location",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "Location",
             "selections": [
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "cellData",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "SurveyCellScan",
+                "kind": "LinkedField",
+                "name": "cellData",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "networkType",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "signalStrength",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "mobileCountryCode",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "mobileNetworkCode",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "operator",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "operator",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               },
               {
-                "kind": "LinkedField",
                 "alias": null,
-                "name": "wifiData",
-                "storageKey": null,
                 "args": null,
                 "concreteType": "SurveyWiFiScan",
+                "kind": "LinkedField",
+                "name": "wifiData",
                 "plural": true,
                 "selections": [
                   (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "frequency",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "channel",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "bssid",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "ssid",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "strength",
-                    "args": null,
                     "storageKey": null
                   },
                   {
-                    "kind": "ScalarField",
                     "alias": null,
-                    "name": "band",
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "band",
                     "storageKey": null
                   }
-                ]
+                ],
+                "storageKey": null
               }
-            ]
+            ],
+            "type": "Location",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "LocationCoverageMapTabQuery",
+    "cacheID": "04d57b75c838f99279a1361c2bdbac1d",
     "id": null,
-    "text": "query LocationCoverageMapTabQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      cellData {\n        ...LocationCellScanCoverageMap_cellData\n        id\n      }\n      wifiData {\n        ...LocationWiFiScanCoverageMap_wifiData\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment LocationCellScanCoverageMap_cellData on SurveyCellScan {\n  id\n  latitude\n  longitude\n  networkType\n  signalStrength\n  mobileCountryCode\n  mobileNetworkCode\n  operator\n}\n\nfragment LocationWiFiScanCoverageMap_wifiData on SurveyWiFiScan {\n  id\n  latitude\n  longitude\n  frequency\n  channel\n  bssid\n  ssid\n  strength\n  band\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "LocationCoverageMapTabQuery",
+    "operationKind": "query",
+    "text": "query LocationCoverageMapTabQuery(\n  $locationId: ID!\n) {\n  location: node(id: $locationId) {\n    __typename\n    ... on Location {\n      cellData {\n        ...LocationCellScanCoverageMap_cellData\n        id\n      }\n      wifiData {\n        ...LocationWiFiScanCoverageMap_wifiData\n        id\n      }\n    }\n    id\n  }\n}\n\nfragment LocationCellScanCoverageMap_cellData on SurveyCellScan {\n  id\n  latitude\n  longitude\n  networkType\n  signalStrength\n  mobileCountryCode\n  mobileNetworkCode\n  operator\n}\n\nfragment LocationWiFiScanCoverageMap_wifiData on SurveyWiFiScan {\n  id\n  latitude\n  longitude\n  frequency\n  channel\n  bssid\n  ssid\n  strength\n  band\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '16ca9fb7b04e14fdb62144f24b5ab0e5';
+
 module.exports = node;

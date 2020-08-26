@@ -34,35 +34,37 @@ export type DynamicPropertyTypesGrid_propertyTypes$key = $ReadOnlyArray<{
 
 
 const node/*: ReaderFragment*/ = {
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "name": "DynamicPropertyTypesGrid_propertyTypes",
-  "type": "PropertyType",
   "metadata": {
     "plural": true
   },
-  "argumentDefinitions": [],
+  "name": "DynamicPropertyTypesGrid_propertyTypes",
   "selections": [
     {
-      "kind": "ScalarField",
       "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "id",
-      "args": null,
       "storageKey": null
     },
     {
-      "kind": "ScalarField",
       "alias": null,
-      "name": "index",
       "args": null,
+      "kind": "ScalarField",
+      "name": "index",
       "storageKey": null
     },
     {
+      "args": null,
       "kind": "FragmentSpread",
-      "name": "PropertyTypeFormField_propertyType",
-      "args": null
+      "name": "PropertyTypeFormField_propertyType"
     }
-  ]
+  ],
+  "type": "PropertyType",
+  "abstractKey": null
 };
 // prettier-ignore
 (node/*: any*/).hash = '199f86b427d215c1e7c8d70543451535';
+
 module.exports = node;

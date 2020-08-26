@@ -13,6 +13,7 @@ import NewCommentInput from './NewCommentInput';
 import type {CommentEntity} from '../../mutations/__generated__/AddCommentMutation.graphql';
 import type {CommentsActivitiesBox_activities} from './__generated__/CommentsActivitiesBox_activities.graphql.js';
 import type {CommentsActivitiesBox_comments} from './__generated__/CommentsActivitiesBox_comments.graphql.js';
+import type {WithSnackbarProps} from 'notistack';
 
 import React from 'react';
 import classNames from 'classnames';
@@ -29,7 +30,7 @@ type Props = {
   boxElementsClass?: string,
   commentsLogClass?: string,
   newCommentInputClass?: string,
-};
+} & WithSnackbarProps;
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -66,6 +67,7 @@ const CommentsActivitiesBox = (props: Props) => {
   );
 };
 
+// $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
 export default withAlert(
   withSnackbar(
     createFragmentContainer(CommentsActivitiesBox, {
