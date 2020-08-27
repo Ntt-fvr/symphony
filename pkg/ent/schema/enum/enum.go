@@ -166,3 +166,82 @@ func (fs *FutureState) UnmarshalGQL(v interface{}) error {
 func (fs FutureState) MarshalGQL(w io.Writer) {
 	_ = MarshalGQL(w, fs)
 }
+
+// WorkOrderStatus is the status of a work order.
+type WorkOrderStatus int
+
+// Possible work order status options.
+const (
+	WorkOrderStatusPlanned    WorkOrderStatus = 100
+	WorkOrderStatusInProgress WorkOrderStatus = 200
+	WorkOrderStatusPaused     WorkOrderStatus = 300
+	WorkOrderStatusSubmitted  WorkOrderStatus = 400
+	WorkOrderStatusClosed     WorkOrderStatus = 500
+	WorkOrderStatusBlocked    WorkOrderStatus = 600
+)
+
+// ValidateWorkOrderStatus validates a raw value of a work order status.
+func ValidateWorkOrderStatus(v int) error {
+	switch WorkOrderStatus(v) {
+	case WorkOrderStatusPlanned,
+		WorkOrderStatusInProgress,
+		WorkOrderStatusPaused,
+		WorkOrderStatusSubmitted,
+		WorkOrderStatusClosed,
+		WorkOrderStatusBlocked:
+		return nil
+	default:
+		return fmt.Errorf("%d is not a valid work order status", v)
+	}
+}
+
+// String returns the textual representation of a work order status.
+func (wos WorkOrderStatus) String() string {
+	switch wos {
+	case WorkOrderStatusPlanned:
+		return "PLANNED"
+	case WorkOrderStatusInProgress:
+		return "IN_PROGRESS"
+	case WorkOrderStatusPaused:
+		return "PAUSED"
+	case WorkOrderStatusSubmitted:
+		return "SUBMITTED"
+	case WorkOrderStatusClosed:
+		return "CLOSED"
+	case WorkOrderStatusBlocked:
+		return "BLOCKED"
+	default:
+		return ""
+	}
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (wos *WorkOrderStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return errors.New("enums must be strings")
+	}
+
+	switch str {
+	case "PLANNED":
+		*wos = WorkOrderStatusPlanned
+	case "IN_PROGRESS", "PENDING":
+		*wos = WorkOrderStatusInProgress
+	case "PAUSED":
+		*wos = WorkOrderStatusPaused
+	case "SUBMITTED":
+		*wos = WorkOrderStatusSubmitted
+	case "CLOSED", "DONE":
+		*wos = WorkOrderStatusClosed
+	case "BLOCKED":
+		*wos = WorkOrderStatusBlocked
+	default:
+		return fmt.Errorf("%s is not a valid WorkOrderStatus", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaller interface.
+func (wos WorkOrderStatus) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, wos)
+}
