@@ -123,6 +123,6 @@ func TestValidateWorkOrderStatus(t *testing.T) {
 		err := enum.ValidateWorkOrderStatus(int(n))
 		require.NoError(t, err)
 	}
-	err := enum.ValidateWorkOrderStatus(22)
-	require.EqualError(t, err, "22 is not a valid work order status")
+	err := enum.ValidateWorkOrderStatus(1022)
+	require.EqualError(t, err, "1022 is not a valid work order status")
 }
