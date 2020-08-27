@@ -115,6 +115,7 @@ func TestValidateWorkOrderStatus(t *testing.T) {
 	workOrderStatusOptions := []enum.WorkOrderStatus{
 		enum.WorkOrderStatusPlanned,
 		enum.WorkOrderStatusInProgress,
+		enum.WorkOrderStatusPaused,
 		enum.WorkOrderStatusSubmitted,
 		enum.WorkOrderStatusClosed,
 		enum.WorkOrderStatusBlocked,

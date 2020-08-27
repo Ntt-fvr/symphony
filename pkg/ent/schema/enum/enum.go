@@ -174,9 +174,10 @@ type WorkOrderStatus int
 const (
 	WorkOrderStatusPlanned    WorkOrderStatus = 100
 	WorkOrderStatusInProgress WorkOrderStatus = 200
-	WorkOrderStatusSubmitted  WorkOrderStatus = 300
-	WorkOrderStatusClosed     WorkOrderStatus = 400
-	WorkOrderStatusBlocked    WorkOrderStatus = 500
+	WorkOrderStatusPaused     WorkOrderStatus = 300
+	WorkOrderStatusSubmitted  WorkOrderStatus = 400
+	WorkOrderStatusClosed     WorkOrderStatus = 500
+	WorkOrderStatusBlocked    WorkOrderStatus = 600
 )
 
 // ValidateWorkOrderStatus validates a raw value of a work order status.
@@ -184,6 +185,7 @@ func ValidateWorkOrderStatus(v int) error {
 	switch WorkOrderStatus(v) {
 	case WorkOrderStatusPlanned,
 		WorkOrderStatusInProgress,
+		WorkOrderStatusPaused,
 		WorkOrderStatusSubmitted,
 		WorkOrderStatusClosed,
 		WorkOrderStatusBlocked:
@@ -200,6 +202,8 @@ func (wos WorkOrderStatus) String() string {
 		return "PLANNED"
 	case WorkOrderStatusInProgress:
 		return "IN_PROGRESS"
+	case WorkOrderStatusPaused:
+		return "PAUSED"
 	case WorkOrderStatusSubmitted:
 		return "SUBMITTED"
 	case WorkOrderStatusClosed:
@@ -223,6 +227,8 @@ func (wos *WorkOrderStatus) UnmarshalGQL(v interface{}) error {
 		*wos = WorkOrderStatusPlanned
 	case "IN_PROGRESS", "PENDING":
 		*wos = WorkOrderStatusInProgress
+	case "PAUSED":
+		*wos = WorkOrderStatusPaused
 	case "SUBMITTED":
 		*wos = WorkOrderStatusSubmitted
 	case "CLOSED", "DONE":
