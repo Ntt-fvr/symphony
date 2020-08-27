@@ -6,7 +6,6 @@
 
  /**
  * @flow
- * @relayHash 53eaf8bef87b9c71bd26ffbb84620a53
  */
 
 /* eslint-disable */
@@ -52,10 +51,9 @@ query CSVFileExportQuery(
 const node/*: ConcreteRequest*/ = (function(){
 var v0 = [
   {
+    "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "taskId",
-    "type": "ID!",
-    "defaultValue": null
+    "name": "taskId"
   }
 ],
 v1 = [
@@ -66,100 +64,105 @@ v1 = [
   }
 ],
 v2 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "id",
   "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "status",
   "args": null,
+  "kind": "ScalarField",
+  "name": "status",
   "storageKey": null
 },
 v4 = {
-  "kind": "ScalarField",
   "alias": null,
-  "name": "progress",
   "args": null,
+  "kind": "ScalarField",
+  "name": "progress",
   "storageKey": null
 };
 return {
-  "kind": "Request",
   "fragment": {
-    "kind": "Fragment",
-    "name": "CSVFileExportQuery",
-    "type": "Query",
-    "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "CSVFileExportQuery",
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "task",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
             "kind": "InlineFragment",
-            "type": "ExportTask",
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/)
-            ]
+            ],
+            "type": "ExportTask",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
-    ]
+    ],
+    "type": "Query",
+    "abstractKey": null
   },
+  "kind": "Request",
   "operation": {
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "CSVFileExportQuery",
-    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
-        "kind": "LinkedField",
         "alias": "task",
-        "name": "node",
-        "storageKey": null,
         "args": (v1/*: any*/),
         "concreteType": null,
+        "kind": "LinkedField",
+        "name": "node",
         "plural": false,
         "selections": [
           {
-            "kind": "ScalarField",
             "alias": null,
-            "name": "__typename",
             "args": null,
+            "kind": "ScalarField",
+            "name": "__typename",
             "storageKey": null
           },
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
-            "type": "ExportTask",
             "selections": [
               (v3/*: any*/),
               (v4/*: any*/)
-            ]
+            ],
+            "type": "ExportTask",
+            "abstractKey": null
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "operationKind": "query",
-    "name": "CSVFileExportQuery",
+    "cacheID": "1ff41b814e8e70f0e471318fceece877",
     "id": null,
-    "text": "query CSVFileExportQuery(\n  $taskId: ID!\n) {\n  task: node(id: $taskId) {\n    __typename\n    ... on ExportTask {\n      id\n      status\n      progress\n    }\n    id\n  }\n}\n",
-    "metadata": {}
+    "metadata": {},
+    "name": "CSVFileExportQuery",
+    "operationKind": "query",
+    "text": "query CSVFileExportQuery(\n  $taskId: ID!\n) {\n  task: node(id: $taskId) {\n    __typename\n    ... on ExportTask {\n      id\n      status\n      progress\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '0e0cc7aeb35079d37a437ccd497243dc';
+
 module.exports = node;
