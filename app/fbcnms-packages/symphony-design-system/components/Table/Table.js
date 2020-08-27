@@ -118,7 +118,6 @@ export type TableVariantTypes = $Keys<typeof TABLE_VARIANT_TYPES>;
 export type TableDesignProps = $ReadOnly<{|
   showSelection?: boolean,
   className?: string,
-  stretchHeight?: boolean,
   variant?: TableVariantTypes,
   dataRowsSeparator?: RowsSeparationTypes,
   dataRowClassName?: string,
@@ -169,7 +168,6 @@ const Table = <T>(props: Props<T>) => {
     onSortChanged,
     dataRowClassName,
     dataRowsSeparator,
-    stretchHeight = false,
     detailsCard,
     resizableColumns = false,
     paginationSettings,
@@ -208,14 +206,10 @@ const Table = <T>(props: Props<T>) => {
     false,
   );
 
-  const renderChildren = (width: number, height: ?number) => (
+  const renderChildren = (width: number) => (
     <div
       className={classNames(classes.root, classes[variant], className)}
-      style={{
-        width,
-        height: stretchHeight ? height : 'auto',
-        maxHeight: stretchHeight ? 'none' : '100%',
-      }}>
+      style={{width}}>
       <div
         className={classNames(classes.tableContainer, {
           [classes.expanded]: !detailsCard,
@@ -261,8 +255,8 @@ const Table = <T>(props: Props<T>) => {
   );
 
   return (
-    <AutoSizer disableHeight={stretchHeight === false}>
-      {({width, height}: {width: number, height: ?number}) => (
+    <AutoSizer disableHeight={true}>
+      {({width}: {width: number}) => (
         <TableContextProvider
           width={width}
           settings={contextValue}
@@ -280,10 +274,10 @@ const Table = <T>(props: Props<T>) => {
                 onActiveChanged={onActiveRowIdChanged}
                 selectedIds={selectedIds ?? []}
                 onSelectionChanged={onSelectionChanged}>
-                {renderChildren(width, height)}
+                {renderChildren(width)}
               </TableSelectionContextProvider>
             ) : (
-              renderChildren(width, height)
+              renderChildren(width)
             )}
           </TablePaginationContextProvider>
         </TableContextProvider>

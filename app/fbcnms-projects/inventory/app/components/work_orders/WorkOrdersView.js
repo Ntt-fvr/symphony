@@ -151,7 +151,6 @@ const WorkOrdersView = (props: Props) => {
             }
           : undefined
       }
-      stretchHeight={true}
       columns={[
         {
           key: 'name',
