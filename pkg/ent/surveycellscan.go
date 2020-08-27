@@ -67,6 +67,12 @@ type SurveyCellScan struct {
 	Latitude *float64 `json:"latitude,omitempty"`
 	// Longitude holds the value of the "longitude" field.
 	Longitude *float64 `json:"longitude,omitempty"`
+	// Altitude holds the value of the "altitude" field.
+	Altitude *float64 `json:"altitude,omitempty"`
+	// Heading holds the value of the "heading" field.
+	Heading *float64 `json:"heading,omitempty"`
+	// Rssi holds the value of the "rssi" field.
+	Rssi *float64 `json:"rssi,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SurveyCellScanQuery when eager-loading is set.
 	Edges                            SurveyCellScanEdges `json:"edges"`
@@ -156,6 +162,9 @@ func (*SurveyCellScan) scanValues() []interface{} {
 		&sql.NullInt64{},   // uarfcn
 		&sql.NullFloat64{}, // latitude
 		&sql.NullFloat64{}, // longitude
+		&sql.NullFloat64{}, // altitude
+		&sql.NullFloat64{}, // heading
+		&sql.NullFloat64{}, // rssi
 	}
 }
 
@@ -308,7 +317,25 @@ func (scs *SurveyCellScan) assignValues(values ...interface{}) error {
 		scs.Longitude = new(float64)
 		*scs.Longitude = value.Float64
 	}
-	values = values[22:]
+	if value, ok := values[22].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field altitude", values[22])
+	} else if value.Valid {
+		scs.Altitude = new(float64)
+		*scs.Altitude = value.Float64
+	}
+	if value, ok := values[23].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field heading", values[23])
+	} else if value.Valid {
+		scs.Heading = new(float64)
+		*scs.Heading = value.Float64
+	}
+	if value, ok := values[24].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field rssi", values[24])
+	} else if value.Valid {
+		scs.Rssi = new(float64)
+		*scs.Rssi = value.Float64
+	}
+	values = values[25:]
 	if len(values) == len(surveycellscan.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field survey_cell_scan_checklist_item", value)
@@ -448,6 +475,18 @@ func (scs *SurveyCellScan) String() string {
 	}
 	if v := scs.Longitude; v != nil {
 		builder.WriteString(", longitude=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Altitude; v != nil {
+		builder.WriteString(", altitude=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Heading; v != nil {
+		builder.WriteString(", heading=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := scs.Rssi; v != nil {
+		builder.WriteString(", rssi=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

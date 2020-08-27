@@ -64,6 +64,12 @@ const (
 	FieldLatitude = "latitude"
 	// FieldLongitude holds the string denoting the longitude field in the database.
 	FieldLongitude = "longitude"
+	// FieldAltitude holds the string denoting the altitude field in the database.
+	FieldAltitude = "altitude"
+	// FieldHeading holds the string denoting the heading field in the database.
+	FieldHeading = "heading"
+	// FieldRssi holds the string denoting the rssi field in the database.
+	FieldRssi = "rssi"
 
 	// EdgeChecklistItem holds the string denoting the checklist_item edge name in mutations.
 	EdgeChecklistItem = "checklist_item"
@@ -122,6 +128,9 @@ var Columns = []string{
 	FieldUarfcn,
 	FieldLatitude,
 	FieldLongitude,
+	FieldAltitude,
+	FieldHeading,
+	FieldRssi,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the SurveyCellScan type.

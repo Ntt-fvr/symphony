@@ -96,6 +96,18 @@ func (SurveyCellScan) Fields() []ent.Field {
 			Comment("Longitude of where cell data was collected").
 			Optional().
 			Nillable(),
+		field.Float("altitude").
+			Comment("Altitude in meters of where cell data was collected.  Missing value implies ground level.").
+			Optional().
+			Nillable(),
+		field.Float("heading").
+			Comment("Heading in degrees of where directional antenna was pointing.  Missing value implies omni-directional antenna.").
+			Optional().
+			Nillable(),
+		field.Float("rssi").
+			Comment("Received Signal Strength Indicator in dBm.").
+			Optional().
+			Nillable(),
 	}
 }
 

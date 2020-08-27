@@ -319,6 +319,48 @@ func (scsc *SurveyCellScanCreate) SetNillableLongitude(f *float64) *SurveyCellSc
 	return scsc
 }
 
+// SetAltitude sets the altitude field.
+func (scsc *SurveyCellScanCreate) SetAltitude(f float64) *SurveyCellScanCreate {
+	scsc.mutation.SetAltitude(f)
+	return scsc
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (scsc *SurveyCellScanCreate) SetNillableAltitude(f *float64) *SurveyCellScanCreate {
+	if f != nil {
+		scsc.SetAltitude(*f)
+	}
+	return scsc
+}
+
+// SetHeading sets the heading field.
+func (scsc *SurveyCellScanCreate) SetHeading(f float64) *SurveyCellScanCreate {
+	scsc.mutation.SetHeading(f)
+	return scsc
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (scsc *SurveyCellScanCreate) SetNillableHeading(f *float64) *SurveyCellScanCreate {
+	if f != nil {
+		scsc.SetHeading(*f)
+	}
+	return scsc
+}
+
+// SetRssi sets the rssi field.
+func (scsc *SurveyCellScanCreate) SetRssi(f float64) *SurveyCellScanCreate {
+	scsc.mutation.SetRssi(f)
+	return scsc
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (scsc *SurveyCellScanCreate) SetNillableRssi(f *float64) *SurveyCellScanCreate {
+	if f != nil {
+		scsc.SetRssi(*f)
+	}
+	return scsc
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (scsc *SurveyCellScanCreate) SetChecklistItemID(id int) *SurveyCellScanCreate {
 	scsc.mutation.SetChecklistItemID(id)
@@ -644,6 +686,30 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Column: surveycellscan.FieldLongitude,
 		})
 		scs.Longitude = &value
+	}
+	if value, ok := scsc.mutation.Altitude(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldAltitude,
+		})
+		scs.Altitude = &value
+	}
+	if value, ok := scsc.mutation.Heading(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldHeading,
+		})
+		scs.Heading = &value
+	}
+	if value, ok := scsc.mutation.Rssi(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldRssi,
+		})
+		scs.Rssi = &value
 	}
 	if nodes := scsc.mutation.ChecklistItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

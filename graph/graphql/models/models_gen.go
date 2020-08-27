@@ -742,6 +742,9 @@ type SurveyCellScanData struct {
 	Uarfcn                *int                       `json:"uarfcn"`
 	Latitude              *float64                   `json:"latitude"`
 	Longitude             *float64                   `json:"longitude"`
+	Altitude              *float64                   `json:"altitude"`
+	Heading               *float64                   `json:"heading"`
+	Rssi                  *float64                   `json:"rssi"`
 }
 
 type SurveyCreateData struct {
@@ -805,6 +808,9 @@ type SurveyWiFiScanData struct {
 	Capabilities *string  `json:"capabilities"`
 	Latitude     *float64 `json:"latitude"`
 	Longitude    *float64 `json:"longitude"`
+	Altitude     *float64 `json:"altitude"`
+	Heading      *float64 `json:"heading"`
+	Rssi         *float64 `json:"rssi"`
 }
 
 type TechnicianCheckListItemInput struct {

@@ -93,6 +93,9 @@ export type SurveyWiFiScanData = {|
   capabilities?: ?string,
   latitude?: ?number,
   longitude?: ?number,
+  altitude?: ?number,
+  heading?: ?number,
+  rssi?: ?number,
 |};
 export type SurveyCellScanData = {|
   networkType: CellularNetworkType,
@@ -115,6 +118,9 @@ export type SurveyCellScanData = {|
   uarfcn?: ?number,
   latitude?: ?number,
   longitude?: ?number,
+  altitude?: ?number,
+  heading?: ?number,
+  rssi?: ?number,
 |};
 export type CheckListCategoryInput = {|
   id?: ?string,

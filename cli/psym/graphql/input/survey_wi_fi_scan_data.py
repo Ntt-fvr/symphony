@@ -23,4 +23,7 @@ class SurveyWiFiScanData(DataClassJsonMixin):
     capabilities: Optional[str] = None
     latitude: Optional[Number] = None
     longitude: Optional[Number] = None
+    altitude: Optional[Number] = None
+    heading: Optional[Number] = None
+    rssi: Optional[Number] = None
 

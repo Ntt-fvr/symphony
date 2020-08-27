@@ -3746,7 +3746,7 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     scs.ID,
 		Type:   "SurveyCellScan",
-		Fields: make([]*Field, 22),
+		Fields: make([]*Field, 25),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -3924,6 +3924,30 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[21] = &Field{
 		Type:  "float64",
 		Name:  "longitude",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(scs.Altitude); err != nil {
+		return nil, err
+	}
+	node.Fields[22] = &Field{
+		Type:  "float64",
+		Name:  "altitude",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(scs.Heading); err != nil {
+		return nil, err
+	}
+	node.Fields[23] = &Field{
+		Type:  "float64",
+		Name:  "heading",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(scs.Rssi); err != nil {
+		return nil, err
+	}
+	node.Fields[24] = &Field{
+		Type:  "float64",
+		Name:  "rssi",
 		Value: string(buf),
 	}
 	var ids []int
@@ -4331,7 +4355,7 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     swfs.ID,
 		Type:   "SurveyWiFiScan",
-		Fields: make([]*Field, 13),
+		Fields: make([]*Field, 16),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
@@ -4437,6 +4461,30 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[12] = &Field{
 		Type:  "float64",
 		Name:  "longitude",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(swfs.Altitude); err != nil {
+		return nil, err
+	}
+	node.Fields[13] = &Field{
+		Type:  "float64",
+		Name:  "altitude",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(swfs.Heading); err != nil {
+		return nil, err
+	}
+	node.Fields[14] = &Field{
+		Type:  "float64",
+		Name:  "heading",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(swfs.Rssi); err != nil {
+		return nil, err
+	}
+	node.Fields[15] = &Field{
+		Type:  "float64",
+		Name:  "rssi",
 		Value: string(buf),
 	}
 	var ids []int
