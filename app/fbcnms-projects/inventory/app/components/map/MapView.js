@@ -12,6 +12,10 @@ import type {ContextRouter} from 'react-router-dom';
 import type {LngLatLike} from 'mapbox-gl/src/geo/lng_lat';
 import type {MapType} from '@fbcnms/ui/insights/map/styles';
 import type {WithStyles} from '@material-ui/core';
+import type {CircleLayerSpecification,HeatmapLayerSpecification, SourceFunctionSpecification, SymbolLayerSpecification} from 'mapbox-gl/src/style-spec/types';
+import type {GeoJSONFeature} from '@mapbox/geojson-types/index';
+import type {ProjectGeoJSONFeatureCollection} from './ProjectsMapUtils';
+import type {Theme} from '@material-ui/core';
 
 import * as React from 'react';
 import MapButtonGroup from '@fbcnms/ui/components/map/MapButtonGroup';
@@ -27,7 +31,7 @@ import {SnackbarProvider} from 'notistack';
 import {getMapStyleForType} from '@fbcnms/ui/insights/map/styles';
 import {withStyles} from '@material-ui/core/styles';
 
-const styles = theme => ({
+const styles = (theme: Theme) => ({
   mapContainer: {
     height: '100%',
     width: '100%',
@@ -51,29 +55,29 @@ const ICON_LAYER_STYLE = 'icon';
 type State = {
   map: ?mapboxgl.Map,
   style: ?'satellite' | 'streets',
-  popup: ?HTMLDivElement,
+  popup: ?mapboxgl.Popup,
   popupType: ?'hover' | 'click',
   container: ?HTMLDivElement,
 };
 
 export type GeoJSONSource = {
   key: string,
-  data: GeoJSONFeatureCollection,
+  data: ProjectGeoJSONFeatureCollection,
 };
 
-export type GeoJSONFeatureCollection = {
+export type GeoJSONFeatureCollection<T: GeoJSONFeature> = {
   type: 'FeatureCollection',
-  features: Array<GeoJSONFeature>,
+  features: Array<T>,
 };
 
-type Props = WithStyles<typeof styles> & {
+type Props<T: GeoJSONFeature> = WithStyles<typeof styles> & {
   mode: MapType,
-  zoomLevel?: string,
+  zoomLevel?: number | string,
   layers: Array<MapLayer>,
   center?: LngLatLike,
-  markers?: ?GeoJSONFeatureCollection,
-  getFeaturePopoutContent?: (feature: GeoJSONFeature) => React.Node,
-  getFeatureHoverPopoutContent?: (feature: GeoJSONFeature) => React.Node,
+  markers?: ?GeoJSONFeatureCollection<T>,
+  getFeaturePopoutContent?: (feature: T) => React.Node,
+  getFeatureHoverPopoutContent?: (feature: T) => React.Node,
   showGeocoder?: boolean,
   showMapSatelliteToggle?: boolean,
   mapButton?: React.Node,
@@ -115,48 +119,20 @@ type FillParams = {
   opacity: number,
 };
 
+type LayoutTypes = $ElementType<SymbolLayerSpecification, 'layout'>;
 type IconParams = {
-  iconImage: Array<string>,
-  textField: Array<string> | string,
-  iconIgnorePlacement: boolean,
-  textTransform: string,
-  textColor: Array<string>,
-  textFont: Array<string>,
+  iconImage: $ElementType<$NonMaybeType<LayoutTypes>, 'icon-image'>,
+  textField: $ElementType<$NonMaybeType<LayoutTypes>, 'text-field'>,
+  iconIgnorePlacement: $ElementType<$NonMaybeType<LayoutTypes>, 'icon-ignore-placement'>,
+  textTransform: $ElementType<$NonMaybeType<LayoutTypes>, 'text-transform'>,
+  textColor: $ElementType<$NonMaybeType<$ElementType<SymbolLayerSpecification, 'paint'>>, 'text-color'>,
+  textFont: $ElementType<$NonMaybeType<LayoutTypes>, 'text-font'>,
 };
-
-/* https://docs.mapbox.com/mapbox-gl-js/style-spec
- * Mapbox paint based on custom properties (e.g. population in a city) */
-type CustomPaintProperty =
-  | number
-  | string
-  | Array<string>
-  | {
-      property: string,
-      type: string,
-      stops: Array<Array<number | string>>,
-    };
-
-/* https://docs.mapbox.com/mapbox-gl-js/style-spec
- * Mapbox paint based on map zoom level */
-type ZoomPaintProperty = {|
-  stops: Array<Array<number | string>>,
-|};
-
-// https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions
-type MapExpression = Array<string | number | MapExpression>;
-
-type PaintProperty = CustomPaintProperty | ZoomPaintProperty | MapExpression;
 
 // https://docs.mapbox.com/mapbox-gl-js/style-spec/#function-type
 type PaintType = 'identity' | 'exponential' | 'interval' | 'categorical';
 
-type CirclePaint = {
-  'circle-color': PaintProperty,
-  'circle-radius': PaintProperty,
-  'circle-stroke-width'?: PaintProperty,
-  'circle-stroke-color'?: PaintProperty,
-  'circle-opacity'?: PaintProperty,
-};
+type CirclePaint = $PropertyType<CircleLayerSpecification, 'paint'>;
 
 export type ColorStop = {
   threshold: number,
@@ -169,26 +145,16 @@ export type CircleColorInterpolation = {
   stops: Array<ColorStop>,
 };
 
-type WeightStop = {
-  threshold: number,
-  weight: number,
-};
-
 type HeatmapWeight = {
   property: string,
   type: PaintType,
-  stops: Array<WeightStop>,
+  stops: Array<{threshold: number,
+  weight: number,}>,
 };
 
-type HeatmapPaint = {
-  'heatmap-weight': PaintProperty,
-  'heatmap-intensity'?: PaintProperty,
-  'heatmap-color'?: PaintProperty,
-  'heatmap-radius': PaintProperty,
-  'heatmap-opacity'?: PaintProperty,
-};
+type HeatmapPaint = $ElementType<HeatmapLayerSpecification, 'paint'>;
 
-class MapView extends React.Component<Props, State> {
+class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
   static defaultProps = {
     markers: null,
     layers: [],
@@ -216,7 +182,7 @@ class MapView extends React.Component<Props, State> {
       ReactDOM.unmountComponentAtNode(this.state.container);
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props<T>) {
     if (prevProps.layers.length === 0 && this.props.layers.length > 0) {
       this._fitBounds();
     }
@@ -250,7 +216,7 @@ class MapView extends React.Component<Props, State> {
       container: this.mapContainer,
       hash: false,
       style: getMapStyleForType(this.props.mode),
-      zoom: this.props.zoomLevel,
+      zoom: this.props.zoomLevel === undefined ? undefined : Number(this.props.zoomLevel),
       center: this.props.center,
     });
 
@@ -380,8 +346,9 @@ class MapView extends React.Component<Props, State> {
     markers.features.forEach(feature => {
       const geometry = nullthrows(feature.geometry);
       if (geometry.type === 'Point') {
-        const marker = new mapboxgl.Marker(<div />)
-          .setLngLat(geometry.coordinates)
+        const el = document.createElement('div');
+        const marker = new mapboxgl.Marker({element: el})
+          .setLngLat([geometry.coordinates[0], geometry.coordinates[1]])
           .addTo(map);
         ReactDOM.render(
           <PlaceIcon className={classes.icon} />,
@@ -490,7 +457,7 @@ class MapView extends React.Component<Props, State> {
   _addIconLayer = (sourceKey: string, params: IconParams) => {
     const map = nullthrows(this.state.map);
     const layerId = `${sourceKey}_${ICON_LAYER_STYLE}`;
-    map.addLayer({
+    const layer: SymbolLayerSpecification = {
       id: layerId,
       type: 'symbol',
       source: sourceKey,
@@ -504,7 +471,8 @@ class MapView extends React.Component<Props, State> {
       paint: {
         'text-color': params.textColor,
       },
-    });
+    };
+    map.addLayer(layer);
     this._registerClick(map, layerId);
   };
 
@@ -549,19 +517,43 @@ class MapView extends React.Component<Props, State> {
 
   _getCirclePaint = (params: ?CircleParams): CirclePaint => {
     const colorInterpolation = params?.colorInterpolation;
-    const circleColor: CustomPaintProperty =
-      colorInterpolation == null
-        ? ['get', 'color']
-        : {
-            property: colorInterpolation.property,
-            type: colorInterpolation.type,
-            stops: colorInterpolation.stops.map<Array<number | string>>(
-              stop => [stop.threshold, stop.color],
-            ),
-          };
-    const paint: CirclePaint = {
+    let circleColor: $PropertyType<$NonMaybeType<CirclePaint>, 'circle-color'>;;
+    if (colorInterpolation == null) {
+      circleColor = ['get', 'color'];
+    } else if (colorInterpolation.type === 'exponential') {
+      circleColor = ({
+          property: colorInterpolation.property,
+          type: 'exponential',
+          stops: (colorInterpolation.stops.map(
+            stop => [stop.threshold, stop.color],
+          ): Array<[number, string]>),
+        });
+    } else if (colorInterpolation.type === 'interval') {
+       circleColor = ({
+          property: colorInterpolation.property,
+          type: 'interval',
+          stops: (colorInterpolation.stops.map(
+            stop => [stop.threshold, stop.color],
+          ): Array<[number, string]>),
+        });
+    } else if (colorInterpolation.type === 'categorical') {
+        circleColor = ({
+          property: colorInterpolation.property,
+          type: 'categorical',
+          stops: (colorInterpolation.stops.map(
+            stop => [stop.threshold, stop.color],
+          ): Array<[string | number | boolean, string]>),
+        });
+    } else if (colorInterpolation.type === 'identity') {
+        circleColor = ({
+          property: colorInterpolation.property,
+          type: 'identity',
+        });
+    }
+    const paint = {
       'circle-color': circleColor,
       'circle-radius': {
+        type: 'interval',
         /* When zoom is <= 8 radius is 6px
          * When zoom is 18 radius is 12px */
         stops: [
@@ -570,16 +562,21 @@ class MapView extends React.Component<Props, State> {
         ],
       },
       'circle-stroke-width': 1,
+      'circle-opacity': undefined,
+      'circle-stroke-color': undefined,
+      'circle-stroke-color': undefined,
     };
     const fadeInZoomLevel = params?.fadeInZoomLevel;
     if (fadeInZoomLevel != null) {
       paint['circle-opacity'] = {
+        type: 'interval',
         stops: [
           [fadeInZoomLevel - 1, 0],
           [fadeInZoomLevel, 1],
         ],
       };
       paint['circle-stroke-color'] = {
+        type: 'interval',
         stops: [
           [fadeInZoomLevel - 1, 'transparent'],
           [fadeInZoomLevel, 'white'],
@@ -592,17 +589,40 @@ class MapView extends React.Component<Props, State> {
   };
 
   _getHeatmapPaint = (params: HeatmapParams): HeatmapPaint => {
-    const paint: HeatmapPaint = {
-      'heatmap-weight': {
-        property: params.weight.property,
-        type: params.weight.type,
-        stops: params.weight.stops.map(stop => [stop.threshold, stop.weight]),
-      },
+    let heatmapWeight: $PropertyType<$NonMaybeType<HeatmapPaint>, 'heatmap-weight'>;
+    if (params.weight.type === 'exponential') {
+      heatmapWeight = ({
+          property: params.weight.property,
+          type: 'exponential',
+          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[number, number]>),
+        });
+    } else if (params.weight.type === 'interval') {
+       heatmapWeight = ({
+          property: params.weight.property,
+          type: 'interval',
+          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[number, number]>),
+        });
+    } else if (params.weight.type === 'categorical') {
+        heatmapWeight = ({
+          property: params.weight.property,
+          type: 'categorical',
+          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[string | number | boolean, number]>),
+        });
+    } else if (params.weight.type === 'identity') {
+        heatmapWeight = ({
+          property: params.weight.property,
+          type: 'identity',
+        });
+    }
+
+    const paint = {
+      'heatmap-weight': heatmapWeight,
       'heatmap-radius': {
         /* When zoom is <= 6 radius is 7px
          * When zoom is <= 9 radius is 16px
          * When zoom is 10 radius is 30px
          * When zoom is 12 radius is 40px */
+        type: 'interval',
         stops: [
           [6, 7],
           [9, 16],
@@ -610,9 +630,11 @@ class MapView extends React.Component<Props, State> {
           [12, 40],
         ],
       },
+      'heatmap-color': undefined,
+      'heatmap-opacity': undefined,
     };
     if (params.colorStops != null) {
-      const heatmapColor: MapExpression = [
+      const heatmapColor = [
         'interpolate',
         ['linear'],
         ['heatmap-density'],
@@ -625,6 +647,7 @@ class MapView extends React.Component<Props, State> {
     }
     if (params.fadeOutZoomLevel != null) {
       paint['heatmap-opacity'] = {
+        type: 'interval',
         stops: [
           [params.fadeOutZoomLevel - 1, 1],
           [params.fadeOutZoomLevel, 0],

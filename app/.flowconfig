@@ -44,15 +44,10 @@
 
 [untyped]
 .*/node_modules/express-graphql/.*
-.*/node_modules/mapbox-gl/src/.*
 
 [options]
 esproposal.optional_chaining=enable
 server.max_workers=3
-
-[libs]
-node_modules/mapbox-gl/flow-typed
-node_modules/mapbox-gl/dist/mapbox-gl.js.flow
 
 [declarations]
 .*/node_modules/.*

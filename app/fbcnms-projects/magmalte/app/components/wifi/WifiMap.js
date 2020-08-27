@@ -211,6 +211,7 @@ function Map() {
       <MapView
         id="mapView"
         geojson={geojson}
+        // $FlowFixMe Found when adding mapboxgl types. Source should be string
         mapLayers={mapLayers}
         MapMarker={WifiMapMarker}
         onMarkerClick={onMarkerClick}

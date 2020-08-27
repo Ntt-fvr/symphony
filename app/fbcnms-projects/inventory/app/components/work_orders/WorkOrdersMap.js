@@ -94,7 +94,7 @@ const WorkOrdersMap = (props: Props) => {
             textTransform: 'uppercase',
             iconIgnorePlacement: false,
             textColor: ['get', 'textColor'],
-            textFont: ['Roboto Bold', 'Arial Unicode MS Bold'],
+            textFont: (['Roboto Bold', 'Arial Unicode MS Bold']: Array<string>),
           },
         },
         source: workOrderToGeoJSONSource('0', workOrdersWithLocations, {
@@ -166,6 +166,7 @@ const WorkOrdersMap = (props: Props) => {
         <WorkOrderMapButtons onClick={value => setSelectedView(value)} />
       }
       mode="streets"
+      // $FlowFixMe found when adding mapboxgl
       layers={layers}
       showMapSatelliteToggle={true}
       showGeocoder={true}

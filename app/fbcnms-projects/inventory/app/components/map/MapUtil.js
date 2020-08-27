@@ -22,6 +22,7 @@ import type {
   WorkOrderPriority,
   WorkOrderStatus,
 } from '../../mutations/__generated__/EditWorkOrderMutation.graphql';
+import type {ProjectGeoJSONFeature} from './ProjectsMapUtils';
 
 export type CoordsWithProps = {
   latitude: number,
@@ -48,7 +49,7 @@ export const locationsToGeoJSONSource = (
     key: key,
     data: {
       type: 'FeatureCollection',
-      features: locations.map<GeoJSONFeature>(location =>
+      features: locations.map(location =>
         locationToGeoFeature(location, properties),
       ),
     },
@@ -59,12 +60,12 @@ export const workOrderToGeoJSONSource = (
   key: string,
   workOrders: Array<WorkOrderWithLocation>,
   properties: Object,
-): GeoJSONSource => {
+) => {
   return {
     key: key,
     data: {
       type: 'FeatureCollection',
-      features: workOrders.map<GeoJSONFeature>(workOrder =>
+      features: workOrders.map<WorkOrderGeoJSONFeature>(workOrder =>
         workOrderToGeoFeature(workOrder, properties),
       ),
     },
@@ -86,12 +87,15 @@ export type WorkOrderProperties = {
   iconTech: string,
   text: string,
   textColor: string,
+  ...,
 };
+
+export type WorkOrderGeoJSONFeature = GeoJSONFeature & {properties: WorkOrderProperties};
 
 export const workOrderToGeoFeature = (
   workOrder: WorkOrderWithLocation,
   properties: WorkOrderProperties,
-): GeoJSONFeature => {
+): WorkOrderGeoJSONFeature => {
   return {
     type: 'Feature',
     geometry: {
@@ -151,7 +155,7 @@ export const locationToGeoFeature = (
     longitude: number,
   },
   properties: Object,
-): GeoJSONFeature => {
+)  => {
   return {
     type: 'Feature',
     geometry: {
@@ -172,7 +176,7 @@ export const locationToGeoJson = (location: {
   name: string,
   latitude: number,
   longitude: number,
-}): GeoJSONFeatureCollection => {
+}) => {
   return {
     type: 'FeatureCollection',
     features: [locationToGeoFeature(location)],
@@ -202,7 +206,7 @@ export const coordsToGeoJSONSource = (
   key: string,
   coordsWithProps: Array<CoordsWithProps>,
 ): GeoJSONSource => {
-  const features: Array<GeoJSONFeature> = coordsWithProps.map(coords => ({
+  const features = coordsWithProps.map(coords => ({
     type: 'Feature',
     geometry: {
       type: 'Point',

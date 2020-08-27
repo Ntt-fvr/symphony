@@ -31,7 +31,7 @@ export type Feature = {
   },
   id: number | string,
   center?: LngLatLike,
-  bbox?: Array<LngLatLike>,
+  bbox?: [number, number, number, number],
   geometry: {type: string, coordinates: LngLatLike},
 };
 export type Result = {feature: Feature};

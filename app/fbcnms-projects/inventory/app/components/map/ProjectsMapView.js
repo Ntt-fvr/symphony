@@ -72,7 +72,7 @@ type State = {
 
 type Props = {
   mode: MapType,
-  zoomLevel?: string,
+  zoomLevel?: number,
   center?: LngLatLike,
   markers?: ?ProjectGeoJSONFeatureCollection,
   showGeocoder?: boolean,
@@ -101,7 +101,7 @@ class ProjectsMapView extends React.Component<Props, State> {
   static defaultProps = {
     markers: null,
     center: [0, 0],
-    zoomLevel: '2',
+    zoomLevel: 2,
   };
 
   state = {
@@ -278,8 +278,9 @@ class ProjectsMapView extends React.Component<Props, State> {
       const geometry = nullthrows(feature.geometry);
       const selectedFeatureId = feature.properties?.id;
       if (geometry.type === 'Point') {
-        const marker = new mapboxgl.Marker(<div />)
-          .setLngLat(geometry.coordinates)
+        const el = document.createElement('div');
+        const marker = new mapboxgl.Marker({element: el})
+          .setLngLat([geometry.coordinates[0], geometry.coordinates[1]])
           .addTo(map);
         ReactDOM.render(
           <Chip
