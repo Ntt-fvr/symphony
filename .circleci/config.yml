@@ -569,6 +569,7 @@ jobs:
 
   flowtest:
     executor: yarnnode
+    resource_class: large
     steps:
       - checkout
       - run:
