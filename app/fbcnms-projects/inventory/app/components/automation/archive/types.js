@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {ActionID} from '../../mutations/__generated__/AddActionsRuleMutation.graphql.js';
+import type {ActionID} from '../../../mutations/__generated__/AddActionsRuleMutation.graphql.js';
 
 export type FilterData = string | string[];
 

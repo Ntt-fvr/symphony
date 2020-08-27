@@ -11,15 +11,16 @@
 import * as React from 'react';
 import {AppContextProvider} from '@fbcnms/ui/context/AppContext';
 
+import Actions from './Actions';
+import ActionsList from './ActionsList';
 import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ComputerIcon from '@material-ui/icons/Computer';
-import FlowBuilder from './flows/builder/FlowBuilder';
-import LoadingIndicator from '../../common/LoadingIndicator';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
-import RelayEnvironment from '../../common/RelayEnvironment';
+import RelayEnvironment from '../../../common/RelayEnvironment';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
@@ -33,6 +34,10 @@ const useStyles = makeStyles(_theme => ({
   root: {
     display: 'flex',
   },
+  progress: {
+    marginTop: 32,
+    textAlign: 'center',
+  },
 }));
 
 function NavItems() {
@@ -41,8 +46,8 @@ function NavItems() {
   return (
     <>
       <NavListItem
-        label="Flows"
-        path={relativeUrl('/flows')}
+        label="Actions"
+        path={relativeUrl('/actions')}
         icon={<ComputerIcon />}
       />
     </>
@@ -53,8 +58,9 @@ function NavRoutes() {
   const relativeUrl = useRelativeUrl();
   return (
     <Switch>
-      <Route path={relativeUrl('/flows')} component={FlowBuilder} />
-      <Redirect to={relativeUrl('/flows')} />
+      <Route path={relativeUrl('/actions/list')} component={ActionsList} />
+      <Route path={relativeUrl('/actions')} component={Actions} />
+      <Redirect to={relativeUrl('/actions')} />
     </Switch>
   );
 }
@@ -74,7 +80,12 @@ function Automation() {
         })}
       />
       <AppContent>
-        <Suspense fallback={<LoadingIndicator />}>
+        <Suspense
+          fallback={
+            <div className={classes.progress}>
+              <CircularProgress className={classes.progress} size={64} />
+            </div>
+          }>
           <NavRoutes />
         </Suspense>
       </AppContent>
