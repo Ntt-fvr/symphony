@@ -179,7 +179,7 @@ const (
 	WorkOrderStatusBlocked    WorkOrderStatus = 50
 )
 
-// ValidateWorkOrderStatus will validate that the given value is from the wo options
+// ValidateWorkOrderStatus validates a raw value of a work order status.
 func ValidateWorkOrderStatus(v int) error {
 	switch WorkOrderStatus(v) {
 	case WorkOrderStatusPlanned,
@@ -193,7 +193,7 @@ func ValidateWorkOrderStatus(v int) error {
 	}
 }
 
-// String is a string representation of the WO
+// String returns the textual representation of a work order status.
 func (wos WorkOrderStatus) String() string {
 	switch wos {
 	case WorkOrderStatusPlanned:
@@ -221,22 +221,18 @@ func (wos *WorkOrderStatus) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "PLANNED":
 		*wos = WorkOrderStatusPlanned
-		return nil
 	case "IN_PROGRESS", "PENDING":
 		*wos = WorkOrderStatusInProgress
-		return nil
 	case "SUBMITTED":
 		*wos = WorkOrderStatusSubmitted
-		return nil
 	case "CLOSED", "DONE":
 		*wos = WorkOrderStatusClosed
-		return nil
 	case "BLOCKED":
 		*wos = WorkOrderStatusBlocked
-		return nil
 	default:
 		return fmt.Errorf("%s is not a valid WorkOrderStatus", str)
 	}
+	return nil
 }
 
 // MarshalGQL implements graphql.Marshaller interface.
