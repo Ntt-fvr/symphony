@@ -308,106 +308,78 @@ The following sections describe the Symphony Mobile App operational procedures.
 
 (See Figure 5 to Figure 14)
 
-          1.
 ###### Click the **Navigation** icon (1).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig5.PNG' width=600><br>
 
 **Figure 5: Navigation Icon**
 
-_Result:_
-
-The **Navigation Menu** screen appears:
+_Result:_ The **Navigation Menu** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig6.PNG' width=600><br>
 
 **Figure 6: Navigation Menu**
 
-          1.
 ###### Click the **Tasks** tab (2).
 
-_Result:_
-
-The assigned work order list appears:
+_Result:_ The assigned work order list appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig7.png' width=600><br>
 
 **Figure 7: Work Order List**
 
-          1.
 ###### Click the desired work order (3).
 
-**NOTE**
+**NOTE** The selected work order must not have a Done status.
 
-The selected work order must not have a Done status.
-
-_Result:_
-
-The work order details screen appears:
+_Result:_ The work order details screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig8.PNG' width=600><br>
 
 **Figure 8: Work Order Details**
 
-          1.
 ###### Click the **Checklist** section (4).
 
-_Result:_
-
-The **Checklist Category** list appears:
+_Result:_ The **Checklist Category** list appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig9.png' width=600><br>
 
 **Figure 9: Checklist Category List**
 
-          1.
 ###### Click the desired **Upload Item Checklist Category** (5).
 
-_Result:_
-
-The Upload Item Checklist Category content appears:
+_Result:_ The Upload Item Checklist Category content appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig10.PNG' width=600><br>
 
 **Figure 10: Upload Item**
 
-          1.
 ###### Click the **Upload** button (6).
 
-_Result:_
-
-The **Upload Media** window appears:
+_Result:_ The **Upload Media** window appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig11.PNG' width=600><br>
 
 **Figure 11: Upload Media**
 
-          1.
 ###### Click the **Take a Photo** option (7a) in order to instantly Click a photo and upload it , or, Click the **Choose from gallery** option (7b) in order to upload photo from the device gallery.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig12.PNG' width=600><br>
 
 **Figure 12: Edit Photo**
 
-          1.
 ###### Click the **Edit** (pencil) icon (8).
 
-_Result:_
-
-The **Photo Caption** window appears:
+_Result:_ The **Photo Caption** window appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig13.PNG' width=600><br>
 
 **Figure 13: Photo Caption**
 
-          1.
-###### Write a caption for selected photo (9).
-          2.
-###### Click the **Save** button (10).
+###### 1) Write a caption for selected photo (9).
+###### 2) Click the **Save** button (10).
 
-_Result:_
-
-The photo caption will be saved.
+_Result:_ The photo caption will be saved.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig14.PNG' width=600><br>
 
@@ -424,30 +396,23 @@ The procedure to search for offline or online work orders is similar with the fo
 - An offline search is performed on assigned work orders (Admin and User roles).
 - An online search is performed on all work orders created in the Symphony system (Admin role) or on all assigned work orders or work orders associated with the assigned template instance (User role).
 
-          1.
 ###### Perform steps **a** and **b** as they are described in the **Add an Image Caption** section.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig15.png' width=600><br>
 
 **Figure 15: Work Order List**
 
-          1.
 ###### Click the search (magnifying-glass) icon (1).
 
-_Result:_
-
-The **Work Order Search** screen appears:
+_Result:_ The **Work Order Search** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig16.png' width=600><br>
 
 **Figure 16: Work Order Search Screen**
 
-          1.
 ###### Write a **Work Order** name to search (2).
 
-_Result:_
-
-The work orders list matching to the text written in search field appears (3):
+_Result:_ The work orders list matching to the text written in search field appears (3):
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig17.png' width=600><br>
 
@@ -464,37 +429,29 @@ The procedure to sort offline or online work orders is similar with the followin
 - An offline sort is performed on assigned work order (Admin and User roles).
 - An online sort is performed on all work orders created in the Symphony system (Admin role) or on all assigned work orders or work orders associated with the assigned template instance (User role).
 
-          1.
 ###### Perform steps **a** and **b** as they are described in the **Search Work Order Offline** section.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig18.png' width=600><br>
 
 **Figure 18: Work Order Search Screen**
 
-          1.
 ###### Click the **ADVANCED FILTER** button (1).
 
-_Result:_
-
-The Advanced Filter screen appears:
+_Result:_ The Advanced Filter screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig19.png' width=600><br>
 
 **Figure 19: Advanced Filter Screen**
 
-          1.
-###### Locate the **SORT BY** section (2).
-          2.
-###### Select the desired sorting method:
+###### 1) Locate the **SORT BY** section (2).
+###### 2) Select the desired sorting method:
 
 - In order to sort the work order list by name, perform the following steps:
 
-            1. Click the **name** option (3a).
-            2. Click the **FILTER** button (4a).
+###### 1) Click the **name** option (3a).
+###### 2) Click the **FILTER** button (4a).
 
-_Result:_
-
-The work order list is sorted by the work orders name.
+_Result:_ The work order list is sorted by the work orders name.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig20.png' width=600><br>
 
@@ -502,17 +459,15 @@ The work order list is sorted by the work orders name.
 
 - In order to sort the work order list by status, perform the following steps:
 
-            1. Click the **status** option (3b).
+ ######           1) Click the **status** option (3b).
 
-            1. Click the **FILTER** button (4b).
+ ######           2) Click the **FILTER** button (4b).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig21.png' width=600><br>
 
 **Figure 21: Advanced Filter Screen**
 
-_Result:_
-
-The work order list is sorted by the work orders status.
+_Result:_ The work order list is sorted by the work orders status.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig22.png' width=600><br>
 
@@ -520,17 +475,15 @@ The work order list is sorted by the work orders status.
 
 - In order to sort the work order list by priority, perform the following steps:
 
-            1. Click the **priority** option (3c).
+######            1. Click the **priority** option (3c).
 
-            1. Click the **FILTER** button (4c).
+######            2. Click the **FILTER** button (4c).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig23.png' width=600><br>
 
 **Figure 23: Advanced Filter Screen**
 
-_Result:_
-
-The work order list is sorted by the work orders priority.
+_Result:_ The work order list is sorted by the work orders priority.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig24.png' width=600><br>
 
@@ -554,14 +507,10 @@ The procedure to filter offline or online work orders is similar with the follow
 
 **Figure 25: Advanced Filter**
 
-          1.
-###### Select the required **Status Type** and **Priority** value (1).
-          2.
-###### Click the **Filter** button (2).
+###### 1) Select the required **Status Type** and **Priority** value (1).
+###### 2) Click the **Filter** button (2).
 
-_Result:_
-
-The work order gets filtered based on selected Status Type and Priority value.
+_Result:_ The work order gets filtered based on selected Status Type and Priority value.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig26.png' width=600><br>
 
@@ -571,89 +520,67 @@ The work order gets filtered based on selected Status Type and Priority value.
 
 (See Figure 27 to Figure 30)
 
-          1.
 ###### Perform steps **a** and **b** as they are described in the **Add an Image Caption** section.
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig27.png' width=600><br>
 
 **Figure 27: Work Order List**
 
-          1.
 ###### Click the desired work order from the list (1).
 
-**NOTE**
+**NOTE** The user must select either an unassigned work order or the work order with Done status.
 
-The user must select either an unassigned work order or the work order with Done status.
-
-_Result:_
-
-The work order details screen appears:
+_Result:_ The work order details screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig28.PNG' width=600><br>
 
 **Figure 28: Work Order Details**
 
-          1.
 ###### Click the **Checklist** section (2).
 
-_Result:_
-
-The **Checklist Category** list appears:
+_Result:_ The **Checklist Category** list appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig29.png' width=600><br>
 
 **Figure 29: Work Order Checklist Category**
 
-          1.
 ###### Click the desired **Checklist Category** (3).
 
-_Result:_
-
-The selected Checklist Category content appears:
+_Result:_ The selected Checklist Category content appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig30.PNG' width=600><br>
 
 **Figure 30: Checklist Category Details**
 
-          1.
 ###### Review the Checklist Category Details (4).
 
 ## Disable Account
 
 (See Figure 31 to Figure 33)
 
-          1.
 ###### Click the Navigation icon (1).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig31.PNG' width=600><br>
 
 **Figure 31: Navigation Icon**
 
-_Result:_
-
-The **Navigation Menu** screen appears:
+_Result:_ The **Navigation Menu** screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig32.PNG' width=600><br>
 
 **Figure 32: Navigation Menu**
 
-          1.
 ###### Click the **Account Settings** tab (2).
 
-_Result:_
-
-The **Account Settings** screen content appears:
+_Result:_ The **Account Settings** screen content appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.20/Fig33.PNG' width=600><br>
 
 **Figure 33: Account Settings**
 
-          1.
 ###### Click the **Deactivate** button (3).
 
-_Result:_
-
-The Symphony account is deactivated.
+_Result:_ The Symphony account is deactivated.
 
 
 
@@ -675,45 +602,34 @@ Checklist list items of an existing work order or a new work order can be marked
 
 In order to mark a checklist item as required, perform the following steps:
 
-          1.
-###### Open the **Workforce Management** interface (1).
-          2.
-###### Create a new work order (2) or open an existing one (3).
+###### 1) Open the **Workforce Management** interface (1).
+###### 2) Create a new work order (2) or open an existing one (3).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+2.png' width=1000><br>
 
 **Figure 2: Work Orders**
 
-          1.
 ###### On the **Checklist Categories** section, add a new category and item (4) or click an existing item from the **Items** column (5).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+3.png' width=1000><br>
 
 **Figure 3: Checklist Categories**
 
-_Result:_
-
-The checklist category screen appears:
+_Result:_ The checklist category screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+4.png' width=1000><br>
 
 **Figure 4: Items**
 
-          1.
-###### Add a new item (6) or open an existing one (7).
-
-          1.
-###### Check the **Mark as required** checkbox (8).
-          2.
-###### Click the **Save** button (9).
+###### 1) Add a new item (6) or open an existing one (7).
+###### 2) Check the **Mark as required** checkbox (8).
+###### 3) Click the **Save** button (9).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+5.png' width=1000><br>
 
 **Figure 5: Mark as Required and Save Button**
 
-_Result:_
-
-On the mobile App checklist forms, the checklist items will appear as mandatory questions (see the **Mandatory Questions on The Mobile App** section).
+_Result:_ On the mobile App checklist forms, the checklist items will appear as mandatory questions (see the **Mandatory Questions on The Mobile App** section).
 
 ### Mandatory Questions on The Mobile App
 
@@ -737,9 +653,7 @@ The assignee can still finish and upload the work order, but in order to do so h
 
 **Figure 8: Not Completing Checklist Reason**
 
-**note**
-
-After uploading the work order the checklist forms questions, including the mandatory questions, cannot be edited or updated.
+**note** After uploading the work order the checklist forms questions, including the mandatory questions, cannot be edited or updated.
 
 ## What are Duplicated Questions?
 
@@ -753,9 +667,7 @@ This feature is used by the assignee in order to duplicate questions to fill out
 
 **Figure 9: Duplicate Question**
 
-**note**
-
-When duplicating a mandatory question, the duplicated question will not be marked as mandatory.
+**note** When duplicating a mandatory question, the duplicated question will not be marked as mandatory.
 
 ### How to Duplicate Questions on The Mobile App?
 
@@ -763,73 +675,54 @@ When duplicating a mandatory question, the duplicated question will not be marke
 
 In order to duplicate questions, perform the following steps:
 
-          1.
 ###### Select a desired work order from the list (1).
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+10.png' width=600><br>
 
 **Figure 10: Work Orders**
 
-_Result:_
-
-The work order appears:
+_Result:_ The work order appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+11.png' width=600><br>
 
 **Figure 11: Checklist**
 
-          1.
 ###### Click the **Checklist** option (2).
 
-_Result:_
-
-The checklist forms appear:
+_Result:_ The checklist forms appear:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+12.png' width=600><br>
 
 **Figure 12: Checklist Forms**
 
-          1.
 ###### Select the desired checklist form (3).
 
-_Result:_
-
-The checklist form questions appear:
+_Result:_ The checklist form questions appear:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+13.png' width=600><br>
 
 **Figure 13: checklist Form Questions**
 
-          1.
 ###### Select the desired question (4) and swipe right.
 
-_Result:_
-
-The **Duplicate** button (5) appears next to the question:
+_Result:_ The **Duplicate** button (5) appears next to the question:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+14.png' width=600><br>
 
 **Figure 14: Duplicate Button**
 
-          1.
 ###### Click the **Duplicate** button (5).
 
-_Result:_
-
-The following screen appears:
+_Result:_ The following screen appears:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+15.png' width=600><br>
 
 **Figure 15: Duplication Options**
 
-          1.
-###### Click to select the number of duplications (6) (max 10).
-          2.
-###### Click the **Duplicate** Button (7).
+###### 1) Click to select the number of duplications (6) (max 10).
+###### 2) Click the **Duplicate** Button (7).
 
-_Result:_
-
-The duplication (8) appears as a new question on the checklist form:
+_Result:_ The duplication (8) appears as a new question on the checklist form:
 
 <img src='https://s3.amazonaws.com/purpleheadband.images/wiki/mobile-app/mobile-app-flow/New+features+v+1.0.18.23/Figure+16.png' width=600><br>
 
