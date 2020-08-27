@@ -12,7 +12,6 @@ locals {
 # inventory service data store
 resource aws_s3_bucket inventory_store {
   bucket_prefix = "${var.project}-${terraform.workspace}-"
-  region        = data.aws_region.current.id
 
   cors_rule {
     allowed_headers = ["*"]
