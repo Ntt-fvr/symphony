@@ -172,11 +172,11 @@ type WorkOrderStatus int
 
 // Possible work order status options.
 const (
-	WorkOrderStatusPlanned    WorkOrderStatus = 10
-	WorkOrderStatusInProgress WorkOrderStatus = 20
-	WorkOrderStatusSubmitted  WorkOrderStatus = 30
-	WorkOrderStatusClosed     WorkOrderStatus = 40
-	WorkOrderStatusBlocked    WorkOrderStatus = 50
+	WorkOrderStatusPlanned    WorkOrderStatus = 100
+	WorkOrderStatusInProgress WorkOrderStatus = 200
+	WorkOrderStatusSubmitted  WorkOrderStatus = 300
+	WorkOrderStatusClosed     WorkOrderStatus = 400
+	WorkOrderStatusBlocked    WorkOrderStatus = 500
 )
 
 // ValidateWorkOrderStatus validates a raw value of a work order status.
