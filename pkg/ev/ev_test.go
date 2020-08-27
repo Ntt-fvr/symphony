@@ -35,11 +35,11 @@ func TestEventsOverTopic(t *testing.T) {
 		)
 
 	emitter, err := ev.NewTopicEmitter(
-		ctx, url, ev.JSONEncoder,
+		ctx, url, ev.MsgPackEncoder,
 	)
 	require.NoError(t, err)
 	receiver, err := ev.NewTopicReceiver(
-		ctx, url, ev.NewDecoder(&payload{}, ev.JSONDecode),
+		ctx, url, ev.NewDecoder(&payload{}, ev.MsgPackDecode),
 	)
 	require.NoError(t, err)
 

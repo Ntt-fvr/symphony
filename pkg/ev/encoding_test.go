@@ -38,6 +38,12 @@ func TestEncoding(t *testing.T) {
 			Decoder: ev.NewDecoder(msg, ev.GobDecode),
 		},
 		{
+			name:    "MsgPack",
+			obj:     msg,
+			Encoder: ev.MsgPackEncoder,
+			Decoder: ev.NewDecoder(msg, ev.MsgPackDecode),
+		},
+		{
 			name:    "String",
 			obj:     "foo",
 			Encoder: ev.StringEncoder,

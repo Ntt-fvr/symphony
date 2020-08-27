@@ -11,6 +11,8 @@ import (
 	"encoding/json"
 	"errors"
 	"reflect"
+
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 // Encode is a function type for marshaling/encoding an arbitrary type into
@@ -40,6 +42,9 @@ var (
 	// GobEncoder encodes gobs.
 	GobEncoder = NewEncoder(GobEncode)
 
+	// MsgPackEncoder encodes msg packs.
+	MsgPackEncoder = NewEncoder(MsgPackEncode)
+
 	// StringEncoder encodes strings.
 	StringEncoder = NewEncoder(StringEncode)
 
@@ -59,6 +64,11 @@ func GobEncode(_ context.Context, obj interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return b.Bytes(), nil
+}
+
+// MsgPackEncode can be passed to NewEncoder when encoding msg packs.
+func MsgPackEncode(_ context.Context, obj interface{}) ([]byte, error) {
+	return msgpack.Marshal(obj)
 }
 
 // StringEncode encodes a string into raw bytes.
@@ -129,6 +139,11 @@ func JSONDecode(_ context.Context, data []byte, obj interface{}) error {
 // GobDecode can be passed to NewDecoder when decoding gobs.
 func GobDecode(_ context.Context, data []byte, obj interface{}) error {
 	return gob.NewDecoder(bytes.NewReader(data)).Decode(obj)
+}
+
+// MsgPackDecode can be passed to NewDecoder when decoding msg packs.
+func MsgPackDecode(_ context.Context, data []byte, obj interface{}) error {
+	return msgpack.Unmarshal(data, obj)
 }
 
 // StringDecode decodes raw bytes b into a string.

@@ -312,12 +312,12 @@ type TopicFactory string
 
 // NewEmitter creates a topic emitter.
 func (f TopicFactory) NewEmitter(ctx context.Context) (Emitter, error) {
-	return NewTopicEmitter(ctx, f.String(), JSONEncoder)
+	return NewTopicEmitter(ctx, f.String(), MsgPackEncoder)
 }
 
 // NewReceiver creates a topic receiver.
 func (f TopicFactory) NewReceiver(ctx context.Context, obj EventObject) (Receiver, error) {
-	return NewTopicReceiver(ctx, f.String(), NewDecoder(obj, JSONDecode))
+	return NewTopicReceiver(ctx, f.String(), NewDecoder(obj, MsgPackDecode))
 }
 
 // String returns the textual representation of topic factory.

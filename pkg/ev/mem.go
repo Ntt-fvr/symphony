@@ -30,7 +30,7 @@ func (f *MemFactory) NewEmitter(context.Context) (Emitter, error) {
 	}
 	return &TopicEmitter{
 		topic:   f.topic,
-		encoder: JSONEncoder,
+		encoder: MsgPackEncoder,
 	}, nil
 }
 
@@ -45,7 +45,7 @@ func (f *MemFactory) NewReceiver(_ context.Context, obj EventObject) (Receiver, 
 	f.subs = append(f.subs, sub)
 	return &TopicReceiver{
 		subscription: sub,
-		decoder:      NewDecoder(obj, JSONDecode),
+		decoder:      NewDecoder(obj, MsgPackDecode),
 	}, nil
 }
 
