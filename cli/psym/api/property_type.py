@@ -32,25 +32,25 @@ def get_property_types(
 ) -> Sequence[PropertyDefinition]:
     """Get property types on specific entity.
 
-        :param entity_type: Existing entity type
-        :type entity_type: :class:`~psym.common.data_enum.Entity`
-        :param entity_name: Existing entity name
-        :type entity_name: str
+    :param entity_type: Existing entity type
+    :type entity_type: :class:`~psym.common.data_enum.Entity`
+    :param entity_name: Existing entity name
+    :type entity_name: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: `entity_type` does not found or does not have property types
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: `entity_type` does not found or does not have property types
 
-        :return: Sequence[PropertyDefinition]
-        :rtype: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :return: Sequence[PropertyDefinition]
+    :rtype: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_property_types(
-                entity_type=Entity.EquipmentType,
-                entity_name="Card",
-            )
+        property_type = client.get_property_types(
+            entity_type=Entity.EquipmentType,
+            entity_name="Card",
+        )
     """
 
     caches: Dict[
@@ -95,28 +95,28 @@ def get_property_type(
 ) -> PropertyDefinition:
     """Get property type on specific entity.
 
-        :param entity_type: Existing entity type
-        :type entity_type: :class:`~psym.common.data_enum.Entity`
-        :param entity_name: Existing entity name
-        :type entity_name: str
-        :param property_type_id: Existing property type ID
-        :type property_type_id: str
+    :param entity_type: Existing entity type
+    :type entity_type: :class:`~psym.common.data_enum.Entity`
+    :param entity_name: Existing entity name
+    :type entity_name: str
+    :param property_type_id: Existing property type ID
+    :type property_type_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
 
-        :return: PropertyDefinition object
-        :rtype: :class:`~psym.common.data_class.PropertyDefinition`
+    :return: PropertyDefinition object
+    :rtype: :class:`~psym.common.data_class.PropertyDefinition`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_property_type(
-                entity_type=Entity.EquipmentType,
-                entity_name="Card",
-                property_type_id="12345",
-            )
+        property_type = client.get_property_type(
+            entity_type=Entity.EquipmentType,
+            entity_name="Card",
+            property_type_id="12345",
+        )
     """
     property_types = get_property_types(
         client=client, entity_type=entity_type, entity_name=entity_name
@@ -136,28 +136,28 @@ def get_property_type_id(
 ) -> str:
     """Get property type ID on specific entity.
 
-        :param entity_type: Existing entity type
-        :type entity_type: :class:`~psym.common.data_enum.Entity`
-        :param entity_name: Existing entity name
-        :type entity_name: str
-        :param property_type_name: Existing property type name
-        :type property_type_name: str
+    :param entity_type: Existing entity type
+    :type entity_type: :class:`~psym.common.data_enum.Entity`
+    :param entity_name: Existing entity name
+    :type entity_name: str
+    :param property_type_name: Existing property type name
+    :type property_type_name: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Property type with name=`property_type_name` does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Property type with name=`property_type_name` does not found
 
-        :return: property type ID
-        :rtype: str
+    :return: property type ID
+    :rtype: str
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_property_type_id(
-                entity_type=Entity.EquipmentType,
-                entity_name="Card",
-                property_type_name="IP",
-            )
+        property_type = client.get_property_type_id(
+            entity_type=Entity.EquipmentType,
+            entity_name="Card",
+            property_type_name="IP",
+        )
     """
     property_types = get_property_types(
         client=client, entity_type=entity_type, entity_name=entity_name
@@ -182,28 +182,28 @@ def get_property_type_by_external_id(
 ) -> PropertyDefinition:
     """Get property type by external ID on specific entity.
 
-        :param entity_type: Existing entity type
-        :type entity_type: :class:`~psym.common.data_enum.Entity`
-        :param entity_name: Existing entity name
-        :type entity_name: str
-        :param property_type_external_id: Existing property type external ID
-        :type property_type_external_id: str
+    :param entity_type: Existing entity type
+    :type entity_type: :class:`~psym.common.data_enum.Entity`
+    :param entity_name: Existing entity name
+    :type entity_name: str
+    :param property_type_external_id: Existing property type external ID
+    :type property_type_external_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Property type with external_id=`property_type_external_id` does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Property type with external_id=`property_type_external_id` does not found
 
-        :return: PropertyDefinition object
-        :rtype: :class:`~psym.common.data_class.PropertyDefinition`
+    :return: PropertyDefinition object
+    :rtype: :class:`~psym.common.data_class.PropertyDefinition`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_property_type_by_external_id(
-                entity_type=Entity.EquipmentType,
-                entity_name="Card",
-                property_type_external_id="12345",
-            )
+        property_type = client.get_property_type_by_external_id(
+            entity_type=Entity.EquipmentType,
+            entity_name="Card",
+            property_type_external_id="12345",
+        )
     """
     property_types = get_property_types(
         client=client, entity_type=entity_type, entity_name=entity_name
@@ -226,36 +226,36 @@ def edit_property_type(
 ) -> List[PropertyTypeInput]:
     """Edit specific property type on specific entity. `entity_type` - ["LocationType", "EquipmentType", "ServiceType", "EquipmentPortType"]
 
-        :param entity_type: Existing entity type
-        :type entity_type: :class:`~psym.common.data_enum.Entity`
-        :param entity_name: Existing entity name
-        :type entity_name: str
-        :param property_type_id: Existing property type ID
-        :type property_type_id: str
-        :param new_property_definition: New property definition
-        :type new_property_definition: :class:`~psym.common.data_class.PropertyDefinition`
+    :param entity_type: Existing entity type
+    :type entity_type: :class:`~psym.common.data_enum.Entity`
+    :param entity_name: Existing entity name
+    :type entity_name: str
+    :param property_type_id: Existing property type ID
+    :type property_type_id: str
+    :param new_property_definition: New property definition
+    :type new_property_definition: :class:`~psym.common.data_class.PropertyDefinition`
 
-        :class:`~psym.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
+    :class:`~psym.exceptions.EntityNotFoundError`: Property type with id=`property_type_id` does not found
 
-        :return: PropertyTypeInputs List
-        :rtype: List[ :class:`~psym.graphql.input.property_type.PropertyTypeInput` ]
+    :return: PropertyTypeInputs List
+    :rtype: List[ :class:`~psym.graphql.input.property_type.PropertyTypeInput` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_types = client.edit_property_type(
-                entity_type=Entity.EquipmentType,
-                entity_name="Card",
-                property_type_id="12345",
-                property_definition=PropertyDefinition(
-                    property_name="new_name",
-                    property_kind=PropertyKind.string,
-                    default_raw_value=None,
-                    is_fixed=False,
-                    external_id="ex_12345",
-                ),
-            )
+        property_types = client.edit_property_type(
+            entity_type=Entity.EquipmentType,
+            entity_name="Card",
+            property_type_id="12345",
+            property_definition=PropertyDefinition(
+                property_name="new_name",
+                property_kind=PropertyKind.string,
+                default_raw_value=None,
+                is_fixed=False,
+                external_id="ex_12345",
+            ),
+        )
     """
     property_types = get_property_types(
         client=client, entity_type=entity_type, entity_name=entity_name

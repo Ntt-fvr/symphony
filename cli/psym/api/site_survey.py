@@ -36,20 +36,20 @@ def add_site_survey_image(
 ) -> None:
     """This function adds image to existing site survey.
 
-        Args:
-            local_file_path (str): local system path to the file
-            id (str): site survey ID
+    Args:
+        local_file_path (str): local system path to the file
+        id (str): site survey ID
 
-        Raises:
-            FailedOperationException: on operation failure
+    Raises:
+        FailedOperationException: on operation failure
 
-        Example:
-            ```
-            client.add_site_survey_image(
-                local_file_path="./document.pdf",
-                id="123456"
-            )
-            ```
+    Example:
+        ```
+        client.add_site_survey_image(
+            local_file_path="./document.pdf",
+            id="123456"
+        )
+        ```
     """
     add_image(client, local_file_path, ImageEntity.SITE_SURVEY, id)
 
@@ -57,16 +57,16 @@ def add_site_survey_image(
 def delete_site_survey_image(client: SymphonyClient, survey: SiteSurvey) -> None:
     """This function deletes image from existing site survey.
 
-        Args:
-            survey ( `psym.common.data_class.SiteSurvey` ): site survey object
+    Args:
+        survey ( `psym.common.data_class.SiteSurvey` ): site survey object
 
-        Raises:
-            FailedOperationException: on operation failure
+    Raises:
+        FailedOperationException: on operation failure
 
-        Example:
-            ```
-            client.delete_site_survey_image(survey=survey)
-            ```
+    Example:
+        ```
+        client.delete_site_survey_image(survey=survey)
+        ```
     """
     source_file_key = survey.source_file_key
     source_file_id = survey.source_file_id
@@ -741,46 +741,46 @@ def upload_site_survey(
     json_file_path: str,
 ) -> None:
     """Upload the site survey to the given completion with the data in the
-        given excel file. We use the schema file to validate the input in the
-        excel is as needed for upload.
+    given excel file. We use the schema file to validate the input in the
+    excel is as needed for upload.
 
-        Args:
-            location ( `psym.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
-            name (str): name of the site survey
-            completion_date (datetime.datetime object): the time the site survey was completed
-            excel_file_path (str): the path for the excel with the site survey information
-                                The format of this excel should be created by calling site_survey.exportToExcel
-                                with the paremeter jsonFilePath (the next parameter of this function)
-            json_file_path(str): the path for the json file of the schema of the site survey
-                               the json file should comply to the schema found in survey_schema.json
-                               Example of the format:
-            ```
+    Args:
+        location ( `psym.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
+        name (str): name of the site survey
+        completion_date (datetime.datetime object): the time the site survey was completed
+        excel_file_path (str): the path for the excel with the site survey information
+                            The format of this excel should be created by calling site_survey.exportToExcel
+                            with the paremeter jsonFilePath (the next parameter of this function)
+        json_file_path(str): the path for the json file of the schema of the site survey
+                           the json file should comply to the schema found in survey_schema.json
+                           Example of the format:
+        ```
+        {
+            "forms": [
             {
-                "forms": [
+                "formTitle": "Site Management - General Information",
+                "questions": [
                 {
-                    "formTitle": "Site Management - General Information",
-                    "questions": [
-                    {
-                        "questionName": "Exact address",
-                        "questionType": "TEXT"
-                    },
-                    {
-                        "questionName": "Reference for address",
-                        "questionType": "TEXT"
-                    },
-                    {
-                        "questionName": "Ubigeo",
-                        "questionType": "TEXT"
-                    }
-                    ]
+                    "questionName": "Exact address",
+                    "questionType": "TEXT"
+                },
+                {
+                    "questionName": "Reference for address",
+                    "questionType": "TEXT"
+                },
+                {
+                    "questionName": "Ubigeo",
+                    "questionType": "TEXT"
                 }
                 ]
             }
-            ```
+            ]
+        }
+        ```
 
-        Raises:
-            AssertionException: if input values in the excel are incorrect
-            FailedOperationException: internal inventory error
+    Raises:
+        AssertionException: if input values in the excel are incorrect
+        FailedOperationException: internal inventory error
     """
 
     site_survey_id = CreateSurveyMutation.execute(
@@ -874,14 +874,14 @@ def build_site_survey_from_survey_response(survey: SurveyFragment) -> SiteSurvey
 def get_site_surveys(client: SymphonyClient, location_id: str) -> List[SiteSurvey]:
     """Retrieve all site survey completed in the location.
 
-        Args:
-            location ( `psym.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
+    Args:
+        location ( `psym.common.data_class.Location` ): could be retrieved from getLocation or addLocation api
 
-        Returns:
-            List[ `psym.common.data_class.SiteSurvey` ]
+    Returns:
+        List[ `psym.common.data_class.SiteSurvey` ]
 
-        Raises:
-            `psym.exceptions.EntityNotFoundError`: location does not exist
+    Raises:
+        `psym.exceptions.EntityNotFoundError`: location does not exist
     """
 
     location_with_surveys = LocationSurveysQuery.execute(client, id=location_id)

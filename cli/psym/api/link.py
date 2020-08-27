@@ -28,33 +28,33 @@ def get_all_links_and_port_names_of_equipment(
 ) -> Iterator[Tuple[Link, str]]:
     """Returns all links and port names in equipment.
 
-        :param equipment: Equipment object to be copied, could be retrieved from
+    :param equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
+    :type equipment: :class:`~psym.common.data_class.Equipment`
 
-        :raises:
-            * `psym.exceptions.EntityNotFoundError`: Link not found
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * `psym.exceptions.EntityNotFoundError`: Link not found
+        * FailedOperationException: Internal inventory error
 
-        :return: Iterator of Tuple[Link, str]
+    :return: Iterator of Tuple[Link, str]
 
-            * Link - :class:`~psym.common.data_class.Link`
-            * str - port name
+        * Link - :class:`~psym.common.data_class.Link`
+        * str - port name
 
-        :rtype: Iterator[ Tuple[ :class:`~psym.common.data_class.Link`, str ] ]
+    :rtype: Iterator[ Tuple[ :class:`~psym.common.data_class.Link`, str ] ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment(name="indProdCpy1_AIO", location=location1)
-            client.get_all_links_and_port_names_of_equipment(equipment=equipment)
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment(name="indProdCpy1_AIO", location=location1)
+        client.get_all_links_and_port_names_of_equipment(equipment=equipment)
     """
 
     equipment_data = EquipmentPortsQuery.execute(client, id=equipment.id)
@@ -85,49 +85,49 @@ def add_link(
 ) -> Link:
     """Connects a link between two ports of two equipments.
 
-        :param equipment_a: Equipment object to connect, could be retrieved from
+    :param equipment_a: Equipment object to connect, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment_a: :class:`~psym.common.data_class.Equipment`
-        :param port_name_a: Name of the port in equipment A
-        :type port_name_a: str
-        :param equipment_b: Equipment object to connect, could be retrieved from
+    :type equipment_a: :class:`~psym.common.data_class.Equipment`
+    :param port_name_a: Name of the port in equipment A
+    :type port_name_a: str
+    :param equipment_b: Equipment object to connect, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment_b: :class:`~psym.common.data_class.Equipment`
-        :param port_name_b: Name of the port in equipment B
-        :type port_name_b: str
+    :type equipment_b: :class:`~psym.common.data_class.Equipment`
+    :param port_name_b: Name of the port in equipment B
+    :type port_name_b: str
 
-        :raises:
-            * AssertionError: `port_name` in any of the equipments does not exist,
-              or match more than one port, or is already occupied by link
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * AssertionError: `port_name` in any of the equipments does not exist,
+          or match more than one port, or is already occupied by link
+        * FailedOperationException: Internal inventory error
 
-        :return: Link object
-        :rtype: :class:`~psym.common.data_class.Link`
+    :return: Link object
+    :rtype: :class:`~psym.common.data_class.Link`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location1 = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment1 = client.get_equipment(name="indProdCpy1_AIO", location=location1)
-            location2 = client.get_location({("Country", "LS_IND_Prod")})
-            equipment2 = client.get_equipment(name="indProd1_AIO", location=location2)
-            client.add_link(
-                equipment_a=equipment1,
-                port_name_a="Port A",
-                equipment_b=equipment2,
-                port_name_b="Port B"
-            )
+        location1 = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment1 = client.get_equipment(name="indProdCpy1_AIO", location=location1)
+        location2 = client.get_location({("Country", "LS_IND_Prod")})
+        equipment2 = client.get_equipment(name="indProd1_AIO", location=location2)
+        client.add_link(
+            equipment_a=equipment1,
+            port_name_a="Port A",
+            equipment_b=equipment2,
+            port_name_b="Port B"
+        )
     """
 
     port_a = get_port(client, equipment_a, port_name_a)
@@ -157,14 +157,14 @@ def add_link(
 def get_links(client: SymphonyClient) -> Iterator[Link]:
     """This function returns all existing links
 
-        :return: Links Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Link` ]
+    :return: Links Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Link` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            all_links = client.get_links()
+        all_links = client.get_links()
     """
     links = LinksQuery.execute(client, first=PAGINATION_STEP)
     edges = links.edges if links else []
@@ -190,34 +190,34 @@ def get_link_in_port_of_equipment(
 ) -> Link:
     """Returns link in specific port by name in equipment.
 
-        :param equipment: Equipment object that has link, could be retrieved from
+    :param equipment: Equipment object that has link, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
-        :param port_name: Name of the port in equipment
-        :type port_name: str
+    :type equipment: :class:`~psym.common.data_class.Equipment`
+    :param port_name: Name of the port in equipment
+    :type port_name: str
 
-        :raises:
-            * LinkNotFoundException: Link not found
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * LinkNotFoundException: Link not found
+        * FailedOperationException: Internal inventory error
 
-        :return: Link object
-        :rtype: :class:`~psym.common.data_class.Link`
+    :return: Link object
+    :rtype: :class:`~psym.common.data_class.Link`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            client.get_link_in_port_of_equipment(
-                equipment=equipment,
-                port_name="Port A"
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        client.get_link_in_port_of_equipment(
+            equipment=equipment,
+            port_name="Port A"
+        )
     """
     port = get_port(client, equipment, port_name)
     link = port.link

@@ -49,19 +49,19 @@ def format_to_property_definitions(
 ) -> Sequence[PropertyDefinition]:
     """This function gets Sequence[ `PropertyTypeFragment` ] as argument and formats it to Sequence[ `PropertyDefinition` ]
 
-        :param data: Existing property type fragments sequence
-        :type data: Sequence[ :class:`~psym.graphql.fragment.property_type.PropertyTypeFragment` ]
+    :param data: Existing property type fragments sequence
+    :type data: Sequence[ :class:`~psym.graphql.fragment.property_type.PropertyTypeFragment` ]
 
-        :return: PropertyDefinitions sequence
-        :rtype: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :return: PropertyDefinitions sequence
+    :rtype: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_definitions = format_to_property_definitions(
-                data=property_type_fragments,
-            )
+        property_definitions = format_to_property_definitions(
+            data=property_type_fragments,
+        )
     """
     return [
         format_to_property_definition(property_type_fragment)
@@ -74,21 +74,21 @@ def format_to_property_type_input(
 ) -> PropertyTypeInput:
     """This function gets `PropertyDefinition` object as argument and formats it to `PropertyTypeInput` object
 
-        :param property_definition: Existing property definition object
-        :type property_definition: :class:`~psym.common.data_class.PropertyDefinition`
-        :param is_new: Is new flag
-        :type is_new: bool
+    :param property_definition: Existing property definition object
+    :type property_definition: :class:`~psym.common.data_class.PropertyDefinition`
+    :param is_new: Is new flag
+    :type is_new: bool
 
-        :return: PropertyTypeInput object
-        :rtype: :class:`~psym.graphql.input.property_type.PropertyTypeInput`
+    :return: PropertyTypeInput object
+    :rtype: :class:`~psym.graphql.input.property_type.PropertyTypeInput`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type_input = format_to_property_type_input(
-                property_definition=property_definition,
-            )
+        property_type_input = format_to_property_type_input(
+            property_definition=property_definition,
+        )
     """
     string_value = None
     int_value = None
@@ -146,19 +146,19 @@ def format_to_property_type_inputs(
 ) -> List[PropertyTypeInput]:
     """This function gets Sequence[ `PropertyDefinition` ] as argument and formats it to Sequence[ `PropertyTypeInput` ]
 
-        :param data: Existing property definitions sequence
-        :type data: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param data: Existing property definitions sequence
+    :type data: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
 
-        :return: PropertyTypeInputs list
-        :rtype: List[ :class:`~psym.graphql.input.property_type.PropertyTypeInput` ]
+    :return: PropertyTypeInputs list
+    :rtype: List[ :class:`~psym.graphql.input.property_type.PropertyTypeInput` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type_inputs = format_to_property_type_inputs(
-                data=property_type_definitions,
-            )
+        property_type_inputs = format_to_property_type_inputs(
+            data=property_type_definitions,
+        )
     """
     return [
         format_to_property_type_input(property_definition)

@@ -46,31 +46,31 @@ def copy_equipment_with_all_attachments(
 ) -> Dict[Equipment, Equipment]:
     """Copy the equipment to the new location with all its attachments
 
-        :param equipment: Equipment object to be copied, could be retrieved from
+    :param equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
-        :param dest_location: Location to copy equipment to, could be retrieved from
+    :type equipment: :class:`~psym.common.data_class.Equipment`
+    :param dest_location: Location to copy equipment to, could be retrieved from
 
-            * :meth:`~psym.api.location.get_location`
-            * :meth:`~psym.api.location.add_location`
+        * :meth:`~psym.api.location.get_location`
+        * :meth:`~psym.api.location.add_location`
 
-        :type dest_location: :class:`~psym.common.data_class.Location`
+    :type dest_location: :class:`~psym.common.data_class.Location`
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Dictionary of source equipment to new equipment,
-            includes the equipment given as parameter and also all the equipments attached to it
+    :return: Dictionary of source equipment to new equipment,
+        includes the equipment given as parameter and also all the equipments attached to it
 
-            * source equipment - :class:`~psym.common.data_class.Equipment`
-            * new equipment - :class:`~psym.common.data_class.Equipment`
+        * source equipment - :class:`~psym.common.data_class.Equipment`
+        * new equipment - :class:`~psym.common.data_class.Equipment`
 
-        :rtype: Iterator[ Tuple[ :class:`~psym.common.data_class.Equipment`, str ] ]
+    :rtype: Iterator[ Tuple[ :class:`~psym.common.data_class.Equipment`, str ] ]
     """
 
     result = {}

@@ -188,28 +188,28 @@ class InventoryClient(SymphonyClient):
         reporter: Reporter = DUMMY_REPORTER,
     ) -> None:
         """This is the class to use for working with inventory. It contains all
-            the functions to query and and edit the inventory.
+        the functions to query and and edit the inventory.
 
-            The __init__ method populates the different entity types
-            for faster run of operations.
+        The __init__ method populates the different entity types
+        for faster run of operations.
 
-            Args:
-                email (str): The email of the user to connect with.
-                password (str): The password of the user to connect with.
-                tenant (str, optional): The tenant to connect to -
-                            should be the beginning of "{}.purpleheadband.cloud"
-                            The default is "fb-test" for QA environment
-                is_local_host (bool, optional): Used for developers to connect to
-                            local inventory. This changes the address and also
-                            disable verification of ssl certificate
-                is_dev_mode (bool, optional): Used for developers to connect to
-                            local inventory from a container. This changes the
-                            address and also disable verification of ssl
-                            certificate
-                reporter (object, optional): Use reporter.InventoryReporter to
-                            store reports on all successful and failed mutations
-                            in inventory. The default is DummyReporter that
-                            discards reports
+        Args:
+            email (str): The email of the user to connect with.
+            password (str): The password of the user to connect with.
+            tenant (str, optional): The tenant to connect to -
+                        should be the beginning of "{}.purpleheadband.cloud"
+                        The default is "fb-test" for QA environment
+            is_local_host (bool, optional): Used for developers to connect to
+                        local inventory. This changes the address and also
+                        disable verification of ssl certificate
+            is_dev_mode (bool, optional): Used for developers to connect to
+                        local inventory from a container. This changes the
+                        address and also disable verification of ssl
+                        certificate
+            reporter (object, optional): Use reporter.InventoryReporter to
+                        store reports on all successful and failed mutations
+                        in inventory. The default is DummyReporter that
+                        discards reports
 
         """
         super().__init__(

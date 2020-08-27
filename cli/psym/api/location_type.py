@@ -46,35 +46,35 @@ def add_location_type(
 ) -> LocationType:
     """This function creates new location type.
 
-        :param name: Location type name
-        :type name: str
-        :param properties: List of property definitions
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
-        :param map_zoom_level: Map zoom level
-        :type map_zoom_level: int
+    :param name: Location type name
+    :type name: str
+    :param properties: List of property definitions
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param map_zoom_level: Map zoom level
+    :type map_zoom_level: int
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: LocationType object
-        :rtype: :class:`~psym.common.data_class.LocationType`
+    :return: LocationType object
+    :rtype: :class:`~psym.common.data_class.LocationType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location_type = client.add_location_type(
-                name="city",
-                properties=[
-                    PropertyDefinition(
-                        property_name="Contact",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=True
-                    )
-                ],
-                map_zoom_level=5,
-            )
+        location_type = client.add_location_type(
+            name="city",
+            properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+            map_zoom_level=5,
+        )
     """
     new_property_types = format_to_property_type_inputs(data=properties)
     result = AddLocationTypeMutation.execute(
@@ -101,19 +101,19 @@ def delete_locations_by_location_type(
 ) -> None:
     """Delete locatons by location type.
 
-        :param location_type: LocationType object
-        :type location_type: :class:`~psym.common.data_class.LocationType`
+    :param location_type: LocationType object
+    :type location_type: :class:`~psym.common.data_class.LocationType`
 
-        :raises:
-            `psym.exceptions.EntityNotFoundError`: `location_type` does not exist
+    :raises:
+        `psym.exceptions.EntityNotFoundError`: `location_type` does not exist
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_locations_by_location_type(location_type=location_type)
+        client.delete_locations_by_location_type(location_type=location_type)
     """
     location_type_with_locations = LocationTypeLocationsQuery.execute(
         client, id=location_type.id
@@ -147,19 +147,19 @@ def delete_location_type_with_locations(
 ) -> None:
     """Delete locaton type with existing locations.
 
-        :param location_type: LocationType object
-        :type location_type: :class:`~psym.common.data_class.LocationType`
+    :param location_type: LocationType object
+    :type location_type: :class:`~psym.common.data_class.LocationType`
 
-        :raises:
-            `psym.exceptions.EntityNotFoundError`: `location_type` does not exist
+    :raises:
+        `psym.exceptions.EntityNotFoundError`: `location_type` does not exist
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_location_type_with_locations(location_type=location_type)
+        client.delete_location_type_with_locations(location_type=location_type)
     """
     delete_locations_by_location_type(client, location_type)
     RemoveLocationTypeMutation.execute(client, id=location_type.id)

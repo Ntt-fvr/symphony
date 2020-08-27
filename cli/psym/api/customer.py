@@ -19,28 +19,28 @@ def add_customer(
 ) -> Customer:
     """This function adds Customer.
 
-        :param name: Customer name
-        :type name: str
-        :param external_id: Customer external ID
-        :type external_id: str, optional
+    :param name: Customer name
+    :type name: str
+    :param external_id: Customer external ID
+    :type external_id: str, optional
 
-        :return: Customer object
-        :rtype: :class:`~psym.common.data_class.Customer`
+    :return: Customer object
+    :rtype: :class:`~psym.common.data_class.Customer`
 
-        **Example 1**
+    **Example 1**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            new_customers = client.add_customer(name="new_customer")
+        new_customers = client.add_customer(name="new_customer")
 
-        **Example 2**
+    **Example 2**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            new_customers = client.add_customer(
-                name="new_customer",
-                external_id="12345678"
-            )
+        new_customers = client.add_customer(
+            name="new_customer",
+            external_id="12345678"
+        )
     """
     customer_input = AddCustomerInput(name=name, externalId=external_id)
     result = AddCustomerMutation.execute(client, input=customer_input)
@@ -51,14 +51,14 @@ def get_all_customers(client: SymphonyClient) -> Iterator[Customer]:
 
     """This function returns all Customers.
 
-        :return: Customers Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Customer` ]
+    :return: Customers Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Customer` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            customers = client.get_all_customers()
+        customers = client.get_all_customers()
     """
     customers = CustomersQuery.execute(client)
     if not customers:
@@ -72,14 +72,14 @@ def get_all_customers(client: SymphonyClient) -> Iterator[Customer]:
 def delete_customer(client: SymphonyClient, customer: Customer) -> None:
     """This function delete Customer.
 
-        :param name: Customer name
-        :type name: :class:`~psym.common.data_class.Customer`
-        :rtype: None
+    :param name: Customer name
+    :type name: :class:`~psym.common.data_class.Customer`
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_customer(customer)
+        client.delete_customer(customer)
     """
     RemoveCustomerMutation.execute(client, id=customer.id)

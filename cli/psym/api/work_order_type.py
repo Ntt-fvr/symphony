@@ -47,32 +47,32 @@ def add_work_order_type(
 ) -> WorkOrderType:
     """This function creates WorkOrderType.
 
-        :param name: Work order type name
-        :type name: str
-        :param description: Work order type description
-        :type description: str, optional
-        :param properties: List of property definitions
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param name: Work order type name
+    :type name: str
+    :param description: Work order type description
+    :type description: str, optional
+    :param properties: List of property definitions
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
 
-        :return: Work order type
-        :rtype: :class:`~psym.common.data_class.WorkOrderType`
+    :return: Work order type
+    :rtype: :class:`~psym.common.data_class.WorkOrderType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.add_work_order_type(
-                name="Work order type",
-                description="Work order type description",
-                properties=[
-                    PropertyDefinition(
-                        property_name="work order type property",
-                        property_kind=PropertyKind.string,
-                        default_raw_value="string value",
-                        is_fixed=False,
-                    )
-                ],
-            )
+        client.add_work_order_type(
+            name="Work order type",
+            description="Work order type description",
+            properties=[
+                PropertyDefinition(
+                    property_name="work order type property",
+                    property_kind=PropertyKind.string,
+                    default_raw_value="string value",
+                    is_fixed=False,
+                )
+            ],
+        )
     """
     property_type_inputs = []
     if properties is not None:
@@ -99,19 +99,19 @@ def add_work_order_type(
 def get_work_order_types(client: SymphonyClient) -> Iterator[WorkOrderType]:
     """Get the list of work order types
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: WorkOrderType Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.WorkOrderType` ]
+    :return: WorkOrderType Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.WorkOrderType` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            work_order_types = client.get_work_order_types()
-            for work_order_type in work_order_types:
-                print(work_order_type.name, work_order_type.description)
+        work_order_types = client.get_work_order_types()
+        for work_order_type in work_order_types:
+            print(work_order_type.name, work_order_type.description)
     """
     result = WorkOrderTypesQuery.execute(client)
     if result is None:
@@ -130,21 +130,21 @@ def get_work_order_types(client: SymphonyClient) -> Iterator[WorkOrderType]:
 def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
     """This function gets existing WorkOrderType by its ID.
 
-        :param id: Work order type ID
-        :type id: str
+    :param id: Work order type ID
+    :type id: str
 
-        :raises:
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
+    :raises:
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
-        :return: Work order type
-        :rtype: :class:`~psym.common.data_class.WorkOrderType`
+    :return: Work order type
+    :rtype: :class:`~psym.common.data_class.WorkOrderType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.get_work_order_type_by_id("12345678")
+        client.get_work_order_type_by_id("12345678")
     """
     result = WorkOrderTypeDetailsQuery.execute(client, id=id)
 
@@ -162,21 +162,21 @@ def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
 def get_work_order_type_by_name(client: SymphonyClient, name: str) -> WorkOrderType:
     """This function gets existing WorkOrderType by its name.
 
-        :param name: Work order type name
-        :type name: str
+    :param name: Work order type name
+    :type name: str
 
-        :raises:
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
+    :raises:
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
-        :return: Work order type
-        :rtype: :class:`~psym.common.data_class.WorkOrderType`
+    :return: Work order type
+    :rtype: :class:`~psym.common.data_class.WorkOrderType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.get_work_order_type_by_name("WorkOrderType Name")
+        client.get_work_order_type_by_name("WorkOrderType Name")
     """
 
     work_order_types = get_work_order_types(client=client)
@@ -195,35 +195,35 @@ def edit_work_order_type(
 ) -> WorkOrderType:
     """This function edits existing WorkOrderType.
 
-        :param work_order_type_id: Existing work order type ID
-        :type work_order_type_id: str
-        :param new_name: Work order type new name
-        :type new_name: str, optional
-        :param new_description: Work order type new description
-        :type new_description: str, optional
-        :param new_properties_defaults: Mapping of property name to property default value
+    :param work_order_type_id: Existing work order type ID
+    :type work_order_type_id: str
+    :param new_name: Work order type new name
+    :type new_name: str, optional
+    :param new_description: Work order type new description
+    :type new_description: str, optional
+    :param new_properties_defaults: Mapping of property name to property default value
 
-            * str - property name
-            * PropertyValue - new default value of the same type for this property
+        * str - property name
+        * PropertyValue - new default value of the same type for this property
 
-        :type new_properties_defaults: Mapping[str, PropertyValue], optional
+    :type new_properties_defaults: Mapping[str, PropertyValue], optional
 
-        :raises:
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
+    :raises:
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
-        :return: Work order type
-        :rtype: :class:`~psym.common.data_class.WorkOrderType`
+    :return: Work order type
+    :rtype: :class:`~psym.common.data_class.WorkOrderType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            edited_work_order_type = client.edit_work_order_type(
-                work_order_type_id="12345678,
-                new_name="New name",
-                new_description="New description",
-            )
+        edited_work_order_type = client.edit_work_order_type(
+            work_order_type_id="12345678,
+            new_name="New name",
+            new_description="New description",
+        )
     """
     work_order_type = get_work_order_type_by_id(client=client, id=work_order_type_id)
     new_name = work_order_type.name if new_name is None else new_name
@@ -261,16 +261,16 @@ def edit_work_order_type(
 def delete_work_order_type(client: SymphonyClient, work_order_type_id: str) -> None:
     """This function deletes WorkOrderType.
 
-        :param work_order_type_id: Work order type ID
-        :type work_order_type_id: str
+    :param work_order_type_id: Work order type ID
+    :type work_order_type_id: str
 
-        :raises:
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * FailedOperationException: Internal inventory error
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_work_order_type("12345678")
+        client.delete_work_order_type("12345678")
     """
     RemoveWorkOrderTypeMutation.execute(client, id=work_order_type_id)

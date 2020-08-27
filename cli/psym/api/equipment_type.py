@@ -102,50 +102,50 @@ def get_or_create_equipment_type(
     position_list: List[str],
 ) -> EquipmentType:
     """This function checks equipment type existence,
-        in case it is not found, creates one.
+    in case it is not found, creates one.
 
-        :param name: Equipment type name
-        :type name: str
-        :param category: Category name
-        :type category: str
-        :param properties: List of property definitions
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
-        :param ports_dict: Dictionary of port name to port type name
+    :param name: Equipment type name
+    :type name: str
+    :param category: Category name
+    :type category: str
+    :param properties: List of property definitions
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param ports_dict: Dictionary of port name to port type name
 
-            * str - port name
-            * str - port type name
+        * str - port name
+        * str - port type name
 
-        :type ports_dict: Dict[str, str]
-        :param position_list: List of positions names
-        :type position_list: List[str]
+    :type ports_dict: Dict[str, str]
+    :param position_list: List of positions names
+    :type position_list: List[str]
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            e_type = client.get_or_create_equipment_type(
-                name="Tp-Link T1600G",
-                category="Router",
-                properties=[
-                    PropertyDefinition(
-                        property_name="IP",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=True
-                    )
-                ],
-                ports_dict={
-                    "Port 1": "eth port",
-                    "port 2": "eth port",
-                },
-                position_list=[],
-            )
+        e_type = client.get_or_create_equipment_type(
+            name="Tp-Link T1600G",
+            category="Router",
+            properties=[
+                PropertyDefinition(
+                    property_name="IP",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+            ports_dict={
+                "Port 1": "eth port",
+                "port 2": "eth port",
+            },
+            position_list=[],
+        )
     """
     if name in EQUIPMENT_TYPES:
         return EQUIPMENT_TYPES[name]
@@ -219,48 +219,48 @@ def add_equipment_type(
 ) -> EquipmentType:
     """This function creates new equipment type.
 
-        :param name: Equipment type name
-        :type name: str
-        :param category: Category name
-        :type category: str
-        :param properties: List of property definitions
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
-        :param ports_dict: Dictionary of port name to port type name
+    :param name: Equipment type name
+    :type name: str
+    :param category: Category name
+    :type category: str
+    :param properties: List of property definitions
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param ports_dict: Dictionary of port name to port type name
 
-            * str - port name
-            * str - port type name
+        * str - port name
+        * str - port type name
 
-        :type ports_dict: Dict[str, str]
-        :param position_list: List of positions names
-        :type position_list: List[str]
+    :type ports_dict: Dict[str, str]
+    :param position_list: List of positions names
+    :type position_list: List[str]
 
-        :raises:
-            FailedOperationException: internal inventory error
+    :raises:
+        FailedOperationException: internal inventory error
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            e_type = client.add_equipment_type(
-                name="Tp-Link T1600G",
-                category="Router",
-                properties=[
-                    PropertyDefinition(
-                        property_name="IP",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=True
-                    )
-                ],
-                ports_dict={
-                    "Port 1": "eth port",
-                    "port 2": "eth port",
-                },
-                position_list=[],
-            )
+        e_type = client.add_equipment_type(
+            name="Tp-Link T1600G",
+            category="Router",
+            properties=[
+                PropertyDefinition(
+                    property_name="IP",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+            ports_dict={
+                "Port 1": "eth port",
+                "port 2": "eth port",
+            },
+            position_list=[],
+        )
     """
     new_property_types = format_to_property_type_inputs(data=properties)
 
@@ -301,32 +301,32 @@ def edit_equipment_type(
 ) -> EquipmentType:
     """Edit existing equipment type.
 
-        :param name: Equipment type name
-        :type name: str
-        :param new_positions_list: List of new positions
-        :type new_positions_list: List[str]
-        :param new_ports_dict: Dictionary of port name to port type name
+    :param name: Equipment type name
+    :type name: str
+    :param new_positions_list: List of new positions
+    :type new_positions_list: List[str]
+    :param new_ports_dict: Dictionary of port name to port type name
 
-            * str - port name
-            * str - port type name
+        * str - port name
+        * str - port type name
 
-        :type new_ports_dict: Dict[str, str]
+    :type new_ports_dict: Dict[str, str]
 
-        :raises:
-            FailedOperationException: internal inventory error
+    :raises:
+        FailedOperationException: internal inventory error
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            edited_equipment = client.edit_equipment_type(
-                name="Card",
-                new_positions_list=[],
-                new_ports_dict={"Port 5": "Z Cards Only (LS - DND)"}
-            )
+        edited_equipment = client.edit_equipment_type(
+            name="Card",
+            new_positions_list=[],
+            new_ports_dict={"Port 5": "Z Cards Only (LS - DND)"}
+        )
     """
     equipment_type = EQUIPMENT_TYPES[name]
     edited_property_types = [
@@ -361,25 +361,25 @@ def copy_equipment_type(
 ) -> EquipmentType:
     """Copy existing equipment type.
 
-        :param curr_equipment_type_name: Existing equipment type name
-        :type curr_equipment_type_name: str
-        :param new_equipment_type_name: New equipment type name
-        :type new_equipment_type_name: str
+    :param curr_equipment_type_name: Existing equipment type name
+    :type curr_equipment_type_name: str
+    :param new_equipment_type_name: New equipment type name
+    :type new_equipment_type_name: str
 
-        :raises:
-            FailedOperationException: internal inventory error
+    :raises:
+        FailedOperationException: internal inventory error
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            e_type = client.copy_equipment_type(
-                curr_equipment_type_name="Card",
-                new_equipment_type_name="External_Card",
-            )
+        e_type = client.copy_equipment_type(
+            curr_equipment_type_name="Card",
+            new_equipment_type_name="External_Card",
+        )
     """
     equipment_type = EQUIPMENT_TYPES[curr_equipment_type_name]
 
@@ -427,25 +427,25 @@ def get_equipment_type_property_type(
 ) -> PropertyDefinition:
     """Get property type by ID on specific equipment type.
 
-        :param equipment_type_name: Existing equipment type name
-        :type equipment_type_name: str
-        :param property_type_id: Property type ID
-        :type property_type_id: str
+    :param equipment_type_name: Existing equipment type name
+    :type equipment_type_name: str
+    :param property_type_id: Property type ID
+    :type property_type_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: property type with id=`property_type_id` is not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: property type with id=`property_type_id` is not found
 
-        :return: PropertyDefinition object
-        :rtype: :class:`~psym.common.data_class.PropertyDefinition`
+    :return: PropertyDefinition object
+    :rtype: :class:`~psym.common.data_class.PropertyDefinition`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_equipment_type_property_type(
-                equipment_type_name="Card",
-                property_type_id="12345",
-            )
+        property_type = client.get_equipment_type_property_type(
+            equipment_type_name="Card",
+            property_type_id="12345",
+        )
     """
     return get_property_type(
         client=client,
@@ -460,25 +460,25 @@ def get_equipment_type_property_type_by_external_id(
 ) -> PropertyDefinition:
     """Get property type by external ID on specific equipment type.
 
-        :param equipment_type_name: Existing equipment type name
-        :type equipment_type_name: str
-        :param property_type_external_id: Property type external ID
-        :type property_type_external_id: str
+    :param equipment_type_name: Existing equipment type name
+    :type equipment_type_name: str
+    :param property_type_external_id: Property type external ID
+    :type property_type_external_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: property type with external_id=`property_type_external_id` is not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: property type with external_id=`property_type_external_id` is not found
 
-        :return: PropertyDefinition object
-        :rtype: :class:`~psym.common.data_class.PropertyDefinition`
+    :return: PropertyDefinition object
+    :rtype: :class:`~psym.common.data_class.PropertyDefinition`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            property_type = client.get_equipment_type_property_type_by_external_id(
-                equipment_type_name="Card",
-                property_type_external_id="12345",
-            )
+        property_type = client.get_equipment_type_property_type_by_external_id(
+            equipment_type_name="Card",
+            property_type_external_id="12345",
+        )
     """
     return get_property_type_by_external_id(
         client=client,
@@ -497,35 +497,35 @@ def edit_equipment_type_property_type(
     """Edit specific property type on specific equipment type.
 
 
-        :param equipment_type_name: Existing equipment type name
-        :type equipment_type_name: str
-        :param property_type_id: Existing property type ID
-        :type property_type_id: str
-        :param new_property_definition: New property definition
-        :type new_property_definition: :class:`~psym.common.data_class.PropertyDefinition`
+    :param equipment_type_name: Existing equipment type name
+    :type equipment_type_name: str
+    :param property_type_id: Existing property type ID
+    :type property_type_id: str
+    :param new_property_definition: New property definition
+    :type new_property_definition: :class:`~psym.common.data_class.PropertyDefinition`
 
-        :raises:
-            * :class:`~psym.exceptions.EntityNotFoundError`: if property type name is not found
-            * FailedOperationException: internal inventory error
+    :raises:
+        * :class:`~psym.exceptions.EntityNotFoundError`: if property type name is not found
+        * FailedOperationException: internal inventory error
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            e_type = client.edit_equipment_type_property_type(
-                equipment_type_name="Card",
-                property_type_id="111669149698",
-                new_property_definition=PropertyDefinition(
-                    property_name=property_type_name,
-                    property_kind=PropertyKind.string,
-                    default_raw_value=None,
-                    is_fixed=False,
-                    external_id="12345",
-                ),
-            )
+        e_type = client.edit_equipment_type_property_type(
+            equipment_type_name="Card",
+            property_type_id="111669149698",
+            new_property_definition=PropertyDefinition(
+                property_name=property_type_name,
+                property_kind=PropertyKind.string,
+                default_raw_value=None,
+                is_fixed=False,
+                external_id="12345",
+            ),
+        )
     """
     equipment_type = EQUIPMENT_TYPES[equipment_type_name]
     edited_property_types = edit_property_type(
@@ -562,31 +562,31 @@ def delete_equipment_type_with_equipments(
 ) -> None:
     """Delete equipment type with existing equipments.
 
-        :param equipment_type: Existing equipment type name
-        :type equipment_type: :class:`~psym.common.data_class.EquipmentType`
+    :param equipment_type: Existing equipment type name
+    :type equipment_type: :class:`~psym.common.data_class.EquipmentType`
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: if equipment_type does not exist
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: if equipment_type does not exist
 
-        :return: None
+    :return: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            equipment_type = client.get_or_create_equipment_type(
-                name="Tp-Link T1600G",
-                category="Router",
-                properties=[
-                    ("IP", "string", None, True),
-                ],
-                ports_dict={
-                    "Port 1": "eth port",
-                    "port 2": "eth port",
-                },
-                position_list=[],
-            )
-            client.delete_equipment_type_with_equipments(equipment_type=equipment_type)
+        equipment_type = client.get_or_create_equipment_type(
+            name="Tp-Link T1600G",
+            category="Router",
+            properties=[
+                ("IP", "string", None, True),
+            ],
+            ports_dict={
+                "Port 1": "eth port",
+                "port 2": "eth port",
+            },
+            position_list=[],
+        )
+        client.delete_equipment_type_with_equipments(equipment_type=equipment_type)
     """
     equipment_type_with_equipments = EquipmentTypeEquipmentQuery.execute(
         client, id=equipment_type.id

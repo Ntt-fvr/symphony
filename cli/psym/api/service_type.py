@@ -72,44 +72,44 @@ def add_service_type(
 ) -> ServiceType:
     """This function creates new service type.
 
-        :param name: Service type name
-        :type name: str
-        :param has_customer: Flag for customer existance
-        :type has_customer: bool
-        :param properties: Property definitions list
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ], optional
-        :param endpoint_definitions: Service endpoint definitions list
-        :type endpoint_definitions: List[ :class:`~psym.common.data_class.ServiceEndpointDefinition` ], optional
+    :param name: Service type name
+    :type name: str
+    :param has_customer: Flag for customer existance
+    :type has_customer: bool
+    :param properties: Property definitions list
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ], optional
+    :param endpoint_definitions: Service endpoint definitions list
+    :type endpoint_definitions: List[ :class:`~psym.common.data_class.ServiceEndpointDefinition` ], optional
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: ServiceType object
-        :rtype: :class:`~psym.common.data_class.ServiceType`
+    :return: ServiceType object
+    :rtype: :class:`~psym.common.data_class.ServiceType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            service_type = client.add_service_type(
-                client=self.client,
-                name="Internet Access",
-                has_customer=True,
-                properties=[
-                    PropertyDefinition(
-                        property_name="Service Package",
-                        property_kind=PropertyKind.string,
-                        default_raw_value="Public 5G",
-                        is_fixed=False,
-                    ),
-                    PropertyDefinition(
-                        property_name="Address Family",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=False,
-                    ),
-                ],
-            )
+        service_type = client.add_service_type(
+            client=self.client,
+            name="Internet Access",
+            has_customer=True,
+            properties=[
+                PropertyDefinition(
+                    property_name="Service Package",
+                    property_kind=PropertyKind.string,
+                    default_raw_value="Public 5G",
+                    is_fixed=False,
+                ),
+                PropertyDefinition(
+                    property_name="Address Family",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=False,
+                ),
+            ],
+        )
     """
 
     formated_property_types = None
@@ -161,22 +161,22 @@ def add_service_type(
 def get_service_type(client: SymphonyClient, service_type_id: str) -> ServiceType:
     """Get service type by ID.
 
-        :param service_type_id: Service type ID
-        :type service_type_id: str
+    :param service_type_id: Service type ID
+    :type service_type_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
 
-        :return: ServiceType object
-        :rtype: :class:`~psym.common.data_class.ServiceType`
+    :return: ServiceType object
+    :rtype: :class:`~psym.common.data_class.ServiceType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            service_type = client.get_service_type(
-                service_type_id="12345",
-            )
+        service_type = client.get_service_type(
+            service_type_id="12345",
+        )
     """
     for _, service_type in SERVICE_TYPES.items():
         if service_type.id == service_type_id:
@@ -195,40 +195,40 @@ def edit_service_type(
 ) -> ServiceType:
     """Edit existing service type by ID.
 
-        :param service_type: ServiceType object
-        :type service_type: :class:`~psym.common.data_class.ServiceType`
-        :param new_name: Service type name
-        :type new_name: str, optional
-        :param new_has_customer: Flag for customer existance
-        :type new_has_customer: bool, optional
-        :param new_properties: Property definitions list
-        :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ], optional
-        :param new_endpoints: Service endpont definitions list
-        :type new_endpoints: List[ :class:`~psym.common.data_class.ServiceEndpointDefinition` ], optional
+    :param service_type: ServiceType object
+    :type service_type: :class:`~psym.common.data_class.ServiceType`
+    :param new_name: Service type name
+    :type new_name: str, optional
+    :param new_has_customer: Flag for customer existance
+    :type new_has_customer: bool, optional
+    :param new_properties: Property definitions list
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ], optional
+    :param new_endpoints: Service endpont definitions list
+    :type new_endpoints: List[ :class:`~psym.common.data_class.ServiceEndpointDefinition` ], optional
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Service type with id=`service_type_id` does not found
 
-        :return: ServiceType object
-        :rtype: :class:`~psym.common.data_class.ServiceType`
+    :return: ServiceType object
+    :rtype: :class:`~psym.common.data_class.ServiceType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            service_type = client.edit_service_type(
-                service_type=service_type,
-                new_name="new service type name",
-                new_properties={"existing property name": "new value"},
-                new_endpoints=[
-                    ServiceEndpointDefinition(
-                        id="endpoint_def_id",
-                        name="endpoint_def_name",
-                        role="endpoint_def_role",
-                        index=1,
-                    ),
-                ],
-            )
+        service_type = client.edit_service_type(
+            service_type=service_type,
+            new_name="new service type name",
+            new_properties={"existing property name": "new value"},
+            new_endpoints=[
+                ServiceEndpointDefinition(
+                    id="endpoint_def_id",
+                    name="endpoint_def_name",
+                    role="endpoint_def_role",
+                    index=1,
+                ),
+            ],
+        )
     """
     new_name = service_type.name if new_name is None else new_name
     new_has_customer = (
@@ -289,18 +289,18 @@ def edit_service_type(
 
 def delete_service_type(client: SymphonyClient, service_type: ServiceType) -> None:
     """This function deletes an service type.
-        It can get only the requested service type ID
+    It can get only the requested service type ID
 
-        :param service_type: ServiceType object
-        :type service_type: :class:`~psym.common.data_class.ServiceType`
+    :param service_type: ServiceType object
+    :type service_type: :class:`~psym.common.data_class.ServiceType`
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_service_type(service_type_id=service_type.id)
+        client.delete_service_type(service_type_id=service_type.id)
     """
     RemoveServiceTypeMutation.execute(client, id=service_type.id)
     del SERVICE_TYPES[service_type.name]
@@ -311,19 +311,19 @@ def delete_service_type_with_services(
 ) -> None:
     """Delete service type with existing services.
 
-        :param service_type: ServiceType object
-        :type service_type: :class:`~psym.common.data_class.ServiceType`
+    :param service_type: ServiceType object
+    :type service_type: :class:`~psym.common.data_class.ServiceType`
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Service type does not exist
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Service type does not exist
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_service_type_with_services(service_type=service_type)
+        client.delete_service_type_with_services(service_type=service_type)
     """
     service_type_with_services = ServiceTypeServicesQuery.execute(
         client, id=service_type.id

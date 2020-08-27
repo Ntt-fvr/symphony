@@ -67,31 +67,31 @@ def _get_equipment_if_exists(
 def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equipment:
     """Get equipment by name in a given location.
 
-        :param name: Equipment name
-        :type name: str
-        :param location: Location object could be retrieved from
+    :param name: Equipment name
+    :type name: str
+    :param location: Location object could be retrieved from
 
-            * :meth:`~psym.api.location.get_location`
-            * :meth:`~psym.api.location.add_location`
+        * :meth:`~psym.api.location.get_location`
+        * :meth:`~psym.api.location.add_location`
 
-        :type location: :class:`~psym.common.data_class.Location`
+    :type location: :class:`~psym.common.data_class.Location`
 
 
-        :raises:
-            * EquipmentIsNotUniqueException: Location contains more than one equipment with the same name
-            * EquipmentNotFoundException: The equipment was not found
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * EquipmentIsNotUniqueException: Location contains more than one equipment with the same name
+        * EquipmentNotFoundException: The equipment was not found
+        * FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location([("Country", "LS_IND_Prod_Copy")])
-            equipment = client.get_equipment("indProdCpy1_AIO", location)
+        location = client.get_location([("Country", "LS_IND_Prod_Copy")])
+        equipment = client.get_equipment("indProdCpy1_AIO", location)
     """
 
     equipment = _get_equipment_if_exists(client, name, location)
@@ -103,14 +103,14 @@ def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equi
 def get_equipments(client: SymphonyClient) -> Iterator[Equipment]:
     """This function returns all existing equipments
 
-        :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
+    :return: Equipments Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            all_equipments = client.get_equipments()
+        all_equipments = client.get_equipments()
     """
     equipments = EquipmentsQuery.execute(client, first=PAGINATION_STEP)
     edges = equipments.edges if equipments else []
@@ -135,23 +135,23 @@ def get_equipments(client: SymphonyClient) -> Iterator[Equipment]:
 def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Equipment:
     """Get equipment by external ID.
 
-        :param external_id: Equipment external ID
-        :type external_id: str
+    :param external_id: Equipment external ID
+    :type external_id: str
 
-        :raises:
-            * EquipmentIsNotUniqueException: Location contains more than one equipment with the same external ID
-            * :class:`~psym.exceptions.EntityNotFoundError`: The equipment was not found
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * EquipmentIsNotUniqueException: Location contains more than one equipment with the same external ID
+        * :class:`~psym.exceptions.EntityNotFoundError`: The equipment was not found
+        * FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            equipment = client.get_equipment_by_external_id(external_id="123456")
+        equipment = client.get_equipment_by_external_id(external_id="123456")
     """
     equipment_filter = EquipmentFilterInput(
         filterType=EquipmentFilterType.EQUIP_INST_EXTERNAL_ID,
@@ -188,29 +188,29 @@ def get_equipment_properties(
 ) -> Dict[str, PropertyValue]:
     """Get specific equipment properties.
 
-        :param equipment: Equipment objecte, could be retrieved from
+    :param equipment: Equipment objecte, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
+    :type equipment: :class:`~psym.common.data_class.Equipment`
 
-        :return: Dictionary of property name to property value
+    :return: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :rtype: Dict[str, PropertyValue]
+    :rtype: Dict[str, PropertyValue]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment("indProdCpy1_AIO", location)
-            properties = client.get_equipment_properties(equipment=equipment)
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment("indProdCpy1_AIO", location)
+        properties = client.get_equipment_properties(equipment=equipment)
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client, equipment
@@ -223,20 +223,20 @@ def get_equipments_by_type(
 ) -> Iterator[Equipment]:
     """Get equipments by ID of specific type.
 
-        :param equipment_type_id: Equipment type ID
-        :type equipment_type_id: str
+    :param equipment_type_id: Equipment type ID
+    :type equipment_type_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Equipment type with this ID does not exist
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Equipment type with this ID does not exist
 
-        :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
+    :return: Equipments Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            equipments = client.get_equipments_by_type(equipment_type_id="34359738369")
+        equipments = client.get_equipments_by_type(equipment_type_id="34359738369")
     """
     equipment_type_with_equipments = EquipmentTypeEquipmentQuery.execute(
         client, id=equipment_type_id
@@ -259,20 +259,20 @@ def get_equipments_by_location(
 ) -> Iterator[Equipment]:
     """Get equipments by ID of specific location.
 
-        :param location_id: Location ID
-        :type location_id: str
+    :param location_id: Location ID
+    :type location_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Location with this ID does not exist
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Location with this ID does not exist
 
-        :return: Equipments Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
+    :return: Equipments Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Equipment` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            equipments = client.get_equipments_by_location(location_id="60129542651")
+        equipments = client.get_equipments_by_location(location_id="60129542651")
     """
     location_details = LocationEquipmentsQuery.execute(client, id=location_id)
     if location_details is None:
@@ -299,34 +299,34 @@ def get_equipment_in_position(
 ) -> Equipment:
     """Get the equipment attached in a given `position_name` of a given `parent_equipment`
 
-        :param parent_equipment: Parent equipment, could be retrieved from
+    :param parent_equipment: Parent equipment, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type parent_equipment: :class:`~psym.common.data_class.Equipment`
-        :param position_name: Position name
-        :type position_name: str
+    :type parent_equipment: :class:`~psym.common.data_class.Equipment`
+    :param position_name: Position name
+    :type position_name: str
 
-        :raises:
-            * AssertionException: Parent equipment has more than one position with the given name,
-              or none with this name or the position is not occupied.
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: `parent_equipment` does not exist
+    :raises:
+        * AssertionException: Parent equipment has more than one position with the given name,
+          or none with this name or the position is not occupied.
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: `parent_equipment` does not exist
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location([("Country", "LS_IND_Prod_Copy")])
-            p_equipment = client.get_equipment("indProdCpy1_AIO", location)
-            equipment = client.get_equipment_in_position(p_equipment, "some_position")
+        location = client.get_location([("Country", "LS_IND_Prod_Copy")])
+        p_equipment = client.get_equipment("indProdCpy1_AIO", location)
+        equipment = client.get_equipment_in_position(p_equipment, "some_position")
     """
 
     equipment = _get_equipment_in_position_if_exists(
@@ -349,56 +349,56 @@ def add_equipment(
     external_id: Optional[str] = None,
 ) -> Equipment:
     """Create a new equipment in a given `location`.
-        The equipment will be of the given `equipment_type`,
-        with the given `name` and with the given `properties`.
-        If equipment with this name already exists in this location,
-        then existing equipment is returned.
+    The equipment will be of the given `equipment_type`,
+    with the given `name` and with the given `properties`.
+    If equipment with this name already exists in this location,
+    then existing equipment is returned.
 
-        :param name: New equipment name
-        :type name: str
-        :param equipment_type: Equipment type name
-        :type equipment_type: str
-        :param location: Location object, could be retrieved from
+    :param name: New equipment name
+    :type name: str
+    :param equipment_type: Equipment type name
+    :type equipment_type: str
+    :param location: Location object, could be retrieved from
 
-            * :meth:`~psym.api.location.get_location`
-            * :meth:`~psym.api.location.add_location`
+        * :meth:`~psym.api.location.get_location`
+        * :meth:`~psym.api.location.add_location`
 
-        :type location: :class:`~psym.common.data_class.Location`
-        :param properties_dict: Dictionary of property name to property value
+    :type location: :class:`~psym.common.data_class.Location`
+    :param properties_dict: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type properties_dict: Mapping[str, PropertyValue]
-        :param external_id: Equipment external ID
-        :type external_id: str, optional
+    :type properties_dict: Mapping[str, PropertyValue]
+    :param external_id: Equipment external ID
+    :type external_id: str, optional
 
-        :raises:
-            * AssertionException: Location contains more than one equipment with the
-              same name or property value in `properties_dict` does not match the property type
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * AssertionException: Location contains more than one equipment with the
+          same name or property value in `properties_dict` does not match the property type
+        * FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            from datetime import date
-            equipment = client.add_equipment(
-                name="Router X123",
-                equipment_type="Router",
-                location=location,
-                properties_dict={
-                    "Date Property": date.today(),
-                    "Lat/Lng Property": (-1.23,9.232),
-                    "E-mail Property": "user@fb.com",
-                    "Number Property": 11,
-                    "String Property": "aa",
-                    "Float Property": 1.23
-                })
+        from datetime import date
+        equipment = client.add_equipment(
+            name="Router X123",
+            equipment_type="Router",
+            location=location,
+            properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            })
     """
 
     property_types = EQUIPMENT_TYPES[equipment_type].property_types
@@ -429,41 +429,41 @@ def edit_equipment(
 ) -> Equipment:
     """Edit existing equipment.
 
-        :param equipment: Equipment object, could be retrieved from
+    :param equipment: Equipment object, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
-        :param new_name: Equipment new name
-        :type new_name: str, optional
-        :param new_properties: Dictionary of property name to property value
+    :type equipment: :class:`~psym.common.data_class.Equipment`
+    :param new_name: Equipment new name
+    :type new_name: str, optional
+    :param new_properties: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type new_properties: Dict[str, PropertyValue], optional
+    :type new_properties: Dict[str, PropertyValue], optional
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            edited_equipment = client.edit_equipment(
-                equipment=equipment,
-                new_name="new_name",
-                new_properties={"Z AIO - Number": 123},
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        edited_equipment = client.edit_equipment(
+            equipment=equipment,
+            new_name="new_name",
+            new_properties={"Z AIO - Number": 123},
+        )
     """
     properties = []
     property_types = EQUIPMENT_TYPES[equipment.equipment_type_name].property_types
@@ -537,61 +537,61 @@ def add_equipment_to_position(
     external_id: Optional[str] = None,
 ) -> Equipment:
     """Create a new equipment inside a given `position_name` of the given `existing_equipment`.
-        The equipment will be of the given `equipment_type`, with the given `name` and with the given `properties`.
-        If equipment with this name already exists in this position, then existing equipment is returned.
+    The equipment will be of the given `equipment_type`, with the given `name` and with the given `properties`.
+    If equipment with this name already exists in this position, then existing equipment is returned.
 
-        :param name: New equipment name
-        :type name: str
-        :param equipment_type: Equipment type name
-        :type equipment_type: str
-        :param existing_equipment: Equipment object, could be retrieved from
+    :param name: New equipment name
+    :type name: str
+    :param equipment_type: Equipment type name
+    :type equipment_type: str
+    :param existing_equipment: Equipment object, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type existing_equipment: :class:`~psym.common.data_class.Equipment`
-        :param position_name: Position name in the equipment type
-        :type position_name: str
-        :param properties_dict: Dictionary of property name to property value
+    :type existing_equipment: :class:`~psym.common.data_class.Equipment`
+    :param position_name: Position name in the equipment type
+    :type position_name: str
+    :param properties_dict: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type properties_dict: Mapping[str, PropertyValue]
-        :param external_id: Equipment external ID
-        :type external_id: str, optional
+    :type properties_dict: Mapping[str, PropertyValue]
+    :param external_id: Equipment external ID
+    :type external_id: str, optional
 
-        :raises:
-            * AssertionException: Parent equipment has more than one position with the given name
-              or property value in `properties_dict` does not match the property type
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: `existing_equipment` does not exist
+    :raises:
+        * AssertionException: Parent equipment has more than one position with the given name
+          or property value in `properties_dict` does not match the property type
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: `existing_equipment` does not exist
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            from datetime import date
-            equipment = client.add_equipment_to_position(
-                name="Card Y123",
-                equipment_type="Card",
-                existing_equipment=equipment,
-                position_name="Pos 1",
-                properties_dict={
-                    "Date Property": date.today(),
-                    "Lat/Lng Property": (-1.23,9.232),
-                    "E-mail Property": "user@fb.com",
-                    "Number Property": 11,
-                    "String Property": "aa",
-                    "Float Property": 1.23
-                }
-            )
+        from datetime import date
+        equipment = client.add_equipment_to_position(
+            name="Card Y123",
+            equipment_type="Card",
+            existing_equipment=equipment,
+            position_name="Pos 1",
+            properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            }
+        )
     """
 
     position_definition_id, _ = _find_position_definition_id(
@@ -621,22 +621,22 @@ def add_equipment_to_position(
 def delete_equipment(client: SymphonyClient, equipment: Equipment) -> None:
     """This function delete Equipment.
 
-        :param equipment: Existing equipment object, could be retrieved from
+    :param equipment: Existing equipment object, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
+    :type equipment: :class:`~psym.common.data_class.Equipment`
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_equipment(equipment=equipment)
+        client.delete_equipment(equipment=equipment)
     """
     RemoveEquipmentMutation.execute(client, id=equipment.id)
 
@@ -646,21 +646,21 @@ def search_for_equipments(
 ) -> Tuple[Iterator[Equipment], int]:
     """Search for equipments.
 
-        :param limit: Search result limit
-        :type limit: int
+    :param limit: Search result limit
+    :type limit: int
 
-        :return: Tuple[Iterator[ :class:`~psym.common.data_class.Equipment` ], int]
+    :return: Tuple[Iterator[ :class:`~psym.common.data_class.Equipment` ], int]
 
-            * Iterator[ :class:`~psym.common.data_class.Equipment` ] - Equipments Iterator
-            * int - Total count of results
+        * Iterator[ :class:`~psym.common.data_class.Equipment` ] - Equipments Iterator
+        * int - Total count of results
 
-        :rtype: Tuple[Iterator[ :class:`~psym.common.data_class.Equipment` ], int]
+    :rtype: Tuple[Iterator[ :class:`~psym.common.data_class.Equipment` ], int]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.search_for_equipments(limit=10)
+        client.search_for_equipments(limit=10)
     """
 
     def generate_equipments(
@@ -686,13 +686,13 @@ def search_for_equipments(
 def delete_all_equipments(client: SymphonyClient) -> None:
     """This function delete all Equipments.
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_all_equipment()
+        client.delete_all_equipment()
     """
 
     def delete_equipments(client: SymphonyClient) -> Tuple[int, int]:
@@ -763,37 +763,37 @@ def copy_equipment_in_position(
 ) -> Equipment:
     """Copy equipment in position.
 
-        :param equipment: Equipment object to be copied, could be retrieved from
+    :param equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
-        :param dest_parent_equipment: Parent equipment, destination to copy to
-        :type dest_parent_equipment: :class:`~psym.common.data_class.Equipment`
-        :param dest_position_name: Destination position name
-        :type dest_position_name: str
-        :param new_external_id: New external ID for equipment
-        :type new_external_id: str, optional
+    :type equipment: :class:`~psym.common.data_class.Equipment`
+    :param dest_parent_equipment: Parent equipment, destination to copy to
+    :type dest_parent_equipment: :class:`~psym.common.data_class.Equipment`
+    :param dest_position_name: Destination position name
+    :type dest_position_name: str
+    :param new_external_id: New external ID for equipment
+    :type new_external_id: str, optional
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment_to_copy = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            parent_equipment = client.get_equipment(name="parent", location=location)
-            copied_equipment = client.copy_equipment_in_position(
-                equipment=equipment,
-                dest_parent_equipment=parent_equipment,
-                dest_position_name="destination position name",
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment_to_copy = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        parent_equipment = client.get_equipment(name="parent", location=location)
+        copied_equipment = client.copy_equipment_in_position(
+            equipment=equipment,
+            dest_parent_equipment=parent_equipment,
+            dest_position_name="destination position name",
+        )
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client, equipment
@@ -817,34 +817,34 @@ def copy_equipment(
 ) -> Equipment:
     """Copy equipment.
 
-        :param equipment: Equipment object to be copied, could be retrieved from
+    :param equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
-        :param dest_location: Destination location to copy to
-        :type dest_location: :class:`~psym.common.data_class.Location`
-        :param new_external_id: External ID for new equipment
-        :type new_external_id: str, optional
+    :type equipment: :class:`~psym.common.data_class.Equipment`
+    :param dest_location: Destination location to copy to
+    :type dest_location: :class:`~psym.common.data_class.Location`
+    :param new_external_id: External ID for new equipment
+    :type new_external_id: str, optional
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            new_location = client.get_location({("Country", "LS_IND_Prod")})
-            copied_equipment = client.copy_equipment(
-                equipment=equipment,
-                dest_location=new_location,
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        new_location = client.get_location({("Country", "LS_IND_Prod")})
+        copied_equipment = client.copy_equipment(
+            equipment=equipment,
+            dest_location=new_location,
+        )
     """
     equipment_type, properties_dict = _get_equipment_type_and_properties_dict(
         client=client, equipment=equipment
@@ -864,25 +864,25 @@ def get_equipment_type_of_equipment(
 ) -> EquipmentType:
     """This function returns equipment type object of equipment.
 
-        :param equipment: Equipment object to be copied, could be retrieved from
+    :param equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type equipment: :class:`~psym.common.data_class.Equipment`
+    :type equipment: :class:`~psym.common.data_class.Equipment`
 
-        :return: EquipmentType object
-        :rtype: :class:`~psym.common.data_class.EquipmentType`
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            equipment_type = client.get_equipment_type_of_equipment(equipment=equipment)
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        equipment_type = client.get_equipment_type_of_equipment(equipment=equipment)
     """
     equipment_type, _ = _get_equipment_type_and_properties_dict(
         client=client, equipment=equipment
@@ -899,54 +899,54 @@ def get_or_create_equipment(
     external_id: Optional[str] = None,
 ) -> Equipment:
     """This function checks equipment existence by name in specific location,
-        in case it is not found by name, creates one.
+    in case it is not found by name, creates one.
 
-        :param name: Equipment name
-        :type name: str
-        :param equipment_type: Equipment type name
-        :type equipment_type: str
-        :param location: Location object, could be retrieved from
+    :param name: Equipment name
+    :type name: str
+    :param equipment_type: Equipment type name
+    :type equipment_type: str
+    :param location: Location object, could be retrieved from
 
-            * :meth:`~psym.api.location.get_location`
-            * :meth:`~psym.api.location.add_location`
+        * :meth:`~psym.api.location.get_location`
+        * :meth:`~psym.api.location.add_location`
 
-        :type location: :class:`~psym.common.data_class.Location`
-        :param properties_dict: Dictionary of property name to property value
+    :type location: :class:`~psym.common.data_class.Location`
+    :param properties_dict: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type properties_dict: Mapping[str, PropertyValue]
-        :param external_id: Equipment external ID
-        :type external_id: str, optional
+    :type properties_dict: Mapping[str, PropertyValue]
+    :param external_id: Equipment external ID
+    :type external_id: str, optional
 
-        :raises:
-            * AssertionException: Location contains more than one equipment with the
-              same name or property value in `properties_dict` does not match the property type
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * AssertionException: Location contains more than one equipment with the
+          same name or property value in `properties_dict` does not match the property type
+        * FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            equipment = client.get_or_create_equipment(
-                name="indProdCpy1_AIO",
-                equipment_type="router",
-                location=location,
-                properties_dict={
-                    "Date Property": date.today(),
-                    "Lat/Lng Property": (-1.23,9.232),
-                    "E-mail Property": "user@fb.com",
-                    "Number Property": 11,
-                    "String Property": "aa",
-                    "Float Property": 1.23
-                }
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        equipment = client.get_or_create_equipment(
+            name="indProdCpy1_AIO",
+            equipment_type="router",
+            location=location,
+            properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            }
+        )
     """
     equipment = _get_equipment_if_exists(client, name, location)
     if equipment is not None:
@@ -971,60 +971,60 @@ def get_or_create_equipment_in_position(
     external_id: Optional[str] = None,
 ) -> Equipment:
     """This function checks equipment existence by name in specific location,
-        in case it is not found by name, creates one.
+    in case it is not found by name, creates one.
 
-        :param name: Equipment name
-        :type name: str
-        :param equipment_type: Equipment type name
-        :type equipment_type: str
-        :param existing_equipment: Equipment object to be copied, could be retrieved from
+    :param name: Equipment name
+    :type name: str
+    :param equipment_type: Equipment type name
+    :type equipment_type: str
+    :param existing_equipment: Equipment object to be copied, could be retrieved from
 
-            * :meth:`~psym.api.equipment.get_equipment`
-            * :meth:`~psym.api.equipment.get_equipment_in_position`
-            * :meth:`~psym.api.equipment.add_equipment`
-            * :meth:`~psym.api.equipment.add_equipment_to_position`
+        * :meth:`~psym.api.equipment.get_equipment`
+        * :meth:`~psym.api.equipment.get_equipment_in_position`
+        * :meth:`~psym.api.equipment.add_equipment`
+        * :meth:`~psym.api.equipment.add_equipment_to_position`
 
-        :type existing_equipment: :class:`~psym.common.data_class.Equipment`
-        :param position_name: Position name
-        :type position_name: str
-        :param properties_dict: Dictionary of property name to property value
+    :type existing_equipment: :class:`~psym.common.data_class.Equipment`
+    :param position_name: Position name
+    :type position_name: str
+    :param properties_dict: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type properties_dict: Mapping[str, PropertyValue]
-        :param external_id: Equipment external ID
-        :type external_id: str, optional
+    :type properties_dict: Mapping[str, PropertyValue]
+    :param external_id: Equipment external ID
+    :type external_id: str, optional
 
-        :raises:
-            * AssertionException: Location contains more than one equipment with the
-              same name or property value in `properties_dict` does not match the property type
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * AssertionException: Location contains more than one equipment with the
+          same name or property value in `properties_dict` does not match the property type
+        * FailedOperationException: Internal inventory error
 
-        :return: Equipment object, you can use the ID to access the equipment from the UI:
-            https://{}.thesymphony.cloud/inventory/inventory?equipment={}
-        :rtype: :class:`~psym.common.data_class.Equipment`
+    :return: Equipment object, you can use the ID to access the equipment from the UI:
+        https://{}.thesymphony.cloud/inventory/inventory?equipment={}
+    :rtype: :class:`~psym.common.data_class.Equipment`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location({("Country", "LS_IND_Prod_Copy")})
-            e_equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
-            equipment_in_position = client.get_or_create_equipment_in_position(
-                name="indProdCpy1_AIO",
-                equipment_type="router",
-                existing_equipment=e_equipment,
-                position_name="some_position",
-                properties_dict={
-                    "Date Property": date.today(),
-                    "Lat/Lng Property": (-1.23,9.232),
-                    "E-mail Property": "user@fb.com",
-                    "Number Property": 11,
-                    "String Property": "aa",
-                    "Float Property": 1.23
-                }
-            )
+        location = client.get_location({("Country", "LS_IND_Prod_Copy")})
+        e_equipment = client.get_equipment(name="indProdCpy1_AIO", location=location)
+        equipment_in_position = client.get_or_create_equipment_in_position(
+            name="indProdCpy1_AIO",
+            equipment_type="router",
+            existing_equipment=e_equipment,
+            position_name="some_position",
+            properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            }
+        )
     """
     equipment = _get_equipment_in_position_if_exists(
         client=client, parent_equipment=existing_equipment, position_name=position_name

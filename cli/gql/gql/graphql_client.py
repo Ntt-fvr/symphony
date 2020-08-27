@@ -23,14 +23,14 @@ class GraphqlClient:
 
         """This is the class to use for working with graphql server
 
-            Args:
-                graphql_endpoint_address (str): The graphql server address
-                auth (Optional[requests.auth.AuthBase], optional): Auth used
-                    to authenticate to graphql server      
-                reporter (object, optional): Use reporter.InventoryReporter to
-                            store reports on all successful and failed mutations
-                            in inventory. The default is DummyReporter that
-                            discards reports
+        Args:
+            graphql_endpoint_address (str): The graphql server address
+            auth (Optional[requests.auth.AuthBase], optional): Auth used
+                to authenticate to graphql server
+            reporter (object, optional): Use reporter.InventoryReporter to
+                       store reports on all successful and failed mutations
+                       in inventory. The default is DummyReporter that
+                       discards reports
 
         """
 

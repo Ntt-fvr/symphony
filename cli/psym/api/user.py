@@ -22,21 +22,21 @@ from ..graphql.query.users import UsersQuery
 def get_user(client: SymphonyClient, email: str) -> User:
     """Returns `psym.common.data_class.User` object by its email
 
-        :param email: Email address the user registered with
-        :type email: str
+    :param email: Email address the user registered with
+    :type email: str
 
-        :raises:
-            * :class:`~psym.exceptions.EntityNotFoundError`: the user was not found
-            * FailedOperationException: Internal inventory error
+    :raises:
+        * :class:`~psym.exceptions.EntityNotFoundError`: the user was not found
+        * FailedOperationException: Internal inventory error
 
-        :return: User object
-        :rtype: :class:`~psym.common.data_class.User`
+    :return: User object
+    :rtype: :class:`~psym.common.data_class.User`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            user = client.get_user(email="user@test.com")
+        user = client.get_user(email="user@test.com")
     """
     user = UserQuery.execute(client, email)
     if user is None:
@@ -53,25 +53,25 @@ def get_user(client: SymphonyClient, email: str) -> User:
 def add_user(client: SymphonyClient, email: str, password: str) -> User:
     """Adds new user to inventory with its email and password
 
-        :param email: Email address of the user
-        :type email: str
-        :param password: Password the user would connect with
-        :type password: str
+    :param email: Email address of the user
+    :type email: str
+    :param password: Password the user would connect with
+    :type password: str
 
-        :raises:
-            * :class:`~psym.exceptions.EntityNotFoundError`: the user was not created
-            * FailedOperationException: Internal inventory error
-            * AssertionError: The user was not created
-            * HTTPError: Connection error
+    :raises:
+        * :class:`~psym.exceptions.EntityNotFoundError`: the user was not created
+        * FailedOperationException: Internal inventory error
+        * AssertionError: The user was not created
+        * HTTPError: Connection error
 
-        :return: User object
-        :rtype: :class:`~psym.common.data_class.User`
+    :return: User object
+    :rtype: :class:`~psym.common.data_class.User`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            user = client.add_user(email="user@test.com", password="P0ssW!rd0f43")
+        user = client.add_user(email="user@test.com", password="P0ssW!rd0f43")
     """
     resp = client.post(
         "/user/async/",
@@ -89,30 +89,30 @@ def edit_user(
 ) -> None:
     """Edit user password and role
 
-        :param user: User object
-        :type user: :class:`~psym.common.data_class.User`
-        :param new_password: New password the user would connect with
-        :type new_password: str, optional
-        :param new_role: New user role
-        :type new_role: str
+    :param user: User object
+    :type user: :class:`~psym.common.data_class.User`
+    :param new_password: New password the user would connect with
+    :type new_password: str, optional
+    :param new_role: New user role
+    :type new_role: str
 
-        :raises:
-            * FailedOperationException: Internal inventory error
-            * AssertionError: The user was not edited
-            * HTTPError: Connection error
+    :raises:
+        * FailedOperationException: Internal inventory error
+        * AssertionError: The user was not edited
+        * HTTPError: Connection error
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            user = client.add_user(email="user@test.com", password="P0ssW!rd0f43")
-            client.edit_user(
-                user=user,
-                new_password="New_Password4Ever",
-                new_role=UserRole.ADMIN,
-            )
+        user = client.add_user(email="user@test.com", password="P0ssW!rd0f43")
+        client.edit_user(
+            user=user,
+            new_password="New_Password4Ever",
+            new_role=UserRole.ADMIN,
+        )
     """
     params: Dict[str, Any] = {}
     if new_password is not None:
@@ -129,22 +129,22 @@ def edit_user(
 
 def deactivate_user(client: SymphonyClient, user: User) -> None:
     """Deactivate the user which would prevent the user from login in to symphony
-       Users in symphony are never deleted. Only de-activated.
+    Users in symphony are never deleted. Only de-activated.
 
-        :param user: User object
-        :type user: :class:`~psym.common.data_class.User`
+     :param user: User object
+     :type user: :class:`~psym.common.data_class.User`
 
-        :raises:
-            FailedOperationException: Internal inventory error
+     :raises:
+         FailedOperationException: Internal inventory error
 
-        :rtype: None
+     :rtype: None
 
-        **Example**
+     **Example**
 
-        .. code-block:: python
+     .. code-block:: python
 
-            user = client.get_user(email="user@test.com")
-            client.deactivate_user(user=user)
+         user = client.get_user(email="user@test.com")
+         client.deactivate_user(user=user)
     """
     EditUserMutation.execute(
         client, input=EditUserInput(id=user.id, status=UserStatus.DEACTIVATED)
@@ -154,20 +154,20 @@ def deactivate_user(client: SymphonyClient, user: User) -> None:
 def activate_user(client: SymphonyClient, user: User) -> None:
     """Activate the user which would allow the user to login again to symphony
 
-        :param user: User object
-        :type user: :class:`~psym.common.data_class.User`
+    :param user: User object
+    :type user: :class:`~psym.common.data_class.User`
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            user = client.get_user(email="user@test.com")
-            client.activate_user(user=user)
+        user = client.get_user(email="user@test.com")
+        client.activate_user(user=user)
     """
     EditUserMutation.execute(
         client, input=EditUserInput(id=user.id, status=UserStatus.ACTIVE)
@@ -177,19 +177,19 @@ def activate_user(client: SymphonyClient, user: User) -> None:
 def get_users(client: SymphonyClient) -> Iterator[User]:
     """Get the list of users in the system (both active and deactivate)
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Users Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.User` ]
+    :return: Users Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.User` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            users = client.get_users()
-            for user in users:
-                print(user.email)
+        users = client.get_users()
+        for user in users:
+            print(user.email)
     """
     result = UsersQuery.execute(client)
     if result is None:
@@ -209,19 +209,19 @@ def get_users(client: SymphonyClient) -> Iterator[User]:
 def get_active_users(client: SymphonyClient) -> List[User]:
     """Get the list of the active users in the system
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Users List
-        :rtype: List[ :class:`~psym.common.data_class.User` ]
+    :return: Users List
+    :rtype: List[ :class:`~psym.common.data_class.User` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            users = client.get_active_users()
-            for user in users:
-                print(user.email)
+        users = client.get_active_users()
+        for user in users:
+            print(user.email)
     """
     users = get_users(client=client)
     return [user for user in users if user.status == UserStatus.ACTIVE]

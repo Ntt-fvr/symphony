@@ -421,20 +421,20 @@ class TestRendererDataclasses(BaseTest):
 
     def test_simple_query_with_enums_default_value(self):
         """
-            enum LengthUnit {
-              METER
-              KM
-            }
+        enum LengthUnit {
+          METER
+          KM
+        }
 
-            type Starship {
-              id: ID!
-              name: String!
-              length(unit: LengthUnit = METER): Float
-            }
+        type Starship {
+          id: ID!
+          name: String!
+          length(unit: LengthUnit = METER): Float
+        }
 
-            type Query {
-                ship(id: String!): Starship
-            }
+        type Query {
+            ship(id: String!): Starship
+        }
         """
 
         length_unit_enum = GraphQLEnumType(

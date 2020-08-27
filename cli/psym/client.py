@@ -32,27 +32,27 @@ class SymphonyClient(GraphqlClient):
     ) -> None:
         """This is the class to use for working with symphony server.
 
-            The __init__ method uses the credentials to establish session with
-            the symphony server. It also consumes graphql schema for
-            validations, and validates the client version is compatible with server.
+        The __init__ method uses the credentials to establish session with
+        the symphony server. It also consumes graphql schema for
+        validations, and validates the client version is compatible with server.
 
-            Args:
-                email (str): The email of the user to connect with.
-                password (str): The password of the user to connect with.
-                tenant (str, optional): The tenant to connect to -
-                            should be the beginning of "{}.purpleheadband.cloud"
-                            The default is "fb-test" for QA environment
-                is_local_host (bool, optional): Used for developers to connect to
-                            local symphony. This changes the address and also
-                            disable verification of ssl certificate
-                is_dev_mode (bool, optional): Used for developers to connect to
-                            local symphony from a container. This changes the
-                            address and also disable verification of ssl
-                            certificate
-                reporter (object, optional): Use reporter.Reporter to
-                            store reports on all successful and failed mutations
-                            in symphony. The default is DummyReporter that
-                            discards reports
+        Args:
+            email (str): The email of the user to connect with.
+            password (str): The password of the user to connect with.
+            tenant (str, optional): The tenant to connect to -
+                        should be the beginning of "{}.purpleheadband.cloud"
+                        The default is "fb-test" for QA environment
+            is_local_host (bool, optional): Used for developers to connect to
+                        local symphony. This changes the address and also
+                        disable verification of ssl certificate
+            is_dev_mode (bool, optional): Used for developers to connect to
+                        local symphony from a container. This changes the
+                        address and also disable verification of ssl
+                        certificate
+            reporter (object, optional): Use reporter.Reporter to
+                        store reports on all successful and failed mutations
+                        in symphony. The default is DummyReporter that
+                        discards reports
 
         """
 

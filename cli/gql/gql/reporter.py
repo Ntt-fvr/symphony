@@ -51,24 +51,24 @@ class CSVReporter(Reporter):
     def __init__(self, out_file_path: str, err_file_path: str) -> None:
 
         """Reporting utility for the SymphonyClient to report on
-            successful and failed operations.
-            In order to report on failed operation, user is required to catch
-            FailedOperationException and call logFailedOperation with date
-            identifier (row number) & full data for easier debugging later.
+        successful and failed operations.
+        In order to report on failed operation, user is required to catch
+        FailedOperationException and call logFailedOperation with date
+        identifier (row number) & full data for easier debugging later.
 
-            Args:
-                out_file_path (str): Path to write csv of successful operations.
-                err_file_path (str): Path to write csv of failed operations.
+        Args:
+            out_file_path (str): Path to write csv of successful operations.
+            err_file_path (str): Path to write csv of failed operations.
 
-            Example:
-            ```
-            reporter = CSVReporter(csvOutPath, csvErrPath)
-            client = InventoryClient(email, password, "fb-test", reporter=reporter)
-            try:
-                location = client.addLocation(..)
-            except FailedOperationException as e:
-                e.logFailedOperation(data_identifier, data)
-            ```
+        Example:
+        ```
+        reporter = CSVReporter(csvOutPath, csvErrPath)
+        client = InventoryClient(email, password, "fb-test", reporter=reporter)
+        try:
+            location = client.addLocation(..)
+        except FailedOperationException as e:
+            e.logFailedOperation(data_identifier, data)
+        ```
 
         """
 

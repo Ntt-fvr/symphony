@@ -84,7 +84,7 @@ class SubscriptionClient:
     # wait for any valid message, while ignoring GQL_CONNECTION_KEEP_ALIVE
     def _receiver_task(self) -> None:
         """the receive function of the client. Which validates response from the
-        server and queues data """
+        server and queues data"""
         while not self._shutdown_receiver:
             self.__dump_queues()
             res = self._connection.recv()

@@ -15,18 +15,18 @@ def add_work_order(
 ) -> WorkOrder:
     """This function creates work order of with the given name and type
 
-        Args:
-            name (str): work order name
-            work_order_type (`psym.common.data_class.WorkOrderType`): work order type
+    Args:
+        name (str): work order name
+        work_order_type (`psym.common.data_class.WorkOrderType`): work order type
 
-        Returns:
-            `psym.common.data_class.WorkOrder`
+    Returns:
+        `psym.common.data_class.WorkOrder`
 
-        Example:
-            ```
-            work_order_type = client.add_work_order_type("Deployment work order")
-            client.add_work_order_type("new work order", work_order_type)
-            ```
+    Example:
+        ```
+        work_order_type = client.add_work_order_type("Deployment work order")
+        client.add_work_order_type("new work order", work_order_type)
+        ```
     """
     result = AddWorkOrderMutation.execute(
         client,

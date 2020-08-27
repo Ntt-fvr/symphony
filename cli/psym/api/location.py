@@ -101,61 +101,61 @@ def add_location(
     external_id: Optional[str] = None,
 ) -> Location:
     """Create a new location of a specific type with a specific name.
-        It will also get the requested location specifiers for hirerchy
-        leading to it and will create all the hirerchy.
-        However the `lat`,`long` and `properties_dict` would only apply for the last location in the chain.
-        If a location with its name in this place already exists, then existing location is returned
+    It will also get the requested location specifiers for hirerchy
+    leading to it and will create all the hirerchy.
+    However the `lat`,`long` and `properties_dict` would only apply for the last location in the chain.
+    If a location with its name in this place already exists, then existing location is returned
 
-        :param location_hirerchy: Locations hierarchy
-        :type location_hirerchy: List[Tuple[str, str]]
+    :param location_hirerchy: Locations hierarchy
+    :type location_hirerchy: List[Tuple[str, str]]
 
-            * str - location type name
-            * str - location name
+        * str - location type name
+        * str - location name
 
-        :param properties_dict: Dictionary of property name to property value
+    :param properties_dict: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type properties_dict: Dict[str, PropertyValue]
-        :param lat: Latitude
-        :type lat: float, optional
-        :param long: Longitude
-        :type long: float, optional
-        :param external_id: Location external ID
-        :type external_id: str, optional
+    :type properties_dict: Dict[str, PropertyValue]
+    :param lat: Latitude
+    :type lat: float, optional
+    :param long: Longitude
+    :type long: float, optional
+    :param external_id: Location external ID
+    :type external_id: str, optional
 
-        :raises:
-            * LocationIsNotUniqueException: There is more than one location to return
-              in the chain and it is not clear where to create or what to return
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Parent location in the chain does not exist
+    :raises:
+        * LocationIsNotUniqueException: There is more than one location to return
+          in the chain and it is not clear where to create or what to return
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Parent location in the chain does not exist
 
-        :return: Location object
-        :rtype: :class:`~psym.common.data_class.Location`
+    :return: Location object
+    :rtype: :class:`~psym.common.data_class.Location`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.add_location(
-                location_hirerchy=[
-                    ("Country", "England"),
-                    ("City", "Milton Keynes"),
-                    ("Site", "Bletchley Park")
-                ],
-                properties_dict={
-                    "Date Property": date.today(),
-                    "Lat/Lng Property": (-1.23,9.232),
-                    "E-mail Property": "user@fb.com",
-                    "Number Property": 11,
-                    "String Property": "aa",
-                    "Float Property": 1.23
-                },
-                lat=-11.32,
-                long=98.32,
-                external_id=None,
-            )
+        location = client.add_location(
+            location_hirerchy=[
+                ("Country", "England"),
+                ("City", "Milton Keynes"),
+                ("Site", "Bletchley Park")
+            ],
+            properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            },
+            lat=-11.32,
+            long=98.32,
+            external_id=None,
+        )
     """
 
     last_location: Optional[LocationFragment] = None
@@ -221,39 +221,39 @@ def get_location(
     client: SymphonyClient, location_hirerchy: List[Tuple[str, str]]
 ) -> Location:
     """This function returns a location of a specific type with a specific name.
-        It can get only the requested location specifiers or the hirerchy leading to it
+    It can get only the requested location specifiers or the hirerchy leading to it
 
-        :param location_hirerchy: Locations hierarchy
-        :type location_hirerchy: List[Tuple[str, str]]
+    :param location_hirerchy: Locations hierarchy
+    :type location_hirerchy: List[Tuple[str, str]]
 
-            * str - location type name
-            * str - location name
+        * str - location type name
+        * str - location name
 
-        :raises:
-            * LocationIsNotUniqueException: There is more than one location to return
-              in the chain and it is not clear where to create or what to return
-            * LocationNotFoundException: Location was not found
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Location in the chain does not exist
+    :raises:
+        * LocationIsNotUniqueException: There is more than one location to return
+          in the chain and it is not clear where to create or what to return
+        * LocationNotFoundException: Location was not found
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location in the chain does not exist
 
-        :return: Location object
-        :rtype: :class:`~psym.common.data_class.Location`
+    :return: Location object
+    :rtype: :class:`~psym.common.data_class.Location`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location(
-                location_hirerchy=[
-                    ("Country", "England"),
-                    ("City", "Milton Keynes"),
-                    ("Site", "Bletchley Park")
-                ])
+        location = client.get_location(
+            location_hirerchy=[
+                ("Country", "England"),
+                ("City", "Milton Keynes"),
+                ("Site", "Bletchley Park")
+            ])
 
-        .. code-block:: python
+    .. code-block:: python
 
-            # this call will fail if there is Bletchley Park in two cities
-            location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
+        # this call will fail if there is Bletchley Park in two cities
+        location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
     """
 
     last_location = None
@@ -297,14 +297,14 @@ def get_location(
 def get_locations(client: SymphonyClient) -> Iterator[Location]:
     """This function returns all existing locations
 
-        :return: Locations Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Location` ]
+    :return: Locations Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Location` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            all_locations = client.get_locations()
+        all_locations = client.get_locations()
     """
 
     def generate_pages(
@@ -340,40 +340,40 @@ def get_location_children(
 ) -> Iterator[Location]:
     """This function returns all children locations of the given location
 
-        :param location_id: Parent location ID
-        :type location_id: str
+    :param location_id: Parent location ID
+    :type location_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
-        :return: Locations Iterator
-        :rtype: Iterator[ :class:`~psym.common.data_class.Location` ]
+    :return: Locations Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.Location` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.add_location(
-                [
-                    ("Country", "England"),
-                    ("City", "Milton Keynes"),
-                ],
-                {},
-            )
-            client.add_location(
-                [
-                    ("Country", "England"),
-                    ("City", "London"),
-                ],
-                {},
-            )
-            parent_location = client.get_location(
-                location_hirerchy=[
-                    ("Country", "England"),
-                ],
-            )
-            children_locations = client.get_location_children(location_id=parent_location.id)
-            # This call will return a list with 2 locations: "Milton Keynes" and "London"
+        client.add_location(
+            [
+                ("Country", "England"),
+                ("City", "Milton Keynes"),
+            ],
+            {},
+        )
+        client.add_location(
+            [
+                ("Country", "England"),
+                ("City", "London"),
+            ],
+            {},
+        )
+        parent_location = client.get_location(
+            location_hirerchy=[
+                ("Country", "England"),
+            ],
+        )
+        children_locations = client.get_location_children(location_id=parent_location.id)
+        # This call will return a list with 2 locations: "Milton Keynes" and "London"
     """
     location_with_children = LocationChildrenQuery.execute(client, id=location_id)
     if not location_with_children:
@@ -402,43 +402,43 @@ def edit_location(
 ) -> Location:
     """This function returns edited location.
 
-        :param location: Location object
-        :type location: :class:`~psym.common.data_class.Location`
-        :param new_name: Location new name
-        :type new_name: str, optional
-        :param new_lat: Location new latitude
-        :type new_lat: float, optional
-        :param new_long: Location new longitude
-        :type new_long: float, optional
-        :param new_external_id: Location new external ID
-        :type new_external_id: str, optional
-        :param new_properties: Dictionary of property name to property value
+    :param location: Location object
+    :type location: :class:`~psym.common.data_class.Location`
+    :param new_name: Location new name
+    :type new_name: str, optional
+    :param new_lat: Location new latitude
+    :type new_lat: float, optional
+    :param new_long: Location new longitude
+    :type new_long: float, optional
+    :param new_external_id: Location new external ID
+    :type new_external_id: str, optional
+    :param new_properties: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type new_properties: Dict[str, PropertyValue], optional
+    :type new_properties: Dict[str, PropertyValue], optional
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Location object
-        :rtype: :class:`~psym.common.data_class.Location`
+    :return: Location object
+    :rtype: :class:`~psym.common.data_class.Location`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            # this call will fail incase the 'Bletchley Park' in two cities
-            location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
-            edited_location = client.edit_location(
-                location=location,
-                new_name="New Bletchley Park",
-                new_lat=10,
-                new_long=20,
-                new_external_id=None,
-                new_properties={"Contact": "new_contact@info.com"},
-            )
+        # this call will fail incase the 'Bletchley Park' in two cities
+        location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
+        edited_location = client.edit_location(
+            location=location,
+            new_name="New Bletchley Park",
+            new_lat=10,
+            new_long=20,
+            new_external_id=None,
+            new_properties={"Contact": "new_contact@info.com"},
+        )
     """
     properties = []
     location_type = location.location_type_name
@@ -472,23 +472,23 @@ def edit_location(
 def delete_location(client: SymphonyClient, location: Location) -> None:
     """This delete existing location.
 
-        :param location: Location object
-        :type location: :class:`~psym.common.data_class.Location`
+    :param location: Location object
+    :type location: :class:`~psym.common.data_class.Location`
 
-        :raises:
-            * LocationCannotBeDeletedWithDependency: Location has dependencies in one or more
-              ["files", "images", "children", "surveys", "equipment"]
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
+    :raises:
+        * LocationCannotBeDeletedWithDependency: Location has dependencies in one or more
+          ["files", "images", "children", "surveys", "equipment"]
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location(location_hirerchy=[('Site', 'Bletchley Park')])
-            client.delete_location(location=location)
+        location = client.get_location(location_hirerchy=[('Site', 'Bletchley Park')])
+        client.delete_location(location=location)
     """
     location_with_deps = LocationDepsQuery.execute(client, id=location.id)
     if location_with_deps is None:
@@ -511,27 +511,27 @@ def move_location(
 ) -> Location:
     """This function moves existing location to another existing parent location.
 
-        :param location_id: Existing location ID to be moved
-        :type location_id: str
-        :param new_parent_id: New existing parent location ID
-        :type new_parent_id: str, optional
+    :param location_id: Existing location ID to be moved
+    :type location_id: str
+    :param new_parent_id: New existing parent location ID
+    :type new_parent_id: str, optional
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: Location object
-        :rtype: :class:`~psym.common.data_class.Location`
+    :return: Location object
+    :rtype: :class:`~psym.common.data_class.Location`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            # this call will fail if there is Bletchley Park in two cities
-            location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
-            moved_location = client.move_locatoin(
-                location_id=location.id,
-                new_parent_id="12345"
-            )
+        # this call will fail if there is Bletchley Park in two cities
+        location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
+        moved_location = client.move_locatoin(
+            location_id=location.id,
+            new_parent_id="12345"
+        )
     """
     result = MoveLocationMutation.execute(
         client, locationID=location_id, parentLocationID=new_parent_id
@@ -550,22 +550,22 @@ def move_location(
 def get_location_by_external_id(client: SymphonyClient, external_id: str) -> Location:
     """This function returns location by external ID.
 
-        :param external_id: Location external ID
-        :type external_id: str
+    :param external_id: Location external ID
+    :type external_id: str
 
-        :raises:
-            * LocationNotFoundException: Location with this external ID does not exists
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
+    :raises:
+        * LocationNotFoundException: Location with this external ID does not exists
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
-        :return: Location object
-        :rtype: :class:`~psym.common.data_class.Location`
+    :return: Location object
+    :rtype: :class:`~psym.common.data_class.Location`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            location = client.get_location_by_external_id(external_id="12345")
+        location = client.get_location_by_external_id(external_id="12345")
     """
     location_filter = LocationFilterInput(
         filterType=LocationFilterType.LOCATION_INST_EXTERNAL_ID,
@@ -608,23 +608,23 @@ def get_location_documents(
 ) -> List[Document]:
     """This function returns locations documents.
 
-        :param location: Location object
-        :type location: :class:`~psym.common.data_class.Location`
+    :param location: Location object
+    :type location: :class:`~psym.common.data_class.Location`
 
-        :raises:
-            * FailedOperationException: Internal inventory error
-            * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
+    :raises:
+        * FailedOperationException: Internal inventory error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
-        :return: Documents List
-        :rtype: List[ :class:`~psym.common.data_class.Document` ]
+    :return: Documents List
+    :rtype: List[ :class:`~psym.common.data_class.Document` ]
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            # this call will fail if there is Bletchley Park in two cities
-            location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
-            location = client.get_location_documents(location=location)
+        # this call will fail if there is Bletchley Park in two cities
+        location = client.get_location(location_hirerchy=[("Site", "Bletchley Park")])
+        location = client.get_location_documents(location=location)
     """
     location_with_documents = LocationDocumentsQuery.execute(client, id=location.id)
     if not location_with_documents:

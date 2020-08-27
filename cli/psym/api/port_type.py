@@ -34,44 +34,44 @@ def add_equipment_port_type(
 ) -> EquipmentPortType:
     """This function creates an equipment port type.
 
-        :param name: Equipment port type name
-        :type name: str
-        :param properties: List of property definitions
-        :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ])
-        :param link_properties: List of property definitions
-        :type link_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ])
+    :param name: Equipment port type name
+    :type name: str
+    :param properties: List of property definitions
+    :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ])
+    :param link_properties: List of property definitions
+    :type link_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ])
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: EquipmentPortType object
-        :rtype: :class:`~psym.common.data_class.EquipmentPortType`
+    :return: EquipmentPortType object
+    :rtype: :class:`~psym.common.data_class.EquipmentPortType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            from psym.common.data_class import PropertyDefinition
-            from psym.graphql.enum.property_kind import PropertyKind
-            port_type1 = client.add_equipment_port_type(
-                name="port type 1",
-                properties=[
-                    PropertyDefinition(
-                        property_name="port property",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=True
-                    )
-                ],
-                link_properties=[
-                    PropertyDefinition(
-                        property_name="link port property",
-                        property_kind=PropertyKind.string,
-                        default_raw_value=None,
-                        is_fixed=True
-                    )
-                ],
-            )
+        from psym.common.data_class import PropertyDefinition
+        from psym.graphql.enum.property_kind import PropertyKind
+        port_type1 = client.add_equipment_port_type(
+            name="port type 1",
+            properties=[
+                PropertyDefinition(
+                    property_name="port property",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+            link_properties=[
+                PropertyDefinition(
+                    property_name="link port property",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
     """
 
     formated_property_types = format_to_property_type_inputs(data=properties)
@@ -99,22 +99,22 @@ def get_equipment_port_type(
     client: SymphonyClient, equipment_port_type_id: str
 ) -> EquipmentPortType:
     """This function returns an equipment port type.
-        It can get only the requested equipment port type ID
+    It can get only the requested equipment port type ID
 
-        :param equipment_port_type_id: Equipment port type ID
-        :type equipment_port_type_id: str
+    :param equipment_port_type_id: Equipment port type ID
+    :type equipment_port_type_id: str
 
-        :raises:
-            :class:`~psym.exceptions.EntityNotFoundError`: Equipment port type does not found
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Equipment port type does not found
 
-        :return: EquipmentPortType object
-        :rtype: :class:`~psym.common.data_class.EquipmentPortType`
+    :return: EquipmentPortType object
+    :rtype: :class:`~psym.common.data_class.EquipmentPortType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            port_type = client.get_equipment_port_type(equipment_port_type_id=port_type1.id)
+        port_type = client.get_equipment_port_type(equipment_port_type_id=port_type1.id)
     """
     result = EquipmentPortTypeQuery.execute(client, id=equipment_port_type_id)
     if not result:
@@ -139,39 +139,39 @@ def edit_equipment_port_type(
 ) -> EquipmentPortType:
     """This function edits an existing equipment port type.
 
-        :param port_type: Existing eqipment port type object
-        :type port_type: :class:`~psym.common.data_class.EquipmentPortType`
-        :param new_name: New name
-        :type new_name: str
-        :param new_properties: Dictionary of property name to property value
+    :param port_type: Existing eqipment port type object
+    :type port_type: :class:`~psym.common.data_class.EquipmentPortType`
+    :param new_name: New name
+    :type new_name: str
+    :param new_properties: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type new_properties: Dict[str, PropertyValue], optional
-        :param new_link_properties: Dictionary of property name to property value
+    :type new_properties: Dict[str, PropertyValue], optional
+    :param new_link_properties: Dictionary of property name to property value
 
-            * str - property name
-            * PropertyValue - new value of the same type for this property
+        * str - property name
+        * PropertyValue - new value of the same type for this property
 
-        :type new_link_properties: Dict[str, PropertyValue], optional
+    :type new_link_properties: Dict[str, PropertyValue], optional
 
-        :raises:
-            FailedOperationException: Internal inventory error
+    :raises:
+        FailedOperationException: Internal inventory error
 
-        :return: EquipmentPortType object
-        :rtype: :class:`~psym.common.data_class.EquipmentPortType`
+    :return: EquipmentPortType object
+    :rtype: :class:`~psym.common.data_class.EquipmentPortType`
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            port_type1 = client.edit_equipment_port_type(
-                port_type=equipment_port_type,
-                new_name="new port type name",
-                new_properties={"existing property name": "new value"},
-                new_link_properties={"existing link property name": "new value"},
-            )
+        port_type1 = client.edit_equipment_port_type(
+            port_type=equipment_port_type,
+            new_name="new port type name",
+            new_properties={"existing property name": "new value"},
+            new_link_properties={"existing link property name": "new value"},
+        )
     """
     new_name = port_type.name if new_name is None else new_name
 
@@ -210,17 +210,17 @@ def delete_equipment_port_type(
     client: SymphonyClient, equipment_port_type_id: str
 ) -> None:
     """This function deletes an equipment port type.
-        It can get only the requested equipment port type ID
+    It can get only the requested equipment port type ID
 
-        :param equipment_port_type_id: Equipment port type ID
-        :type equipment_port_type_id: str
+    :param equipment_port_type_id: Equipment port type ID
+    :type equipment_port_type_id: str
 
-        :rtype: None
+    :rtype: None
 
-        **Example**
+    **Example**
 
-        .. code-block:: python
+    .. code-block:: python
 
-            client.delete_equipment_port_type(equipment_port_type_id=port_type1.id)
+        client.delete_equipment_port_type(equipment_port_type_id=port_type1.id)
     """
     RemoveEquipmentPortTypeMutation.execute(client, id=equipment_port_type_id)
