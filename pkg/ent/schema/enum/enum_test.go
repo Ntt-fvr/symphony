@@ -14,7 +14,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,11 +44,11 @@ func TestMarshalGQL(t *testing.T) {
 	err := enum.MarshalGQL(&b, red)
 	require.NoError(t, err)
 	str := b.String()
-	assert.True(t, strings.HasPrefix(str, ""))
-	assert.True(t, strings.HasSuffix(str, ""))
+	require.True(t, strings.HasPrefix(str, ""))
+	require.True(t, strings.HasSuffix(str, ""))
 	str, err = strconv.Unquote(str)
 	require.NoError(t, err)
-	assert.EqualValues(t, red, str)
+	require.EqualValues(t, red, str)
 }
 
 func TestUnmarshalGQL(t *testing.T) {
@@ -57,17 +56,17 @@ func TestUnmarshalGQL(t *testing.T) {
 		var c color
 		err := enum.UnmarshalGQL("green", &c)
 		require.NoError(t, err)
-		assert.Equal(t, green, c)
+		require.Equal(t, green, c)
 	})
 	t.Run("BadType", func(t *testing.T) {
 		var c color
 		err := enum.UnmarshalGQL(5, &c)
-		assert.EqualError(t, err, "enums must be strings")
+		require.EqualError(t, err, "enums must be strings")
 	})
 	t.Run("BadValue", func(t *testing.T) {
 		var c color
 		err := enum.UnmarshalGQL("blue", &c)
-		assert.EqualError(t, err, "blue is not a valid *enum_test.color")
+		require.EqualError(t, err, "blue is not a valid *enum_test.color")
 	})
 }
 
@@ -105,7 +104,7 @@ func TestEnum(t *testing.T) {
 				err = unmarshaller.UnmarshalGQL(str)
 				require.NoError(t, err)
 				got := reflect.ValueOf(unmarshaller).Elem().Interface()
-				assert.Equal(t, want, got)
+				require.Equal(t, want, got)
 			}
 		})
 	}
