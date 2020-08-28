@@ -48,7 +48,6 @@
 
 [options]
 esproposal.optional_chaining=enable
-server.max_workers=3
 
 [libs]
 node_modules/mapbox-gl/flow-typed
