@@ -13,7 +13,7 @@ locals {
   graph_db_name = "graph"
 }
 
-# grant RDS to EKS nodes
+# grant RDS access to EKS worker nodes
 resource aws_security_group eks_rds {
   for_each = {
     mysql = {

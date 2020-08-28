@@ -3,8 +3,11 @@ output storybook_tag {
   value       = local.storybook_tag
 }
 
-output keycloak_db {
-  description = "Keycloak database currently used"
-  value       = local.keycloak_db
-  sensitive   = true
+output keycloak_admin {
+  description = "Keycloak login credentials"
+  value = {
+    user     = local.keycloak_user
+    password = random_password.keycloak_admin.result
+  }
+  sensitive = true
 }

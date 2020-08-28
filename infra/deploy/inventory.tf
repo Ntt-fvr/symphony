@@ -16,7 +16,7 @@ resource aws_s3_bucket inventory_store {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET", "PUT", "DELETE"]
-    allowed_origins = [for domain in local.domains : format("https://*.%s", domain.name)]
+    allowed_origins = ["https://*.${local.domains.symphony.name}"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3600
   }
@@ -53,7 +53,11 @@ resource aws_s3_bucket inventory_store {
     }
   }
 
-  tags = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # limit public access to inventory data store
