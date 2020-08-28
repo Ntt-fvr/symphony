@@ -8,14 +8,17 @@
  * @format
  */
 
+import type {
+  CircleLayerSpecification,
+  HeatmapLayerSpecification,
+  SymbolLayerSpecification,
+} from 'mapbox-gl/src/style-spec/types';
 import type {ContextRouter} from 'react-router-dom';
+import type {GeoJSONGeometry} from '@mapbox/geojson-types/index';
 import type {LngLatLike} from 'mapbox-gl/src/geo/lng_lat';
 import type {MapType} from '@fbcnms/ui/insights/map/styles';
-import type {WithStyles} from '@material-ui/core';
-import type {CircleLayerSpecification,HeatmapLayerSpecification, SourceFunctionSpecification, SymbolLayerSpecification} from 'mapbox-gl/src/style-spec/types';
-import type {GeoJSONFeature} from '@mapbox/geojson-types/index';
-import type {ProjectGeoJSONFeatureCollection} from './ProjectsMapUtils';
 import type {Theme} from '@material-ui/core';
+import type {WithStyles} from '@material-ui/core';
 
 import * as React from 'react';
 import MapButtonGroup from '@fbcnms/ui/components/map/MapButtonGroup';
@@ -60,24 +63,33 @@ type State = {
   container: ?HTMLDivElement,
 };
 
-export type GeoJSONSource = {
+export type CustomGeoJSONFeature<T> = {
+  type: 'Feature',
+  geometry: ?GeoJSONGeometry,
+  properties: ?T,
+  id?: number | string,
+};
+
+export type GeoJSONSource<T> = {
   key: string,
-  data: ProjectGeoJSONFeatureCollection,
+  data: CustomGeoJSONFeatureCollection<T>,
 };
 
-export type GeoJSONFeatureCollection<T: GeoJSONFeature> = {
+export type CustomGeoJSONFeatureCollection<T> = {
   type: 'FeatureCollection',
-  features: Array<T>,
+  features: Array<CustomGeoJSONFeature<T>>,
 };
 
-type Props<T: GeoJSONFeature> = WithStyles<typeof styles> & {
+type Props<T> = WithStyles<typeof styles> & {
   mode: MapType,
   zoomLevel?: number | string,
-  layers: Array<MapLayer>,
+  layers: Array<MapLayer<T>>,
   center?: LngLatLike,
-  markers?: ?GeoJSONFeatureCollection<T>,
-  getFeaturePopoutContent?: (feature: T) => React.Node,
-  getFeatureHoverPopoutContent?: (feature: T) => React.Node,
+  markers?: ?CustomGeoJSONFeatureCollection<T>,
+  getFeaturePopoutContent?: (feature: CustomGeoJSONFeature<T>) => React.Node,
+  getFeatureHoverPopoutContent?: (
+    feature: CustomGeoJSONFeature<T>,
+  ) => React.Node,
   showGeocoder?: boolean,
   showMapSatelliteToggle?: boolean,
   mapButton?: React.Node,
@@ -85,8 +97,8 @@ type Props<T: GeoJSONFeature> = WithStyles<typeof styles> & {
   ...ContextRouter,
 };
 
-export type MapLayer = {
-  source: GeoJSONSource,
+export type MapLayer<T> = {
+  source: GeoJSONSource<T>,
   styles?: ?MapLayerStyles,
 };
 
@@ -123,9 +135,15 @@ type LayoutTypes = $ElementType<SymbolLayerSpecification, 'layout'>;
 type IconParams = {
   iconImage: $ElementType<$NonMaybeType<LayoutTypes>, 'icon-image'>,
   textField: $ElementType<$NonMaybeType<LayoutTypes>, 'text-field'>,
-  iconIgnorePlacement: $ElementType<$NonMaybeType<LayoutTypes>, 'icon-ignore-placement'>,
+  iconIgnorePlacement: $ElementType<
+    $NonMaybeType<LayoutTypes>,
+    'icon-ignore-placement',
+  >,
   textTransform: $ElementType<$NonMaybeType<LayoutTypes>, 'text-transform'>,
-  textColor: $ElementType<$NonMaybeType<$ElementType<SymbolLayerSpecification, 'paint'>>, 'text-color'>,
+  textColor: $ElementType<
+    $NonMaybeType<$ElementType<SymbolLayerSpecification, 'paint'>>,
+    'text-color',
+  >,
   textFont: $ElementType<$NonMaybeType<LayoutTypes>, 'text-font'>,
 };
 
@@ -148,13 +166,12 @@ export type CircleColorInterpolation = {
 type HeatmapWeight = {
   property: string,
   type: PaintType,
-  stops: Array<{threshold: number,
-  weight: number,}>,
+  stops: Array<{threshold: number, weight: number}>,
 };
 
 type HeatmapPaint = $ElementType<HeatmapLayerSpecification, 'paint'>;
 
-class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
+class MapView<T: {name: string}> extends React.Component<Props<T>, State> {
   static defaultProps = {
     markers: null,
     layers: [],
@@ -216,7 +233,10 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
       container: this.mapContainer,
       hash: false,
       style: getMapStyleForType(this.props.mode),
-      zoom: this.props.zoomLevel === undefined ? undefined : Number(this.props.zoomLevel),
+      zoom:
+        this.props.zoomLevel === undefined
+          ? undefined
+          : Number(this.props.zoomLevel),
       center: this.props.center,
     });
 
@@ -301,13 +321,13 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
     );
   }
 
-  _registerClick = (map, layerId) => {
+  _registerClick = (map: mapboxgl.Map, layerId) => {
     map.on('click', layerId, this._handleClick);
     map.on('mouseenter', layerId, this._handleMouseEnter);
     map.on('mouseleave', layerId, this._handleMouseLeave);
   };
 
-  _unregisterClick = (map, layerId) => {
+  _unregisterClick = (map: mapboxgl.Map, layerId) => {
     map.off('click', layerId, this._handleClick);
     map.off('mouseenter', layerId, this._handleMouseEnter);
     map.off('mouseleave', layerId, this._handleMouseLeave);
@@ -362,7 +382,7 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
     this.props.layers.forEach(layer => this._addLayer(layer, null));
   };
 
-  _removeLayer = (prevLayer: MapLayer, currentLayer?: ?MapLayer) => {
+  _removeLayer = <T>(prevLayer: MapLayer<T>, currentLayer?: ?MapLayer<T>) => {
     const map = nullthrows(this.state.map);
 
     const prevLayerStyles =
@@ -389,7 +409,7 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
     }
   };
 
-  _addLayer = (currentLayer: MapLayer, prevLayer?: ?MapLayer) => {
+  _addLayer = <T>(currentLayer: MapLayer<T>, prevLayer?: ?MapLayer<T>) => {
     const map = nullthrows(this.state.map);
     if (prevLayer == null) {
       map.addSource(currentLayer.source.key, {
@@ -429,7 +449,7 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
     }
   };
 
-  _getLayerStyles = (layer: MapLayer): {[string]: boolean} => {
+  _getLayerStyles = <T>(layer: MapLayer<T>): {[string]: boolean} => {
     return {
       [CIRCLE_LAYER_STYLE]: layer.styles == null || layer.styles.circle != null,
       [HEATMAP_LAYER_STYLE]: layer.styles?.heatmap != null,
@@ -476,9 +496,9 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
     this._registerClick(map, layerId);
   };
 
-  _editIconLayer = (
+  _editIconLayer = <T>(
     sourceKey: string,
-    currentLayer: MapLayer,
+    currentLayer: MapLayer<T>,
     params: IconParams,
   ) => {
     const map = nullthrows(this.state.map);
@@ -517,38 +537,41 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
 
   _getCirclePaint = (params: ?CircleParams): CirclePaint => {
     const colorInterpolation = params?.colorInterpolation;
-    let circleColor: $PropertyType<$NonMaybeType<CirclePaint>, 'circle-color'>;;
+    let circleColor: $PropertyType<$NonMaybeType<CirclePaint>, 'circle-color'>;
     if (colorInterpolation == null) {
       circleColor = ['get', 'color'];
     } else if (colorInterpolation.type === 'exponential') {
-      circleColor = ({
-          property: colorInterpolation.property,
-          type: 'exponential',
-          stops: (colorInterpolation.stops.map(
-            stop => [stop.threshold, stop.color],
-          ): Array<[number, string]>),
-        });
+      circleColor = {
+        property: colorInterpolation.property,
+        type: 'exponential',
+        stops: (colorInterpolation.stops.map(stop => [
+          stop.threshold,
+          stop.color,
+        ]): Array<[number, string]>),
+      };
     } else if (colorInterpolation.type === 'interval') {
-       circleColor = ({
-          property: colorInterpolation.property,
-          type: 'interval',
-          stops: (colorInterpolation.stops.map(
-            stop => [stop.threshold, stop.color],
-          ): Array<[number, string]>),
-        });
+      circleColor = {
+        property: colorInterpolation.property,
+        type: 'interval',
+        stops: (colorInterpolation.stops.map(stop => [
+          stop.threshold,
+          stop.color,
+        ]): Array<[number, string]>),
+      };
     } else if (colorInterpolation.type === 'categorical') {
-        circleColor = ({
-          property: colorInterpolation.property,
-          type: 'categorical',
-          stops: (colorInterpolation.stops.map(
-            stop => [stop.threshold, stop.color],
-          ): Array<[string | number | boolean, string]>),
-        });
+      circleColor = {
+        property: colorInterpolation.property,
+        type: 'categorical',
+        stops: (colorInterpolation.stops.map(stop => [
+          stop.threshold,
+          stop.color,
+        ]): Array<[string | number | boolean, string]>),
+      };
     } else if (colorInterpolation.type === 'identity') {
-        circleColor = ({
-          property: colorInterpolation.property,
-          type: 'identity',
-        });
+      circleColor = {
+        property: colorInterpolation.property,
+        type: 'identity',
+      };
     }
     const paint = {
       'circle-color': circleColor,
@@ -589,30 +612,42 @@ class MapView<T: GeoJSONFeature> extends React.Component<Props<T>, State> {
   };
 
   _getHeatmapPaint = (params: HeatmapParams): HeatmapPaint => {
-    let heatmapWeight: $PropertyType<$NonMaybeType<HeatmapPaint>, 'heatmap-weight'>;
+    let heatmapWeight: $PropertyType<
+      $NonMaybeType<HeatmapPaint>,
+      'heatmap-weight',
+    >;
     if (params.weight.type === 'exponential') {
-      heatmapWeight = ({
-          property: params.weight.property,
-          type: 'exponential',
-          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[number, number]>),
-        });
+      heatmapWeight = {
+        property: params.weight.property,
+        type: 'exponential',
+        stops: (params.weight.stops.map(stop => [
+          stop.threshold,
+          stop.weight,
+        ]): Array<[number, number]>),
+      };
     } else if (params.weight.type === 'interval') {
-       heatmapWeight = ({
-          property: params.weight.property,
-          type: 'interval',
-          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[number, number]>),
-        });
+      heatmapWeight = {
+        property: params.weight.property,
+        type: 'interval',
+        stops: (params.weight.stops.map(stop => [
+          stop.threshold,
+          stop.weight,
+        ]): Array<[number, number]>),
+      };
     } else if (params.weight.type === 'categorical') {
-        heatmapWeight = ({
-          property: params.weight.property,
-          type: 'categorical',
-          stops: (params.weight.stops.map(stop => [stop.threshold, stop.weight]): Array<[string | number | boolean, number]>),
-        });
+      heatmapWeight = {
+        property: params.weight.property,
+        type: 'categorical',
+        stops: (params.weight.stops.map(stop => [
+          stop.threshold,
+          stop.weight,
+        ]): Array<[string | number | boolean, number]>),
+      };
     } else if (params.weight.type === 'identity') {
-        heatmapWeight = ({
-          property: params.weight.property,
-          type: 'identity',
-        });
+      heatmapWeight = {
+        property: params.weight.property,
+        type: 'identity',
+      };
     }
 
     const paint = {

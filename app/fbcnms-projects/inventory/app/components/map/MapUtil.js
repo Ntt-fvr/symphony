@@ -10,10 +10,8 @@
 
 import {gray14, green30, orange} from '@fbcnms/ui/theme/colors';
 import type {BasicLocation} from '../../common/Location';
-import type {
-  GeoJSONFeature,
-  GeoJSONFeatureCollection,
-} from '@mapbox/geojson-types';
+import type {CustomGeoJSONFeature} from './MapView';
+import type {GeoJSONFeatureCollection} from '@mapbox/geojson-types';
 import type {GeoJSONSource} from './MapView';
 import type {Location} from '../../common/Location.js';
 import type {ShortUser} from '../../common/EntUtils';
@@ -22,12 +20,17 @@ import type {
   WorkOrderPriority,
   WorkOrderStatus,
 } from '../../mutations/__generated__/EditWorkOrderMutation.graphql';
-import type {ProjectGeoJSONFeature} from './ProjectsMapUtils';
 
+export type CoordProps = {
+  color: string,
+  id: string,
+  signalStrength?: number,
+  strength?: number,
+};
 export type CoordsWithProps = {
   latitude: number,
   longitude: number,
-  properties: Object,
+  properties: CoordProps,
 };
 
 export type WorkOrderLocation = BasicLocation & {
@@ -44,7 +47,7 @@ export const locationsToGeoJSONSource = (
   key: string,
   locations: Array<Location>,
   properties: Object,
-): GeoJSONSource => {
+): GeoJSONSource<*> => {
   return {
     key: key,
     data: {
@@ -56,16 +59,16 @@ export const locationsToGeoJSONSource = (
   };
 };
 
-export const workOrderToGeoJSONSource = (
+export const workOrderToGeoJSONSource = <T: {}>(
   key: string,
   workOrders: Array<WorkOrderWithLocation>,
-  properties: Object,
-) => {
+  properties: T,
+): GeoJSONSource<T & WorkOrderProperties> => {
   return {
     key: key,
     data: {
       type: 'FeatureCollection',
-      features: workOrders.map<WorkOrderGeoJSONFeature>(workOrder =>
+      features: workOrders.map(workOrder =>
         workOrderToGeoFeature(workOrder, properties),
       ),
     },
@@ -87,15 +90,15 @@ export type WorkOrderProperties = {
   iconTech: string,
   text: string,
   textColor: string,
-  ...,
+  ...
 };
 
-export type WorkOrderGeoJSONFeature = GeoJSONFeature & {properties: WorkOrderProperties};
+export type WorkOrderGeoJSONFeature = CustomGeoJSONFeature<WorkOrderProperties>;
 
-export const workOrderToGeoFeature = (
+export const workOrderToGeoFeature = <T: {}>(
   workOrder: WorkOrderWithLocation,
-  properties: WorkOrderProperties,
-): WorkOrderGeoJSONFeature => {
+  properties: T,
+): CustomGeoJSONFeature<*> => {
   return {
     type: 'Feature',
     geometry: {
@@ -106,6 +109,7 @@ export const workOrderToGeoFeature = (
       ],
     },
     properties: {
+      ...properties,
       id: workOrder.workOrder.id,
       name: workOrder.workOrder.name,
       description: workOrder.workOrder.description,
@@ -124,7 +128,6 @@ export const workOrderToGeoFeature = (
         ? workOrder.workOrder.assignedTo.email.slice(0, 2)
         : '',
       textColor: getWorkOrderIconTextColor(workOrder.workOrder.status),
-      ...properties,
     },
   };
 };
@@ -155,7 +158,7 @@ export const locationToGeoFeature = (
     longitude: number,
   },
   properties: Object,
-)  => {
+) => {
   return {
     type: 'Feature',
     geometry: {
@@ -205,7 +208,7 @@ export const coordsToGeoJson = (
 export const coordsToGeoJSONSource = (
   key: string,
   coordsWithProps: Array<CoordsWithProps>,
-): GeoJSONSource => {
+): GeoJSONSource<CoordProps> => {
   const features = coordsWithProps.map(coords => ({
     type: 'Feature',
     geometry: {
@@ -226,7 +229,7 @@ export const coordsToGeoJSONSource = (
 export const polygonToGeoJSONSource = (
   key: string,
   coords: Array<{latitude: number, longitude: number}>,
-): GeoJSONSource => {
+): GeoJSONSource<{}> => {
   const coordinates = [coords.map(coord => [coord.longitude, coord.latitude])];
   return {
     key: key,

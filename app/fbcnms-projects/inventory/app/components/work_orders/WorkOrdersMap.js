@@ -8,8 +8,9 @@
  * @format
  */
 
-import type {BasicLocation} from '../../common/Location';
+import type {CustomGeoJSONFeature} from '../map/MapView';
 import type {Location} from '../../common/Location';
+import type {MapLayer} from '../map/MapView';
 import type {ShortUser} from '../../common/EntUtils';
 import type {WorkOrder} from '../../common/WorkOrder';
 import type {
@@ -81,7 +82,9 @@ const WorkOrdersMap = (props: Props) => {
     workOrdersConst,
   );
 
-  const layers = useMemo(() => {
+  const layers = useMemo((): Array<
+    MapLayer<WorkOrderProperties & {primaryKey: string, color: string}>,
+  > => {
     return [
       {
         styles: {
@@ -135,14 +138,16 @@ const WorkOrdersMap = (props: Props) => {
     };
   };
 
-  const userFormat = (userInput: 'string' | ShortUser) => {
+  const userFormat = (userInput: string | ShortUser) => {
     const user: ShortUser =
       typeof userInput === 'string' ? JSON.parse(userInput) : userInput;
     return user;
   };
 
-  const locationFormat = (locationInput: 'string' | BasicLocation) => {
-    const location: BasicLocation =
+  const locationFormat = (
+    locationInput: string | WorkOrderLocation,
+  ): WorkOrderLocation => {
+    const location: WorkOrderLocation =
       typeof locationInput === 'string'
         ? JSON.parse(locationInput)
         : locationInput;
@@ -150,11 +155,11 @@ const WorkOrdersMap = (props: Props) => {
   };
 
   const featurePropertiesToWorkOrderProperties = (
-    properties,
+    properties: WorkOrderProperties & {primaryKey: string, color: string},
   ): WorkOrderProperties => {
     return {
       ...properties,
-      assignedTo: userFormat(properties.assignedTo),
+      assignedTo: userFormat(properties.assignedTo ?? '{}'),
       owner: userFormat(properties.owner),
       location: locationFormat(properties.location),
     };
@@ -166,12 +171,19 @@ const WorkOrdersMap = (props: Props) => {
         <WorkOrderMapButtons onClick={value => setSelectedView(value)} />
       }
       mode="streets"
-      // $FlowFixMe found when adding mapboxgl
       layers={layers}
       showMapSatelliteToggle={true}
       showGeocoder={true}
       workOrdersView={true}
-      getFeaturePopoutContent={feature => {
+      getFeaturePopoutContent={(
+        feature: CustomGeoJSONFeature<
+          WorkOrderProperties & {primaryKey: string, color: string},
+        >,
+      ) => {
+        // For flow
+        if (feature.properties == null) {
+          return null;
+        }
         const workOrder = featurePropertiesToWorkOrderProperties(
           feature.properties,
         );
@@ -184,7 +196,7 @@ const WorkOrdersMap = (props: Props) => {
             workOrder={workOrder}
             onWorkOrderClick={() => {
               router.history.push(
-                `/workorders/search?workorder=${feature.properties.id}`,
+                `/workorders/search?workorder=${feature.properties?.id ?? ''}`,
               );
             }}
           />
@@ -193,7 +205,9 @@ const WorkOrdersMap = (props: Props) => {
       getFeatureHoverPopoutContent={feature => (
         <WorkOrderPopover
           displayFullDetails={false}
-          workOrder={featurePropertiesToWorkOrderProperties(feature.properties)}
+          workOrder={featurePropertiesToWorkOrderProperties(
+            nullthrows(feature.properties),
+          )}
         />
       )}
     />

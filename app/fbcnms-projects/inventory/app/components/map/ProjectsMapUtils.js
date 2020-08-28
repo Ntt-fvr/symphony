@@ -12,7 +12,7 @@ import type {GeoJSONGeometry} from '@mapbox/geojson-types';
 
 export type ProjectGeoJSONFeature = {
   type: 'Feature',
-  geometry: ?GeoJSONGeometry,
+  geometry?: ?GeoJSONGeometry,
   properties: ?{
     name: string,
     id: string,

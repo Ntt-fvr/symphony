@@ -75,7 +75,11 @@ function SiteSurveyQuestionReply(props: Props) {
         <div className={classes.mapContainer}>
           <MapView
             id="mapView"
-            center={question.latitude && question.longitude ? {lat: question.latitude, lng: question.longitude} : undefined}
+            center={
+              question.latitude && question.longitude
+                ? {lat: question.latitude, lng: question.longitude}
+                : undefined
+            }
             mode="streets"
             zoomLevel="14"
             markers={coordsToGeoJson(

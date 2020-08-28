@@ -211,7 +211,7 @@ function Map() {
       <MapView
         id="mapView"
         geojson={geojson}
-        // $FlowFixMe Found when adding mapboxgl types. Source should be string
+        // $FlowFixMe this is a dep and specifies the wrong prop
         mapLayers={mapLayers}
         MapMarker={WifiMapMarker}
         onMarkerClick={onMarkerClick}
