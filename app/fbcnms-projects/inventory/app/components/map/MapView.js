@@ -171,7 +171,7 @@ type HeatmapWeight = {
 
 type HeatmapPaint = $ElementType<HeatmapLayerSpecification, 'paint'>;
 
-class MapView<T: {name: string}> extends React.Component<Props<T>, State> {
+class MapView<T> extends React.Component<Props<T>, State> {
   static defaultProps = {
     markers: null,
     layers: [],

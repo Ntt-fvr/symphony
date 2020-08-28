@@ -48,7 +48,7 @@ type Props<T> = {
   shouldSearchPlaces?: ?(customResults: Array<Result>) => boolean,
 };
 
-class MapGeocoder<T: {name: string}> extends React.Component<Props<T>> {
+class MapGeocoder<T: Object> extends React.Component<Props<T>> {
   static defaultProps = {
     apiEndpoint: 'https://api.mapbox.com/geocoding/v5/mapbox.places/',
     searchDebounceMs: 200,
