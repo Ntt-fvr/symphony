@@ -582,7 +582,7 @@ jobs:
       - run:
           name: limit flow server
           <<: *appdir
-          command: echo "$(awk '{sub(/\[options\]/,"[options]\nserver.max_workers=3")}1' .flowconfig)" > .flowconfig
+          command: echo "$(awk '{sub(/\[options\]/,"[options]\nserver.max_workers=3")}1' .flowconfig)" > .flowconfig && cat .flowconfig
       - run:
           name: flow typecheck
           <<: *appdir
