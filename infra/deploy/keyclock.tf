@@ -36,7 +36,11 @@ module keycloak_db {
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
-  tags = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # generate random password for keycloak admin

@@ -12,12 +12,6 @@ output kubeconfig {
   sensitive = true
 }
 
-output keycloak_admin_password {
-  description = "Keycloak administrator password"
-  value       = random_password.keycloak_admin.result
-  sensitive   = true
-}
-
 output grafana_admin_password {
   description = "Grafana administrator password"
   value       = random_string.grafana_admin_password.result
@@ -32,4 +26,16 @@ output inventory_tag {
 output storybook_tag {
   description = "Storybook tag currently deployed"
   value       = local.storybook_tag
+}
+
+output database {
+  description = "Database subnets and security groups"
+  value = {
+    subnets      = module.vpc.database_subnets
+    subnet_group = module.vpc.database_subnet_group
+    security_group_ids = {
+      for k, v in aws_security_group.eks_rds : k => v.id
+    }
+  }
+  sensitive = true
 }

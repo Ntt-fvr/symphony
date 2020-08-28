@@ -1,5 +1,44 @@
+resource random_password keycloak_dbpass {
+  length  = 16
+  special = false
+}
+
+module keycloak_db {
+  identifier = "keycloak"
+  source     = "terraform-aws-modules/rds/aws"
+  version    = "~> 2.0"
+
+  family                     = "mysql5.7"
+  major_engine_version       = "5.7"
+  engine                     = "mysql"
+  engine_version             = "5.7"
+  auto_minor_version_upgrade = true
+  instance_class             = "db.t2.small"
+  allocated_storage          = 16
+
+  name     = "keycloak"
+  username = "admin"
+  password = random_password.keycloak_dbpass.result
+  port     = 3306
+
+  maintenance_window      = "Mon:00:00-Mon:03:00"
+  backup_window           = "03:00-06:00"
+  backup_retention_period = 7
+  deletion_protection     = true
+  skip_final_snapshot     = false
+
+  monitoring_role_arn = data.aws_iam_role.rds_monitoring.arn
+  monitoring_interval = 60
+
+  vpc_security_group_ids = [data.terraform_remote_state.core.outputs.database.security_group_ids["mysql"]]
+  subnet_ids             = data.terraform_remote_state.core.outputs.database.subnets
+  db_subnet_group_name   = data.terraform_remote_state.core.outputs.database.subnet_group
+
+  tags = local.tags
+}
+
 locals {
-  keycloak_db = var.keycloak_db != null ? var.keycloak_db : data.terraform_remote_state.current.outputs.keycloak_db
+  keycloak_user = "admin"
 }
 
 resource random_password keycloak_admin {
@@ -35,14 +74,14 @@ resource helm_release keycloak {
       "keycloak-bcrypt.sh" = file("${path.module}/files/keycloak-bcrypt.sh")
     }
     extraEnv = yamlencode([
-      { name = "KEYCLOAK_USER", value = "admin" },
+      { name = "KEYCLOAK_USER", value = local.keycloak_user },
       { name = "KEYCLOAK_STATISTICS", value = "all" },
       { name = "JDBC_PARAMS", value = "useSSL=false" },
       { name = "PROXY_ADDRESS_FORWARDING", value = "true" },
-      { name = "DB_VENDOR", value = local.keycloak_db.vendor },
-      { name = "DB_ADDR", value = local.keycloak_db.host },
-      { name = "DB_PORT", value = tostring(local.keycloak_db.port) },
-      { name = "DB_USER", value = local.keycloak_db.user },
+      { name = "DB_VENDOR", value = "mysql" },
+      { name = "DB_ADDR", value = module.keycloak_db.this_db_instance_address },
+      { name = "DB_PORT", value = tostring(module.keycloak_db.this_db_instance_port) },
+      { name = "DB_USER", value = module.keycloak_db.this_db_instance_username },
     ])
     extraEnvFrom = yamlencode([
       { secretRef = { name = "keycloak-http" } },
@@ -61,6 +100,6 @@ resource helm_release keycloak {
 
   set_sensitive {
     name  = "secrets.db.stringData.DB_PASSWORD"
-    value = local.keycloak_db.password
+    value = module.keycloak_db.this_db_instance_password
   }
 }
