@@ -126,6 +126,7 @@ function graphAddVertex(
       text: options?.text ?? 'step',
     },
   });
+
   newVertex.addTo(graph);
 
   return newVertex;

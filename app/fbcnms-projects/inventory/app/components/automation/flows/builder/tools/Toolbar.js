@@ -11,6 +11,7 @@
 import Button from '@fbcnms/ui/components/design-system/Button';
 import JsonInputDialog from './JsonInputDialog';
 import React, {useCallback} from 'react';
+import {TYPE as CreateCustomWorkorderType} from '../canvas/graph/shapes/vertexes/blocks/actions/CreateCustomWorkorder';
 import {TYPE as ManualStartType} from '../canvas/graph/shapes/vertexes/blocks/administrative/ManualStart';
 import {makeStyles} from '@material-ui/styles';
 import {useDialogShowingContext} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
@@ -82,9 +83,20 @@ export default function Toolbar() {
         onClick={() => {
           flow.addVertex(ManualStartType, {
             position: {x: 200, y: 100},
+            size: {width: 60, height: 60},
           });
         }}>
         Add Start
+      </Button>
+      <Button
+        onClick={() => {
+          flow.addVertex(CreateCustomWorkorderType, {
+            position: {x: 500, y: 100},
+            size: {width: 55, height: 60},
+            text: 'Supervisor approval',
+          });
+        }}>
+        Add Custom Worker
       </Button>
     </div>
   );
