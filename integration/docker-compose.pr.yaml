@@ -91,6 +91,16 @@ services:
       - conf/log.env
     healthcheck: *healthcheck
     restart: on-failure
+  
+  docs:
+    build:
+      context: ..
+      dockerfile: docs/Dockerfile
+    ports:
+      - 8090:80
+    healthcheck:
+      test: curl -Ifk http://localhost/healthz
+    restart: on-failure
 
   mysql:
     image: mysql
