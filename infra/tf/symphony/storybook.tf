@@ -14,7 +14,7 @@ resource helm_release storybook {
 
   values = [yamlencode({
     image = {
-      repository = "${local.docker_registry}/storybook"
+      repository = "${module.artifactory_secret.data.docker_registry}/storybook"
       tag        = local.storybook_tag
     }
     imagePullSecrets = [{

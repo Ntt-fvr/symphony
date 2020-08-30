@@ -4,10 +4,10 @@ resource random_password keycloak_dbpass {
 }
 
 module keycloak_db {
-  identifier = "keycloak"
-  source     = "terraform-aws-modules/rds/aws"
-  version    = "~> 2.0"
+  source  = "terraform-aws-modules/rds/aws"
+  version = "~> 2.0"
 
+  identifier                 = "keycloak"
   family                     = "mysql5.7"
   major_engine_version       = "5.7"
   engine                     = "mysql"
@@ -19,7 +19,7 @@ module keycloak_db {
   name     = "keycloak"
   username = "admin"
   password = random_password.keycloak_dbpass.result
-  port     = 3306
+  port     = local.mysql_port
 
   maintenance_window      = "Mon:00:00-Mon:03:00"
   backup_window           = "03:00-06:00"
@@ -30,7 +30,7 @@ module keycloak_db {
   monitoring_role_arn = data.aws_iam_role.rds_monitoring.arn
   monitoring_interval = 60
 
-  vpc_security_group_ids = [data.terraform_remote_state.core.outputs.database.security_group_ids["mysql"]]
+  vpc_security_group_ids = [data.terraform_remote_state.core.outputs.database.security_group_ids.mysql]
   subnet_ids             = data.terraform_remote_state.core.outputs.database.subnets
   db_subnet_group_name   = data.terraform_remote_state.core.outputs.database.subnet_group
 

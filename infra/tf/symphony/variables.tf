@@ -4,14 +4,14 @@ variable "storybook_tag" {
   default     = null
 }
 
-variable "keycloak_db" {
+variable artifactory {
+  description = "Artifactory urls and credentials"
   type = object({
-    vendor   = string
-    host     = string
-    port     = number
-    user     = string
-    password = string
+    docker_registry = string
+    helm_repository = string
+    username        = string
+    password        = string
+    email           = string
   })
-  description = "Keycloak database"
-  default     = null
+  default = null
 }

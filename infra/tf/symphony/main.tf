@@ -32,12 +32,14 @@ terraform {
 locals {
   env = {
     staging = {
-      region  = "eu-west-1"
-      cluster = "phb-staging"
+      region             = "eu-west-1"
+      cluster            = "phb-staging"
+      graphdb_identifier = "firm-boar"
     }
     production = {
-      region  = "us-east-1"
-      cluster = "phb-default"
+      region             = "us-east-1"
+      cluster            = "phb-default"
+      graphdb_identifier = "cuddly-stud"
     }
   }
 }

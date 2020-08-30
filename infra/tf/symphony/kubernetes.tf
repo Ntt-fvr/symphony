@@ -39,20 +39,6 @@ resource kubernetes_limit_range default {
   }
 }
 
-data aws_secretsmanager_secret artifactory {
-  name     = "symphony/artifactory"
-  provider = aws.us-east-1
-}
-
-data aws_secretsmanager_secret_version artifactory {
-  secret_id = data.aws_secretsmanager_secret.artifactory.id
-  provider  = aws.us-east-1
-}
-
-locals {
-  docker_registry = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["docker_registry"]
-}
-
 resource kubernetes_secret artifactory {
   metadata {
     name      = "artifactory"
@@ -61,10 +47,10 @@ resource kubernetes_secret artifactory {
 
   data = {
     ".dockercfg" = jsonencode({
-      (local.docker_registry) = {
-        username = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["username"]
-        password = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["password"]
-        email    = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["email"]
+      (module.artifactory_secret.data.docker_registry) = {
+        username = module.artifactory_secret.data.username
+        password = module.artifactory_secret.data.password
+        email    = module.artifactory_secret.data.email
       },
     })
   }
