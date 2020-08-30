@@ -23,6 +23,9 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ template "inventory.store.serviceAccountName" . }}
+      {{- with .Values.store.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.store.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -59,8 +62,5 @@ spec:
               path: /healthz/readiness
               port: http
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.store.securityContext }}
-          securityContext: {{- toYaml . | nindent 12 }}
           {{- end }}
           resources: {{- toYaml .Values.store.resources | nindent 12 }}

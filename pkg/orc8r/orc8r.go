@@ -28,6 +28,7 @@ func NewClient(cfg Config) (*http.Client, error) {
 	var rt http.RoundTripper = &http.Transport{
 		TLSClientConfig: &tls.Config{
 			Certificates: []tls.Certificate{cert},
+			MinVersion:   tls.VersionTLS12,
 		},
 	}
 	rt = &ochttp.Transport{Base: rt}

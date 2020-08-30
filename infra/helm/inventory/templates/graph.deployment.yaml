@@ -23,6 +23,9 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ template "inventory.graph.serviceAccountName" . }}
+      {{- with .Values.graph.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.graph.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -89,9 +92,6 @@ spec:
               path: /healthz/readiness
               port: http
             {{- toYaml .Values.graph.probes.readiness | nindent 12 }}
-          {{- end }}
-          {{- with .Values.graph.securityContext }}
-          securityContext: {{- toYaml . | nindent 12 }}
           {{- end }}
           resources: {{- toYaml .Values.graph.resources | nindent 12 }}
       {{- if .Values.integrations.orc8r.enabled }}
