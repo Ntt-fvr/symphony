@@ -8,8 +8,10 @@
  * @format
  */
 
-import type {CSVFileExportQuery} from './__generated__/CSVFileExportQuery.graphql';
-
+import type {
+  CSVFileExportQuery,
+  ExportStatus,
+} from './__generated__/CSVFileExportQuery.graphql';
 import type {FiltersQuery} from './comparison_view/ComparisonViewTypes';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
@@ -17,11 +19,13 @@ import type {WithStyles} from '@material-ui/core';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useState} from 'react';
 import RelayEnvironment from '../common/RelayEnvironment';
 import axios from 'axios';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import {DownloadIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {useContext} from 'react';
 import {withStyles} from '@material-ui/core/styles';
@@ -71,7 +75,7 @@ type Props = {
 const CSVFileExport = (props: Props) => {
   const {classes, title, exportPath} = props;
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isAsyncExportInProgress, setIsAsyncExportInProgress] = useState(false);
+  const [asyncTaskStatus, setAsyncTaskStatus] = useState<?ExportStatus>(null);
   const isAsyncExportEnabled = useContext(AppContext).isFeatureEnabled(
     'async_export',
   );
@@ -84,27 +88,26 @@ const CSVFileExport = (props: Props) => {
     return f;
   });
 
-  const handleAsyncExport = (taskID: string, intervalId: IntervalID) => {
+  const handleAsyncDownload = async () => {
+    //TODO: send axios.get to async service with the taskId to get the file.
+  };
+
+  const handleAsyncExport = (taskId: string, intervalId: IntervalID) => {
     fetchQuery<CSVFileExportQuery>(RelayEnvironment, csvFileExportQuery, {
-      taskId: taskID,
+      taskId,
     }).then(response => {
-      if (response == null || response.task == null) {
+      if (
+        response == null ||
+        response.task == null ||
+        response.task.status === 'FAILED'
+      ) {
+        clearInterval(intervalId);
+        setAsyncTaskStatus('FAILED');
+        props.alert('Failed to export file');
         return;
-      }
-      switch (response.task.status) {
-        case 'SUCCEEDED':
-          //TODO: present a download button
-          clearInterval(intervalId);
-          setIsAsyncExportInProgress(false);
-          break;
-        case 'FAILED':
-          //TODO: show appropriate failure message and present original export button
-          clearInterval(intervalId);
-          setIsAsyncExportInProgress(false);
-          break;
-        default:
-          //TODO: present a progress bar and loading circle
-          break;
+      } else if (response.task.status === 'SUCCEEDED') {
+        clearInterval(intervalId);
+        setAsyncTaskStatus('SUCCEEDED');
       }
     });
   };
@@ -134,11 +137,11 @@ const CSVFileExport = (props: Props) => {
               if (text == null || text === '') {
                 return;
               }
-              const taskID = JSON.parse(text)['TaskID'];
-              if (!isAsyncExportInProgress) {
-                setIsAsyncExportInProgress(true);
+              const taskId = JSON.parse(text)['TaskID'];
+              if (asyncTaskStatus !== 'IN_PROGRESS') {
+                setAsyncTaskStatus('IN_PROGRESS');
                 const intervalId = setInterval(
-                  () => handleAsyncExport(taskID, intervalId),
+                  () => handleAsyncExport(taskId, intervalId),
                   EXPORT_TASK_REFRESH_INTERVAL_MS,
                 );
               }
@@ -150,25 +153,36 @@ const CSVFileExport = (props: Props) => {
       setIsDownloading(false);
     }
   };
+
   return (
     <div className={classes.exportButtonContainer}>
       <Button className={classes.exportButton} variant="text" onClick={onClick}>
         <div className={classes.exportButtonContent}>
           <span
             className={classNames({
-              [classes.hiddenContent]: isDownloading,
+              [classes.hiddenContent]:
+                isDownloading || asyncTaskStatus === 'IN_PROGRESS',
             })}>
             {title}
           </span>
           <CircularProgress
-            size={20}
+            size={24}
             color="inherit"
             className={classNames({
-              [classes.hiddenContent]: !isDownloading,
+              [classes.hiddenContent]:
+                (!isDownloading && !isAsyncExportEnabled) ||
+                (asyncTaskStatus !== 'IN_PROGRESS' && isAsyncExportEnabled),
             })}
           />
         </div>
       </Button>
+      {isAsyncExportEnabled && asyncTaskStatus === 'SUCCEEDED' && (
+        <IconButton
+          icon={DownloadIcon}
+          onClick={handleAsyncDownload}
+          skin="gray"
+        />
+      )}
     </div>
   );
 };
