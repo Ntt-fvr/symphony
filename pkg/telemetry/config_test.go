@@ -18,13 +18,13 @@ func TestFlags(t *testing.T) {
 	parser, err := kong.New(&cfg, cfg)
 	require.NoError(t, err)
 	_, err = parser.Parse([]string{
-		"--" + telemetry.TraceExporterFlag, "nop",
-		"--" + telemetry.TraceSamplingProbabilityFlag, "0.5",
-		"--" + telemetry.TraceServiceFlag, t.Name(),
-		"--" + telemetry.TraceTagsFlag, "one=1",
-		"--" + telemetry.TraceTagsFlag, "two=2",
-		"--" + telemetry.ViewExporterFlag, "nop",
-		"--" + telemetry.ViewLabelsFlag, "three=3",
+		"--telemetry.trace.exporter", "nop",
+		"--telemetry.trace.sampling_probability", "0.5",
+		"--telemetry.trace.service", t.Name(),
+		"--telemetry.trace.tags", "one=1",
+		"--telemetry.trace.tags", "two=2",
+		"--telemetry.view.exporter", "nop",
+		"--telemetry.view.labels", "three=3",
 	})
 	require.NoError(t, err)
 	require.Equal(t, "nop", cfg.Trace.ExporterName)
@@ -74,8 +74,8 @@ func TestProvider(t *testing.T) {
 	parser, err := kong.New(&cfg, cfg)
 	require.NoError(t, err)
 	_, err = parser.Parse([]string{
-		"--" + telemetry.TraceExporterFlag, "jaeger",
-		"--" + telemetry.ViewExporterFlag, "prometheus",
+		"--telemetry.trace.exporter", "jaeger",
+		"--telemetry.view.exporter", "prometheus",
 	})
 	require.NoError(t, err)
 	te, flusher, err := telemetry.ProvideTraceExporter(&cfg)

@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
@@ -32,6 +33,7 @@ import (
 )
 
 type cliFlags struct {
+	ConfigFile      kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
 	HTTPAddress     string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
 	GRPCAddress     string           `name:"grpc.listen-address" default:":https" help:"GRPC address to listen on."`
 	MySQLConfig     mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
@@ -45,7 +47,10 @@ type cliFlags struct {
 
 func main() {
 	var cf cliFlags
-	kong.Parse(&cf, cf.TelemetryConfig)
+	kong.Parse(&cf,
+		kong.Configuration(kongtoml.Loader),
+		cf.TelemetryConfig,
+	)
 
 	ctx := ctxutil.WithSignal(
 		context.Background(),
