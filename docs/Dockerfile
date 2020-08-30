@@ -10,19 +10,10 @@ RUN yarn install
 
 # build project
 RUN rm -rf build && yarn build
+COPY website/static/psym build/docs/psym
 
 # create reverse proxy image
-FROM nginx:alpine
-
-# Install runtime dependencies
-RUN apk add --no-cache curl
+FROM bitnami/nginx
 
 # copy build artifacts
-COPY --from=builder /src/website/build/docs /www/data
-
-RUN rm -rf www/data/psym/*
-
-COPY website/static/psym www/data/psym/
-
-# copy nginx config
-COPY nginx/default.nginx /etc/nginx/conf.d/default.conf
+COPY --from=builder /src/website/build/docs /app

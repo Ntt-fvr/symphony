@@ -9,10 +9,8 @@ services:
     build:
       context: ../app
       dockerfile: fbcnms-projects/storybook/Dockerfile
-    ports:
-      - 8090:80
     networks:
-      - public
+      - private
     healthcheck:
-      test: curl -Ifk http://localhost/healthz
+      test: curl -Ifk http://localhost:8080/status
     restart: on-failure

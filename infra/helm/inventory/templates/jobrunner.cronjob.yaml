@@ -22,7 +22,7 @@ spec:
         spec:
           serviceAccountName: {{ template "inventory.graph.serviceAccountName" $ }}
           {{- with $.Values.graph.securityContext }}
-          securityContext: {{- toYaml . | nindent 10 }}
+          securityContext: {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- include "inventory.imagePullSecrets" $ | indent 10 }}
           containers:

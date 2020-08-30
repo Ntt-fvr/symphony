@@ -126,13 +126,10 @@ services:
   docs:
     build:
       context: ../docs
-    ports:
-      - 8090:80
     networks:
       - private
-      - public
     healthcheck:
-      test: curl -Ifk http://localhost/healthz
+      test: curl -Ifk http://localhost:8080/status
     restart: on-failure
 
   fluentd:

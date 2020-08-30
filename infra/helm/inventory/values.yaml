@@ -548,7 +548,7 @@ docs:
     # Service external port
     port: 80
     # Service target port
-    targetPort: 80
+    targetPort: 8080
     # Service type
     type: ClusterIP
 
