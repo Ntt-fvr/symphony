@@ -11,7 +11,7 @@ resource helm_release storybook {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "storybook"
-  version             = "1.0.0"
+  version             = "1.1.0"
   keyring             = ""
   max_history         = 10
 

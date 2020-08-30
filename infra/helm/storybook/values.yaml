@@ -9,13 +9,19 @@
 replicaCount: 1
 
 image:
-  repository: facebookconnectivity-phb-docker.jfrog.io/storybook
+  repository: facebookconnectivity-symphony-docker.jfrog.io/storybook
   tag: latest
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+securityContext:
+  runAsUser: 65534
+  runAsNonRoot: true
+  runAsGroup: 65534
+  fsGroup: 65534
 
 service:
   type: ClusterIP

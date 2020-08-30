@@ -54,4 +54,7 @@ spec:
               port: http
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.docs.securityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources: {{- toYaml .Values.docs.resources | nindent 12 }}

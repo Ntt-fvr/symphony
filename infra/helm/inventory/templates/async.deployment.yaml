@@ -79,4 +79,7 @@ spec:
               port: http
             {{- toYaml .Values.async.probes.readiness | nindent 12 }}
           {{- end }}
+          {{- with .Values.async.securityContext }}
+          securityContext: {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources: {{- toYaml .Values.async.resources | nindent 12 }}

@@ -9,7 +9,7 @@ resource helm_release storybook {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.0.0"
+  version             = "1.1.0"
   max_history         = 10
 
   values = [yamlencode({

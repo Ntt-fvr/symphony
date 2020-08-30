@@ -20,6 +20,9 @@ spec:
     spec:
       template:
         spec:
+          {{- with $.Values.graph.securityContext }}
+          securityContext: {{- toYaml . | nindent 10 }}
+          {{- end }}
           serviceAccountName: {{ template "inventory.graph.serviceAccountName" $ }}
           {{- include "inventory.imagePullSecrets" $ | indent 10 }}
           containers:

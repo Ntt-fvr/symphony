@@ -129,7 +129,7 @@ resource helm_release inventory {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   chart               = "inventory"
-  version             = "2.1.0"
+  version             = "2.2.0"
   keyring             = ""
   max_history         = 100
 
