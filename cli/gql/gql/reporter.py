@@ -63,7 +63,7 @@ class CSVReporter(Reporter):
         Example:
         ```
         reporter = CSVReporter(csvOutPath, csvErrPath)
-        client = InventoryClient(email, password, "fb-test", reporter=reporter)
+        client = PsymClient(email, password, "fb-test", reporter=reporter)
         try:
             location = client.addLocation(..)
         except FailedOperationException as e:

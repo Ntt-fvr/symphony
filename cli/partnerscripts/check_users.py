@@ -6,7 +6,7 @@ import argparse
 import sys
 from typing import List
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.api.user import get_users
 from psym.common.data_class import User
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     result: List[str] = []
     users: List[User] = []
     try:
-        client = InventoryClient(username, password, tenant)
+        client = PsymClient(username, password, tenant)
     except Exception as e:
         print(f"User {username} unaible to connect to {tenant} tenant")
         print(f"ERROR - {str(e)}")
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     for user in users:
         try:
-            client = InventoryClient(user.auth_id, user.auth_id, tenant)
+            client = PsymClient(user.auth_id, user.auth_id, tenant)
             result.append(user.auth_id)
             client.session.close()
         except Exception:

@@ -3264,24 +3264,6 @@ Users in symphony are never deleted. Only de-activated.</p>
 <span class="pre">`</span></code></p>
 </dd></dl>
 
-<dl class="py function">
-<dt id="psym.api.work_order.add_work_order_type">
-<code class="sig-prename descclassname">psym.api.work_order.</code><code class="sig-name descname">add_work_order_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient">psym.client.SymphonyClient</a></span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a><a class="headerlink" href="#psym.api.work_order.add_work_order_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function creates work order type with the given name</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – work order type name</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><cite>psym.common.data_class.WorkOrderType</cite></p>
-</dd>
-</dl>
-<p class="rubric">Example</p>
-<p><code class="docutils literal notranslate"><span class="pre">`</span>
-<span class="pre">client.add_work_order_type(&quot;Deployment</span> <span class="pre">work</span> <span class="pre">order&quot;)</span>
-<span class="pre">`</span></code></p>
-</dd></dl>
-
 </div>
 <div class="section" id="module-psym.api.work_order_type">
 <span id="psym-api-work-order-type-module"></span><h2>psym.api.work_order_type module<a class="headerlink" href="#module-psym.api.work_order_type" title="Permalink to this headline">¶</a></h2>
@@ -3404,7 +3386,7 @@ Users in symphony are never deleted. Only de-activated.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_work_order_type_by_id</span><span class="p">(</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_work_order_type_by_id</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3431,7 +3413,7 @@ Users in symphony are never deleted. Only de-activated.</p>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_work_order_type_by_name</span><span class="p">(</span><span class="s2">&quot;WorkOrderType Name&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_work_order_type_by_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;WorkOrderType Name&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3439,7 +3421,7 @@ Users in symphony are never deleted. Only de-activated.</p>
 <dl class="py function">
 <dt id="psym.api.work_order_type.get_work_order_types">
 <code class="sig-prename descclassname">psym.api.work_order_type.</code><code class="sig-name descname">get_work_order_types</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">client</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.html#psym.client.SymphonyClient" title="psym.client.SymphonyClient">psym.client.SymphonyClient</a></span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a><span class="p">]</span><a class="headerlink" href="#psym.api.work_order_type.get_work_order_types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the list of work order types</p>
+<dd><p>Get the iterator of work order types</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p>FailedOperationException: Internal inventory error</p>

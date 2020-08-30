@@ -9,7 +9,7 @@ import os
 import sys
 from typing import Generator
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.api.file import add_file
 
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument("entity_id", help="entity ID", type=str)
     # pyre-fixme[5]: Global expression must be annotated.
     args = parser.parse_args()
-    client = InventoryClient(args.email, args.password, args.tenant)
+    client = PsymClient(args.email, args.password, args.tenant)
     for file in list_dir(args.local_dir_path):
         file_name = os.path.basename(file)
         category = file_name.split("_")[1]

@@ -4,7 +4,7 @@ import sys
 from collections import namedtuple
 
 import unicodecsv as csv
-from psym import InventoryClient
+from psym import PsymClient
 from psym.reporter import FailedOperationException, InventoryReporter
 
 
@@ -53,7 +53,7 @@ def import_tx(email, password, csvPath, csvOutPath, csvErrPath):
         columns_row = ["ITEM"] + columns_row[1:]
         Data = namedtuple("Data", columns_row)
         reporter = InventoryReporter(csvOutPath, csvErrPath)
-        client = InventoryClient(email, password, "ipt", reporter=reporter)
+        client = PsymClient(email, password, "ipt", reporter=reporter)
         for i, data in enumerate(map(Data._make, reader)):
             import_tx_row(client, "{}:{}".format(csvPath, i), data)
 

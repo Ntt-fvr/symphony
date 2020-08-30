@@ -39,7 +39,7 @@ class Footer extends React.Component {
             <a href={this.docUrl('csv-upload.html')}>
               CSV uploads
             </a>
-            <a href={this.docUrl('py-inventory.html')}>
+            <a href={this.docUrl('psym.html')}>
               python API
             </a>
             <a href={this.docUrl('export.html')}>

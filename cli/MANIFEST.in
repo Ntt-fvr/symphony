@@ -1,1 +1,2 @@
 include psym/survey_schema.json
+include README.md
