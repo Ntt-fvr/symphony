@@ -20,10 +20,10 @@ type File struct {
 func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").
-			ValueMap(map[string]string{
-				"Image": "IMAGE",
-				"File":  "FILE",
-			}).
+			NamedValues(
+				"Image", "IMAGE",
+				"File", "FILE",
+			).
 			StructTag(`gqlgen:"fileType"`),
 		field.String("name").
 			StructTag(`gqlgen:"fileName"`),

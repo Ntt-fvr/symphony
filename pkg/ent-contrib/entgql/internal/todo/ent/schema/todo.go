@@ -28,10 +28,10 @@ func (Todo) Fields() []ent.Field {
 				entgql.OrderField("CREATED_AT"),
 			),
 		field.Enum("status").
-			ValueMap(map[string]string{
-				"InProgress": "IN_PROGRESS",
-				"Completed":  "COMPLETED",
-			}).
+			NamedValues(
+				"InProgress", "IN_PROGRESS",
+				"Completed", "COMPLETED",
+			).
 			Annotations(
 				entgql.OrderField("STATUS"),
 			),

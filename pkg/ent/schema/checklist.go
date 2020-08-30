@@ -166,10 +166,10 @@ func (CheckListItem) Fields() []ent.Field {
 			StructTag(`gqlgen:"selectedEnumValues"`).
 			Optional(),
 		field.Enum("yes_no_val").
-			ValueMap(map[string]string{
-				"Yes": "YES",
-				"No":  "NO",
-			}).
+			NamedValues(
+				"Yes", "YES",
+				"No", "NO",
+			).
 			Optional().
 			Nillable(),
 		field.String("help_text").

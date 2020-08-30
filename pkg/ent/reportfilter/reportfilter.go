@@ -71,12 +71,12 @@ type Entity string
 
 // Entity values.
 const (
+	EntityWorkOrder Entity = "WORK_ORDER"
+	EntityPort      Entity = "PORT"
 	EntityEquipment Entity = "EQUIPMENT"
 	EntityLink      Entity = "LINK"
 	EntityLocation  Entity = "LOCATION"
-	EntityPort      Entity = "PORT"
 	EntityService   Entity = "SERVICE"
-	EntityWorkOrder Entity = "WORK_ORDER"
 )
 
 func (e Entity) String() string {
@@ -86,7 +86,7 @@ func (e Entity) String() string {
 // EntityValidator is a validator for the "entity" field enum values. It is called by the builders before save.
 func EntityValidator(e Entity) error {
 	switch e {
-	case EntityEquipment, EntityLink, EntityLocation, EntityPort, EntityService, EntityWorkOrder:
+	case EntityWorkOrder, EntityPort, EntityEquipment, EntityLink, EntityLocation, EntityService:
 		return nil
 	default:
 		return fmt.Errorf("reportfilter: invalid enum value for entity field: %q", e)

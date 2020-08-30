@@ -72,8 +72,8 @@ type Status string
 
 // Status values.
 const (
-	StatusCompleted  Status = "COMPLETED"
 	StatusInProgress Status = "IN_PROGRESS"
+	StatusCompleted  Status = "COMPLETED"
 )
 
 func (s Status) String() string {
@@ -83,7 +83,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusCompleted, StatusInProgress:
+	case StatusInProgress, StatusCompleted:
 		return nil
 	default:
 		return fmt.Errorf("todo: invalid enum value for status field: %q", s)

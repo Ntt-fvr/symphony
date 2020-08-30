@@ -141,10 +141,10 @@ type Status string
 
 // Status values.
 const (
-	StatusDisconnected Status = "DISCONNECTED"
+	StatusPending      Status = "PENDING"
 	StatusInService    Status = "IN_SERVICE"
 	StatusMaintenance  Status = "MAINTENANCE"
-	StatusPending      Status = "PENDING"
+	StatusDisconnected Status = "DISCONNECTED"
 )
 
 func (s Status) String() string {
@@ -154,7 +154,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusDisconnected, StatusInService, StatusMaintenance, StatusPending:
+	case StatusPending, StatusInService, StatusMaintenance, StatusDisconnected:
 		return nil
 	default:
 		return fmt.Errorf("service: invalid enum value for status field: %q", s)

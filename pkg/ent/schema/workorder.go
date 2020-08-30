@@ -125,22 +125,20 @@ func (WorkOrder) Fields() []ent.Field {
 				OrderField: "NAME",
 			}),
 		field.Enum("status").
-			ValueMap(
-				map[string]string{
-					"Pending": "PENDING",
-					"Planned": "PLANNED",
-					"Done":    "DONE",
-				}).
+			NamedValues(
+				"Pending", "PENDING",
+				"Planned", "PLANNED",
+				"Done", "DONE",
+			).
 			Default("PLANNED"),
 		field.Enum("priority").
-			ValueMap(
-				map[string]string{
-					"Urgent": "URGENT",
-					"High":   "HIGH",
-					"Medium": "MEDIUM",
-					"Low":    "LOW",
-					"None":   "NONE",
-				}).
+			NamedValues(
+				"Urgent", "URGENT",
+				"High", "HIGH",
+				"Medium", "MEDIUM",
+				"Low", "LOW",
+				"None", "NONE",
+			).
 			Default("NONE"),
 		field.Text("description").
 			Optional().

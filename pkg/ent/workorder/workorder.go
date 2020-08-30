@@ -224,9 +224,9 @@ const DefaultStatus = StatusPlanned
 
 // Status values.
 const (
-	StatusDone    Status = "DONE"
 	StatusPending Status = "PENDING"
 	StatusPlanned Status = "PLANNED"
+	StatusDone    Status = "DONE"
 )
 
 func (s Status) String() string {
@@ -236,7 +236,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusDone, StatusPending, StatusPlanned:
+	case StatusPending, StatusPlanned, StatusDone:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for status field: %q", s)
@@ -251,11 +251,11 @@ const DefaultPriority = PriorityNone
 
 // Priority values.
 const (
-	PriorityHigh   Priority = "HIGH"
-	PriorityLow    Priority = "LOW"
-	PriorityMedium Priority = "MEDIUM"
-	PriorityNone   Priority = "NONE"
 	PriorityUrgent Priority = "URGENT"
+	PriorityHigh   Priority = "HIGH"
+	PriorityMedium Priority = "MEDIUM"
+	PriorityLow    Priority = "LOW"
+	PriorityNone   Priority = "NONE"
 )
 
 func (pr Priority) String() string {
@@ -265,7 +265,7 @@ func (pr Priority) String() string {
 // PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
 func PriorityValidator(pr Priority) error {
 	switch pr {
-	case PriorityHigh, PriorityLow, PriorityMedium, PriorityNone, PriorityUrgent:
+	case PriorityUrgent, PriorityHigh, PriorityMedium, PriorityLow, PriorityNone:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for priority field: %q", pr)

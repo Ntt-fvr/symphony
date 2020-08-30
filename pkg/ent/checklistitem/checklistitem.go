@@ -120,7 +120,7 @@ var (
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enum.CheckListItemType) error {
 	switch _type {
-	case "cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no":
+	case "simple", "string", "enum", "files", "yes_no", "cell_scan", "wifi_scan":
 		return nil
 	default:
 		return fmt.Errorf("checklistitem: invalid enum value for type field: %q", _type)
@@ -142,8 +142,8 @@ type YesNoVal string
 
 // YesNoVal values.
 const (
-	YesNoValNo  YesNoVal = "NO"
 	YesNoValYes YesNoVal = "YES"
+	YesNoValNo  YesNoVal = "NO"
 )
 
 func (ynv YesNoVal) String() string {
@@ -153,7 +153,7 @@ func (ynv YesNoVal) String() string {
 // YesNoValValidator is a validator for the "yes_no_val" field enum values. It is called by the builders before save.
 func YesNoValValidator(ynv YesNoVal) error {
 	switch ynv {
-	case YesNoValNo, YesNoValYes:
+	case YesNoValYes, YesNoValNo:
 		return nil
 	default:
 		return fmt.Errorf("checklistitem: invalid enum value for yes_no_val field: %q", ynv)

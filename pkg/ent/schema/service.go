@@ -65,10 +65,10 @@ func (ServiceType) Fields() []ent.Field {
 			Default(false),
 		field.Enum("discovery_method").
 			Comment("how will service of this type be discovered?").
-			ValueMap(map[string]string{
-				"Manual":    "MANUAL",
-				"Inventory": "INVENTORY",
-			}).
+			NamedValues(
+				"Manual", "MANUAL",
+				"Inventory", "INVENTORY",
+			).
 			Default("MANUAL"),
 	}
 }
@@ -182,12 +182,12 @@ func (Service) Fields() []ent.Field {
 			NotEmpty().
 			Unique(),
 		field.Enum("status").
-			ValueMap(map[string]string{
-				"Pending":      "PENDING",
-				"InService":    "IN_SERVICE",
-				"Maintenance":  "MAINTENANCE",
-				"Disconnected": "DISCONNECTED",
-			}),
+			NamedValues(
+				"Pending", "PENDING",
+				"InService", "IN_SERVICE",
+				"Maintenance", "MAINTENANCE",
+				"Disconnected", "DISCONNECTED",
+			),
 	}
 }
 
