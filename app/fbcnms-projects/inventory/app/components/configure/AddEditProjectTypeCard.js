@@ -264,6 +264,7 @@ const AddEditProjectTypeCard = (props: Props) => {
             selectedWorkOrderTypeIds={(projectTypeInput.workOrders ?? []).map(
               wo => wo.type,
             )}
+            // $FlowFixMe Relay flow types
             workOrderTypes={workOrderTypes}
             onWorkOrderTypesSelected={ids => {
               setProjectTypeInput(
