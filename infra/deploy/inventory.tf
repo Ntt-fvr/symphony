@@ -78,7 +78,11 @@ module inventory_store_role {
   service_account_name      = "${local.inventory_name}-store"
   service_account_namespace = local.inventory_namespace
   oidc_provider_arn         = module.eks.oidc_provider_arn
-  tags                      = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # policy required by inventory store service
@@ -105,7 +109,11 @@ module inventory_async_role {
   service_account_name      = "${local.inventory_name}-async"
   service_account_namespace = local.inventory_namespace
   oidc_provider_arn         = module.eks.oidc_provider_arn
-  tags                      = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # policy required by inventory async service
