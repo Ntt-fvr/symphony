@@ -1,6 +1,6 @@
 # iam role for alb ingress controller
 module alb_ingress_controller_role {
-  source                    = "./modules/irsa"
+  source                    = "./../tf/modules/irsa"
   role_name_prefix          = "ALBIngressControllerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.alb_ingress_controller.json
@@ -329,7 +329,7 @@ resource kubernetes_ingress gateway {
 
 # iam role for external dns
 module external_dns_role {
-  source                    = "./modules/irsa"
+  source                    = "./../tf/modules/irsa"
   role_name_prefix          = "ExternalDNSRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.external_dns.json
@@ -433,7 +433,7 @@ data aws_iam_policy_document cert_manager {
 
 # iam role for cert manager
 module cert_manager_role {
-  source                    = "./modules/irsa"
+  source                    = "./../tf/modules/irsa"
   role_name_prefix          = "CertManagerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.cert_manager.json
