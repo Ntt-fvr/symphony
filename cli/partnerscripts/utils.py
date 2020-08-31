@@ -5,7 +5,7 @@
 import time
 from typing import List, Optional, Tuple
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.api.location import edit_location, get_location_by_external_id, get_locations
 from psym.common.data_class import Location
 
@@ -42,14 +42,14 @@ class Timer:
         return elapsed_time
 
 
-def get_location(client: InventoryClient, external_id: str) -> Tuple[Location, float]:
+def get_location(client: PsymClient, external_id: str) -> Tuple[Location, float]:
     t = Timer()
     t.start()
     location = get_location_by_external_id(client=client, external_id=external_id)
     return (location, t.stop())
 
 
-def get_building_locations(client: InventoryClient) -> List[Tuple[Location, str]]:
+def get_building_locations(client: PsymClient) -> List[Tuple[Location, str]]:
     t = Timer()
     t.start()
     locations = list(get_locations(client=client))
@@ -63,7 +63,7 @@ def get_building_locations(client: InventoryClient) -> List[Tuple[Location, str]
     return result
 
 
-def edit_location_with_time(client: InventoryClient, location: Location) -> float:
+def edit_location_with_time(client: PsymClient, location: Location) -> float:
     t = Timer()
     t.start()
     edit_location(
@@ -74,9 +74,9 @@ def edit_location_with_time(client: InventoryClient, location: Location) -> floa
     return t.stop()
 
 
-def get_client(email: str, password: str, tenant: str) -> InventoryClient:
+def get_client(email: str, password: str, tenant: str) -> PsymClient:
     t = Timer()
     t.start()
-    client = InventoryClient(email=email, password=password, tenant=tenant)
+    client = PsymClient(email=email, password=password, tenant=tenant)
     print(f"Client connection in {t.stop():.4f} secs")
     return client

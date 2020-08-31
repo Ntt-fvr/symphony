@@ -43,8 +43,8 @@ aliases:
 orbs:
   artifactory: circleci/artifactory@1.0.0
   docker: circleci/docker@1.4.0
-  go: circleci/go@1.1.0
-  helm: circleci/helm@0.2.3
+  go: circleci/go@1.3.1
+  helm: circleci/helm@1.0.0
 
 executors:
   node:
@@ -53,7 +53,7 @@ executors:
   golangci:
     parameters:
       tag:
-        default: v1.29
+        default: v1.30
         type: string
     docker:
       - image: golangci/golangci-lint:<<parameters.tag>>
@@ -75,16 +75,10 @@ executors:
       - image: circleci/python:3.7
 
 commands:
-  getmods:
-    steps:
-      - go/load-cache
-      - go/mod-download
-      - go/save-cache
-
   helm-install:
     steps:
       - helm/install-helm-client:
-          version: v3.2.1
+          version: v3.3.0
 
   helm-lint:
     parameters:
@@ -245,7 +239,7 @@ jobs:
     steps:
       - checkout
       - *mktestdir
-      - getmods
+      - go/mod-download-cached
       - run:
           name: Lint tests
           command: golangci-lint run --out-format junit-xml > ~/test-results/lint.xml
@@ -264,7 +258,7 @@ jobs:
           name: Wait for database
           command: dockerize -timeout 1m -wait tcp://localhost:3306
       - *mktestdir
-      - getmods
+      - go/mod-download-cached
       - run:
           name: Unit tests
           environment:
@@ -579,6 +573,10 @@ jobs:
           command: yarn add --dev -W flow-bin@$(x=$(grep "\[version\]" .flowconfig -A 1 | tail -n 1); echo ${x:1})
 
       - yarn-install
+      - run:
+          name: limit flow server
+          <<: *appdir
+          command: echo "$(awk '{sub(/\[options\]/,"[options]\nserver.max_workers=3")}1' .flowconfig)" > .flowconfig && cat .flowconfig
       - run:
           name: flow typecheck
           <<: *appdir

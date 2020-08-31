@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 from typing import List, Tuple
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.common.data_class import Location
 
 from .utils import (
@@ -21,7 +21,7 @@ from .utils import (
 
 
 def run_it(
-    client: InventoryClient, location: Location, external_id: str
+    client: PsymClient, location: Location, external_id: str
 ) -> Tuple[Location, float, float]:
     new_location, get_location_time = get_location(
         client=client, external_id=external_id

@@ -15,14 +15,14 @@ require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/alecthomas/kong v0.2.11
-	github.com/aws/aws-sdk-go v1.34.10
+	github.com/aws/aws-sdk-go v1.34.13
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.1-0.20200820092101-fd481554a455
+	github.com/facebook/ent v0.4.2
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/google/addlicense v0.0.0-20200422172452-68a83edd47bc // indirect
-	github.com/google/uuid v1.1.1
+	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
@@ -30,6 +30,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/matryer/moq v0.0.0-20200816112511-720d53e65d2f // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
+	github.com/pelletier/go-toml v1.8.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
 	github.com/prometheus/common v0.13.0

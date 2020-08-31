@@ -2,7 +2,7 @@
   "wiki": {
     "General": [
       "team-processes",
-      "release-notes",
+      "release-notes"
     ],
     "Inventory": [
       "inventory-intro",
@@ -21,8 +21,9 @@
       "user-management"
     ],
     "API": [
-      "py-inventory",
+      "psym",
       "py-inventory-release-notes",
+      "psym-release-notes",
       "graphql-breaking-changes"
     ]
   }

@@ -20,17 +20,17 @@ type ExportTask struct {
 func (ExportTask) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").
-			ValueMap(map[string]string{
-				"Equipment": "EQUIPMENT",
-				"Location":  "LOCATION",
-			}),
+			NamedValues(
+				"Equipment", "EQUIPMENT",
+				"Location", "LOCATION",
+			),
 		field.Enum("status").
-			ValueMap(map[string]string{
-				"Pending":    "PENDING",
-				"InProgress": "IN_PROGRESS",
-				"Succeeded":  "SUCCEEDED",
-				"Failed":     "FAILED",
-			}),
+			NamedValues(
+				"Pending", "PENDING",
+				"InProgress", "IN_PROGRESS",
+				"Succeeded", "SUCCEEDED",
+				"Failed", "FAILED",
+			),
 		field.Float("progress").
 			Default(0).
 			Range(0, 100),

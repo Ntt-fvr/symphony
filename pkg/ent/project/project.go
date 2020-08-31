@@ -144,11 +144,11 @@ const DefaultPriority = PriorityNone
 
 // Priority values.
 const (
-	PriorityHigh   Priority = "HIGH"
-	PriorityLow    Priority = "LOW"
-	PriorityMedium Priority = "MEDIUM"
-	PriorityNone   Priority = "NONE"
 	PriorityUrgent Priority = "URGENT"
+	PriorityHigh   Priority = "HIGH"
+	PriorityMedium Priority = "MEDIUM"
+	PriorityLow    Priority = "LOW"
+	PriorityNone   Priority = "NONE"
 )
 
 func (pr Priority) String() string {
@@ -158,7 +158,7 @@ func (pr Priority) String() string {
 // PriorityValidator is a validator for the "priority" field enum values. It is called by the builders before save.
 func PriorityValidator(pr Priority) error {
 	switch pr {
-	case PriorityHigh, PriorityLow, PriorityMedium, PriorityNone, PriorityUrgent:
+	case PriorityUrgent, PriorityHigh, PriorityMedium, PriorityLow, PriorityNone:
 		return nil
 	default:
 		return fmt.Errorf("project: invalid enum value for priority field: %q", pr)

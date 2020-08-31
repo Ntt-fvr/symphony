@@ -5,8 +5,8 @@
 apiVersion: v2
 name: inventory
 type: application
-version: 2.1.0
-appVersion: 0.1
+version: 2.2.0
+appVersion: "0.1"
 description: Inventory system for Symphony project.
 keywords:
   - symphony

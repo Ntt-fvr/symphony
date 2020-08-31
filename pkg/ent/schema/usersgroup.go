@@ -25,10 +25,10 @@ func (UsersGroup) Fields() []ent.Field {
 		field.String("description").
 			Optional(),
 		field.Enum("status").
-			ValueMap(map[string]string{
-				"Active":      "ACTIVE",
-				"Deactivated": "DEACTIVATED",
-			}).
+			NamedValues(
+				"Active", "ACTIVE",
+				"Deactivated", "DEACTIVATED",
+			).
 			Default("ACTIVE"),
 	}
 }

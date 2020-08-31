@@ -92,7 +92,7 @@ var (
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type enum.CheckListItemType) error {
 	switch _type {
-	case "cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no":
+	case "simple", "string", "enum", "files", "yes_no", "cell_scan", "wifi_scan":
 		return nil
 	default:
 		return fmt.Errorf("checklistitemdefinition: invalid enum value for type field: %q", _type)

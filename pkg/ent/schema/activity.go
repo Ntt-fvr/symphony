@@ -21,16 +21,16 @@ type Activity struct {
 func (Activity) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("activity_type").
-			ValueMap(map[string]string{
-				"StatusChanged":       "STATUS",
-				"PriorityChanged":     "PRIORITY",
-				"AssigneeChanged":     "ASSIGNEE",
-				"CreationDateChanged": "CREATION_DATE",
-				"OwnerChanged":        "OWNER",
-				"NameChanged":         "NAME",
-				"DescriptionChanged":  "DESCRIPTION",
-				"ClockIn":             "CLOCK_IN",
-			}).
+			NamedValues(
+				"StatusChanged", "STATUS",
+				"PriorityChanged", "PRIORITY",
+				"AssigneeChanged", "ASSIGNEE",
+				"CreationDateChanged", "CREATION_DATE",
+				"OwnerChanged", "OWNER",
+				"NameChanged", "NAME",
+				"DescriptionChanged", "DESCRIPTION",
+				"ClockIn", "CLOCK_IN",
+			).
 			StorageKey("changed_field"),
 		field.Bool("is_create").
 			Default(false),

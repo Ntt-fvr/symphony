@@ -23,14 +23,14 @@ func (ReportFilter) Fields() []ent.Field {
 		field.String("name").
 			NotEmpty(),
 		field.Enum("entity").
-			ValueMap(map[string]string{
-				"WorkOrder": "WORK_ORDER",
-				"Port":      "PORT",
-				"Equipment": "EQUIPMENT",
-				"Link":      "LINK",
-				"Location":  "LOCATION",
-				"Service":   "SERVICE",
-			}),
+			NamedValues(
+				"WorkOrder", "WORK_ORDER",
+				"Port", "PORT",
+				"Equipment", "EQUIPMENT",
+				"Link", "LINK",
+				"Location", "LOCATION",
+				"Service", "SERVICE",
+			),
 		field.Text("filters").
 			Default("[]"),
 	}

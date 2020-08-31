@@ -13,33 +13,25 @@ import type {IVertexModel} from '../../BaseVertext';
 import type {Paper} from '../../../../facades/Paper';
 
 import * as jointJS from 'jointjs';
-import symphony from '@fbcnms/ui/theme/symphony';
 
 export const TYPE = 'administrative.ManualStart';
-
-const RADIUS = 20;
 
 const ManualStartBaseClass = jointJS.dia.Element.define(
   TYPE,
   {
     attrs: {
-      body: {
+      image: {
+        xlinkHref: '/inventory/static/svg/go.svg',
         refWidth: '100%',
         refHeight: '100%',
-        strokeWidth: 2,
-        stroke: '#000000',
-        fill: symphony.palette.primary,
-        r: RADIUS,
-        cx: RADIUS,
-        cy: RADIUS,
       },
     },
   },
   {
     markup: [
       {
-        tagName: 'circle',
-        selector: 'body',
+        tagName: 'image',
+        selector: 'image',
       },
     ],
   },

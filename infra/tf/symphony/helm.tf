@@ -1,9 +1,9 @@
 locals {
   helm_repository = {
     symphony = {
-      url      = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["helm_repository"]
-      username = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["username"]
-      password = jsondecode(data.aws_secretsmanager_secret_version.artifactory.secret_string)["password"]
+      url      = module.artifactory_secret.data.helm_repository
+      username = module.artifactory_secret.data.username
+      password = module.artifactory_secret.data.password
     }
     codecentric = "https://codecentric.github.io/helm-charts"
   }

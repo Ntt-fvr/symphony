@@ -115,7 +115,7 @@ func (s TenantService) Truncate(ctx context.Context, name *wrappers.StringValue)
 		return nil, status.FromContextError(err).Err()
 	}
 	for _, table := range migrate.Tables {
-		query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbname, table.Name) // nolint:gosec
+		query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbname, table.Name)
 		if _, err = db.ExecContext(ctx, query); err != nil {
 			err = status.FromContextError(err).Err()
 			break

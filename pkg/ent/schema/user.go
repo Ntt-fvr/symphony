@@ -36,23 +36,23 @@ func (User) Fields() []ent.Field {
 			NotEmpty().
 			Optional(),
 		field.Enum("status").
-			ValueMap(map[string]string{
-				"Active":      "ACTIVE",
-				"Deactivated": "DEACTIVATED",
-			}).
+			NamedValues(
+				"Active", "ACTIVE",
+				"Deactivated", "DEACTIVATED",
+			).
 			Default("ACTIVE"),
 		field.Enum("role").
-			ValueMap(map[string]string{
-				"User":  "USER",
-				"Admin": "ADMIN",
-				"Owner": "OWNER",
-			}).
+			NamedValues(
+				"User", "USER",
+				"Admin", "ADMIN",
+				"Owner", "OWNER",
+			).
 			Default("USER"),
 		field.Enum("distance_unit").
-			ValueMap(map[string]string{
-				"Kilometer": "KILOMETER",
-				"Mile":      "MILE",
-			}).
+			NamedValues(
+				"Kilometer", "KILOMETER",
+				"Mile", "MILE",
+			).
 			Default("KILOMETER"),
 	}
 }

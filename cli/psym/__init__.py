@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-
-from distutils.version import LooseVersion
-from typing import Optional, Tuple
-
-from colorama import Fore
+# Copyright (c) 2004-present Facebook All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
 from psym.common.constant import __version__
 
@@ -15,11 +13,9 @@ from .api.location_type import _populate_location_types
 from .api.service_type import _populate_service_types
 from .api.work_order_type import _populate_work_order_types
 from .client import SymphonyClient
-from .graphql.query.latest_python_package import LatestPythonPackageQuery
 
 
-"""Psym is a python package that allows for querying and modifying the
-FBC platform inventory using graphql.
+"""Psym is a python package that allows for querying and modifying the Symphony data using graphql queries.
 
 This module contains the client that allows to connect to inventory. The client
 allows different kind of operations: querying and creating of locations, equipments,
@@ -27,10 +23,10 @@ positions and links.
 
 Example of how to connect:
 ```
-from pyinventory import InventoryClient
-# since inventory is multi tenant system you will need to insert which
+from psym import PsymClient
+# since symphony is multi tenant system you will need to insert which
 # partner you connect as
-client = InventoryClient(email, password, "tenant_name")
+client = PsymClient(email, password, "tenant_name")
 location = client.add_location(
     location_hirerchy=[
         ("Country", "England"),
@@ -66,7 +62,7 @@ equipment = client.add_equipment(
 """
 
 
-class InventoryClient(SymphonyClient):
+class PsymClient(SymphonyClient):
 
     from .api.file import add_location_image, delete_document, add_file, add_files
     from .api.location_type import (
@@ -221,51 +217,7 @@ class InventoryClient(SymphonyClient):
             is_dev_mode,
             reporter,
         )
-        self._verify_version_is_not_broken()
         self.populate_types()
-
-    def _verify_version_is_not_broken(self) -> None:
-        package = self._get_latest_python_package_version()
-
-        latest_version, latest_breaking_version = (
-            package if package is not None else (None, None)
-        )
-
-        if latest_breaking_version is not None and LooseVersion(
-            latest_breaking_version
-        ) > LooseVersion(__version__):
-            raise Exception(
-                "This version of pyinventory is not supported anymore. \
-                Please download and install the latest version ({})".format(
-                    latest_version
-                )
-            )
-
-        if latest_version is not None and LooseVersion(latest_version) > LooseVersion(
-            __version__
-        ):
-            print(
-                str(Fore.RED)
-                + "A newer version of pyinventory exists ({}). \
-            It is recommended to download and install it".format(
-                    latest_version
-                )
-            )
-
-    def _get_latest_python_package_version(self) -> Optional[Tuple[str, str]]:
-
-        package = LatestPythonPackageQuery.execute(self)
-        if package is not None:
-            last_version = package.lastPythonPackage
-            last_breaking_version = package.lastBreakingPythonPackage
-            if last_version is not None:
-                return (
-                    last_version.version,
-                    last_breaking_version.version
-                    if last_breaking_version
-                    else last_version.version,
-                )
-        return None
 
     def populate_types(self) -> None:
         _populate_location_types(self)

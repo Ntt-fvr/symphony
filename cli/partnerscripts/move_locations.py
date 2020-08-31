@@ -6,7 +6,7 @@
 import argparse
 import sys
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.api.location import move_location
 
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     )
     # pyre-fixme[5]: Global expression must be annotated.
     args = parser.parse_args()
-    client = InventoryClient(args.email, args.password, args.tenant)
+    client = PsymClient(args.email, args.password, args.tenant)
     for location_id in args.locations_to_move:
         move_location(client, location_id, args.new_parent_id)
     sys.exit(0)

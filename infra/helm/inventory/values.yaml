@@ -125,7 +125,7 @@ front:
 
   # Front image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/front
+    repository: facebookconnectivity-symphony-docker.jfrog.io/front
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -145,6 +145,14 @@ front:
       timeoutSeconds: 3
       successThreshold: 1
       failureThreshold: 5
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
 
   # Resource limits & requests
   resources: {}
@@ -233,15 +241,13 @@ graph:
 
   # Configuration for graph service
   service:
-    type: ClusterIP
     port:
       http:
         port: 80
-        targetPort: 80
-        nodePort: ""
+        targetPort: 8080
       grpc:
         port: 443
-        targetPort: 443
+        targetPort: 8443
 
   # Configuration for graph service account
   serviceAccount:
@@ -254,7 +260,7 @@ graph:
 
   # Graph image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/graph
+    repository: facebookconnectivity-symphony-docker.jfrog.io/graph
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -274,6 +280,14 @@ graph:
       timeoutSeconds: 1
       successThreshold: 1
       failureThreshold: 3
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
 
   # Resource limits & requests
   resources: {}
@@ -332,6 +346,13 @@ async:
     minAvailable: 1
     maxUnavailable: ""
 
+  # Configuration for async service
+  service:
+    # Service external port
+    port: 80
+    # Service target port
+    targetPort: 8080
+
   # Configuration for async service account
   serviceAccount:
     # Specifies whether a ServiceAccount should be created
@@ -343,7 +364,7 @@ async:
 
   # async image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/async
+    repository: facebookconnectivity-symphony-docker.jfrog.io/async
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -363,6 +384,14 @@ async:
       timeoutSeconds: 1
       successThreshold: 1
       failureThreshold: 3
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
 
   # Resource limits & requests
   resources: {}
@@ -423,15 +452,10 @@ store:
 
   # Configuration for store service
   service:
-    # Port to expose on each node
-    # Only used if service.type is 'NodePort'
-    nodePort: ""
     # Service external port
     port: 80
     # Service target port
-    targetPort: 80
-    # Service type
-    type: ClusterIP
+    targetPort: 8080
 
   # Configuration for store service account
   serviceAccount:
@@ -444,7 +468,7 @@ store:
 
   # Store image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/store
+    repository: facebookconnectivity-symphony-docker.jfrog.io/store
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -464,6 +488,14 @@ store:
       timeoutSeconds: 1
       successThreshold: 1
       failureThreshold: 3
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
 
   # Resource limits & requests
   resources: {}
@@ -510,15 +542,10 @@ docs:
 
   # Configuration for docs service
   service:
-    # Port to expose on each node
-    # Only used if service.type is 'NodePort'
-    nodePort: ""
     # Service external port
     port: 80
     # Service target port
-    targetPort: 80
-    # Service type
-    type: ClusterIP
+    targetPort: 8080
 
   # Configuration for docs service account
   serviceAccount:
@@ -531,7 +558,7 @@ docs:
 
   # docs image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/docs
+    repository: facebookconnectivity-symphony-docker.jfrog.io/docs
     tag: latest
     pullPolicy: IfNotPresent
 
@@ -551,6 +578,12 @@ docs:
       timeoutSeconds: 1
       successThreshold: 1
       failureThreshold: 3
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1001
 
   # Resource limits & requests
   resources: {}
@@ -600,7 +633,7 @@ jobrunner:
 
   # Jobrunner image
   image:
-    repository: facebookconnectivity-phb-docker.jfrog.io/jobrunner
+    repository: facebookconnectivity-symphony-docker.jfrog.io/jobrunner
     tag: latest
     pullPolicy: IfNotPresent
 

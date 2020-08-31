@@ -125,14 +125,13 @@ func (Project) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 		field.Enum("priority").
-			ValueMap(
-				map[string]string{
-					"Urgent": "URGENT",
-					"High":   "HIGH",
-					"Medium": "MEDIUM",
-					"Low":    "LOW",
-					"None":   "NONE",
-				}).
+			NamedValues(
+				"Urgent", "URGENT",
+				"High", "HIGH",
+				"Medium", "MEDIUM",
+				"Low", "LOW",
+				"None", "NONE",
+			).
 			Default("NONE"),
 	}
 }

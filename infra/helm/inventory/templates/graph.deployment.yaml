@@ -23,6 +23,9 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ template "inventory.graph.serviceAccountName" . }}
+      {{- with .Values.graph.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.graph.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}

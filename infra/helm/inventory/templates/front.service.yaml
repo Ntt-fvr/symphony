@@ -21,8 +21,4 @@ spec:
     - name: http-internal
       port: {{ .Values.front.service.internalPort }}
       targetPort: http-internal
-    {{- if .Values.serviceMonitor.enabled }}
-    - name: http-metrics
-      port: 9464
-      targetPort: http-metrics
-    {{- end }}
+    {{- include "inventory.metricsPort" . | indent 4 }}

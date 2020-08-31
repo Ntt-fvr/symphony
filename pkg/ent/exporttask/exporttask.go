@@ -89,10 +89,10 @@ type Status string
 
 // Status values.
 const (
-	StatusFailed     Status = "FAILED"
-	StatusInProgress Status = "IN_PROGRESS"
 	StatusPending    Status = "PENDING"
+	StatusInProgress Status = "IN_PROGRESS"
 	StatusSucceeded  Status = "SUCCEEDED"
+	StatusFailed     Status = "FAILED"
 )
 
 func (s Status) String() string {
@@ -102,7 +102,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusFailed, StatusInProgress, StatusPending, StatusSucceeded:
+	case StatusPending, StatusInProgress, StatusSucceeded, StatusFailed:
 		return nil
 	default:
 		return fmt.Errorf("exporttask: invalid enum value for status field: %q", s)

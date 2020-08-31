@@ -84,6 +84,7 @@ def add_work_order_type(
             description=description,
             properties=property_type_inputs,
             checkListCategories=[],
+            assigneeCanCompleteWorkOrder=True,
         ),
     )
     added = WorkOrderType(
@@ -97,7 +98,7 @@ def add_work_order_type(
 
 
 def get_work_order_types(client: SymphonyClient) -> Iterator[WorkOrderType]:
-    """Get the list of work order types
+    """Get the iterator of work order types
 
     :raises:
         FailedOperationException: Internal inventory error
@@ -144,7 +145,7 @@ def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
 
     .. code-block:: python
 
-        client.get_work_order_type_by_id("12345678")
+        client.get_work_order_type_by_id(id="12345678")
     """
     result = WorkOrderTypeDetailsQuery.execute(client, id=id)
 
@@ -176,7 +177,7 @@ def get_work_order_type_by_name(client: SymphonyClient, name: str) -> WorkOrderT
 
     .. code-block:: python
 
-        client.get_work_order_type_by_name("WorkOrderType Name")
+        client.get_work_order_type_by_name(name="WorkOrderType Name")
     """
 
     work_order_types = get_work_order_types(client=client)

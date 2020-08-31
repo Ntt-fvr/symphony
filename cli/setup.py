@@ -23,14 +23,26 @@ def find_version(*file_paths):
 GQL_PACKAGES = ["gql", "gql.*"]
 PSYM_PACKAGES = ["psym", "psym.*"]
 
+this_directory = os.path.abspath(os.path.dirname(__file__))
+long_description = ""
+with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
+    long_description = f.read()
+
 
 setuptools.setup(
     name="psym",
     version=find_version("psym", "common", "constant.py"),
     author="Facebook Inc.",
     description="Tool for accessing and modifying Symphony database",
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
     packages=setuptools.find_packages(include=GQL_PACKAGES + PSYM_PACKAGES),
-    classifiers=["Programming Language :: Python :: 3.6"],
+    classifiers=[
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+    ],
+    python_requires=">=3.6",
     include_package_data=True,
     install_requires=[
         "graphql-core-next>=1.0.0",

@@ -1,0 +1,127 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "symphony.front.fullname" . }}
+  labels: {{- include "symphony.front.metaLabels" . | nindent 4 }}
+  {{- with .Values.front.deploymentAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.front.replicas }}
+  selector:
+    matchLabels: {{- include "symphony.front.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "symphony.front.selectorLabels" . | nindent 8 }}
+      {{- with .Values.front.podAnnotations }}
+      annotations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ template "symphony.front.serviceAccountName" . }}
+      {{- with .Values.front.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.front.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.front.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.front.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "symphony.imagePullSecrets" . | indent 6 }}
+      containers:
+        - name: front
+          image: {{ .Values.front.image.repository }}:{{ .Values.front.image.tag }}
+          imagePullPolicy: {{ .Values.front.image.pullPolicy }}
+          env:
+            - name: PORT
+              value: {{ .Values.front.service.targetPort | quote }}
+            - name: INTERNAL_PORT
+              value: {{ .Values.front.service.targetInternalPort | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.front.spec.log.level | quote }}
+            - name: API_HOST
+              value: {{ .Values.integrations.orc8r.host | quote }}
+            {{- if or .Values.integrations.orc8r.tls.cert .Values.integrations.orc8r.tls.key }}
+            - name: API_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template  "symphony.integrations.orc8r.certsSecretName" . }}
+                  key: tls.cert
+            - name: API_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template  "symphony.integrations.orc8r.certsSecretName" . }}
+                  key: tls.key
+            {{- end }}
+            - name: MYSQL_HOST
+              value: {{ .Values.front.spec.mysql.host | quote }}
+            - name: MYSQL_PORT
+              value: {{ .Values.front.spec.mysql.port | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.front.spec.mysql.user | quote }}
+            - name: MYSQL_DB
+              value: {{ .Values.front.spec.mysql.db | quote }}
+            - name: GRAPH_HOST
+              value: {{ include "symphony.graph.fullname" . | quote }}
+            - name: STORE_HOST
+              value: {{ include "symphony.store.fullname" . | quote }}
+            - name: DOCS_HOST
+              value: {{ include "symphony.docs.fullname" . | quote }}
+            {{- with .Values.front.spec.proxy.logger }}
+            - name: LOGGER_HOST
+              value: {{ . | quote }}
+            {{- end }}
+            {{- with .Values.front.spec.mapbox.access_token }}
+            - name: MAPBOX_ACCESS_TOKEN
+              value: {{ . | quote }}
+            {{- end }}
+            - name: USER_GRAFANA_ADDRESS
+              value: {{ .Values.front.spec.grafana.address | quote }}
+            {{- /*
+            This block should include `symphony.tracingEnv`, but the node jaeger client only supports
+            Thrift when working with the agent.  This is a temporary hack until the node client supports
+            grpc, at which point we can delete `agentThriftClient`.
+            */ -}}
+            {{- if and .Values.tracing.enabled .Values.tracing.jaeger.agentThriftEndpoint }}
+            - name: TELEMETRY_TRACE_SAMPLING_PROBABILITY
+              value: {{ int .Values.tracing.enabled | quote }}
+            - name: TELEMETRY_TRACE_EXPORTER
+              value: "jaeger"
+            {{- with .Values.tracing.jaeger.agentThriftEndpoint }}
+            - name: JAEGER_AGENT_ENDPOINT
+              value: {{ . | quote }}
+            {{- end }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ template "symphony.front.fullname" . }}
+          ports:
+            - containerPort: {{ .Values.front.service.targetPort }}
+              name: http
+            - containerPort: 9464
+              name: http-metrics
+            - containerPort: {{ .Values.front.service.targetInternalPort }}
+              name: http-internal
+          {{- with .Values.front.probes.liveness }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.front.probes.readiness }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources: {{- toYaml .Values.front.resources | nindent 12 }}

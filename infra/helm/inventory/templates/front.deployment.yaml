@@ -23,6 +23,9 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ template "inventory.front.serviceAccountName" . }}
+      {{- with .Values.front.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.front.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}

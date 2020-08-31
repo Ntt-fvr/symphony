@@ -105,8 +105,8 @@ const DefaultDiscoveryMethod = DiscoveryMethodManual
 
 // DiscoveryMethod values.
 const (
-	DiscoveryMethodInventory DiscoveryMethod = "INVENTORY"
 	DiscoveryMethodManual    DiscoveryMethod = "MANUAL"
+	DiscoveryMethodInventory DiscoveryMethod = "INVENTORY"
 )
 
 func (dm DiscoveryMethod) String() string {
@@ -116,7 +116,7 @@ func (dm DiscoveryMethod) String() string {
 // DiscoveryMethodValidator is a validator for the "discovery_method" field enum values. It is called by the builders before save.
 func DiscoveryMethodValidator(dm DiscoveryMethod) error {
 	switch dm {
-	case DiscoveryMethodInventory, DiscoveryMethodManual:
+	case DiscoveryMethodManual, DiscoveryMethodInventory:
 		return nil
 	default:
 		return fmt.Errorf("servicetype: invalid enum value for discovery_method field: %q", dm)

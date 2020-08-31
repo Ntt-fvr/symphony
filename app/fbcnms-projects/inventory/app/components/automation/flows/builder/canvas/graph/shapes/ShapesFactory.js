@@ -12,6 +12,9 @@
 import type {IBaseShapeAttributes, IShape} from './BaseShape';
 import type {IVertexModel} from './vertexes/BaseVertext';
 
+import CreateCustomWorkorder, {
+  TYPE as CreateCustomWorkorderType,
+} from './vertexes/blocks/actions/CreateCustomWorkorder';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
 } from './vertexes/blocks/actions/CreateWorkorder';
@@ -26,6 +29,7 @@ import {getCellType} from './BaseShape';
 const VERTEXES = {
   [ManualStartType]: ManualStart,
   [CreateWorkorderType]: CreateWorkorder,
+  [CreateCustomWorkorderType]: CreateCustomWorkorder,
   [LassoType]: Lasso,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);

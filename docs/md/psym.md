@@ -1,10 +1,9 @@
 ---
-id: py-inventory
-title: Python Inventory Tool
+id: psym
+title: Python Symphony Tool
 ---
 
-Pyinventory is a python package that allows for querying and modifying the Symphony Inventory
-data using graphql queries.
+Psym is a python package that allows for querying and modifying the Symphony data using graphql queries.
 Graphql is a query language developed by Facebook (https://graphql.org/)
 
 ## Prerequisites
@@ -13,25 +12,20 @@ Graphql is a query language developed by Facebook (https://graphql.org/)
 
 ## Installation
 
-* Download the `.whl` file from the upload dialog:
-
-<img src='https://s3.amazonaws.com/purpleheadband.images/wiki/pyinventory_download.png' width=300>
-
-
 * Install it with:
 
 ```
-pip install pyinventory-<version>-py3-none-any.whl
+pip install psym
 ```
 
 ## Usage
 
-* First connect to inventory with your credentials
+* First connect to Symphony with your credentials
 
 ```python
-from psym import InventoryClient
-# since inventory is multi tenant system you will need to insert which partner you connect as
-client = InventoryClient(email, password, tenant_name)
+from psym import PsymClient
+# since symphony is multi tenant system you will need to insert which partner you connect as
+client = PsymClient(email, password, tenant_name)
 ```
   * The tenant is the company name (meaning, the word at the beginning of "{}.thesymphony.cloud", without "thesymphony.cloud")
 * Start creating location types, equipment types in the inventory:
@@ -41,7 +35,7 @@ equipment_type = client.add_equipment_type("Antenna HW", "Category Name", [("alt
 ```
 * Start creating locations, equipment and links in the inventory:
 ```python
-location = client.add_location(-1.22,2.66, ('City', 'Lima'))
+location = client.add_location(-1.22,2.66, ('City', 'New York'))
 equipment = client.add_equipment('HW1569', 'Antenna HW', location, {'altitude': 53.5})
 ```
 
@@ -49,7 +43,7 @@ equipment = client.add_equipment('HW1569', 'Antenna HW', location, {'altitude': 
 
 ## Upload Site Survey Data
 
-Pyinventory allows you to export a json file of your site survey schema to an excel.
+Psym allows you to export a json file of your site survey schema to an excel.
 
 This excel uses different validations using the json file to make sure that the data is valid.
 
@@ -59,13 +53,13 @@ from psym.site_survey import export_to_excel
 export_to_excel('survey_schemas/ipt_site.json', '~/site_survey.xlsx')
 ```
 
-After the cotractor fills the excel with the information, you can use pyinventory
+After the cotractor fills the excel with the information, you can use psym
 to upload it to the correct location in iventory. You can choose the name of TSS and
 when it was completed (could be useful if you upload old TSS)
 ```python
-from psym import InventoryClient
+from psym import PsymClient
 from datetime import datetime
-client = InventoryClient(email, password, "fb-test")
+client = PsymClient(email, password, "fb-test")
 location = client.get_location(('Building', 'Asia-10037'))
 client.upload_site_survey(location, 'My TSS 4', datetime.now(), '~/site_survey.xlsx', 'survey_schemas/ipt_site.json')
 ```
@@ -82,7 +76,7 @@ easier debugging later.
 ```python
 from psym.reporter import InventoryReporter, FailedOperationException
 reporter = InventoryReporter(csvOutPath, csvErrPath)
-client = InventoryClient(email, password, "fb-test", reporter=reporter)
+client = PsymClient(email, password, "fb-test", reporter=reporter)
 try:
     location = client.add_location(..)
 except FailedOperationException as e:
@@ -96,7 +90,7 @@ except FailedOperationException as e:
 import unicodecsv as csv
 import sys
 from collections import namedtuple
-from psym import InventoryClient
+from psym import PsymClient
 from psym.reporter import InventoryReporter, FailedOperationException
 
 
@@ -143,7 +137,7 @@ def import_tx(email, password, csvPath, csvOutPath, csvErrPath):
         columnsRow = ['ITEM'] + columnsRow[1:]
         Data = namedtuple("Data", columnsRow)
         reporter = InventoryReporter(csvOutPath, csvErrPath)
-        client = InventoryClient(email, password, "ipt", reporter=reporter)
+        client = PsymClient(email, password, "ipt", reporter=reporter)
         for i, data in enumerate(map(Data._make, reader)):
             import_tx_row(client, "{}:{}".format(csvPath, i), data)
 

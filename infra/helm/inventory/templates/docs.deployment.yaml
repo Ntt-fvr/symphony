@@ -23,6 +23,9 @@ spec:
       {{- end }}
     spec:
       serviceAccountName: {{ template "inventory.docs.serviceAccountName" . }}
+      {{- with .Values.docs.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.docs.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -43,14 +46,14 @@ spec:
           {{- with .Values.docs.probes.liveness }}
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: http
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.docs.probes.readiness }}
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: http
             {{- toYaml . | nindent 12 }}
           {{- end }}

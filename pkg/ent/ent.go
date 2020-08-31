@@ -222,8 +222,8 @@ func isSQLConstraintError(err error) (*ConstraintError, bool) {
 		msg = err.Error()
 		// error format per dialect.
 		errors = [...]string{
-			"Error 1062",               // MySQL 1062 error (ER_DUP_ENTRY).
-			"UNIQUE constraint failed", // SQLite.
+			"Error 1062",                                     // MySQL 1062 error (ER_DUP_ENTRY).
+			"UNIQUE constraint failed",                       // SQLite.
 			"duplicate key value violates unique constraint", // PostgreSQL.
 		}
 	)

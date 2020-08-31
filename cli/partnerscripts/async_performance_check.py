@@ -11,7 +11,7 @@ from asyncio.events import AbstractEventLoop
 from datetime import datetime
 from typing import Sequence, Tuple
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.common.data_class import Location
 
 from .utils import (
@@ -24,17 +24,17 @@ from .utils import (
 
 
 async def a_get_location(
-    client: InventoryClient, external_id: str
+    client: PsymClient, external_id: str
 ) -> Tuple[Location, float]:
     return get_location(client, external_id)
 
 
-async def a_edit_location(client: InventoryClient, location: Location) -> float:
+async def a_edit_location(client: PsymClient, location: Location) -> float:
     return edit_location_with_time(client, location)
 
 
 async def run_it(
-    client: InventoryClient, location: Location, external_id: str
+    client: PsymClient, location: Location, external_id: str
 ) -> Tuple[Location, float, float]:
     new_location, get_location_time = await a_get_location(
         client=client, external_id=external_id

@@ -88,7 +88,11 @@ module db {
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
-  tags = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # generate random graph database identifier
@@ -127,6 +131,7 @@ module graph_db {
   monitoring_interval = 60
 
   vpc_security_group_ids = [aws_security_group.eks_rds["mysql"].id]
+  subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
   parameters = [
@@ -144,7 +149,11 @@ module graph_db {
     },
   ]
 
-  tags = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # generate random provisioner name

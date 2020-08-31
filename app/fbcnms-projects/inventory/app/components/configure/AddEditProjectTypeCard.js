@@ -12,6 +12,7 @@ import type {AddEditProjectTypeCard_editingProjectType} from './__generated__/Ad
 import type {CreateProjectTypeMutationVariables} from './mutations/__generated__/CreateProjectTypeMutation.graphql';
 import type {EditProjectTypeInput} from './mutations/__generated__/EditProjectTypeMutation.graphql';
 import type {EditProjectTypeMutationVariables} from './mutations/__generated__/EditProjectTypeMutation.graphql';
+import type {ProjectTypeWorkOrderTemplatesPanel_workOrderTypes} from './__generated__/ProjectTypeWorkOrderTemplatesPanel_workOrderTypes.graphql';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Button from '@symphony/design-system/components/Button';
@@ -59,10 +60,16 @@ type Props = {
   editingProjectType: ?AddEditProjectTypeCard_editingProjectType,
   onCancelClicked: () => void,
   onProjectTypeSaved: () => void,
+  workOrderTypes: ProjectTypeWorkOrderTemplatesPanel_workOrderTypes,
 };
 
 const AddEditProjectTypeCard = (props: Props) => {
-  const {editingProjectType, onCancelClicked, onProjectTypeSaved} = props;
+  const {
+    editingProjectType,
+    onCancelClicked,
+    onProjectTypeSaved,
+    workOrderTypes,
+  } = props;
   const enqueueSnackbar = useEnqueueSnackbar();
   const classes = useStyles();
   const initialProjectTypeInput: EditProjectTypeInput = useMemo(
@@ -257,11 +264,8 @@ const AddEditProjectTypeCard = (props: Props) => {
             selectedWorkOrderTypeIds={(projectTypeInput.workOrders ?? []).map(
               wo => wo.type,
             )}
-            workOrderTypes={
-              editingProjectType?.workOrders
-                ?.map(it => it?.type)
-                .filter(Boolean) ?? []
-            }
+            // $FlowFixMe Relay flow types
+            workOrderTypes={workOrderTypes}
             onWorkOrderTypesSelected={ids => {
               setProjectTypeInput(
                 update(projectTypeInput, {

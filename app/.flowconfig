@@ -47,7 +47,6 @@
 
 [options]
 esproposal.optional_chaining=enable
-server.max_workers=3
 
 [declarations]
 .*/node_modules/.*

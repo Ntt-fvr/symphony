@@ -34,7 +34,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"ASSIGNEE", "CLOCK_IN", "CREATION_DATE", "DESCRIPTION", "NAME", "OWNER", "PRIORITY", "STATUS"}},
+		{Name: "changed_field", Type: field.TypeEnum, Enums: []string{"STATUS", "PRIORITY", "ASSIGNEE", "CREATION_DATE", "OWNER", "NAME", "DESCRIPTION", "CLOCK_IN"}},
 		{Name: "is_create", Type: field.TypeBool},
 		{Name: "old_value", Type: field.TypeString, Nullable: true},
 		{Name: "new_value", Type: field.TypeString, Nullable: true},
@@ -124,7 +124,7 @@ var (
 	CheckListItemsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "title", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"simple", "string", "enum", "files", "yes_no", "cell_scan", "wifi_scan"}},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "checked", Type: field.TypeBool, Nullable: true},
@@ -132,7 +132,7 @@ var (
 		{Name: "enum_values", Type: field.TypeString, Nullable: true},
 		{Name: "enum_selection_mode_value", Type: field.TypeEnum, Nullable: true, Enums: []string{"multiple", "single"}},
 		{Name: "selected_enum_values", Type: field.TypeString, Nullable: true},
-		{Name: "yes_no_val", Type: field.TypeEnum, Nullable: true, Enums: []string{"NO", "YES"}},
+		{Name: "yes_no_val", Type: field.TypeEnum, Nullable: true, Enums: []string{"YES", "NO"}},
 		{Name: "help_text", Type: field.TypeString, Nullable: true},
 		{Name: "check_list_category_check_list_items", Type: field.TypeInt, Nullable: true},
 	}
@@ -157,7 +157,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "title", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"cell_scan", "enum", "files", "simple", "string", "wifi_scan", "yes_no"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"simple", "string", "enum", "files", "yes_no", "cell_scan", "wifi_scan"}},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
 		{Name: "is_mandatory", Type: field.TypeBool, Nullable: true},
 		{Name: "enum_values", Type: field.TypeString, Nullable: true},
@@ -480,7 +480,7 @@ var (
 	ExportTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION"}},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"FAILED", "IN_PROGRESS", "PENDING", "SUCCEEDED"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED"}},
 		{Name: "progress", Type: field.TypeFloat64},
 		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
 		{Name: "store_key", Type: field.TypeString, Nullable: true},
@@ -497,7 +497,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"FILE", "IMAGE"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"IMAGE", "FILE"}},
 		{Name: "name", Type: field.TypeString},
 		{Name: "size", Type: field.TypeInt, Nullable: true},
 		{Name: "modified_at", Type: field.TypeTime, Nullable: true},
@@ -810,7 +810,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "priority", Type: field.TypeEnum, Enums: []string{"HIGH", "LOW", "MEDIUM", "NONE", "URGENT"}, Default: "NONE"},
+		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "project_template", Type: field.TypeInt, Nullable: true},
 		{Name: "project_location", Type: field.TypeInt, Nullable: true},
 		{Name: "project_creator", Type: field.TypeInt, Nullable: true},
@@ -1074,7 +1074,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"bool", "date", "datetime_local", "email", "enum", "float", "gps_location", "int", "node", "range", "string"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"string", "int", "bool", "float", "date", "enum", "range", "email", "gps_location", "datetime_local", "node"}},
 		{Name: "name", Type: field.TypeString},
 		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "index", Type: field.TypeInt, Nullable: true},
@@ -1206,7 +1206,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "entity", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LINK", "LOCATION", "PORT", "SERVICE", "WORK_ORDER"}},
+		{Name: "entity", Type: field.TypeEnum, Enums: []string{"WORK_ORDER", "PORT", "EQUIPMENT", "LINK", "LOCATION", "SERVICE"}},
 		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
 	}
 	// ReportFiltersTable holds the schema information for the "report_filters" table.
@@ -1230,7 +1230,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "external_id", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"DISCONNECTED", "IN_SERVICE", "MAINTENANCE", "PENDING"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_SERVICE", "MAINTENANCE", "DISCONNECTED"}},
 		{Name: "service_type", Type: field.TypeInt, Nullable: true},
 	}
 	// ServicesTable holds the schema information for the "services" table.
@@ -1347,7 +1347,7 @@ var (
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "has_customer", Type: field.TypeBool},
 		{Name: "is_deleted", Type: field.TypeBool},
-		{Name: "discovery_method", Type: field.TypeEnum, Enums: []string{"INVENTORY", "MANUAL"}, Default: "MANUAL"},
+		{Name: "discovery_method", Type: field.TypeEnum, Enums: []string{"MANUAL", "INVENTORY"}, Default: "MANUAL"},
 	}
 	// ServiceTypesTable holds the schema information for the "service_types" table.
 	ServiceTypesTable = &schema.Table{
@@ -1596,7 +1596,7 @@ var (
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "DEACTIVATED"}, Default: "ACTIVE"},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "OWNER", "USER"}, Default: "USER"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "distance_unit", Type: field.TypeEnum, Enums: []string{"KILOMETER", "MILE"}, Default: "KILOMETER"},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -1628,8 +1628,8 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"DONE", "PENDING", "PLANNED"}, Default: "PLANNED"},
-		{Name: "priority", Type: field.TypeEnum, Enums: []string{"HIGH", "LOW", "MEDIUM", "NONE", "URGENT"}, Default: "NONE"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "PLANNED", "DONE"}, Default: "PLANNED"},
+		{Name: "priority", Type: field.TypeEnum, Enums: []string{"URGENT", "HIGH", "MEDIUM", "LOW", "NONE"}, Default: "NONE"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "install_date", Type: field.TypeTime, Nullable: true},
 		{Name: "creation_date", Type: field.TypeTime},

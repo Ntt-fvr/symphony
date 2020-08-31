@@ -104,7 +104,3 @@ locals {
     Workspace = terraform.workspace
   }
 }
-
-data aws_iam_role rds_monitoring {
-  name = "rds-monitoring-role"
-}

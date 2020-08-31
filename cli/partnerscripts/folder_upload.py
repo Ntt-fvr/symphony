@@ -6,7 +6,7 @@
 import argparse
 import sys
 
-from psym import InventoryClient
+from psym import PsymClient
 from psym.api.file import add_files
 
 
@@ -27,6 +27,6 @@ if __name__ == "__main__":
     parser.add_argument("entity_id", help="entity ID", type=str)
     # pyre-fixme[5]: Global expression must be annotated.
     args = parser.parse_args()
-    client = InventoryClient(args.email, args.password, args.tenant)
+    client = PsymClient(args.email, args.password, args.tenant)
     add_files(client, args.local_dir_path, args.entity_type, args.entity_id)
     sys.exit(0)
