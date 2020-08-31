@@ -6,10 +6,10 @@ license that can be found in the LICENSE file.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "inventory.store.fullname" . }}
-  labels: {{- include "inventory.store.metaLabels" . | nindent 4 }}
+  name: {{ template "inventory.async.fullname" . }}
+  labels: {{- include "inventory.async.metaLabels" . | nindent 4 }}
 spec:
-  selector: {{- include "inventory.store.selectorLabels" . | nindent 4 }}
+  selector: {{- include "inventory.async.selectorLabels" . | nindent 4 }}
   type: ClusterIP
   ports:
     - name: http

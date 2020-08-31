@@ -241,3 +241,12 @@ app.kubernetes.io/component: docs
 imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
+
+{{/* Create service metrics port */}}
+{{- define "inventory.metricsPort" -}}
+{{- if .Values.serviceMonitor.enabled }}
+- name: http-metrics
+  port: 9464
+  targetPort: http
+{{- end }}
+{{- end }}

@@ -40,6 +40,8 @@ spec:
         - name: async
           image: {{ .Values.async.image.repository }}:{{ .Values.async.image.tag }}
           imagePullPolicy: {{ .Values.async.image.pullPolicy }}
+          args:
+            - --web.listen-address={{ printf ":%d" (int .Values.async.service.targetPort) }}
           env:
             - name: EVENT_PUB_URL
               value: {{ required ".Values.async.spec.event.pub_url is required" .Values.async.spec.event.pub_url | quote }}
@@ -67,7 +69,7 @@ spec:
                 name: {{ template "inventory.graphDB.secretName" . }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.async.service.targetPort }}
           {{- if .Values.async.probes.liveness }}
           livenessProbe:
             httpGet:

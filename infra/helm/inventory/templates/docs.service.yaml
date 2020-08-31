@@ -10,11 +10,8 @@ metadata:
   labels: {{- include "inventory.docs.metaLabels" . | nindent 4 }}
 spec:
   selector: {{- include "inventory.docs.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.docs.service.type }}
+  type: ClusterIP
   ports:
     - name: http
-      {{- if (and (eq .Values.docs.service.type "NodePort") (not (empty .Values.docs.service.nodePort))) }}
-      nodePort: {{ .Values.docs.service.nodePort }}
-      {{- end }}
       port: {{ .Values.docs.service.port }}
       targetPort: http

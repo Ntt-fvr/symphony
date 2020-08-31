@@ -46,14 +46,14 @@ spec:
           {{- with .Values.docs.probes.liveness }}
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: http
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.docs.probes.readiness }}
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /
               port: http
             {{- toYaml . | nindent 12 }}
           {{- end }}

@@ -241,15 +241,13 @@ graph:
 
   # Configuration for graph service
   service:
-    type: ClusterIP
     port:
       http:
         port: 80
-        targetPort: 80
-        nodePort: ""
+        targetPort: 8080
       grpc:
         port: 443
-        targetPort: 443
+        targetPort: 8443
 
   # Configuration for graph service account
   serviceAccount:
@@ -347,6 +345,13 @@ async:
     enabled: false
     minAvailable: 1
     maxUnavailable: ""
+
+  # Configuration for async service
+  service:
+    # Service external port
+    port: 80
+    # Service target port
+    targetPort: 8080
 
   # Configuration for async service account
   serviceAccount:
@@ -447,15 +452,10 @@ store:
 
   # Configuration for store service
   service:
-    # Port to expose on each node
-    # Only used if service.type is 'NodePort'
-    nodePort: ""
     # Service external port
     port: 80
     # Service target port
-    targetPort: 80
-    # Service type
-    type: ClusterIP
+    targetPort: 8080
 
   # Configuration for store service account
   serviceAccount:
@@ -542,15 +542,10 @@ docs:
 
   # Configuration for docs service
   service:
-    # Port to expose on each node
-    # Only used if service.type is 'NodePort'
-    nodePort: ""
     # Service external port
     port: 80
     # Service target port
     targetPort: 8080
-    # Service type
-    type: ClusterIP
 
   # Configuration for docs service account
   serviceAccount:
@@ -587,10 +582,8 @@ docs:
   # SecurityContext holds pod-level security attributes and common container settings.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   securityContext:
-    runAsGroup: 65534
     runAsNonRoot: true
-    runAsUser: 65534
-    fsGroup: 65534
+    runAsUser: 1001
 
   # Resource limits & requests
   resources: {}
