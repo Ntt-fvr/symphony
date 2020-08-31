@@ -1386,7 +1386,7 @@ enum WorkOrderStatus
   ) {
   PLANNED
   IN_PROGRESS
-  PENDING @deprecated(reason: "Use new status `In_PROGRESS` instead.")
+  PENDING @deprecated(reason: "Use new status `IN_PROGRESS` instead.")
   SUBMITTED
   CLOSED
   DONE @deprecated(reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead.")
