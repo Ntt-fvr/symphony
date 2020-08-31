@@ -1,0 +1,60 @@
+{{- /*
+Copyright (c) 2004-present Facebook All rights reserved.
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file.
+*/ -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "symphony.migrate.fullname" . }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels: {{- include "symphony.migrate.metaLabels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: {{ template "symphony.migrate.fullname" . }}
+      labels: {{- include "symphony.migrate.metaLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.graph.securityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.graph.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "symphony.imagePullSecrets" . | indent 6 }}
+      containers:
+        - name: migrate
+          image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
+          imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
+          command:
+            - /bin/migrate
+          args:
+            - --db-driver=mysql
+            - --db-dsn=$(MYSQL_DSN)
+          env:
+            - name: MYSQL_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "symphony.migrate.secretName" . }}
+                  key: MYSQL_DSN
+      restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template  "symphony.migrate.secretName" . }}
+  labels: {{- include "symphony.metaLabels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+type: Opaque
+stringData: {{- include "symphony.graphDB.stringData" . | nindent 2 }}
