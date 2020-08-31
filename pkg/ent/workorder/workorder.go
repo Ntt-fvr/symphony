@@ -204,7 +204,7 @@ var ForeignKeys = []string{
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [4]ent.Hook
+	Hooks  [5]ent.Hook
 	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the create_time field.
 	DefaultCreateTime func() time.Time
@@ -224,9 +224,9 @@ const DefaultStatus = StatusPlanned
 
 // Status values.
 const (
-	StatusPending    Status = "PENDING"
-	StatusInProgress Status = "IN_PROGRESS"
 	StatusPlanned    Status = "PLANNED"
+	StatusInProgress Status = "IN_PROGRESS"
+	StatusPending    Status = "PENDING"
 	StatusSubmitted  Status = "SUBMITTED"
 	StatusClosed     Status = "CLOSED"
 	StatusDone       Status = "DONE"
@@ -240,7 +240,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusBlocked, StatusClosed, StatusDone, StatusInProgress, StatusPending, StatusPlanned, StatusSubmitted:
+	case StatusPlanned, StatusInProgress, StatusPending, StatusSubmitted, StatusClosed, StatusDone, StatusBlocked:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for status field: %q", s)
