@@ -71,14 +71,18 @@ resource aws_s3_bucket_public_access_block inventory_store {
 
 # iam role for inventory store
 module inventory_store_role {
-  source                    = "./modules/irsa"
+  source                    = "./../tf/modules/irsa"
   role_name_prefix          = "InventoryStoreRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.inventory_store.json
   service_account_name      = "${local.inventory_name}-store"
   service_account_namespace = local.inventory_namespace
   oidc_provider_arn         = module.eks.oidc_provider_arn
-  tags                      = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # policy required by inventory store service
@@ -98,14 +102,18 @@ data aws_iam_policy_document inventory_store {
 
 # iam role for inventory async
 module inventory_async_role {
-  source                    = "./modules/irsa"
+  source                    = "./../tf/modules/irsa"
   role_name_prefix          = "InventoryAsyncRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.inventory_async.json
   service_account_name      = "${local.inventory_name}-async"
   service_account_namespace = local.inventory_namespace
   oidc_provider_arn         = module.eks.oidc_provider_arn
-  tags                      = local.tags
+  tags = {
+    Project   = "symphony"
+    PartOf    = "symphony"
+    Workspace = local.environment
+  }
 }
 
 # policy required by inventory async service

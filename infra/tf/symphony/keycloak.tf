@@ -17,7 +17,7 @@ module keycloak_db {
   allocated_storage          = 16
 
   name     = "keycloak"
-  username = "admin"
+  username = local.db_user
   password = random_password.keycloak_dbpass.result
   port     = local.mysql_port
 

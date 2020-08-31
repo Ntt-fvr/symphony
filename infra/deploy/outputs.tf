@@ -39,3 +39,19 @@ output database {
   }
   sensitive = true
 }
+
+output eks {
+  description = "EKS cluster details"
+  value = {
+    oidc_provider_arn = module.eks.oidc_provider_arn
+    sa_role_path      = local.eks_sa_role_path
+    fluentd_http_service = format("%s-http.%s.svc.cluster.local:9880",
+      helm_release.fluentd_elasticsearch.name,
+      helm_release.fluentd_elasticsearch.namespace,
+    )
+    nats_server_url = format("nats://%s-client.%s.svc.cluster.local",
+      helm_release.nats.name, helm_release.nats.namespace,
+    )
+  }
+  sensitive = true
+}

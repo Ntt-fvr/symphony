@@ -32,14 +32,12 @@ terraform {
 locals {
   env = {
     staging = {
-      region             = "eu-west-1"
-      cluster            = "phb-staging"
-      graphdb_identifier = "firm-boar"
+      region  = "eu-west-1"
+      cluster = "phb-staging"
     }
     production = {
-      region             = "us-east-1"
-      cluster            = "phb-default"
-      graphdb_identifier = "cuddly-stud"
+      region  = "us-east-1"
+      cluster = "phb-default"
     }
   }
 }
@@ -105,8 +103,4 @@ locals {
     PartOf    = "symphony"
     Workspace = terraform.workspace
   }
-}
-
-data aws_iam_role rds_monitoring {
-  name = "rds-monitoring-role"
 }
