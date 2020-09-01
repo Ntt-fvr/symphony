@@ -31,7 +31,7 @@ export function getRectCenter(rect: Rect): Position {
   };
 }
 
-export function convertPointsToRect(pt1: Point, pt2: Point): Rect {
+export function convertPointsToRect(pt1: Position, pt2: Position): Rect {
   const minX = Math.min(pt1.x, pt2.x);
   const maxX = Math.max(pt1.x, pt2.x);
   const minY = Math.min(pt1.y, pt2.y);

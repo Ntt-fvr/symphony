@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type {CoordsWithProps} from '../../../map/MapUtil';
+import type {CoordProps, CoordsWithProps} from '../../../map/MapUtil';
 import type {FilterValue} from '../../../comparison_view/ComparisonViewTypes';
 import type {LocationWiFiScanCoverageMap_wifiData} from './__generated__/LocationWiFiScanCoverageMap_wifiData.graphql.js';
 import type {MapLayer, MapLayerStyles} from '../../../map/MapView';
@@ -81,7 +81,7 @@ const wifiScanIndexToLayer = (
   sourceKey: string,
   aggregatedWiFiDataIndex: WiFiScanIndex,
   styles: MapLayerStyles,
-): MapLayer => {
+): MapLayer<CoordProps> => {
   const coordsWithProps: Array<CoordsWithProps> = Object.keys(
     aggregatedWiFiDataIndex,
   ).map(id => {

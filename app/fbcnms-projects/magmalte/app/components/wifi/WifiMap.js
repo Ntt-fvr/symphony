@@ -211,6 +211,7 @@ function Map() {
       <MapView
         id="mapView"
         geojson={geojson}
+        // $FlowFixMe this is a dep and specifies the wrong prop
         mapLayers={mapLayers}
         MapMarker={WifiMapMarker}
         onMarkerClick={onMarkerClick}

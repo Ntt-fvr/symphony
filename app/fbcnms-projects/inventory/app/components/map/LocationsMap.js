@@ -155,7 +155,7 @@ const LocationsMap = (_props: Props) => {
             mode="streets"
             layers={layers.filter(l => selectedTypeIds.includes(l.source.key))}
             getFeaturePopoutContent={feature => (
-              <LocationPopout locationId={feature.properties.id} />
+              <LocationPopout locationId={feature.properties?.id ?? ''} />
             )}
             showGeocoder={true}
             showMapSatelliteToggle={true}

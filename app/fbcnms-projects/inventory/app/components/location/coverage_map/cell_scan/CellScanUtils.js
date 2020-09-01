@@ -14,7 +14,7 @@ import type {
   CellScanCollection,
   CellScanIndex,
 } from './LocationCellScanCoverageMap';
-import type {CoordsWithProps} from '../../../map/MapUtil';
+import type {CoordProps, CoordsWithProps} from '../../../map/MapUtil';
 import type {FilterValue} from '../../../comparison_view/ComparisonViewTypes';
 import type {LocationCellScanCoverageMap_cellData} from './__generated__/LocationCellScanCoverageMap_cellData.graphql.js';
 import type {MapLayer, MapLayerStyles} from '../../../map/MapView';
@@ -148,7 +148,7 @@ function cellScanIndexToLayer(
   sourceKey: string,
   aggregatedCellDataIndex: CellScanIndex,
   styles: MapLayerStyles,
-): MapLayer {
+): MapLayer<CoordProps> {
   const coordsWithProps: Array<CoordsWithProps> = Object.keys(
     aggregatedCellDataIndex,
   ).map(id => {

@@ -16,11 +16,9 @@ import MapboxGeocoder from '@fbcnms/ui/components/map/MapboxGeocoder';
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
+import type {CustomGeoJSONFeatureCollection} from '../MapView';
 import type {LngLatLike} from 'mapbox-gl/src/geo/lng_lat';
-import type {
-  ProjectGeoJSONFeatureCollection,
-  ProjectLocation,
-} from '../ProjectsMapUtils';
+import type {ProjectLocation} from '../ProjectsMapUtils';
 
 export type Feature = {
   title: string,
@@ -31,13 +29,13 @@ export type Feature = {
   },
   id: number | string,
   center?: LngLatLike,
-  bbox?: Array<LngLatLike>,
+  bbox?: [number, number, number, number],
   geometry: {type: string, coordinates: LngLatLike},
 };
 export type Result = {feature: Feature};
 
-type Props = {
-  markers?: ?ProjectGeoJSONFeatureCollection,
+type Props<T> = {
+  markers?: ?CustomGeoJSONFeatureCollection<T>,
   accessToken: string,
   mapRef: ?mapboxgl.Map,
   featuresType: 'Work Order' | 'Project' | '',
@@ -50,7 +48,7 @@ type Props = {
   shouldSearchPlaces?: ?(customResults: Array<Result>) => boolean,
 };
 
-class MapGeocoder extends React.Component<Props> {
+class MapGeocoder<T: Object> extends React.Component<Props<T>> {
   static defaultProps = {
     apiEndpoint: 'https://api.mapbox.com/geocoding/v5/mapbox.places/',
     searchDebounceMs: 200,
