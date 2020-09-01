@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
 	"go.uber.org/zap"
@@ -26,13 +27,15 @@ import (
 
 // ExportHandler is the handler struct for export tasks.
 type ExportHandler struct {
-	bucket *blob.Bucket
+	bucket       *blob.Bucket
+	bucketPrefix string
 }
 
 // NewExportHandler returns an ExportHandler object with a bucket.
-func NewExportHandler(bucket *blob.Bucket) *ExportHandler {
+func NewExportHandler(bucket *blob.Bucket, bucketPrefix string) *ExportHandler {
 	return &ExportHandler{
-		bucket: bucket,
+		bucket:       bucket,
+		bucketPrefix: bucketPrefix,
 	}
 }
 
@@ -72,7 +75,6 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, entry ev
 		mutation.SetStatus(exporttask.StatusSucceeded).
 			SetStoreKey(key)
 	}
-
 	if err := mutation.Exec(ctx); err != nil {
 		logger.For(ctx).Error("cannot update task status", zap.Error(err), zap.Int("id", task.ID))
 		return err
@@ -92,8 +94,10 @@ func (eh *ExportHandler) exportLocations(ctx context.Context, logger log.Logger,
 		return "", err
 	}
 
-	key := uuid.New().String()
-	if err := eh.writeRows(ctx, key, rows); err != nil {
+	tenant := viewer.FromContext(ctx).Tenant()
+	key := eh.bucketPrefix + uuid.New().String()
+	writeKey := tenant + "/" + key
+	if err := eh.writeRows(ctx, writeKey, rows); err != nil {
 		logger.For(ctx).Error("cannot write rows", zap.Error(err))
 		return "", err
 	}
