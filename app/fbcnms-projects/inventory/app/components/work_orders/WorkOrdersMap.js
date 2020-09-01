@@ -154,9 +154,11 @@ const WorkOrdersMap = (props: Props) => {
     return location;
   };
 
-  const featurePropertiesToWorkOrderProperties = (
-    properties: {...WorkOrderProperties, primaryKey: string, color: string},
-  ): WorkOrderProperties => {
+  const featurePropertiesToWorkOrderProperties = (properties: {
+    ...WorkOrderProperties,
+    primaryKey: string,
+    color: string,
+  }): WorkOrderProperties => {
     return {
       ...properties,
       assignedTo: userFormat(properties.assignedTo ?? '{}'),
