@@ -4,9 +4,13 @@
 from enum import Enum
 
 class WorkOrderStatus(Enum):
-    PENDING = "PENDING"
     PLANNED = "PLANNED"
+    IN_PROGRESS = "IN_PROGRESS"
+    PENDING = "PENDING"
+    SUBMITTED = "SUBMITTED"
+    CLOSED = "CLOSED"
     DONE = "DONE"
+    BLOCKED = "BLOCKED"
     MISSING_ENUM = ""
 
     @classmethod

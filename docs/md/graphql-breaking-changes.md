@@ -28,5 +28,6 @@ title: Graphql API Breaking Changes
 * `TechnicianWorkOrderUploadInput.checklist` - Use `TechnicianWorkOrderUploadInput.checkListCategories` instead. Will be removed on 2020-09-01. You cannot use `TechnicianWorkOrderUploadInput.checklist` and `TechnicianWorkOrderUploadInput.checkListCategories` together
 
 ## Deprecated Enums
-
+* `WorkOrderStatus.PENDING` - Use new status `IN_PROGRESS` instead. Will be removed on 2020-11-01
+* `WorkOrderStatus.DONE` - Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01
 
