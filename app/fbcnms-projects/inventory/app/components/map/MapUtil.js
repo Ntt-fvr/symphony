@@ -21,12 +21,12 @@ import type {
   WorkOrderStatus,
 } from '../../mutations/__generated__/EditWorkOrderMutation.graphql';
 
-export type CoordProps = {
+export type CoordProps = {|
   color: string,
   id: string,
   signalStrength?: number,
   strength?: number,
-};
+|};
 export type CoordsWithProps = {
   latitude: number,
   longitude: number,

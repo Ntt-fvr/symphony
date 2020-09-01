@@ -155,7 +155,7 @@ const WorkOrdersMap = (props: Props) => {
   };
 
   const featurePropertiesToWorkOrderProperties = (
-    properties: WorkOrderProperties & {primaryKey: string, color: string},
+    properties: {...WorkOrderProperties, primaryKey: string, color: string},
   ): WorkOrderProperties => {
     return {
       ...properties,
