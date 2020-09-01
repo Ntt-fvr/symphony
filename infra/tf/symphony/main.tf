@@ -40,6 +40,7 @@ locals {
       cluster = "phb-default"
     }
   }
+  production_only_count = terraform.workspace == "production" ? 1 : 0
 }
 
 data terraform_remote_state current {
@@ -83,12 +84,33 @@ data terraform_remote_state core {
   }
 }
 
-data aws_eks_cluster cluster {
+data aws_eks_cluster staging {
+  name     = local.env.staging.cluster
+  provider = aws.eu-west-1
+}
+
+data aws_eks_cluster production {
+  name     = local.env.production.cluster
+  provider = aws.us-east-1
+}
+
+data aws_eks_cluster current {
   name = local.env[terraform.workspace].cluster
 }
 
-data aws_eks_cluster_auth cluster {
-  name = data.aws_eks_cluster.cluster.name
+data aws_eks_cluster_auth current {
+  name     = data.aws_eks_cluster.current.name
+  provider = aws.assume-admin-role
+  count    = ! var.bootstrap ? 1 : 0
+}
+
+data aws_eks_cluster_auth bootstrap {
+  name  = data.aws_eks_cluster.current.name
+  count = var.bootstrap ? 1 : 0
+}
+
+locals {
+  eks_cluster_token = var.bootstrap ? data.aws_eks_cluster_auth.bootstrap[0].token : data.aws_eks_cluster_auth.current[0].token
 }
 
 locals {

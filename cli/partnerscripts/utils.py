@@ -2,6 +2,7 @@
 # Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
+import argparse
 import time
 from typing import List, Optional, Tuple
 
@@ -80,3 +81,11 @@ def get_client(email: str, password: str, tenant: str) -> PsymClient:
     client = PsymClient(email=email, password=password, tenant=tenant)
     print(f"Client connection in {t.stop():.4f} secs")
     return client
+
+
+def add_base_args() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("email", help="email to connect to symphony with", type=str)
+    parser.add_argument("password", help="symphony connection password", type=str)
+    parser.add_argument("tenant", help="Tenant name", type=str)
+    return parser

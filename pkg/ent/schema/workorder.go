@@ -126,9 +126,13 @@ func (WorkOrder) Fields() []ent.Field {
 			}),
 		field.Enum("status").
 			NamedValues(
-				"Pending", "PENDING",
 				"Planned", "PLANNED",
+				"InProgress", "IN_PROGRESS",
+				"Pending", "PENDING",
+				"Submitted", "SUBMITTED",
+				"Closed", "CLOSED",
 				"Done", "DONE",
+				"Blocked", "BLOCKED",
 			).
 			Default("PLANNED"),
 		field.Enum("priority").

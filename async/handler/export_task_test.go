@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/suite"
 	"gocloud.dev/blob"
@@ -25,6 +26,7 @@ type exportTestSuite struct {
 	client  *ent.Client
 	ctx     context.Context
 	bucket  *blob.Bucket
+	tenant  string
 	logger  log.Logger
 	handler *handler.ExportHandler
 }
@@ -34,7 +36,8 @@ func (s *exportTestSuite) SetupSuite() {
 	s.ctx = viewertest.NewContext(context.Background(), s.client)
 	s.bucket = memblob.OpenBucket(nil)
 	s.logger = logtest.NewTestLogger(s.T())
-	s.handler = handler.NewExportHandler(s.bucket)
+	s.tenant = viewer.FromContext(s.ctx).Tenant()
+	s.handler = handler.NewExportHandler(s.bucket, "exports/")
 	s.Require().NotNil(s.handler)
 }
 
@@ -53,8 +56,7 @@ func (s *exportTestSuite) TestLocations() {
 	s.Require().NoError(err)
 	s.Require().NotNil(task.StoreKey)
 	s.Require().Equal(exporttask.StatusSucceeded, task.Status)
-
-	attrs, err := s.bucket.Attributes(s.ctx, *task.StoreKey)
+	attrs, err := s.bucket.Attributes(s.ctx, s.tenant+"/"+*task.StoreKey)
 	s.Require().NoError(err)
 	s.Require().Equal("text/csv", attrs.ContentType)
 	s.Require().NotEmpty(attrs.ContentDisposition)

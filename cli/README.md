@@ -22,7 +22,7 @@ from psym import PsymClient
 # since symphony is multi tenant system you will need to insert which partner you connect as
 client = PsymClient(email, password, tenant_name)
 ```
-  * The tenant is the company name (meaning, the word at the beginning of "{}.thesymphony.cloud", without "thesymphony.cloud")
+  * The tenant is the company name
 * Start creating location types, equipment types:
 ```python
 locationType = client.add_location_type("City", [])

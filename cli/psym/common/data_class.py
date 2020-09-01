@@ -31,7 +31,6 @@ from psym.graphql.fragment.property import PropertyFragment
 
 from ..graphql.enum.image_entity import ImageEntity
 
-
 ReturnType = TypeVar("ReturnType")
 PropertyValue = Union[date, datetime, float, int, str, bool, Tuple[float, float]]
 PropertyValueType = Union[
@@ -123,11 +122,20 @@ class LocationType(NamedTuple):
     :type id: str
     :param property_types: PropertyTypes sequence
     :type property_types: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param map_type: Map type
+    :type map_type: str, optional
+    :param map_zoom_level: Map zoom level
+    :type map_zoom_level: int, optional
+    :param is_site: Is site flag for location
+    :type is_site: bool
     """
 
     name: str
     id: str
     property_types: Sequence[PropertyDefinition]
+    map_type: Optional[str]
+    map_zoom_level: Optional[int]
+    is_site: bool
 
 
 class Location(NamedTuple):
@@ -238,12 +246,18 @@ class EquipmentPortDefinition(NamedTuple):
     :type id: str
     :param name: Name
     :type name: str
+    :param visible_label: Visible label
+    :type visible_label: str, optional
+    :param port_definition_index: Index
+    :type port_definition_index: int, optional
     :param port_type_name: Port type name
     :type port_type_name: str, optional
     """
 
     id: str
     name: str
+    visible_label: Optional[str] = None
+    port_definition_index: Optional[int] = None
     port_type_name: Optional[str] = None
 
 

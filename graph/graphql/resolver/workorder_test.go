@@ -113,7 +113,7 @@ func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationRe
 		Description: workOrder.Description,
 		OwnerID:     ownerID,
 		InstallDate: workOrder.InstallDate,
-		Status:      workOrderStatusPtr(workorder.StatusDone),
+		Status:      workOrderStatusPtr(workorder.StatusClosed),
 		AssigneeID:  assigneeID,
 	})
 	require.NoError(t, err)
@@ -216,7 +216,7 @@ func TestAddWorkOrderWithAssignee(t *testing.T) {
 		Name:        workOrder.Name,
 		Description: workOrder.Description,
 		OwnerID:     ownerID,
-		Status:      workOrderStatusPtr(workorder.StatusPending),
+		Status:      workOrderStatusPtr(workorder.StatusInProgress),
 		AssigneeID:  &assignee.ID,
 	})
 	require.NoError(t, err)
@@ -343,7 +343,7 @@ func TestAddWorkOrderWithPriority(t *testing.T) {
 		Name:        workOrder.Name,
 		Description: workOrder.Description,
 		OwnerID:     ownerID,
-		Status:      workOrderStatusPtr(workorder.StatusPending),
+		Status:      workOrderStatusPtr(workorder.StatusInProgress),
 		Priority:    workOrderPriorityPtr(workorder.PriorityHigh),
 		Index:       pointer.ToInt(42),
 	}
@@ -1526,7 +1526,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	_, err = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
 		Name:            "should_fail",
 		WorkOrderTypeID: woType.ID,
-		Status:          workOrderStatusPtr(workorder.StatusDone),
+		Status:          workOrderStatusPtr(workorder.StatusClosed),
 	})
 	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 	_, err = mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
@@ -1553,7 +1553,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 		Name:            "location_name_3",
 		WorkOrderTypeID: woType.ID,
 		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusDone),
+		Status:          workOrderStatusPtr(workorder.StatusClosed),
 	})
 	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 
@@ -1566,7 +1566,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 		Name:            "location_name_3",
 		WorkOrderTypeID: woType.ID,
 		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusDone),
+		Status:          workOrderStatusPtr(workorder.StatusClosed),
 	})
 	require.NoError(t, err)
 }
@@ -1818,7 +1818,7 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	assert.Equal(t, w.Status, workorder.StatusPending)
+	assert.Equal(t, w.Status, workorder.StatusInProgress)
 
 	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)
@@ -2034,7 +2034,7 @@ func TestAssigneeCannotCompleteWorkOrder(t *testing.T) {
 		ID:         wo.ID,
 		Name:       "NewName",
 		AssigneeID: pointer.ToInt(assignee.ID),
-		Status:     toWorkOrderStatusPointer(workorder.StatusDone),
+		Status:     toWorkOrderStatusPointer(workorder.StatusClosed),
 	})
 	require.Error(t, err)
 }

@@ -51,7 +51,7 @@ resource helm_release keycloak {
   namespace  = kubernetes_namespace.symphony.id
   chart      = "keycloak"
   repository = local.helm_repository.codecentric
-  version    = "9.0.1"
+  version    = "9.0.5"
 
   values = [yamlencode({
     replicas            = 2
@@ -90,8 +90,7 @@ resource helm_release keycloak {
     serviceMonitor = { enabled = true }
     postgresql     = { enabled = false }
     test           = { enabled = false }
-    }),
-  ]
+  })]
 
   set_sensitive {
     name  = "secrets.http.stringData.KEYCLOAK_PASSWORD"

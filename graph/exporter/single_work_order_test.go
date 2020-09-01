@@ -62,7 +62,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 	}
 	proj, _ := r.Mutation().CreateProject(ctx, projInput)
 
-	st := workorder.StatusDone
+	st := workorder.StatusClosed
 	priority := workorder.PriorityHigh
 	indexValue := 1
 	fooCL := models.CheckListItemInput{

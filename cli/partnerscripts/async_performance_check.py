@@ -6,7 +6,6 @@
 import argparse
 import asyncio
 import sys
-from argparse import Namespace
 from asyncio.events import AbstractEventLoop
 from datetime import datetime
 from typing import Sequence, Tuple
@@ -16,6 +15,7 @@ from psym.common.data_class import Location
 
 from .utils import (
     Timer,
+    add_base_args,
     edit_location_with_time,
     get_building_locations,
     get_client,
@@ -63,27 +63,20 @@ async def main(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("email", help="email to connect to inventory with", type=str)
-    parser.add_argument("password", help="inventory connection password", type=str)
-    parser.add_argument("tenant", help="Tenant name", type=str)
-    args: Namespace = parser.parse_args()
+    parser = add_base_args()
+    args: argparse.Namespace = parser.parse_args()
 
     total_run = Timer()
     print(f"STARTED at {datetime.now()}".center(80, "*"))
     total_run.start()
     loop: AbstractEventLoop = asyncio.get_event_loop()
     try:
-        # pyre-fixme[5]: Global expression must be annotated.
         result = loop.run_until_complete(main(args.email, args.password, args.tenant))
     finally:
         loop.close()
 
-    # pyre-fixme[5]: Global expression must be annotated.
     number_of_calls = len(result)
-    # pyre-fixme[5]: Global expression must be annotated.
     get_location_run = sum([r[1] for r in result]) / number_of_calls
-    # pyre-fixme[5]: Global expression must be annotated.
     edit_location_run = sum([r[2] for r in result]) / number_of_calls
     print("RESULT".center(80, "*"))
     print(

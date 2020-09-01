@@ -4,38 +4,22 @@ resource kubernetes_namespace symphony {
   }
 }
 
-resource kubernetes_resource_quota default {
+resource kubernetes_role_binding symphony_admins {
   metadata {
-    name      = "default"
+    name      = "admins"
     namespace = kubernetes_namespace.symphony.id
   }
 
-  spec {
-    hard = {
-      "limits.cpu"    = "8"
-      "limits.memory" = "16Gi"
-    }
-  }
-}
-
-resource kubernetes_limit_range default {
-  metadata {
-    name      = "default"
-    namespace = kubernetes_namespace.symphony.id
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
   }
 
-  spec {
-    limit {
-      default = {
-        cpu    = "2"
-        memory = "4Gi"
-      }
-      default_request = {
-        cpu    = "1"
-        memory = "2Gi"
-      }
-      type = "Container"
-    }
+  subject {
+    kind      = "Group"
+    name      = "symphony:masters"
+    api_group = "rbac.authorization.k8s.io"
   }
 }
 

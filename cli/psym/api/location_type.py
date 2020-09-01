@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import List
+from typing import List, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import LOCATION_TYPES
@@ -35,6 +35,9 @@ def _populate_location_types(client: SymphonyClient) -> None:
                 name=node.name,
                 id=node.id,
                 property_types=format_to_property_definitions(node.propertyTypes),
+                map_type=node.mapType,
+                map_zoom_level=node.mapZoomLevel,
+                is_site=node.isSite,
             )
 
 
@@ -42,7 +45,9 @@ def add_location_type(
     client: SymphonyClient,
     name: str,
     properties: List[PropertyDefinition],
+    map_type: Optional[str] = None,
     map_zoom_level: int = 8,
+    is_site: bool = False,
 ) -> LocationType:
     """This function creates new location type.
 
@@ -82,6 +87,8 @@ def add_location_type(
         AddLocationTypeInput(
             name=name,
             mapZoomLevel=map_zoom_level,
+            mapType=map_type if map_type else None,
+            isSite=is_site,
             properties=new_property_types,
             surveyTemplateCategories=[],
         ),
@@ -91,6 +98,9 @@ def add_location_type(
         name=result.name,
         id=result.id,
         property_types=format_to_property_definitions(result.propertyTypes),
+        map_type=result.mapType,
+        map_zoom_level=result.mapZoomLevel,
+        is_site=result.isSite,
     )
     LOCATION_TYPES[result.name] = location_type
     return location_type

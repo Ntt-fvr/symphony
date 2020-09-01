@@ -9,6 +9,7 @@ import os
 import sys
 from typing import Generator
 
+from partnerscripts.utils import add_base_args
 from psym import PsymClient
 from psym.api.file import add_file
 
@@ -21,13 +22,10 @@ def list_dir(directory_path: str) -> Generator[str, None, None]:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("email", help="email to connect to inventory with", type=str)
-    parser.add_argument("password", help="inventory connection password", type=str)
+    parser = add_base_args()
     parser.add_argument(
         "local_dir_path", help="local directory path to upload", type=str
     )
-    parser.add_argument("tenant", help="Tenant name", type=str)
     parser.add_argument(
         "entity_type",
         help="entity type",
@@ -35,8 +33,7 @@ if __name__ == "__main__":
         choices=["LOCATION", "WORK_ORDER", "SITE_SURVEY", "EQUIPMENT"],
     )
     parser.add_argument("entity_id", help="entity ID", type=str)
-    # pyre-fixme[5]: Global expression must be annotated.
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     client = PsymClient(args.email, args.password, args.tenant)
     for file in list_dir(args.local_dir_path):
         file_name = os.path.basename(file)

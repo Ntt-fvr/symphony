@@ -182,7 +182,7 @@ func prepareWOData(ctx context.Context, r *TestResolver, name string) woSearchDa
 		ID:         wo1.ID,
 		Name:       wo1.Name,
 		OwnerID:    &owner.ID,
-		Status:     workOrderStatusPtr(workorder.StatusDone),
+		Status:     workOrderStatusPtr(workorder.StatusClosed),
 		Priority:   workOrderPriorityPtr(workorder.PriorityHigh),
 		LocationID: &loc1.ID,
 		AssigneeID: &assignee1.ID,

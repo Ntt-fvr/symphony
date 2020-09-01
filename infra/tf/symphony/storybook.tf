@@ -33,12 +33,8 @@ resource helm_release storybook {
     }
     resources = {
       limits = {
-        cpu    = "100m"
-        memory = "128Mi"
-      }
-      requests = {
-        cpu    = "100m"
-        memory = "128Mi"
+        cpu    = "10m"
+        memory = "64Mi"
       }
     }
   })]

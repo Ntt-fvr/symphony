@@ -18,6 +18,9 @@ QUERY: List[str] = PropertyTypeFragmentQuery + ["""
 fragment LocationTypeFragment on LocationType {
   id
   name
+  mapType
+  isSite
+  mapZoomLevel
   propertyTypes {
     ...PropertyTypeFragment
   }
@@ -33,4 +36,7 @@ class LocationTypeFragment(DataClassJsonMixin):
 
     id: str
     name: str
+    mapType: Optional[str]
+    isSite: bool
+    mapZoomLevel: Optional[int]
     propertyTypes: List[PropertyType]

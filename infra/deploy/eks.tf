@@ -6,7 +6,7 @@ locals {
   eks_sa_role_path = "/service_accounts/${local.environment}/"
 
   # worker asg desired capacity
-  eks_asg_capacity = terraform.workspace == "default" ? 5 : 3
+  eks_asg_capacity = length(module.vpc.azs) * 2
 }
 
 # eks workers ssh key
@@ -114,6 +114,11 @@ module eks {
       username = "springboard:master"
       groups   = [module.springboard.subject_name]
     },
+    {
+      rolearn  = "arn:aws:iam::495344428215:role/SymphonyAdminRole"
+      username = "symphony:master"
+      groups   = ["symphony:masters"]
+    }
   ]
 
   kubeconfig_name                      = "symphony-${local.environment}"

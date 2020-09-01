@@ -79,6 +79,8 @@ def get_port(
             id=ports[0].definition.id,
             name=ports[0].definition.name,
             port_type_name=port_type_name,
+            visible_label=ports[0].definition.visibleLabel,
+            port_definition_index=ports[0].definition.index,
         ),
         link=Link(
             id=link.id,
@@ -133,6 +135,8 @@ def get_ports(client: SymphonyClient) -> Iterator[EquipmentPort]:
                         id=node.definition.id,
                         name=node.definition.name,
                         port_type_name=port_type.name if port_type else None,
+                        visible_label=node.definition.visibleLabel,
+                        port_definition_index=node.definition.index,
                     ),
                     link=Link(
                         id=link.id,
@@ -207,6 +211,8 @@ def edit_port_properties(
     )
     port_type = result.definition.portType
     link = result.link
+    visible_label = result.definition.visibleLabel
+    _index = result.definition.index
     return EquipmentPort(
         id=result.id,
         properties=result.properties,
@@ -214,6 +220,8 @@ def edit_port_properties(
             id=result.definition.id,
             name=result.definition.name,
             port_type_name=port_type.name if port_type else None,
+            visible_label=visible_label if visible_label else None,
+            port_definition_index=_index if _index else None,
         ),
         link=Link(
             id=link.id,
@@ -297,6 +305,8 @@ def edit_link_properties(
             id=port.definition.id,
             name=port.definition.name,
             port_type_name=port.definition.port_type_name,
+            visible_label=port.definition.visible_label,
+            port_definition_index=port.definition.port_definition_index,
         ),
         link=Link(
             id=result.id,

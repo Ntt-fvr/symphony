@@ -244,7 +244,7 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 		return nil, err
 	}
 	woType = wType.Name
-	if wo.Status == workorder.StatusDone {
+	if wo.Status == workorder.StatusDone || wo.Status == workorder.StatusClosed {
 		closedDate = wo.CloseDate.Format(timeLayout)
 	}
 

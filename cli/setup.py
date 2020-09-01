@@ -35,7 +35,7 @@ setuptools.setup(
     author="Facebook Inc.",
     description="Tool for accessing and modifying Symphony database",
     long_description=long_description,
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     packages=setuptools.find_packages(include=GQL_PACKAGES + PSYM_PACKAGES),
     classifiers=[
         "License :: OSI Approved :: BSD License",
