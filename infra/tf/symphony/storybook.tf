@@ -37,7 +37,7 @@ resource helm_release storybook {
         memory = "128Mi"
       }
       requests = {
-        cpu    = "100m"
+        cpu    = "50m"
         memory = "128Mi"
       }
     }

@@ -83,6 +83,11 @@ front:
   # Annotations to be added to front pods
   podAnnotations: {}
 
+  # Configure update strategy for front
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
   # Configure pod disruption budgets for front
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
@@ -224,6 +229,11 @@ graph:
   # Annotations to be added to graph pods
   podAnnotations: {}
 
+  # Configure update strategy for graph
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
   # Configure pod disruption budgets for graph
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
@@ -339,6 +349,11 @@ async:
   # Annotations to be added to async pods
   podAnnotations: {}
 
+  # Configure update strategy for async
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
   # Configure pod disruption budgets for async
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
@@ -443,6 +458,11 @@ store:
   # Annotations to be added to store pods
   podAnnotations: {}
 
+  # Configure update strategy for store
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
   # Configure pod disruption budgets for store
   # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   podDisruptionBudget:
@@ -540,6 +560,11 @@ docs:
   # Annotations to be added to docs pods
   podAnnotations: {}
 
+  # Configure update strategy for docs
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
   # Configuration for docs service
   service:
     # Service external port
@@ -636,6 +661,15 @@ jobrunner:
     repository: facebookconnectivity-symphony-docker.jfrog.io/jobrunner
     tag: latest
     pullPolicy: IfNotPresent
+
+  # Resource limits & requests
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
   # job.name should consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character
   jobs:

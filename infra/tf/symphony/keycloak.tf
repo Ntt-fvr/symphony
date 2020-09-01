@@ -51,7 +51,8 @@ resource helm_release keycloak {
   namespace  = kubernetes_namespace.symphony.id
   chart      = "keycloak"
   repository = local.helm_repository.codecentric
-  version    = "9.0.1"
+  version    = "9.0.5"
+  timeout    = 600
 
   values = [yamlencode({
     replicas            = 2
@@ -69,6 +70,16 @@ resource helm_release keycloak {
         paths = ["/"]
       }]
       tls = []
+    }
+    resources = {
+      requests = {
+        cpu    = "500m"
+        memory = "1Gi"
+      }
+      limits = {
+        cpu    = "1500m"
+        memory = "2Gi"
+      }
     }
     startupScripts = {
       "keycloak-bcrypt.sh" = file("${path.module}/files/keycloak-bcrypt.sh")
@@ -90,8 +101,7 @@ resource helm_release keycloak {
     serviceMonitor = { enabled = true }
     postgresql     = { enabled = false }
     test           = { enabled = false }
-    }),
-  ]
+  })]
 
   set_sensitive {
     name  = "secrets.http.stringData.KEYCLOAK_PASSWORD"

@@ -34,5 +34,6 @@ spec:
               env:
                 - name: GRAPH_HOST
                   value: {{ include "symphony.graph.fullname" $ | quote }}
+              resources: {{- toYaml $.Values.jobrunner.resources | nindent 16 }}
           restartPolicy: OnFailure
 {{- end }}

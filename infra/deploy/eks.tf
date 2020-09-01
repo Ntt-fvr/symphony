@@ -6,7 +6,7 @@ locals {
   eks_sa_role_path = "/service_accounts/${local.environment}/"
 
   # worker asg desired capacity
-  eks_asg_capacity = terraform.workspace == "default" ? 5 : 3
+  eks_asg_capacity = length(module.vpc.azs) * 2
 }
 
 # eks workers ssh key

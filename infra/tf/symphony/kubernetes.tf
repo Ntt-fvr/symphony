@@ -12,8 +12,8 @@ resource kubernetes_resource_quota default {
 
   spec {
     hard = {
-      "limits.cpu"    = "8"
-      "limits.memory" = "16Gi"
+      "limits.cpu"    = "12"
+      "limits.memory" = "32Gi"
     }
   }
 }
@@ -27,12 +27,12 @@ resource kubernetes_limit_range default {
   spec {
     limit {
       default = {
-        cpu    = "2"
-        memory = "4Gi"
+        cpu    = "1"
+        memory = "1Gi"
       }
       default_request = {
-        cpu    = "1"
-        memory = "2Gi"
+        cpu    = "500m"
+        memory = "512Mi"
       }
       type = "Container"
     }

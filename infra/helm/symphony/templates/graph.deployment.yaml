@@ -12,6 +12,9 @@ metadata:
   annotations: {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- with .Values.graph.updateStrategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
   replicas: {{ .Values.graph.replicas }}
   selector:
     matchLabels: {{- include "symphony.graph.selectorLabels" . | nindent 6 }}
