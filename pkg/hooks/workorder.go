@@ -127,23 +127,3 @@ func WorkOrderAddTemplateHook() ent.Hook {
 	}
 	return hook.On(hk, ent.OpCreate)
 }
-
-// WorkOrderUpdateStateHook sync the state field according to the status field
-func WorkOrderUpdateStatusHook() ent.Hook {
-	hk := func(next ent.Mutator) ent.Mutator {
-		return hook.WorkOrderFunc(func(ctx context.Context, mutation *ent.WorkOrderMutation) (ent.Value, error) {
-			status, exists := mutation.Status()
-			if !exists {
-				return next.Mutate(ctx, mutation)
-			}
-			switch status {
-			case workorder.StatusDone:
-				mutation.SetStatus(workorder.StatusClosed)
-			case workorder.StatusPending:
-				mutation.SetStatus(workorder.StatusInProgress)
-			}
-			return next.Mutate(ctx, mutation)
-		})
-	}
-	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpUpdate)
-}

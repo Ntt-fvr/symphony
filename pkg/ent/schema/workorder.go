@@ -237,7 +237,6 @@ func (WorkOrder) Hooks() []ent.Hook {
 		hooks.WorkOrderCloseDateHook(),
 		hooks.WorkOrderAddTemplateHook(),
 		hooks.WorkOrderMandatoryPropertyOnClose(),
-		hooks.WorkOrderUpdateStatusHook(),
 	}
 }
 
