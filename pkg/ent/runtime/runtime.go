@@ -1211,8 +1211,6 @@ func init() {
 	workorder.Hooks[2] = workorderHooks[1]
 
 	workorder.Hooks[3] = workorderHooks[2]
-
-	workorder.Hooks[4] = workorderHooks[3]
 	workorderMixinFields0 := workorderMixin[0].Fields()
 	workorderMixinFields1 := workorderMixin[1].Fields()
 	workorderFields := schema.WorkOrder{}.Fields()
