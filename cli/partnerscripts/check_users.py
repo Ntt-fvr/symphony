@@ -6,16 +6,13 @@ import argparse
 import sys
 from typing import List
 
+from partnerscripts.utils import add_base_args
 from psym import PsymClient
 from psym.api.user import get_users
 from psym.common.data_class import User
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("email", help="email to connect to inventory with", type=str)
-    parser.add_argument("password", help="inventory connection password", type=str)
-    parser.add_argument("tenant", help="Tenant name", type=str)
+    parser = add_base_args()
     args: argparse.Namespace = parser.parse_args()
 
     username: str = args.email

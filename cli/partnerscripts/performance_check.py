@@ -13,6 +13,7 @@ from psym.common.data_class import Location
 
 from .utils import (
     Timer,
+    add_base_args,
     edit_location_with_time,
     get_building_locations,
     get_client,
@@ -46,24 +47,16 @@ def main(email: str, password: str, tenant: str) -> List[Tuple[Location, float, 
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("email", help="email to connect to inventory with", type=str)
-    parser.add_argument("password", help="inventory connection password", type=str)
-    parser.add_argument("tenant", help="Tenant name", type=str)
-    # pyre-fixme[5]: Global expression must be annotated.
-    args = parser.parse_args()
+    parser = add_base_args()
+    args: argparse.Namespace = parser.parse_args()
 
     total_run = Timer()
     print(f"STARTED at {datetime.now()}".center(80, "*"))
     total_run.start()
 
-    # pyre-fixme[5]: Global expression must be annotated.
     result = main(args.email, args.password, args.tenant)
-    # pyre-fixme[5]: Global expression must be annotated.
     number_of_calls = len(result)
-    # pyre-fixme[5]: Global expression must be annotated.
     get_location_run = sum([r[1] for r in result]) / number_of_calls
-    # pyre-fixme[5]: Global expression must be annotated.
     edit_location_run = sum([r[2] for r in result]) / number_of_calls
     print("RESULT".center(80, "*"))
     print(

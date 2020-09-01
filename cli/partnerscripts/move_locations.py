@@ -6,21 +6,17 @@
 import argparse
 import sys
 
+from partnerscripts.utils import add_base_args
 from psym import PsymClient
 from psym.api.location import move_location
 
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("email", help="email to connect to inventory with", type=str)
-    parser.add_argument("password", help="inventory connection password", type=str)
-    parser.add_argument("tenant", help="Tenant name", type=str)
+    parser = add_base_args()
     parser.add_argument("new_parent", help="new parent ID", type=str)
     parser.add_argument(
         "locations_to_move", help="list of location IDs to move", nargs="+"
     )
-    # pyre-fixme[5]: Global expression must be annotated.
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     client = PsymClient(args.email, args.password, args.tenant)
     for location_id in args.locations_to_move:
         move_location(client, location_id, args.new_parent_id)
