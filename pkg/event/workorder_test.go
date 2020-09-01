@@ -94,13 +94,13 @@ func (s *workOrderTestSuite) TestWorkOrderCreate() {
 		SetType(s.typ).
 		SetCreationDate(time.Now()).
 		SetOwner(s.user).
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		SaveX(s.ctx)
 }
 
 func (s *workOrderTestSuite) TestWorkOrderUpdate() {
 	err := s.client.WorkOrder.Update().
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		Exec(s.ctx)
 	s.Require().True(
 		errors.Is(err, event.ErrWorkOrderUpdateStatusOfMany),
@@ -156,7 +156,7 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateOne() {
 	s.Require().NoError(err)
 	ctx := ent.NewTxContext(s.ctx, tx)
 	err = tx.WorkOrder.UpdateOne(wo).
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		Exec(ctx)
 	s.Require().NoError(err)
 	err = tx.Commit()

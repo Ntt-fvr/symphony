@@ -444,7 +444,7 @@ func (c *client) executeWorkOrder(workOrder *addWorkOrderResponse) error {
 		} `graphql:"editWorkOrder(input: $input)"`
 	}
 	ownerID := IDToInt(workOrder.Owner.ID)
-	st := workorder.StatusDone
+	st := workorder.StatusClosed
 	vars := map[string]interface{}{
 		"input": models.EditWorkOrderInput{
 			ID:      IDToInt(workOrder.ID),

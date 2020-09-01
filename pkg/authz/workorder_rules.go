@@ -197,7 +197,7 @@ func isOwnerChanged(ctx context.Context, m *ent.WorkOrderMutation) (bool, error)
 
 func isStatusChangedToDone(ctx context.Context, m *ent.WorkOrderMutation) (bool, error) {
 	newStatus, ok := m.Status()
-	if !ok || newStatus != workorder.StatusDone {
+	if !ok || (newStatus != workorder.StatusDone && newStatus != workorder.StatusClosed) {
 		return false, nil
 	}
 	if m.Op().Is(ent.OpCreate) {

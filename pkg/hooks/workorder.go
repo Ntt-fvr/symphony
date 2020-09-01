@@ -37,7 +37,7 @@ func WorkOrderCloseDateHook() ent.Hook {
 				}
 			}
 			switch status {
-			case workorder.StatusDone:
+			case workorder.StatusDone, workorder.StatusClosed:
 				mutation.SetCloseDate(time.Now())
 			default:
 				mutation.ClearCloseDate()
