@@ -15,7 +15,7 @@
 /*::
 import type { ReaderFragment } from 'relay-runtime';
 export type FutureState = "INSTALL" | "REMOVE" | "%future added value";
-export type WorkOrderStatus = "DONE" | "PENDING" | "PLANNED" | "%future added value";
+export type WorkOrderStatus = "BLOCKED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type EquipmentPropertiesCard_position$ref: FragmentReference;
 declare export opaque type EquipmentPropertiesCard_position$fragmentType: EquipmentPropertiesCard_position$ref;

@@ -38,7 +38,8 @@ func (e *Eventer) workOrderCreateHook() ent.Hook {
 				return value, err
 			}
 			e.emit(ctx, WorkOrderAdded, value)
-			if value.(*ent.WorkOrder).Status == workorder.StatusDone {
+			if value.(*ent.WorkOrder).Status == workorder.StatusDone ||
+				value.(*ent.WorkOrder).Status == workorder.StatusClosed {
 				e.emit(ctx, WorkOrderDone, value)
 			}
 			return value, nil
@@ -53,7 +54,7 @@ var ErrWorkOrderUpdateStatusOfMany = errors.New("work order status update to don
 func (e *Eventer) workOrderUpdateHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
-			if status, exists := m.Status(); exists && status == workorder.StatusDone {
+			if status, exists := m.Status(); exists && (status == workorder.StatusDone || status == workorder.StatusClosed) {
 				return nil, ErrWorkOrderUpdateStatusOfMany
 			}
 			return next.Mutate(ctx, m)
@@ -66,7 +67,7 @@ func (e *Eventer) workOrderUpdateOneHook() ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return hook.WorkOrderFunc(func(ctx context.Context, m *ent.WorkOrderMutation) (ent.Value, error) {
 			status, exists := m.Status()
-			if !exists || status != workorder.StatusDone {
+			if !exists || (status != workorder.StatusDone && status != workorder.StatusClosed) {
 				return next.Mutate(ctx, m)
 			}
 			oldStatus, err := m.OldStatus(ctx)

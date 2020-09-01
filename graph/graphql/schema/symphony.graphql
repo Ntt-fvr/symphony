@@ -1384,9 +1384,13 @@ enum WorkOrderStatus
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/workorder.Status"
   ) {
-  PENDING
   PLANNED
-  DONE
+  IN_PROGRESS
+  PENDING @deprecated(reason: "Use new status `IN_PROGRESS` instead. Will be removed on 2020-11-01")
+  SUBMITTED
+  CLOSED
+  DONE @deprecated(reason: "Use new status `CLOSED`, `SUBMITTED` or `BLOCKED` instead. Will be removed on 2020-11-01")
+  BLOCKED
 }
 
 enum ServiceStatus

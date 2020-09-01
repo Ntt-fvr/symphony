@@ -96,7 +96,7 @@ func TestEditWorkOrderActivities(t *testing.T) {
 		SetName("wo2_").
 		SetDescription("descr_").
 		SetAssignee(u2).
-		SetStatus(workorder.StatusPending).
+		SetStatus(workorder.StatusInProgress).
 		ExecX(ctx)
 
 	activities = wo.QueryActivities().AllX(ctx)
@@ -115,7 +115,7 @@ func TestEditWorkOrderActivities(t *testing.T) {
 			require.False(t, a.IsCreate)
 			require.Equal(t, a.OldValue, strconv.Itoa(u.ID))
 		case activity.ActivityTypeStatusChanged:
-			require.EqualValues(t, a.NewValue, workorder.StatusPending)
+			require.EqualValues(t, a.NewValue, workorder.StatusInProgress)
 			require.False(t, a.IsCreate)
 			require.EqualValues(t, a.OldValue, workorder.StatusPlanned)
 		case activity.ActivityTypeNameChanged:

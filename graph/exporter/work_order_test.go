@@ -88,7 +88,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	}
 	proj, _ := r.Mutation().CreateProject(ctx, projInput)
 
-	st := workorder.StatusDone
+	st := workorder.StatusClosed
 	priority := workorder.PriorityHigh
 	woInput1 := models.AddWorkOrderInput{
 		Name:            "WO1",
@@ -209,7 +209,7 @@ func TestWOExport(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusDone.String(),
+				workorder.StatusClosed.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
@@ -264,7 +264,7 @@ func TestExportWOWithFilters(t *testing.T) {
 		{
 			Name:      "WORK_ORDER_STATUS",
 			Operator:  "IS_ONE_OF",
-			StringSet: []string{"DONE"},
+			StringSet: []string{"CLOSED"},
 		},
 		{
 			Name:     "WORK_ORDER_ASSIGNED_TO",
@@ -295,7 +295,7 @@ func TestExportWOWithFilters(t *testing.T) {
 			require.EqualValues(t, ln[1:], []string{
 				"WO1",
 				wo.QueryProject().OnlyX(ctx).Name,
-				workorder.StatusDone.String(),
+				workorder.StatusClosed.String(),
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),

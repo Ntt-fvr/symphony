@@ -224,9 +224,13 @@ const DefaultStatus = StatusPlanned
 
 // Status values.
 const (
-	StatusPending Status = "PENDING"
-	StatusPlanned Status = "PLANNED"
-	StatusDone    Status = "DONE"
+	StatusPlanned    Status = "PLANNED"
+	StatusInProgress Status = "IN_PROGRESS"
+	StatusPending    Status = "PENDING"
+	StatusSubmitted  Status = "SUBMITTED"
+	StatusClosed     Status = "CLOSED"
+	StatusDone       Status = "DONE"
+	StatusBlocked    Status = "BLOCKED"
 )
 
 func (s Status) String() string {
@@ -236,7 +240,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusPending, StatusPlanned, StatusDone:
+	case StatusPlanned, StatusInProgress, StatusPending, StatusSubmitted, StatusClosed, StatusDone, StatusBlocked:
 		return nil
 	default:
 		return fmt.Errorf("workorder: invalid enum value for status field: %q", s)

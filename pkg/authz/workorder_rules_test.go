@@ -109,11 +109,11 @@ func TestAssigneeCanCompleteWO(t *testing.T) {
 		viewertest.WithRole(user.RoleUser),
 		viewertest.WithPermissions(authz.EmptyPermissions()))
 	err := c.WorkOrder.UpdateOne(workOrder).
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		Exec(ctx)
 	require.NoError(t, err)
 	err = c.WorkOrder.UpdateOne(workOrderWithCompletionDisallowed).
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		Exec(ctx)
 	require.True(t, errors.Is(err, privacy.Deny))
 }
@@ -148,7 +148,7 @@ func TestOwnerCanEditWOButNotDelete(t *testing.T) {
 		Exec(ctx)
 	require.Error(t, err)
 	err = c.WorkOrder.UpdateOne(workOrder).
-		SetStatus(workorder.StatusDone).
+		SetStatus(workorder.StatusClosed).
 		Exec(ctx)
 	require.NoError(t, err)
 }
