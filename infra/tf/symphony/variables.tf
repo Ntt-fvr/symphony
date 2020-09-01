@@ -1,3 +1,9 @@
+variable bootstrap {
+  type        = bool
+  description = "Run in bootstrap mode"
+  default     = false
+}
+
 variable "storybook_tag" {
   type        = string
   description = "Storybook application image tag"

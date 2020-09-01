@@ -52,7 +52,6 @@ resource helm_release keycloak {
   chart      = "keycloak"
   repository = local.helm_repository.codecentric
   version    = "9.0.5"
-  timeout    = 600
 
   values = [yamlencode({
     replicas            = 2
@@ -70,16 +69,6 @@ resource helm_release keycloak {
         paths = ["/"]
       }]
       tls = []
-    }
-    resources = {
-      requests = {
-        cpu    = "500m"
-        memory = "1Gi"
-      }
-      limits = {
-        cpu    = "1500m"
-        memory = "2Gi"
-      }
     }
     startupScripts = {
       "keycloak-bcrypt.sh" = file("${path.module}/files/keycloak-bcrypt.sh")

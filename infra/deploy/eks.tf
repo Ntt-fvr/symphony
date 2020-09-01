@@ -114,6 +114,11 @@ module eks {
       username = "springboard:master"
       groups   = [module.springboard.subject_name]
     },
+    {
+      rolearn  = "arn:aws:iam::495344428215:role/SymphonyAdminRole"
+      username = "symphony:master"
+      groups   = ["symphony:masters"]
+    }
   ]
 
   kubeconfig_name                      = "symphony-${local.environment}"
