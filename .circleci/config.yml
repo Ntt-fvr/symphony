@@ -803,7 +803,7 @@ workflows:
         - << pipeline.parameters.deploy >>
     jobs:
       - tfdiff:
-          workspace: default
+          workspace: production
           context: symphony
           <<: *tfvardir
       - tfapply:
