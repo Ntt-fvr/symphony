@@ -26,7 +26,7 @@ aliases:
         ignore: master
 
   - &tfworkdir
-    working_directory: infra/deploy
+    working_directory: infra/tf/symphony
 
   - &tfvardir
     vardir: /tmp/tfvars
@@ -110,7 +110,7 @@ commands:
   tfinit:
     parameters:
       working_directory:
-        default: infra/deploy
+        default: infra/tf/symphony
         type: string
       workspace:
         default: ""
@@ -137,7 +137,7 @@ commands:
       repo:
         type: string
       working_directory:
-        default: infra/deploy
+        default: infra/tf/symphony
         type: string
     steps:
       - run:
@@ -173,7 +173,7 @@ commands:
       vardir:
         type: string
       working_directory:
-        default: infra/deploy
+        default: infra/tf/symphony
         type: string
     steps:
       - tfathalt:
@@ -339,7 +339,7 @@ jobs:
       - checkout
       - helm-install
       - helm-lint:
-          chart: inventory
+          chart: symphony
           working_directory: <<parameters.working_directory>>
       - helm-lint:
           chart: storybook
@@ -470,7 +470,7 @@ jobs:
           command: mkdir <<parameters.vardir>> && touch <<parameters.vardir>>/.sentinel
       - tfdiff:
           vardir: <<parameters.vardir>>
-          tag: inventory_tag
+          tag: symphony_tag
           repo: graph
       - tfdiff:
           vardir: <<parameters.vardir>>
@@ -489,7 +489,7 @@ jobs:
       targets:
         type: string
         default: >-
-          -target=helm_release.inventory
+          -target=helm_release.symphony
           -target=helm_release.storybook
       after_checkout:
         default: []
@@ -786,7 +786,7 @@ workflows:
             - helm-install
             - run: mkdir /tmp/helm-charts
             - helm-package:
-                chart: inventory
+                chart: symphony
                 destination: /tmp/helm-charts
             - helm-package:
                 chart: storybook
@@ -829,7 +829,7 @@ workflows:
             - staging/deploy
       - tfapply:
           name: production/deploy
-          workspace: default
+          workspace: production
           context: symphony
           after_checkout:
             - tfprepare: *tfprepare

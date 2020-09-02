@@ -4,6 +4,12 @@ variable bootstrap {
   default     = false
 }
 
+variable "symphony_tag" {
+  type        = string
+  description = "Symphony application image tag"
+  default     = null
+}
+
 variable "storybook_tag" {
   type        = string
   description = "Storybook application image tag"
@@ -20,4 +26,19 @@ variable artifactory {
     email           = string
   })
   default = null
+}
+
+variable front_secret {
+  description = "Front secret override"
+  type = object({
+    session_token       = string
+    mapbox_access_token = string
+  })
+  default = null
+}
+
+variable with_orc8r {
+  description = "Enable orchestrator integration"
+  type        = bool
+  default     = true
 }

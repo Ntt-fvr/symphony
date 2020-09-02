@@ -56,14 +56,8 @@ data terraform_remote_state current {
   }
 
   defaults = {
+    symphony_tag  = "latest"
     storybook_tag = "latest"
-    keycloak_db = {
-      vendor   = "mysql"
-      host     = "localhost"
-      port     = 3306
-      user     = "root"
-      password = "root"
-    }
   }
 }
 

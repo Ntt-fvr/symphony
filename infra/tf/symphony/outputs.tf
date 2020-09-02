@@ -1,3 +1,8 @@
+output symphony_tag {
+  description = "Symphony tag currently deployed"
+  value       = local.symphony_tag
+}
+
 output storybook_tag {
   description = "Storybook tag currently deployed"
   value       = local.storybook_tag

@@ -51,3 +51,8 @@ resource aws_s3_bucket_public_access_block store {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+locals {
+  store_bucket_url   = format("s3://%s?region=%s", aws_s3_bucket.store.id, aws_s3_bucket.store.region)
+  store_exports_path = "exports/"
+}
