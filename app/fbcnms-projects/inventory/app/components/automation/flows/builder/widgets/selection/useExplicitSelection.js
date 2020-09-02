@@ -12,14 +12,9 @@ import type {
   ChangeSelectionFunc,
   IsIgnoredElementFunc,
 } from './GraphSelectionContext';
-import type {IShape} from '../../canvas/graph/shapes/BaseShape';
-import type {
-  IVertexModel,
-  Vertex,
-} from '../../canvas/graph/shapes/vertexes/BaseVertext';
+import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 
 import {Events} from '../../canvas/graph/facades/Helpers';
-import {isVertex} from '../../canvas/graph/shapes/ShapesFactory';
 import {useCallback, useEffect, useState} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
 
@@ -30,7 +25,7 @@ const useExplicitSelection = (
   const [
     explicitlySelectedElement,
     setExplicitlySelectedElement,
-  ] = useState<?IVertexModel>();
+  ] = useState<?IBlock>();
 
   const flow = useGraph();
 
@@ -45,24 +40,18 @@ const useExplicitSelection = (
     changeSelection(explicitlySelectedElement);
   }, [changeSelection, explicitlySelectedElement, isIgnoredElement]);
 
-  const onVertexClicked = useCallback((element: Vertex) => {
-    setExplicitlySelectedElement(element.model);
+  const onBlockClicked = useCallback((element: IBlock) => {
+    setExplicitlySelectedElement(element);
   }, []);
 
-  const onVertexCreated = useCallback((newShpae: IShape) => {
-    if (!isVertex(newShpae)) {
-      return;
-    }
-    // eslint-disable-next-line no-warning-comments
-    // $FlowFixMe: Improve flow Graph typings
-    const newVertex: IVertexModel = newShpae;
-    setExplicitlySelectedElement(newVertex);
+  const onBlockAdded = useCallback((newBlock: IBlock) => {
+    setExplicitlySelectedElement(newBlock);
   }, []);
 
   useEffect(() => {
-    flow.onVertexEvent(Events.VertexMouseUp, onVertexClicked);
-    flow.onGraphEvent(Events.VertexAdded, onVertexCreated);
-  }, [flow, onVertexClicked, onVertexCreated]);
+    flow.onBlockEvent(Events.Block.MouseUp, onBlockClicked);
+    flow.onGraphEvent(Events.Graph.BlockAdded, onBlockAdded);
+  }, [flow, onBlockClicked, onBlockAdded]);
 };
 
 export default useExplicitSelection;

@@ -8,43 +8,32 @@
  * @format
  */
 
-import type {IVertexModel} from '../../canvas/graph/shapes/vertexes/BaseVertext';
-
-import Link, {isLink} from '../../canvas/graph/shapes/edges/connectors/Link';
 import {Events} from '../../canvas/graph/facades/Helpers';
-import {useCallback, useEffect, useRef} from 'react';
+import {isLink} from '../../canvas/graph/facades/shapes/edges/Link';
+import {useCallback, useEffect} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
 
 export default function useLinkSelection() {
   const flow = useGraph();
-  const originalTarget = useRef<?IVertexModel>(null);
 
-  const onLinkMouseDown = useCallback((cellView, evt) => {
-    if (!isLink(cellView.model)) {
+  const onConnectorMouseDown = useCallback((connector, evt) => {
+    if (!isLink(connector.model)) {
       return;
     }
-    // eslint-disable-next-line no-warning-comments
-    // $FlowFixMe: Improve flow Graph typings
-    const link: Link = cellView.model;
-    originalTarget.current = link.getTargetElement();
     const position = {x: evt.clientX, y: evt.clientY};
-    link.snapTargetToPointer(cellView.paper, position);
+    connector.snapTargetToPointer(position);
   }, []);
 
-  const onCellMouseUp = useCallback((cellView, evt) => {
-    if (originalTarget.current == null || !isLink(cellView.model)) {
-      return;
-    }
-    // eslint-disable-next-line no-warning-comments
-    // $FlowFixMe: Improve flow Graph typings
-    const link: Link = cellView.model;
-    const position = {x: evt.clientX, y: evt.clientY};
-    link.tryAttachingAtPoint(cellView.paper, position, originalTarget.current);
-    originalTarget.current = null;
-  }, []);
+  const onConnectorMouseUp = useCallback(
+    (connector, evt) => {
+      const position = {x: evt.clientX, y: evt.clientY};
+      connector.tryAttachingAtPoint(position, flow);
+    },
+    [flow],
+  );
 
   useEffect(() => {
-    flow.onLinkEvent(Events.LinkMouseDown, onLinkMouseDown);
-    flow.onLinkEvent(Events.LinkMouseUp, onCellMouseUp);
-  }, [onLinkMouseDown, flow, onCellMouseUp]);
+    flow.onConnectorEvent(Events.Connector.MouseDown, onConnectorMouseDown);
+    flow.onConnectorEvent(Events.Connector.MouseUp, onConnectorMouseUp);
+  }, [onConnectorMouseDown, flow, onConnectorMouseUp]);
 }

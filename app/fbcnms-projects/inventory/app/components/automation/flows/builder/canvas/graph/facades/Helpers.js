@@ -9,8 +9,9 @@
  */
 'use strict';
 
+export type Primitive = string | number | Boolean;
 export type KeyValuePair = {
-  [key: string]: string | number | KeyValuePair,
+  [key: string]: Primitive | Array<Primitive> | KeyValuePair,
 };
 
 export type Position = {|
@@ -29,16 +30,24 @@ export type Rect = {|
 |};
 
 export const Events = {
-  LinkMouseHover: 'link:mouseover',
-  LinkMouseDown: 'link:pointerdown',
-  LinkMouseUp: 'link:pointerup',
-  VertexAdded: 'add',
-  VertexMouseUp: 'element:pointerup',
-  VertexMouseDown: 'element:pointerdown',
-  BackdropClick: 'blank:pointerclick',
-  BackdropMouseDown: 'blank:pointerdown',
-  BackdropMouseDrag: 'blank:pointermove',
-  BackdropMouseUp: 'blank:pointerup',
+  Connector: {
+    MouseHover: 'link:mouseover',
+    MouseDown: 'link:pointerdown',
+    MouseUp: 'link:pointerup',
+  },
+  Graph: {
+    BlockAdded: 'add',
+  },
+  Block: {
+    MouseUp: 'element:pointerup',
+    MouseDown: 'element:pointerdown',
+  },
+  Paper: {
+    BackdropClick: 'blank:pointerclick',
+    BackdropMouseDown: 'blank:pointerdown',
+    BackdropMouseDrag: 'blank:pointermove',
+    BackdropMouseUp: 'blank:pointerup',
+  },
 };
 
 export type GeneralEventArgs = $ReadOnly<{|

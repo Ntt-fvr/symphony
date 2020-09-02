@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useState} from 'react';
 import {useGraph} from '../canvas/graph/GraphContext';

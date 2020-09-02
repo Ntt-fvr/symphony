@@ -9,10 +9,10 @@
  */
 'use strict';
 
-import type {GeneralEventArgs} from '../../facades/Helpers';
-import type {Graph} from '../../facades/Graph';
-import type {KeyValuePair, Position, Size} from '../../facades/Helpers';
-import type {Paper} from '../../facades/Paper';
+import type {GeneralEventArgs} from '../../Helpers';
+import type {Graph} from '../../Graph';
+import type {KeyValuePair, Position, Size} from '../../Helpers';
+import type {Paper} from '../../Paper';
 
 export type VertexDescriptor = $ReadOnly<{|
   id: string,
@@ -30,7 +30,7 @@ export type BaseVertexAttributes = $ReadOnly<{|
 |}>;
 
 export type VertexEventCallback = (
-  Vertex,
+  IVertexView,
   GeneralEventArgs,
   number,
   number,
@@ -48,12 +48,12 @@ export interface IVertexModel {
   +embed: IVertexModel => void;
   +unembed: IVertexModel => void;
   +fitEmbeds: ({padding: number}) => void;
-  +view: Paper => Vertex;
+  +view: Paper => IVertexView;
 }
 
-export type Vertex = $ReadOnly<{|
+export type IVertexView = $ReadOnly<{|
   model: IVertexModel,
-  highlight: (?Vertex, options?: KeyValuePair) => void,
+  highlight: (?IVertexView, options?: KeyValuePair) => void,
   unhighlight: () => void,
   isSelected: boolean,
 |}>;

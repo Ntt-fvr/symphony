@@ -8,9 +8,9 @@
  * @format
  */
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import React from 'react';
-import TextInput from '@fbcnms/ui/components/design-system/Input/TextInput';
+import TextInput from '@symphony/design-system/components/Input/TextInput';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useState} from 'react';
 

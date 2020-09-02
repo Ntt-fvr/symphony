@@ -8,7 +8,7 @@
  * @format
  */
 
-import type {ButtonSkin} from './Button';
+import type {ButtonSkin, MouseEventHandler} from './Button';
 import type {SvgIconStyleProps} from '../icons/SvgIcon';
 
 import * as React from 'react';
@@ -25,9 +25,8 @@ export type IconButtonProps = $ReadOnly<{|
 |}>;
 
 type Props = $ReadOnly<{|
-  onClick?:
-    | void
-    | (void | ((SyntheticMouseEvent<HTMLElement>) => void | Promise<void>)),
+  onClick?: MouseEventHandler,
+  onMouseDown?: MouseEventHandler,
   ...IconButtonProps,
 |}>;
 

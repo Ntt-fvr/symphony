@@ -9,48 +9,55 @@
  */
 'use strict';
 
-import type {IBaseShapeAttributes, IShape} from './BaseShape';
-import type {IVertexModel} from './vertexes/BaseVertext';
+import type {IBaseShapeAttributes, IShape} from '../facades/shapes/BaseShape';
+import type {IBlock} from './blocks/BaseBlock';
+import type {IConnector} from './connectors/BaseConnector';
+import type {Paper} from '../facades/Paper';
 
-import CreateCustomWorkorder, {
-  TYPE as CreateCustomWorkorderType,
-} from './vertexes/blocks/actions/CreateCustomWorkorder';
+import BaseConnector from './connectors/BaseConnector';
+import Block from './blocks/BaseBlock';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
-} from './vertexes/blocks/actions/CreateWorkorder';
-import Lasso, {TYPE as LassoType} from './vertexes/helpers/Lasso';
-import Link from './edges/connectors/Link';
+} from '../facades/shapes/vertexes/actions/CreateWorkorder';
+import GeneralStep, {
+  TYPE as GeneralStepType,
+} from '../facades/shapes/vertexes/actions/GeneralStep';
 import ManualStart, {
   TYPE as ManualStartType,
-} from './vertexes/blocks/administrative/ManualStart';
+} from '../facades/shapes/vertexes/administrative/ManualStart';
 import nullthrows from '@fbcnms/util/nullthrows';
-import {getCellType} from './BaseShape';
+import {getCellType} from '../facades/shapes/BaseShape';
 
 const VERTEXES = {
   [ManualStartType]: ManualStart,
+  [GeneralStepType]: GeneralStep,
   [CreateWorkorderType]: CreateWorkorder,
-  [CreateCustomWorkorderType]: CreateCustomWorkorder,
-  [LassoType]: Lasso,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);
-
-export type ShapesFactory = $ReadOnly<{|
-  createVertex: string => IVertexModel,
-  createEdge: () => Link,
-|}>;
 
 export function isVertex(cell: ?IShape | IBaseShapeAttributes) {
   return VERTEX_TYPES.includes(getCellType(cell));
 }
 
-const shapesFactory: ShapesFactory = {
-  createVertex: function (vertexType: string) {
-    const VertexCtor = nullthrows(VERTEXES[vertexType]);
-    return new VertexCtor();
-  },
-  createEdge: function () {
-    return new Link();
-  },
-};
+export interface IShapesFactory {
+  +createBlock: string => Block;
+  +createConnector: (source?: ?IBlock, target?: ?IBlock) => IConnector;
+}
 
-export default shapesFactory;
+export default class ShapesFactory {
+  paper: Paper;
+
+  constructor(paper: Paper) {
+    this.paper = paper;
+  }
+
+  createBlock(type: string) {
+    const VertexCtor = nullthrows(VERTEXES[type]);
+    const vertexModel = new VertexCtor();
+
+    return new Block(vertexModel, this.paper);
+  }
+  createConnector(source?: ?IBlock, target?: ?IBlock) {
+    return new BaseConnector(this.paper, source, target);
+  }
+}

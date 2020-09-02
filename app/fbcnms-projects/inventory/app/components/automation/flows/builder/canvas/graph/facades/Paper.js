@@ -11,11 +11,15 @@
 
 import type {GeneralEventArgs, Position, Rect} from './Helpers';
 import type {Graph} from './Graph';
-import type {IVertexModel, Vertex} from '../shapes/vertexes/BaseVertext';
-import type {LinkEventCallback} from '../shapes/edges/connectors/Link';
-import type {VertexEventCallback} from '../shapes/vertexes/BaseVertext';
+import type {
+  IVertexModel,
+  IVertexView,
+  VertexEventCallback,
+} from './shapes/vertexes/BaseVertext';
+import type {LinkEventCallback} from './shapes/edges/Link';
 
 export type Paper = $ReadOnly<{|
+  model: Graph,
   getContentArea: () => Rect,
   getContentBBox: () => Rect,
   scale: (
@@ -44,7 +48,7 @@ export type Paper = $ReadOnly<{|
   },
   clientToLocalPoint: Position => Position,
   findViewsFromPoint: Position => Array<{model: IVertexModel}>,
-  findViewByModel: IVertexModel => Vertex,
+  findViewByModel: IVertexModel => IVertexView,
 |}>;
 
 export type PaperEventCallback = (GeneralEventArgs, number, number) => void;

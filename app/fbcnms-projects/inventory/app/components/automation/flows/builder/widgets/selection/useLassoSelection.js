@@ -13,12 +13,10 @@ import type {
   IsIgnoredElementFunc,
 } from './GraphSelectionContext';
 import type {GraphContextType} from '../../canvas/graph/GraphContext';
-import type {IVertexModel} from '../../canvas/graph/shapes/vertexes/BaseVertext';
+import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 import type {Position} from '../../canvas/graph/facades/Helpers';
 
-import Lasso, {
-  TYPE as LassoType,
-} from '../../canvas/graph/shapes/vertexes/helpers/Lasso';
+import Lasso from '../../canvas/graph/facades/shapes/vertexes/helpers/Lasso';
 import {Events} from '../../canvas/graph/facades/Helpers';
 import {convertPointsToRect} from '../../../utils/helpers';
 import {useCallback, useEffect, useState} from 'react';
@@ -28,23 +26,16 @@ function createSelectionMarkup(
   flow: GraphContextType,
   position: Position,
 ): ?Lasso {
-  const lasso = flow.addVertex(LassoType, {
-    position: position,
-    size: {width: 0, height: 0},
-  });
-
-  // eslint-disable-next-line no-warning-comments
-  // $FlowFixMe - change Lasso implementation
-  return lasso;
+  return flow.drawLasso(position);
 }
 
-function wrapSelectedElementsWithContainerIfNeeded(
+function wrapSelectedBlocksWithContainerIfNeeded(
   container: Lasso,
-  elements: ?$ReadOnlyArray<IVertexModel>,
+  blocks: ?$ReadOnlyArray<IBlock>,
 ): boolean {
-  if (Array.isArray(elements) && elements.length > 1) {
-    elements.forEach(element => {
-      container.embed(element);
+  if (Array.isArray(blocks) && blocks.length > 1) {
+    blocks.forEach(block => {
+      container.embed(block.model);
     });
   } else {
     return false;
@@ -60,7 +51,7 @@ type LassoSelectionApi = {
 };
 
 export default function useLassoSelection(
-  selectedElements: $ReadOnlyArray<IVertexModel>,
+  selectedElements: $ReadOnlyArray<IBlock>,
   changeSelection: ChangeSelectionFunc,
 ): LassoSelectionApi {
   const [selectionStart, setSelectionStart] = useState<?Position>(null);
@@ -133,7 +124,7 @@ export default function useLassoSelection(
     if (finalSelectionContainer == null) {
       return;
     }
-    const haveLassoSelection = wrapSelectedElementsWithContainerIfNeeded(
+    const haveLassoSelection = wrapSelectedBlocksWithContainerIfNeeded(
       finalSelectionContainer,
       selectedElements,
     );
@@ -154,9 +145,9 @@ export default function useLassoSelection(
       selectionProgressMarkup.resize(selectionRect.width, selectionRect.height);
     }
 
-    const elements = flow.getElementsInArea(selectionRect);
-    const newSelection = elements.filter(
-      element => element != selectionProgressMarkup,
+    const blocks = flow.getBlocksInArea(selectionRect);
+    const newSelection = blocks.filter(
+      block => block.id != selectionProgressMarkup?.id,
     );
     changeSelection(newSelection);
   }, [
@@ -168,16 +159,16 @@ export default function useLassoSelection(
   ]);
 
   useEffect(() => {
-    flow.onPaperEvent(Events.BackdropMouseDown, onDragStartHandler);
-    flow.onPaperEvent(Events.BackdropMouseDrag, onDragHandler);
-    flow.onPaperEvent(Events.BackdropMouseUp, onDragDoneHandler);
+    flow.onPaperEvent(Events.Paper.BackdropMouseDown, onDragStartHandler);
+    flow.onPaperEvent(Events.Paper.BackdropMouseDrag, onDragHandler);
+    flow.onPaperEvent(Events.Paper.BackdropMouseUp, onDragDoneHandler);
   }, [onDragStartHandler, onDragHandler, flow, onDragDoneHandler]);
 
   const checkIfElementShouldBeIgnored = useCallback(
-    (element: ?IVertexModel) =>
+    (element: ?IBlock) =>
       element == null ||
-      element === finalSelectionContainer ||
-      element === selectionProgressMarkup,
+      element.id === finalSelectionContainer?.id ||
+      element.id === selectionProgressMarkup?.id,
     [finalSelectionContainer, selectionProgressMarkup],
   );
 

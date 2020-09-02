@@ -330,13 +330,15 @@ export type ButtonProps = $ReadOnly<{|
   tooltip?: string,
 |}>;
 
+export type MouseEventHandler = (
+  SyntheticMouseEvent<HTMLElement>,
+) => void | Promise<void>;
+
 export type Props = $ReadOnly<{|
   className?: string,
   children: React.Node,
-  onClick?:
-    | void
-    | (void | ((SyntheticMouseEvent<HTMLElement>) => void | Promise<void>)),
-
+  onClick?: ?MouseEventHandler,
+  onMouseDown?: ?MouseEventHandler,
   leftIcon?: SvgIcon,
   leftIconClass?: string,
   rightIcon?: SvgIcon,
@@ -353,6 +355,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
     variant = 'contained',
     useEllipsis = true,
     onClick,
+    onMouseDown,
     leftIcon: LeftIcon = null,
     leftIconClass = null,
     rightIcon: RightIcon = null,
@@ -394,6 +397,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
       title={tooltip}
       disabled={disabled}
       onClick={onClick}
+      onMouseDown={onMouseDown}
       ref={forwardedRef}>
       {LeftIcon ? (
         <LeftIcon

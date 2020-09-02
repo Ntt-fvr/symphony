@@ -16,33 +16,37 @@ import symphony from '@fbcnms/ui/theme/symphony';
 
 export const TYPE = 'helpers.Lasso';
 
-const LassoBaseClass = jointJS.dia.Element.define(
-  TYPE,
-  {
-    attrs: {
-      body: {
-        refWidth: '100%',
-        refHeight: '100%',
-        strokeWidth: 1,
-        stroke: symphony.palette.B900,
-        strokeDasharray: '5 5',
-        strokeDashoffset: 2.5,
-        fill: 'rgba(57, 132, 255, 0.1)',
-        rx: 0,
-        ry: 0,
-        width: 0,
-        height: 0,
-      },
+const defaultProperties = {
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+      strokeWidth: 1,
+      stroke: symphony.palette.B900,
+      strokeDasharray: '5 5',
+      strokeDashoffset: 2.5,
+      fill: 'rgba(57, 132, 255, 0.1)',
+      rx: 0,
+      ry: 0,
+      width: 0,
+      height: 0,
     },
   },
-  {
-    markup: [
-      {
-        tagName: 'rect',
-        selector: 'body',
-      },
-    ],
-  },
+};
+
+const markup = {
+  markup: [
+    {
+      tagName: 'rect',
+      selector: 'body',
+    },
+  ],
+};
+
+const LassoBaseClass = jointJS.dia.Element.define(
+  TYPE,
+  defaultProperties,
+  markup,
 );
 
 export default class Lasso extends LassoBaseClass implements IVertexModel {

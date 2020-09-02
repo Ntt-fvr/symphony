@@ -9,88 +9,137 @@
  */
 'use strict';
 
-import type {Graph, GraphEventCallback, GraphExporter} from './facades/Graph';
+import type {GeneralEventArgs, Position, Rect} from './facades/Helpers';
+import type {Graph, GraphEventCallback} from './facades/Graph';
+import type {IBlock} from './shapes/blocks/BaseBlock';
+import type {IConnector} from './shapes/connectors/BaseConnector';
+import type {IShape} from './facades/shapes/BaseShape';
+import type {IShapesFactory} from './shapes/ShapesFactory';
 import type {
   IVertexModel,
+  IVertexView,
   VertexDescriptor,
   VertexEventCallback,
-} from './shapes/vertexes/BaseVertext';
+} from './facades/shapes/vertexes/BaseVertext';
 import type {
   LinkDescriptor,
+  LinkEventArgs,
   LinkEventCallback,
-} from './shapes/edges/connectors/Link';
+} from './facades/shapes/edges/Link';
 import type {Paper, PaperEventCallback} from './facades/Paper';
-import type {Position, Rect, Size} from './facades/Helpers';
 
 import * as React from 'react';
 import GraphFactory from './GraphFactory';
-import Link, {isLink} from './shapes/edges/connectors/Link';
-import ShapesFactory, {isVertex} from './shapes/ShapesFactory';
+import Lasso from './facades/shapes/vertexes/helpers/Lasso';
+import ShapesFactory from './shapes/ShapesFactory';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import {getRectCenter, getRectDiff} from '../../../utils/helpers';
-import {useContext, useRef} from 'react';
+import {useCallback, useContext, useRef} from 'react';
 
-export type GraphDescriptor = $ReadOnly<{|
-  vertexes: $ReadOnlyArray<VertexDescriptor>,
-  links: $ReadOnlyArray<LinkDescriptor>,
+export type BlockDescriptor = $ReadOnly<{|
+  model: VertexDescriptor,
 |}>;
 
-type AddVertexFunctionType = (
-  vertexType: string,
+export type ConnectorDescriptor = $ReadOnly<{|
+  model: LinkDescriptor,
+|}>;
+
+export type GraphDescriptor = $ReadOnly<{|
+  blocks: $ReadOnlyArray<BlockDescriptor>,
+  connectors: $ReadOnlyArray<ConnectorDescriptor>,
+|}>;
+
+const emptySerialization = {
+  blocks: [],
+  connectors: [],
+};
+
+type AddBlockFunctionType = (
+  type: string,
   options?: ?{
     id?: ?string,
     text?: ?string,
     position?: ?Position,
-    size?: ?Size,
   },
-) => ?IVertexModel;
+) => ?IBlock;
 
-type AddEdgeFunctionType = (options: {
-  source: IVertexModel,
-  target: IVertexModel,
-}) => ?Link;
+type AddConnectorFunctionType = (
+  options?: ?{
+    source?: ?IBlock,
+    target?: ?IBlock,
+  },
+) => ?IConnector;
 
-const emptySerialization = {
-  vertexes: [],
-  links: [],
-};
+export type BlockEventCallback = (
+  IBlock,
+  GeneralEventArgs,
+  number,
+  number,
+) => void;
+
+export type GraphBlockEventCallback = IBlock => void;
+
+export type ConnectorEventCallback = (
+  IConnector,
+  GeneralEventArgs,
+  number,
+  number,
+) => void;
+
+export type GraphEvent = 'add';
+export type PaperEvent =
+  | 'blank:pointerclick'
+  | 'blank:pointerdown'
+  | 'blank:pointermove'
+  | 'blank:pointerup';
+export type BlockEvent = 'element:pointerup' | 'element:pointerdown';
+export type ConnectorEvent =
+  | 'link:mouseover'
+  | 'link:pointerdown'
+  | 'link:pointerup';
 
 export type GraphContextType = {
   bindGraphContainer: HTMLElement => void,
   getMainPaper: () => ?Paper,
-  addVertex: AddVertexFunctionType,
-  addEdge: AddEdgeFunctionType,
+  addBlock: AddBlockFunctionType,
+  addConnector: AddConnectorFunctionType,
+  getBlock: string => ?IBlock,
+  getConnector: string => ?IConnector,
   zoomIn: () => void,
   zoomOut: () => void,
   zoomFit: () => void,
   move: Position => void,
   reset: () => void,
-  onVertexEvent: (string, VertexEventCallback) => void,
-  onLinkEvent: (string, LinkEventCallback) => void,
-  onPaperEvent: (string, PaperEventCallback) => void,
-  onGraphEvent: (string, GraphEventCallback) => void,
+  onGraphEvent: (GraphEvent, GraphBlockEventCallback) => void,
+  onPaperEvent: (PaperEvent, PaperEventCallback) => void,
+  onBlockEvent: (BlockEvent, BlockEventCallback) => void,
+  onConnectorEvent: (ConnectorEvent, ConnectorEventCallback) => void,
   serialize: () => ?GraphDescriptor,
   deserialize: string => void,
-  getElementsInArea: Rect => Array<IVertexModel>,
+  drawLasso: Position => ?Lasso,
+  getBlocksInArea: Rect => Array<IBlock>,
 };
 
 const GraphContextDefaults = {
   bindGraphContainer: emptyFunction,
   getMainPaper: emptyFunction,
-  addVertex: emptyFunction,
-  addEdge: emptyFunction,
+  addBlock: emptyFunction,
+  addConnector: emptyFunction,
+  getBlock: emptyFunction,
+  getConnector: emptyFunction,
   zoomIn: emptyFunction,
   zoomOut: emptyFunction,
   zoomFit: emptyFunction,
   move: emptyFunction,
   reset: emptyFunction,
-  onVertexEvent: emptyFunction,
-  onLinkEvent: emptyFunction,
+  onBlockEvent: emptyFunction,
+  onConnectorEvent: emptyFunction,
   onPaperEvent: emptyFunction,
   onGraphEvent: emptyFunction,
   serialize: () => emptySerialization,
   deserialize: emptyFunction,
-  getElementsInArea: () => [],
+  drawLasso: emptyFunction,
+  getBlocksInArea: () => [],
 };
 
 const GraphContext = React.createContext<GraphContextType>(
@@ -101,50 +150,54 @@ type Props = {|
   children: React.Node,
 |};
 
-function graphAddVertex(
-  vertexType: string,
+function graphAddBlock(
+  type: string,
   options: ?{
     id?: ?string,
     text?: ?string,
     position: ?Position,
-    size?: ?Size,
   },
 ) {
-  const graph = this.current?.graph;
-  if (graph == null) {
+  if (this.current == null) {
     return;
   }
+
+  const shapesFactory = this.current.shapesFactory;
+  const blocksMap = this.current.blocks;
 
   const position = options?.position || {x: 0, y: 0};
-  const size = options?.size ?? {width: 80, height: 40};
 
-  const newVertex = ShapesFactory.createVertex(vertexType);
-  newVertex.resize(size.width, size.height);
-  newVertex.position(position.x, position.y);
-  newVertex.attr({
-    label: {
-      text: options?.text ?? 'step',
-    },
-  });
+  const newBlock = shapesFactory.createBlock(type);
+  newBlock.model.position(position.x, position.y);
+  if (options?.text) {
+    newBlock.model.attr({
+      label: {
+        text: options.text,
+      },
+    });
+  }
 
-  newVertex.addTo(graph);
+  blocksMap.set(newBlock.id, newBlock);
 
-  return newVertex;
+  return newBlock;
 }
 
-function graphAddEdge(options: {source: IVertexModel, target: IVertexModel}) {
-  const graph = this.current?.graph;
-  if (graph == null) {
+function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
+  if (this.current == null) {
     return;
   }
 
-  const link = ShapesFactory.createEdge();
+  const shapesFactory = this.current.shapesFactory;
+  const connectorsMap = this.current.connectors;
 
-  link.source(options?.source);
-  link.target(options?.target);
-  link.addTo(graph);
+  const connector = shapesFactory.createConnector(
+    options?.source,
+    options?.target,
+  );
 
-  return link;
+  connectorsMap.set(connector.id, connector);
+
+  return connector;
 }
 
 function paperZoom(factor?: 1 | -1 | 0 = 1) {
@@ -227,109 +280,173 @@ function paperReset() {
   paperMove.call(this, 0);
 }
 
-function paperOnVertexEvent(event: string, handler: VertexEventCallback) {
+function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
+  if (this.current == null) {
+    return;
+  }
+  const wrappedHandler: VertexEventCallback = (
+    vertexView: IVertexView,
+    generalEventArgs: GeneralEventArgs,
+    positionX: number,
+    positionY: number,
+  ) => {
+    const block = this.current?.blocks.get(vertexView.model.id);
+    if (block == null) {
+      return;
+    }
+    handler(block, generalEventArgs, positionX, positionY);
+  };
+  this.current.paper.on(event, wrappedHandler);
+}
+
+function paperOnPaperEvent(event: PaperEvent, handler: PaperEventCallback) {
   if (this.current == null) {
     return;
   }
   this.current.paper.on(event, handler);
 }
 
-function paperOnPaperEvent(event: string, handler: PaperEventCallback) {
+function paperOnConnectorEvent(
+  event: ConnectorEvent,
+  handler: ConnectorEventCallback,
+) {
   if (this.current == null) {
     return;
   }
-  this.current.paper.on(event, handler);
+  const wrappedHandler: LinkEventCallback = (
+    linkEventArgs: LinkEventArgs,
+    generalEventArgs: GeneralEventArgs,
+    positionX: number,
+    positionY: number,
+  ) => {
+    const connector = this.current?.connectors.get(linkEventArgs.model.id);
+    if (connector == null) {
+      return;
+    }
+    handler(connector, generalEventArgs, positionX, positionY);
+  };
+  this.current.paper.on(event, wrappedHandler);
 }
 
-function paperOnLinkEvent(event: string, handler: LinkEventCallback) {
+function graphOnGraphEvent(
+  event: GraphEvent,
+  handler: GraphBlockEventCallback,
+) {
   if (this.current == null) {
     return;
   }
-  this.current.paper.on(event, handler);
-}
-
-function graphOnGraphEvent(event: string, handler: GraphEventCallback) {
-  if (this.current == null) {
-    return;
-  }
-  this.current.graph.on(event, handler);
+  const wrappedHandler: GraphEventCallback = (shape: IShape) => {
+    const block = this.current?.blocks.get(shape.id);
+    if (block == null) {
+      return;
+    }
+    handler(block);
+  };
+  this.current.graph.on(event, wrappedHandler);
 }
 
 function graphSerialize(): ?GraphDescriptor {
-  if (this.current == null) {
-    return;
-  }
-  const jsonObject: GraphExporter = this.current.graph.toJSON();
+  const allblocks = this.current?.blocks.values() || [];
+  const allConnectors = this.current?.connectors.values() || [];
 
-  const vertexes: $ReadOnlyArray<VertexDescriptor> = jsonObject.cells
-    .map(cell =>
-      isVertex(cell) && cell.position != null
-        ? {
-            type: cell.type,
-            id: cell.id,
-            position: cell.position,
-          }
-        : null,
-    )
-    .filter(Boolean);
-  const links: $ReadOnlyArray<LinkDescriptor> = jsonObject.cells
-    .map(cell =>
-      isLink(cell) && cell.source != null && cell.target != null
-        ? {
-            id: cell.id,
-            sourceId: cell.source.id,
-            targetId: cell.target.id,
-          }
-        : null,
-    )
-    .filter(Boolean);
+  const blocks: $ReadOnlyArray<BlockDescriptor> = [...allblocks].map(block => ({
+    model: {
+      type: block.type,
+      id: block.id,
+      position: block.model.attributes.position,
+    },
+  }));
+  const connectors: $ReadOnlyArray<ConnectorDescriptor> = [
+    ...allConnectors,
+  ].map(connector => ({
+    model: {
+      id: connector.id,
+      sourceId: connector.source?.id,
+      targetId: connector.target?.id,
+    },
+  }));
 
   return {
-    vertexes,
-    links,
+    blocks,
+    connectors,
   };
 }
 
 function graphDeserialize(json: string) {
   const graphDescriptor: GraphDescriptor = JSON.parse(json);
 
-  if (graphDescriptor.vertexes == null) {
+  if (graphDescriptor.blocks == null) {
     return;
   }
 
-  const newVertexesMap = new Map<string, IVertexModel>();
-  graphDescriptor.vertexes.forEach(vertex => {
-    const newVertex = graphAddVertex.call(this, vertex.type, {
-      position: vertex.position,
+  const newBlocksMap = new Map<string, IBlock>();
+  graphDescriptor.blocks.forEach(block => {
+    const newBlock = graphAddBlock.call(this, block.model.type, {
+      position: block.model.position,
     });
-    if (newVertex == null) {
+    if (newBlock == null) {
       return;
     }
-    newVertexesMap.set(vertex.id, newVertex);
+    newBlocksMap.set(block.model.id, newBlock);
   });
 
-  if (graphDescriptor.links == null) {
+  if (graphDescriptor.connectors == null) {
     return;
   }
 
-  graphDescriptor.links.forEach(link => {
-    const vSource = newVertexesMap.get(link.sourceId);
-    const vTarget = newVertexesMap.get(link.targetId);
-    if (vSource == null || vTarget == null) {
+  graphDescriptor.connectors.forEach(link => {
+    const blockSource =
+      link.model.sourceId != null
+        ? newBlocksMap.get(link.model.sourceId)
+        : null;
+    const blockTarget =
+      link.model.targetId != null
+        ? newBlocksMap.get(link.model.targetId)
+        : null;
+    if (blockSource == null || blockTarget == null) {
       return;
     }
-    graphAddEdge.call(this, {
-      source: vSource,
-      target: vTarget,
+    graphAddConnector.call(this, {
+      source: blockSource,
+      target: blockTarget,
     });
   });
 }
 
-function graphGetElementsInArea(rect: Rect): Array<IVertexModel> {
+function graphDrawLasso(position: Position) {
+  const graph = this.current?.graph;
+  if (graph == null) {
+    return;
+  }
+
+  const lasso = new Lasso();
+  lasso.position(position.x, position.y);
+  lasso.addTo(graph);
+
+  return lasso;
+}
+
+function graphGetBlock(id: string) {
+  return this.current?.blocks.get(id);
+}
+
+function graphGetConnector(id: string) {
+  return this.current?.connectors.get(id);
+}
+
+function graphGetBlocksInArea(rect: Rect): Array<IBlock> {
   if (this.current == null) {
     return [];
   }
-  return this.current.graph.findModelsInArea(rect);
+  const blocksMap = this.current.blocks;
+  const vertexes: Array<IVertexModel> = this.current.graph.findModelsInArea(
+    rect,
+  );
+  const blocks = vertexes
+    .map(vertex => blocksMap.get(vertex.id))
+    .filter(Boolean);
+
+  return blocks;
 }
 
 function graphGetMainPaper(): ?Paper {
@@ -339,6 +456,9 @@ function graphGetMainPaper(): ?Paper {
 type FlowWrapper = {|
   graph: Graph,
   paper: Paper,
+  blocks: Map<string, IBlock>,
+  connectors: Map<string, IConnector>,
+  shapesFactory: IShapesFactory,
   paperScale: number,
   paperTranslation: Position,
 |};
@@ -347,7 +467,7 @@ export function GraphContextProvider(props: Props) {
   const {children} = props;
   const flowWrapper = useRef<?FlowWrapper>();
 
-  const bindGraphContainer = containerElement => {
+  const bindGraphContainer = useCallback(containerElement => {
     const graph = new GraphFactory.Graph();
     const paper = new GraphFactory.Paper({
       el: containerElement,
@@ -359,51 +479,61 @@ export function GraphContextProvider(props: Props) {
         color: 'white',
       },
     });
+    const shapesFactory = new ShapesFactory(paper);
 
     flowWrapper.current = {
       graph,
       paper,
+      blocks: new Map(),
+      connectors: new Map(),
+      shapesFactory,
       paperScale: 1,
       paperTranslation: {
         x: 0,
         y: 0,
       },
     };
-  };
+  }, []);
 
   const getMainPaper = graphGetMainPaper.bind(flowWrapper);
-  const addVertex = graphAddVertex.bind(flowWrapper);
-  const addEdge = graphAddEdge.bind(flowWrapper);
+  const addBlock = graphAddBlock.bind(flowWrapper);
+  const addConnector = graphAddConnector.bind(flowWrapper);
   const zoomIn = paperZoomIn.bind(flowWrapper);
   const zoomOut = paperZoomOut.bind(flowWrapper);
   const zoomFit = paperZoomFit.bind(flowWrapper);
   const move = paperMove.bind(flowWrapper);
   const reset = paperReset.bind(flowWrapper);
-  const onVertexEvent = paperOnVertexEvent.bind(flowWrapper);
-  const onLinkEvent = paperOnLinkEvent.bind(flowWrapper);
+  const onBlockEvent = paperOnBlockEvent.bind(flowWrapper);
+  const onConnectorEvent = paperOnConnectorEvent.bind(flowWrapper);
   const onPaperEvent = paperOnPaperEvent.bind(flowWrapper);
   const onGraphEvent = graphOnGraphEvent.bind(flowWrapper);
   const serialize = graphSerialize.bind(flowWrapper);
   const deserialize = graphDeserialize.bind(flowWrapper);
-  const getElementsInArea = graphGetElementsInArea.bind(flowWrapper);
+  const getConnector = graphGetConnector.bind(flowWrapper);
+  const getBlock = graphGetBlock.bind(flowWrapper);
+  const drawLasso = graphDrawLasso.bind(flowWrapper);
+  const getBlocksInArea = graphGetBlocksInArea.bind(flowWrapper);
 
   const value = {
     bindGraphContainer,
     getMainPaper,
-    addVertex,
-    addEdge,
+    addBlock,
+    addConnector,
     zoomIn,
     zoomOut,
     zoomFit,
     move,
     reset,
-    onVertexEvent,
-    onLinkEvent,
+    onBlockEvent,
+    onConnectorEvent,
     onPaperEvent,
     onGraphEvent,
     serialize,
     deserialize,
-    getElementsInArea,
+    getConnector,
+    getBlock,
+    drawLasso,
+    getBlocksInArea,
   };
 
   return (

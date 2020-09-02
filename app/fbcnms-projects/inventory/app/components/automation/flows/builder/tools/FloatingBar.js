@@ -8,12 +8,12 @@
  * @format
  */
 
-import type {IVertexModel} from '../canvas/graph/shapes/vertexes/BaseVertext';
+import type {IBlock} from '../canvas/graph/shapes/blocks/BaseBlock';
+import type {Position} from '../canvas/graph/facades/Helpers';
 
-import IconButton from '@fbcnms/ui/components/design-system/IconButton';
+import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback, useEffect, useState} from 'react';
-import {ArrowRightIcon} from '@fbcnms/ui/components/design-system/Icons';
-import {TYPE as CreateWorkorderType} from '../canvas/graph/shapes/vertexes/blocks/actions/CreateWorkorder';
+import {ArrowRightIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useGraph} from '../canvas/graph/GraphContext';
 import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
@@ -32,27 +32,35 @@ type FloatingBarStyle = $ReadOnly<{|
 |}>;
 const defaultStyle = {display: 'none'};
 
+function mouseEventArgsToPosition(args: {
+  +clientX: number,
+  +clientY: number,
+}): Position {
+  return {
+    x: args.clientX,
+    y: args.clientY,
+  };
+}
+
 export default function FloatingBar() {
   const classes = useStyles();
   const [style, setStyle] = useState<FloatingBarStyle>(defaultStyle);
-  const [activeGraphElement, setActiveGraphElement] = useState<?IVertexModel>(
-    null,
-  );
+  const [activeBlock, setActiveBlock] = useState<?IBlock>(null);
 
   const flow = useGraph();
   const selection = useGraphSelection();
 
   useEffect(() => {
-    const newActiveGraphElement =
+    const newActiveBlock =
       selection.selectedElements.length === 1
         ? selection.selectedElements[0]
         : null;
 
-    if (newActiveGraphElement == null) {
+    if (newActiveBlock == null) {
       setStyle(defaultStyle);
     } else {
-      const position = newActiveGraphElement.attributes.position;
-      const size = newActiveGraphElement.attributes.size;
+      const position = newActiveBlock.model.attributes.position;
+      const size = newActiveBlock.model.attributes.size;
 
       setStyle({
         left: `${position.x + size.width}px`,
@@ -60,34 +68,40 @@ export default function FloatingBar() {
       });
     }
 
-    setActiveGraphElement(newActiveGraphElement);
+    setActiveBlock(newActiveBlock);
   }, [selection.selectedElements]);
 
-  const addStep = useCallback(() => {
-    if (activeGraphElement == null) {
-      return;
-    }
+  const addStep = useCallback(
+    args => {
+      if (activeBlock == null) {
+        return;
+      }
 
-    const position = activeGraphElement.attributes.position;
-    const size = activeGraphElement.attributes.size;
+      const connector = flow.addConnector({source: activeBlock});
+      if (connector == null) {
+        return;
+      }
 
-    const target = flow.addVertex(CreateWorkorderType, {
-      text: 'new step',
-      position: {
-        x: position.x + size.width + 100,
-        y: position.y,
-      },
-    });
+      const snapToPointer = mouseEventArgs =>
+        connector.snapTargetToPointer(mouseEventArgsToPosition(mouseEventArgs));
+      snapToPointer(args);
+      window.addEventListener('mousemove', snapToPointer);
 
-    if (target) {
-      flow.addEdge({source: activeGraphElement, target: target});
-      // selectionChangedHandler({model: target});
-    }
-  }, [activeGraphElement, flow]);
+      const trySettingSource = (mouseEventArgs: MouseEvent) => {
+        connector.tryAttachingAtPoint(
+          mouseEventArgsToPosition(mouseEventArgs),
+          flow,
+        );
+        window.removeEventListener('mousemove', snapToPointer);
+      };
+      window.addEventListener('mouseup', trySettingSource, {once: true});
+    },
+    [activeBlock, flow],
+  );
 
   return (
     <div className={classes.root} style={style}>
-      <IconButton icon={ArrowRightIcon} onClick={addStep} />
+      <IconButton icon={ArrowRightIcon} onMouseDown={addStep} />
     </div>
   );
 }

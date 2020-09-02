@@ -9,42 +9,42 @@
  */
 'use strict';
 
-import type {IVertexModel} from '../../BaseVertext';
-import type {Paper} from '../../../../facades/Paper';
+import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
 
 export const TYPE = 'administrative.ManualStart';
 
-const ManualStartBaseClass = jointJS.dia.Element.define(
-  TYPE,
-  {
-    attrs: {
-      image: {
-        xlinkHref: '/inventory/static/svg/go.svg',
-        refWidth: '100%',
-        refHeight: '100%',
-      },
+const defaultProperties = {
+  attrs: {
+    image: {
+      xlinkHref: '/inventory/static/svg/go.svg',
+      refWidth: '100%',
+      refHeight: '100%',
     },
   },
-  {
-    markup: [
-      {
-        tagName: 'image',
-        selector: 'image',
-      },
-    ],
-  },
+};
+
+const markup = {
+  markup: [
+    {
+      tagName: 'image',
+      selector: 'image',
+    },
+  ],
+};
+
+const ManualStartBaseClass = jointJS.dia.Element.define(
+  TYPE,
+  defaultProperties,
+  markup,
 );
 
 export default class ManualStart extends ManualStartBaseClass
   implements IVertexModel {
   constructor() {
     super();
-  }
-
-  view(p: Paper) {
-    return p.findViewByModel(this);
+    this.resize(36, 36);
   }
 }
 

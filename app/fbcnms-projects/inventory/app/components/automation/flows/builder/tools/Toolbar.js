@@ -8,13 +8,14 @@
  * @format
  */
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import JsonInputDialog from './JsonInputDialog';
 import React, {useCallback} from 'react';
-import {TYPE as CreateCustomWorkorderType} from '../canvas/graph/shapes/vertexes/blocks/actions/CreateCustomWorkorder';
-import {TYPE as ManualStartType} from '../canvas/graph/shapes/vertexes/blocks/administrative/ManualStart';
+import {TYPE as CreateCustomWorkorderType} from '../canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
+import {TYPE as GeneralStepType} from '../canvas/graph/facades/shapes/vertexes/actions/GeneralStep';
+import {TYPE as ManualStartType} from '../canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {makeStyles} from '@material-ui/styles';
-import {useDialogShowingContext} from '@fbcnms/ui/components/design-system/Dialog/DialogShowingContext';
+import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {useGraph} from '../canvas/graph/GraphContext';
 
 const useStyles = makeStyles(() => ({
@@ -81,19 +82,24 @@ export default function Toolbar() {
       </Button>
       <Button
         onClick={() => {
-          flow.addVertex(ManualStartType, {
+          flow.addBlock(ManualStartType, {
             position: {x: 200, y: 100},
-            size: {width: 60, height: 60},
           });
         }}>
         Add Start
       </Button>
       <Button
         onClick={() => {
-          flow.addVertex(CreateCustomWorkorderType, {
+          flow.addBlock(GeneralStepType, {
             position: {x: 500, y: 100},
-            size: {width: 55, height: 60},
-            text: 'Supervisor approval',
+          });
+        }}>
+        Add Manual Step
+      </Button>
+      <Button
+        onClick={() => {
+          flow.addBlock(CreateCustomWorkorderType, {
+            position: {x: 500, y: 100},
           });
         }}>
         Add Custom Worker

@@ -14,7 +14,7 @@ import FloatingBar from './tools/FloatingBar';
 import JsonViewer from './tools/JsonViewer';
 import React from 'react';
 import Toolbar from './tools/Toolbar';
-import ViewContainer from '@fbcnms/ui/components/design-system/View/ViewContainer';
+import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {makeStyles} from '@material-ui/styles';

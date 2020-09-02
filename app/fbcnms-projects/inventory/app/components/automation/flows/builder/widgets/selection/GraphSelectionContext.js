@@ -8,17 +8,15 @@
  * @format
  */
 
-import type {IVertexModel} from '../../canvas/graph/shapes/vertexes/BaseVertext';
+import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 
 import * as React from 'react';
 import useExplicitSelection from './useExplicitSelection';
 import useLassoSelection from './useLassoSelection';
 import useLinkSelection from './useLinkSelection';
-import {highlight, unhighlight} from '../../../utils/helpers';
 import {useCallback, useContext, useState} from 'react';
-import {useGraph} from '../../canvas/graph/GraphContext';
 
-type SelectedElement = $ReadOnly<IVertexModel>;
+type SelectedElement = $ReadOnly<IBlock>;
 
 export type Selection = $ReadOnlyArray<SelectedElement>;
 export type GraphSelectionContextType = {
@@ -35,7 +33,7 @@ const GraphSelectionContext = React.createContext<GraphSelectionContextType>(
 
 export type ChangeSelectionFunc = (SelectedElement | Selection) => void;
 
-export type IsIgnoredElementFunc = IVertexModel => boolean;
+export type IsIgnoredElementFunc = IBlock => boolean;
 
 type Props = {|
   children: React.Node,
@@ -43,14 +41,12 @@ type Props = {|
 
 export function GraphSelectionContextProvider(props: Props) {
   const [selectedElements, setSelectedElements] = useState<
-    $ReadOnlyArray<IVertexModel>,
+    $ReadOnlyArray<IBlock>,
   >([]);
 
-  const flow = useGraph();
-
   const changeSelection: ChangeSelectionFunc = useCallback(
-    (newSelection: IVertexModel | $ReadOnlyArray<IVertexModel>) => {
-      const newSelectedElements: $ReadOnlyArray<IVertexModel> = Array.isArray(
+    (newSelection: IBlock | $ReadOnlyArray<IBlock>) => {
+      const newSelectedElements: $ReadOnlyArray<IBlock> = Array.isArray(
         newSelection,
       )
         ? newSelection
@@ -60,13 +56,13 @@ export function GraphSelectionContextProvider(props: Props) {
         if (previousSelectedElements != null) {
           previousSelectedElements
             .filter(element => !newSelectedElements.includes(element))
-            .forEach(element => unhighlight(flow, element));
+            .forEach(element => element.deselect());
         }
         newSelectedElements
           .filter(
             element => !(previousSelectedElements || []).includes(element),
           )
-          .forEach(element => highlight(flow, element));
+          .forEach(element => element.select());
 
         return newSelectedElements;
       });

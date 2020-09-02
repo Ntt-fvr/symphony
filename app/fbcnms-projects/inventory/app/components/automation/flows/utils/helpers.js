@@ -7,12 +7,6 @@
  * @flow
  * @format
  */
-
-import type {GraphContextType} from '../builder/canvas/graph/GraphContext';
-import type {
-  IVertexModel,
-  Vertex,
-} from '../builder/canvas/graph/shapes/vertexes/BaseVertext';
 import type {Position, Rect} from '../builder/canvas/graph/facades/Helpers';
 
 export function getRectDiff(rectA: Rect, rectB: Rect): Rect {
@@ -43,20 +37,4 @@ export function convertPointsToRect(pt1: Position, pt2: Position): Rect {
     width: maxX - minX,
     height: maxY - minY,
   };
-}
-
-function modelToVertex(flow: GraphContextType, model: IVertexModel): ?Vertex {
-  const paper = flow.getMainPaper();
-  if (paper == null) {
-    return;
-  }
-  return model.view(paper);
-}
-
-export function highlight(flow: GraphContextType, model: IVertexModel) {
-  modelToVertex(flow, model)?.highlight();
-}
-
-export function unhighlight(flow: GraphContextType, model: IVertexModel) {
-  modelToVertex(flow, model)?.unhighlight();
 }
