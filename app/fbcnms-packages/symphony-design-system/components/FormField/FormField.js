@@ -14,7 +14,7 @@ import FormElementContext from '../Form/FormElementContext';
 import Text from '../Text';
 import classNames from 'classnames';
 import nullthrows from 'nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useContext, useMemo} from 'react';
 

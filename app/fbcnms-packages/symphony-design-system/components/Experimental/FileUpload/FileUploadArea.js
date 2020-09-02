@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {PlusIcon, UploadIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useState} from 'react';
