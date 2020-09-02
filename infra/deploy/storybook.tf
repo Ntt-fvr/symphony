@@ -22,7 +22,7 @@ resource helm_release storybook {
   imagePullSecrets:
     - name: ${kubernetes_secret.artifactory.metadata[0].name}
   ingress:
-    enabled: true
+    enabled: false
     annotations:
       kubernetes.io/ingress.class: nginx
     hosts:
