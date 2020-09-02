@@ -113,7 +113,7 @@ func (e *ValidationError) Error() string {
 
 // Unwrap implements the errors.Wrapper interface.
 func (e *ValidationError) Unwrap() error {
-	return errors.Unwrap(e.err)
+	return e.err
 }
 
 // IsValidationError returns a boolean indicating whether the error is a validaton error.
@@ -222,8 +222,8 @@ func isSQLConstraintError(err error) (*ConstraintError, bool) {
 		msg = err.Error()
 		// error format per dialect.
 		errors = [...]string{
-			"Error 1062",                                     // MySQL 1062 error (ER_DUP_ENTRY).
-			"UNIQUE constraint failed",                       // SQLite.
+			"Error 1062",               // MySQL 1062 error (ER_DUP_ENTRY).
+			"UNIQUE constraint failed", // SQLite.
 			"duplicate key value violates unique constraint", // PostgreSQL.
 		}
 	)
