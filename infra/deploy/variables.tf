@@ -31,9 +31,3 @@ variable inventory_tag {
   type        = string
   default     = ""
 }
-
-variable storybook_tag {
-  description = "Storybook application image tag"
-  type        = string
-  default     = ""
-}

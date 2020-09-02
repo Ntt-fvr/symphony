@@ -23,11 +23,6 @@ output inventory_tag {
   value       = local.inventory_tag
 }
 
-output storybook_tag {
-  description = "Storybook tag currently deployed"
-  value       = local.storybook_tag
-}
-
 output database {
   description = "Database subnets and security groups"
   value = {

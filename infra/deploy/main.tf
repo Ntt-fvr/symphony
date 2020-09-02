@@ -77,7 +77,6 @@ data terraform_remote_state current {
   # first time deployment defaults
   defaults = {
     inventory_tag = "latest"
-    storybook_tag = "latest"
   }
 }
 
