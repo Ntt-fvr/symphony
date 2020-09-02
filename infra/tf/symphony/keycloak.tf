@@ -57,8 +57,7 @@ resource helm_release keycloak {
     replicas            = 2
     podDisruptionBudget = { minAvailable = 1 }
     ingress = {
-      # TODO: enable once default/keycloak ingress gets removed.
-      enabled = false
+      enabled = true
       annotations = {
         "kubernetes.io/ingress.class"                     = "nginx"
         "nginx.ingress.kubernetes.io/affinity"            = "cookie"
