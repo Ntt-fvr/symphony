@@ -59,7 +59,7 @@ resource helm_release keycloak {
   values = [<<EOT
   replicas: 2
   ingress:
-    enabled: true
+    enabled: false
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/affinity: cookie

@@ -109,8 +109,7 @@ resource helm_release symphony {
         name = kubernetes_secret.artifactory.metadata.0.name
       }]
       ingress = {
-        # TODO: enable once default/inventory ingress gets removed.
-        enabled = false
+        enabled = true
         annotations = {
           "kubernetes.io/ingress.class"                 = "nginx"
           "nginx.ingress.kubernetes.io/proxy-body-size" = "10m"
@@ -278,5 +277,50 @@ resource helm_release symphony {
 
   lifecycle {
     prevent_destroy = true
+  }
+}
+
+resource kubernetes_cron_job tenant_cleaner {
+  for_each = terraform.workspace == "staging" ? {
+    testimio = {
+      schedule = "25,55 * * * *"
+    }
+    fb-test = {
+      schedule = "0 0 * * *"
+    }
+  } : {}
+
+  metadata {
+    name      = "${local.symphony_name}-${each.key}-cleaner"
+    namespace = kubernetes_namespace.symphony.id
+  }
+
+  spec {
+    concurrency_policy            = "Forbid"
+    successful_jobs_history_limit = 0
+    schedule                      = each.value.schedule
+
+    job_template {
+      metadata {}
+      spec {
+        template {
+          metadata {}
+          spec {
+            container {
+              name  = "${local.symphony_name}-${each.key}-cleaner"
+              image = "networld/grpcurl"
+              command = [
+                "/bin/sh",
+                "-c",
+                format(
+                  "/grpcurl -plaintext -d '%q' %s-graph.%s.svc.cluster.local:443 graph.TenantService.Truncate",
+                  each.key, local.symphony_name, kubernetes_namespace.symphony.id,
+                ),
+              ]
+            }
+          }
+        }
+      }
+    }
   }
 }

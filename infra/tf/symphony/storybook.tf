@@ -21,8 +21,7 @@ resource helm_release storybook {
       name = kubernetes_secret.artifactory.metadata.0.name
     }]
     ingress = {
-      # TODO: enable once default/storybook ingress gets removed.
-      enabled = false
+      enabled = true
       annotations = {
         "kubernetes.io/ingress.class" = "nginx"
       }
