@@ -18,11 +18,6 @@ output grafana_admin_password {
   sensitive   = true
 }
 
-output inventory_tag {
-  description = "Inventory tag currently deployed"
-  value       = local.inventory_tag
-}
-
 output database {
   description = "Database subnets and security groups"
   value = {

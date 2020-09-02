@@ -25,9 +25,3 @@ variable deployer_name {
   type        = string
   default     = "circleci-bot"
 }
-
-variable inventory_tag {
-  description = "Inventory application image tag"
-  type        = string
-  default     = ""
-}

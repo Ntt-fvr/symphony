@@ -61,25 +61,6 @@ locals {
   output_path = "${path.module}/.terraform/output/"
 }
 
-data terraform_remote_state current {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  # must be identical to backend config
-  config = {
-    bucket               = "symphony.deployment"
-    region               = "us-east-1"
-    key                  = "terraform/terraform.tfstate"
-    workspace_key_prefix = "terraform"
-    dynamodb_table       = "symphony.terraform.lock"
-  }
-
-  # first time deployment defaults
-  defaults = {
-    inventory_tag = "latest"
-  }
-}
-
 # expose deployment bucket
 data aws_s3_bucket deployment {
   bucket   = "symphony.deployment"
