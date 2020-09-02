@@ -362,7 +362,7 @@ jobs:
               unzip tflint.zip && rm tflint.zip
       - run:
           name: Run tflint
-          <<: *tfworkdir
+          working_directory: infra/tf
           command: tflint --deep --module
 
   integration:

@@ -1,7 +1,7 @@
 imagePullSecrets:
   - name: ${image_pull_secret}
 ingress:
-  enabled: true
+  enabled: false
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-body-size: 10m
