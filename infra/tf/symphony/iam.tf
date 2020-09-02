@@ -1,8 +1,17 @@
+locals {
+  symphony_admin_role = "SymphonyAdminRole"
+}
+
 module team {
   source     = "../modules/team-iam"
   group_name = "Symphony"
-  role_name  = "SymphonyAdminRole"
+  role_name  = local.symphony_admin_role
   count      = local.production_only_count
+}
+
+data aws_iam_role team_role {
+  name  = local.symphony_admin_role
+  count = 1 - length(module.team)
 }
 
 module deployer {

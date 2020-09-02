@@ -29,6 +29,8 @@ terraform {
   }
 }
 
+data aws_region current {}
+
 locals {
   env = {
     staging = {

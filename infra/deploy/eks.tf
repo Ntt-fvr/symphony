@@ -92,11 +92,6 @@ module eks {
       groups   = ["system:masters"]
     },
     {
-      rolearn  = local.eks_developer_role.arn
-      username = ""
-      groups   = [local.eks_developer_group]
-    },
-    {
       rolearn  = local.orc8r_admin_role.arn
       username = ""
       groups   = [local.orc8r_admin_group]
@@ -221,31 +216,5 @@ data aws_iam_policy_document eks_worker_assumable {
       type        = "AWS"
     }
     actions = ["sts:AssumeRole"]
-  }
-}
-
-# kubernetes cluster role binding for viewers
-resource kubernetes_cluster_role_binding viewers {
-  metadata {
-    name = "viewers"
-  }
-
-  role_ref {
-    kind      = "ClusterRole"
-    name      = "view"
-    api_group = "rbac.authorization.k8s.io"
-  }
-
-  dynamic "subject" {
-    for_each = toset([
-      local.eks_developer_group,
-      local.orc8r_admin_group,
-    ])
-
-    content {
-      kind      = "Group"
-      name      = subject.key
-      api_group = "rbac.authorization.k8s.io"
-    }
   }
 }

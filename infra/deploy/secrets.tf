@@ -18,16 +18,6 @@ data aws_secretsmanager_secret_version mapbox {
   provider  = aws.us-east-1
 }
 
-data aws_secretsmanager_secret apps {
-  name     = "phb/apps"
-  provider = aws.us-east-1
-}
-
-data aws_secretsmanager_secret_version apps {
-  secret_id = data.aws_secretsmanager_secret.apps.id
-  provider  = aws.us-east-1
-}
-
 data aws_secretsmanager_secret alertmanager {
   name     = "symphony/alertmanager"
   provider = aws.us-east-1

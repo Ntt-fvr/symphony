@@ -128,7 +128,7 @@ resource kubernetes_role_binding orc8r_admin {
 
   role_ref {
     kind      = "ClusterRole"
-    name      = "admin"
+    name      = "cluster-admin"
     api_group = "rbac.authorization.k8s.io"
   }
 

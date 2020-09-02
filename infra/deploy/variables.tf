@@ -19,9 +19,3 @@ variable k8s_assume_role {
   type        = bool
   default     = true
 }
-
-variable deployer_name {
-  description = "The service deployer AWS IAM user name"
-  type        = string
-  default     = "circleci-bot"
-}

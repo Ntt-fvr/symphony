@@ -1,17 +1,3 @@
-output kubeconfig {
-  description = "kubectl config file contents for this EKS cluster."
-  value = templatefile("${path.module}/templates/kubeconfig.tpl", {
-    cluster_name      = "symphony-${local.environment}"
-    cluster_namespace = "default"
-    eks_cluster_name  = local.eks_cluster_name
-    cluster_endpoint  = module.eks.cluster_endpoint
-    cluster_auth_data = module.eks.cluster_certificate_authority_data
-    assume_role_arn   = local.eks_developer_role.arn
-    region            = data.aws_region.current.name
-  })
-  sensitive = true
-}
-
 output grafana_admin_password {
   description = "Grafana administrator password"
   value       = random_string.grafana_admin_password.result
