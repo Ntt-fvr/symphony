@@ -201,6 +201,7 @@ func (Service) Edges() []ent.Edge {
 			From("downstream"),
 		edge.To("properties", Property.Type),
 		edge.To("links", Link.Type),
+		edge.To("ports", EquipmentPort.Type),
 		edge.To("customer", Customer.Type),
 		edge.To("endpoints", ServiceEndpoint.Type),
 	}

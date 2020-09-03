@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -152,6 +153,21 @@ func (sc *ServiceCreate) AddLinks(l ...*Link) *ServiceCreate {
 		ids[i] = l[i].ID
 	}
 	return sc.AddLinkIDs(ids...)
+}
+
+// AddPortIDs adds the ports edge to EquipmentPort by ids.
+func (sc *ServiceCreate) AddPortIDs(ids ...int) *ServiceCreate {
+	sc.mutation.AddPortIDs(ids...)
+	return sc
+}
+
+// AddPorts adds the ports edges to EquipmentPort.
+func (sc *ServiceCreate) AddPorts(e ...*EquipmentPort) *ServiceCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return sc.AddPortIDs(ids...)
 }
 
 // AddCustomerIDs adds the customer edge to Customer by ids.
@@ -417,6 +433,25 @@ func (sc *ServiceCreate) createSpec() (*Service, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: link.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.PortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
 				},
 			},
 		}

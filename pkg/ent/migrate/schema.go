@@ -1857,6 +1857,33 @@ var (
 			},
 		},
 	}
+	// ServicePortsColumns holds the columns for the "service_ports" table.
+	ServicePortsColumns = []*schema.Column{
+		{Name: "service_id", Type: field.TypeInt},
+		{Name: "equipment_port_id", Type: field.TypeInt},
+	}
+	// ServicePortsTable holds the schema information for the "service_ports" table.
+	ServicePortsTable = &schema.Table{
+		Name:       "service_ports",
+		Columns:    ServicePortsColumns,
+		PrimaryKey: []*schema.Column{ServicePortsColumns[0], ServicePortsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "service_ports_service_id",
+				Columns: []*schema.Column{ServicePortsColumns[0]},
+
+				RefColumns: []*schema.Column{ServicesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "service_ports_equipment_port_id",
+				Columns: []*schema.Column{ServicePortsColumns[1]},
+
+				RefColumns: []*schema.Column{EquipmentPortsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceCustomerColumns holds the columns for the "service_customer" table.
 	ServiceCustomerColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -1990,6 +2017,7 @@ var (
 		WorkOrderTypesTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
+		ServicePortsTable,
 		ServiceCustomerTable,
 		UsersGroupMembersTable,
 		UsersGroupPoliciesTable,
@@ -2096,6 +2124,8 @@ func init() {
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[1].RefTable = LinksTable
+	ServicePortsTable.ForeignKeys[0].RefTable = ServicesTable
+	ServicePortsTable.ForeignKeys[1].RefTable = EquipmentPortsTable
 	ServiceCustomerTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceCustomerTable.ForeignKeys[1].RefTable = CustomersTable
 	UsersGroupMembersTable.ForeignKeys[0].RefTable = UsersGroupsTable

@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 )
 
@@ -39,6 +40,7 @@ type EquipmentPortQuery struct {
 	withLink       *LinkQuery
 	withProperties *PropertyQuery
 	withEndpoints  *ServiceEndpointQuery
+	withService    *ServiceQuery
 	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -152,6 +154,24 @@ func (epq *EquipmentPortQuery) QueryEndpoints() *ServiceEndpointQuery {
 			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
 			sqlgraph.To(serviceendpoint.Table, serviceendpoint.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmentport.EndpointsTable, equipmentport.EndpointsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(epq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryService chains the current query on the service edge.
+func (epq *EquipmentPortQuery) QueryService() *ServiceQuery {
+	query := &ServiceQuery{config: epq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := epq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.To(service.Table, service.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, equipmentport.ServiceTable, equipmentport.ServicePrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(epq.driver.Dialect(), step)
 		return fromU, nil
@@ -393,6 +413,17 @@ func (epq *EquipmentPortQuery) WithEndpoints(opts ...func(*ServiceEndpointQuery)
 	return epq
 }
 
+//  WithService tells the query-builder to eager-loads the nodes that are connected to
+// the "service" edge. The optional arguments used to configure the query builder of the edge.
+func (epq *EquipmentPortQuery) WithService(opts ...func(*ServiceQuery)) *EquipmentPortQuery {
+	query := &ServiceQuery{config: epq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	epq.withService = query
+	return epq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -463,12 +494,13 @@ func (epq *EquipmentPortQuery) sqlAll(ctx context.Context) ([]*EquipmentPort, er
 		nodes       = []*EquipmentPort{}
 		withFKs     = epq.withFKs
 		_spec       = epq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			epq.withDefinition != nil,
 			epq.withParent != nil,
 			epq.withLink != nil,
 			epq.withProperties != nil,
 			epq.withEndpoints != nil,
+			epq.withService != nil,
 		}
 	)
 	if epq.withDefinition != nil || epq.withParent != nil || epq.withLink != nil {
@@ -629,6 +661,69 @@ func (epq *EquipmentPortQuery) sqlAll(ctx context.Context) ([]*EquipmentPort, er
 				return nil, fmt.Errorf(`unexpected foreign-key "service_endpoint_port" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Endpoints = append(node.Edges.Endpoints, n)
+		}
+	}
+
+	if query := epq.withService; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*EquipmentPort, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*EquipmentPort)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: true,
+				Table:   equipmentport.ServiceTable,
+				Columns: equipmentport.ServicePrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(equipmentport.ServicePrimaryKey[1], fks...))
+			},
+
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				edgeids = append(edgeids, inValue)
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, epq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "service": %v`, err)
+		}
+		query.Where(service.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "service" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Service = append(nodes[i].Edges.Service, n)
+			}
 		}
 	}
 

@@ -49,13 +49,15 @@ type ServiceEdges struct {
 	Properties []*Property
 	// Links holds the value of the links edge.
 	Links []*Link
+	// Ports holds the value of the ports edge.
+	Ports []*EquipmentPort
 	// Customer holds the value of the customer edge.
 	Customer []*Customer
 	// Endpoints holds the value of the endpoints edge.
 	Endpoints []*ServiceEndpoint
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // TypeOrErr returns the Type value or an error if the edge
@@ -108,10 +110,19 @@ func (e ServiceEdges) LinksOrErr() ([]*Link, error) {
 	return nil, &NotLoadedError{edge: "links"}
 }
 
+// PortsOrErr returns the Ports value or an error if the edge
+// was not loaded in eager-loading.
+func (e ServiceEdges) PortsOrErr() ([]*EquipmentPort, error) {
+	if e.loadedTypes[5] {
+		return e.Ports, nil
+	}
+	return nil, &NotLoadedError{edge: "ports"}
+}
+
 // CustomerOrErr returns the Customer value or an error if the edge
 // was not loaded in eager-loading.
 func (e ServiceEdges) CustomerOrErr() ([]*Customer, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.Customer, nil
 	}
 	return nil, &NotLoadedError{edge: "customer"}
@@ -120,7 +131,7 @@ func (e ServiceEdges) CustomerOrErr() ([]*Customer, error) {
 // EndpointsOrErr returns the Endpoints value or an error if the edge
 // was not loaded in eager-loading.
 func (e ServiceEdges) EndpointsOrErr() ([]*ServiceEndpoint, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Endpoints, nil
 	}
 	return nil, &NotLoadedError{edge: "endpoints"}
@@ -218,6 +229,11 @@ func (s *Service) QueryProperties() *PropertyQuery {
 // QueryLinks queries the links edge of the Service.
 func (s *Service) QueryLinks() *LinkQuery {
 	return (&ServiceClient{config: s.config}).QueryLinks(s)
+}
+
+// QueryPorts queries the ports edge of the Service.
+func (s *Service) QueryPorts() *EquipmentPortQuery {
+	return (&ServiceClient{config: s.config}).QueryPorts(s)
 }
 
 // QueryCustomer queries the customer edge of the Service.

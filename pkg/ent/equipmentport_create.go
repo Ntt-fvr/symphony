@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 )
 
@@ -134,6 +135,21 @@ func (epc *EquipmentPortCreate) AddEndpoints(s ...*ServiceEndpoint) *EquipmentPo
 		ids[i] = s[i].ID
 	}
 	return epc.AddEndpointIDs(ids...)
+}
+
+// AddServiceIDs adds the service edge to Service by ids.
+func (epc *EquipmentPortCreate) AddServiceIDs(ids ...int) *EquipmentPortCreate {
+	epc.mutation.AddServiceIDs(ids...)
+	return epc
+}
+
+// AddService adds the service edges to Service.
+func (epc *EquipmentPortCreate) AddService(s ...*Service) *EquipmentPortCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return epc.AddServiceIDs(ids...)
 }
 
 // Mutation returns the EquipmentPortMutation object of the builder.
@@ -324,6 +340,25 @@ func (epc *EquipmentPortCreate) createSpec() (*EquipmentPort, *sqlgraph.CreateSp
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := epc.mutation.ServiceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
 				},
 			},
 		}

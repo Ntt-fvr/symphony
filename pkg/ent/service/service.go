@@ -41,6 +41,8 @@ const (
 	EdgeProperties = "properties"
 	// EdgeLinks holds the string denoting the links edge name in mutations.
 	EdgeLinks = "links"
+	// EdgePorts holds the string denoting the ports edge name in mutations.
+	EdgePorts = "ports"
 	// EdgeCustomer holds the string denoting the customer edge name in mutations.
 	EdgeCustomer = "customer"
 	// EdgeEndpoints holds the string denoting the endpoints edge name in mutations.
@@ -71,6 +73,11 @@ const (
 	// LinksInverseTable is the table name for the Link entity.
 	// It exists in this package in order to avoid circular dependency with the "link" package.
 	LinksInverseTable = "links"
+	// PortsTable is the table the holds the ports relation/edge. The primary key declared below.
+	PortsTable = "service_ports"
+	// PortsInverseTable is the table name for the EquipmentPort entity.
+	// It exists in this package in order to avoid circular dependency with the "equipmentport" package.
+	PortsInverseTable = "equipment_ports"
 	// CustomerTable is the table the holds the customer relation/edge. The primary key declared below.
 	CustomerTable = "service_customer"
 	// CustomerInverseTable is the table name for the Customer entity.
@@ -110,6 +117,9 @@ var (
 	// LinksPrimaryKey and LinksColumn2 are the table columns denoting the
 	// primary key for the links relation (M2M).
 	LinksPrimaryKey = []string{"service_id", "link_id"}
+	// PortsPrimaryKey and PortsColumn2 are the table columns denoting the
+	// primary key for the ports relation (M2M).
+	PortsPrimaryKey = []string{"service_id", "equipment_port_id"}
 	// CustomerPrimaryKey and CustomerColumn2 are the table columns denoting the
 	// primary key for the customer relation (M2M).
 	CustomerPrimaryKey = []string{"service_id", "customer_id"}

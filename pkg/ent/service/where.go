@@ -701,6 +701,34 @@ func HasLinksWith(preds ...predicate.Link) predicate.Service {
 	})
 }
 
+// HasPorts applies the HasEdge predicate on the "ports" edge.
+func HasPorts() predicate.Service {
+	return predicate.Service(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PortsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PortsTable, PortsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPortsWith applies the HasEdge predicate on the "ports" edge with a given conditions (other predicates).
+func HasPortsWith(preds ...predicate.EquipmentPort) predicate.Service {
+	return predicate.Service(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PortsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PortsTable, PortsPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasCustomer applies the HasEdge predicate on the "customer" edge.
 func HasCustomer() predicate.Service {
 	return predicate.Service(func(s *sql.Selector) {

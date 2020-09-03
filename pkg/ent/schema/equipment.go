@@ -118,6 +118,8 @@ func (EquipmentPort) Edges() []ent.Edge {
 		edge.From("endpoints", ServiceEndpoint.Type).
 			Ref("port").
 			Annotations(entgql.MapsTo("serviceEndpoints")),
+		edge.From("service", Service.Type).
+			Ref("ports"),
 	}
 }
 

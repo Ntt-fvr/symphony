@@ -32,6 +32,8 @@ const (
 	EdgeProperties = "properties"
 	// EdgeEndpoints holds the string denoting the endpoints edge name in mutations.
 	EdgeEndpoints = "endpoints"
+	// EdgeService holds the string denoting the service edge name in mutations.
+	EdgeService = "service"
 
 	// Table holds the table name of the equipmentport in the database.
 	Table = "equipment_ports"
@@ -70,6 +72,11 @@ const (
 	EndpointsInverseTable = "service_endpoints"
 	// EndpointsColumn is the table column denoting the endpoints relation/edge.
 	EndpointsColumn = "service_endpoint_port"
+	// ServiceTable is the table the holds the service relation/edge. The primary key declared below.
+	ServiceTable = "service_ports"
+	// ServiceInverseTable is the table name for the Service entity.
+	// It exists in this package in order to avoid circular dependency with the "service" package.
+	ServiceInverseTable = "services"
 )
 
 // Columns holds all SQL columns for equipmentport fields.
@@ -85,6 +92,12 @@ var ForeignKeys = []string{
 	"equipment_port_definition",
 	"equipment_port_link",
 }
+
+var (
+	// ServicePrimaryKey and ServiceColumn2 are the table columns denoting the
+	// primary key for the service relation (M2M).
+	ServicePrimaryKey = []string{"service_id", "equipment_port_id"}
+)
 
 // Note that the variables below are initialized by the runtime
 // package on the initialization of the application. Therefore,

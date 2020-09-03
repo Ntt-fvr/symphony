@@ -20,6 +20,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 )
 
@@ -116,6 +117,21 @@ func (epu *EquipmentPortUpdate) AddEndpoints(s ...*ServiceEndpoint) *EquipmentPo
 	return epu.AddEndpointIDs(ids...)
 }
 
+// AddServiceIDs adds the service edge to Service by ids.
+func (epu *EquipmentPortUpdate) AddServiceIDs(ids ...int) *EquipmentPortUpdate {
+	epu.mutation.AddServiceIDs(ids...)
+	return epu
+}
+
+// AddService adds the service edges to Service.
+func (epu *EquipmentPortUpdate) AddService(s ...*Service) *EquipmentPortUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return epu.AddServiceIDs(ids...)
+}
+
 // Mutation returns the EquipmentPortMutation object of the builder.
 func (epu *EquipmentPortUpdate) Mutation() *EquipmentPortMutation {
 	return epu.mutation
@@ -167,6 +183,21 @@ func (epu *EquipmentPortUpdate) RemoveEndpoints(s ...*ServiceEndpoint) *Equipmen
 		ids[i] = s[i].ID
 	}
 	return epu.RemoveEndpointIDs(ids...)
+}
+
+// RemoveServiceIDs removes the service edge to Service by ids.
+func (epu *EquipmentPortUpdate) RemoveServiceIDs(ids ...int) *EquipmentPortUpdate {
+	epu.mutation.RemoveServiceIDs(ids...)
+	return epu
+}
+
+// RemoveService removes service edges to Service.
+func (epu *EquipmentPortUpdate) RemoveService(s ...*Service) *EquipmentPortUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return epu.RemoveServiceIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -435,6 +466,44 @@ func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if nodes := epu.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epu.mutation.ServiceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, epu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{equipmentport.Label}
@@ -532,6 +601,21 @@ func (epuo *EquipmentPortUpdateOne) AddEndpoints(s ...*ServiceEndpoint) *Equipme
 	return epuo.AddEndpointIDs(ids...)
 }
 
+// AddServiceIDs adds the service edge to Service by ids.
+func (epuo *EquipmentPortUpdateOne) AddServiceIDs(ids ...int) *EquipmentPortUpdateOne {
+	epuo.mutation.AddServiceIDs(ids...)
+	return epuo
+}
+
+// AddService adds the service edges to Service.
+func (epuo *EquipmentPortUpdateOne) AddService(s ...*Service) *EquipmentPortUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return epuo.AddServiceIDs(ids...)
+}
+
 // Mutation returns the EquipmentPortMutation object of the builder.
 func (epuo *EquipmentPortUpdateOne) Mutation() *EquipmentPortMutation {
 	return epuo.mutation
@@ -583,6 +667,21 @@ func (epuo *EquipmentPortUpdateOne) RemoveEndpoints(s ...*ServiceEndpoint) *Equi
 		ids[i] = s[i].ID
 	}
 	return epuo.RemoveEndpointIDs(ids...)
+}
+
+// RemoveServiceIDs removes the service edge to Service by ids.
+func (epuo *EquipmentPortUpdateOne) RemoveServiceIDs(ids ...int) *EquipmentPortUpdateOne {
+	epuo.mutation.RemoveServiceIDs(ids...)
+	return epuo
+}
+
+// RemoveService removes service edges to Service.
+func (epuo *EquipmentPortUpdateOne) RemoveService(s ...*Service) *EquipmentPortUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return epuo.RemoveServiceIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -841,6 +940,44 @@ func (epuo *EquipmentPortUpdateOne) sqlSave(ctx context.Context) (ep *EquipmentP
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := epuo.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epuo.mutation.ServiceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
 				},
 			},
 		}

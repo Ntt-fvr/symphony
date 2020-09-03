@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
@@ -140,6 +141,21 @@ func (su *ServiceUpdate) AddLinks(l ...*Link) *ServiceUpdate {
 	return su.AddLinkIDs(ids...)
 }
 
+// AddPortIDs adds the ports edge to EquipmentPort by ids.
+func (su *ServiceUpdate) AddPortIDs(ids ...int) *ServiceUpdate {
+	su.mutation.AddPortIDs(ids...)
+	return su
+}
+
+// AddPorts adds the ports edges to EquipmentPort.
+func (su *ServiceUpdate) AddPorts(e ...*EquipmentPort) *ServiceUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.AddPortIDs(ids...)
+}
+
 // AddCustomerIDs adds the customer edge to Customer by ids.
 func (su *ServiceUpdate) AddCustomerIDs(ids ...int) *ServiceUpdate {
 	su.mutation.AddCustomerIDs(ids...)
@@ -239,6 +255,21 @@ func (su *ServiceUpdate) RemoveLinks(l ...*Link) *ServiceUpdate {
 		ids[i] = l[i].ID
 	}
 	return su.RemoveLinkIDs(ids...)
+}
+
+// RemovePortIDs removes the ports edge to EquipmentPort by ids.
+func (su *ServiceUpdate) RemovePortIDs(ids ...int) *ServiceUpdate {
+	su.mutation.RemovePortIDs(ids...)
+	return su
+}
+
+// RemovePorts removes ports edges to EquipmentPort.
+func (su *ServiceUpdate) RemovePorts(e ...*EquipmentPort) *ServiceUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.RemovePortIDs(ids...)
 }
 
 // RemoveCustomerIDs removes the customer edge to Customer by ids.
@@ -585,6 +616,44 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if nodes := su.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.PortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if nodes := su.mutation.RemovedCustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -782,6 +851,21 @@ func (suo *ServiceUpdateOne) AddLinks(l ...*Link) *ServiceUpdateOne {
 	return suo.AddLinkIDs(ids...)
 }
 
+// AddPortIDs adds the ports edge to EquipmentPort by ids.
+func (suo *ServiceUpdateOne) AddPortIDs(ids ...int) *ServiceUpdateOne {
+	suo.mutation.AddPortIDs(ids...)
+	return suo
+}
+
+// AddPorts adds the ports edges to EquipmentPort.
+func (suo *ServiceUpdateOne) AddPorts(e ...*EquipmentPort) *ServiceUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.AddPortIDs(ids...)
+}
+
 // AddCustomerIDs adds the customer edge to Customer by ids.
 func (suo *ServiceUpdateOne) AddCustomerIDs(ids ...int) *ServiceUpdateOne {
 	suo.mutation.AddCustomerIDs(ids...)
@@ -881,6 +965,21 @@ func (suo *ServiceUpdateOne) RemoveLinks(l ...*Link) *ServiceUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return suo.RemoveLinkIDs(ids...)
+}
+
+// RemovePortIDs removes the ports edge to EquipmentPort by ids.
+func (suo *ServiceUpdateOne) RemovePortIDs(ids ...int) *ServiceUpdateOne {
+	suo.mutation.RemovePortIDs(ids...)
+	return suo
+}
+
+// RemovePorts removes ports edges to EquipmentPort.
+func (suo *ServiceUpdateOne) RemovePorts(e ...*EquipmentPort) *ServiceUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.RemovePortIDs(ids...)
 }
 
 // RemoveCustomerIDs removes the customer edge to Customer by ids.
@@ -1217,6 +1316,44 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: link.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := suo.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.PortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
 				},
 			},
 		}

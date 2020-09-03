@@ -403,6 +403,34 @@ func HasEndpointsWith(preds ...predicate.ServiceEndpoint) predicate.EquipmentPor
 	})
 }
 
+// HasService applies the HasEdge predicate on the "service" edge.
+func HasService() predicate.EquipmentPort {
+	return predicate.EquipmentPort(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ServiceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, ServiceTable, ServicePrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasServiceWith applies the HasEdge predicate on the "service" edge with a given conditions (other predicates).
+func HasServiceWith(preds ...predicate.Service) predicate.EquipmentPort {
+	return predicate.EquipmentPort(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ServiceInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, ServiceTable, ServicePrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.EquipmentPort) predicate.EquipmentPort {
 	return predicate.EquipmentPort(func(s *sql.Selector) {

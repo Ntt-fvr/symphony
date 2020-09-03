@@ -1938,6 +1938,22 @@ func (c *EquipmentPortClient) QueryEndpoints(ep *EquipmentPort) *ServiceEndpoint
 	return query
 }
 
+// QueryService queries the service edge of a EquipmentPort.
+func (c *EquipmentPortClient) QueryService(ep *EquipmentPort) *ServiceQuery {
+	query := &ServiceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ep.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, id),
+			sqlgraph.To(service.Table, service.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, equipmentport.ServiceTable, equipmentport.ServicePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ep.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *EquipmentPortClient) Hooks() []Hook {
 	hooks := c.hooks.EquipmentPort
@@ -5393,6 +5409,22 @@ func (c *ServiceClient) QueryLinks(s *Service) *LinkQuery {
 			sqlgraph.From(service.Table, service.FieldID, id),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, service.LinksTable, service.LinksPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPorts queries the ports edge of a Service.
+func (c *ServiceClient) QueryPorts(s *Service) *EquipmentPortQuery {
+	query := &EquipmentPortQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(service.Table, service.FieldID, id),
+			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, service.PortsTable, service.PortsPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
 		return fromV, nil

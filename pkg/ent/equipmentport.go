@@ -47,9 +47,11 @@ type EquipmentPortEdges struct {
 	Properties []*Property
 	// Endpoints holds the value of the endpoints edge.
 	Endpoints []*ServiceEndpoint
+	// Service holds the value of the service edge.
+	Service []*Service
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // DefinitionOrErr returns the Definition value or an error if the edge
@@ -110,6 +112,15 @@ func (e EquipmentPortEdges) EndpointsOrErr() ([]*ServiceEndpoint, error) {
 		return e.Endpoints, nil
 	}
 	return nil, &NotLoadedError{edge: "endpoints"}
+}
+
+// ServiceOrErr returns the Service value or an error if the edge
+// was not loaded in eager-loading.
+func (e EquipmentPortEdges) ServiceOrErr() ([]*Service, error) {
+	if e.loadedTypes[5] {
+		return e.Service, nil
+	}
+	return nil, &NotLoadedError{edge: "service"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -199,6 +210,11 @@ func (ep *EquipmentPort) QueryProperties() *PropertyQuery {
 // QueryEndpoints queries the endpoints edge of the EquipmentPort.
 func (ep *EquipmentPort) QueryEndpoints() *ServiceEndpointQuery {
 	return (&EquipmentPortClient{config: ep.config}).QueryEndpoints(ep)
+}
+
+// QueryService queries the service edge of the EquipmentPort.
+func (ep *EquipmentPort) QueryService() *ServiceQuery {
+	return (&EquipmentPortClient{config: ep.config}).QueryService(ep)
 }
 
 // Update returns a builder for updating this EquipmentPort.
