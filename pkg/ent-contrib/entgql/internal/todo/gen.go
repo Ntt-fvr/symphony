@@ -5,3 +5,4 @@
 package todo
 
 //go:generate go run github.com/99designs/gqlgen --verbose
+//go:generate go run github.com/google/addlicense -c Facebook -y 2004-present -l bsd ./

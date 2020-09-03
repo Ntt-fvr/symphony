@@ -39,7 +39,6 @@ import (
 
 // Injectors from wire.go:
 
-// NewApplication creates a new graph application.
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	config := flags.MySQLConfig
 	viewerConfig := flags.TenancyConfig

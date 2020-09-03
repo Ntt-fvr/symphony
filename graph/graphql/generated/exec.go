@@ -9060,10 +9060,10 @@ enum WorkOrderStatus
   ) {
   PLANNED
   IN_PROGRESS
-  PENDING @deprecated(reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead.")
+  PENDING @deprecated(reason: "Use new status ` + "`" + `IN_PROGRESS` + "`" + ` instead. Will be removed on 2020-11-01")
   SUBMITTED
   CLOSED
-  DONE @deprecated(reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead.")
+  DONE @deprecated(reason: "Use new status ` + "`" + `CLOSED` + "`" + `, ` + "`" + `SUBMITTED` + "`" + ` or ` + "`" + `BLOCKED` + "`" + ` instead. Will be removed on 2020-11-01")
   BLOCKED
 }
 

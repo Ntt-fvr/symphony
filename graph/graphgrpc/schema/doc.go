@@ -4,5 +4,6 @@
 
 //go:generate protoc --go_out=plugins=grpc,paths=source_relative:. rpc.proto
 //go:generate go run github.com/vektra/mockery/cmd/mockery -all -case underscore
+//go:generate go run github.com/google/addlicense -c Facebook -y 2004-present -l bsd ./
 
 package schema

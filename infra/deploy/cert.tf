@@ -9,15 +9,6 @@ resource aws_acm_certificate symphony {
   ]
 
   tags = local.tags
-
-  lifecycle {
-    create_before_destroy = true
-    # SANs are recreated in random order, prevent certificate recreate by ignoring SAN changes
-    # See: https://github.com/terraform-providers/terraform-provider-aws/issues/8531
-    ignore_changes = [
-      subject_alternative_names,
-    ]
-  }
 }
 
 # dns record for symphony certificate validation
