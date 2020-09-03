@@ -336,6 +336,9 @@ func (r mutationResolver) CreateWiFiScans(ctx context.Context, inputs []*models.
 			SetNillableCapabilities(input.Capabilities).
 			SetNillableLatitude(input.Latitude).
 			SetNillableLongitude(input.Longitude).
+			SetNillableAltitude(input.Altitude).
+			SetNillableHeading(input.Heading).
+			SetNillableRssi(input.Rssi).
 			SetNillableSurveyQuestionID(parentIDs.qid).
 			SetNillableLocationID(parentIDs.locationID).
 			SetNillableChecklistItemID(parentIDs.checklistItemID).
@@ -386,6 +389,9 @@ func (r mutationResolver) CreateCellScans(ctx context.Context, inputs []*models.
 			SetNillableUarfcn(input.Uarfcn).
 			SetNillableLatitude(input.Latitude).
 			SetNillableLongitude(input.Longitude).
+			SetNillableAltitude(input.Altitude).
+			SetNillableHeading(input.Heading).
+			SetNillableRssi(input.Rssi).
 			SetNillableSurveyQuestionID(parentIDs.qid).
 			SetNillableLocationID(parentIDs.locationID).
 			SetNillableChecklistItemID(parentIDs.checklistItemID).

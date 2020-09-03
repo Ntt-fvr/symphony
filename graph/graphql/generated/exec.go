@@ -1001,10 +1001,12 @@ type ComplexityRoot struct {
 	}
 
 	SurveyCellScan struct {
+		Altitude              func(childComplexity int) int
 		Arfcn                 func(childComplexity int) int
 		BaseStationID         func(childComplexity int) int
 		CellID                func(childComplexity int) int
 		Earfcn                func(childComplexity int) int
+		Heading               func(childComplexity int) int
 		ID                    func(childComplexity int) int
 		Latitude              func(childComplexity int) int
 		LocationAreaCode      func(childComplexity int) int
@@ -1016,6 +1018,7 @@ type ComplexityRoot struct {
 		Operator              func(childComplexity int) int
 		PhysicalCellID        func(childComplexity int) int
 		PrimaryScramblingCode func(childComplexity int) int
+		Rssi                  func(childComplexity int) int
 		SignalStrength        func(childComplexity int) int
 		SystemID              func(childComplexity int) int
 		Timestamp             func(childComplexity int) int
@@ -1065,15 +1068,18 @@ type ComplexityRoot struct {
 	}
 
 	SurveyWiFiScan struct {
+		Altitude     func(childComplexity int) int
 		Band         func(childComplexity int) int
 		Bssid        func(childComplexity int) int
 		Capabilities func(childComplexity int) int
 		Channel      func(childComplexity int) int
 		ChannelWidth func(childComplexity int) int
 		Frequency    func(childComplexity int) int
+		Heading      func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Latitude     func(childComplexity int) int
 		Longitude    func(childComplexity int) int
+		Rssi         func(childComplexity int) int
 		Ssid         func(childComplexity int) int
 		Strength     func(childComplexity int) int
 		Timestamp    func(childComplexity int) int
@@ -6318,6 +6324,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Survey.SurveyResponses(childComplexity), true
 
+	case "SurveyCellScan.altitude":
+		if e.complexity.SurveyCellScan.Altitude == nil {
+			break
+		}
+
+		return e.complexity.SurveyCellScan.Altitude(childComplexity), true
+
 	case "SurveyCellScan.arfcn":
 		if e.complexity.SurveyCellScan.Arfcn == nil {
 			break
@@ -6345,6 +6358,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SurveyCellScan.Earfcn(childComplexity), true
+
+	case "SurveyCellScan.heading":
+		if e.complexity.SurveyCellScan.Heading == nil {
+			break
+		}
+
+		return e.complexity.SurveyCellScan.Heading(childComplexity), true
 
 	case "SurveyCellScan.id":
 		if e.complexity.SurveyCellScan.ID == nil {
@@ -6422,6 +6442,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SurveyCellScan.PrimaryScramblingCode(childComplexity), true
+
+	case "SurveyCellScan.rssi":
+		if e.complexity.SurveyCellScan.Rssi == nil {
+			break
+		}
+
+		return e.complexity.SurveyCellScan.Rssi(childComplexity), true
 
 	case "SurveyCellScan.signalStrength":
 		if e.complexity.SurveyCellScan.SignalStrength == nil {
@@ -6682,6 +6709,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SurveyTemplateQuestion.QuestionType(childComplexity), true
 
+	case "SurveyWiFiScan.altitude":
+		if e.complexity.SurveyWiFiScan.Altitude == nil {
+			break
+		}
+
+		return e.complexity.SurveyWiFiScan.Altitude(childComplexity), true
+
 	case "SurveyWiFiScan.band":
 		if e.complexity.SurveyWiFiScan.Band == nil {
 			break
@@ -6724,6 +6758,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SurveyWiFiScan.Frequency(childComplexity), true
 
+	case "SurveyWiFiScan.heading":
+		if e.complexity.SurveyWiFiScan.Heading == nil {
+			break
+		}
+
+		return e.complexity.SurveyWiFiScan.Heading(childComplexity), true
+
 	case "SurveyWiFiScan.id":
 		if e.complexity.SurveyWiFiScan.ID == nil {
 			break
@@ -6744,6 +6785,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SurveyWiFiScan.Longitude(childComplexity), true
+
+	case "SurveyWiFiScan.rssi":
+		if e.complexity.SurveyWiFiScan.Rssi == nil {
+			break
+		}
+
+		return e.complexity.SurveyWiFiScan.Rssi(childComplexity), true
 
 	case "SurveyWiFiScan.ssid":
 		if e.complexity.SurveyWiFiScan.Ssid == nil {
@@ -7631,16 +7679,16 @@ var sources = []*ast.Source{
 #  After making changes to this schema file, be sure to regenerate
 #  any code that relies on this schema.
 #  Inventory Front-End:
-#    %> cd ~/fbsource/xplat/fbc/fbcnms-projects/inventory
+#    %> cd ~/symphony/app/fbcnms-projects/inventory
 #    %> yarn relay
 #  Inventory Back-End:
-#    %> cd ~/fbsource/fbcode/fbc/symphony/graph/
+#    %> cd ~/symphony/graph/
 #    %> go generate ./... && go generate
 #  Technician App:
 #    %> cd ~/fbsource/xplat/fbc-mobile-app
 #    %> yarn relay
 #  Pyinventory API:
-#    %> cd ~/fbsource/fbcode/fbc/symphony/cli
+#    %> cd ~/symphony/cli
 #    %> sudo python3 setup_pyinventory.py develop
 #    %> ./compile_graphql.sh
 
@@ -10478,6 +10526,9 @@ input SurveyWiFiScanData {
   capabilities: String
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type SurveyWiFiScan implements Node {
@@ -10493,6 +10544,9 @@ type SurveyWiFiScan implements Node {
   capabilities: String
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 input SurveyCellScanData {
@@ -10516,6 +10570,9 @@ input SurveyCellScanData {
   uarfcn: Int
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type SurveyCellScan implements Node {
@@ -10540,6 +10597,9 @@ type SurveyCellScan implements Node {
   uarfcn: Int
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type EquipmentSearchResult {
@@ -36135,6 +36195,99 @@ func (ec *executionContext) _SurveyCellScan_longitude(ctx context.Context, field
 	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SurveyCellScan_altitude(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyCellScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Altitude, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SurveyCellScan_heading(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyCellScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Heading, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SurveyCellScan_rssi(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyCellScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyCellScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rssi, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SurveyQuestion_id(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyQuestion) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -37520,6 +37673,99 @@ func (ec *executionContext) _SurveyWiFiScan_longitude(ctx context.Context, field
 	res := resTmp.(float64)
 	fc.Result = res
 	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SurveyWiFiScan_altitude(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyWiFiScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyWiFiScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Altitude, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SurveyWiFiScan_heading(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyWiFiScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyWiFiScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Heading, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SurveyWiFiScan_rssi(ctx context.Context, field graphql.CollectedField, obj *ent.SurveyWiFiScan) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SurveyWiFiScan",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rssi, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TopologyLink_type(ctx context.Context, field graphql.CollectedField, obj *models.TopologyLink) (ret graphql.Marshaler) {
@@ -46947,6 +47193,30 @@ func (ec *executionContext) unmarshalInputSurveyCellScanData(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "altitude":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("altitude"))
+			it.Altitude, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "heading":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("heading"))
+			it.Heading, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rssi":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("rssi"))
+			it.Rssi, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -47388,6 +47658,30 @@ func (ec *executionContext) unmarshalInputSurveyWiFiScanData(ctx context.Context
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("longitude"))
 			it.Longitude, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "altitude":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("altitude"))
+			it.Altitude, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "heading":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("heading"))
+			it.Heading, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "rssi":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("rssi"))
+			it.Rssi, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -54517,6 +54811,12 @@ func (ec *executionContext) _SurveyCellScan(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._SurveyCellScan_latitude(ctx, field, obj)
 		case "longitude":
 			out.Values[i] = ec._SurveyCellScan_longitude(ctx, field, obj)
+		case "altitude":
+			out.Values[i] = ec._SurveyCellScan_altitude(ctx, field, obj)
+		case "heading":
+			out.Values[i] = ec._SurveyCellScan_heading(ctx, field, obj)
+		case "rssi":
+			out.Values[i] = ec._SurveyCellScan_rssi(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -54826,6 +55126,12 @@ func (ec *executionContext) _SurveyWiFiScan(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._SurveyWiFiScan_latitude(ctx, field, obj)
 		case "longitude":
 			out.Values[i] = ec._SurveyWiFiScan_longitude(ctx, field, obj)
+		case "altitude":
+			out.Values[i] = ec._SurveyWiFiScan_altitude(ctx, field, obj)
+		case "heading":
+			out.Values[i] = ec._SurveyWiFiScan_heading(ctx, field, obj)
+		case "rssi":
+			out.Values[i] = ec._SurveyWiFiScan_rssi(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

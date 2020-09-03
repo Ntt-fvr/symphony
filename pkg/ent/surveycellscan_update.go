@@ -456,6 +456,87 @@ func (scsu *SurveyCellScanUpdate) ClearLongitude() *SurveyCellScanUpdate {
 	return scsu
 }
 
+// SetAltitude sets the altitude field.
+func (scsu *SurveyCellScanUpdate) SetAltitude(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.ResetAltitude()
+	scsu.mutation.SetAltitude(f)
+	return scsu
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (scsu *SurveyCellScanUpdate) SetNillableAltitude(f *float64) *SurveyCellScanUpdate {
+	if f != nil {
+		scsu.SetAltitude(*f)
+	}
+	return scsu
+}
+
+// AddAltitude adds f to altitude.
+func (scsu *SurveyCellScanUpdate) AddAltitude(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.AddAltitude(f)
+	return scsu
+}
+
+// ClearAltitude clears the value of altitude.
+func (scsu *SurveyCellScanUpdate) ClearAltitude() *SurveyCellScanUpdate {
+	scsu.mutation.ClearAltitude()
+	return scsu
+}
+
+// SetHeading sets the heading field.
+func (scsu *SurveyCellScanUpdate) SetHeading(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.ResetHeading()
+	scsu.mutation.SetHeading(f)
+	return scsu
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (scsu *SurveyCellScanUpdate) SetNillableHeading(f *float64) *SurveyCellScanUpdate {
+	if f != nil {
+		scsu.SetHeading(*f)
+	}
+	return scsu
+}
+
+// AddHeading adds f to heading.
+func (scsu *SurveyCellScanUpdate) AddHeading(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.AddHeading(f)
+	return scsu
+}
+
+// ClearHeading clears the value of heading.
+func (scsu *SurveyCellScanUpdate) ClearHeading() *SurveyCellScanUpdate {
+	scsu.mutation.ClearHeading()
+	return scsu
+}
+
+// SetRssi sets the rssi field.
+func (scsu *SurveyCellScanUpdate) SetRssi(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.ResetRssi()
+	scsu.mutation.SetRssi(f)
+	return scsu
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (scsu *SurveyCellScanUpdate) SetNillableRssi(f *float64) *SurveyCellScanUpdate {
+	if f != nil {
+		scsu.SetRssi(*f)
+	}
+	return scsu
+}
+
+// AddRssi adds f to rssi.
+func (scsu *SurveyCellScanUpdate) AddRssi(f float64) *SurveyCellScanUpdate {
+	scsu.mutation.AddRssi(f)
+	return scsu
+}
+
+// ClearRssi clears the value of rssi.
+func (scsu *SurveyCellScanUpdate) ClearRssi() *SurveyCellScanUpdate {
+	scsu.mutation.ClearRssi()
+	return scsu
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (scsu *SurveyCellScanUpdate) SetChecklistItemID(id int) *SurveyCellScanUpdate {
 	scsu.mutation.SetChecklistItemID(id)
@@ -917,6 +998,66 @@ func (scsu *SurveyCellScanUpdate) sqlSave(ctx context.Context) (n int, err error
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: surveycellscan.FieldLongitude,
+		})
+	}
+	if value, ok := scsu.mutation.Altitude(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if value, ok := scsu.mutation.AddedAltitude(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if scsu.mutation.AltitudeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if value, ok := scsu.mutation.Heading(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if value, ok := scsu.mutation.AddedHeading(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if scsu.mutation.HeadingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if value, ok := scsu.mutation.Rssi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldRssi,
+		})
+	}
+	if value, ok := scsu.mutation.AddedRssi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldRssi,
+		})
+	}
+	if scsu.mutation.RssiCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldRssi,
 		})
 	}
 	if scsu.mutation.ChecklistItemCleared() {
@@ -1463,6 +1604,87 @@ func (scsuo *SurveyCellScanUpdateOne) ClearLongitude() *SurveyCellScanUpdateOne 
 	return scsuo
 }
 
+// SetAltitude sets the altitude field.
+func (scsuo *SurveyCellScanUpdateOne) SetAltitude(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.ResetAltitude()
+	scsuo.mutation.SetAltitude(f)
+	return scsuo
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (scsuo *SurveyCellScanUpdateOne) SetNillableAltitude(f *float64) *SurveyCellScanUpdateOne {
+	if f != nil {
+		scsuo.SetAltitude(*f)
+	}
+	return scsuo
+}
+
+// AddAltitude adds f to altitude.
+func (scsuo *SurveyCellScanUpdateOne) AddAltitude(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.AddAltitude(f)
+	return scsuo
+}
+
+// ClearAltitude clears the value of altitude.
+func (scsuo *SurveyCellScanUpdateOne) ClearAltitude() *SurveyCellScanUpdateOne {
+	scsuo.mutation.ClearAltitude()
+	return scsuo
+}
+
+// SetHeading sets the heading field.
+func (scsuo *SurveyCellScanUpdateOne) SetHeading(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.ResetHeading()
+	scsuo.mutation.SetHeading(f)
+	return scsuo
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (scsuo *SurveyCellScanUpdateOne) SetNillableHeading(f *float64) *SurveyCellScanUpdateOne {
+	if f != nil {
+		scsuo.SetHeading(*f)
+	}
+	return scsuo
+}
+
+// AddHeading adds f to heading.
+func (scsuo *SurveyCellScanUpdateOne) AddHeading(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.AddHeading(f)
+	return scsuo
+}
+
+// ClearHeading clears the value of heading.
+func (scsuo *SurveyCellScanUpdateOne) ClearHeading() *SurveyCellScanUpdateOne {
+	scsuo.mutation.ClearHeading()
+	return scsuo
+}
+
+// SetRssi sets the rssi field.
+func (scsuo *SurveyCellScanUpdateOne) SetRssi(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.ResetRssi()
+	scsuo.mutation.SetRssi(f)
+	return scsuo
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (scsuo *SurveyCellScanUpdateOne) SetNillableRssi(f *float64) *SurveyCellScanUpdateOne {
+	if f != nil {
+		scsuo.SetRssi(*f)
+	}
+	return scsuo
+}
+
+// AddRssi adds f to rssi.
+func (scsuo *SurveyCellScanUpdateOne) AddRssi(f float64) *SurveyCellScanUpdateOne {
+	scsuo.mutation.AddRssi(f)
+	return scsuo
+}
+
+// ClearRssi clears the value of rssi.
+func (scsuo *SurveyCellScanUpdateOne) ClearRssi() *SurveyCellScanUpdateOne {
+	scsuo.mutation.ClearRssi()
+	return scsuo
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (scsuo *SurveyCellScanUpdateOne) SetChecklistItemID(id int) *SurveyCellScanUpdateOne {
 	scsuo.mutation.SetChecklistItemID(id)
@@ -1922,6 +2144,66 @@ func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyC
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: surveycellscan.FieldLongitude,
+		})
+	}
+	if value, ok := scsuo.mutation.Altitude(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if value, ok := scsuo.mutation.AddedAltitude(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if scsuo.mutation.AltitudeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldAltitude,
+		})
+	}
+	if value, ok := scsuo.mutation.Heading(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if value, ok := scsuo.mutation.AddedHeading(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if scsuo.mutation.HeadingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldHeading,
+		})
+	}
+	if value, ok := scsuo.mutation.Rssi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldRssi,
+		})
+	}
+	if value, ok := scsuo.mutation.AddedRssi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveycellscan.FieldRssi,
+		})
+	}
+	if scsuo.mutation.RssiCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveycellscan.FieldRssi,
 		})
 	}
 	if scsuo.mutation.ChecklistItemCleared() {

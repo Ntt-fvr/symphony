@@ -5,16 +5,16 @@
 #  After making changes to this schema file, be sure to regenerate
 #  any code that relies on this schema.
 #  Inventory Front-End:
-#    %> cd ~/fbsource/xplat/fbc/fbcnms-projects/inventory
+#    %> cd ~/symphony/app/fbcnms-projects/inventory
 #    %> yarn relay
 #  Inventory Back-End:
-#    %> cd ~/fbsource/fbcode/fbc/symphony/graph/
+#    %> cd ~/symphony/graph/
 #    %> go generate ./... && go generate
 #  Technician App:
 #    %> cd ~/fbsource/xplat/fbc-mobile-app
 #    %> yarn relay
 #  Pyinventory API:
-#    %> cd ~/fbsource/fbcode/fbc/symphony/cli
+#    %> cd ~/symphony/cli
 #    %> sudo python3 setup_pyinventory.py develop
 #    %> ./compile_graphql.sh
 
@@ -2852,6 +2852,9 @@ input SurveyWiFiScanData {
   capabilities: String
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type SurveyWiFiScan implements Node {
@@ -2867,6 +2870,9 @@ type SurveyWiFiScan implements Node {
   capabilities: String
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 input SurveyCellScanData {
@@ -2890,6 +2896,9 @@ input SurveyCellScanData {
   uarfcn: Int
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type SurveyCellScan implements Node {
@@ -2914,6 +2923,9 @@ type SurveyCellScan implements Node {
   uarfcn: Int
   latitude: Float
   longitude: Float
+  altitude: Float
+  heading: Float
+  rssi: Float
 }
 
 type EquipmentSearchResult {

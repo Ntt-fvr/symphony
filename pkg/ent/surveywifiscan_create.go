@@ -169,6 +169,48 @@ func (swfsc *SurveyWiFiScanCreate) SetNillableLongitude(f *float64) *SurveyWiFiS
 	return swfsc
 }
 
+// SetAltitude sets the altitude field.
+func (swfsc *SurveyWiFiScanCreate) SetAltitude(f float64) *SurveyWiFiScanCreate {
+	swfsc.mutation.SetAltitude(f)
+	return swfsc
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (swfsc *SurveyWiFiScanCreate) SetNillableAltitude(f *float64) *SurveyWiFiScanCreate {
+	if f != nil {
+		swfsc.SetAltitude(*f)
+	}
+	return swfsc
+}
+
+// SetHeading sets the heading field.
+func (swfsc *SurveyWiFiScanCreate) SetHeading(f float64) *SurveyWiFiScanCreate {
+	swfsc.mutation.SetHeading(f)
+	return swfsc
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (swfsc *SurveyWiFiScanCreate) SetNillableHeading(f *float64) *SurveyWiFiScanCreate {
+	if f != nil {
+		swfsc.SetHeading(*f)
+	}
+	return swfsc
+}
+
+// SetRssi sets the rssi field.
+func (swfsc *SurveyWiFiScanCreate) SetRssi(f float64) *SurveyWiFiScanCreate {
+	swfsc.mutation.SetRssi(f)
+	return swfsc
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (swfsc *SurveyWiFiScanCreate) SetNillableRssi(f *float64) *SurveyWiFiScanCreate {
+	if f != nil {
+		swfsc.SetRssi(*f)
+	}
+	return swfsc
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (swfsc *SurveyWiFiScanCreate) SetChecklistItemID(id int) *SurveyWiFiScanCreate {
 	swfsc.mutation.SetChecklistItemID(id)
@@ -426,6 +468,30 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Column: surveywifiscan.FieldLongitude,
 		})
 		swfs.Longitude = value
+	}
+	if value, ok := swfsc.mutation.Altitude(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldAltitude,
+		})
+		swfs.Altitude = &value
+	}
+	if value, ok := swfsc.mutation.Heading(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldHeading,
+		})
+		swfs.Heading = &value
+	}
+	if value, ok := swfsc.mutation.Rssi(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldRssi,
+		})
+		swfs.Rssi = &value
 	}
 	if nodes := swfsc.mutation.ChecklistItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

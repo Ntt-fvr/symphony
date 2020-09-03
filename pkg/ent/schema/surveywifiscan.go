@@ -48,6 +48,18 @@ func (SurveyWiFiScan) Fields() []ent.Field {
 		field.Float("longitude").
 			Comment("Longitude of where wifi scan data was collected").
 			Optional(),
+		field.Float("altitude").
+			Comment("Altitude in meters of where wifi data was collected.  Missing value implies ground level.").
+			Optional().
+			Nillable(),
+		field.Float("heading").
+			Comment("Heading in degrees of where directional antenna was pointing.  Missing value implies omni-directional antenna.").
+			Optional().
+			Nillable(),
+		field.Float("rssi").
+			Comment("Received Signal Strength Indicator in dBm.").
+			Optional().
+			Nillable(),
 	}
 }
 

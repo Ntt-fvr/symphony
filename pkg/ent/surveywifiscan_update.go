@@ -227,6 +227,87 @@ func (swfsu *SurveyWiFiScanUpdate) ClearLongitude() *SurveyWiFiScanUpdate {
 	return swfsu
 }
 
+// SetAltitude sets the altitude field.
+func (swfsu *SurveyWiFiScanUpdate) SetAltitude(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.ResetAltitude()
+	swfsu.mutation.SetAltitude(f)
+	return swfsu
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (swfsu *SurveyWiFiScanUpdate) SetNillableAltitude(f *float64) *SurveyWiFiScanUpdate {
+	if f != nil {
+		swfsu.SetAltitude(*f)
+	}
+	return swfsu
+}
+
+// AddAltitude adds f to altitude.
+func (swfsu *SurveyWiFiScanUpdate) AddAltitude(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.AddAltitude(f)
+	return swfsu
+}
+
+// ClearAltitude clears the value of altitude.
+func (swfsu *SurveyWiFiScanUpdate) ClearAltitude() *SurveyWiFiScanUpdate {
+	swfsu.mutation.ClearAltitude()
+	return swfsu
+}
+
+// SetHeading sets the heading field.
+func (swfsu *SurveyWiFiScanUpdate) SetHeading(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.ResetHeading()
+	swfsu.mutation.SetHeading(f)
+	return swfsu
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (swfsu *SurveyWiFiScanUpdate) SetNillableHeading(f *float64) *SurveyWiFiScanUpdate {
+	if f != nil {
+		swfsu.SetHeading(*f)
+	}
+	return swfsu
+}
+
+// AddHeading adds f to heading.
+func (swfsu *SurveyWiFiScanUpdate) AddHeading(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.AddHeading(f)
+	return swfsu
+}
+
+// ClearHeading clears the value of heading.
+func (swfsu *SurveyWiFiScanUpdate) ClearHeading() *SurveyWiFiScanUpdate {
+	swfsu.mutation.ClearHeading()
+	return swfsu
+}
+
+// SetRssi sets the rssi field.
+func (swfsu *SurveyWiFiScanUpdate) SetRssi(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.ResetRssi()
+	swfsu.mutation.SetRssi(f)
+	return swfsu
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (swfsu *SurveyWiFiScanUpdate) SetNillableRssi(f *float64) *SurveyWiFiScanUpdate {
+	if f != nil {
+		swfsu.SetRssi(*f)
+	}
+	return swfsu
+}
+
+// AddRssi adds f to rssi.
+func (swfsu *SurveyWiFiScanUpdate) AddRssi(f float64) *SurveyWiFiScanUpdate {
+	swfsu.mutation.AddRssi(f)
+	return swfsu
+}
+
+// ClearRssi clears the value of rssi.
+func (swfsu *SurveyWiFiScanUpdate) ClearRssi() *SurveyWiFiScanUpdate {
+	swfsu.mutation.ClearRssi()
+	return swfsu
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (swfsu *SurveyWiFiScanUpdate) SetChecklistItemID(id int) *SurveyWiFiScanUpdate {
 	swfsu.mutation.SetChecklistItemID(id)
@@ -541,6 +622,66 @@ func (swfsu *SurveyWiFiScanUpdate) sqlSave(ctx context.Context) (n int, err erro
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: surveywifiscan.FieldLongitude,
+		})
+	}
+	if value, ok := swfsu.mutation.Altitude(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if value, ok := swfsu.mutation.AddedAltitude(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if swfsu.mutation.AltitudeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if value, ok := swfsu.mutation.Heading(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if value, ok := swfsu.mutation.AddedHeading(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if swfsu.mutation.HeadingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if value, ok := swfsu.mutation.Rssi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldRssi,
+		})
+	}
+	if value, ok := swfsu.mutation.AddedRssi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldRssi,
+		})
+	}
+	if swfsu.mutation.RssiCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldRssi,
 		})
 	}
 	if swfsu.mutation.ChecklistItemCleared() {
@@ -858,6 +999,87 @@ func (swfsuo *SurveyWiFiScanUpdateOne) ClearLongitude() *SurveyWiFiScanUpdateOne
 	return swfsuo
 }
 
+// SetAltitude sets the altitude field.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetAltitude(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ResetAltitude()
+	swfsuo.mutation.SetAltitude(f)
+	return swfsuo
+}
+
+// SetNillableAltitude sets the altitude field if the given value is not nil.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetNillableAltitude(f *float64) *SurveyWiFiScanUpdateOne {
+	if f != nil {
+		swfsuo.SetAltitude(*f)
+	}
+	return swfsuo
+}
+
+// AddAltitude adds f to altitude.
+func (swfsuo *SurveyWiFiScanUpdateOne) AddAltitude(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.AddAltitude(f)
+	return swfsuo
+}
+
+// ClearAltitude clears the value of altitude.
+func (swfsuo *SurveyWiFiScanUpdateOne) ClearAltitude() *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ClearAltitude()
+	return swfsuo
+}
+
+// SetHeading sets the heading field.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetHeading(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ResetHeading()
+	swfsuo.mutation.SetHeading(f)
+	return swfsuo
+}
+
+// SetNillableHeading sets the heading field if the given value is not nil.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetNillableHeading(f *float64) *SurveyWiFiScanUpdateOne {
+	if f != nil {
+		swfsuo.SetHeading(*f)
+	}
+	return swfsuo
+}
+
+// AddHeading adds f to heading.
+func (swfsuo *SurveyWiFiScanUpdateOne) AddHeading(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.AddHeading(f)
+	return swfsuo
+}
+
+// ClearHeading clears the value of heading.
+func (swfsuo *SurveyWiFiScanUpdateOne) ClearHeading() *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ClearHeading()
+	return swfsuo
+}
+
+// SetRssi sets the rssi field.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetRssi(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ResetRssi()
+	swfsuo.mutation.SetRssi(f)
+	return swfsuo
+}
+
+// SetNillableRssi sets the rssi field if the given value is not nil.
+func (swfsuo *SurveyWiFiScanUpdateOne) SetNillableRssi(f *float64) *SurveyWiFiScanUpdateOne {
+	if f != nil {
+		swfsuo.SetRssi(*f)
+	}
+	return swfsuo
+}
+
+// AddRssi adds f to rssi.
+func (swfsuo *SurveyWiFiScanUpdateOne) AddRssi(f float64) *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.AddRssi(f)
+	return swfsuo
+}
+
+// ClearRssi clears the value of rssi.
+func (swfsuo *SurveyWiFiScanUpdateOne) ClearRssi() *SurveyWiFiScanUpdateOne {
+	swfsuo.mutation.ClearRssi()
+	return swfsuo
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (swfsuo *SurveyWiFiScanUpdateOne) SetChecklistItemID(id int) *SurveyWiFiScanUpdateOne {
 	swfsuo.mutation.SetChecklistItemID(id)
@@ -1170,6 +1392,66 @@ func (swfsuo *SurveyWiFiScanUpdateOne) sqlSave(ctx context.Context) (swfs *Surve
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeFloat64,
 			Column: surveywifiscan.FieldLongitude,
+		})
+	}
+	if value, ok := swfsuo.mutation.Altitude(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if value, ok := swfsuo.mutation.AddedAltitude(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if swfsuo.mutation.AltitudeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldAltitude,
+		})
+	}
+	if value, ok := swfsuo.mutation.Heading(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if value, ok := swfsuo.mutation.AddedHeading(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if swfsuo.mutation.HeadingCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldHeading,
+		})
+	}
+	if value, ok := swfsuo.mutation.Rssi(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldRssi,
+		})
+	}
+	if value, ok := swfsuo.mutation.AddedRssi(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: surveywifiscan.FieldRssi,
+		})
+	}
+	if swfsuo.mutation.RssiCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Column: surveywifiscan.FieldRssi,
 		})
 	}
 	if swfsuo.mutation.ChecklistItemCleared() {

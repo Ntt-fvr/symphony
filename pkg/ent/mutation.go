@@ -31951,6 +31951,12 @@ type SurveyCellScanMutation struct {
 	addlatitude             *float64
 	longitude               *float64
 	addlongitude            *float64
+	altitude                *float64
+	addaltitude             *float64
+	heading                 *float64
+	addheading              *float64
+	rssi                    *float64
+	addrssi                 *float64
 	clearedFields           map[string]struct{}
 	checklist_item          *int
 	clearedchecklist_item   bool
@@ -33235,6 +33241,219 @@ func (m *SurveyCellScanMutation) ResetLongitude() {
 	delete(m.clearedFields, surveycellscan.FieldLongitude)
 }
 
+// SetAltitude sets the altitude field.
+func (m *SurveyCellScanMutation) SetAltitude(f float64) {
+	m.altitude = &f
+	m.addaltitude = nil
+}
+
+// Altitude returns the altitude value in the mutation.
+func (m *SurveyCellScanMutation) Altitude() (r float64, exists bool) {
+	v := m.altitude
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAltitude returns the old altitude value of the SurveyCellScan.
+// If the SurveyCellScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyCellScanMutation) OldAltitude(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAltitude is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAltitude requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAltitude: %w", err)
+	}
+	return oldValue.Altitude, nil
+}
+
+// AddAltitude adds f to altitude.
+func (m *SurveyCellScanMutation) AddAltitude(f float64) {
+	if m.addaltitude != nil {
+		*m.addaltitude += f
+	} else {
+		m.addaltitude = &f
+	}
+}
+
+// AddedAltitude returns the value that was added to the altitude field in this mutation.
+func (m *SurveyCellScanMutation) AddedAltitude() (r float64, exists bool) {
+	v := m.addaltitude
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAltitude clears the value of altitude.
+func (m *SurveyCellScanMutation) ClearAltitude() {
+	m.altitude = nil
+	m.addaltitude = nil
+	m.clearedFields[surveycellscan.FieldAltitude] = struct{}{}
+}
+
+// AltitudeCleared returns if the field altitude was cleared in this mutation.
+func (m *SurveyCellScanMutation) AltitudeCleared() bool {
+	_, ok := m.clearedFields[surveycellscan.FieldAltitude]
+	return ok
+}
+
+// ResetAltitude reset all changes of the "altitude" field.
+func (m *SurveyCellScanMutation) ResetAltitude() {
+	m.altitude = nil
+	m.addaltitude = nil
+	delete(m.clearedFields, surveycellscan.FieldAltitude)
+}
+
+// SetHeading sets the heading field.
+func (m *SurveyCellScanMutation) SetHeading(f float64) {
+	m.heading = &f
+	m.addheading = nil
+}
+
+// Heading returns the heading value in the mutation.
+func (m *SurveyCellScanMutation) Heading() (r float64, exists bool) {
+	v := m.heading
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeading returns the old heading value of the SurveyCellScan.
+// If the SurveyCellScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyCellScanMutation) OldHeading(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHeading is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHeading requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeading: %w", err)
+	}
+	return oldValue.Heading, nil
+}
+
+// AddHeading adds f to heading.
+func (m *SurveyCellScanMutation) AddHeading(f float64) {
+	if m.addheading != nil {
+		*m.addheading += f
+	} else {
+		m.addheading = &f
+	}
+}
+
+// AddedHeading returns the value that was added to the heading field in this mutation.
+func (m *SurveyCellScanMutation) AddedHeading() (r float64, exists bool) {
+	v := m.addheading
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearHeading clears the value of heading.
+func (m *SurveyCellScanMutation) ClearHeading() {
+	m.heading = nil
+	m.addheading = nil
+	m.clearedFields[surveycellscan.FieldHeading] = struct{}{}
+}
+
+// HeadingCleared returns if the field heading was cleared in this mutation.
+func (m *SurveyCellScanMutation) HeadingCleared() bool {
+	_, ok := m.clearedFields[surveycellscan.FieldHeading]
+	return ok
+}
+
+// ResetHeading reset all changes of the "heading" field.
+func (m *SurveyCellScanMutation) ResetHeading() {
+	m.heading = nil
+	m.addheading = nil
+	delete(m.clearedFields, surveycellscan.FieldHeading)
+}
+
+// SetRssi sets the rssi field.
+func (m *SurveyCellScanMutation) SetRssi(f float64) {
+	m.rssi = &f
+	m.addrssi = nil
+}
+
+// Rssi returns the rssi value in the mutation.
+func (m *SurveyCellScanMutation) Rssi() (r float64, exists bool) {
+	v := m.rssi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRssi returns the old rssi value of the SurveyCellScan.
+// If the SurveyCellScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyCellScanMutation) OldRssi(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRssi is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRssi requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRssi: %w", err)
+	}
+	return oldValue.Rssi, nil
+}
+
+// AddRssi adds f to rssi.
+func (m *SurveyCellScanMutation) AddRssi(f float64) {
+	if m.addrssi != nil {
+		*m.addrssi += f
+	} else {
+		m.addrssi = &f
+	}
+}
+
+// AddedRssi returns the value that was added to the rssi field in this mutation.
+func (m *SurveyCellScanMutation) AddedRssi() (r float64, exists bool) {
+	v := m.addrssi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRssi clears the value of rssi.
+func (m *SurveyCellScanMutation) ClearRssi() {
+	m.rssi = nil
+	m.addrssi = nil
+	m.clearedFields[surveycellscan.FieldRssi] = struct{}{}
+}
+
+// RssiCleared returns if the field rssi was cleared in this mutation.
+func (m *SurveyCellScanMutation) RssiCleared() bool {
+	_, ok := m.clearedFields[surveycellscan.FieldRssi]
+	return ok
+}
+
+// ResetRssi reset all changes of the "rssi" field.
+func (m *SurveyCellScanMutation) ResetRssi() {
+	m.rssi = nil
+	m.addrssi = nil
+	delete(m.clearedFields, surveycellscan.FieldRssi)
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (m *SurveyCellScanMutation) SetChecklistItemID(id int) {
 	m.checklist_item = &id
@@ -33366,7 +33585,7 @@ func (m *SurveyCellScanMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *SurveyCellScanMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 25)
 	if m.create_time != nil {
 		fields = append(fields, surveycellscan.FieldCreateTime)
 	}
@@ -33433,6 +33652,15 @@ func (m *SurveyCellScanMutation) Fields() []string {
 	if m.longitude != nil {
 		fields = append(fields, surveycellscan.FieldLongitude)
 	}
+	if m.altitude != nil {
+		fields = append(fields, surveycellscan.FieldAltitude)
+	}
+	if m.heading != nil {
+		fields = append(fields, surveycellscan.FieldHeading)
+	}
+	if m.rssi != nil {
+		fields = append(fields, surveycellscan.FieldRssi)
+	}
 	return fields
 }
 
@@ -33485,6 +33713,12 @@ func (m *SurveyCellScanMutation) Field(name string) (ent.Value, bool) {
 		return m.Latitude()
 	case surveycellscan.FieldLongitude:
 		return m.Longitude()
+	case surveycellscan.FieldAltitude:
+		return m.Altitude()
+	case surveycellscan.FieldHeading:
+		return m.Heading()
+	case surveycellscan.FieldRssi:
+		return m.Rssi()
 	}
 	return nil, false
 }
@@ -33538,6 +33772,12 @@ func (m *SurveyCellScanMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldLatitude(ctx)
 	case surveycellscan.FieldLongitude:
 		return m.OldLongitude(ctx)
+	case surveycellscan.FieldAltitude:
+		return m.OldAltitude(ctx)
+	case surveycellscan.FieldHeading:
+		return m.OldHeading(ctx)
+	case surveycellscan.FieldRssi:
+		return m.OldRssi(ctx)
 	}
 	return nil, fmt.Errorf("unknown SurveyCellScan field %s", name)
 }
@@ -33701,6 +33941,27 @@ func (m *SurveyCellScanMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLongitude(v)
 		return nil
+	case surveycellscan.FieldAltitude:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAltitude(v)
+		return nil
+	case surveycellscan.FieldHeading:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeading(v)
+		return nil
+	case surveycellscan.FieldRssi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRssi(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SurveyCellScan field %s", name)
 }
@@ -33730,6 +33991,15 @@ func (m *SurveyCellScanMutation) AddedFields() []string {
 	if m.addlongitude != nil {
 		fields = append(fields, surveycellscan.FieldLongitude)
 	}
+	if m.addaltitude != nil {
+		fields = append(fields, surveycellscan.FieldAltitude)
+	}
+	if m.addheading != nil {
+		fields = append(fields, surveycellscan.FieldHeading)
+	}
+	if m.addrssi != nil {
+		fields = append(fields, surveycellscan.FieldRssi)
+	}
 	return fields
 }
 
@@ -33752,6 +34022,12 @@ func (m *SurveyCellScanMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedLatitude()
 	case surveycellscan.FieldLongitude:
 		return m.AddedLongitude()
+	case surveycellscan.FieldAltitude:
+		return m.AddedAltitude()
+	case surveycellscan.FieldHeading:
+		return m.AddedHeading()
+	case surveycellscan.FieldRssi:
+		return m.AddedRssi()
 	}
 	return nil, false
 }
@@ -33809,6 +34085,27 @@ func (m *SurveyCellScanMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddLongitude(v)
+		return nil
+	case surveycellscan.FieldAltitude:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAltitude(v)
+		return nil
+	case surveycellscan.FieldHeading:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHeading(v)
+		return nil
+	case surveycellscan.FieldRssi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRssi(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyCellScan numeric field %s", name)
@@ -33871,6 +34168,15 @@ func (m *SurveyCellScanMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(surveycellscan.FieldLongitude) {
 		fields = append(fields, surveycellscan.FieldLongitude)
+	}
+	if m.FieldCleared(surveycellscan.FieldAltitude) {
+		fields = append(fields, surveycellscan.FieldAltitude)
+	}
+	if m.FieldCleared(surveycellscan.FieldHeading) {
+		fields = append(fields, surveycellscan.FieldHeading)
+	}
+	if m.FieldCleared(surveycellscan.FieldRssi) {
+		fields = append(fields, surveycellscan.FieldRssi)
 	}
 	return fields
 }
@@ -33939,6 +34245,15 @@ func (m *SurveyCellScanMutation) ClearField(name string) error {
 		return nil
 	case surveycellscan.FieldLongitude:
 		m.ClearLongitude()
+		return nil
+	case surveycellscan.FieldAltitude:
+		m.ClearAltitude()
+		return nil
+	case surveycellscan.FieldHeading:
+		m.ClearHeading()
+		return nil
+	case surveycellscan.FieldRssi:
+		m.ClearRssi()
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyCellScan nullable field %s", name)
@@ -34014,6 +34329,15 @@ func (m *SurveyCellScanMutation) ResetField(name string) error {
 		return nil
 	case surveycellscan.FieldLongitude:
 		m.ResetLongitude()
+		return nil
+	case surveycellscan.FieldAltitude:
+		m.ResetAltitude()
+		return nil
+	case surveycellscan.FieldHeading:
+		m.ResetHeading()
+		return nil
+	case surveycellscan.FieldRssi:
+		m.ResetRssi()
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyCellScan field %s", name)
@@ -37673,6 +37997,12 @@ type SurveyWiFiScanMutation struct {
 	addlatitude            *float64
 	longitude              *float64
 	addlongitude           *float64
+	altitude               *float64
+	addaltitude            *float64
+	heading                *float64
+	addheading             *float64
+	rssi                   *float64
+	addrssi                *float64
 	clearedFields          map[string]struct{}
 	checklist_item         *int
 	clearedchecklist_item  bool
@@ -38445,6 +38775,219 @@ func (m *SurveyWiFiScanMutation) ResetLongitude() {
 	delete(m.clearedFields, surveywifiscan.FieldLongitude)
 }
 
+// SetAltitude sets the altitude field.
+func (m *SurveyWiFiScanMutation) SetAltitude(f float64) {
+	m.altitude = &f
+	m.addaltitude = nil
+}
+
+// Altitude returns the altitude value in the mutation.
+func (m *SurveyWiFiScanMutation) Altitude() (r float64, exists bool) {
+	v := m.altitude
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAltitude returns the old altitude value of the SurveyWiFiScan.
+// If the SurveyWiFiScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyWiFiScanMutation) OldAltitude(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAltitude is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAltitude requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAltitude: %w", err)
+	}
+	return oldValue.Altitude, nil
+}
+
+// AddAltitude adds f to altitude.
+func (m *SurveyWiFiScanMutation) AddAltitude(f float64) {
+	if m.addaltitude != nil {
+		*m.addaltitude += f
+	} else {
+		m.addaltitude = &f
+	}
+}
+
+// AddedAltitude returns the value that was added to the altitude field in this mutation.
+func (m *SurveyWiFiScanMutation) AddedAltitude() (r float64, exists bool) {
+	v := m.addaltitude
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAltitude clears the value of altitude.
+func (m *SurveyWiFiScanMutation) ClearAltitude() {
+	m.altitude = nil
+	m.addaltitude = nil
+	m.clearedFields[surveywifiscan.FieldAltitude] = struct{}{}
+}
+
+// AltitudeCleared returns if the field altitude was cleared in this mutation.
+func (m *SurveyWiFiScanMutation) AltitudeCleared() bool {
+	_, ok := m.clearedFields[surveywifiscan.FieldAltitude]
+	return ok
+}
+
+// ResetAltitude reset all changes of the "altitude" field.
+func (m *SurveyWiFiScanMutation) ResetAltitude() {
+	m.altitude = nil
+	m.addaltitude = nil
+	delete(m.clearedFields, surveywifiscan.FieldAltitude)
+}
+
+// SetHeading sets the heading field.
+func (m *SurveyWiFiScanMutation) SetHeading(f float64) {
+	m.heading = &f
+	m.addheading = nil
+}
+
+// Heading returns the heading value in the mutation.
+func (m *SurveyWiFiScanMutation) Heading() (r float64, exists bool) {
+	v := m.heading
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeading returns the old heading value of the SurveyWiFiScan.
+// If the SurveyWiFiScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyWiFiScanMutation) OldHeading(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHeading is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHeading requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeading: %w", err)
+	}
+	return oldValue.Heading, nil
+}
+
+// AddHeading adds f to heading.
+func (m *SurveyWiFiScanMutation) AddHeading(f float64) {
+	if m.addheading != nil {
+		*m.addheading += f
+	} else {
+		m.addheading = &f
+	}
+}
+
+// AddedHeading returns the value that was added to the heading field in this mutation.
+func (m *SurveyWiFiScanMutation) AddedHeading() (r float64, exists bool) {
+	v := m.addheading
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearHeading clears the value of heading.
+func (m *SurveyWiFiScanMutation) ClearHeading() {
+	m.heading = nil
+	m.addheading = nil
+	m.clearedFields[surveywifiscan.FieldHeading] = struct{}{}
+}
+
+// HeadingCleared returns if the field heading was cleared in this mutation.
+func (m *SurveyWiFiScanMutation) HeadingCleared() bool {
+	_, ok := m.clearedFields[surveywifiscan.FieldHeading]
+	return ok
+}
+
+// ResetHeading reset all changes of the "heading" field.
+func (m *SurveyWiFiScanMutation) ResetHeading() {
+	m.heading = nil
+	m.addheading = nil
+	delete(m.clearedFields, surveywifiscan.FieldHeading)
+}
+
+// SetRssi sets the rssi field.
+func (m *SurveyWiFiScanMutation) SetRssi(f float64) {
+	m.rssi = &f
+	m.addrssi = nil
+}
+
+// Rssi returns the rssi value in the mutation.
+func (m *SurveyWiFiScanMutation) Rssi() (r float64, exists bool) {
+	v := m.rssi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRssi returns the old rssi value of the SurveyWiFiScan.
+// If the SurveyWiFiScan object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *SurveyWiFiScanMutation) OldRssi(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRssi is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRssi requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRssi: %w", err)
+	}
+	return oldValue.Rssi, nil
+}
+
+// AddRssi adds f to rssi.
+func (m *SurveyWiFiScanMutation) AddRssi(f float64) {
+	if m.addrssi != nil {
+		*m.addrssi += f
+	} else {
+		m.addrssi = &f
+	}
+}
+
+// AddedRssi returns the value that was added to the rssi field in this mutation.
+func (m *SurveyWiFiScanMutation) AddedRssi() (r float64, exists bool) {
+	v := m.addrssi
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRssi clears the value of rssi.
+func (m *SurveyWiFiScanMutation) ClearRssi() {
+	m.rssi = nil
+	m.addrssi = nil
+	m.clearedFields[surveywifiscan.FieldRssi] = struct{}{}
+}
+
+// RssiCleared returns if the field rssi was cleared in this mutation.
+func (m *SurveyWiFiScanMutation) RssiCleared() bool {
+	_, ok := m.clearedFields[surveywifiscan.FieldRssi]
+	return ok
+}
+
+// ResetRssi reset all changes of the "rssi" field.
+func (m *SurveyWiFiScanMutation) ResetRssi() {
+	m.rssi = nil
+	m.addrssi = nil
+	delete(m.clearedFields, surveywifiscan.FieldRssi)
+}
+
 // SetChecklistItemID sets the checklist_item edge to CheckListItem by id.
 func (m *SurveyWiFiScanMutation) SetChecklistItemID(id int) {
 	m.checklist_item = &id
@@ -38576,7 +39119,7 @@ func (m *SurveyWiFiScanMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *SurveyWiFiScanMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 16)
 	if m.create_time != nil {
 		fields = append(fields, surveywifiscan.FieldCreateTime)
 	}
@@ -38616,6 +39159,15 @@ func (m *SurveyWiFiScanMutation) Fields() []string {
 	if m.longitude != nil {
 		fields = append(fields, surveywifiscan.FieldLongitude)
 	}
+	if m.altitude != nil {
+		fields = append(fields, surveywifiscan.FieldAltitude)
+	}
+	if m.heading != nil {
+		fields = append(fields, surveywifiscan.FieldHeading)
+	}
+	if m.rssi != nil {
+		fields = append(fields, surveywifiscan.FieldRssi)
+	}
 	return fields
 }
 
@@ -38650,6 +39202,12 @@ func (m *SurveyWiFiScanMutation) Field(name string) (ent.Value, bool) {
 		return m.Latitude()
 	case surveywifiscan.FieldLongitude:
 		return m.Longitude()
+	case surveywifiscan.FieldAltitude:
+		return m.Altitude()
+	case surveywifiscan.FieldHeading:
+		return m.Heading()
+	case surveywifiscan.FieldRssi:
+		return m.Rssi()
 	}
 	return nil, false
 }
@@ -38685,6 +39243,12 @@ func (m *SurveyWiFiScanMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldLatitude(ctx)
 	case surveywifiscan.FieldLongitude:
 		return m.OldLongitude(ctx)
+	case surveywifiscan.FieldAltitude:
+		return m.OldAltitude(ctx)
+	case surveywifiscan.FieldHeading:
+		return m.OldHeading(ctx)
+	case surveywifiscan.FieldRssi:
+		return m.OldRssi(ctx)
 	}
 	return nil, fmt.Errorf("unknown SurveyWiFiScan field %s", name)
 }
@@ -38785,6 +39349,27 @@ func (m *SurveyWiFiScanMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLongitude(v)
 		return nil
+	case surveywifiscan.FieldAltitude:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAltitude(v)
+		return nil
+	case surveywifiscan.FieldHeading:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeading(v)
+		return nil
+	case surveywifiscan.FieldRssi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRssi(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SurveyWiFiScan field %s", name)
 }
@@ -38811,6 +39396,15 @@ func (m *SurveyWiFiScanMutation) AddedFields() []string {
 	if m.addlongitude != nil {
 		fields = append(fields, surveywifiscan.FieldLongitude)
 	}
+	if m.addaltitude != nil {
+		fields = append(fields, surveywifiscan.FieldAltitude)
+	}
+	if m.addheading != nil {
+		fields = append(fields, surveywifiscan.FieldHeading)
+	}
+	if m.addrssi != nil {
+		fields = append(fields, surveywifiscan.FieldRssi)
+	}
 	return fields
 }
 
@@ -38831,6 +39425,12 @@ func (m *SurveyWiFiScanMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedLatitude()
 	case surveywifiscan.FieldLongitude:
 		return m.AddedLongitude()
+	case surveywifiscan.FieldAltitude:
+		return m.AddedAltitude()
+	case surveywifiscan.FieldHeading:
+		return m.AddedHeading()
+	case surveywifiscan.FieldRssi:
+		return m.AddedRssi()
 	}
 	return nil, false
 }
@@ -38882,6 +39482,27 @@ func (m *SurveyWiFiScanMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddLongitude(v)
 		return nil
+	case surveywifiscan.FieldAltitude:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAltitude(v)
+		return nil
+	case surveywifiscan.FieldHeading:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHeading(v)
+		return nil
+	case surveywifiscan.FieldRssi:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRssi(v)
+		return nil
 	}
 	return fmt.Errorf("unknown SurveyWiFiScan numeric field %s", name)
 }
@@ -38907,6 +39528,15 @@ func (m *SurveyWiFiScanMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(surveywifiscan.FieldLongitude) {
 		fields = append(fields, surveywifiscan.FieldLongitude)
+	}
+	if m.FieldCleared(surveywifiscan.FieldAltitude) {
+		fields = append(fields, surveywifiscan.FieldAltitude)
+	}
+	if m.FieldCleared(surveywifiscan.FieldHeading) {
+		fields = append(fields, surveywifiscan.FieldHeading)
+	}
+	if m.FieldCleared(surveywifiscan.FieldRssi) {
+		fields = append(fields, surveywifiscan.FieldRssi)
 	}
 	return fields
 }
@@ -38939,6 +39569,15 @@ func (m *SurveyWiFiScanMutation) ClearField(name string) error {
 		return nil
 	case surveywifiscan.FieldLongitude:
 		m.ClearLongitude()
+		return nil
+	case surveywifiscan.FieldAltitude:
+		m.ClearAltitude()
+		return nil
+	case surveywifiscan.FieldHeading:
+		m.ClearHeading()
+		return nil
+	case surveywifiscan.FieldRssi:
+		m.ClearRssi()
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyWiFiScan nullable field %s", name)
@@ -38987,6 +39626,15 @@ func (m *SurveyWiFiScanMutation) ResetField(name string) error {
 		return nil
 	case surveywifiscan.FieldLongitude:
 		m.ResetLongitude()
+		return nil
+	case surveywifiscan.FieldAltitude:
+		m.ResetAltitude()
+		return nil
+	case surveywifiscan.FieldHeading:
+		m.ResetHeading()
+		return nil
+	case surveywifiscan.FieldRssi:
+		m.ResetRssi()
 		return nil
 	}
 	return fmt.Errorf("unknown SurveyWiFiScan field %s", name)

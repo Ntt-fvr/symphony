@@ -244,6 +244,27 @@ func Longitude(v float64) predicate.SurveyCellScan {
 	})
 }
 
+// Altitude applies equality check predicate on the "altitude" field. It's identical to AltitudeEQ.
+func Altitude(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAltitude), v))
+	})
+}
+
+// Heading applies equality check predicate on the "heading" field. It's identical to HeadingEQ.
+func Heading(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHeading), v))
+	})
+}
+
+// Rssi applies equality check predicate on the "rssi" field. It's identical to RssiEQ.
+func Rssi(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRssi), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.SurveyCellScan {
 	return predicate.SurveyCellScan(func(s *sql.Selector) {
@@ -2522,6 +2543,276 @@ func LongitudeIsNil() predicate.SurveyCellScan {
 func LongitudeNotNil() predicate.SurveyCellScan {
 	return predicate.SurveyCellScan(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldLongitude)))
+	})
+}
+
+// AltitudeEQ applies the EQ predicate on the "altitude" field.
+func AltitudeEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeNEQ applies the NEQ predicate on the "altitude" field.
+func AltitudeNEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeIn applies the In predicate on the "altitude" field.
+func AltitudeIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAltitude), v...))
+	})
+}
+
+// AltitudeNotIn applies the NotIn predicate on the "altitude" field.
+func AltitudeNotIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAltitude), v...))
+	})
+}
+
+// AltitudeGT applies the GT predicate on the "altitude" field.
+func AltitudeGT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeGTE applies the GTE predicate on the "altitude" field.
+func AltitudeGTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeLT applies the LT predicate on the "altitude" field.
+func AltitudeLT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeLTE applies the LTE predicate on the "altitude" field.
+func AltitudeLTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldAltitude), v))
+	})
+}
+
+// AltitudeIsNil applies the IsNil predicate on the "altitude" field.
+func AltitudeIsNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldAltitude)))
+	})
+}
+
+// AltitudeNotNil applies the NotNil predicate on the "altitude" field.
+func AltitudeNotNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldAltitude)))
+	})
+}
+
+// HeadingEQ applies the EQ predicate on the "heading" field.
+func HeadingEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingNEQ applies the NEQ predicate on the "heading" field.
+func HeadingNEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingIn applies the In predicate on the "heading" field.
+func HeadingIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldHeading), v...))
+	})
+}
+
+// HeadingNotIn applies the NotIn predicate on the "heading" field.
+func HeadingNotIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldHeading), v...))
+	})
+}
+
+// HeadingGT applies the GT predicate on the "heading" field.
+func HeadingGT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingGTE applies the GTE predicate on the "heading" field.
+func HeadingGTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingLT applies the LT predicate on the "heading" field.
+func HeadingLT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingLTE applies the LTE predicate on the "heading" field.
+func HeadingLTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldHeading), v))
+	})
+}
+
+// HeadingIsNil applies the IsNil predicate on the "heading" field.
+func HeadingIsNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldHeading)))
+	})
+}
+
+// HeadingNotNil applies the NotNil predicate on the "heading" field.
+func HeadingNotNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldHeading)))
+	})
+}
+
+// RssiEQ applies the EQ predicate on the "rssi" field.
+func RssiEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldRssi), v))
+	})
+}
+
+// RssiNEQ applies the NEQ predicate on the "rssi" field.
+func RssiNEQ(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldRssi), v))
+	})
+}
+
+// RssiIn applies the In predicate on the "rssi" field.
+func RssiIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldRssi), v...))
+	})
+}
+
+// RssiNotIn applies the NotIn predicate on the "rssi" field.
+func RssiNotIn(vs ...float64) predicate.SurveyCellScan {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldRssi), v...))
+	})
+}
+
+// RssiGT applies the GT predicate on the "rssi" field.
+func RssiGT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldRssi), v))
+	})
+}
+
+// RssiGTE applies the GTE predicate on the "rssi" field.
+func RssiGTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldRssi), v))
+	})
+}
+
+// RssiLT applies the LT predicate on the "rssi" field.
+func RssiLT(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldRssi), v))
+	})
+}
+
+// RssiLTE applies the LTE predicate on the "rssi" field.
+func RssiLTE(v float64) predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldRssi), v))
+	})
+}
+
+// RssiIsNil applies the IsNil predicate on the "rssi" field.
+func RssiIsNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldRssi)))
+	})
+}
+
+// RssiNotNil applies the NotNil predicate on the "rssi" field.
+func RssiNotNil() predicate.SurveyCellScan {
+	return predicate.SurveyCellScan(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldRssi)))
 	})
 }
 

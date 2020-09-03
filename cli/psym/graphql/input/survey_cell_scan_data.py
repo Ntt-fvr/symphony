@@ -35,4 +35,7 @@ class SurveyCellScanData(DataClassJsonMixin):
     uarfcn: Optional[int] = None
     latitude: Optional[Number] = None
     longitude: Optional[Number] = None
+    altitude: Optional[Number] = None
+    heading: Optional[Number] = None
+    rssi: Optional[Number] = None
 

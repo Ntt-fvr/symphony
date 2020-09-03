@@ -1407,6 +1407,9 @@ var (
 		{Name: "uarfcn", Type: field.TypeInt, Nullable: true},
 		{Name: "latitude", Type: field.TypeFloat64, Nullable: true},
 		{Name: "longitude", Type: field.TypeFloat64, Nullable: true},
+		{Name: "altitude", Type: field.TypeFloat64, Nullable: true},
+		{Name: "heading", Type: field.TypeFloat64, Nullable: true},
+		{Name: "rssi", Type: field.TypeFloat64, Nullable: true},
 		{Name: "survey_cell_scan_checklist_item", Type: field.TypeInt, Nullable: true},
 		{Name: "survey_cell_scan_survey_question", Type: field.TypeInt, Nullable: true},
 		{Name: "survey_cell_scan_location", Type: field.TypeInt, Nullable: true},
@@ -1419,21 +1422,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "survey_cell_scans_check_list_items_checklist_item",
-				Columns: []*schema.Column{SurveyCellScansColumns[23]},
+				Columns: []*schema.Column{SurveyCellScansColumns[26]},
 
 				RefColumns: []*schema.Column{CheckListItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "survey_cell_scans_survey_questions_survey_question",
-				Columns: []*schema.Column{SurveyCellScansColumns[24]},
+				Columns: []*schema.Column{SurveyCellScansColumns[27]},
 
 				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "survey_cell_scans_locations_location",
-				Columns: []*schema.Column{SurveyCellScansColumns[25]},
+				Columns: []*schema.Column{SurveyCellScansColumns[28]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1553,6 +1556,9 @@ var (
 		{Name: "strength", Type: field.TypeInt},
 		{Name: "latitude", Type: field.TypeFloat64, Nullable: true},
 		{Name: "longitude", Type: field.TypeFloat64, Nullable: true},
+		{Name: "altitude", Type: field.TypeFloat64, Nullable: true},
+		{Name: "heading", Type: field.TypeFloat64, Nullable: true},
+		{Name: "rssi", Type: field.TypeFloat64, Nullable: true},
 		{Name: "survey_wi_fi_scan_checklist_item", Type: field.TypeInt, Nullable: true},
 		{Name: "survey_wi_fi_scan_survey_question", Type: field.TypeInt, Nullable: true},
 		{Name: "survey_wi_fi_scan_location", Type: field.TypeInt, Nullable: true},
@@ -1565,21 +1571,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "survey_wi_fi_scans_check_list_items_checklist_item",
-				Columns: []*schema.Column{SurveyWiFiScansColumns[14]},
+				Columns: []*schema.Column{SurveyWiFiScansColumns[17]},
 
 				RefColumns: []*schema.Column{CheckListItemsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "survey_wi_fi_scans_survey_questions_survey_question",
-				Columns: []*schema.Column{SurveyWiFiScansColumns[15]},
+				Columns: []*schema.Column{SurveyWiFiScansColumns[18]},
 
 				RefColumns: []*schema.Column{SurveyQuestionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "survey_wi_fi_scans_locations_location",
-				Columns: []*schema.Column{SurveyWiFiScansColumns[16]},
+				Columns: []*schema.Column{SurveyWiFiScansColumns[19]},
 
 				RefColumns: []*schema.Column{LocationsColumns[0]},
 				OnDelete:   schema.SetNull,
