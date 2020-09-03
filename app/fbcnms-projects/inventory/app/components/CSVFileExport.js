@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {CSVFileExportKeyQuery} from './__generated__/CSVFileExportKeyQuery.graphql';
 import type {
   CSVFileExportQuery,
   ExportStatus,
@@ -25,6 +26,7 @@ import RelayEnvironment from '../common/RelayEnvironment';
 import axios from 'axios';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
+import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {DownloadIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {useContext} from 'react';
@@ -62,9 +64,18 @@ const csvFileExportQuery = graphql`
   }
 `;
 
+const csvFileExportKeyQuery = graphql`
+  query CSVFileExportKeyQuery($taskId: ID!) {
+    task: node(id: $taskId) {
+      ... on ExportTask {
+        storeKey
+      }
+    }
+  }
+`;
+
 const PATH_PREFIX = '/graph/export';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
-
 type Props = {
   exportPath: string,
   title: string,
@@ -76,6 +87,8 @@ const CSVFileExport = (props: Props) => {
   const {classes, title, exportPath} = props;
   const [isDownloading, setIsDownloading] = useState(false);
   const [asyncTaskStatus, setAsyncTaskStatus] = useState<?ExportStatus>(null);
+  const [asyncStoreKey, setAsyncStoreKey] = useState(null);
+  const [asyncTaskId, setAsyncTaskId] = useState(null);
   const isAsyncExportEnabled = useContext(AppContext).isFeatureEnabled(
     'async_export',
   );
@@ -88,8 +101,32 @@ const CSVFileExport = (props: Props) => {
     return f;
   });
 
+  const getFileName = () => {
+    const date = new Date();
+    const localDate = date.toLocaleDateString();
+    const localTime = new Date().toLocaleTimeString();
+    return `${localDate}-${localTime}.csv`;
+  };
+
   const handleAsyncDownload = async () => {
-    //TODO: send axios.get to async service with the taskId to get the file.
+    if (asyncStoreKey == null) {
+      props.alert('Failed to download file');
+      return;
+    }
+    const url = DocumentAPIUrls.get_url(asyncStoreKey);
+    axios.get(url, {responseType: 'blob'}).then(response => {
+      if (response == null || response.data == null) {
+        props.alert('Failed to download file');
+        return;
+      }
+      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', getFileName());
+      link.click();
+    });
+    setAsyncTaskId(null);
+    setAsyncStoreKey(null);
   };
 
   const handleAsyncExport = (taskId: string, intervalId: IntervalID) => {
@@ -108,6 +145,24 @@ const CSVFileExport = (props: Props) => {
       } else if (response.task.status === 'SUCCEEDED') {
         clearInterval(intervalId);
         setAsyncTaskStatus('SUCCEEDED');
+        setAsyncTaskId(taskId);
+        fetchQuery<CSVFileExportKeyQuery>(
+          RelayEnvironment,
+          csvFileExportKeyQuery,
+          {
+            taskId,
+          },
+        ).then(response => {
+          if (
+            response == null ||
+            response.task == null ||
+            response.task.storeKey == null
+          ) {
+            props.alert('Failed to download file');
+            return;
+          }
+          setAsyncStoreKey(response.task.storeKey);
+        });
       }
     });
   };
@@ -176,13 +231,16 @@ const CSVFileExport = (props: Props) => {
           />
         </div>
       </Button>
-      {isAsyncExportEnabled && asyncTaskStatus === 'SUCCEEDED' && (
-        <IconButton
-          icon={DownloadIcon}
-          onClick={handleAsyncDownload}
-          skin="gray"
-        />
-      )}
+      {isAsyncExportEnabled &&
+        asyncTaskStatus === 'SUCCEEDED' &&
+        asyncTaskId != null &&
+        asyncStoreKey != null && (
+          <IconButton
+            icon={DownloadIcon}
+            onClick={handleAsyncDownload}
+            skin="gray"
+          />
+        )}
     </div>
   );
 };
