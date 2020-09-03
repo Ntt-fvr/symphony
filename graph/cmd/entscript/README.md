@@ -12,7 +12,7 @@ The file should be at the format `migrate_{migration_date}_{migration_name}.go`.
 
 Inside you should have function with the following signature:
 ```go
-type migrationFunc func(ctx context.Context, logger log.Logger) error
+type migrationFunc func(ctx context.Context, logger *zap.Logger) error
 ```
 With the context you would access to `ent.Client` for use. If you return error all the operations
 you performed with Ent will be rolled back

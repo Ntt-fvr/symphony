@@ -14,4 +14,5 @@ import (
 var migrationMap = map[string]func(context.Context, *zap.Logger) error{
 	"sample":                    migrations.MigrateSample,
 	"migrate_project_templates": migrations.MigrateProjectTemplates,
+	"migrate_workorder_status":  migrations.MigrateWorkOrderStatus,
 }
