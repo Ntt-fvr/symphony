@@ -9,6 +9,7 @@ import warnings
 from typing import Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
 from dacite import Config, from_dict
+
 from psym.common.data_class import (
     TYPE_AND_FIELD_NAME,
     DataTypeName,
@@ -234,6 +235,7 @@ def get_port_definition_input(
         id=port_definition.id if not is_new else None,
         index=port_definition.index,
         visibleLabel=port_definition.visibleLabel,
+        portTypeID=port_definition.portType.id if port_definition.portType else None,
     )
 
 

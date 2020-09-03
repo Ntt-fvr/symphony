@@ -40,7 +40,7 @@ class TestEquipmentType(BaseTest):
                     is_fixed=False,
                 )
             ],
-            ports_dict={},
+            port_definitions=[],
             position_list=[],
         )
 
@@ -57,7 +57,7 @@ class TestEquipmentType(BaseTest):
                     is_fixed=False,
                 )
             ],
-            ports_dict={},
+            port_definitions=[],
             position_list=[],
         )
         self.assertEqual(self.equipment_type, fetched_equipment_type)

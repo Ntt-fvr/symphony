@@ -3,12 +3,13 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES, PORT_TYPES
 from psym.common.data_class import (
     Equipment,
+    EquipmentPortDefinition,
     EquipmentPortType,
     EquipmentType,
     PropertyDefinition,
@@ -98,7 +99,7 @@ def get_or_create_equipment_type(
     name: str,
     category: str,
     properties: List[PropertyDefinition],
-    ports_dict: Dict[str, str],
+    port_definitions: List[EquipmentPortDefinition],
     position_list: List[str],
 ) -> EquipmentType:
     """This function checks equipment type existence,
@@ -110,12 +111,8 @@ def get_or_create_equipment_type(
     :type category: str
     :param properties: List of property definitions
     :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
-    :param ports_dict: Dictionary of port name to port type name
-
-        * str - port name
-        * str - port type name
-
-    :type ports_dict: Dict[str, str]
+    :param port_definitions: EquipmentPortDefinitions list
+    :type port_definitions: List[ :class:`~psym.common.data_class.EquipmentPortDefinition` ]
     :param position_list: List of positions names
     :type position_list: List[str]
 
@@ -140,17 +137,21 @@ def get_or_create_equipment_type(
                     is_fixed=True
                 )
             ],
-            ports_dict={
-                "Port 1": "eth port",
-                "port 2": "eth port",
-            },
+            port_definitions=[
+                EquipmentPortDefinition(
+                    name="tp_link_port",
+                    visible_label="TP-Link port",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                )
+            ],
             position_list=[],
         )
     """
     if name in EQUIPMENT_TYPES:
         return EQUIPMENT_TYPES[name]
     return add_equipment_type(
-        client, name, category, properties, ports_dict, position_list
+        client, name, category, properties, port_definitions, position_list
     )
 
 
@@ -214,7 +215,7 @@ def add_equipment_type(
     name: str,
     category: str,
     properties: List[PropertyDefinition],
-    ports_dict: Dict[str, str],
+    port_definitions: List[EquipmentPortDefinition],
     position_list: List[str],
 ) -> EquipmentType:
     """This function creates new equipment type.
@@ -225,12 +226,8 @@ def add_equipment_type(
     :type category: str
     :param properties: List of property definitions
     :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
-    :param ports_dict: Dictionary of port name to port type name
-
-        * str - port name
-        * str - port type name
-
-    :type ports_dict: Dict[str, str]
+    :param port_definitions: EquipmentPortDefinitions list
+    :type port_definitions: List[ :class:`~psym.common.data_class.EquipmentPortDefinition` ]
     :param position_list: List of positions names
     :type position_list: List[str]
 
@@ -255,18 +252,26 @@ def add_equipment_type(
                     is_fixed=True
                 )
             ],
-            ports_dict={
-                "Port 1": "eth port",
-                "port 2": "eth port",
-            },
+            port_definitions=[
+                EquipmentPortDefinition(
+                    name="tp_link_port",
+                    visible_label="TP-Link port",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                )
+            ],
             position_list=[],
         )
     """
     new_property_types = format_to_property_type_inputs(data=properties)
-
-    port_definitions = [
-        EquipmentPortInput(name=name, portTypeID=PORT_TYPES[_type].id)
-        for name, _type in ports_dict.items()
+    new_port_definitions = [
+        EquipmentPortInput(
+            name=pd.name,
+            index=pd.port_definition_index,
+            visibleLabel=pd.visible_label,
+            portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+        )
+        for pd in port_definitions
     ]
     position_definitions = [
         EquipmentPositionInput(name=position) for position in position_list
@@ -277,7 +282,7 @@ def add_equipment_type(
         category,
         new_property_types,
         position_definitions,
-        port_definitions,
+        new_port_definitions,
     )
     equipment_type = EquipmentType(
         name=equipment_type_result.name,
@@ -297,7 +302,7 @@ def edit_equipment_type(
     client: SymphonyClient,
     name: str,
     new_positions_list: List[str],
-    new_ports_dict: Dict[str, str],
+    new_port_definitions: List[EquipmentPortDefinition],
 ) -> EquipmentType:
     """Edit existing equipment type.
 
@@ -305,12 +310,8 @@ def edit_equipment_type(
     :type name: str
     :param new_positions_list: List of new positions
     :type new_positions_list: List[str]
-    :param new_ports_dict: Dictionary of port name to port type name
-
-        * str - port name
-        * str - port type name
-
-    :type new_ports_dict: Dict[str, str]
+    :param new_port_definitions: EquipmentPortDefinitions list
+    :type new_port_definitions: List[ :class:`~psym.common.data_class.EquipmentPortDefinition` ]
 
     :raises:
         FailedOperationException: internal inventory error
@@ -325,7 +326,14 @@ def edit_equipment_type(
         edited_equipment = client.edit_equipment_type(
             name="Card",
             new_positions_list=[],
-            new_ports_dict={"Port 5": "Z Cards Only (LS - DND)"}
+            new_port_definitions=[
+                EquipmentPortDefinition(
+                    name="tp_link_port",
+                    visible_label="TP-Link port",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                )
+            ],
         )
     """
     equipment_type = EQUIPMENT_TYPES[name]
@@ -341,8 +349,13 @@ def edit_equipment_type(
         get_port_definition_input(port_definition, is_new=False)
         for port_definition in equipment_type.port_definitions
     ] + [
-        EquipmentPortInput(name=name, portTypeID=PORT_TYPES[_type].id)
-        for name, _type in new_ports_dict.items()
+        EquipmentPortInput(
+            name=pd.name,
+            index=pd.port_definition_index,
+            visibleLabel=pd.visible_label,
+            portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+        )
+        for pd in new_port_definitions
     ]
 
     return _update_equipment_type(

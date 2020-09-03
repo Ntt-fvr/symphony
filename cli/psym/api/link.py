@@ -133,14 +133,24 @@ def add_link(
     port_a = get_port(client, equipment_a, port_name_a)
     if port_a.link is not None:
         raise PortAlreadyOccupiedException(equipment_a.name, port_a.definition.name)
+    port_a_definition_id = port_a.definition.id
+    if not port_a_definition_id:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentPort, msg="port definition has no ID"
+        )
     port_b = get_port(client, equipment_b, port_name_b)
     if port_b.link is not None:
         raise PortAlreadyOccupiedException(equipment_b.name, port_b.definition.name)
+    port_b_definition_id = port_b.definition.id
+    if not port_b_definition_id:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentPort, msg="port definition has no ID"
+        )
 
     add_link_input = AddLinkInput(
         sides=[
-            LinkSide(equipment=equipment_a.id, port=port_a.definition.id),
-            LinkSide(equipment=equipment_b.id, port=port_b.definition.id),
+            LinkSide(equipment=equipment_a.id, port=port_a_definition_id),
+            LinkSide(equipment=equipment_b.id, port=port_b_definition_id),
         ],
         properties=[],
         serviceIds=[],

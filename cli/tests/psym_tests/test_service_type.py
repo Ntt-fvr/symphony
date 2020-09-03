@@ -78,7 +78,7 @@ class TestServiceType(BaseTest):
                     is_fixed=False,
                 )
             ],
-            ports_dict={},
+            port_definitions=[],
             position_list=[],
         )
         new_name = "New Service Package"

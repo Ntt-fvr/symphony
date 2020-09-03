@@ -14,7 +14,11 @@ from psym.api.equipment_type import add_equipment_type
 from psym.api.location_type import add_location_type
 from psym.api.port_type import add_equipment_port_type
 from psym.api.service_type import add_service_type
-from psym.common.data_class import PropertyDefinition, ServiceEndpointDefinition
+from psym.common.data_class import (
+    EquipmentPortDefinition,
+    PropertyDefinition,
+    ServiceEndpointDefinition,
+)
 from psym.graphql.enum.property_kind import PropertyKind
 
 
@@ -54,9 +58,15 @@ def upload_equipment_types(client: PsymClient) -> None:
             name=equipment_type["name"],
             category=equipment_type["category"],
             properties=format_property_type_definitions(equipment_type["properties"]),
-            ports_dict={
-                port["name"]: port["port_type_name"] for port in equipment_type["ports"]
-            },
+            port_definitions=[
+                EquipmentPortDefinition(
+                    name=port["name"],
+                    visible_label=port["visible_label"],
+                    port_definition_index=port["port_definition_index"],
+                    port_type_name=port["port_type_name"],
+                )
+                for port in equipment_type["ports"]
+            ],
             position_list=[pos["name"] for pos in equipment_type["position_list"]],
         )
 

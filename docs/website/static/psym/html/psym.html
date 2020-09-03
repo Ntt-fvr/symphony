@@ -513,7 +513,7 @@ or property value in <cite>properties_dict</cite> does not match the property ty
 
 <dl class="py method">
 <dt id="psym.PsymClient.add_equipment_type">
-<code class="sig-name descname">add_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ports_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">position_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.add_equipment_type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">port_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition">psym.common.data_class.EquipmentPortDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">position_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.add_equipment_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates new equipment type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -521,12 +521,7 @@ or property value in <cite>properties_dict</cite> does not match the property ty
 <li><p><strong>name</strong> (<em>str</em>) – Equipment type name</p></li>
 <li><p><strong>category</strong> (<em>str</em>) – Category name</p></li>
 <li><p><strong>properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
-<li><p><strong>ports_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>Dictionary of port name to port type name</p>
-<ul>
-<li><p>str - port name</p></li>
-<li><p>str - port type name</p></li>
-</ul>
-</p></li>
+<li><p><strong>port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
 <li><p><strong>position_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of positions names</p></li>
 </ul>
 </dd>
@@ -552,10 +547,14 @@ or property value in <cite>properties_dict</cite> does not match the property ty
             <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
     <span class="p">],</span>
-    <span class="n">ports_dict</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;Port 1&quot;</span><span class="p">:</span> <span class="s2">&quot;eth port&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;port 2&quot;</span><span class="p">:</span> <span class="s2">&quot;eth port&quot;</span><span class="p">,</span>
-    <span class="p">},</span>
+    <span class="n">port_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">EquipmentPortDefinition</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tp_link_port&quot;</span><span class="p">,</span>
+            <span class="n">visible_label</span><span class="o">=</span><span class="s2">&quot;TP-Link port&quot;</span><span class="p">,</span>
+            <span class="n">port_definition_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">port_type_name</span><span class="o">=</span><span class="s2">&quot;port type 1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
     <span class="n">position_list</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">)</span>
 </pre></div>
@@ -776,7 +775,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 
 <dl class="py method">
 <dt id="psym.PsymClient.add_location_type">
-<code class="sig-name descname">add_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">map_zoom_level</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">8</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.PsymClient.add_location_type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">map_type</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">map_zoom_level</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">8</span></em>, <em class="sig-param"><span class="n">is_site</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.PsymClient.add_location_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates new location type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1562,19 +1561,14 @@ It can get only the requested service type ID</p>
 
 <dl class="py method">
 <dt id="psym.PsymClient.edit_equipment_type">
-<code class="sig-name descname">edit_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_positions_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">new_ports_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.edit_equipment_type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">edit_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_positions_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">new_port_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition">psym.common.data_class.EquipmentPortDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.edit_equipment_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edit existing equipment type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Equipment type name</p></li>
 <li><p><strong>new_positions_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of new positions</p></li>
-<li><p><strong>new_ports_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>Dictionary of port name to port type name</p>
-<ul>
-<li><p>str - port name</p></li>
-<li><p>str - port type name</p></li>
-</ul>
-</p></li>
+<li><p><strong>port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1591,7 +1585,14 @@ It can get only the requested service type ID</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edited_equipment</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_equipment_type</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Card&quot;</span><span class="p">,</span>
     <span class="n">new_positions_list</span><span class="o">=</span><span class="p">[],</span>
-    <span class="n">new_ports_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Port 5&quot;</span><span class="p">:</span> <span class="s2">&quot;Z Cards Only (LS - DND)&quot;</span><span class="p">}</span>
+    <span class="n">new_port_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">EquipmentPortDefinition</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tp_link_port&quot;</span><span class="p">,</span>
+            <span class="n">visible_label</span><span class="o">=</span><span class="s2">&quot;TP-Link port&quot;</span><span class="p">,</span>
+            <span class="n">port_definition_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">port_type_name</span><span class="o">=</span><span class="s2">&quot;port type 1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -2617,7 +2618,7 @@ same name or property value in <cite>properties_dict</cite> does not match the p
 
 <dl class="py method">
 <dt id="psym.PsymClient.get_or_create_equipment_type">
-<code class="sig-name descname">get_or_create_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ports_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">position_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.get_or_create_equipment_type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_or_create_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">category</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">port_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition">psym.common.data_class.EquipmentPortDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">position_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.get_or_create_equipment_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function checks equipment type existence,
 in case it is not found, creates one.</p>
 <dl class="field-list simple">
@@ -2626,12 +2627,7 @@ in case it is not found, creates one.</p>
 <li><p><strong>name</strong> (<em>str</em>) – Equipment type name</p></li>
 <li><p><strong>category</strong> (<em>str</em>) – Category name</p></li>
 <li><p><strong>properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
-<li><p><strong>ports_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>Dictionary of port name to port type name</p>
-<ul>
-<li><p>str - port name</p></li>
-<li><p>str - port type name</p></li>
-</ul>
-</p></li>
+<li><p><strong>port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
 <li><p><strong>position_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of positions names</p></li>
 </ul>
 </dd>
@@ -2657,10 +2653,14 @@ in case it is not found, creates one.</p>
             <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
     <span class="p">],</span>
-    <span class="n">ports_dict</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;Port 1&quot;</span><span class="p">:</span> <span class="s2">&quot;eth port&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;port 2&quot;</span><span class="p">:</span> <span class="s2">&quot;eth port&quot;</span><span class="p">,</span>
-    <span class="p">},</span>
+    <span class="n">port_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">EquipmentPortDefinition</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tp_link_port&quot;</span><span class="p">,</span>
+            <span class="n">visible_label</span><span class="o">=</span><span class="s2">&quot;TP-Link port&quot;</span><span class="p">,</span>
+            <span class="n">port_definition_index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">port_type_name</span><span class="o">=</span><span class="s2">&quot;port type 1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
     <span class="n">position_list</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">)</span>
 </pre></div>

@@ -242,10 +242,10 @@ class Link(NamedTuple):
 
 class EquipmentPortDefinition(NamedTuple):
     """
-    :param id: ID
-    :type id: str
     :param name: Name
     :type name: str
+    :param id: ID
+    :type id: str, optional
     :param visible_label: Visible label
     :type visible_label: str, optional
     :param port_definition_index: Index
@@ -254,8 +254,8 @@ class EquipmentPortDefinition(NamedTuple):
     :type port_type_name: str, optional
     """
 
-    id: str
     name: str
+    id: Optional[str] = None
     visible_label: Optional[str] = None
     port_definition_index: Optional[int] = None
     port_type_name: Optional[str] = None

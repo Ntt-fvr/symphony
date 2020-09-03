@@ -23,7 +23,7 @@ from psym.api.port import edit_port_properties, get_port, get_ports
 from psym.api.port_type import add_equipment_port_type
 from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES
-from psym.common.data_class import PropertyDefinition
+from psym.common.data_class import EquipmentPortDefinition, PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
@@ -109,7 +109,14 @@ class TestEquipment(BaseTest):
                     is_fixed=False,
                 ),
             ],
-            ports_dict={"tp_link_port": "port type 1"},
+            port_definitions=[
+                EquipmentPortDefinition(
+                    name="tp_link_port",
+                    visible_label="TP-Link port",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                )
+            ],
             position_list=[],
         )
         self.location = add_location(

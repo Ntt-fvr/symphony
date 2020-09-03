@@ -12,7 +12,7 @@ from psym.api.location_type import add_location_type
 from psym.api.port import edit_link_properties, get_port
 from psym.api.port_type import add_equipment_port_type
 from psym.client import SymphonyClient
-from psym.common.data_class import PropertyDefinition
+from psym.common.data_class import EquipmentPortDefinition, PropertyDefinition
 from psym.exceptions import PortAlreadyOccupiedException
 from psym.graphql.enum.property_kind import PropertyKind
 
@@ -85,7 +85,20 @@ class TestLink(BaseTest):
                     is_fixed=False,
                 )
             ],
-            ports_dict={"Port 1": "port type 1", "Port 2": "port type 1"},
+            port_definitions=[
+                EquipmentPortDefinition(
+                    name="Port 1",
+                    visible_label="Port1",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                ),
+                EquipmentPortDefinition(
+                    name="Port 2",
+                    visible_label="Port2",
+                    port_definition_index=0,
+                    port_type_name="port type 1",
+                ),
+            ],
             position_list=[],
         )
         self.equipment1 = add_equipment(

@@ -188,7 +188,11 @@ def edit_port_properties(
         )
     """
     port = get_port(client, equipment, port_name)
-
+    port_definition_id = port.definition.id
+    if not port_definition_id:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentPort, msg="port definition has no ID"
+        )
     new_property_inputs = []
     if new_properties:
         port_type_name = port.definition.port_type_name
@@ -205,7 +209,7 @@ def edit_port_properties(
     result = EditEquipmentPortMutation.execute(
         client,
         EditEquipmentPortInput(
-            side=LinkSide(equipment=equipment.id, port=port.definition.id),
+            side=LinkSide(equipment=equipment.id, port=port_definition_id),
             properties=new_property_inputs,
         ),
     )
