@@ -2055,6 +2055,30 @@ func (r mutationResolver) RemoveServiceLink(ctx context.Context, id, linkID int)
 	return svc, nil
 }
 
+func (r mutationResolver) AddServicePort(ctx context.Context, id, portID int) (*ent.Service, error) {
+	svc, err := r.ClientFrom(ctx).
+		Service.
+		UpdateOneID(id).
+		AddPortIDs(portID).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("adding port %d to service %d: %w", portID, id, err)
+	}
+	return svc, nil
+}
+
+func (r mutationResolver) RemoveServicePort(ctx context.Context, id, portID int) (*ent.Service, error) {
+	svc, err := r.ClientFrom(ctx).
+		Service.
+		UpdateOneID(id).
+		RemovePortIDs(portID).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("removing port %d from service %d: %w", portID, id, err)
+	}
+	return svc, nil
+}
+
 func (r mutationResolver) AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error) {
 	st, err := r.ClientFrom(ctx).
 		ServiceType.Create().

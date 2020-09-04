@@ -795,6 +795,7 @@ type EquipmentPort implements Node {
   link: Link
   properties: [Property!]!
   serviceEndpoints: [ServiceEndpoint!]!
+  services: [Service]!
 }
 
 input EquipmentPortInput {
@@ -2569,6 +2570,7 @@ type Service implements Node & NamedNode {
   properties: [Property]!
   endpoints: [ServiceEndpoint]!
   links: [Link]!
+  ports: [EquipmentPort]!
   topology: NetworkTopology!
 }
 
@@ -3481,6 +3483,8 @@ type Mutation {
   removeServiceLink(id: ID!, linkId: ID!): Service!
   addServiceEndpoint(input: AddServiceEndpointInput!): Service!
   removeServiceEndpoint(serviceEndpointId: ID!): Service!
+  addServicePort(id: ID!, portId: ID!): Service!
+  removeServicePort(id: ID!, portId: ID!): Service!
   addServiceType(
     """
     AddServiceEndpointInput

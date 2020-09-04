@@ -987,3 +987,63 @@ func TestAddServiceEndpointType(t *testing.T) {
 	})
 	require.Error(t, err, "service is of different type than service endpoint type")
 }
+
+func TestAddRemoveServicePort(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr := r.Mutation()
+	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
+		Name: "service_type", HasCustomer: false})
+	require.NoError(t, err)
+
+	service, err := mr.AddService(ctx, models.ServiceCreateData{
+		Name:          "service",
+		ServiceTypeID: serviceType.ID,
+		Status:        service.StatusPending,
+	})
+	require.NoError(t, err)
+
+	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
+		Name: "loc_type_name",
+	})
+	require.NoError(t, err)
+
+	location, err := mr.AddLocation(ctx, models.AddLocationInput{
+		Name: "loc_inst_name",
+		Type: locType.ID,
+	})
+	require.NoError(t, err)
+
+	eqType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "eq_type_name",
+		Ports: []*models.EquipmentPortInput{
+			{Name: "typ"},
+		},
+	})
+	require.NoError(t, err)
+	defs := eqType.QueryPortDefinitions().AllX(ctx)
+
+	eq, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
+		Name:     "eq_inst_name",
+		Type:     eqType.ID,
+		Location: &location.ID,
+	})
+	require.NoError(t, err)
+
+	ep := eq.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.ID(defs[0].ID))).OnlyX(ctx)
+	require.NoError(t, err)
+
+	updatedService, err := mr.AddServicePort(ctx, service.ID, ep.ID)
+	require.NoError(t, err)
+
+	ports, _ := r.ResolverRoot.Service().Ports(ctx, updatedService)
+	assert.NotEmpty(t, ports)
+
+	updatedService, err = mr.RemoveServicePort(ctx, service.ID, ep.ID)
+	require.NoError(t, err)
+
+	ports, _ = r.ResolverRoot.Service().Ports(ctx, updatedService)
+	assert.Empty(t, ports)
+}

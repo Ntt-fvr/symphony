@@ -62,6 +62,9 @@ func (equipmentPortResolver) Properties(ctx context.Context, ep *ent.EquipmentPo
 	}
 	return ep.QueryProperties().All(ctx)
 }
+func (equipmentPortResolver) Services(ctx context.Context, obj *ent.EquipmentPort) ([]*ent.Service, error) {
+	return obj.QueryService().All(ctx)
+}
 
 type equipmentPositionResolver struct{}
 

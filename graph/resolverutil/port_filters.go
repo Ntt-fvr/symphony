@@ -179,12 +179,13 @@ func handlePortServiceFilter(q *ent.EquipmentPortQuery, filter *models.PortFilte
 }
 
 func portServiceFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	query := equipmentport.HasEndpointsWith(serviceendpoint.HasServiceWith(service.IDIn(filter.IDSet...)))
+	queryEndPointPorts := equipmentport.HasEndpointsWith(serviceendpoint.HasServiceWith(service.IDIn(filter.IDSet...)))
+	queryPorts := equipmentport.HasServiceWith(service.IDIn(filter.IDSet...))
 	switch filter.Operator {
 	case models.FilterOperatorIsOneOf:
-		return q.Where(query), nil
+		return q.Where(equipmentport.Or(queryEndPointPorts, queryPorts)), nil
 	case models.FilterOperatorIsNotOneOf:
-		return q.Where(equipmentport.Not(query)), nil
+		return q.Where(equipmentport.Not(equipmentport.Or(queryEndPointPorts, queryPorts))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

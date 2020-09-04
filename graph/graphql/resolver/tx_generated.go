@@ -444,6 +444,34 @@ func (tr txResolver) RemoveServiceEndpoint(ctx context.Context, serviceEndpointI
 	return result, nil
 }
 
+func (tr txResolver) AddServicePort(ctx context.Context, id int, portID int) (*ent.Service, error) {
+	var result, zero *ent.Service
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddServicePort(ctx, id, portID)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) RemoveServicePort(ctx context.Context, id int, portID int) (*ent.Service, error) {
+	var result, zero *ent.Service
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.RemoveServicePort(ctx, id, portID)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
 func (tr txResolver) AddServiceType(ctx context.Context, data models.ServiceTypeCreateData) (*ent.ServiceType, error) {
 	var result, zero *ent.ServiceType
 	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {

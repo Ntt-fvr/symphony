@@ -64,6 +64,10 @@ func (serviceResolver) Links(ctx context.Context, obj *ent.Service) ([]*ent.Link
 	return obj.QueryLinks().All(ctx)
 }
 
+func (serviceResolver) Ports(ctx context.Context, obj *ent.Service) ([]*ent.EquipmentPort, error) {
+	return obj.QueryPorts().All(ctx)
+}
+
 func (serviceResolver) Endpoints(ctx context.Context, obj *ent.Service) ([]*ent.ServiceEndpoint, error) {
 	return obj.QueryEndpoints().All(ctx)
 }
@@ -87,13 +91,19 @@ func (r serviceResolver) Topology(ctx context.Context, obj *ent.Service) (*model
 	if err != nil {
 		return nil, errors.Wrap(err, "querying links equipments")
 	}
-
+	portEquipments, err := obj.QueryPorts().QueryParent().All(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "querying port equipments")
+	}
+	eqs = append(eqs, portEquipments...)
 	var nodes []ent.Noder
 	eqsMap := make(map[int]*ent.Equipment)
 	for _, eq := range eqs {
 		node := r.rootNode(ctx, eq)
-		eqsMap[node.ID] = node
-		nodes = append(nodes, node)
+		if _, ok := eqsMap[node.ID]; !ok {
+			eqsMap[node.ID] = node
+			nodes = append(nodes, node)
+		}
 	}
 
 	eps, err := obj.QueryEndpoints().All(ctx)
