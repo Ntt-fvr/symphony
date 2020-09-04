@@ -15,7 +15,7 @@ require (
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/alecthomas/kong v0.2.11
-	github.com/aws/aws-sdk-go v1.34.16
+	github.com/aws/aws-sdk-go v1.34.17
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/facebook/ent v0.4.3-0.20200901090646-750a19c118c8
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
