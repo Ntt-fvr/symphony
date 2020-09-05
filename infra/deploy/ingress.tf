@@ -165,21 +165,20 @@ resource helm_release alb_ingress_controller {
   repository = local.helm_repository.incubator
   version    = "1.0.2"
   namespace  = module.alb_ingress_controller_role.service_account_namespace
-  keyring    = ""
 
-  values = [<<VALUES
-  clusterName: ${module.eks.cluster_id}
-  awsRegion: ${data.aws_region.current.id}
-  awsVpcID: ${module.vpc.vpc_id}
-  image:
-    tag: v1.1.8
-  rbac:
-    serviceAccount:
-      name: ${module.alb_ingress_controller_role.service_account_name}
-      annotations:
-        eks.amazonaws.com/role-arn: ${module.alb_ingress_controller_role.role_arn}
-  VALUES
-  ]
+  values = [yamlencode({
+    clusterName = module.eks.cluster_id
+    awsRegion   = data.aws_region.current.id
+    awsVpcID    = module.vpc.vpc_id
+    rbac = {
+      serviceAccount = {
+        name = module.alb_ingress_controller_role.service_account_name
+        annotations = {
+          "eks.amazonaws.com/role-arn" = module.alb_ingress_controller_role.role_arn
+        }
+      }
+    }
+  })]
 }
 
 # security groups allowing http/https access to intern.
@@ -191,12 +190,10 @@ resource "aws_security_group" "intern_sg" {
     for_each = [80, 443]
 
     content {
-      from_port = ingress.value
-      to_port   = ingress.value
-      protocol  = "tcp"
-      cidr_blocks = jsondecode(
-        jsondecode(data.aws_secretsmanager_secret_version.cidrs.secret_string)["facebook"]
-      )
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = local.cidrs.facebook
     }
   }
 
@@ -318,7 +315,7 @@ resource kubernetes_ingress gateway {
           path = "/*"
 
           backend {
-            service_name = format("%s-controller", helm_release.nginx_ingress.name)
+            service_name = "${helm_release.nginx_ingress.name}-controller"
             service_port = "80"
           }
         }
@@ -378,22 +375,23 @@ resource helm_release external_dns {
   chart      = "external-dns"
   version    = "3.3.0"
   namespace  = "kube-system"
-  keyring    = ""
 
-  values = [<<VALUES
-  annotationFilter: kubernetes.io/ingress.class notin (nginx)
-  serviceAccount:
-    name: ${module.external_dns_role.service_account_name}
-    annotations:
-      eks.amazonaws.com/role-arn: ${module.external_dns_role.role_arn}
-  zoneIdFilters:
-    ${indent(4, yamlencode(local.aws_route53_zones))}
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-  VALUES
-  ]
+  values = [yamlencode({
+    annotationFilter = "kubernetes.io/ingress.class notin (nginx)"
+    serviceAccount = {
+      name = module.external_dns_role.service_account_name
+      annotations = {
+        "eks.amazonaws.com/role-arn" = module.external_dns_role.role_arn
+      }
+    }
+    zoneIdFilters = local.aws_route53_zones
+    metrics = {
+      enabled = true
+      serviceMonitor = {
+        enabled = true
+      }
+    }
+  })]
 }
 
 # policy required by cert manager
@@ -448,24 +446,29 @@ resource helm_release cert_manager {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"
-  version          = "0.16.1"
+  version          = "1.0.1"
   namespace        = "cert-manager"
   create_namespace = true
 
-  values = [<<VALUES
-  serviceAccount:
-    name: ${module.cert_manager_role.service_account_name}
-    annotations:
-      eks.amazonaws.com/role-arn: ${module.cert_manager_role.role_arn}
-  securityContext:
-    fsGroup: 1001
-  extraArgs:
-    - --issuer-ambient-credentials
-  prometheus:
-    servicemonitor:
-      enabled: true
-  VALUES
-  ]
+  values = [yamlencode({
+    serviceAccount = {
+      name = module.cert_manager_role.service_account_name
+      annotations = {
+        "eks.amazonaws.com/role-arn" = module.cert_manager_role.role_arn
+      }
+    }
+    securityContext = {
+      fsGroup = 1001
+    }
+    extraArgs = [
+      "--issuer-ambient-credentials",
+    ]
+    prometheus = {
+      servicemonitor = {
+        enabled = true
+      }
+    }
+  })]
 }
 
 locals {

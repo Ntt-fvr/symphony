@@ -160,9 +160,8 @@ resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.stable
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.3.0"
+  version    = "4.3.1"
   namespace  = "monitoring"
-  keyring    = ""
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {
     circleci_token = jsondecode(data.aws_secretsmanager_secret_version.circleci.secret_string)["circleci-token"]

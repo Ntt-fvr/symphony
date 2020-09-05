@@ -55,30 +55,29 @@ data aws_iam_policy_document cluster_autoscaler {
 
 # autoscaler scales worker nodes within autoscaling groups
 resource helm_release cluster_autoscaler {
-  chart      = "cluster-autoscaler"
-  repository = local.helm_repository.stable
-  name       = "cluster-autoscaler"
-  version    = "7.3.4"
+  chart      = "cluster-autoscaler-chart"
+  repository = local.helm_repository.autoscaler
+  name       = "cluster-autoscaler-chart"
+  version    = "1.0.3"
   namespace  = module.cluster_autoscaler_role.service_account_namespace
-  keyring    = ""
 
-  values = [<<VALUES
-  image:
-    repository: us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler
-    tag: v1.16.5
-  autoDiscovery:
-    clusterName: ${module.eks.cluster_id}
-  awsRegion: ${data.aws_region.current.id}
-  rbac:
-    create: true
-    serviceAccount:
-      name: ${module.cluster_autoscaler_role.service_account_name}
-    serviceAccountAnnotations:
-      eks.amazonaws.com/role-arn: ${module.cluster_autoscaler_role.role_arn}
-  serviceMonitor:
-    enabled: true
-  VALUES
-  ]
+  values = [yamlencode({
+    autoDiscovery = {
+      clusterName = module.eks.cluster_id
+    }
+    awsRegion = data.aws_region.current.name
+    rbac = {
+      serviceAccount = {
+        name = module.cluster_autoscaler_role.service_account_name
+        annotations = {
+          "eks.amazonaws.com/role-arn" = module.cluster_autoscaler_role.role_arn
+        }
+      }
+    }
+    serviceMonitor = {
+      enabled = true
+    }
+  })]
 }
 
 # metrics is a cluster-wide aggregator of resource usage data
@@ -86,15 +85,14 @@ resource helm_release metrics_server {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.3.0"
+  version    = "4.3.1"
   namespace  = "kube-system"
-  keyring    = ""
 
-  values = [<<VALUES
-  extraArgs:
-    kubelet-preferred-address-types: InternalIP
-  VALUES
-  ]
+  values = [yamlencode({
+    extraArgs = {
+      "kubelet-preferred-address-types" = "InternalIP"
+    }
+  })]
 }
 
 # monitors extra attributes on nodes
@@ -104,7 +102,6 @@ resource helm_release node_problem_detector {
   name       = "node-problem-detector"
   namespace  = "kube-system"
   version    = "1.7.6"
-  keyring    = ""
 
   set {
     name  = "metrics.serviceMonitor.enabled"
@@ -131,13 +128,13 @@ resource helm_release aws_vpc_cni {
   name       = "aws-vpc-cni"
   namespace  = "kube-system"
   version    = "1.0.9"
-  keyring    = ""
 
-  values = [<<VALUES
-  serviceAccount:
-    name: ${module.aws_node_role.service_account_name}
-    annotations:
-      eks.amazonaws.com/role-arn: ${module.aws_node_role.role_arn}
-  VALUES
-  ]
+  values = [yamlencode({
+    serviceAccount = {
+      name = module.aws_node_role.service_account_name
+      annotations = {
+        "eks.amazonaws.com/role-arn" = module.aws_node_role.role_arn
+      }
+    }
+  })]
 }

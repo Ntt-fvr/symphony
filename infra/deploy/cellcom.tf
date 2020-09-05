@@ -2,9 +2,7 @@ resource aws_wafregional_ipset cellcom {
   name = "cellcom"
 
   dynamic "ip_set_descriptor" {
-    for_each = jsondecode(
-      jsondecode(data.aws_secretsmanager_secret_version.cidrs.secret_string)["cellcom"]
-    )
+    for_each = local.cidrs.cellcom
 
     content {
       type  = "IPV4"

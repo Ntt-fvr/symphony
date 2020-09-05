@@ -9,5 +9,6 @@ locals {
     bitnami       = "https://charts.bitnami.com/bitnami"
     eks           = "https://aws.github.io/eks-charts"
     jetstack      = "https://charts.jetstack.io"
+    autoscaler    = "https://kubernetes.github.io/autoscaler"
   }
 }

@@ -154,9 +154,7 @@ resource aws_wafregional_ipset fb_ips {
   name = "fbips"
 
   dynamic "ip_set_descriptor" {
-    for_each = jsondecode(
-      jsondecode(data.aws_secretsmanager_secret_version.cidrs.secret_string)["facebook"]
-    )
+    for_each = local.cidrs.facebook
 
     content {
       type  = "IPV4"

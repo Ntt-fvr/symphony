@@ -5,19 +5,19 @@ resource helm_release nats {
   create_namespace = true
   repository       = local.helm_repository.bitnami
   chart            = "nats"
-  version          = "4.5.2"
-  keyring          = ""
+  version          = "4.5.4"
 
-  values = [<<VALUES
-  replicaCount: 3
-  auth:
-    enabled: false
-  pdb:
-    create: true
-    minAvailable: null
-    maxUnavailable: 1
-  VALUES
-  ]
+  values = [yamlencode({
+    replicaCount = 3
+    auth = {
+      enabled = false
+    }
+    pdb = {
+      create         = true
+      minAvailable   = null
+      maxUnavailable = 1
+    }
+  })]
 }
 
 # exports nats stats to prometheus
@@ -26,18 +26,19 @@ resource helm_release prometheus_nats_exporter {
   namespace  = helm_release.nats.namespace
   repository = local.helm_repository.stable
   chart      = "prometheus-nats-exporter"
-  version    = "2.5.0"
-  keyring    = ""
+  version    = "2.5.1"
 
-  values = [<<VALUES
-  config:
-    nats:
-      service: ${helm_release.nats.name}-monitoring
-      namespace: ${helm_release.nats.namespace}
-  serviceMonitor:
-    enabled: true
-  VALUES
-  ]
+  values = [yamlencode({
+    config = {
+      nats = {
+        service   = "${helm_release.nats.name}-monitoring"
+        namespace = helm_release.nats.namespace
+      }
+    }
+    serviceMonitor = {
+      enabled = true
+    }
+  })]
 
   depends_on = [helm_release.prometheus_operator]
 }

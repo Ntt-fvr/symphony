@@ -38,12 +38,13 @@ data aws_secretsmanager_secret_version circleci {
   provider  = aws.us-east-1
 }
 
-data aws_secretsmanager_secret cidrs {
-  name     = "symphony/cidrs"
-  provider = aws.us-east-1
+data sops_file cidrs {
+  source_file = "${path.module}/secrets/cidrs.yaml"
 }
 
-data aws_secretsmanager_secret_version cidrs {
-  secret_id = data.aws_secretsmanager_secret.cidrs.id
-  provider  = aws.us-east-1
+locals {
+  cidrs = {
+    facebook = [for k, v in data.sops_file.cidrs.data : v if split(".", k)[0] == "facebook"]
+    cellcom  = [for k, v in data.sops_file.cidrs.data : v if split(".", k)[0] == "cellcom"]
+  }
 }

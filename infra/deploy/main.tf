@@ -42,6 +42,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 1.0"
     }
+    sops = {
+      source  = "carlpett/sops"
+      version = "~> 0.5"
+    }
   }
 
   required_version = ">= 0.13"
