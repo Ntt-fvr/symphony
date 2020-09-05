@@ -10,7 +10,6 @@ import (
 	"fmt"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -38,7 +37,7 @@ func addProjectTemplate(
 		return nil, fmt.Errorf("creating project template: %w", err)
 	}
 	for _, pt := range projectType.Edges.Properties {
-		_, err := createTemplatePropertyType(ctx, client, pt, tem.ID, models.PropertyEntityProject)
+		_, err := createTemplatePropertyType(ctx, client, pt, tem.ID, PropertyTypeParentProject)
 		if err != nil {
 			return nil, fmt.Errorf("creating property type: %w", err)
 		}
