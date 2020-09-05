@@ -64,7 +64,7 @@ module eks {
       asg_min_size         = local.eks_asg_capacity
       asg_max_size         = local.eks_asg_capacity * 3
       autoscaling_enabled  = true
-      termination_policies = ["OldestLaunchConfiguration", "Default"]
+      termination_policies = ["OldestLaunchTemplate", "Default"]
       tags = [
         {
           key                 = "k8s.io/cluster-autoscaler/enabled"
