@@ -63,11 +63,13 @@ func TestServer(t *testing.T) {
 	logEntry := getLogEntry()
 	client := viewertest.NewTestClient(t)
 	ctx, cancel := context.WithCancel(context.Background())
-	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
 		v := viewer.FromContext(ctx)
 		require.Equal(t, t.Name(), v.Tenant())
 		require.Equal(t, handler.ServiceName, v.Name())
 		require.Equal(t, user.RoleOwner, v.Role())
+		entry, ok := evt.(event.LogEntry)
+		require.True(t, ok)
 		require.EqualValues(t, logEntry, entry)
 		cancel()
 		return nil
@@ -109,7 +111,7 @@ func TestServerBadData(t *testing.T) {
 		[]handler.Handler{
 			handler.New(handler.HandleConfig{
 				Name:    "handler",
-				Handler: handler.Func(func(context.Context, log.Logger, event.LogEntry) error { return nil }),
+				Handler: handler.Func(func(context.Context, log.Logger, ev.EventObject) error { return nil }),
 			}),
 		})
 	err := server.HandleEvent(ctx, &ev.Event{
@@ -132,7 +134,7 @@ func TestServerHandlerError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, _ log.Logger, _ ev.EventObject) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").
@@ -176,7 +178,7 @@ func TestServerHandlerNoError(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), client)
 	cancelledCtx, cancel := context.WithCancel(ctx)
 
-	h := handler.Func(func(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+	h := handler.Func(func(ctx context.Context, _ log.Logger, _ ev.EventObject) error {
 		client := ent.FromContext(ctx)
 		client.LocationType.Create().
 			SetName("LocationType").

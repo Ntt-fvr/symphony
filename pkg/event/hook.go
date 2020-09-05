@@ -11,13 +11,14 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"go.uber.org/zap"
 )
 
-func LogHook(handler func(context.Context, log.Logger, LogEntry) error, logger log.Logger) ent.Hook {
+func LogHook(handler func(context.Context, log.Logger, ev.EventObject) error, logger log.Logger) ent.Hook {
 	hk := func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			v := viewer.FromContext(ctx)

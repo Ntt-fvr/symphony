@@ -15,78 +15,12 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 	"gocloud.dev/runtimevar"
 )
 
 // ServiceName is the current service name.
 const ServiceName = "async"
-
-// A Handler handles incoming events.
-type Handler interface {
-	Handle(context.Context, log.Logger, event.LogEntry) error
-}
-
-// The Func type is an adapter to allow the use of
-// ordinary functions as handlers.
-type Func func(context.Context, log.Logger, event.LogEntry) error
-
-// Handle returns f(ctx, entry).
-func (f Func) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
-	return f(ctx, logger, entry)
-}
-
-// handler contains the handler to run on every event, with the name handler for tracking purposes and transactional flag.
-type handler struct {
-	name          string
-	handler       Handler
-	transactional bool
-}
-
-// Handle handles incoming events and sets span.
-func (h handler) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
-	ctx, span := trace.StartSpan(ctx, h.name)
-	defer span.End()
-	span.AddAttributes(
-		trace.StringAttribute("operation", entry.Operation.String()),
-		trace.StringAttribute("type", entry.Type),
-		trace.Int64Attribute("ent_id", int64(event.GetEntID(entry))),
-	)
-	if h.transactional {
-		return h.runHandlerWithTransaction(ctx, logger, entry)
-	}
-	return h.handler.Handle(ctx, logger, entry)
-}
-
-// handler options.
-type Option func(*handler)
-
-// New returns a new handler from HandlerConfig and options.
-func New(config HandleConfig, opts ...Option) Handler {
-	handler := handler{
-		name:          config.Name,
-		handler:       config.Handler,
-		transactional: true,
-	}
-	for _, opt := range opts {
-		opt(&handler)
-	}
-	return handler
-}
-
-// WithTransaction sets the transaction field for an Handler.
-func WithTransaction(b bool) Option {
-	return func(h *handler) {
-		h.transactional = b
-	}
-}
-
-// HandleConfig contains the configuration for a Handler.
-type HandleConfig struct {
-	Name    string
-	Handler Handler
-}
 
 // NewServer is the events server.
 type Server struct {
@@ -135,22 +69,24 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 // HandleEvent implement ev.EventHandler interface.
 func (s *Server) HandleEvent(ctx context.Context, evt *ev.Event) error {
-	entry, ok := evt.Object.(event.LogEntry)
-	if !ok {
-		return fmt.Errorf("event object %T must be a log entry", evt.Object)
+	if evt.Name == event.EntMutation {
+		if _, ok := evt.Object.(event.LogEntry); !ok {
+			return fmt.Errorf("event object %T must be a log entry", evt.Object)
+		}
 	}
-	if err := s.handleLogEntry(ctx, evt.Tenant, entry); err != nil {
+
+	if err := s.handleEvent(ctx, evt); err != nil {
 		s.logger.For(ctx).Error("failed to handle event", zap.Error(err))
 	}
 	return nil
 }
 
-func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.LogEntry) error {
-	client, err := s.tenancy.ClientFor(ctx, tenant)
+func (s *Server) handleEvent(ctx context.Context, evt *ev.Event) error {
+	client, err := s.tenancy.ClientFor(ctx, evt.Tenant)
 	if err != nil {
 		const msg = "cannot get tenancy client"
 		s.logger.For(ctx).Error(msg, zap.Error(err))
-		return fmt.Errorf("%s. tenant: %s", msg, tenant)
+		return fmt.Errorf("%s. tenant: %s", msg, evt.Tenant)
 	}
 	ctx = ent.NewContext(ctx, client)
 
@@ -160,11 +96,11 @@ func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.
 		return err
 	}
 	if tenantFeatures, ok := snapshot.Value.(viewer.TenantFeatures); ok {
-		if features, ok := tenantFeatures[tenant]; ok {
+		if features, ok := tenantFeatures[evt.Tenant]; ok {
 			featureList = features
 		}
 	}
-	v := viewer.NewAutomation(tenant, ServiceName, user.RoleOwner,
+	v := viewer.NewAutomation(evt.Tenant, ServiceName, user.RoleOwner,
 		viewer.WithFeatures(featureList...),
 	)
 	ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
@@ -175,39 +111,14 @@ func (s *Server) handleLogEntry(ctx context.Context, tenant string, entry event.
 		s.logger.For(ctx).Error(msg,
 			zap.Error(err),
 		)
-		return fmt.Errorf("%s. tenant: %s, name: %s", msg, tenant, ServiceName)
+		return fmt.Errorf("%s. tenant: %s, name: %s", msg, evt.Tenant, ServiceName)
 	}
 	ctx = authz.NewContext(ctx, permissions)
 
 	for _, h := range s.handlers {
-		if err := h.Handle(ctx, s.logger, entry); err != nil {
+		if err := h.Handle(ctx, s.logger, evt.Object); err != nil {
 			s.logger.For(ctx).Error("running handler", zap.Error(err))
 		}
-	}
-	return nil
-}
-
-func (h *handler) runHandlerWithTransaction(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
-	tx, err := ent.FromContext(ctx).Tx(ctx)
-	if err != nil {
-		return fmt.Errorf("creating transaction: %w", err)
-	}
-	ctx = ent.NewTxContext(ctx, tx)
-	defer func() {
-		if r := recover(); r != nil {
-			_ = tx.Rollback()
-			panic(r)
-		}
-	}()
-	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.handler.Handle(ctx, logger, entry); err != nil {
-		if r := tx.Rollback(); r != nil {
-			err = fmt.Errorf("rolling back transaction: %v", r)
-		}
-		return err
-	}
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("committing transaction: %w", err)
 	}
 	return nil
 }

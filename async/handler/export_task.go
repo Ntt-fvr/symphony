@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/exporter"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -40,8 +41,9 @@ func NewExportHandler(bucket *blob.Bucket, bucketPrefix string) *ExportHandler {
 }
 
 // Handle handles async exports.
-func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
-	if entry.Type != ent.TypeExportTask || !entry.Operation.Is(ent.OpCreate) {
+func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
+	entry, ok := evt.(event.LogEntry)
+	if !ok || entry.Type != ent.TypeExportTask || !entry.Operation.Is(ent.OpCreate) {
 		return nil
 	}
 	task, err := ent.FromContext(ctx).ExportTask.Get(ctx, entry.CurrState.ID)
