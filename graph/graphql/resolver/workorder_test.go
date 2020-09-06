@@ -1818,7 +1818,7 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	assert.Equal(t, w.Status, workorder.StatusPending)
+	assert.Equal(t, w.Status, workorder.StatusInProgress)
 
 	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)

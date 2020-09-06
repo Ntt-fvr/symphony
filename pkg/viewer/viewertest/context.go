@@ -34,6 +34,7 @@ type Option func(*options)
 
 var DefaultFeatures = []string{
 	viewer.FeatureMandatoryPropertiesOnWorkOrderClose,
+	viewer.FeatureNewWorkOrderStatuses,
 }
 
 // WithTenant overrides default tenant name.
@@ -57,10 +58,32 @@ func WithRole(role user.Role) Option {
 	}
 }
 
-// WithFeatures overrides default feature set.
+// WithFeatures adds the features into the default feature set.
 func WithFeatures(features ...string) Option {
 	return func(o *options) {
-		o.features = features
+		o.features = append(o.features, features...)
+	}
+}
+
+// WithoutFeatures removes the features from the default feature set.
+func WithoutFeatures(removedFeatures ...string) Option {
+	shouldRemoveFeature := func(feature string) bool {
+		for _, removedFeature := range removedFeatures {
+			if feature == removedFeature {
+				return true
+			}
+		}
+		return false
+	}
+
+	return func(o *options) {
+		var newFeatures []string
+		for _, feature := range o.features {
+			if !shouldRemoveFeature(feature) {
+				newFeatures = append(newFeatures, feature)
+			}
+		}
+		o.features = newFeatures
 	}
 }
 

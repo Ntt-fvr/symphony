@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/viewer"
+
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -125,4 +127,32 @@ func WorkOrderAddTemplateHook() ent.Hook {
 		})
 	}
 	return hook.On(hk, ent.OpCreate)
+}
+
+// WorkOrderUpdateStateHook sync the state field according to the status field
+func WorkOrderUpdateStatusHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.WorkOrderFunc(func(ctx context.Context, mutation *ent.WorkOrderMutation) (ent.Value, error) {
+			status, _ := mutation.Status()
+
+			if viewer.FromContext(ctx).Features().Enabled(viewer.FeatureNewWorkOrderStatuses) {
+				switch status {
+				case workorder.StatusDone:
+					mutation.SetStatus(workorder.StatusClosed)
+				case workorder.StatusPending:
+					mutation.SetStatus(workorder.StatusInProgress)
+				}
+			} else {
+				switch status {
+				case workorder.StatusClosed:
+					mutation.SetStatus(workorder.StatusDone)
+				case workorder.StatusInProgress:
+					mutation.SetStatus(workorder.StatusPending)
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.If(hk, hook.And(hook.HasOp(ent.OpCreate|ent.OpUpdateOne|ent.OpUpdate), hook.HasFields(workorder.FieldStatus)))
 }

@@ -16,6 +16,7 @@ import (
 // To query if feature is allowed use FeatureSet.Enabled
 const (
 	FeatureMandatoryPropertiesOnWorkOrderClose = "mandatory_properties_on_work_order_close"
+	FeatureNewWorkOrderStatuses                = "workorder_new_status"
 )
 
 // How frequently the features variable is updated by http calls

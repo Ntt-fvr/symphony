@@ -39,7 +39,7 @@ func (s *workOrderTestSuite) SetupSuite() {
 	s.Require().True(ok)
 	s.user = u.User()
 	var err error
-	s.typ, err = client.WorkOrderType.
+	s.typ, err = s.client.WorkOrderType.
 		Create().
 		SetName("deploy").
 		Save(s.ctx)
@@ -149,6 +149,87 @@ func (s *workOrderTestSuite) TestWorkOrderAddedWithTemplate() {
 	s.Equal("deploy", template.Name)
 	_, err = template.QueryPropertyTypes().Where(propertytype.Name("str_prop")).Only(s.ctx)
 	s.Require().NoError(err)
+}
+
+func (s *workOrderTestSuite) TestWorkOrderUpdateStatus() {
+	s.Run("InFeatureNoChange", func() {
+		order, err := s.CreateWorkOrder().
+			SetName("first").
+			SetStatus(workorder.StatusPlanned).
+			Save(s.ctx)
+		s.Require().NoError(err)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusInProgress).
+			Save(s.ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusInProgress, order.Status)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusClosed).
+			Save(s.ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusClosed, order.Status)
+	})
+	s.Run("InFeatureWithStatusChange", func() {
+		order, err := s.CreateWorkOrder().
+			SetName("second").
+			SetStatus(workorder.StatusPending).
+			Save(s.ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusInProgress, order.Status)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusDone).
+			Save(s.ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusClosed, order.Status)
+	})
+	s.Run("NotInFeatureNoChange", func() {
+		ctx := viewertest.NewContext(
+			s.ctx,
+			s.client,
+			viewertest.WithoutFeatures(viewer.FeatureNewWorkOrderStatuses),
+		)
+
+		order, err := s.CreateWorkOrder().
+			SetName("first").
+			SetStatus(workorder.StatusPlanned).
+			Save(ctx)
+		s.Require().NoError(err)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusPending).
+			Save(ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusPending, order.Status)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusDone).
+			Save(ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusDone, order.Status)
+	})
+	s.Run("NotInFeatureWithStatusChange", func() {
+		ctx := viewertest.NewContext(
+			s.ctx,
+			s.client,
+			viewertest.WithoutFeatures(viewer.FeatureNewWorkOrderStatuses),
+		)
+
+		order, err := s.CreateWorkOrder().
+			SetName("second").
+			SetStatus(workorder.StatusInProgress).
+			Save(ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusPending, order.Status)
+
+		order, err = order.Update().
+			SetStatus(workorder.StatusClosed).
+			Save(ctx)
+		s.Require().NoError(err)
+		s.Equal(workorder.StatusDone, order.Status)
+	})
 }
 
 func TestWorkOrderHooks(t *testing.T) {
