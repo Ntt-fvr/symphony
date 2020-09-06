@@ -72,7 +72,7 @@ resource random_string grafana_admin_password {
 
 # iam role for grafana
 module grafana_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "GrafanaRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.grafana.json

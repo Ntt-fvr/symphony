@@ -1,6 +1,6 @@
 # iam role for alb ingress controller
 module alb_ingress_controller_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "ALBIngressControllerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.alb_ingress_controller.json
@@ -326,7 +326,7 @@ resource kubernetes_ingress gateway {
 
 # iam role for external dns
 module external_dns_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "ExternalDNSRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.external_dns.json
@@ -431,7 +431,7 @@ data aws_iam_policy_document cert_manager {
 
 # iam role for cert manager
 module cert_manager_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "CertManagerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.cert_manager.json
@@ -484,28 +484,36 @@ resource "helm_release" "intern_cert_issuer" {
   repository = local.helm_repository.kiwigrid
   chart      = "any-resource"
 
-  values = [<<VALUES
-  anyResources:
-    InternIssuer: |-
-      apiVersion: cert-manager.io/v1alpha2
-      kind: ClusterIssuer
-      metadata:
-        name: ${local.cert_issuer.intern}
-      spec:
-        acme:
-          server: https://acme-v02.api.letsencrypt.org/directory
-          email: alexsn@fb.com
-          privateKeySecretRef:
-            name: ${local.cert_issuer.intern}-account-key
-          solvers:
-            - dns01:
-                route53:
-                  region: ${data.aws_region.current.name}
-                  hostedZoneID: ${aws_route53_zone.symphony.id}
-              selector:
-                dnsZones:
-                  - ${local.domains.symphony.intern_name}
-  VALUES
-  ]
+  values = [yamlencode({
+    anyResources = {
+      InternIssuer = yamlencode({
+        apiVersion = "cert-manager.io/v1alpha2"
+        kind       = "ClusterIssuer"
+        metadata = {
+          name = local.cert_issuer.intern
+        }
+        spec = {
+          acme = {
+            server = "https://acme-v02.api.letsencrypt.org/directory"
+            email  = "alexsn@fb.com"
+            privateKeySecretRef = {
+              name = "${local.cert_issuer.intern}-account-key"
+            }
+            solvers = [{
+              dns01 = {
+                route53 = {
+                  region       = data.aws_region.current.name
+                  hostedZoneID = aws_route53_zone.symphony.id
+                }
+              }
+              selector = {
+                dnsZones = [local.domains.symphony.intern_name]
+              }
+            }]
+          }
+        }
+      })
+    }
+  })]
 }
 

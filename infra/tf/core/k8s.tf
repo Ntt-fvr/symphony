@@ -1,6 +1,6 @@
 # iam role for cluster autoscaler
 module cluster_autoscaler_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "ClusterAutoScalerRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.cluster_autoscaler.json
@@ -111,7 +111,7 @@ resource helm_release node_problem_detector {
 
 # iam role for aws node
 module aws_node_role {
-  source                    = "./../tf/modules/irsa"
+  source                    = "../modules/irsa"
   role_name_prefix          = "AWSNodeRole"
   role_path                 = local.eks_sa_role_path
   role_policy_arns          = ["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]

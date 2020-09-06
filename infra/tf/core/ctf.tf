@@ -142,29 +142,37 @@ resource helm_release ctf_cert_issuer {
   repository = local.helm_repository.kiwigrid
   chart      = "any-resource"
 
-  values = [<<VALUES
-  anyResources:
-    CertIssuer: |-
-      apiVersion: cert-manager.io/v1alpha2
-      kind: Issuer
-      metadata:
-        name: letsencrypt
-      spec:
-        acme:
-          server: https://acme-v02.api.letsencrypt.org/directory
-          email: alexsn@fb.com
-          privateKeySecretRef:
-            name: letsencrypt
-          solvers:
-            - dns01:
-                route53:
-                  region: ${data.aws_region.current.name}
-                  hostedZoneID: ${aws_route53_zone.ctf.id}
-              selector:
-                dnsZones:
-                  - ${local.ctf_domain_name}
-  VALUES
-  ]
+  values = [yamlencode({
+    anyResources = {
+      CertIssuer = yamlencode({
+        apiVersion = "cert-manager.io/v1alpha2"
+        kind       = "Issuer"
+        metadata = {
+          name = "letsencrypt"
+        }
+        spec = {
+          acme = {
+            server = "https://acme-v02.api.letsencrypt.org/directory"
+            email  = "alexsn@fb.com"
+            privateKeySecretRef = {
+              name = "letsencrypt"
+            }
+            solvers = [{
+              dns01 = {
+                route53 = {
+                  region       = data.aws_region.current.name
+                  hostedZoneID = aws_route53_zone.ctf.id
+                }
+              }
+              selector = {
+                dnsZones = [local.ctf_domain_name]
+              }
+            }]
+          }
+        }
+      })
+    }
+  })]
 }
 
 # ctf database password

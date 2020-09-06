@@ -47,17 +47,16 @@ resource aws_efs_mount_target eks_pv_mnt {
   count           = length(local.vpc_private_subnets)
 }
 
-# allow eks workers to assume efs provisioner role
-resource aws_iam_role efs_provisioner {
-  name_prefix        = "EFSProvisionerRole"
-  assume_role_policy = data.aws_iam_policy_document.eks_worker_assumable.json
-  tags               = local.tags
-}
-
-# grant efs read only policy to efs provisioner
-resource aws_iam_role_policy_attachment efs_provisioner {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess"
-  role       = aws_iam_role.efs_provisioner.id
+# iam role for efs provisioner
+module efs_provisioner_role {
+  source                    = "../modules/irsa"
+  role_name_prefix          = "EFSProvisionerRole"
+  role_path                 = local.eks_sa_role_path
+  role_policy_arns          = ["arn:aws:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess"]
+  service_account_name      = "efs-provisioner"
+  service_account_namespace = "kube-system"
+  oidc_provider_arn         = module.eks.oidc_provider_arn
+  tags                      = local.tags
 }
 
 # k8s requires provisioner to treat efs as a persistent volume
@@ -66,21 +65,24 @@ resource helm_release efs_provisioner {
   repository = local.helm_repository.stable
   chart      = "efs-provisioner"
   version    = "0.13.0"
-  namespace  = "kube-system"
-  keyring    = ""
+  namespace  = module.efs_provisioner_role.service_account_namespace
 
-  values = [<<VALUES
-  efsProvisioner:
-    efsFileSystemId: ${aws_efs_file_system.eks_pv.id}
-    awsRegion: ${data.aws_region.current.id}
-    path: /pv-volume
-    provisionerName: aws-efs
-    storageClass:
-      name: efs
-  podAnnotations:
-    iam-assumable-role: ${aws_iam_role.efs_provisioner.arn}
-  VALUES
-  ]
-
+  values = [yamlencode({
+    efsProvisioner = {
+      efsFileSystemId = aws_efs_file_system.eks_pv.id
+      awsRegion       = data.aws_region.current.id
+      path            = "/pv-volume"
+      provisionerName = "aws-efs"
+      storageClass = {
+        name = "efs"
+      }
+    }
+    serviceAccount = {
+      name = module.efs_provisioner_role.service_account_name
+      annotations = {
+        "eks.amazonaws.com/role-arn" = module.efs_provisioner_role.role_arn
+      }
+    }
+  })]
   depends_on = [aws_efs_mount_target.eks_pv_mnt]
 }
