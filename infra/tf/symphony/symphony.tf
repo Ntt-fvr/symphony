@@ -52,7 +52,7 @@ data aws_iam_policy_document async {
     ]
 
     resources = [
-      "${aws_s3_bucket.store.arn}/*/${local.store_exports_path}/*",
+      "${aws_s3_bucket.store.arn}/*/${local.store_exports_path}*",
     ]
   }
 }
