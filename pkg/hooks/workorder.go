@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
@@ -71,7 +70,7 @@ func addWorkOrderTemplate(
 		return nil, fmt.Errorf("creating work order template: %w", err)
 	}
 	for _, pt := range workOrderType.Edges.PropertyTypes {
-		_, err := createTemplatePropertyType(ctx, client, pt, workOrderTemplate.ID, models.PropertyEntityWorkOrder)
+		_, err := createTemplatePropertyType(ctx, client, pt, workOrderTemplate.ID, PropertyTypeParentWorkOrder)
 		if err != nil {
 			return nil, fmt.Errorf("creating property type: %w", err)
 		}

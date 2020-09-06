@@ -8,8 +8,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+)
+
+type PropertyTypeParent string
+
+const (
+	PropertyTypeParentWorkOrder PropertyTypeParent = "WORK_ORDER"
+	PropertyTypeParentProject   PropertyTypeParent = "PROJECT"
 )
 
 func createTemplatePropertyType(
@@ -17,7 +23,7 @@ func createTemplatePropertyType(
 	client *ent.Client,
 	pt *ent.PropertyType,
 	id int,
-	entity models.PropertyEntity,
+	entity PropertyTypeParent,
 ) (*ent.PropertyType, error) {
 	mutation := client.PropertyType.Create().
 		SetName(pt.Name).
@@ -38,9 +44,9 @@ func createTemplatePropertyType(
 		SetMandatory(pt.Mandatory).
 		SetDeleted(pt.Deleted)
 	switch entity {
-	case models.PropertyEntityWorkOrder:
+	case PropertyTypeParentWorkOrder:
 		mutation = mutation.SetWorkOrderTemplateID(id)
-	case models.PropertyEntityProject:
+	case PropertyTypeParentProject:
 		mutation = mutation.SetProjectTemplateID(id)
 	}
 	result, err := mutation.Save(ctx)
