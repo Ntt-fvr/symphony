@@ -7735,7 +7735,7 @@ var sources = []*ast.Source{
 #    %> yarn relay
 #  Pyinventory API:
 #    %> cd ~/symphony/cli
-#    %> sudo python3 setup_pyinventory.py develop
+#    %> sudo python3 setup.py develop
 #    %> ./compile_graphql.sh
 
 directive @deprecatedInput(
