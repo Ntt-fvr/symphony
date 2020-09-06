@@ -8,12 +8,13 @@ import (
 	"context"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
 
 func (e *Eventer) logHook() ent.Hook {
-	return LogHook(func(ctx context.Context, logger log.Logger, entry LogEntry) error {
-		e.emit(ctx, EntMutation, entry)
+	return LogHook(func(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
+		e.emit(ctx, EntMutation, evt)
 		return nil
 	}, e.Logger)
 }

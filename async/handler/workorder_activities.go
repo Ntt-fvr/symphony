@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/log"
 )
@@ -198,9 +199,10 @@ func getDiffOfUniqueEdgeAsString(entry *event.LogEntry, edge string) (*string, *
 	return newStrVal, oldStrVal, shouldUpdate
 }
 
-func HandleActivityLog(ctx context.Context, logger log.Logger, entry event.LogEntry) error {
+func HandleActivityLog(ctx context.Context, _ log.Logger, evt ev.EventObject) error {
 	var err error
-	if entry.Type != ent.TypeWorkOrder {
+	entry, ok := evt.(event.LogEntry)
+	if !ok || entry.Type != ent.TypeWorkOrder {
 		return nil
 	}
 	if entry.Operation.Is(ent.OpCreate) {
