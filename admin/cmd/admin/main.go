@@ -7,7 +7,6 @@ package main
 import (
 	"context"
 	stdlog "log"
-	"net/url"
 	"os"
 	"syscall"
 
@@ -16,17 +15,16 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"go.uber.org/zap"
-
-	_ "gocloud.dev/blob/s3blob"
 )
 
 type cliFlags struct {
 	ConfigFile      kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
-	ListenAddress   string           `prefix:"web." default:":http" help:"Address to listen on."`
-	BucketURL       *url.URL         `env:"BUCKET_URL" required:"" placeholder:"URL" help:"Blob bucket URL."`
+	ListenAddress   string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MySQLConfig     mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
 	LogConfig       log.Config       `embed:""`
 	TelemetryConfig telemetry.Config `embed:""`
 }
@@ -43,7 +41,7 @@ func main() {
 		os.Interrupt,
 		syscall.SIGTERM,
 	)
-	app, cleanup, err := newApplication(ctx, &cf)
+	app, cleanup, err := NewApplication(ctx, &cf)
 	if err != nil {
 		stdlog.Fatal(err)
 	}
