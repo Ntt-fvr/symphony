@@ -103,9 +103,15 @@ func (tu *TodoUpdate) Mutation() *TodoMutation {
 	return tu.mutation
 }
 
-// ClearParent clears the parent edge to Todo.
+// ClearParent clears the "parent" edge to type Todo.
 func (tu *TodoUpdate) ClearParent() *TodoUpdate {
 	tu.mutation.ClearParent()
+	return tu
+}
+
+// ClearChildren clears all "children" edges to type Todo.
+func (tu *TodoUpdate) ClearChildren() *TodoUpdate {
+	tu.mutation.ClearChildren()
 	return tu
 }
 
@@ -267,7 +273,23 @@ func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := tu.mutation.RemovedChildrenIDs(); len(nodes) > 0 {
+	if tu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   todo.ChildrenTable,
+			Columns: []string{todo.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: todo.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !tu.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -395,9 +417,15 @@ func (tuo *TodoUpdateOne) Mutation() *TodoMutation {
 	return tuo.mutation
 }
 
-// ClearParent clears the parent edge to Todo.
+// ClearParent clears the "parent" edge to type Todo.
 func (tuo *TodoUpdateOne) ClearParent() *TodoUpdateOne {
 	tuo.mutation.ClearParent()
+	return tuo
+}
+
+// ClearChildren clears all "children" edges to type Todo.
+func (tuo *TodoUpdateOne) ClearChildren() *TodoUpdateOne {
+	tuo.mutation.ClearChildren()
 	return tuo
 }
 
@@ -557,7 +585,23 @@ func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (t *Todo, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := tuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 {
+	if tuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   todo.ChildrenTable,
+			Columns: []string{todo.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: todo.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !tuo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

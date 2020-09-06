@@ -17,7 +17,7 @@ require (
 	github.com/alecthomas/kong v0.2.11
 	github.com/aws/aws-sdk-go v1.34.17
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.3-0.20200901090646-750a19c118c8
+	github.com/facebook/ent v0.4.3-0.20200906172242-8e824c14eb7a
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2

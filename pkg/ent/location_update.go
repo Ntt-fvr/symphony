@@ -315,15 +315,21 @@ func (lu *LocationUpdate) Mutation() *LocationMutation {
 	return lu.mutation
 }
 
-// ClearType clears the type edge to LocationType.
+// ClearType clears the "type" edge to type LocationType.
 func (lu *LocationUpdate) ClearType() *LocationUpdate {
 	lu.mutation.ClearType()
 	return lu
 }
 
-// ClearParent clears the parent edge to Location.
+// ClearParent clears the "parent" edge to type Location.
 func (lu *LocationUpdate) ClearParent() *LocationUpdate {
 	lu.mutation.ClearParent()
+	return lu
+}
+
+// ClearChildren clears all "children" edges to type Location.
+func (lu *LocationUpdate) ClearChildren() *LocationUpdate {
+	lu.mutation.ClearChildren()
 	return lu
 }
 
@@ -342,6 +348,12 @@ func (lu *LocationUpdate) RemoveChildren(l ...*Location) *LocationUpdate {
 	return lu.RemoveChildIDs(ids...)
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (lu *LocationUpdate) ClearFiles() *LocationUpdate {
+	lu.mutation.ClearFiles()
+	return lu
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (lu *LocationUpdate) RemoveFileIDs(ids ...int) *LocationUpdate {
 	lu.mutation.RemoveFileIDs(ids...)
@@ -355,6 +367,12 @@ func (lu *LocationUpdate) RemoveFiles(f ...*File) *LocationUpdate {
 		ids[i] = f[i].ID
 	}
 	return lu.RemoveFileIDs(ids...)
+}
+
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (lu *LocationUpdate) ClearHyperlinks() *LocationUpdate {
+	lu.mutation.ClearHyperlinks()
+	return lu
 }
 
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
@@ -372,6 +390,12 @@ func (lu *LocationUpdate) RemoveHyperlinks(h ...*Hyperlink) *LocationUpdate {
 	return lu.RemoveHyperlinkIDs(ids...)
 }
 
+// ClearEquipment clears all "equipment" edges to type Equipment.
+func (lu *LocationUpdate) ClearEquipment() *LocationUpdate {
+	lu.mutation.ClearEquipment()
+	return lu
+}
+
 // RemoveEquipmentIDs removes the equipment edge to Equipment by ids.
 func (lu *LocationUpdate) RemoveEquipmentIDs(ids ...int) *LocationUpdate {
 	lu.mutation.RemoveEquipmentIDs(ids...)
@@ -385,6 +409,12 @@ func (lu *LocationUpdate) RemoveEquipment(e ...*Equipment) *LocationUpdate {
 		ids[i] = e[i].ID
 	}
 	return lu.RemoveEquipmentIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (lu *LocationUpdate) ClearProperties() *LocationUpdate {
+	lu.mutation.ClearProperties()
+	return lu
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -402,6 +432,12 @@ func (lu *LocationUpdate) RemoveProperties(p ...*Property) *LocationUpdate {
 	return lu.RemovePropertyIDs(ids...)
 }
 
+// ClearSurvey clears all "survey" edges to type Survey.
+func (lu *LocationUpdate) ClearSurvey() *LocationUpdate {
+	lu.mutation.ClearSurvey()
+	return lu
+}
+
 // RemoveSurveyIDs removes the survey edge to Survey by ids.
 func (lu *LocationUpdate) RemoveSurveyIDs(ids ...int) *LocationUpdate {
 	lu.mutation.RemoveSurveyIDs(ids...)
@@ -415,6 +451,12 @@ func (lu *LocationUpdate) RemoveSurvey(s ...*Survey) *LocationUpdate {
 		ids[i] = s[i].ID
 	}
 	return lu.RemoveSurveyIDs(ids...)
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (lu *LocationUpdate) ClearWifiScan() *LocationUpdate {
+	lu.mutation.ClearWifiScan()
+	return lu
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -432,6 +474,12 @@ func (lu *LocationUpdate) RemoveWifiScan(s ...*SurveyWiFiScan) *LocationUpdate {
 	return lu.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (lu *LocationUpdate) ClearCellScan() *LocationUpdate {
+	lu.mutation.ClearCellScan()
+	return lu
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (lu *LocationUpdate) RemoveCellScanIDs(ids ...int) *LocationUpdate {
 	lu.mutation.RemoveCellScanIDs(ids...)
@@ -447,6 +495,12 @@ func (lu *LocationUpdate) RemoveCellScan(s ...*SurveyCellScan) *LocationUpdate {
 	return lu.RemoveCellScanIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrder.
+func (lu *LocationUpdate) ClearWorkOrders() *LocationUpdate {
+	lu.mutation.ClearWorkOrders()
+	return lu
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
 func (lu *LocationUpdate) RemoveWorkOrderIDs(ids ...int) *LocationUpdate {
 	lu.mutation.RemoveWorkOrderIDs(ids...)
@@ -460,6 +514,12 @@ func (lu *LocationUpdate) RemoveWorkOrders(w ...*WorkOrder) *LocationUpdate {
 		ids[i] = w[i].ID
 	}
 	return lu.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearFloorPlans clears all "floor_plans" edges to type FloorPlan.
+func (lu *LocationUpdate) ClearFloorPlans() *LocationUpdate {
+	lu.mutation.ClearFloorPlans()
+	return lu
 }
 
 // RemoveFloorPlanIDs removes the floor_plans edge to FloorPlan by ids.
@@ -708,7 +768,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedChildrenIDs(); len(nodes) > 0 {
+	if lu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.ChildrenTable,
+			Columns: []string{location.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: location.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !lu.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -746,7 +822,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if lu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.FilesTable,
+			Columns: []string{location.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !lu.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -784,7 +876,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if lu.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.HyperlinksTable,
+			Columns: []string{location.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !lu.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -822,7 +930,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedEquipmentIDs(); len(nodes) > 0 {
+	if lu.mutation.EquipmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.EquipmentTable,
+			Columns: []string{location.EquipmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedEquipmentIDs(); len(nodes) > 0 && !lu.mutation.EquipmentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -860,7 +984,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if lu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.PropertiesTable,
+			Columns: []string{location.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !lu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -898,7 +1038,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedSurveyIDs(); len(nodes) > 0 {
+	if lu.mutation.SurveyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.SurveyTable,
+			Columns: []string{location.SurveyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: survey.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedSurveyIDs(); len(nodes) > 0 && !lu.mutation.SurveyCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -936,7 +1092,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if lu.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.WifiScanTable,
+			Columns: []string{location.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !lu.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -974,7 +1146,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if lu.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.CellScanTable,
+			Columns: []string{location.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !lu.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1012,7 +1200,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if lu.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.WorkOrdersTable,
+			Columns: []string{location.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !lu.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1050,7 +1254,23 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedFloorPlansIDs(); len(nodes) > 0 {
+	if lu.mutation.FloorPlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.FloorPlansTable,
+			Columns: []string{location.FloorPlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: floorplan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedFloorPlansIDs(); len(nodes) > 0 && !lu.mutation.FloorPlansCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1379,15 +1599,21 @@ func (luo *LocationUpdateOne) Mutation() *LocationMutation {
 	return luo.mutation
 }
 
-// ClearType clears the type edge to LocationType.
+// ClearType clears the "type" edge to type LocationType.
 func (luo *LocationUpdateOne) ClearType() *LocationUpdateOne {
 	luo.mutation.ClearType()
 	return luo
 }
 
-// ClearParent clears the parent edge to Location.
+// ClearParent clears the "parent" edge to type Location.
 func (luo *LocationUpdateOne) ClearParent() *LocationUpdateOne {
 	luo.mutation.ClearParent()
+	return luo
+}
+
+// ClearChildren clears all "children" edges to type Location.
+func (luo *LocationUpdateOne) ClearChildren() *LocationUpdateOne {
+	luo.mutation.ClearChildren()
 	return luo
 }
 
@@ -1406,6 +1632,12 @@ func (luo *LocationUpdateOne) RemoveChildren(l ...*Location) *LocationUpdateOne 
 	return luo.RemoveChildIDs(ids...)
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (luo *LocationUpdateOne) ClearFiles() *LocationUpdateOne {
+	luo.mutation.ClearFiles()
+	return luo
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (luo *LocationUpdateOne) RemoveFileIDs(ids ...int) *LocationUpdateOne {
 	luo.mutation.RemoveFileIDs(ids...)
@@ -1419,6 +1651,12 @@ func (luo *LocationUpdateOne) RemoveFiles(f ...*File) *LocationUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return luo.RemoveFileIDs(ids...)
+}
+
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (luo *LocationUpdateOne) ClearHyperlinks() *LocationUpdateOne {
+	luo.mutation.ClearHyperlinks()
+	return luo
 }
 
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
@@ -1436,6 +1674,12 @@ func (luo *LocationUpdateOne) RemoveHyperlinks(h ...*Hyperlink) *LocationUpdateO
 	return luo.RemoveHyperlinkIDs(ids...)
 }
 
+// ClearEquipment clears all "equipment" edges to type Equipment.
+func (luo *LocationUpdateOne) ClearEquipment() *LocationUpdateOne {
+	luo.mutation.ClearEquipment()
+	return luo
+}
+
 // RemoveEquipmentIDs removes the equipment edge to Equipment by ids.
 func (luo *LocationUpdateOne) RemoveEquipmentIDs(ids ...int) *LocationUpdateOne {
 	luo.mutation.RemoveEquipmentIDs(ids...)
@@ -1449,6 +1693,12 @@ func (luo *LocationUpdateOne) RemoveEquipment(e ...*Equipment) *LocationUpdateOn
 		ids[i] = e[i].ID
 	}
 	return luo.RemoveEquipmentIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (luo *LocationUpdateOne) ClearProperties() *LocationUpdateOne {
+	luo.mutation.ClearProperties()
+	return luo
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -1466,6 +1716,12 @@ func (luo *LocationUpdateOne) RemoveProperties(p ...*Property) *LocationUpdateOn
 	return luo.RemovePropertyIDs(ids...)
 }
 
+// ClearSurvey clears all "survey" edges to type Survey.
+func (luo *LocationUpdateOne) ClearSurvey() *LocationUpdateOne {
+	luo.mutation.ClearSurvey()
+	return luo
+}
+
 // RemoveSurveyIDs removes the survey edge to Survey by ids.
 func (luo *LocationUpdateOne) RemoveSurveyIDs(ids ...int) *LocationUpdateOne {
 	luo.mutation.RemoveSurveyIDs(ids...)
@@ -1479,6 +1735,12 @@ func (luo *LocationUpdateOne) RemoveSurvey(s ...*Survey) *LocationUpdateOne {
 		ids[i] = s[i].ID
 	}
 	return luo.RemoveSurveyIDs(ids...)
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (luo *LocationUpdateOne) ClearWifiScan() *LocationUpdateOne {
+	luo.mutation.ClearWifiScan()
+	return luo
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -1496,6 +1758,12 @@ func (luo *LocationUpdateOne) RemoveWifiScan(s ...*SurveyWiFiScan) *LocationUpda
 	return luo.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (luo *LocationUpdateOne) ClearCellScan() *LocationUpdateOne {
+	luo.mutation.ClearCellScan()
+	return luo
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (luo *LocationUpdateOne) RemoveCellScanIDs(ids ...int) *LocationUpdateOne {
 	luo.mutation.RemoveCellScanIDs(ids...)
@@ -1511,6 +1779,12 @@ func (luo *LocationUpdateOne) RemoveCellScan(s ...*SurveyCellScan) *LocationUpda
 	return luo.RemoveCellScanIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrder.
+func (luo *LocationUpdateOne) ClearWorkOrders() *LocationUpdateOne {
+	luo.mutation.ClearWorkOrders()
+	return luo
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
 func (luo *LocationUpdateOne) RemoveWorkOrderIDs(ids ...int) *LocationUpdateOne {
 	luo.mutation.RemoveWorkOrderIDs(ids...)
@@ -1524,6 +1798,12 @@ func (luo *LocationUpdateOne) RemoveWorkOrders(w ...*WorkOrder) *LocationUpdateO
 		ids[i] = w[i].ID
 	}
 	return luo.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearFloorPlans clears all "floor_plans" edges to type FloorPlan.
+func (luo *LocationUpdateOne) ClearFloorPlans() *LocationUpdateOne {
+	luo.mutation.ClearFloorPlans()
+	return luo
 }
 
 // RemoveFloorPlanIDs removes the floor_plans edge to FloorPlan by ids.
@@ -1770,7 +2050,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedChildrenIDs(); len(nodes) > 0 {
+	if luo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.ChildrenTable,
+			Columns: []string{location.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: location.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !luo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1808,7 +2104,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if luo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.FilesTable,
+			Columns: []string{location.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !luo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1846,7 +2158,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if luo.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.HyperlinksTable,
+			Columns: []string{location.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !luo.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1884,7 +2212,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedEquipmentIDs(); len(nodes) > 0 {
+	if luo.mutation.EquipmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.EquipmentTable,
+			Columns: []string{location.EquipmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedEquipmentIDs(); len(nodes) > 0 && !luo.mutation.EquipmentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1922,7 +2266,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if luo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   location.PropertiesTable,
+			Columns: []string{location.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !luo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1960,7 +2320,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedSurveyIDs(); len(nodes) > 0 {
+	if luo.mutation.SurveyCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.SurveyTable,
+			Columns: []string{location.SurveyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: survey.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedSurveyIDs(); len(nodes) > 0 && !luo.mutation.SurveyCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1998,7 +2374,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if luo.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.WifiScanTable,
+			Columns: []string{location.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !luo.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2036,7 +2428,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if luo.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.CellScanTable,
+			Columns: []string{location.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !luo.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2074,7 +2482,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if luo.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.WorkOrdersTable,
+			Columns: []string{location.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !luo.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2112,7 +2536,23 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedFloorPlansIDs(); len(nodes) > 0 {
+	if luo.mutation.FloorPlansCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   location.FloorPlansTable,
+			Columns: []string{location.FloorPlansColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: floorplan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedFloorPlansIDs(); len(nodes) > 0 && !luo.mutation.FloorPlansCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

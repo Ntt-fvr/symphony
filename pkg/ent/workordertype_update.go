@@ -146,6 +146,12 @@ func (wotu *WorkOrderTypeUpdate) Mutation() *WorkOrderTypeMutation {
 	return wotu.mutation
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (wotu *WorkOrderTypeUpdate) ClearPropertyTypes() *WorkOrderTypeUpdate {
+	wotu.mutation.ClearPropertyTypes()
+	return wotu
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (wotu *WorkOrderTypeUpdate) RemovePropertyTypeIDs(ids ...int) *WorkOrderTypeUpdate {
 	wotu.mutation.RemovePropertyTypeIDs(ids...)
@@ -159,6 +165,12 @@ func (wotu *WorkOrderTypeUpdate) RemovePropertyTypes(p ...*PropertyType) *WorkOr
 		ids[i] = p[i].ID
 	}
 	return wotu.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearCheckListCategoryDefinitions clears all "check_list_category_definitions" edges to type CheckListCategoryDefinition.
+func (wotu *WorkOrderTypeUpdate) ClearCheckListCategoryDefinitions() *WorkOrderTypeUpdate {
+	wotu.mutation.ClearCheckListCategoryDefinitions()
+	return wotu
 }
 
 // RemoveCheckListCategoryDefinitionIDs removes the check_list_category_definitions edge to CheckListCategoryDefinition by ids.
@@ -176,6 +188,12 @@ func (wotu *WorkOrderTypeUpdate) RemoveCheckListCategoryDefinitions(c ...*CheckL
 	return wotu.RemoveCheckListCategoryDefinitionIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrder.
+func (wotu *WorkOrderTypeUpdate) ClearWorkOrders() *WorkOrderTypeUpdate {
+	wotu.mutation.ClearWorkOrders()
+	return wotu
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
 func (wotu *WorkOrderTypeUpdate) RemoveWorkOrderIDs(ids ...int) *WorkOrderTypeUpdate {
 	wotu.mutation.RemoveWorkOrderIDs(ids...)
@@ -189,6 +207,12 @@ func (wotu *WorkOrderTypeUpdate) RemoveWorkOrders(w ...*WorkOrder) *WorkOrderTyp
 		ids[i] = w[i].ID
 	}
 	return wotu.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearDefinitions clears all "definitions" edges to type WorkOrderDefinition.
+func (wotu *WorkOrderTypeUpdate) ClearDefinitions() *WorkOrderTypeUpdate {
+	wotu.mutation.ClearDefinitions()
+	return wotu
 }
 
 // RemoveDefinitionIDs removes the definitions edge to WorkOrderDefinition by ids.
@@ -309,7 +333,23 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: workordertype.FieldAssigneeCanCompleteWorkOrder,
 		})
 	}
-	if nodes := wotu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if wotu.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workordertype.PropertyTypesTable,
+			Columns: []string{workordertype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !wotu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -347,7 +387,23 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotu.mutation.RemovedCheckListCategoryDefinitionsIDs(); len(nodes) > 0 {
+	if wotu.mutation.CheckListCategoryDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workordertype.CheckListCategoryDefinitionsTable,
+			Columns: []string{workordertype.CheckListCategoryDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistcategorydefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotu.mutation.RemovedCheckListCategoryDefinitionsIDs(); len(nodes) > 0 && !wotu.mutation.CheckListCategoryDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -385,7 +441,23 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if wotu.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workordertype.WorkOrdersTable,
+			Columns: []string{workordertype.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !wotu.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -423,7 +495,23 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotu.mutation.RemovedDefinitionsIDs(); len(nodes) > 0 {
+	if wotu.mutation.DefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workordertype.DefinitionsTable,
+			Columns: []string{workordertype.DefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorderdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotu.mutation.RemovedDefinitionsIDs(); len(nodes) > 0 && !wotu.mutation.DefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -590,6 +678,12 @@ func (wotuo *WorkOrderTypeUpdateOne) Mutation() *WorkOrderTypeMutation {
 	return wotuo.mutation
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (wotuo *WorkOrderTypeUpdateOne) ClearPropertyTypes() *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ClearPropertyTypes()
+	return wotuo
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (wotuo *WorkOrderTypeUpdateOne) RemovePropertyTypeIDs(ids ...int) *WorkOrderTypeUpdateOne {
 	wotuo.mutation.RemovePropertyTypeIDs(ids...)
@@ -603,6 +697,12 @@ func (wotuo *WorkOrderTypeUpdateOne) RemovePropertyTypes(p ...*PropertyType) *Wo
 		ids[i] = p[i].ID
 	}
 	return wotuo.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearCheckListCategoryDefinitions clears all "check_list_category_definitions" edges to type CheckListCategoryDefinition.
+func (wotuo *WorkOrderTypeUpdateOne) ClearCheckListCategoryDefinitions() *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ClearCheckListCategoryDefinitions()
+	return wotuo
 }
 
 // RemoveCheckListCategoryDefinitionIDs removes the check_list_category_definitions edge to CheckListCategoryDefinition by ids.
@@ -620,6 +720,12 @@ func (wotuo *WorkOrderTypeUpdateOne) RemoveCheckListCategoryDefinitions(c ...*Ch
 	return wotuo.RemoveCheckListCategoryDefinitionIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrder.
+func (wotuo *WorkOrderTypeUpdateOne) ClearWorkOrders() *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ClearWorkOrders()
+	return wotuo
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
 func (wotuo *WorkOrderTypeUpdateOne) RemoveWorkOrderIDs(ids ...int) *WorkOrderTypeUpdateOne {
 	wotuo.mutation.RemoveWorkOrderIDs(ids...)
@@ -633,6 +739,12 @@ func (wotuo *WorkOrderTypeUpdateOne) RemoveWorkOrders(w ...*WorkOrder) *WorkOrde
 		ids[i] = w[i].ID
 	}
 	return wotuo.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearDefinitions clears all "definitions" edges to type WorkOrderDefinition.
+func (wotuo *WorkOrderTypeUpdateOne) ClearDefinitions() *WorkOrderTypeUpdateOne {
+	wotuo.mutation.ClearDefinitions()
+	return wotuo
 }
 
 // RemoveDefinitionIDs removes the definitions edge to WorkOrderDefinition by ids.
@@ -751,7 +863,23 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 			Column: workordertype.FieldAssigneeCanCompleteWorkOrder,
 		})
 	}
-	if nodes := wotuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if wotuo.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workordertype.PropertyTypesTable,
+			Columns: []string{workordertype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !wotuo.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -789,7 +917,23 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotuo.mutation.RemovedCheckListCategoryDefinitionsIDs(); len(nodes) > 0 {
+	if wotuo.mutation.CheckListCategoryDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workordertype.CheckListCategoryDefinitionsTable,
+			Columns: []string{workordertype.CheckListCategoryDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistcategorydefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotuo.mutation.RemovedCheckListCategoryDefinitionsIDs(); len(nodes) > 0 && !wotuo.mutation.CheckListCategoryDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -827,7 +971,23 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotuo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if wotuo.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workordertype.WorkOrdersTable,
+			Columns: []string{workordertype.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotuo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !wotuo.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -865,7 +1025,23 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wotuo.mutation.RemovedDefinitionsIDs(); len(nodes) > 0 {
+	if wotuo.mutation.DefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workordertype.DefinitionsTable,
+			Columns: []string{workordertype.DefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorderdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wotuo.mutation.RemovedDefinitionsIDs(); len(nodes) > 0 && !wotuo.mutation.DefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

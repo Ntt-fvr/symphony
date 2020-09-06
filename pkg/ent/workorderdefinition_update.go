@@ -123,19 +123,19 @@ func (wodu *WorkOrderDefinitionUpdate) Mutation() *WorkOrderDefinitionMutation {
 	return wodu.mutation
 }
 
-// ClearType clears the type edge to WorkOrderType.
+// ClearType clears the "type" edge to type WorkOrderType.
 func (wodu *WorkOrderDefinitionUpdate) ClearType() *WorkOrderDefinitionUpdate {
 	wodu.mutation.ClearType()
 	return wodu
 }
 
-// ClearProjectType clears the project_type edge to ProjectType.
+// ClearProjectType clears the "project_type" edge to type ProjectType.
 func (wodu *WorkOrderDefinitionUpdate) ClearProjectType() *WorkOrderDefinitionUpdate {
 	wodu.mutation.ClearProjectType()
 	return wodu
 }
 
-// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+// ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (wodu *WorkOrderDefinitionUpdate) ClearProjectTemplate() *WorkOrderDefinitionUpdate {
 	wodu.mutation.ClearProjectTemplate()
 	return wodu
@@ -454,19 +454,19 @@ func (woduo *WorkOrderDefinitionUpdateOne) Mutation() *WorkOrderDefinitionMutati
 	return woduo.mutation
 }
 
-// ClearType clears the type edge to WorkOrderType.
+// ClearType clears the "type" edge to type WorkOrderType.
 func (woduo *WorkOrderDefinitionUpdateOne) ClearType() *WorkOrderDefinitionUpdateOne {
 	woduo.mutation.ClearType()
 	return woduo
 }
 
-// ClearProjectType clears the project_type edge to ProjectType.
+// ClearProjectType clears the "project_type" edge to type ProjectType.
 func (woduo *WorkOrderDefinitionUpdateOne) ClearProjectType() *WorkOrderDefinitionUpdateOne {
 	woduo.mutation.ClearProjectType()
 	return woduo
 }
 
-// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+// ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (woduo *WorkOrderDefinitionUpdateOne) ClearProjectTemplate() *WorkOrderDefinitionUpdateOne {
 	woduo.mutation.ClearProjectTemplate()
 	return woduo

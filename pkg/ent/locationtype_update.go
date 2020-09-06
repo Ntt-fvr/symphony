@@ -172,6 +172,12 @@ func (ltu *LocationTypeUpdate) Mutation() *LocationTypeMutation {
 	return ltu.mutation
 }
 
+// ClearLocations clears all "locations" edges to type Location.
+func (ltu *LocationTypeUpdate) ClearLocations() *LocationTypeUpdate {
+	ltu.mutation.ClearLocations()
+	return ltu
+}
+
 // RemoveLocationIDs removes the locations edge to Location by ids.
 func (ltu *LocationTypeUpdate) RemoveLocationIDs(ids ...int) *LocationTypeUpdate {
 	ltu.mutation.RemoveLocationIDs(ids...)
@@ -187,6 +193,12 @@ func (ltu *LocationTypeUpdate) RemoveLocations(l ...*Location) *LocationTypeUpda
 	return ltu.RemoveLocationIDs(ids...)
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (ltu *LocationTypeUpdate) ClearPropertyTypes() *LocationTypeUpdate {
+	ltu.mutation.ClearPropertyTypes()
+	return ltu
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (ltu *LocationTypeUpdate) RemovePropertyTypeIDs(ids ...int) *LocationTypeUpdate {
 	ltu.mutation.RemovePropertyTypeIDs(ids...)
@@ -200,6 +212,12 @@ func (ltu *LocationTypeUpdate) RemovePropertyTypes(p ...*PropertyType) *Location
 		ids[i] = p[i].ID
 	}
 	return ltu.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearSurveyTemplateCategories clears all "survey_template_categories" edges to type SurveyTemplateCategory.
+func (ltu *LocationTypeUpdate) ClearSurveyTemplateCategories() *LocationTypeUpdate {
+	ltu.mutation.ClearSurveyTemplateCategories()
+	return ltu
 }
 
 // RemoveSurveyTemplateCategoryIDs removes the survey_template_categories edge to SurveyTemplateCategory by ids.
@@ -359,7 +377,23 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: locationtype.FieldIndex,
 		})
 	}
-	if nodes := ltu.mutation.RemovedLocationsIDs(); len(nodes) > 0 {
+	if ltu.mutation.LocationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   locationtype.LocationsTable,
+			Columns: []string{locationtype.LocationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: location.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltu.mutation.RemovedLocationsIDs(); len(nodes) > 0 && !ltu.mutation.LocationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -397,7 +431,23 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ltu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if ltu.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.PropertyTypesTable,
+			Columns: []string{locationtype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !ltu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -435,7 +485,23 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ltu.mutation.RemovedSurveyTemplateCategoriesIDs(); len(nodes) > 0 {
+	if ltu.mutation.SurveyTemplateCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.SurveyTemplateCategoriesTable,
+			Columns: []string{locationtype.SurveyTemplateCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveytemplatecategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltu.mutation.RemovedSurveyTemplateCategoriesIDs(); len(nodes) > 0 && !ltu.mutation.SurveyTemplateCategoriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -629,6 +695,12 @@ func (ltuo *LocationTypeUpdateOne) Mutation() *LocationTypeMutation {
 	return ltuo.mutation
 }
 
+// ClearLocations clears all "locations" edges to type Location.
+func (ltuo *LocationTypeUpdateOne) ClearLocations() *LocationTypeUpdateOne {
+	ltuo.mutation.ClearLocations()
+	return ltuo
+}
+
 // RemoveLocationIDs removes the locations edge to Location by ids.
 func (ltuo *LocationTypeUpdateOne) RemoveLocationIDs(ids ...int) *LocationTypeUpdateOne {
 	ltuo.mutation.RemoveLocationIDs(ids...)
@@ -644,6 +716,12 @@ func (ltuo *LocationTypeUpdateOne) RemoveLocations(l ...*Location) *LocationType
 	return ltuo.RemoveLocationIDs(ids...)
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (ltuo *LocationTypeUpdateOne) ClearPropertyTypes() *LocationTypeUpdateOne {
+	ltuo.mutation.ClearPropertyTypes()
+	return ltuo
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (ltuo *LocationTypeUpdateOne) RemovePropertyTypeIDs(ids ...int) *LocationTypeUpdateOne {
 	ltuo.mutation.RemovePropertyTypeIDs(ids...)
@@ -657,6 +735,12 @@ func (ltuo *LocationTypeUpdateOne) RemovePropertyTypes(p ...*PropertyType) *Loca
 		ids[i] = p[i].ID
 	}
 	return ltuo.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearSurveyTemplateCategories clears all "survey_template_categories" edges to type SurveyTemplateCategory.
+func (ltuo *LocationTypeUpdateOne) ClearSurveyTemplateCategories() *LocationTypeUpdateOne {
+	ltuo.mutation.ClearSurveyTemplateCategories()
+	return ltuo
 }
 
 // RemoveSurveyTemplateCategoryIDs removes the survey_template_categories edge to SurveyTemplateCategory by ids.
@@ -814,7 +898,23 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationTyp
 			Column: locationtype.FieldIndex,
 		})
 	}
-	if nodes := ltuo.mutation.RemovedLocationsIDs(); len(nodes) > 0 {
+	if ltuo.mutation.LocationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   locationtype.LocationsTable,
+			Columns: []string{locationtype.LocationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: location.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltuo.mutation.RemovedLocationsIDs(); len(nodes) > 0 && !ltuo.mutation.LocationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -852,7 +952,23 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationTyp
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ltuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if ltuo.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.PropertyTypesTable,
+			Columns: []string{locationtype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !ltuo.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -890,7 +1006,23 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationTyp
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ltuo.mutation.RemovedSurveyTemplateCategoriesIDs(); len(nodes) > 0 {
+	if ltuo.mutation.SurveyTemplateCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   locationtype.SurveyTemplateCategoriesTable,
+			Columns: []string{locationtype.SurveyTemplateCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveytemplatecategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ltuo.mutation.RemovedSurveyTemplateCategoriesIDs(); len(nodes) > 0 && !ltuo.mutation.SurveyTemplateCategoriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

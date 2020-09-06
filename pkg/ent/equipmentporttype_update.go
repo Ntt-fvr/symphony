@@ -89,6 +89,12 @@ func (eptu *EquipmentPortTypeUpdate) Mutation() *EquipmentPortTypeMutation {
 	return eptu.mutation
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (eptu *EquipmentPortTypeUpdate) ClearPropertyTypes() *EquipmentPortTypeUpdate {
+	eptu.mutation.ClearPropertyTypes()
+	return eptu
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (eptu *EquipmentPortTypeUpdate) RemovePropertyTypeIDs(ids ...int) *EquipmentPortTypeUpdate {
 	eptu.mutation.RemovePropertyTypeIDs(ids...)
@@ -104,6 +110,12 @@ func (eptu *EquipmentPortTypeUpdate) RemovePropertyTypes(p ...*PropertyType) *Eq
 	return eptu.RemovePropertyTypeIDs(ids...)
 }
 
+// ClearLinkPropertyTypes clears all "link_property_types" edges to type PropertyType.
+func (eptu *EquipmentPortTypeUpdate) ClearLinkPropertyTypes() *EquipmentPortTypeUpdate {
+	eptu.mutation.ClearLinkPropertyTypes()
+	return eptu
+}
+
 // RemoveLinkPropertyTypeIDs removes the link_property_types edge to PropertyType by ids.
 func (eptu *EquipmentPortTypeUpdate) RemoveLinkPropertyTypeIDs(ids ...int) *EquipmentPortTypeUpdate {
 	eptu.mutation.RemoveLinkPropertyTypeIDs(ids...)
@@ -117,6 +129,12 @@ func (eptu *EquipmentPortTypeUpdate) RemoveLinkPropertyTypes(p ...*PropertyType)
 		ids[i] = p[i].ID
 	}
 	return eptu.RemoveLinkPropertyTypeIDs(ids...)
+}
+
+// ClearPortDefinitions clears all "port_definitions" edges to type EquipmentPortDefinition.
+func (eptu *EquipmentPortTypeUpdate) ClearPortDefinitions() *EquipmentPortTypeUpdate {
+	eptu.mutation.ClearPortDefinitions()
+	return eptu
 }
 
 // RemovePortDefinitionIDs removes the port_definitions edge to EquipmentPortDefinition by ids.
@@ -222,7 +240,23 @@ func (eptu *EquipmentPortTypeUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: equipmentporttype.FieldName,
 		})
 	}
-	if nodes := eptu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if eptu.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentporttype.PropertyTypesTable,
+			Columns: []string{equipmentporttype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !eptu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -260,7 +294,23 @@ func (eptu *EquipmentPortTypeUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eptu.mutation.RemovedLinkPropertyTypesIDs(); len(nodes) > 0 {
+	if eptu.mutation.LinkPropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentporttype.LinkPropertyTypesTable,
+			Columns: []string{equipmentporttype.LinkPropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptu.mutation.RemovedLinkPropertyTypesIDs(); len(nodes) > 0 && !eptu.mutation.LinkPropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -298,7 +348,23 @@ func (eptu *EquipmentPortTypeUpdate) sqlSave(ctx context.Context) (n int, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eptu.mutation.RemovedPortDefinitionsIDs(); len(nodes) > 0 {
+	if eptu.mutation.PortDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentporttype.PortDefinitionsTable,
+			Columns: []string{equipmentporttype.PortDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptu.mutation.RemovedPortDefinitionsIDs(); len(nodes) > 0 && !eptu.mutation.PortDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -410,6 +476,12 @@ func (eptuo *EquipmentPortTypeUpdateOne) Mutation() *EquipmentPortTypeMutation {
 	return eptuo.mutation
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (eptuo *EquipmentPortTypeUpdateOne) ClearPropertyTypes() *EquipmentPortTypeUpdateOne {
+	eptuo.mutation.ClearPropertyTypes()
+	return eptuo
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (eptuo *EquipmentPortTypeUpdateOne) RemovePropertyTypeIDs(ids ...int) *EquipmentPortTypeUpdateOne {
 	eptuo.mutation.RemovePropertyTypeIDs(ids...)
@@ -425,6 +497,12 @@ func (eptuo *EquipmentPortTypeUpdateOne) RemovePropertyTypes(p ...*PropertyType)
 	return eptuo.RemovePropertyTypeIDs(ids...)
 }
 
+// ClearLinkPropertyTypes clears all "link_property_types" edges to type PropertyType.
+func (eptuo *EquipmentPortTypeUpdateOne) ClearLinkPropertyTypes() *EquipmentPortTypeUpdateOne {
+	eptuo.mutation.ClearLinkPropertyTypes()
+	return eptuo
+}
+
 // RemoveLinkPropertyTypeIDs removes the link_property_types edge to PropertyType by ids.
 func (eptuo *EquipmentPortTypeUpdateOne) RemoveLinkPropertyTypeIDs(ids ...int) *EquipmentPortTypeUpdateOne {
 	eptuo.mutation.RemoveLinkPropertyTypeIDs(ids...)
@@ -438,6 +516,12 @@ func (eptuo *EquipmentPortTypeUpdateOne) RemoveLinkPropertyTypes(p ...*PropertyT
 		ids[i] = p[i].ID
 	}
 	return eptuo.RemoveLinkPropertyTypeIDs(ids...)
+}
+
+// ClearPortDefinitions clears all "port_definitions" edges to type EquipmentPortDefinition.
+func (eptuo *EquipmentPortTypeUpdateOne) ClearPortDefinitions() *EquipmentPortTypeUpdateOne {
+	eptuo.mutation.ClearPortDefinitions()
+	return eptuo
 }
 
 // RemovePortDefinitionIDs removes the port_definitions edge to EquipmentPortDefinition by ids.
@@ -541,7 +625,23 @@ func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *Equi
 			Column: equipmentporttype.FieldName,
 		})
 	}
-	if nodes := eptuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if eptuo.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentporttype.PropertyTypesTable,
+			Columns: []string{equipmentporttype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !eptuo.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -579,7 +679,23 @@ func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *Equi
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eptuo.mutation.RemovedLinkPropertyTypesIDs(); len(nodes) > 0 {
+	if eptuo.mutation.LinkPropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentporttype.LinkPropertyTypesTable,
+			Columns: []string{equipmentporttype.LinkPropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptuo.mutation.RemovedLinkPropertyTypesIDs(); len(nodes) > 0 && !eptuo.mutation.LinkPropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -617,7 +733,23 @@ func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *Equi
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eptuo.mutation.RemovedPortDefinitionsIDs(); len(nodes) > 0 {
+	if eptuo.mutation.PortDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentporttype.PortDefinitionsTable,
+			Columns: []string{equipmentporttype.PortDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eptuo.mutation.RemovedPortDefinitionsIDs(); len(nodes) > 0 && !eptuo.mutation.PortDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

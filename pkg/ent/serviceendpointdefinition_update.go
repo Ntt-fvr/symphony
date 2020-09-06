@@ -131,6 +131,12 @@ func (sedu *ServiceEndpointDefinitionUpdate) Mutation() *ServiceEndpointDefiniti
 	return sedu.mutation
 }
 
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (sedu *ServiceEndpointDefinitionUpdate) ClearEndpoints() *ServiceEndpointDefinitionUpdate {
+	sedu.mutation.ClearEndpoints()
+	return sedu
+}
+
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
 func (sedu *ServiceEndpointDefinitionUpdate) RemoveEndpointIDs(ids ...int) *ServiceEndpointDefinitionUpdate {
 	sedu.mutation.RemoveEndpointIDs(ids...)
@@ -146,13 +152,13 @@ func (sedu *ServiceEndpointDefinitionUpdate) RemoveEndpoints(s ...*ServiceEndpoi
 	return sedu.RemoveEndpointIDs(ids...)
 }
 
-// ClearServiceType clears the service_type edge to ServiceType.
+// ClearServiceType clears the "service_type" edge to type ServiceType.
 func (sedu *ServiceEndpointDefinitionUpdate) ClearServiceType() *ServiceEndpointDefinitionUpdate {
 	sedu.mutation.ClearServiceType()
 	return sedu
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (sedu *ServiceEndpointDefinitionUpdate) ClearEquipmentType() *ServiceEndpointDefinitionUpdate {
 	sedu.mutation.ClearEquipmentType()
 	return sedu
@@ -278,7 +284,23 @@ func (sedu *ServiceEndpointDefinitionUpdate) sqlSave(ctx context.Context) (n int
 			Column: serviceendpointdefinition.FieldIndex,
 		})
 	}
-	if nodes := sedu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if sedu.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   serviceendpointdefinition.EndpointsTable,
+			Columns: []string{serviceendpointdefinition.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := sedu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !sedu.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -501,6 +523,12 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) Mutation() *ServiceEndpointDefi
 	return seduo.mutation
 }
 
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (seduo *ServiceEndpointDefinitionUpdateOne) ClearEndpoints() *ServiceEndpointDefinitionUpdateOne {
+	seduo.mutation.ClearEndpoints()
+	return seduo
+}
+
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
 func (seduo *ServiceEndpointDefinitionUpdateOne) RemoveEndpointIDs(ids ...int) *ServiceEndpointDefinitionUpdateOne {
 	seduo.mutation.RemoveEndpointIDs(ids...)
@@ -516,13 +544,13 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) RemoveEndpoints(s ...*ServiceEn
 	return seduo.RemoveEndpointIDs(ids...)
 }
 
-// ClearServiceType clears the service_type edge to ServiceType.
+// ClearServiceType clears the "service_type" edge to type ServiceType.
 func (seduo *ServiceEndpointDefinitionUpdateOne) ClearServiceType() *ServiceEndpointDefinitionUpdateOne {
 	seduo.mutation.ClearServiceType()
 	return seduo
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (seduo *ServiceEndpointDefinitionUpdateOne) ClearEquipmentType() *ServiceEndpointDefinitionUpdateOne {
 	seduo.mutation.ClearEquipmentType()
 	return seduo
@@ -646,7 +674,23 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (s
 			Column: serviceendpointdefinition.FieldIndex,
 		})
 	}
-	if nodes := seduo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if seduo.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   serviceendpointdefinition.EndpointsTable,
+			Columns: []string{serviceendpointdefinition.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := seduo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !seduo.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

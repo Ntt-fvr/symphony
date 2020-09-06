@@ -95,19 +95,19 @@ func (cu *CommentUpdate) Mutation() *CommentMutation {
 	return cu.mutation
 }
 
-// ClearAuthor clears the author edge to User.
+// ClearAuthor clears the "author" edge to type User.
 func (cu *CommentUpdate) ClearAuthor() *CommentUpdate {
 	cu.mutation.ClearAuthor()
 	return cu
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (cu *CommentUpdate) ClearWorkOrder() *CommentUpdate {
 	cu.mutation.ClearWorkOrder()
 	return cu
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (cu *CommentUpdate) ClearProject() *CommentUpdate {
 	cu.mutation.ClearProject()
 	return cu
@@ -388,19 +388,19 @@ func (cuo *CommentUpdateOne) Mutation() *CommentMutation {
 	return cuo.mutation
 }
 
-// ClearAuthor clears the author edge to User.
+// ClearAuthor clears the "author" edge to type User.
 func (cuo *CommentUpdateOne) ClearAuthor() *CommentUpdateOne {
 	cuo.mutation.ClearAuthor()
 	return cuo
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (cuo *CommentUpdateOne) ClearWorkOrder() *CommentUpdateOne {
 	cuo.mutation.ClearWorkOrder()
 	return cuo
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (cuo *CommentUpdateOne) ClearProject() *CommentUpdateOne {
 	cuo.mutation.ClearProject()
 	return cuo

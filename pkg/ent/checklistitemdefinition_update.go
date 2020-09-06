@@ -169,7 +169,7 @@ func (clidu *CheckListItemDefinitionUpdate) Mutation() *CheckListItemDefinitionM
 	return clidu.mutation
 }
 
-// ClearCheckListCategoryDefinition clears the check_list_category_definition edge to CheckListCategoryDefinition.
+// ClearCheckListCategoryDefinition clears the "check_list_category_definition" edge to type CheckListCategoryDefinition.
 func (clidu *CheckListItemDefinitionUpdate) ClearCheckListCategoryDefinition() *CheckListItemDefinitionUpdate {
 	clidu.mutation.ClearCheckListCategoryDefinition()
 	return clidu
@@ -543,7 +543,7 @@ func (cliduo *CheckListItemDefinitionUpdateOne) Mutation() *CheckListItemDefinit
 	return cliduo.mutation
 }
 
-// ClearCheckListCategoryDefinition clears the check_list_category_definition edge to CheckListCategoryDefinition.
+// ClearCheckListCategoryDefinition clears the "check_list_category_definition" edge to type CheckListCategoryDefinition.
 func (cliduo *CheckListItemDefinitionUpdateOne) ClearCheckListCategoryDefinition() *CheckListItemDefinitionUpdateOne {
 	cliduo.mutation.ClearCheckListCategoryDefinition()
 	return cliduo

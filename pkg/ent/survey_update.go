@@ -145,15 +145,21 @@ func (su *SurveyUpdate) Mutation() *SurveyMutation {
 	return su.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (su *SurveyUpdate) ClearLocation() *SurveyUpdate {
 	su.mutation.ClearLocation()
 	return su
 }
 
-// ClearSourceFile clears the source_file edge to File.
+// ClearSourceFile clears the "source_file" edge to type File.
 func (su *SurveyUpdate) ClearSourceFile() *SurveyUpdate {
 	su.mutation.ClearSourceFile()
+	return su
+}
+
+// ClearQuestions clears all "questions" edges to type SurveyQuestion.
+func (su *SurveyUpdate) ClearQuestions() *SurveyUpdate {
+	su.mutation.ClearQuestions()
 	return su
 }
 
@@ -363,7 +369,23 @@ func (su *SurveyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedQuestionsIDs(); len(nodes) > 0 {
+	if su.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   survey.QuestionsTable,
+			Columns: []string{survey.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveyquestion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !su.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -529,15 +551,21 @@ func (suo *SurveyUpdateOne) Mutation() *SurveyMutation {
 	return suo.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (suo *SurveyUpdateOne) ClearLocation() *SurveyUpdateOne {
 	suo.mutation.ClearLocation()
 	return suo
 }
 
-// ClearSourceFile clears the source_file edge to File.
+// ClearSourceFile clears the "source_file" edge to type File.
 func (suo *SurveyUpdateOne) ClearSourceFile() *SurveyUpdateOne {
 	suo.mutation.ClearSourceFile()
+	return suo
+}
+
+// ClearQuestions clears all "questions" edges to type SurveyQuestion.
+func (suo *SurveyUpdateOne) ClearQuestions() *SurveyUpdateOne {
+	suo.mutation.ClearQuestions()
 	return suo
 }
 
@@ -745,7 +773,23 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (s *Survey, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedQuestionsIDs(); len(nodes) > 0 {
+	if suo.mutation.QuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   survey.QuestionsTable,
+			Columns: []string{survey.QuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveyquestion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedQuestionsIDs(); len(nodes) > 0 && !suo.mutation.QuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

@@ -125,6 +125,12 @@ func (lu *LinkUpdate) Mutation() *LinkMutation {
 	return lu.mutation
 }
 
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (lu *LinkUpdate) ClearPorts() *LinkUpdate {
+	lu.mutation.ClearPorts()
+	return lu
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (lu *LinkUpdate) RemovePortIDs(ids ...int) *LinkUpdate {
 	lu.mutation.RemovePortIDs(ids...)
@@ -140,9 +146,15 @@ func (lu *LinkUpdate) RemovePorts(e ...*EquipmentPort) *LinkUpdate {
 	return lu.RemovePortIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (lu *LinkUpdate) ClearWorkOrder() *LinkUpdate {
 	lu.mutation.ClearWorkOrder()
+	return lu
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (lu *LinkUpdate) ClearProperties() *LinkUpdate {
+	lu.mutation.ClearProperties()
 	return lu
 }
 
@@ -159,6 +171,12 @@ func (lu *LinkUpdate) RemoveProperties(p ...*Property) *LinkUpdate {
 		ids[i] = p[i].ID
 	}
 	return lu.RemovePropertyIDs(ids...)
+}
+
+// ClearService clears all "service" edges to type Service.
+func (lu *LinkUpdate) ClearService() *LinkUpdate {
+	lu.mutation.ClearService()
+	return lu
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -275,7 +293,23 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: link.FieldFutureState,
 		})
 	}
-	if nodes := lu.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if lu.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   link.PortsTable,
+			Columns: []string{link.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedPortsIDs(); len(nodes) > 0 && !lu.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -348,7 +382,23 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if lu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   link.PropertiesTable,
+			Columns: []string{link.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !lu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -386,7 +436,23 @@ func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := lu.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+	if lu.mutation.ServiceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   link.ServiceTable,
+			Columns: link.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := lu.mutation.RemovedServiceIDs(); len(nodes) > 0 && !lu.mutation.ServiceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -531,6 +597,12 @@ func (luo *LinkUpdateOne) Mutation() *LinkMutation {
 	return luo.mutation
 }
 
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (luo *LinkUpdateOne) ClearPorts() *LinkUpdateOne {
+	luo.mutation.ClearPorts()
+	return luo
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (luo *LinkUpdateOne) RemovePortIDs(ids ...int) *LinkUpdateOne {
 	luo.mutation.RemovePortIDs(ids...)
@@ -546,9 +618,15 @@ func (luo *LinkUpdateOne) RemovePorts(e ...*EquipmentPort) *LinkUpdateOne {
 	return luo.RemovePortIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (luo *LinkUpdateOne) ClearWorkOrder() *LinkUpdateOne {
 	luo.mutation.ClearWorkOrder()
+	return luo
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (luo *LinkUpdateOne) ClearProperties() *LinkUpdateOne {
+	luo.mutation.ClearProperties()
 	return luo
 }
 
@@ -565,6 +643,12 @@ func (luo *LinkUpdateOne) RemoveProperties(p ...*Property) *LinkUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return luo.RemovePropertyIDs(ids...)
+}
+
+// ClearService clears all "service" edges to type Service.
+func (luo *LinkUpdateOne) ClearService() *LinkUpdateOne {
+	luo.mutation.ClearService()
+	return luo
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -679,7 +763,23 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 			Column: link.FieldFutureState,
 		})
 	}
-	if nodes := luo.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if luo.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   link.PortsTable,
+			Columns: []string{link.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedPortsIDs(); len(nodes) > 0 && !luo.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -752,7 +852,23 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if luo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   link.PropertiesTable,
+			Columns: []string{link.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !luo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -790,7 +906,23 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := luo.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+	if luo.mutation.ServiceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   link.ServiceTable,
+			Columns: link.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := luo.mutation.RemovedServiceIDs(); len(nodes) > 0 && !luo.mutation.ServiceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,

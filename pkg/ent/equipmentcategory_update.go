@@ -58,6 +58,12 @@ func (ecu *EquipmentCategoryUpdate) Mutation() *EquipmentCategoryMutation {
 	return ecu.mutation
 }
 
+// ClearTypes clears all "types" edges to type EquipmentType.
+func (ecu *EquipmentCategoryUpdate) ClearTypes() *EquipmentCategoryUpdate {
+	ecu.mutation.ClearTypes()
+	return ecu
+}
+
 // RemoveTypeIDs removes the types edge to EquipmentType by ids.
 func (ecu *EquipmentCategoryUpdate) RemoveTypeIDs(ids ...int) *EquipmentCategoryUpdate {
 	ecu.mutation.RemoveTypeIDs(ids...)
@@ -161,7 +167,23 @@ func (ecu *EquipmentCategoryUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: equipmentcategory.FieldName,
 		})
 	}
-	if nodes := ecu.mutation.RemovedTypesIDs(); len(nodes) > 0 {
+	if ecu.mutation.TypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentcategory.TypesTable,
+			Columns: []string{equipmentcategory.TypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmenttype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ecu.mutation.RemovedTypesIDs(); len(nodes) > 0 && !ecu.mutation.TypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -241,6 +263,12 @@ func (ecuo *EquipmentCategoryUpdateOne) AddTypes(e ...*EquipmentType) *Equipment
 // Mutation returns the EquipmentCategoryMutation object of the builder.
 func (ecuo *EquipmentCategoryUpdateOne) Mutation() *EquipmentCategoryMutation {
 	return ecuo.mutation
+}
+
+// ClearTypes clears all "types" edges to type EquipmentType.
+func (ecuo *EquipmentCategoryUpdateOne) ClearTypes() *EquipmentCategoryUpdateOne {
+	ecuo.mutation.ClearTypes()
+	return ecuo
 }
 
 // RemoveTypeIDs removes the types edge to EquipmentType by ids.
@@ -344,7 +372,23 @@ func (ecuo *EquipmentCategoryUpdateOne) sqlSave(ctx context.Context) (ec *Equipm
 			Column: equipmentcategory.FieldName,
 		})
 	}
-	if nodes := ecuo.mutation.RemovedTypesIDs(); len(nodes) > 0 {
+	if ecuo.mutation.TypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentcategory.TypesTable,
+			Columns: []string{equipmentcategory.TypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmenttype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ecuo.mutation.RemovedTypesIDs(); len(nodes) > 0 && !ecuo.mutation.TypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

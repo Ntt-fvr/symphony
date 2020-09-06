@@ -101,25 +101,25 @@ func (seu *ServiceEndpointUpdate) Mutation() *ServiceEndpointMutation {
 	return seu.mutation
 }
 
-// ClearPort clears the port edge to EquipmentPort.
+// ClearPort clears the "port" edge to type EquipmentPort.
 func (seu *ServiceEndpointUpdate) ClearPort() *ServiceEndpointUpdate {
 	seu.mutation.ClearPort()
 	return seu
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (seu *ServiceEndpointUpdate) ClearEquipment() *ServiceEndpointUpdate {
 	seu.mutation.ClearEquipment()
 	return seu
 }
 
-// ClearService clears the service edge to Service.
+// ClearService clears the "service" edge to type Service.
 func (seu *ServiceEndpointUpdate) ClearService() *ServiceEndpointUpdate {
 	seu.mutation.ClearService()
 	return seu
 }
 
-// ClearDefinition clears the definition edge to ServiceEndpointDefinition.
+// ClearDefinition clears the "definition" edge to type ServiceEndpointDefinition.
 func (seu *ServiceEndpointUpdate) ClearDefinition() *ServiceEndpointUpdate {
 	seu.mutation.ClearDefinition()
 	return seu
@@ -437,25 +437,25 @@ func (seuo *ServiceEndpointUpdateOne) Mutation() *ServiceEndpointMutation {
 	return seuo.mutation
 }
 
-// ClearPort clears the port edge to EquipmentPort.
+// ClearPort clears the "port" edge to type EquipmentPort.
 func (seuo *ServiceEndpointUpdateOne) ClearPort() *ServiceEndpointUpdateOne {
 	seuo.mutation.ClearPort()
 	return seuo
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (seuo *ServiceEndpointUpdateOne) ClearEquipment() *ServiceEndpointUpdateOne {
 	seuo.mutation.ClearEquipment()
 	return seuo
 }
 
-// ClearService clears the service edge to Service.
+// ClearService clears the "service" edge to type Service.
 func (seuo *ServiceEndpointUpdateOne) ClearService() *ServiceEndpointUpdateOne {
 	seuo.mutation.ClearService()
 	return seuo
 }
 
-// ClearDefinition clears the definition edge to ServiceEndpointDefinition.
+// ClearDefinition clears the "definition" edge to type ServiceEndpointDefinition.
 func (seuo *ServiceEndpointUpdateOne) ClearDefinition() *ServiceEndpointUpdateOne {
 	seuo.mutation.ClearDefinition()
 	return seuo

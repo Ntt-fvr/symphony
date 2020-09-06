@@ -108,6 +108,12 @@ func (ugu *UsersGroupUpdate) Mutation() *UsersGroupMutation {
 	return ugu.mutation
 }
 
+// ClearMembers clears all "members" edges to type User.
+func (ugu *UsersGroupUpdate) ClearMembers() *UsersGroupUpdate {
+	ugu.mutation.ClearMembers()
+	return ugu
+}
+
 // RemoveMemberIDs removes the members edge to User by ids.
 func (ugu *UsersGroupUpdate) RemoveMemberIDs(ids ...int) *UsersGroupUpdate {
 	ugu.mutation.RemoveMemberIDs(ids...)
@@ -121,6 +127,12 @@ func (ugu *UsersGroupUpdate) RemoveMembers(u ...*User) *UsersGroupUpdate {
 		ids[i] = u[i].ID
 	}
 	return ugu.RemoveMemberIDs(ids...)
+}
+
+// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
+func (ugu *UsersGroupUpdate) ClearPolicies() *UsersGroupUpdate {
+	ugu.mutation.ClearPolicies()
+	return ugu
 }
 
 // RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
@@ -256,7 +268,23 @@ func (ugu *UsersGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: usersgroup.FieldStatus,
 		})
 	}
-	if nodes := ugu.mutation.RemovedMembersIDs(); len(nodes) > 0 {
+	if ugu.mutation.MembersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.MembersTable,
+			Columns: usersgroup.MembersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ugu.mutation.RemovedMembersIDs(); len(nodes) > 0 && !ugu.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -294,7 +322,23 @@ func (ugu *UsersGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ugu.mutation.RemovedPoliciesIDs(); len(nodes) > 0 {
+	if ugu.mutation.PoliciesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.PoliciesTable,
+			Columns: usersgroup.PoliciesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: permissionspolicy.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ugu.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !ugu.mutation.PoliciesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -425,6 +469,12 @@ func (uguo *UsersGroupUpdateOne) Mutation() *UsersGroupMutation {
 	return uguo.mutation
 }
 
+// ClearMembers clears all "members" edges to type User.
+func (uguo *UsersGroupUpdateOne) ClearMembers() *UsersGroupUpdateOne {
+	uguo.mutation.ClearMembers()
+	return uguo
+}
+
 // RemoveMemberIDs removes the members edge to User by ids.
 func (uguo *UsersGroupUpdateOne) RemoveMemberIDs(ids ...int) *UsersGroupUpdateOne {
 	uguo.mutation.RemoveMemberIDs(ids...)
@@ -438,6 +488,12 @@ func (uguo *UsersGroupUpdateOne) RemoveMembers(u ...*User) *UsersGroupUpdateOne 
 		ids[i] = u[i].ID
 	}
 	return uguo.RemoveMemberIDs(ids...)
+}
+
+// ClearPolicies clears all "policies" edges to type PermissionsPolicy.
+func (uguo *UsersGroupUpdateOne) ClearPolicies() *UsersGroupUpdateOne {
+	uguo.mutation.ClearPolicies()
+	return uguo
 }
 
 // RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
@@ -571,7 +627,23 @@ func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, e
 			Column: usersgroup.FieldStatus,
 		})
 	}
-	if nodes := uguo.mutation.RemovedMembersIDs(); len(nodes) > 0 {
+	if uguo.mutation.MembersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.MembersTable,
+			Columns: usersgroup.MembersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uguo.mutation.RemovedMembersIDs(); len(nodes) > 0 && !uguo.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -609,7 +681,23 @@ func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uguo.mutation.RemovedPoliciesIDs(); len(nodes) > 0 {
+	if uguo.mutation.PoliciesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.PoliciesTable,
+			Columns: usersgroup.PoliciesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: permissionspolicy.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uguo.mutation.RemovedPoliciesIDs(); len(nodes) > 0 && !uguo.mutation.PoliciesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,

@@ -137,21 +137,27 @@ func (epu *EquipmentPortUpdate) Mutation() *EquipmentPortMutation {
 	return epu.mutation
 }
 
-// ClearDefinition clears the definition edge to EquipmentPortDefinition.
+// ClearDefinition clears the "definition" edge to type EquipmentPortDefinition.
 func (epu *EquipmentPortUpdate) ClearDefinition() *EquipmentPortUpdate {
 	epu.mutation.ClearDefinition()
 	return epu
 }
 
-// ClearParent clears the parent edge to Equipment.
+// ClearParent clears the "parent" edge to type Equipment.
 func (epu *EquipmentPortUpdate) ClearParent() *EquipmentPortUpdate {
 	epu.mutation.ClearParent()
 	return epu
 }
 
-// ClearLink clears the link edge to Link.
+// ClearLink clears the "link" edge to type Link.
 func (epu *EquipmentPortUpdate) ClearLink() *EquipmentPortUpdate {
 	epu.mutation.ClearLink()
+	return epu
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (epu *EquipmentPortUpdate) ClearProperties() *EquipmentPortUpdate {
+	epu.mutation.ClearProperties()
 	return epu
 }
 
@@ -170,6 +176,12 @@ func (epu *EquipmentPortUpdate) RemoveProperties(p ...*Property) *EquipmentPortU
 	return epu.RemovePropertyIDs(ids...)
 }
 
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (epu *EquipmentPortUpdate) ClearEndpoints() *EquipmentPortUpdate {
+	epu.mutation.ClearEndpoints()
+	return epu
+}
+
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
 func (epu *EquipmentPortUpdate) RemoveEndpointIDs(ids ...int) *EquipmentPortUpdate {
 	epu.mutation.RemoveEndpointIDs(ids...)
@@ -183,6 +195,12 @@ func (epu *EquipmentPortUpdate) RemoveEndpoints(s ...*ServiceEndpoint) *Equipmen
 		ids[i] = s[i].ID
 	}
 	return epu.RemoveEndpointIDs(ids...)
+}
+
+// ClearService clears all "service" edges to type Service.
+func (epu *EquipmentPortUpdate) ClearService() *EquipmentPortUpdate {
+	epu.mutation.ClearService()
+	return epu
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -390,7 +408,23 @@ func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if epu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentport.PropertiesTable,
+			Columns: []string{equipmentport.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !epu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -428,7 +462,23 @@ func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if epu.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentport.EndpointsTable,
+			Columns: []string{equipmentport.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !epu.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -466,7 +516,23 @@ func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epu.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+	if epu.mutation.ServiceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epu.mutation.RemovedServiceIDs(); len(nodes) > 0 && !epu.mutation.ServiceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -621,21 +687,27 @@ func (epuo *EquipmentPortUpdateOne) Mutation() *EquipmentPortMutation {
 	return epuo.mutation
 }
 
-// ClearDefinition clears the definition edge to EquipmentPortDefinition.
+// ClearDefinition clears the "definition" edge to type EquipmentPortDefinition.
 func (epuo *EquipmentPortUpdateOne) ClearDefinition() *EquipmentPortUpdateOne {
 	epuo.mutation.ClearDefinition()
 	return epuo
 }
 
-// ClearParent clears the parent edge to Equipment.
+// ClearParent clears the "parent" edge to type Equipment.
 func (epuo *EquipmentPortUpdateOne) ClearParent() *EquipmentPortUpdateOne {
 	epuo.mutation.ClearParent()
 	return epuo
 }
 
-// ClearLink clears the link edge to Link.
+// ClearLink clears the "link" edge to type Link.
 func (epuo *EquipmentPortUpdateOne) ClearLink() *EquipmentPortUpdateOne {
 	epuo.mutation.ClearLink()
+	return epuo
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (epuo *EquipmentPortUpdateOne) ClearProperties() *EquipmentPortUpdateOne {
+	epuo.mutation.ClearProperties()
 	return epuo
 }
 
@@ -654,6 +726,12 @@ func (epuo *EquipmentPortUpdateOne) RemoveProperties(p ...*Property) *EquipmentP
 	return epuo.RemovePropertyIDs(ids...)
 }
 
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (epuo *EquipmentPortUpdateOne) ClearEndpoints() *EquipmentPortUpdateOne {
+	epuo.mutation.ClearEndpoints()
+	return epuo
+}
+
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
 func (epuo *EquipmentPortUpdateOne) RemoveEndpointIDs(ids ...int) *EquipmentPortUpdateOne {
 	epuo.mutation.RemoveEndpointIDs(ids...)
@@ -667,6 +745,12 @@ func (epuo *EquipmentPortUpdateOne) RemoveEndpoints(s ...*ServiceEndpoint) *Equi
 		ids[i] = s[i].ID
 	}
 	return epuo.RemoveEndpointIDs(ids...)
+}
+
+// ClearService clears all "service" edges to type Service.
+func (epuo *EquipmentPortUpdateOne) ClearService() *EquipmentPortUpdateOne {
+	epuo.mutation.ClearService()
+	return epuo
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -872,7 +956,23 @@ func (epuo *EquipmentPortUpdateOne) sqlSave(ctx context.Context) (ep *EquipmentP
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if epuo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipmentport.PropertiesTable,
+			Columns: []string{equipmentport.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !epuo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -910,7 +1010,23 @@ func (epuo *EquipmentPortUpdateOne) sqlSave(ctx context.Context) (ep *EquipmentP
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epuo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if epuo.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentport.EndpointsTable,
+			Columns: []string{equipmentport.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epuo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !epuo.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -948,7 +1064,23 @@ func (epuo *EquipmentPortUpdateOne) sqlSave(ctx context.Context) (ep *EquipmentP
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epuo.mutation.RemovedServiceIDs(); len(nodes) > 0 {
+	if epuo.mutation.ServiceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   equipmentport.ServiceTable,
+			Columns: equipmentport.ServicePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epuo.mutation.RemovedServiceIDs(); len(nodes) > 0 && !epuo.mutation.ServiceCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,

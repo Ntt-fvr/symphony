@@ -271,21 +271,27 @@ func (eu *EquipmentUpdate) Mutation() *EquipmentMutation {
 	return eu.mutation
 }
 
-// ClearType clears the type edge to EquipmentType.
+// ClearType clears the "type" edge to type EquipmentType.
 func (eu *EquipmentUpdate) ClearType() *EquipmentUpdate {
 	eu.mutation.ClearType()
 	return eu
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (eu *EquipmentUpdate) ClearLocation() *EquipmentUpdate {
 	eu.mutation.ClearLocation()
 	return eu
 }
 
-// ClearParentPosition clears the parent_position edge to EquipmentPosition.
+// ClearParentPosition clears the "parent_position" edge to type EquipmentPosition.
 func (eu *EquipmentUpdate) ClearParentPosition() *EquipmentUpdate {
 	eu.mutation.ClearParentPosition()
+	return eu
+}
+
+// ClearPositions clears all "positions" edges to type EquipmentPosition.
+func (eu *EquipmentUpdate) ClearPositions() *EquipmentUpdate {
+	eu.mutation.ClearPositions()
 	return eu
 }
 
@@ -304,6 +310,12 @@ func (eu *EquipmentUpdate) RemovePositions(e ...*EquipmentPosition) *EquipmentUp
 	return eu.RemovePositionIDs(ids...)
 }
 
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (eu *EquipmentUpdate) ClearPorts() *EquipmentUpdate {
+	eu.mutation.ClearPorts()
+	return eu
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (eu *EquipmentUpdate) RemovePortIDs(ids ...int) *EquipmentUpdate {
 	eu.mutation.RemovePortIDs(ids...)
@@ -319,9 +331,15 @@ func (eu *EquipmentUpdate) RemovePorts(e ...*EquipmentPort) *EquipmentUpdate {
 	return eu.RemovePortIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (eu *EquipmentUpdate) ClearWorkOrder() *EquipmentUpdate {
 	eu.mutation.ClearWorkOrder()
+	return eu
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (eu *EquipmentUpdate) ClearProperties() *EquipmentUpdate {
+	eu.mutation.ClearProperties()
 	return eu
 }
 
@@ -340,6 +358,12 @@ func (eu *EquipmentUpdate) RemoveProperties(p ...*Property) *EquipmentUpdate {
 	return eu.RemovePropertyIDs(ids...)
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (eu *EquipmentUpdate) ClearFiles() *EquipmentUpdate {
+	eu.mutation.ClearFiles()
+	return eu
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (eu *EquipmentUpdate) RemoveFileIDs(ids ...int) *EquipmentUpdate {
 	eu.mutation.RemoveFileIDs(ids...)
@@ -355,6 +379,12 @@ func (eu *EquipmentUpdate) RemoveFiles(f ...*File) *EquipmentUpdate {
 	return eu.RemoveFileIDs(ids...)
 }
 
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (eu *EquipmentUpdate) ClearHyperlinks() *EquipmentUpdate {
+	eu.mutation.ClearHyperlinks()
+	return eu
+}
+
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
 func (eu *EquipmentUpdate) RemoveHyperlinkIDs(ids ...int) *EquipmentUpdate {
 	eu.mutation.RemoveHyperlinkIDs(ids...)
@@ -368,6 +398,12 @@ func (eu *EquipmentUpdate) RemoveHyperlinks(h ...*Hyperlink) *EquipmentUpdate {
 		ids[i] = h[i].ID
 	}
 	return eu.RemoveHyperlinkIDs(ids...)
+}
+
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (eu *EquipmentUpdate) ClearEndpoints() *EquipmentUpdate {
+	eu.mutation.ClearEndpoints()
+	return eu
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -636,7 +672,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedPositionsIDs(); len(nodes) > 0 {
+	if eu.mutation.PositionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PositionsTable,
+			Columns: []string{equipment.PositionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentposition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedPositionsIDs(); len(nodes) > 0 && !eu.mutation.PositionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -674,7 +726,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if eu.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PortsTable,
+			Columns: []string{equipment.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedPortsIDs(); len(nodes) > 0 && !eu.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -747,7 +815,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if eu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PropertiesTable,
+			Columns: []string{equipment.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !eu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -785,7 +869,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if eu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.FilesTable,
+			Columns: []string{equipment.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !eu.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -823,7 +923,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if eu.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.HyperlinksTable,
+			Columns: []string{equipment.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !eu.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -861,7 +977,23 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := eu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if eu.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipment.EndpointsTable,
+			Columns: []string{equipment.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !eu.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1146,21 +1278,27 @@ func (euo *EquipmentUpdateOne) Mutation() *EquipmentMutation {
 	return euo.mutation
 }
 
-// ClearType clears the type edge to EquipmentType.
+// ClearType clears the "type" edge to type EquipmentType.
 func (euo *EquipmentUpdateOne) ClearType() *EquipmentUpdateOne {
 	euo.mutation.ClearType()
 	return euo
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (euo *EquipmentUpdateOne) ClearLocation() *EquipmentUpdateOne {
 	euo.mutation.ClearLocation()
 	return euo
 }
 
-// ClearParentPosition clears the parent_position edge to EquipmentPosition.
+// ClearParentPosition clears the "parent_position" edge to type EquipmentPosition.
 func (euo *EquipmentUpdateOne) ClearParentPosition() *EquipmentUpdateOne {
 	euo.mutation.ClearParentPosition()
+	return euo
+}
+
+// ClearPositions clears all "positions" edges to type EquipmentPosition.
+func (euo *EquipmentUpdateOne) ClearPositions() *EquipmentUpdateOne {
+	euo.mutation.ClearPositions()
 	return euo
 }
 
@@ -1179,6 +1317,12 @@ func (euo *EquipmentUpdateOne) RemovePositions(e ...*EquipmentPosition) *Equipme
 	return euo.RemovePositionIDs(ids...)
 }
 
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (euo *EquipmentUpdateOne) ClearPorts() *EquipmentUpdateOne {
+	euo.mutation.ClearPorts()
+	return euo
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (euo *EquipmentUpdateOne) RemovePortIDs(ids ...int) *EquipmentUpdateOne {
 	euo.mutation.RemovePortIDs(ids...)
@@ -1194,9 +1338,15 @@ func (euo *EquipmentUpdateOne) RemovePorts(e ...*EquipmentPort) *EquipmentUpdate
 	return euo.RemovePortIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (euo *EquipmentUpdateOne) ClearWorkOrder() *EquipmentUpdateOne {
 	euo.mutation.ClearWorkOrder()
+	return euo
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (euo *EquipmentUpdateOne) ClearProperties() *EquipmentUpdateOne {
+	euo.mutation.ClearProperties()
 	return euo
 }
 
@@ -1215,6 +1365,12 @@ func (euo *EquipmentUpdateOne) RemoveProperties(p ...*Property) *EquipmentUpdate
 	return euo.RemovePropertyIDs(ids...)
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (euo *EquipmentUpdateOne) ClearFiles() *EquipmentUpdateOne {
+	euo.mutation.ClearFiles()
+	return euo
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (euo *EquipmentUpdateOne) RemoveFileIDs(ids ...int) *EquipmentUpdateOne {
 	euo.mutation.RemoveFileIDs(ids...)
@@ -1230,6 +1386,12 @@ func (euo *EquipmentUpdateOne) RemoveFiles(f ...*File) *EquipmentUpdateOne {
 	return euo.RemoveFileIDs(ids...)
 }
 
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (euo *EquipmentUpdateOne) ClearHyperlinks() *EquipmentUpdateOne {
+	euo.mutation.ClearHyperlinks()
+	return euo
+}
+
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
 func (euo *EquipmentUpdateOne) RemoveHyperlinkIDs(ids ...int) *EquipmentUpdateOne {
 	euo.mutation.RemoveHyperlinkIDs(ids...)
@@ -1243,6 +1405,12 @@ func (euo *EquipmentUpdateOne) RemoveHyperlinks(h ...*Hyperlink) *EquipmentUpdat
 		ids[i] = h[i].ID
 	}
 	return euo.RemoveHyperlinkIDs(ids...)
+}
+
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (euo *EquipmentUpdateOne) ClearEndpoints() *EquipmentUpdateOne {
+	euo.mutation.ClearEndpoints()
+	return euo
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -1509,7 +1677,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedPositionsIDs(); len(nodes) > 0 {
+	if euo.mutation.PositionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PositionsTable,
+			Columns: []string{equipment.PositionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentposition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedPositionsIDs(); len(nodes) > 0 && !euo.mutation.PositionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1547,7 +1731,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if euo.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PortsTable,
+			Columns: []string{equipment.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedPortsIDs(); len(nodes) > 0 && !euo.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1620,7 +1820,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if euo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.PropertiesTable,
+			Columns: []string{equipment.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !euo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1658,7 +1874,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if euo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.FilesTable,
+			Columns: []string{equipment.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !euo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1696,7 +1928,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if euo.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   equipment.HyperlinksTable,
+			Columns: []string{equipment.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !euo.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1734,7 +1982,23 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := euo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if euo.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipment.EndpointsTable,
+			Columns: []string{equipment.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !euo.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

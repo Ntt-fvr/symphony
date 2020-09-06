@@ -156,13 +156,13 @@ func (au *ActivityUpdate) Mutation() *ActivityMutation {
 	return au.mutation
 }
 
-// ClearAuthor clears the author edge to User.
+// ClearAuthor clears the "author" edge to type User.
 func (au *ActivityUpdate) ClearAuthor() *ActivityUpdate {
 	au.mutation.ClearAuthor()
 	return au
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (au *ActivityUpdate) ClearWorkOrder() *ActivityUpdate {
 	au.mutation.ClearWorkOrder()
 	return au
@@ -518,13 +518,13 @@ func (auo *ActivityUpdateOne) Mutation() *ActivityMutation {
 	return auo.mutation
 }
 
-// ClearAuthor clears the author edge to User.
+// ClearAuthor clears the "author" edge to type User.
 func (auo *ActivityUpdateOne) ClearAuthor() *ActivityUpdateOne {
 	auo.mutation.ClearAuthor()
 	return auo
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (auo *ActivityUpdateOne) ClearWorkOrder() *ActivityUpdateOne {
 	auo.mutation.ClearWorkOrder()
 	return auo

@@ -297,6 +297,12 @@ func (cliu *CheckListItemUpdate) Mutation() *CheckListItemMutation {
 	return cliu.mutation
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (cliu *CheckListItemUpdate) ClearFiles() *CheckListItemUpdate {
+	cliu.mutation.ClearFiles()
+	return cliu
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (cliu *CheckListItemUpdate) RemoveFileIDs(ids ...int) *CheckListItemUpdate {
 	cliu.mutation.RemoveFileIDs(ids...)
@@ -310,6 +316,12 @@ func (cliu *CheckListItemUpdate) RemoveFiles(f ...*File) *CheckListItemUpdate {
 		ids[i] = f[i].ID
 	}
 	return cliu.RemoveFileIDs(ids...)
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (cliu *CheckListItemUpdate) ClearWifiScan() *CheckListItemUpdate {
+	cliu.mutation.ClearWifiScan()
+	return cliu
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -327,6 +339,12 @@ func (cliu *CheckListItemUpdate) RemoveWifiScan(s ...*SurveyWiFiScan) *CheckList
 	return cliu.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (cliu *CheckListItemUpdate) ClearCellScan() *CheckListItemUpdate {
+	cliu.mutation.ClearCellScan()
+	return cliu
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (cliu *CheckListItemUpdate) RemoveCellScanIDs(ids ...int) *CheckListItemUpdate {
 	cliu.mutation.RemoveCellScanIDs(ids...)
@@ -342,7 +360,7 @@ func (cliu *CheckListItemUpdate) RemoveCellScan(s ...*SurveyCellScan) *CheckList
 	return cliu.RemoveCellScanIDs(ids...)
 }
 
-// ClearCheckListCategory clears the check_list_category edge to CheckListCategory.
+// ClearCheckListCategory clears the "check_list_category" edge to type CheckListCategory.
 func (cliu *CheckListItemUpdate) ClearCheckListCategory() *CheckListItemUpdate {
 	cliu.mutation.ClearCheckListCategory()
 	return cliu
@@ -574,7 +592,23 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Column: checklistitem.FieldHelpText,
 		})
 	}
-	if nodes := cliu.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if cliu.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistitem.FilesTable,
+			Columns: []string{checklistitem.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !cliu.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -612,7 +646,23 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := cliu.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if cliu.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   checklistitem.WifiScanTable,
+			Columns: []string{checklistitem.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliu.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !cliu.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -650,7 +700,23 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := cliu.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if cliu.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   checklistitem.CellScanTable,
+			Columns: []string{checklistitem.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliu.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !cliu.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1001,6 +1067,12 @@ func (cliuo *CheckListItemUpdateOne) Mutation() *CheckListItemMutation {
 	return cliuo.mutation
 }
 
+// ClearFiles clears all "files" edges to type File.
+func (cliuo *CheckListItemUpdateOne) ClearFiles() *CheckListItemUpdateOne {
+	cliuo.mutation.ClearFiles()
+	return cliuo
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (cliuo *CheckListItemUpdateOne) RemoveFileIDs(ids ...int) *CheckListItemUpdateOne {
 	cliuo.mutation.RemoveFileIDs(ids...)
@@ -1014,6 +1086,12 @@ func (cliuo *CheckListItemUpdateOne) RemoveFiles(f ...*File) *CheckListItemUpdat
 		ids[i] = f[i].ID
 	}
 	return cliuo.RemoveFileIDs(ids...)
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (cliuo *CheckListItemUpdateOne) ClearWifiScan() *CheckListItemUpdateOne {
+	cliuo.mutation.ClearWifiScan()
+	return cliuo
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -1031,6 +1109,12 @@ func (cliuo *CheckListItemUpdateOne) RemoveWifiScan(s ...*SurveyWiFiScan) *Check
 	return cliuo.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (cliuo *CheckListItemUpdateOne) ClearCellScan() *CheckListItemUpdateOne {
+	cliuo.mutation.ClearCellScan()
+	return cliuo
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (cliuo *CheckListItemUpdateOne) RemoveCellScanIDs(ids ...int) *CheckListItemUpdateOne {
 	cliuo.mutation.RemoveCellScanIDs(ids...)
@@ -1046,7 +1130,7 @@ func (cliuo *CheckListItemUpdateOne) RemoveCellScan(s ...*SurveyCellScan) *Check
 	return cliuo.RemoveCellScanIDs(ids...)
 }
 
-// ClearCheckListCategory clears the check_list_category edge to CheckListCategory.
+// ClearCheckListCategory clears the "check_list_category" edge to type CheckListCategory.
 func (cliuo *CheckListItemUpdateOne) ClearCheckListCategory() *CheckListItemUpdateOne {
 	cliuo.mutation.ClearCheckListCategory()
 	return cliuo
@@ -1276,7 +1360,23 @@ func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckLis
 			Column: checklistitem.FieldHelpText,
 		})
 	}
-	if nodes := cliuo.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if cliuo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistitem.FilesTable,
+			Columns: []string{checklistitem.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliuo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !cliuo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1314,7 +1414,23 @@ func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckLis
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := cliuo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if cliuo.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   checklistitem.WifiScanTable,
+			Columns: []string{checklistitem.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliuo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !cliuo.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1352,7 +1468,23 @@ func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckLis
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := cliuo.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if cliuo.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   checklistitem.CellScanTable,
+			Columns: []string{checklistitem.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cliuo.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !cliuo.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

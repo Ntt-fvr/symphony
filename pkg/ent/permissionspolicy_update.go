@@ -123,6 +123,12 @@ func (ppu *PermissionsPolicyUpdate) Mutation() *PermissionsPolicyMutation {
 	return ppu.mutation
 }
 
+// ClearGroups clears all "groups" edges to type UsersGroup.
+func (ppu *PermissionsPolicyUpdate) ClearGroups() *PermissionsPolicyUpdate {
+	ppu.mutation.ClearGroups()
+	return ppu
+}
+
 // RemoveGroupIDs removes the groups edge to UsersGroup by ids.
 func (ppu *PermissionsPolicyUpdate) RemoveGroupIDs(ids ...int) *PermissionsPolicyUpdate {
 	ppu.mutation.RemoveGroupIDs(ids...)
@@ -283,7 +289,23 @@ func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err err
 			Column: permissionspolicy.FieldWorkforcePolicy,
 		})
 	}
-	if nodes := ppu.mutation.RemovedGroupsIDs(); len(nodes) > 0 {
+	if ppu.mutation.GroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.GroupsTable,
+			Columns: permissionspolicy.GroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppu.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !ppu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -427,6 +449,12 @@ func (ppuo *PermissionsPolicyUpdateOne) AddGroups(u ...*UsersGroup) *Permissions
 // Mutation returns the PermissionsPolicyMutation object of the builder.
 func (ppuo *PermissionsPolicyUpdateOne) Mutation() *PermissionsPolicyMutation {
 	return ppuo.mutation
+}
+
+// ClearGroups clears all "groups" edges to type UsersGroup.
+func (ppuo *PermissionsPolicyUpdateOne) ClearGroups() *PermissionsPolicyUpdateOne {
+	ppuo.mutation.ClearGroups()
+	return ppuo
 }
 
 // RemoveGroupIDs removes the groups edge to UsersGroup by ids.
@@ -587,7 +615,23 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (pp *Permis
 			Column: permissionspolicy.FieldWorkforcePolicy,
 		})
 	}
-	if nodes := ppuo.mutation.RemovedGroupsIDs(); len(nodes) > 0 {
+	if ppuo.mutation.GroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permissionspolicy.GroupsTable,
+			Columns: permissionspolicy.GroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ppuo.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !ppuo.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,

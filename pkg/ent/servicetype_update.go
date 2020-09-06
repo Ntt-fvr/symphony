@@ -132,6 +132,12 @@ func (stu *ServiceTypeUpdate) Mutation() *ServiceTypeMutation {
 	return stu.mutation
 }
 
+// ClearServices clears all "services" edges to type Service.
+func (stu *ServiceTypeUpdate) ClearServices() *ServiceTypeUpdate {
+	stu.mutation.ClearServices()
+	return stu
+}
+
 // RemoveServiceIDs removes the services edge to Service by ids.
 func (stu *ServiceTypeUpdate) RemoveServiceIDs(ids ...int) *ServiceTypeUpdate {
 	stu.mutation.RemoveServiceIDs(ids...)
@@ -147,6 +153,12 @@ func (stu *ServiceTypeUpdate) RemoveServices(s ...*Service) *ServiceTypeUpdate {
 	return stu.RemoveServiceIDs(ids...)
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (stu *ServiceTypeUpdate) ClearPropertyTypes() *ServiceTypeUpdate {
+	stu.mutation.ClearPropertyTypes()
+	return stu
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (stu *ServiceTypeUpdate) RemovePropertyTypeIDs(ids ...int) *ServiceTypeUpdate {
 	stu.mutation.RemovePropertyTypeIDs(ids...)
@@ -160,6 +172,12 @@ func (stu *ServiceTypeUpdate) RemovePropertyTypes(p ...*PropertyType) *ServiceTy
 		ids[i] = p[i].ID
 	}
 	return stu.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearEndpointDefinitions clears all "endpoint_definitions" edges to type ServiceEndpointDefinition.
+func (stu *ServiceTypeUpdate) ClearEndpointDefinitions() *ServiceTypeUpdate {
+	stu.mutation.ClearEndpointDefinitions()
+	return stu
 }
 
 // RemoveEndpointDefinitionIDs removes the endpoint_definitions edge to ServiceEndpointDefinition by ids.
@@ -291,7 +309,23 @@ func (stu *ServiceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: servicetype.FieldDiscoveryMethod,
 		})
 	}
-	if nodes := stu.mutation.RemovedServicesIDs(); len(nodes) > 0 {
+	if stu.mutation.ServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   servicetype.ServicesTable,
+			Columns: []string{servicetype.ServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stu.mutation.RemovedServicesIDs(); len(nodes) > 0 && !stu.mutation.ServicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -329,7 +363,23 @@ func (stu *ServiceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := stu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if stu.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   servicetype.PropertyTypesTable,
+			Columns: []string{servicetype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stu.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !stu.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -367,7 +417,23 @@ func (stu *ServiceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := stu.mutation.RemovedEndpointDefinitionsIDs(); len(nodes) > 0 {
+	if stu.mutation.EndpointDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   servicetype.EndpointDefinitionsTable,
+			Columns: []string{servicetype.EndpointDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpointdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stu.mutation.RemovedEndpointDefinitionsIDs(); len(nodes) > 0 && !stu.mutation.EndpointDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -521,6 +587,12 @@ func (stuo *ServiceTypeUpdateOne) Mutation() *ServiceTypeMutation {
 	return stuo.mutation
 }
 
+// ClearServices clears all "services" edges to type Service.
+func (stuo *ServiceTypeUpdateOne) ClearServices() *ServiceTypeUpdateOne {
+	stuo.mutation.ClearServices()
+	return stuo
+}
+
 // RemoveServiceIDs removes the services edge to Service by ids.
 func (stuo *ServiceTypeUpdateOne) RemoveServiceIDs(ids ...int) *ServiceTypeUpdateOne {
 	stuo.mutation.RemoveServiceIDs(ids...)
@@ -536,6 +608,12 @@ func (stuo *ServiceTypeUpdateOne) RemoveServices(s ...*Service) *ServiceTypeUpda
 	return stuo.RemoveServiceIDs(ids...)
 }
 
+// ClearPropertyTypes clears all "property_types" edges to type PropertyType.
+func (stuo *ServiceTypeUpdateOne) ClearPropertyTypes() *ServiceTypeUpdateOne {
+	stuo.mutation.ClearPropertyTypes()
+	return stuo
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (stuo *ServiceTypeUpdateOne) RemovePropertyTypeIDs(ids ...int) *ServiceTypeUpdateOne {
 	stuo.mutation.RemovePropertyTypeIDs(ids...)
@@ -549,6 +627,12 @@ func (stuo *ServiceTypeUpdateOne) RemovePropertyTypes(p ...*PropertyType) *Servi
 		ids[i] = p[i].ID
 	}
 	return stuo.RemovePropertyTypeIDs(ids...)
+}
+
+// ClearEndpointDefinitions clears all "endpoint_definitions" edges to type ServiceEndpointDefinition.
+func (stuo *ServiceTypeUpdateOne) ClearEndpointDefinitions() *ServiceTypeUpdateOne {
+	stuo.mutation.ClearEndpointDefinitions()
+	return stuo
 }
 
 // RemoveEndpointDefinitionIDs removes the endpoint_definitions edge to ServiceEndpointDefinition by ids.
@@ -678,7 +762,23 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 			Column: servicetype.FieldDiscoveryMethod,
 		})
 	}
-	if nodes := stuo.mutation.RemovedServicesIDs(); len(nodes) > 0 {
+	if stuo.mutation.ServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   servicetype.ServicesTable,
+			Columns: []string{servicetype.ServicesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stuo.mutation.RemovedServicesIDs(); len(nodes) > 0 && !stuo.mutation.ServicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -716,7 +816,23 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := stuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 {
+	if stuo.mutation.PropertyTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   servicetype.PropertyTypesTable,
+			Columns: []string{servicetype.PropertyTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stuo.mutation.RemovedPropertyTypesIDs(); len(nodes) > 0 && !stuo.mutation.PropertyTypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -754,7 +870,23 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := stuo.mutation.RemovedEndpointDefinitionsIDs(); len(nodes) > 0 {
+	if stuo.mutation.EndpointDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   servicetype.EndpointDefinitionsTable,
+			Columns: []string{servicetype.EndpointDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpointdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stuo.mutation.RemovedEndpointDefinitionsIDs(); len(nodes) > 0 && !stuo.mutation.EndpointDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

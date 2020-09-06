@@ -404,15 +404,21 @@ func (wou *WorkOrderUpdate) Mutation() *WorkOrderMutation {
 	return wou.mutation
 }
 
-// ClearType clears the type edge to WorkOrderType.
+// ClearType clears the "type" edge to type WorkOrderType.
 func (wou *WorkOrderUpdate) ClearType() *WorkOrderUpdate {
 	wou.mutation.ClearType()
 	return wou
 }
 
-// ClearTemplate clears the template edge to WorkOrderTemplate.
+// ClearTemplate clears the "template" edge to type WorkOrderTemplate.
 func (wou *WorkOrderUpdate) ClearTemplate() *WorkOrderUpdate {
 	wou.mutation.ClearTemplate()
+	return wou
+}
+
+// ClearEquipment clears all "equipment" edges to type Equipment.
+func (wou *WorkOrderUpdate) ClearEquipment() *WorkOrderUpdate {
+	wou.mutation.ClearEquipment()
 	return wou
 }
 
@@ -431,6 +437,12 @@ func (wou *WorkOrderUpdate) RemoveEquipment(e ...*Equipment) *WorkOrderUpdate {
 	return wou.RemoveEquipmentIDs(ids...)
 }
 
+// ClearLinks clears all "links" edges to type Link.
+func (wou *WorkOrderUpdate) ClearLinks() *WorkOrderUpdate {
+	wou.mutation.ClearLinks()
+	return wou
+}
+
 // RemoveLinkIDs removes the links edge to Link by ids.
 func (wou *WorkOrderUpdate) RemoveLinkIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.RemoveLinkIDs(ids...)
@@ -444,6 +456,12 @@ func (wou *WorkOrderUpdate) RemoveLinks(l ...*Link) *WorkOrderUpdate {
 		ids[i] = l[i].ID
 	}
 	return wou.RemoveLinkIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to type File.
+func (wou *WorkOrderUpdate) ClearFiles() *WorkOrderUpdate {
+	wou.mutation.ClearFiles()
+	return wou
 }
 
 // RemoveFileIDs removes the files edge to File by ids.
@@ -461,6 +479,12 @@ func (wou *WorkOrderUpdate) RemoveFiles(f ...*File) *WorkOrderUpdate {
 	return wou.RemoveFileIDs(ids...)
 }
 
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (wou *WorkOrderUpdate) ClearHyperlinks() *WorkOrderUpdate {
+	wou.mutation.ClearHyperlinks()
+	return wou
+}
+
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
 func (wou *WorkOrderUpdate) RemoveHyperlinkIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.RemoveHyperlinkIDs(ids...)
@@ -476,9 +500,15 @@ func (wou *WorkOrderUpdate) RemoveHyperlinks(h ...*Hyperlink) *WorkOrderUpdate {
 	return wou.RemoveHyperlinkIDs(ids...)
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (wou *WorkOrderUpdate) ClearLocation() *WorkOrderUpdate {
 	wou.mutation.ClearLocation()
+	return wou
+}
+
+// ClearComments clears all "comments" edges to type Comment.
+func (wou *WorkOrderUpdate) ClearComments() *WorkOrderUpdate {
+	wou.mutation.ClearComments()
 	return wou
 }
 
@@ -497,6 +527,12 @@ func (wou *WorkOrderUpdate) RemoveComments(c ...*Comment) *WorkOrderUpdate {
 	return wou.RemoveCommentIDs(ids...)
 }
 
+// ClearActivities clears all "activities" edges to type Activity.
+func (wou *WorkOrderUpdate) ClearActivities() *WorkOrderUpdate {
+	wou.mutation.ClearActivities()
+	return wou
+}
+
 // RemoveActivityIDs removes the activities edge to Activity by ids.
 func (wou *WorkOrderUpdate) RemoveActivityIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.RemoveActivityIDs(ids...)
@@ -510,6 +546,12 @@ func (wou *WorkOrderUpdate) RemoveActivities(a ...*Activity) *WorkOrderUpdate {
 		ids[i] = a[i].ID
 	}
 	return wou.RemoveActivityIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (wou *WorkOrderUpdate) ClearProperties() *WorkOrderUpdate {
+	wou.mutation.ClearProperties()
+	return wou
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -527,6 +569,12 @@ func (wou *WorkOrderUpdate) RemoveProperties(p ...*Property) *WorkOrderUpdate {
 	return wou.RemovePropertyIDs(ids...)
 }
 
+// ClearCheckListCategories clears all "check_list_categories" edges to type CheckListCategory.
+func (wou *WorkOrderUpdate) ClearCheckListCategories() *WorkOrderUpdate {
+	wou.mutation.ClearCheckListCategories()
+	return wou
+}
+
 // RemoveCheckListCategoryIDs removes the check_list_categories edge to CheckListCategory by ids.
 func (wou *WorkOrderUpdate) RemoveCheckListCategoryIDs(ids ...int) *WorkOrderUpdate {
 	wou.mutation.RemoveCheckListCategoryIDs(ids...)
@@ -542,19 +590,19 @@ func (wou *WorkOrderUpdate) RemoveCheckListCategories(c ...*CheckListCategory) *
 	return wou.RemoveCheckListCategoryIDs(ids...)
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (wou *WorkOrderUpdate) ClearProject() *WorkOrderUpdate {
 	wou.mutation.ClearProject()
 	return wou
 }
 
-// ClearOwner clears the owner edge to User.
+// ClearOwner clears the "owner" edge to type User.
 func (wou *WorkOrderUpdate) ClearOwner() *WorkOrderUpdate {
 	wou.mutation.ClearOwner()
 	return wou
 }
 
-// ClearAssignee clears the assignee edge to User.
+// ClearAssignee clears the "assignee" edge to type User.
 func (wou *WorkOrderUpdate) ClearAssignee() *WorkOrderUpdate {
 	wou.mutation.ClearAssignee()
 	return wou
@@ -817,7 +865,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedEquipmentIDs(); len(nodes) > 0 {
+	if wou.mutation.EquipmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workorder.EquipmentTable,
+			Columns: []string{workorder.EquipmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedEquipmentIDs(); len(nodes) > 0 && !wou.mutation.EquipmentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -855,7 +919,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedLinksIDs(); len(nodes) > 0 {
+	if wou.mutation.LinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workorder.LinksTable,
+			Columns: []string{workorder.LinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: link.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedLinksIDs(); len(nodes) > 0 && !wou.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -893,7 +973,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if wou.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.FilesTable,
+			Columns: []string{workorder.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedFilesIDs(); len(nodes) > 0 && !wou.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -931,7 +1027,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if wou.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.HyperlinksTable,
+			Columns: []string{workorder.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !wou.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1004,7 +1116,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedCommentsIDs(); len(nodes) > 0 {
+	if wou.mutation.CommentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.CommentsTable,
+			Columns: []string{workorder.CommentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: comment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedCommentsIDs(); len(nodes) > 0 && !wou.mutation.CommentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1042,7 +1170,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedActivitiesIDs(); len(nodes) > 0 {
+	if wou.mutation.ActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.ActivitiesTable,
+			Columns: []string{workorder.ActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: activity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedActivitiesIDs(); len(nodes) > 0 && !wou.mutation.ActivitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1080,7 +1224,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if wou.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.PropertiesTable,
+			Columns: []string{workorder.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !wou.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1118,7 +1278,23 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wou.mutation.RemovedCheckListCategoriesIDs(); len(nodes) > 0 {
+	if wou.mutation.CheckListCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.CheckListCategoriesTable,
+			Columns: []string{workorder.CheckListCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wou.mutation.RemovedCheckListCategoriesIDs(); len(nodes) > 0 && !wou.mutation.CheckListCategoriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1637,15 +1813,21 @@ func (wouo *WorkOrderUpdateOne) Mutation() *WorkOrderMutation {
 	return wouo.mutation
 }
 
-// ClearType clears the type edge to WorkOrderType.
+// ClearType clears the "type" edge to type WorkOrderType.
 func (wouo *WorkOrderUpdateOne) ClearType() *WorkOrderUpdateOne {
 	wouo.mutation.ClearType()
 	return wouo
 }
 
-// ClearTemplate clears the template edge to WorkOrderTemplate.
+// ClearTemplate clears the "template" edge to type WorkOrderTemplate.
 func (wouo *WorkOrderUpdateOne) ClearTemplate() *WorkOrderUpdateOne {
 	wouo.mutation.ClearTemplate()
+	return wouo
+}
+
+// ClearEquipment clears all "equipment" edges to type Equipment.
+func (wouo *WorkOrderUpdateOne) ClearEquipment() *WorkOrderUpdateOne {
+	wouo.mutation.ClearEquipment()
 	return wouo
 }
 
@@ -1664,6 +1846,12 @@ func (wouo *WorkOrderUpdateOne) RemoveEquipment(e ...*Equipment) *WorkOrderUpdat
 	return wouo.RemoveEquipmentIDs(ids...)
 }
 
+// ClearLinks clears all "links" edges to type Link.
+func (wouo *WorkOrderUpdateOne) ClearLinks() *WorkOrderUpdateOne {
+	wouo.mutation.ClearLinks()
+	return wouo
+}
+
 // RemoveLinkIDs removes the links edge to Link by ids.
 func (wouo *WorkOrderUpdateOne) RemoveLinkIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.RemoveLinkIDs(ids...)
@@ -1677,6 +1865,12 @@ func (wouo *WorkOrderUpdateOne) RemoveLinks(l ...*Link) *WorkOrderUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return wouo.RemoveLinkIDs(ids...)
+}
+
+// ClearFiles clears all "files" edges to type File.
+func (wouo *WorkOrderUpdateOne) ClearFiles() *WorkOrderUpdateOne {
+	wouo.mutation.ClearFiles()
+	return wouo
 }
 
 // RemoveFileIDs removes the files edge to File by ids.
@@ -1694,6 +1888,12 @@ func (wouo *WorkOrderUpdateOne) RemoveFiles(f ...*File) *WorkOrderUpdateOne {
 	return wouo.RemoveFileIDs(ids...)
 }
 
+// ClearHyperlinks clears all "hyperlinks" edges to type Hyperlink.
+func (wouo *WorkOrderUpdateOne) ClearHyperlinks() *WorkOrderUpdateOne {
+	wouo.mutation.ClearHyperlinks()
+	return wouo
+}
+
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
 func (wouo *WorkOrderUpdateOne) RemoveHyperlinkIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.RemoveHyperlinkIDs(ids...)
@@ -1709,9 +1909,15 @@ func (wouo *WorkOrderUpdateOne) RemoveHyperlinks(h ...*Hyperlink) *WorkOrderUpda
 	return wouo.RemoveHyperlinkIDs(ids...)
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (wouo *WorkOrderUpdateOne) ClearLocation() *WorkOrderUpdateOne {
 	wouo.mutation.ClearLocation()
+	return wouo
+}
+
+// ClearComments clears all "comments" edges to type Comment.
+func (wouo *WorkOrderUpdateOne) ClearComments() *WorkOrderUpdateOne {
+	wouo.mutation.ClearComments()
 	return wouo
 }
 
@@ -1730,6 +1936,12 @@ func (wouo *WorkOrderUpdateOne) RemoveComments(c ...*Comment) *WorkOrderUpdateOn
 	return wouo.RemoveCommentIDs(ids...)
 }
 
+// ClearActivities clears all "activities" edges to type Activity.
+func (wouo *WorkOrderUpdateOne) ClearActivities() *WorkOrderUpdateOne {
+	wouo.mutation.ClearActivities()
+	return wouo
+}
+
 // RemoveActivityIDs removes the activities edge to Activity by ids.
 func (wouo *WorkOrderUpdateOne) RemoveActivityIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.RemoveActivityIDs(ids...)
@@ -1743,6 +1955,12 @@ func (wouo *WorkOrderUpdateOne) RemoveActivities(a ...*Activity) *WorkOrderUpdat
 		ids[i] = a[i].ID
 	}
 	return wouo.RemoveActivityIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (wouo *WorkOrderUpdateOne) ClearProperties() *WorkOrderUpdateOne {
+	wouo.mutation.ClearProperties()
+	return wouo
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -1760,6 +1978,12 @@ func (wouo *WorkOrderUpdateOne) RemoveProperties(p ...*Property) *WorkOrderUpdat
 	return wouo.RemovePropertyIDs(ids...)
 }
 
+// ClearCheckListCategories clears all "check_list_categories" edges to type CheckListCategory.
+func (wouo *WorkOrderUpdateOne) ClearCheckListCategories() *WorkOrderUpdateOne {
+	wouo.mutation.ClearCheckListCategories()
+	return wouo
+}
+
 // RemoveCheckListCategoryIDs removes the check_list_categories edge to CheckListCategory by ids.
 func (wouo *WorkOrderUpdateOne) RemoveCheckListCategoryIDs(ids ...int) *WorkOrderUpdateOne {
 	wouo.mutation.RemoveCheckListCategoryIDs(ids...)
@@ -1775,19 +1999,19 @@ func (wouo *WorkOrderUpdateOne) RemoveCheckListCategories(c ...*CheckListCategor
 	return wouo.RemoveCheckListCategoryIDs(ids...)
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (wouo *WorkOrderUpdateOne) ClearProject() *WorkOrderUpdateOne {
 	wouo.mutation.ClearProject()
 	return wouo
 }
 
-// ClearOwner clears the owner edge to User.
+// ClearOwner clears the "owner" edge to type User.
 func (wouo *WorkOrderUpdateOne) ClearOwner() *WorkOrderUpdateOne {
 	wouo.mutation.ClearOwner()
 	return wouo
 }
 
-// ClearAssignee clears the assignee edge to User.
+// ClearAssignee clears the "assignee" edge to type User.
 func (wouo *WorkOrderUpdateOne) ClearAssignee() *WorkOrderUpdateOne {
 	wouo.mutation.ClearAssignee()
 	return wouo
@@ -2048,7 +2272,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedEquipmentIDs(); len(nodes) > 0 {
+	if wouo.mutation.EquipmentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workorder.EquipmentTable,
+			Columns: []string{workorder.EquipmentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedEquipmentIDs(); len(nodes) > 0 && !wouo.mutation.EquipmentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2086,7 +2326,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedLinksIDs(); len(nodes) > 0 {
+	if wouo.mutation.LinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   workorder.LinksTable,
+			Columns: []string{workorder.LinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: link.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedLinksIDs(); len(nodes) > 0 && !wouo.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2124,7 +2380,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedFilesIDs(); len(nodes) > 0 {
+	if wouo.mutation.FilesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.FilesTable,
+			Columns: []string{workorder.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !wouo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2162,7 +2434,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 {
+	if wouo.mutation.HyperlinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.HyperlinksTable,
+			Columns: []string{workorder.HyperlinksColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: hyperlink.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedHyperlinksIDs(); len(nodes) > 0 && !wouo.mutation.HyperlinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2235,7 +2523,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedCommentsIDs(); len(nodes) > 0 {
+	if wouo.mutation.CommentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.CommentsTable,
+			Columns: []string{workorder.CommentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: comment.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedCommentsIDs(); len(nodes) > 0 && !wouo.mutation.CommentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2273,7 +2577,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedActivitiesIDs(); len(nodes) > 0 {
+	if wouo.mutation.ActivitiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.ActivitiesTable,
+			Columns: []string{workorder.ActivitiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: activity.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedActivitiesIDs(); len(nodes) > 0 && !wouo.mutation.ActivitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2311,7 +2631,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if wouo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.PropertiesTable,
+			Columns: []string{workorder.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !wouo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2349,7 +2685,23 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := wouo.mutation.RemovedCheckListCategoriesIDs(); len(nodes) > 0 {
+	if wouo.mutation.CheckListCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   workorder.CheckListCategoriesTable,
+			Columns: []string{workorder.CheckListCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistcategory.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wouo.mutation.RemovedCheckListCategoriesIDs(); len(nodes) > 0 && !wouo.mutation.CheckListCategoriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

@@ -125,6 +125,12 @@ func (epdu *EquipmentPositionDefinitionUpdate) Mutation() *EquipmentPositionDefi
 	return epdu.mutation
 }
 
+// ClearPositions clears all "positions" edges to type EquipmentPosition.
+func (epdu *EquipmentPositionDefinitionUpdate) ClearPositions() *EquipmentPositionDefinitionUpdate {
+	epdu.mutation.ClearPositions()
+	return epdu
+}
+
 // RemovePositionIDs removes the positions edge to EquipmentPosition by ids.
 func (epdu *EquipmentPositionDefinitionUpdate) RemovePositionIDs(ids ...int) *EquipmentPositionDefinitionUpdate {
 	epdu.mutation.RemovePositionIDs(ids...)
@@ -140,7 +146,7 @@ func (epdu *EquipmentPositionDefinitionUpdate) RemovePositions(e ...*EquipmentPo
 	return epdu.RemovePositionIDs(ids...)
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (epdu *EquipmentPositionDefinitionUpdate) ClearEquipmentType() *EquipmentPositionDefinitionUpdate {
 	epdu.mutation.ClearEquipmentType()
 	return epdu
@@ -267,7 +273,23 @@ func (epdu *EquipmentPositionDefinitionUpdate) sqlSave(ctx context.Context) (n i
 			Column: equipmentpositiondefinition.FieldVisibilityLabel,
 		})
 	}
-	if nodes := epdu.mutation.RemovedPositionsIDs(); len(nodes) > 0 {
+	if epdu.mutation.PositionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentpositiondefinition.PositionsTable,
+			Columns: []string{equipmentpositiondefinition.PositionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentposition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epdu.mutation.RemovedPositionsIDs(); len(nodes) > 0 && !epdu.mutation.PositionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -450,6 +472,12 @@ func (epduo *EquipmentPositionDefinitionUpdateOne) Mutation() *EquipmentPosition
 	return epduo.mutation
 }
 
+// ClearPositions clears all "positions" edges to type EquipmentPosition.
+func (epduo *EquipmentPositionDefinitionUpdateOne) ClearPositions() *EquipmentPositionDefinitionUpdateOne {
+	epduo.mutation.ClearPositions()
+	return epduo
+}
+
 // RemovePositionIDs removes the positions edge to EquipmentPosition by ids.
 func (epduo *EquipmentPositionDefinitionUpdateOne) RemovePositionIDs(ids ...int) *EquipmentPositionDefinitionUpdateOne {
 	epduo.mutation.RemovePositionIDs(ids...)
@@ -465,7 +493,7 @@ func (epduo *EquipmentPositionDefinitionUpdateOne) RemovePositions(e ...*Equipme
 	return epduo.RemovePositionIDs(ids...)
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (epduo *EquipmentPositionDefinitionUpdateOne) ClearEquipmentType() *EquipmentPositionDefinitionUpdateOne {
 	epduo.mutation.ClearEquipmentType()
 	return epduo
@@ -590,7 +618,23 @@ func (epduo *EquipmentPositionDefinitionUpdateOne) sqlSave(ctx context.Context) 
 			Column: equipmentpositiondefinition.FieldVisibilityLabel,
 		})
 	}
-	if nodes := epduo.mutation.RemovedPositionsIDs(); len(nodes) > 0 {
+	if epduo.mutation.PositionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentpositiondefinition.PositionsTable,
+			Columns: []string{equipmentpositiondefinition.PositionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentposition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epduo.mutation.RemovedPositionsIDs(); len(nodes) > 0 && !epduo.mutation.PositionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

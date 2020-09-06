@@ -347,55 +347,55 @@ func (fu *FileUpdate) Mutation() *FileMutation {
 	return fu.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (fu *FileUpdate) ClearLocation() *FileUpdate {
 	fu.mutation.ClearLocation()
 	return fu
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (fu *FileUpdate) ClearEquipment() *FileUpdate {
 	fu.mutation.ClearEquipment()
 	return fu
 }
 
-// ClearUser clears the user edge to User.
+// ClearUser clears the "user" edge to type User.
 func (fu *FileUpdate) ClearUser() *FileUpdate {
 	fu.mutation.ClearUser()
 	return fu
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (fu *FileUpdate) ClearWorkOrder() *FileUpdate {
 	fu.mutation.ClearWorkOrder()
 	return fu
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (fu *FileUpdate) ClearChecklistItem() *FileUpdate {
 	fu.mutation.ClearChecklistItem()
 	return fu
 }
 
-// ClearSurvey clears the survey edge to Survey.
+// ClearSurvey clears the "survey" edge to type Survey.
 func (fu *FileUpdate) ClearSurvey() *FileUpdate {
 	fu.mutation.ClearSurvey()
 	return fu
 }
 
-// ClearFloorPlan clears the floor_plan edge to FloorPlan.
+// ClearFloorPlan clears the "floor_plan" edge to type FloorPlan.
 func (fu *FileUpdate) ClearFloorPlan() *FileUpdate {
 	fu.mutation.ClearFloorPlan()
 	return fu
 }
 
-// ClearPhotoSurveyQuestion clears the photo_survey_question edge to SurveyQuestion.
+// ClearPhotoSurveyQuestion clears the "photo_survey_question" edge to type SurveyQuestion.
 func (fu *FileUpdate) ClearPhotoSurveyQuestion() *FileUpdate {
 	fu.mutation.ClearPhotoSurveyQuestion()
 	return fu
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fu *FileUpdate) ClearSurveyQuestion() *FileUpdate {
 	fu.mutation.ClearSurveyQuestion()
 	return fu
@@ -1232,55 +1232,55 @@ func (fuo *FileUpdateOne) Mutation() *FileMutation {
 	return fuo.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (fuo *FileUpdateOne) ClearLocation() *FileUpdateOne {
 	fuo.mutation.ClearLocation()
 	return fuo
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (fuo *FileUpdateOne) ClearEquipment() *FileUpdateOne {
 	fuo.mutation.ClearEquipment()
 	return fuo
 }
 
-// ClearUser clears the user edge to User.
+// ClearUser clears the "user" edge to type User.
 func (fuo *FileUpdateOne) ClearUser() *FileUpdateOne {
 	fuo.mutation.ClearUser()
 	return fuo
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (fuo *FileUpdateOne) ClearWorkOrder() *FileUpdateOne {
 	fuo.mutation.ClearWorkOrder()
 	return fuo
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (fuo *FileUpdateOne) ClearChecklistItem() *FileUpdateOne {
 	fuo.mutation.ClearChecklistItem()
 	return fuo
 }
 
-// ClearSurvey clears the survey edge to Survey.
+// ClearSurvey clears the "survey" edge to type Survey.
 func (fuo *FileUpdateOne) ClearSurvey() *FileUpdateOne {
 	fuo.mutation.ClearSurvey()
 	return fuo
 }
 
-// ClearFloorPlan clears the floor_plan edge to FloorPlan.
+// ClearFloorPlan clears the "floor_plan" edge to type FloorPlan.
 func (fuo *FileUpdateOne) ClearFloorPlan() *FileUpdateOne {
 	fuo.mutation.ClearFloorPlan()
 	return fuo
 }
 
-// ClearPhotoSurveyQuestion clears the photo_survey_question edge to SurveyQuestion.
+// ClearPhotoSurveyQuestion clears the "photo_survey_question" edge to type SurveyQuestion.
 func (fuo *FileUpdateOne) ClearPhotoSurveyQuestion() *FileUpdateOne {
 	fuo.mutation.ClearPhotoSurveyQuestion()
 	return fuo
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (fuo *FileUpdateOne) ClearSurveyQuestion() *FileUpdateOne {
 	fuo.mutation.ClearSurveyQuestion()
 	return fuo

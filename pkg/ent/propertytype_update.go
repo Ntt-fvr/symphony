@@ -588,6 +588,12 @@ func (ptu *PropertyTypeUpdate) Mutation() *PropertyTypeMutation {
 	return ptu.mutation
 }
 
+// ClearProperties clears all "properties" edges to type Property.
+func (ptu *PropertyTypeUpdate) ClearProperties() *PropertyTypeUpdate {
+	ptu.mutation.ClearProperties()
+	return ptu
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (ptu *PropertyTypeUpdate) RemovePropertyIDs(ids ...int) *PropertyTypeUpdate {
 	ptu.mutation.RemovePropertyIDs(ids...)
@@ -603,55 +609,55 @@ func (ptu *PropertyTypeUpdate) RemoveProperties(p ...*Property) *PropertyTypeUpd
 	return ptu.RemovePropertyIDs(ids...)
 }
 
-// ClearLocationType clears the location_type edge to LocationType.
+// ClearLocationType clears the "location_type" edge to type LocationType.
 func (ptu *PropertyTypeUpdate) ClearLocationType() *PropertyTypeUpdate {
 	ptu.mutation.ClearLocationType()
 	return ptu
 }
 
-// ClearEquipmentPortType clears the equipment_port_type edge to EquipmentPortType.
+// ClearEquipmentPortType clears the "equipment_port_type" edge to type EquipmentPortType.
 func (ptu *PropertyTypeUpdate) ClearEquipmentPortType() *PropertyTypeUpdate {
 	ptu.mutation.ClearEquipmentPortType()
 	return ptu
 }
 
-// ClearLinkEquipmentPortType clears the link_equipment_port_type edge to EquipmentPortType.
+// ClearLinkEquipmentPortType clears the "link_equipment_port_type" edge to type EquipmentPortType.
 func (ptu *PropertyTypeUpdate) ClearLinkEquipmentPortType() *PropertyTypeUpdate {
 	ptu.mutation.ClearLinkEquipmentPortType()
 	return ptu
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (ptu *PropertyTypeUpdate) ClearEquipmentType() *PropertyTypeUpdate {
 	ptu.mutation.ClearEquipmentType()
 	return ptu
 }
 
-// ClearServiceType clears the service_type edge to ServiceType.
+// ClearServiceType clears the "service_type" edge to type ServiceType.
 func (ptu *PropertyTypeUpdate) ClearServiceType() *PropertyTypeUpdate {
 	ptu.mutation.ClearServiceType()
 	return ptu
 }
 
-// ClearWorkOrderType clears the work_order_type edge to WorkOrderType.
+// ClearWorkOrderType clears the "work_order_type" edge to type WorkOrderType.
 func (ptu *PropertyTypeUpdate) ClearWorkOrderType() *PropertyTypeUpdate {
 	ptu.mutation.ClearWorkOrderType()
 	return ptu
 }
 
-// ClearWorkOrderTemplate clears the work_order_template edge to WorkOrderTemplate.
+// ClearWorkOrderTemplate clears the "work_order_template" edge to type WorkOrderTemplate.
 func (ptu *PropertyTypeUpdate) ClearWorkOrderTemplate() *PropertyTypeUpdate {
 	ptu.mutation.ClearWorkOrderTemplate()
 	return ptu
 }
 
-// ClearProjectType clears the project_type edge to ProjectType.
+// ClearProjectType clears the "project_type" edge to type ProjectType.
 func (ptu *PropertyTypeUpdate) ClearProjectType() *PropertyTypeUpdate {
 	ptu.mutation.ClearProjectType()
 	return ptu
 }
 
-// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+// ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (ptu *PropertyTypeUpdate) ClearProjectTemplate() *PropertyTypeUpdate {
 	ptu.mutation.ClearProjectTemplate()
 	return ptu
@@ -990,7 +996,23 @@ func (ptu *PropertyTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: propertytype.FieldNodeType,
 		})
 	}
-	if nodes := ptu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if ptu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   propertytype.PropertiesTable,
+			Columns: []string{propertytype.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !ptu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1909,6 +1931,12 @@ func (ptuo *PropertyTypeUpdateOne) Mutation() *PropertyTypeMutation {
 	return ptuo.mutation
 }
 
+// ClearProperties clears all "properties" edges to type Property.
+func (ptuo *PropertyTypeUpdateOne) ClearProperties() *PropertyTypeUpdateOne {
+	ptuo.mutation.ClearProperties()
+	return ptuo
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (ptuo *PropertyTypeUpdateOne) RemovePropertyIDs(ids ...int) *PropertyTypeUpdateOne {
 	ptuo.mutation.RemovePropertyIDs(ids...)
@@ -1924,55 +1952,55 @@ func (ptuo *PropertyTypeUpdateOne) RemoveProperties(p ...*Property) *PropertyTyp
 	return ptuo.RemovePropertyIDs(ids...)
 }
 
-// ClearLocationType clears the location_type edge to LocationType.
+// ClearLocationType clears the "location_type" edge to type LocationType.
 func (ptuo *PropertyTypeUpdateOne) ClearLocationType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearLocationType()
 	return ptuo
 }
 
-// ClearEquipmentPortType clears the equipment_port_type edge to EquipmentPortType.
+// ClearEquipmentPortType clears the "equipment_port_type" edge to type EquipmentPortType.
 func (ptuo *PropertyTypeUpdateOne) ClearEquipmentPortType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearEquipmentPortType()
 	return ptuo
 }
 
-// ClearLinkEquipmentPortType clears the link_equipment_port_type edge to EquipmentPortType.
+// ClearLinkEquipmentPortType clears the "link_equipment_port_type" edge to type EquipmentPortType.
 func (ptuo *PropertyTypeUpdateOne) ClearLinkEquipmentPortType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearLinkEquipmentPortType()
 	return ptuo
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (ptuo *PropertyTypeUpdateOne) ClearEquipmentType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearEquipmentType()
 	return ptuo
 }
 
-// ClearServiceType clears the service_type edge to ServiceType.
+// ClearServiceType clears the "service_type" edge to type ServiceType.
 func (ptuo *PropertyTypeUpdateOne) ClearServiceType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearServiceType()
 	return ptuo
 }
 
-// ClearWorkOrderType clears the work_order_type edge to WorkOrderType.
+// ClearWorkOrderType clears the "work_order_type" edge to type WorkOrderType.
 func (ptuo *PropertyTypeUpdateOne) ClearWorkOrderType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearWorkOrderType()
 	return ptuo
 }
 
-// ClearWorkOrderTemplate clears the work_order_template edge to WorkOrderTemplate.
+// ClearWorkOrderTemplate clears the "work_order_template" edge to type WorkOrderTemplate.
 func (ptuo *PropertyTypeUpdateOne) ClearWorkOrderTemplate() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearWorkOrderTemplate()
 	return ptuo
 }
 
-// ClearProjectType clears the project_type edge to ProjectType.
+// ClearProjectType clears the "project_type" edge to type ProjectType.
 func (ptuo *PropertyTypeUpdateOne) ClearProjectType() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearProjectType()
 	return ptuo
 }
 
-// ClearProjectTemplate clears the project_template edge to ProjectTemplate.
+// ClearProjectTemplate clears the "project_template" edge to type ProjectTemplate.
 func (ptuo *PropertyTypeUpdateOne) ClearProjectTemplate() *PropertyTypeUpdateOne {
 	ptuo.mutation.ClearProjectTemplate()
 	return ptuo
@@ -2309,7 +2337,23 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (pt *PropertyTyp
 			Column: propertytype.FieldNodeType,
 		})
 	}
-	if nodes := ptuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if ptuo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   propertytype.PropertiesTable,
+			Columns: []string{propertytype.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !ptuo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

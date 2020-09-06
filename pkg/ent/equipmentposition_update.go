@@ -88,19 +88,19 @@ func (epu *EquipmentPositionUpdate) Mutation() *EquipmentPositionMutation {
 	return epu.mutation
 }
 
-// ClearDefinition clears the definition edge to EquipmentPositionDefinition.
+// ClearDefinition clears the "definition" edge to type EquipmentPositionDefinition.
 func (epu *EquipmentPositionUpdate) ClearDefinition() *EquipmentPositionUpdate {
 	epu.mutation.ClearDefinition()
 	return epu
 }
 
-// ClearParent clears the parent edge to Equipment.
+// ClearParent clears the "parent" edge to type Equipment.
 func (epu *EquipmentPositionUpdate) ClearParent() *EquipmentPositionUpdate {
 	epu.mutation.ClearParent()
 	return epu
 }
 
-// ClearAttachment clears the attachment edge to Equipment.
+// ClearAttachment clears the "attachment" edge to type Equipment.
 func (epu *EquipmentPositionUpdate) ClearAttachment() *EquipmentPositionUpdate {
 	epu.mutation.ClearAttachment()
 	return epu
@@ -368,19 +368,19 @@ func (epuo *EquipmentPositionUpdateOne) Mutation() *EquipmentPositionMutation {
 	return epuo.mutation
 }
 
-// ClearDefinition clears the definition edge to EquipmentPositionDefinition.
+// ClearDefinition clears the "definition" edge to type EquipmentPositionDefinition.
 func (epuo *EquipmentPositionUpdateOne) ClearDefinition() *EquipmentPositionUpdateOne {
 	epuo.mutation.ClearDefinition()
 	return epuo
 }
 
-// ClearParent clears the parent edge to Equipment.
+// ClearParent clears the "parent" edge to type Equipment.
 func (epuo *EquipmentPositionUpdateOne) ClearParent() *EquipmentPositionUpdateOne {
 	epuo.mutation.ClearParent()
 	return epuo
 }
 
-// ClearAttachment clears the attachment edge to Equipment.
+// ClearAttachment clears the "attachment" edge to type Equipment.
 func (epuo *EquipmentPositionUpdateOne) ClearAttachment() *EquipmentPositionUpdateOne {
 	epuo.mutation.ClearAttachment()
 	return epuo

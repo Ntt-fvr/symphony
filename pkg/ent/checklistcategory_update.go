@@ -91,6 +91,12 @@ func (clcu *CheckListCategoryUpdate) Mutation() *CheckListCategoryMutation {
 	return clcu.mutation
 }
 
+// ClearCheckListItems clears all "check_list_items" edges to type CheckListItem.
+func (clcu *CheckListCategoryUpdate) ClearCheckListItems() *CheckListCategoryUpdate {
+	clcu.mutation.ClearCheckListItems()
+	return clcu
+}
+
 // RemoveCheckListItemIDs removes the check_list_items edge to CheckListItem by ids.
 func (clcu *CheckListCategoryUpdate) RemoveCheckListItemIDs(ids ...int) *CheckListCategoryUpdate {
 	clcu.mutation.RemoveCheckListItemIDs(ids...)
@@ -106,7 +112,7 @@ func (clcu *CheckListCategoryUpdate) RemoveCheckListItems(c ...*CheckListItem) *
 	return clcu.RemoveCheckListItemIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (clcu *CheckListCategoryUpdate) ClearWorkOrder() *CheckListCategoryUpdate {
 	clcu.mutation.ClearWorkOrder()
 	return clcu
@@ -216,7 +222,23 @@ func (clcu *CheckListCategoryUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: checklistcategory.FieldDescription,
 		})
 	}
-	if nodes := clcu.mutation.RemovedCheckListItemsIDs(); len(nodes) > 0 {
+	if clcu.mutation.CheckListItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistcategory.CheckListItemsTable,
+			Columns: []string{checklistcategory.CheckListItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistitem.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := clcu.mutation.RemovedCheckListItemsIDs(); len(nodes) > 0 && !clcu.mutation.CheckListItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -364,6 +386,12 @@ func (clcuo *CheckListCategoryUpdateOne) Mutation() *CheckListCategoryMutation {
 	return clcuo.mutation
 }
 
+// ClearCheckListItems clears all "check_list_items" edges to type CheckListItem.
+func (clcuo *CheckListCategoryUpdateOne) ClearCheckListItems() *CheckListCategoryUpdateOne {
+	clcuo.mutation.ClearCheckListItems()
+	return clcuo
+}
+
 // RemoveCheckListItemIDs removes the check_list_items edge to CheckListItem by ids.
 func (clcuo *CheckListCategoryUpdateOne) RemoveCheckListItemIDs(ids ...int) *CheckListCategoryUpdateOne {
 	clcuo.mutation.RemoveCheckListItemIDs(ids...)
@@ -379,7 +407,7 @@ func (clcuo *CheckListCategoryUpdateOne) RemoveCheckListItems(c ...*CheckListIte
 	return clcuo.RemoveCheckListItemIDs(ids...)
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (clcuo *CheckListCategoryUpdateOne) ClearWorkOrder() *CheckListCategoryUpdateOne {
 	clcuo.mutation.ClearWorkOrder()
 	return clcuo
@@ -487,7 +515,23 @@ func (clcuo *CheckListCategoryUpdateOne) sqlSave(ctx context.Context) (clc *Chec
 			Column: checklistcategory.FieldDescription,
 		})
 	}
-	if nodes := clcuo.mutation.RemovedCheckListItemsIDs(); len(nodes) > 0 {
+	if clcuo.mutation.CheckListItemsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistcategory.CheckListItemsTable,
+			Columns: []string{checklistcategory.CheckListItemsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistitem.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := clcuo.mutation.RemovedCheckListItemsIDs(); len(nodes) > 0 && !clcuo.mutation.CheckListItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

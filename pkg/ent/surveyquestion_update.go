@@ -501,9 +501,15 @@ func (squ *SurveyQuestionUpdate) Mutation() *SurveyQuestionMutation {
 	return squ.mutation
 }
 
-// ClearSurvey clears the survey edge to Survey.
+// ClearSurvey clears the "survey" edge to type Survey.
 func (squ *SurveyQuestionUpdate) ClearSurvey() *SurveyQuestionUpdate {
 	squ.mutation.ClearSurvey()
+	return squ
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (squ *SurveyQuestionUpdate) ClearWifiScan() *SurveyQuestionUpdate {
+	squ.mutation.ClearWifiScan()
 	return squ
 }
 
@@ -522,6 +528,12 @@ func (squ *SurveyQuestionUpdate) RemoveWifiScan(s ...*SurveyWiFiScan) *SurveyQue
 	return squ.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (squ *SurveyQuestionUpdate) ClearCellScan() *SurveyQuestionUpdate {
+	squ.mutation.ClearCellScan()
+	return squ
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (squ *SurveyQuestionUpdate) RemoveCellScanIDs(ids ...int) *SurveyQuestionUpdate {
 	squ.mutation.RemoveCellScanIDs(ids...)
@@ -537,6 +549,12 @@ func (squ *SurveyQuestionUpdate) RemoveCellScan(s ...*SurveyCellScan) *SurveyQue
 	return squ.RemoveCellScanIDs(ids...)
 }
 
+// ClearPhotoData clears all "photo_data" edges to type File.
+func (squ *SurveyQuestionUpdate) ClearPhotoData() *SurveyQuestionUpdate {
+	squ.mutation.ClearPhotoData()
+	return squ
+}
+
 // RemovePhotoDatumIDs removes the photo_data edge to File by ids.
 func (squ *SurveyQuestionUpdate) RemovePhotoDatumIDs(ids ...int) *SurveyQuestionUpdate {
 	squ.mutation.RemovePhotoDatumIDs(ids...)
@@ -550,6 +568,12 @@ func (squ *SurveyQuestionUpdate) RemovePhotoData(f ...*File) *SurveyQuestionUpda
 		ids[i] = f[i].ID
 	}
 	return squ.RemovePhotoDatumIDs(ids...)
+}
+
+// ClearImages clears all "images" edges to type File.
+func (squ *SurveyQuestionUpdate) ClearImages() *SurveyQuestionUpdate {
+	squ.mutation.ClearImages()
+	return squ
 }
 
 // RemoveImageIDs removes the images edge to File by ids.
@@ -965,7 +989,23 @@ func (squ *SurveyQuestionUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squ.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if squ.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   surveyquestion.WifiScanTable,
+			Columns: []string{surveyquestion.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squ.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !squ.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1003,7 +1043,23 @@ func (squ *SurveyQuestionUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squ.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if squ.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   surveyquestion.CellScanTable,
+			Columns: []string{surveyquestion.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squ.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !squ.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1041,7 +1097,23 @@ func (squ *SurveyQuestionUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squ.mutation.RemovedPhotoDataIDs(); len(nodes) > 0 {
+	if squ.mutation.PhotoDataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveyquestion.PhotoDataTable,
+			Columns: []string{surveyquestion.PhotoDataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squ.mutation.RemovedPhotoDataIDs(); len(nodes) > 0 && !squ.mutation.PhotoDataCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1079,7 +1151,23 @@ func (squ *SurveyQuestionUpdate) sqlSave(ctx context.Context) (n int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squ.mutation.RemovedImagesIDs(); len(nodes) > 0 {
+	if squ.mutation.ImagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveyquestion.ImagesTable,
+			Columns: []string{surveyquestion.ImagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squ.mutation.RemovedImagesIDs(); len(nodes) > 0 && !squ.mutation.ImagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1599,9 +1687,15 @@ func (squo *SurveyQuestionUpdateOne) Mutation() *SurveyQuestionMutation {
 	return squo.mutation
 }
 
-// ClearSurvey clears the survey edge to Survey.
+// ClearSurvey clears the "survey" edge to type Survey.
 func (squo *SurveyQuestionUpdateOne) ClearSurvey() *SurveyQuestionUpdateOne {
 	squo.mutation.ClearSurvey()
+	return squo
+}
+
+// ClearWifiScan clears all "wifi_scan" edges to type SurveyWiFiScan.
+func (squo *SurveyQuestionUpdateOne) ClearWifiScan() *SurveyQuestionUpdateOne {
+	squo.mutation.ClearWifiScan()
 	return squo
 }
 
@@ -1620,6 +1714,12 @@ func (squo *SurveyQuestionUpdateOne) RemoveWifiScan(s ...*SurveyWiFiScan) *Surve
 	return squo.RemoveWifiScanIDs(ids...)
 }
 
+// ClearCellScan clears all "cell_scan" edges to type SurveyCellScan.
+func (squo *SurveyQuestionUpdateOne) ClearCellScan() *SurveyQuestionUpdateOne {
+	squo.mutation.ClearCellScan()
+	return squo
+}
+
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
 func (squo *SurveyQuestionUpdateOne) RemoveCellScanIDs(ids ...int) *SurveyQuestionUpdateOne {
 	squo.mutation.RemoveCellScanIDs(ids...)
@@ -1635,6 +1735,12 @@ func (squo *SurveyQuestionUpdateOne) RemoveCellScan(s ...*SurveyCellScan) *Surve
 	return squo.RemoveCellScanIDs(ids...)
 }
 
+// ClearPhotoData clears all "photo_data" edges to type File.
+func (squo *SurveyQuestionUpdateOne) ClearPhotoData() *SurveyQuestionUpdateOne {
+	squo.mutation.ClearPhotoData()
+	return squo
+}
+
 // RemovePhotoDatumIDs removes the photo_data edge to File by ids.
 func (squo *SurveyQuestionUpdateOne) RemovePhotoDatumIDs(ids ...int) *SurveyQuestionUpdateOne {
 	squo.mutation.RemovePhotoDatumIDs(ids...)
@@ -1648,6 +1754,12 @@ func (squo *SurveyQuestionUpdateOne) RemovePhotoData(f ...*File) *SurveyQuestion
 		ids[i] = f[i].ID
 	}
 	return squo.RemovePhotoDatumIDs(ids...)
+}
+
+// ClearImages clears all "images" edges to type File.
+func (squo *SurveyQuestionUpdateOne) ClearImages() *SurveyQuestionUpdateOne {
+	squo.mutation.ClearImages()
+	return squo
 }
 
 // RemoveImageIDs removes the images edge to File by ids.
@@ -2061,7 +2173,23 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 {
+	if squo.mutation.WifiScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   surveyquestion.WifiScanTable,
+			Columns: []string{surveyquestion.WifiScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveywifiscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squo.mutation.RemovedWifiScanIDs(); len(nodes) > 0 && !squo.mutation.WifiScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2099,7 +2227,23 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squo.mutation.RemovedCellScanIDs(); len(nodes) > 0 {
+	if squo.mutation.CellScanCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   surveyquestion.CellScanTable,
+			Columns: []string{surveyquestion.CellScanColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveycellscan.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squo.mutation.RemovedCellScanIDs(); len(nodes) > 0 && !squo.mutation.CellScanCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -2137,7 +2281,23 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squo.mutation.RemovedPhotoDataIDs(); len(nodes) > 0 {
+	if squo.mutation.PhotoDataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveyquestion.PhotoDataTable,
+			Columns: []string{surveyquestion.PhotoDataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squo.mutation.RemovedPhotoDataIDs(); len(nodes) > 0 && !squo.mutation.PhotoDataCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2175,7 +2335,23 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := squo.mutation.RemovedImagesIDs(); len(nodes) > 0 {
+	if squo.mutation.ImagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveyquestion.ImagesTable,
+			Columns: []string{surveyquestion.ImagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: file.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := squo.mutation.RemovedImagesIDs(); len(nodes) > 0 && !squo.mutation.ImagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

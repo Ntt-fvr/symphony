@@ -191,9 +191,15 @@ func (su *ServiceUpdate) Mutation() *ServiceMutation {
 	return su.mutation
 }
 
-// ClearType clears the type edge to ServiceType.
+// ClearType clears the "type" edge to type ServiceType.
 func (su *ServiceUpdate) ClearType() *ServiceUpdate {
 	su.mutation.ClearType()
+	return su
+}
+
+// ClearDownstream clears all "downstream" edges to type Service.
+func (su *ServiceUpdate) ClearDownstream() *ServiceUpdate {
+	su.mutation.ClearDownstream()
 	return su
 }
 
@@ -212,6 +218,12 @@ func (su *ServiceUpdate) RemoveDownstream(s ...*Service) *ServiceUpdate {
 	return su.RemoveDownstreamIDs(ids...)
 }
 
+// ClearUpstream clears all "upstream" edges to type Service.
+func (su *ServiceUpdate) ClearUpstream() *ServiceUpdate {
+	su.mutation.ClearUpstream()
+	return su
+}
+
 // RemoveUpstreamIDs removes the upstream edge to Service by ids.
 func (su *ServiceUpdate) RemoveUpstreamIDs(ids ...int) *ServiceUpdate {
 	su.mutation.RemoveUpstreamIDs(ids...)
@@ -225,6 +237,12 @@ func (su *ServiceUpdate) RemoveUpstream(s ...*Service) *ServiceUpdate {
 		ids[i] = s[i].ID
 	}
 	return su.RemoveUpstreamIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (su *ServiceUpdate) ClearProperties() *ServiceUpdate {
+	su.mutation.ClearProperties()
+	return su
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -242,6 +260,12 @@ func (su *ServiceUpdate) RemoveProperties(p ...*Property) *ServiceUpdate {
 	return su.RemovePropertyIDs(ids...)
 }
 
+// ClearLinks clears all "links" edges to type Link.
+func (su *ServiceUpdate) ClearLinks() *ServiceUpdate {
+	su.mutation.ClearLinks()
+	return su
+}
+
 // RemoveLinkIDs removes the links edge to Link by ids.
 func (su *ServiceUpdate) RemoveLinkIDs(ids ...int) *ServiceUpdate {
 	su.mutation.RemoveLinkIDs(ids...)
@@ -255,6 +279,12 @@ func (su *ServiceUpdate) RemoveLinks(l ...*Link) *ServiceUpdate {
 		ids[i] = l[i].ID
 	}
 	return su.RemoveLinkIDs(ids...)
+}
+
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (su *ServiceUpdate) ClearPorts() *ServiceUpdate {
+	su.mutation.ClearPorts()
+	return su
 }
 
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
@@ -272,6 +302,12 @@ func (su *ServiceUpdate) RemovePorts(e ...*EquipmentPort) *ServiceUpdate {
 	return su.RemovePortIDs(ids...)
 }
 
+// ClearCustomer clears all "customer" edges to type Customer.
+func (su *ServiceUpdate) ClearCustomer() *ServiceUpdate {
+	su.mutation.ClearCustomer()
+	return su
+}
+
 // RemoveCustomerIDs removes the customer edge to Customer by ids.
 func (su *ServiceUpdate) RemoveCustomerIDs(ids ...int) *ServiceUpdate {
 	su.mutation.RemoveCustomerIDs(ids...)
@@ -285,6 +321,12 @@ func (su *ServiceUpdate) RemoveCustomer(c ...*Customer) *ServiceUpdate {
 		ids[i] = c[i].ID
 	}
 	return su.RemoveCustomerIDs(ids...)
+}
+
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (su *ServiceUpdate) ClearEndpoints() *ServiceUpdate {
+	su.mutation.ClearEndpoints()
+	return su
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -464,7 +506,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedDownstreamIDs(); len(nodes) > 0 {
+	if su.mutation.DownstreamCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   service.DownstreamTable,
+			Columns: service.DownstreamPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedDownstreamIDs(); len(nodes) > 0 && !su.mutation.DownstreamCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -502,7 +560,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedUpstreamIDs(); len(nodes) > 0 {
+	if su.mutation.UpstreamCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.UpstreamTable,
+			Columns: service.UpstreamPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedUpstreamIDs(); len(nodes) > 0 && !su.mutation.UpstreamCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -540,7 +614,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if su.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   service.PropertiesTable,
+			Columns: []string{service.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !su.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -578,7 +668,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedLinksIDs(); len(nodes) > 0 {
+	if su.mutation.LinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.LinksTable,
+			Columns: service.LinksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: link.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedLinksIDs(); len(nodes) > 0 && !su.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -616,7 +722,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if su.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedPortsIDs(); len(nodes) > 0 && !su.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -654,7 +776,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedCustomerIDs(); len(nodes) > 0 {
+	if su.mutation.CustomerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.CustomerTable,
+			Columns: service.CustomerPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: customer.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedCustomerIDs(); len(nodes) > 0 && !su.mutation.CustomerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -692,7 +830,23 @@ func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := su.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if su.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   service.EndpointsTable,
+			Columns: []string{service.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !su.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -901,9 +1055,15 @@ func (suo *ServiceUpdateOne) Mutation() *ServiceMutation {
 	return suo.mutation
 }
 
-// ClearType clears the type edge to ServiceType.
+// ClearType clears the "type" edge to type ServiceType.
 func (suo *ServiceUpdateOne) ClearType() *ServiceUpdateOne {
 	suo.mutation.ClearType()
+	return suo
+}
+
+// ClearDownstream clears all "downstream" edges to type Service.
+func (suo *ServiceUpdateOne) ClearDownstream() *ServiceUpdateOne {
+	suo.mutation.ClearDownstream()
 	return suo
 }
 
@@ -922,6 +1082,12 @@ func (suo *ServiceUpdateOne) RemoveDownstream(s ...*Service) *ServiceUpdateOne {
 	return suo.RemoveDownstreamIDs(ids...)
 }
 
+// ClearUpstream clears all "upstream" edges to type Service.
+func (suo *ServiceUpdateOne) ClearUpstream() *ServiceUpdateOne {
+	suo.mutation.ClearUpstream()
+	return suo
+}
+
 // RemoveUpstreamIDs removes the upstream edge to Service by ids.
 func (suo *ServiceUpdateOne) RemoveUpstreamIDs(ids ...int) *ServiceUpdateOne {
 	suo.mutation.RemoveUpstreamIDs(ids...)
@@ -935,6 +1101,12 @@ func (suo *ServiceUpdateOne) RemoveUpstream(s ...*Service) *ServiceUpdateOne {
 		ids[i] = s[i].ID
 	}
 	return suo.RemoveUpstreamIDs(ids...)
+}
+
+// ClearProperties clears all "properties" edges to type Property.
+func (suo *ServiceUpdateOne) ClearProperties() *ServiceUpdateOne {
+	suo.mutation.ClearProperties()
+	return suo
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -952,6 +1124,12 @@ func (suo *ServiceUpdateOne) RemoveProperties(p ...*Property) *ServiceUpdateOne 
 	return suo.RemovePropertyIDs(ids...)
 }
 
+// ClearLinks clears all "links" edges to type Link.
+func (suo *ServiceUpdateOne) ClearLinks() *ServiceUpdateOne {
+	suo.mutation.ClearLinks()
+	return suo
+}
+
 // RemoveLinkIDs removes the links edge to Link by ids.
 func (suo *ServiceUpdateOne) RemoveLinkIDs(ids ...int) *ServiceUpdateOne {
 	suo.mutation.RemoveLinkIDs(ids...)
@@ -965,6 +1143,12 @@ func (suo *ServiceUpdateOne) RemoveLinks(l ...*Link) *ServiceUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return suo.RemoveLinkIDs(ids...)
+}
+
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (suo *ServiceUpdateOne) ClearPorts() *ServiceUpdateOne {
+	suo.mutation.ClearPorts()
+	return suo
 }
 
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
@@ -982,6 +1166,12 @@ func (suo *ServiceUpdateOne) RemovePorts(e ...*EquipmentPort) *ServiceUpdateOne 
 	return suo.RemovePortIDs(ids...)
 }
 
+// ClearCustomer clears all "customer" edges to type Customer.
+func (suo *ServiceUpdateOne) ClearCustomer() *ServiceUpdateOne {
+	suo.mutation.ClearCustomer()
+	return suo
+}
+
 // RemoveCustomerIDs removes the customer edge to Customer by ids.
 func (suo *ServiceUpdateOne) RemoveCustomerIDs(ids ...int) *ServiceUpdateOne {
 	suo.mutation.RemoveCustomerIDs(ids...)
@@ -995,6 +1185,12 @@ func (suo *ServiceUpdateOne) RemoveCustomer(c ...*Customer) *ServiceUpdateOne {
 		ids[i] = c[i].ID
 	}
 	return suo.RemoveCustomerIDs(ids...)
+}
+
+// ClearEndpoints clears all "endpoints" edges to type ServiceEndpoint.
+func (suo *ServiceUpdateOne) ClearEndpoints() *ServiceUpdateOne {
+	suo.mutation.ClearEndpoints()
+	return suo
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -1172,7 +1368,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedDownstreamIDs(); len(nodes) > 0 {
+	if suo.mutation.DownstreamCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   service.DownstreamTable,
+			Columns: service.DownstreamPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedDownstreamIDs(); len(nodes) > 0 && !suo.mutation.DownstreamCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1210,7 +1422,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedUpstreamIDs(); len(nodes) > 0 {
+	if suo.mutation.UpstreamCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.UpstreamTable,
+			Columns: service.UpstreamPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedUpstreamIDs(); len(nodes) > 0 && !suo.mutation.UpstreamCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -1248,7 +1476,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if suo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   service.PropertiesTable,
+			Columns: []string{service.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: property.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !suo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1286,7 +1530,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedLinksIDs(); len(nodes) > 0 {
+	if suo.mutation.LinksCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.LinksTable,
+			Columns: service.LinksPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: link.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedLinksIDs(); len(nodes) > 0 && !suo.mutation.LinksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -1324,7 +1584,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if suo.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.PortsTable,
+			Columns: service.PortsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedPortsIDs(); len(nodes) > 0 && !suo.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -1362,7 +1638,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedCustomerIDs(); len(nodes) > 0 {
+	if suo.mutation.CustomerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   service.CustomerTable,
+			Columns: service.CustomerPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: customer.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedCustomerIDs(); len(nodes) > 0 && !suo.mutation.CustomerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -1400,7 +1692,23 @@ func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := suo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 {
+	if suo.mutation.EndpointsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   service.EndpointsTable,
+			Columns: []string{service.EndpointsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: serviceendpoint.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedEndpointsIDs(); len(nodes) > 0 && !suo.mutation.EndpointsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

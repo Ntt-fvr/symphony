@@ -1519,6 +1519,7 @@ type CheckListCategoryMutation struct {
 	clearedFields           map[string]struct{}
 	check_list_items        map[int]struct{}
 	removedcheck_list_items map[int]struct{}
+	clearedcheck_list_items bool
 	work_order              *int
 	clearedwork_order       bool
 	done                    bool
@@ -1775,6 +1776,16 @@ func (m *CheckListCategoryMutation) AddCheckListItemIDs(ids ...int) {
 	}
 }
 
+// ClearCheckListItems clears the check_list_items edge to CheckListItem.
+func (m *CheckListCategoryMutation) ClearCheckListItems() {
+	m.clearedcheck_list_items = true
+}
+
+// CheckListItemsCleared returns if the edge check_list_items was cleared.
+func (m *CheckListCategoryMutation) CheckListItemsCleared() bool {
+	return m.clearedcheck_list_items
+}
+
 // RemoveCheckListItemIDs removes the check_list_items edge to CheckListItem by ids.
 func (m *CheckListCategoryMutation) RemoveCheckListItemIDs(ids ...int) {
 	if m.removedcheck_list_items == nil {
@@ -1804,6 +1815,7 @@ func (m *CheckListCategoryMutation) CheckListItemsIDs() (ids []int) {
 // ResetCheckListItems reset all changes of the "check_list_items" edge.
 func (m *CheckListCategoryMutation) ResetCheckListItems() {
 	m.check_list_items = nil
+	m.clearedcheck_list_items = false
 	m.removedcheck_list_items = nil
 }
 
@@ -2077,6 +2089,9 @@ func (m *CheckListCategoryMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *CheckListCategoryMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
+	if m.clearedcheck_list_items {
+		edges = append(edges, checklistcategory.EdgeCheckListItems)
+	}
 	if m.clearedwork_order {
 		edges = append(edges, checklistcategory.EdgeWorkOrder)
 	}
@@ -2087,6 +2102,8 @@ func (m *CheckListCategoryMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *CheckListCategoryMutation) EdgeCleared(name string) bool {
 	switch name {
+	case checklistcategory.EdgeCheckListItems:
+		return m.clearedcheck_list_items
 	case checklistcategory.EdgeWorkOrder:
 		return m.clearedwork_order
 	}
@@ -2133,6 +2150,7 @@ type CheckListCategoryDefinitionMutation struct {
 	clearedFields                      map[string]struct{}
 	check_list_item_definitions        map[int]struct{}
 	removedcheck_list_item_definitions map[int]struct{}
+	clearedcheck_list_item_definitions bool
 	work_order_type                    *int
 	clearedwork_order_type             bool
 	work_order_template                *int
@@ -2391,6 +2409,16 @@ func (m *CheckListCategoryDefinitionMutation) AddCheckListItemDefinitionIDs(ids 
 	}
 }
 
+// ClearCheckListItemDefinitions clears the check_list_item_definitions edge to CheckListItemDefinition.
+func (m *CheckListCategoryDefinitionMutation) ClearCheckListItemDefinitions() {
+	m.clearedcheck_list_item_definitions = true
+}
+
+// CheckListItemDefinitionsCleared returns if the edge check_list_item_definitions was cleared.
+func (m *CheckListCategoryDefinitionMutation) CheckListItemDefinitionsCleared() bool {
+	return m.clearedcheck_list_item_definitions
+}
+
 // RemoveCheckListItemDefinitionIDs removes the check_list_item_definitions edge to CheckListItemDefinition by ids.
 func (m *CheckListCategoryDefinitionMutation) RemoveCheckListItemDefinitionIDs(ids ...int) {
 	if m.removedcheck_list_item_definitions == nil {
@@ -2420,6 +2448,7 @@ func (m *CheckListCategoryDefinitionMutation) CheckListItemDefinitionsIDs() (ids
 // ResetCheckListItemDefinitions reset all changes of the "check_list_item_definitions" edge.
 func (m *CheckListCategoryDefinitionMutation) ResetCheckListItemDefinitions() {
 	m.check_list_item_definitions = nil
+	m.clearedcheck_list_item_definitions = false
 	m.removedcheck_list_item_definitions = nil
 }
 
@@ -2739,6 +2768,9 @@ func (m *CheckListCategoryDefinitionMutation) RemovedIDs(name string) []ent.Valu
 // mutation.
 func (m *CheckListCategoryDefinitionMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedcheck_list_item_definitions {
+		edges = append(edges, checklistcategorydefinition.EdgeCheckListItemDefinitions)
+	}
 	if m.clearedwork_order_type {
 		edges = append(edges, checklistcategorydefinition.EdgeWorkOrderType)
 	}
@@ -2752,6 +2784,8 @@ func (m *CheckListCategoryDefinitionMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *CheckListCategoryDefinitionMutation) EdgeCleared(name string) bool {
 	switch name {
+	case checklistcategorydefinition.EdgeCheckListItemDefinitions:
+		return m.clearedcheck_list_item_definitions
 	case checklistcategorydefinition.EdgeWorkOrderType:
 		return m.clearedwork_order_type
 	case checklistcategorydefinition.EdgeWorkOrderTemplate:
@@ -2814,10 +2848,13 @@ type CheckListItemMutation struct {
 	clearedFields              map[string]struct{}
 	files                      map[int]struct{}
 	removedfiles               map[int]struct{}
+	clearedfiles               bool
 	wifi_scan                  map[int]struct{}
 	removedwifi_scan           map[int]struct{}
+	clearedwifi_scan           bool
 	cell_scan                  map[int]struct{}
 	removedcell_scan           map[int]struct{}
+	clearedcell_scan           bool
 	check_list_category        *int
 	clearedcheck_list_category bool
 	done                       bool
@@ -3458,6 +3495,16 @@ func (m *CheckListItemMutation) AddFileIDs(ids ...int) {
 	}
 }
 
+// ClearFiles clears the files edge to File.
+func (m *CheckListItemMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *CheckListItemMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
 // RemoveFileIDs removes the files edge to File by ids.
 func (m *CheckListItemMutation) RemoveFileIDs(ids ...int) {
 	if m.removedfiles == nil {
@@ -3487,6 +3534,7 @@ func (m *CheckListItemMutation) FilesIDs() (ids []int) {
 // ResetFiles reset all changes of the "files" edge.
 func (m *CheckListItemMutation) ResetFiles() {
 	m.files = nil
+	m.clearedfiles = false
 	m.removedfiles = nil
 }
 
@@ -3498,6 +3546,16 @@ func (m *CheckListItemMutation) AddWifiScanIDs(ids ...int) {
 	for i := range ids {
 		m.wifi_scan[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWifiScan clears the wifi_scan edge to SurveyWiFiScan.
+func (m *CheckListItemMutation) ClearWifiScan() {
+	m.clearedwifi_scan = true
+}
+
+// WifiScanCleared returns if the edge wifi_scan was cleared.
+func (m *CheckListItemMutation) WifiScanCleared() bool {
+	return m.clearedwifi_scan
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -3529,6 +3587,7 @@ func (m *CheckListItemMutation) WifiScanIDs() (ids []int) {
 // ResetWifiScan reset all changes of the "wifi_scan" edge.
 func (m *CheckListItemMutation) ResetWifiScan() {
 	m.wifi_scan = nil
+	m.clearedwifi_scan = false
 	m.removedwifi_scan = nil
 }
 
@@ -3540,6 +3599,16 @@ func (m *CheckListItemMutation) AddCellScanIDs(ids ...int) {
 	for i := range ids {
 		m.cell_scan[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCellScan clears the cell_scan edge to SurveyCellScan.
+func (m *CheckListItemMutation) ClearCellScan() {
+	m.clearedcell_scan = true
+}
+
+// CellScanCleared returns if the edge cell_scan was cleared.
+func (m *CheckListItemMutation) CellScanCleared() bool {
+	return m.clearedcell_scan
 }
 
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
@@ -3571,6 +3640,7 @@ func (m *CheckListItemMutation) CellScanIDs() (ids []int) {
 // ResetCellScan reset all changes of the "cell_scan" edge.
 func (m *CheckListItemMutation) ResetCellScan() {
 	m.cell_scan = nil
+	m.clearedcell_scan = false
 	m.removedcell_scan = nil
 }
 
@@ -4062,6 +4132,15 @@ func (m *CheckListItemMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *CheckListItemMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
+	if m.clearedfiles {
+		edges = append(edges, checklistitem.EdgeFiles)
+	}
+	if m.clearedwifi_scan {
+		edges = append(edges, checklistitem.EdgeWifiScan)
+	}
+	if m.clearedcell_scan {
+		edges = append(edges, checklistitem.EdgeCellScan)
+	}
 	if m.clearedcheck_list_category {
 		edges = append(edges, checklistitem.EdgeCheckListCategory)
 	}
@@ -4072,6 +4151,12 @@ func (m *CheckListItemMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *CheckListItemMutation) EdgeCleared(name string) bool {
 	switch name {
+	case checklistitem.EdgeFiles:
+		return m.clearedfiles
+	case checklistitem.EdgeWifiScan:
+		return m.clearedwifi_scan
+	case checklistitem.EdgeCellScan:
+		return m.clearedcell_scan
 	case checklistitem.EdgeCheckListCategory:
 		return m.clearedcheck_list_category
 	}
@@ -5651,6 +5736,7 @@ type CustomerMutation struct {
 	clearedFields   map[string]struct{}
 	services        map[int]struct{}
 	removedservices map[int]struct{}
+	clearedservices bool
 	done            bool
 	oldValue        func(context.Context) (*Customer, error)
 }
@@ -5905,6 +5991,16 @@ func (m *CustomerMutation) AddServiceIDs(ids ...int) {
 	}
 }
 
+// ClearServices clears the services edge to Service.
+func (m *CustomerMutation) ClearServices() {
+	m.clearedservices = true
+}
+
+// ServicesCleared returns if the edge services was cleared.
+func (m *CustomerMutation) ServicesCleared() bool {
+	return m.clearedservices
+}
+
 // RemoveServiceIDs removes the services edge to Service by ids.
 func (m *CustomerMutation) RemoveServiceIDs(ids ...int) {
 	if m.removedservices == nil {
@@ -5934,6 +6030,7 @@ func (m *CustomerMutation) ServicesIDs() (ids []int) {
 // ResetServices reset all changes of the "services" edge.
 func (m *CustomerMutation) ResetServices() {
 	m.services = nil
+	m.clearedservices = false
 	m.removedservices = nil
 }
 
@@ -6161,6 +6258,9 @@ func (m *CustomerMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *CustomerMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.clearedservices {
+		edges = append(edges, customer.EdgeServices)
+	}
 	return edges
 }
 
@@ -6168,6 +6268,8 @@ func (m *CustomerMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *CustomerMutation) EdgeCleared(name string) bool {
 	switch name {
+	case customer.EdgeServices:
+		return m.clearedservices
 	}
 	return false
 }
@@ -6214,18 +6316,24 @@ type EquipmentMutation struct {
 	clearedparent_position bool
 	positions              map[int]struct{}
 	removedpositions       map[int]struct{}
+	clearedpositions       bool
 	ports                  map[int]struct{}
 	removedports           map[int]struct{}
+	clearedports           bool
 	work_order             *int
 	clearedwork_order      bool
 	properties             map[int]struct{}
 	removedproperties      map[int]struct{}
+	clearedproperties      bool
 	files                  map[int]struct{}
 	removedfiles           map[int]struct{}
+	clearedfiles           bool
 	hyperlinks             map[int]struct{}
 	removedhyperlinks      map[int]struct{}
+	clearedhyperlinks      bool
 	endpoints              map[int]struct{}
 	removedendpoints       map[int]struct{}
+	clearedendpoints       bool
 	done                   bool
 	oldValue               func(context.Context) (*Equipment, error)
 }
@@ -6697,6 +6805,16 @@ func (m *EquipmentMutation) AddPositionIDs(ids ...int) {
 	}
 }
 
+// ClearPositions clears the positions edge to EquipmentPosition.
+func (m *EquipmentMutation) ClearPositions() {
+	m.clearedpositions = true
+}
+
+// PositionsCleared returns if the edge positions was cleared.
+func (m *EquipmentMutation) PositionsCleared() bool {
+	return m.clearedpositions
+}
+
 // RemovePositionIDs removes the positions edge to EquipmentPosition by ids.
 func (m *EquipmentMutation) RemovePositionIDs(ids ...int) {
 	if m.removedpositions == nil {
@@ -6726,6 +6844,7 @@ func (m *EquipmentMutation) PositionsIDs() (ids []int) {
 // ResetPositions reset all changes of the "positions" edge.
 func (m *EquipmentMutation) ResetPositions() {
 	m.positions = nil
+	m.clearedpositions = false
 	m.removedpositions = nil
 }
 
@@ -6737,6 +6856,16 @@ func (m *EquipmentMutation) AddPortIDs(ids ...int) {
 	for i := range ids {
 		m.ports[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPorts clears the ports edge to EquipmentPort.
+func (m *EquipmentMutation) ClearPorts() {
+	m.clearedports = true
+}
+
+// PortsCleared returns if the edge ports was cleared.
+func (m *EquipmentMutation) PortsCleared() bool {
+	return m.clearedports
 }
 
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
@@ -6768,6 +6897,7 @@ func (m *EquipmentMutation) PortsIDs() (ids []int) {
 // ResetPorts reset all changes of the "ports" edge.
 func (m *EquipmentMutation) ResetPorts() {
 	m.ports = nil
+	m.clearedports = false
 	m.removedports = nil
 }
 
@@ -6820,6 +6950,16 @@ func (m *EquipmentMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to Property.
+func (m *EquipmentMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *EquipmentMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (m *EquipmentMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -6849,6 +6989,7 @@ func (m *EquipmentMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *EquipmentMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -6860,6 +7001,16 @@ func (m *EquipmentMutation) AddFileIDs(ids ...int) {
 	for i := range ids {
 		m.files[ids[i]] = struct{}{}
 	}
+}
+
+// ClearFiles clears the files edge to File.
+func (m *EquipmentMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *EquipmentMutation) FilesCleared() bool {
+	return m.clearedfiles
 }
 
 // RemoveFileIDs removes the files edge to File by ids.
@@ -6891,6 +7042,7 @@ func (m *EquipmentMutation) FilesIDs() (ids []int) {
 // ResetFiles reset all changes of the "files" edge.
 func (m *EquipmentMutation) ResetFiles() {
 	m.files = nil
+	m.clearedfiles = false
 	m.removedfiles = nil
 }
 
@@ -6902,6 +7054,16 @@ func (m *EquipmentMutation) AddHyperlinkIDs(ids ...int) {
 	for i := range ids {
 		m.hyperlinks[ids[i]] = struct{}{}
 	}
+}
+
+// ClearHyperlinks clears the hyperlinks edge to Hyperlink.
+func (m *EquipmentMutation) ClearHyperlinks() {
+	m.clearedhyperlinks = true
+}
+
+// HyperlinksCleared returns if the edge hyperlinks was cleared.
+func (m *EquipmentMutation) HyperlinksCleared() bool {
+	return m.clearedhyperlinks
 }
 
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
@@ -6933,6 +7095,7 @@ func (m *EquipmentMutation) HyperlinksIDs() (ids []int) {
 // ResetHyperlinks reset all changes of the "hyperlinks" edge.
 func (m *EquipmentMutation) ResetHyperlinks() {
 	m.hyperlinks = nil
+	m.clearedhyperlinks = false
 	m.removedhyperlinks = nil
 }
 
@@ -6944,6 +7107,16 @@ func (m *EquipmentMutation) AddEndpointIDs(ids ...int) {
 	for i := range ids {
 		m.endpoints[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEndpoints clears the endpoints edge to ServiceEndpoint.
+func (m *EquipmentMutation) ClearEndpoints() {
+	m.clearedendpoints = true
+}
+
+// EndpointsCleared returns if the edge endpoints was cleared.
+func (m *EquipmentMutation) EndpointsCleared() bool {
+	return m.clearedendpoints
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -6975,6 +7148,7 @@ func (m *EquipmentMutation) EndpointsIDs() (ids []int) {
 // ResetEndpoints reset all changes of the "endpoints" edge.
 func (m *EquipmentMutation) ResetEndpoints() {
 	m.endpoints = nil
+	m.clearedendpoints = false
 	m.removedendpoints = nil
 }
 
@@ -7375,8 +7549,26 @@ func (m *EquipmentMutation) ClearedEdges() []string {
 	if m.clearedparent_position {
 		edges = append(edges, equipment.EdgeParentPosition)
 	}
+	if m.clearedpositions {
+		edges = append(edges, equipment.EdgePositions)
+	}
+	if m.clearedports {
+		edges = append(edges, equipment.EdgePorts)
+	}
 	if m.clearedwork_order {
 		edges = append(edges, equipment.EdgeWorkOrder)
+	}
+	if m.clearedproperties {
+		edges = append(edges, equipment.EdgeProperties)
+	}
+	if m.clearedfiles {
+		edges = append(edges, equipment.EdgeFiles)
+	}
+	if m.clearedhyperlinks {
+		edges = append(edges, equipment.EdgeHyperlinks)
+	}
+	if m.clearedendpoints {
+		edges = append(edges, equipment.EdgeEndpoints)
 	}
 	return edges
 }
@@ -7391,8 +7583,20 @@ func (m *EquipmentMutation) EdgeCleared(name string) bool {
 		return m.clearedlocation
 	case equipment.EdgeParentPosition:
 		return m.clearedparent_position
+	case equipment.EdgePositions:
+		return m.clearedpositions
+	case equipment.EdgePorts:
+		return m.clearedports
 	case equipment.EdgeWorkOrder:
 		return m.clearedwork_order
+	case equipment.EdgeProperties:
+		return m.clearedproperties
+	case equipment.EdgeFiles:
+		return m.clearedfiles
+	case equipment.EdgeHyperlinks:
+		return m.clearedhyperlinks
+	case equipment.EdgeEndpoints:
+		return m.clearedendpoints
 	}
 	return false
 }
@@ -7469,6 +7673,7 @@ type EquipmentCategoryMutation struct {
 	clearedFields map[string]struct{}
 	types         map[int]struct{}
 	removedtypes  map[int]struct{}
+	clearedtypes  bool
 	done          bool
 	oldValue      func(context.Context) (*EquipmentCategory, error)
 }
@@ -7673,6 +7878,16 @@ func (m *EquipmentCategoryMutation) AddTypeIDs(ids ...int) {
 	}
 }
 
+// ClearTypes clears the types edge to EquipmentType.
+func (m *EquipmentCategoryMutation) ClearTypes() {
+	m.clearedtypes = true
+}
+
+// TypesCleared returns if the edge types was cleared.
+func (m *EquipmentCategoryMutation) TypesCleared() bool {
+	return m.clearedtypes
+}
+
 // RemoveTypeIDs removes the types edge to EquipmentType by ids.
 func (m *EquipmentCategoryMutation) RemoveTypeIDs(ids ...int) {
 	if m.removedtypes == nil {
@@ -7702,6 +7917,7 @@ func (m *EquipmentCategoryMutation) TypesIDs() (ids []int) {
 // ResetTypes reset all changes of the "types" edge.
 func (m *EquipmentCategoryMutation) ResetTypes() {
 	m.types = nil
+	m.clearedtypes = false
 	m.removedtypes = nil
 }
 
@@ -7903,6 +8119,9 @@ func (m *EquipmentCategoryMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *EquipmentCategoryMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.clearedtypes {
+		edges = append(edges, equipmentcategory.EdgeTypes)
+	}
 	return edges
 }
 
@@ -7910,6 +8129,8 @@ func (m *EquipmentCategoryMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *EquipmentCategoryMutation) EdgeCleared(name string) bool {
 	switch name {
+	case equipmentcategory.EdgeTypes:
+		return m.clearedtypes
 	}
 	return false
 }
@@ -7952,10 +8173,13 @@ type EquipmentPortMutation struct {
 	clearedlink       bool
 	properties        map[int]struct{}
 	removedproperties map[int]struct{}
+	clearedproperties bool
 	endpoints         map[int]struct{}
 	removedendpoints  map[int]struct{}
+	clearedendpoints  bool
 	service           map[int]struct{}
 	removedservice    map[int]struct{}
+	clearedservice    bool
 	done              bool
 	oldValue          func(context.Context) (*EquipmentPort, error)
 }
@@ -8240,6 +8464,16 @@ func (m *EquipmentPortMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to Property.
+func (m *EquipmentPortMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *EquipmentPortMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (m *EquipmentPortMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -8269,6 +8503,7 @@ func (m *EquipmentPortMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *EquipmentPortMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -8280,6 +8515,16 @@ func (m *EquipmentPortMutation) AddEndpointIDs(ids ...int) {
 	for i := range ids {
 		m.endpoints[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEndpoints clears the endpoints edge to ServiceEndpoint.
+func (m *EquipmentPortMutation) ClearEndpoints() {
+	m.clearedendpoints = true
+}
+
+// EndpointsCleared returns if the edge endpoints was cleared.
+func (m *EquipmentPortMutation) EndpointsCleared() bool {
+	return m.clearedendpoints
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -8311,6 +8556,7 @@ func (m *EquipmentPortMutation) EndpointsIDs() (ids []int) {
 // ResetEndpoints reset all changes of the "endpoints" edge.
 func (m *EquipmentPortMutation) ResetEndpoints() {
 	m.endpoints = nil
+	m.clearedendpoints = false
 	m.removedendpoints = nil
 }
 
@@ -8322,6 +8568,16 @@ func (m *EquipmentPortMutation) AddServiceIDs(ids ...int) {
 	for i := range ids {
 		m.service[ids[i]] = struct{}{}
 	}
+}
+
+// ClearService clears the service edge to Service.
+func (m *EquipmentPortMutation) ClearService() {
+	m.clearedservice = true
+}
+
+// ServiceCleared returns if the edge service was cleared.
+func (m *EquipmentPortMutation) ServiceCleared() bool {
+	return m.clearedservice
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -8353,6 +8609,7 @@ func (m *EquipmentPortMutation) ServiceIDs() (ids []int) {
 // ResetService reset all changes of the "service" edge.
 func (m *EquipmentPortMutation) ResetService() {
 	m.service = nil
+	m.clearedservice = false
 	m.removedservice = nil
 }
 
@@ -8603,6 +8860,15 @@ func (m *EquipmentPortMutation) ClearedEdges() []string {
 	if m.clearedlink {
 		edges = append(edges, equipmentport.EdgeLink)
 	}
+	if m.clearedproperties {
+		edges = append(edges, equipmentport.EdgeProperties)
+	}
+	if m.clearedendpoints {
+		edges = append(edges, equipmentport.EdgeEndpoints)
+	}
+	if m.clearedservice {
+		edges = append(edges, equipmentport.EdgeService)
+	}
 	return edges
 }
 
@@ -8616,6 +8882,12 @@ func (m *EquipmentPortMutation) EdgeCleared(name string) bool {
 		return m.clearedparent
 	case equipmentport.EdgeLink:
 		return m.clearedlink
+	case equipmentport.EdgeProperties:
+		return m.clearedproperties
+	case equipmentport.EdgeEndpoints:
+		return m.clearedendpoints
+	case equipmentport.EdgeService:
+		return m.clearedservice
 	}
 	return false
 }
@@ -8683,6 +8955,7 @@ type EquipmentPortDefinitionMutation struct {
 	clearedequipment_port_type bool
 	ports                      map[int]struct{}
 	removedports               map[int]struct{}
+	clearedports               bool
 	equipment_type             *int
 	clearedequipment_type      bool
 	done                       bool
@@ -9099,6 +9372,16 @@ func (m *EquipmentPortDefinitionMutation) AddPortIDs(ids ...int) {
 	}
 }
 
+// ClearPorts clears the ports edge to EquipmentPort.
+func (m *EquipmentPortDefinitionMutation) ClearPorts() {
+	m.clearedports = true
+}
+
+// PortsCleared returns if the edge ports was cleared.
+func (m *EquipmentPortDefinitionMutation) PortsCleared() bool {
+	return m.clearedports
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (m *EquipmentPortDefinitionMutation) RemovePortIDs(ids ...int) {
 	if m.removedports == nil {
@@ -9128,6 +9411,7 @@ func (m *EquipmentPortDefinitionMutation) PortsIDs() (ids []int) {
 // ResetPorts reset all changes of the "ports" edge.
 func (m *EquipmentPortDefinitionMutation) ResetPorts() {
 	m.ports = nil
+	m.clearedports = false
 	m.removedports = nil
 }
 
@@ -9472,6 +9756,9 @@ func (m *EquipmentPortDefinitionMutation) ClearedEdges() []string {
 	if m.clearedequipment_port_type {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentPortType)
 	}
+	if m.clearedports {
+		edges = append(edges, equipmentportdefinition.EdgePorts)
+	}
 	if m.clearedequipment_type {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentType)
 	}
@@ -9484,6 +9771,8 @@ func (m *EquipmentPortDefinitionMutation) EdgeCleared(name string) bool {
 	switch name {
 	case equipmentportdefinition.EdgeEquipmentPortType:
 		return m.clearedequipment_port_type
+	case equipmentportdefinition.EdgePorts:
+		return m.clearedports
 	case equipmentportdefinition.EdgeEquipmentType:
 		return m.clearedequipment_type
 	}
@@ -9535,10 +9824,13 @@ type EquipmentPortTypeMutation struct {
 	clearedFields              map[string]struct{}
 	property_types             map[int]struct{}
 	removedproperty_types      map[int]struct{}
+	clearedproperty_types      bool
 	link_property_types        map[int]struct{}
 	removedlink_property_types map[int]struct{}
+	clearedlink_property_types bool
 	port_definitions           map[int]struct{}
 	removedport_definitions    map[int]struct{}
+	clearedport_definitions    bool
 	done                       bool
 	oldValue                   func(context.Context) (*EquipmentPortType, error)
 }
@@ -9743,6 +10035,16 @@ func (m *EquipmentPortTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	}
 }
 
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *EquipmentPortTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *EquipmentPortTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (m *EquipmentPortTypeMutation) RemovePropertyTypeIDs(ids ...int) {
 	if m.removedproperty_types == nil {
@@ -9772,6 +10074,7 @@ func (m *EquipmentPortTypeMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *EquipmentPortTypeMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -9783,6 +10086,16 @@ func (m *EquipmentPortTypeMutation) AddLinkPropertyTypeIDs(ids ...int) {
 	for i := range ids {
 		m.link_property_types[ids[i]] = struct{}{}
 	}
+}
+
+// ClearLinkPropertyTypes clears the link_property_types edge to PropertyType.
+func (m *EquipmentPortTypeMutation) ClearLinkPropertyTypes() {
+	m.clearedlink_property_types = true
+}
+
+// LinkPropertyTypesCleared returns if the edge link_property_types was cleared.
+func (m *EquipmentPortTypeMutation) LinkPropertyTypesCleared() bool {
+	return m.clearedlink_property_types
 }
 
 // RemoveLinkPropertyTypeIDs removes the link_property_types edge to PropertyType by ids.
@@ -9814,6 +10127,7 @@ func (m *EquipmentPortTypeMutation) LinkPropertyTypesIDs() (ids []int) {
 // ResetLinkPropertyTypes reset all changes of the "link_property_types" edge.
 func (m *EquipmentPortTypeMutation) ResetLinkPropertyTypes() {
 	m.link_property_types = nil
+	m.clearedlink_property_types = false
 	m.removedlink_property_types = nil
 }
 
@@ -9825,6 +10139,16 @@ func (m *EquipmentPortTypeMutation) AddPortDefinitionIDs(ids ...int) {
 	for i := range ids {
 		m.port_definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPortDefinitions clears the port_definitions edge to EquipmentPortDefinition.
+func (m *EquipmentPortTypeMutation) ClearPortDefinitions() {
+	m.clearedport_definitions = true
+}
+
+// PortDefinitionsCleared returns if the edge port_definitions was cleared.
+func (m *EquipmentPortTypeMutation) PortDefinitionsCleared() bool {
+	return m.clearedport_definitions
 }
 
 // RemovePortDefinitionIDs removes the port_definitions edge to EquipmentPortDefinition by ids.
@@ -9856,6 +10180,7 @@ func (m *EquipmentPortTypeMutation) PortDefinitionsIDs() (ids []int) {
 // ResetPortDefinitions reset all changes of the "port_definitions" edge.
 func (m *EquipmentPortTypeMutation) ResetPortDefinitions() {
 	m.port_definitions = nil
+	m.clearedport_definitions = false
 	m.removedport_definitions = nil
 }
 
@@ -10093,6 +10418,15 @@ func (m *EquipmentPortTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *EquipmentPortTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedproperty_types {
+		edges = append(edges, equipmentporttype.EdgePropertyTypes)
+	}
+	if m.clearedlink_property_types {
+		edges = append(edges, equipmentporttype.EdgeLinkPropertyTypes)
+	}
+	if m.clearedport_definitions {
+		edges = append(edges, equipmentporttype.EdgePortDefinitions)
+	}
 	return edges
 }
 
@@ -10100,6 +10434,12 @@ func (m *EquipmentPortTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *EquipmentPortTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case equipmentporttype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case equipmentporttype.EdgeLinkPropertyTypes:
+		return m.clearedlink_property_types
+	case equipmentporttype.EdgePortDefinitions:
+		return m.clearedport_definitions
 	}
 	return false
 }
@@ -10681,6 +11021,7 @@ type EquipmentPositionDefinitionMutation struct {
 	clearedFields         map[string]struct{}
 	positions             map[int]struct{}
 	removedpositions      map[int]struct{}
+	clearedpositions      bool
 	equipment_type        *int
 	clearedequipment_type bool
 	done                  bool
@@ -11008,6 +11349,16 @@ func (m *EquipmentPositionDefinitionMutation) AddPositionIDs(ids ...int) {
 	}
 }
 
+// ClearPositions clears the positions edge to EquipmentPosition.
+func (m *EquipmentPositionDefinitionMutation) ClearPositions() {
+	m.clearedpositions = true
+}
+
+// PositionsCleared returns if the edge positions was cleared.
+func (m *EquipmentPositionDefinitionMutation) PositionsCleared() bool {
+	return m.clearedpositions
+}
+
 // RemovePositionIDs removes the positions edge to EquipmentPosition by ids.
 func (m *EquipmentPositionDefinitionMutation) RemovePositionIDs(ids ...int) {
 	if m.removedpositions == nil {
@@ -11037,6 +11388,7 @@ func (m *EquipmentPositionDefinitionMutation) PositionsIDs() (ids []int) {
 // ResetPositions reset all changes of the "positions" edge.
 func (m *EquipmentPositionDefinitionMutation) ResetPositions() {
 	m.positions = nil
+	m.clearedpositions = false
 	m.removedpositions = nil
 }
 
@@ -11348,6 +11700,9 @@ func (m *EquipmentPositionDefinitionMutation) RemovedIDs(name string) []ent.Valu
 // mutation.
 func (m *EquipmentPositionDefinitionMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
+	if m.clearedpositions {
+		edges = append(edges, equipmentpositiondefinition.EdgePositions)
+	}
 	if m.clearedequipment_type {
 		edges = append(edges, equipmentpositiondefinition.EdgeEquipmentType)
 	}
@@ -11358,6 +11713,8 @@ func (m *EquipmentPositionDefinitionMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *EquipmentPositionDefinitionMutation) EdgeCleared(name string) bool {
 	switch name {
+	case equipmentpositiondefinition.EdgePositions:
+		return m.clearedpositions
 	case equipmentpositiondefinition.EdgeEquipmentType:
 		return m.clearedequipment_type
 	}
@@ -11403,16 +11760,21 @@ type EquipmentTypeMutation struct {
 	clearedFields                       map[string]struct{}
 	port_definitions                    map[int]struct{}
 	removedport_definitions             map[int]struct{}
+	clearedport_definitions             bool
 	position_definitions                map[int]struct{}
 	removedposition_definitions         map[int]struct{}
+	clearedposition_definitions         bool
 	property_types                      map[int]struct{}
 	removedproperty_types               map[int]struct{}
+	clearedproperty_types               bool
 	equipment                           map[int]struct{}
 	removedequipment                    map[int]struct{}
+	clearedequipment                    bool
 	category                            *int
 	clearedcategory                     bool
 	service_endpoint_definitions        map[int]struct{}
 	removedservice_endpoint_definitions map[int]struct{}
+	clearedservice_endpoint_definitions bool
 	done                                bool
 	oldValue                            func(context.Context) (*EquipmentType, error)
 }
@@ -11617,6 +11979,16 @@ func (m *EquipmentTypeMutation) AddPortDefinitionIDs(ids ...int) {
 	}
 }
 
+// ClearPortDefinitions clears the port_definitions edge to EquipmentPortDefinition.
+func (m *EquipmentTypeMutation) ClearPortDefinitions() {
+	m.clearedport_definitions = true
+}
+
+// PortDefinitionsCleared returns if the edge port_definitions was cleared.
+func (m *EquipmentTypeMutation) PortDefinitionsCleared() bool {
+	return m.clearedport_definitions
+}
+
 // RemovePortDefinitionIDs removes the port_definitions edge to EquipmentPortDefinition by ids.
 func (m *EquipmentTypeMutation) RemovePortDefinitionIDs(ids ...int) {
 	if m.removedport_definitions == nil {
@@ -11646,6 +12018,7 @@ func (m *EquipmentTypeMutation) PortDefinitionsIDs() (ids []int) {
 // ResetPortDefinitions reset all changes of the "port_definitions" edge.
 func (m *EquipmentTypeMutation) ResetPortDefinitions() {
 	m.port_definitions = nil
+	m.clearedport_definitions = false
 	m.removedport_definitions = nil
 }
 
@@ -11657,6 +12030,16 @@ func (m *EquipmentTypeMutation) AddPositionDefinitionIDs(ids ...int) {
 	for i := range ids {
 		m.position_definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPositionDefinitions clears the position_definitions edge to EquipmentPositionDefinition.
+func (m *EquipmentTypeMutation) ClearPositionDefinitions() {
+	m.clearedposition_definitions = true
+}
+
+// PositionDefinitionsCleared returns if the edge position_definitions was cleared.
+func (m *EquipmentTypeMutation) PositionDefinitionsCleared() bool {
+	return m.clearedposition_definitions
 }
 
 // RemovePositionDefinitionIDs removes the position_definitions edge to EquipmentPositionDefinition by ids.
@@ -11688,6 +12071,7 @@ func (m *EquipmentTypeMutation) PositionDefinitionsIDs() (ids []int) {
 // ResetPositionDefinitions reset all changes of the "position_definitions" edge.
 func (m *EquipmentTypeMutation) ResetPositionDefinitions() {
 	m.position_definitions = nil
+	m.clearedposition_definitions = false
 	m.removedposition_definitions = nil
 }
 
@@ -11699,6 +12083,16 @@ func (m *EquipmentTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	for i := range ids {
 		m.property_types[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *EquipmentTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *EquipmentTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
 }
 
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
@@ -11730,6 +12124,7 @@ func (m *EquipmentTypeMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *EquipmentTypeMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -11741,6 +12136,16 @@ func (m *EquipmentTypeMutation) AddEquipmentIDs(ids ...int) {
 	for i := range ids {
 		m.equipment[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEquipment clears the equipment edge to Equipment.
+func (m *EquipmentTypeMutation) ClearEquipment() {
+	m.clearedequipment = true
+}
+
+// EquipmentCleared returns if the edge equipment was cleared.
+func (m *EquipmentTypeMutation) EquipmentCleared() bool {
+	return m.clearedequipment
 }
 
 // RemoveEquipmentIDs removes the equipment edge to Equipment by ids.
@@ -11772,6 +12177,7 @@ func (m *EquipmentTypeMutation) EquipmentIDs() (ids []int) {
 // ResetEquipment reset all changes of the "equipment" edge.
 func (m *EquipmentTypeMutation) ResetEquipment() {
 	m.equipment = nil
+	m.clearedequipment = false
 	m.removedequipment = nil
 }
 
@@ -11824,6 +12230,16 @@ func (m *EquipmentTypeMutation) AddServiceEndpointDefinitionIDs(ids ...int) {
 	}
 }
 
+// ClearServiceEndpointDefinitions clears the service_endpoint_definitions edge to ServiceEndpointDefinition.
+func (m *EquipmentTypeMutation) ClearServiceEndpointDefinitions() {
+	m.clearedservice_endpoint_definitions = true
+}
+
+// ServiceEndpointDefinitionsCleared returns if the edge service_endpoint_definitions was cleared.
+func (m *EquipmentTypeMutation) ServiceEndpointDefinitionsCleared() bool {
+	return m.clearedservice_endpoint_definitions
+}
+
 // RemoveServiceEndpointDefinitionIDs removes the service_endpoint_definitions edge to ServiceEndpointDefinition by ids.
 func (m *EquipmentTypeMutation) RemoveServiceEndpointDefinitionIDs(ids ...int) {
 	if m.removedservice_endpoint_definitions == nil {
@@ -11853,6 +12269,7 @@ func (m *EquipmentTypeMutation) ServiceEndpointDefinitionsIDs() (ids []int) {
 // ResetServiceEndpointDefinitions reset all changes of the "service_endpoint_definitions" edge.
 func (m *EquipmentTypeMutation) ResetServiceEndpointDefinitions() {
 	m.service_endpoint_definitions = nil
+	m.clearedservice_endpoint_definitions = false
 	m.removedservice_endpoint_definitions = nil
 }
 
@@ -12133,8 +12550,23 @@ func (m *EquipmentTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *EquipmentTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 6)
+	if m.clearedport_definitions {
+		edges = append(edges, equipmenttype.EdgePortDefinitions)
+	}
+	if m.clearedposition_definitions {
+		edges = append(edges, equipmenttype.EdgePositionDefinitions)
+	}
+	if m.clearedproperty_types {
+		edges = append(edges, equipmenttype.EdgePropertyTypes)
+	}
+	if m.clearedequipment {
+		edges = append(edges, equipmenttype.EdgeEquipment)
+	}
 	if m.clearedcategory {
 		edges = append(edges, equipmenttype.EdgeCategory)
+	}
+	if m.clearedservice_endpoint_definitions {
+		edges = append(edges, equipmenttype.EdgeServiceEndpointDefinitions)
 	}
 	return edges
 }
@@ -12143,8 +12575,18 @@ func (m *EquipmentTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *EquipmentTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case equipmenttype.EdgePortDefinitions:
+		return m.clearedport_definitions
+	case equipmenttype.EdgePositionDefinitions:
+		return m.clearedposition_definitions
+	case equipmenttype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case equipmenttype.EdgeEquipment:
+		return m.clearedequipment
 	case equipmenttype.EdgeCategory:
 		return m.clearedcategory
+	case equipmenttype.EdgeServiceEndpointDefinitions:
+		return m.clearedservice_endpoint_definitions
 	}
 	return false
 }
@@ -17174,12 +17616,15 @@ type LinkMutation struct {
 	clearedFields     map[string]struct{}
 	ports             map[int]struct{}
 	removedports      map[int]struct{}
+	clearedports      bool
 	work_order        *int
 	clearedwork_order bool
 	properties        map[int]struct{}
 	removedproperties map[int]struct{}
+	clearedproperties bool
 	service           map[int]struct{}
 	removedservice    map[int]struct{}
+	clearedservice    bool
 	done              bool
 	oldValue          func(context.Context) (*Link, error)
 }
@@ -17397,6 +17842,16 @@ func (m *LinkMutation) AddPortIDs(ids ...int) {
 	}
 }
 
+// ClearPorts clears the ports edge to EquipmentPort.
+func (m *LinkMutation) ClearPorts() {
+	m.clearedports = true
+}
+
+// PortsCleared returns if the edge ports was cleared.
+func (m *LinkMutation) PortsCleared() bool {
+	return m.clearedports
+}
+
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
 func (m *LinkMutation) RemovePortIDs(ids ...int) {
 	if m.removedports == nil {
@@ -17426,6 +17881,7 @@ func (m *LinkMutation) PortsIDs() (ids []int) {
 // ResetPorts reset all changes of the "ports" edge.
 func (m *LinkMutation) ResetPorts() {
 	m.ports = nil
+	m.clearedports = false
 	m.removedports = nil
 }
 
@@ -17478,6 +17934,16 @@ func (m *LinkMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to Property.
+func (m *LinkMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *LinkMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (m *LinkMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -17507,6 +17973,7 @@ func (m *LinkMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *LinkMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -17518,6 +17985,16 @@ func (m *LinkMutation) AddServiceIDs(ids ...int) {
 	for i := range ids {
 		m.service[ids[i]] = struct{}{}
 	}
+}
+
+// ClearService clears the service edge to Service.
+func (m *LinkMutation) ClearService() {
+	m.clearedservice = true
+}
+
+// ServiceCleared returns if the edge service was cleared.
+func (m *LinkMutation) ServiceCleared() bool {
+	return m.clearedservice
 }
 
 // RemoveServiceIDs removes the service edge to Service by ids.
@@ -17549,6 +18026,7 @@ func (m *LinkMutation) ServiceIDs() (ids []int) {
 // ResetService reset all changes of the "service" edge.
 func (m *LinkMutation) ResetService() {
 	m.service = nil
+	m.clearedservice = false
 	m.removedservice = nil
 }
 
@@ -17802,8 +18280,17 @@ func (m *LinkMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *LinkMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
+	if m.clearedports {
+		edges = append(edges, link.EdgePorts)
+	}
 	if m.clearedwork_order {
 		edges = append(edges, link.EdgeWorkOrder)
+	}
+	if m.clearedproperties {
+		edges = append(edges, link.EdgeProperties)
+	}
+	if m.clearedservice {
+		edges = append(edges, link.EdgeService)
 	}
 	return edges
 }
@@ -17812,8 +18299,14 @@ func (m *LinkMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *LinkMutation) EdgeCleared(name string) bool {
 	switch name {
+	case link.EdgePorts:
+		return m.clearedports
 	case link.EdgeWorkOrder:
 		return m.clearedwork_order
+	case link.EdgeProperties:
+		return m.clearedproperties
+	case link.EdgeService:
+		return m.clearedservice
 	}
 	return false
 }
@@ -17873,24 +18366,34 @@ type LocationMutation struct {
 	clearedparent      bool
 	children           map[int]struct{}
 	removedchildren    map[int]struct{}
+	clearedchildren    bool
 	files              map[int]struct{}
 	removedfiles       map[int]struct{}
+	clearedfiles       bool
 	hyperlinks         map[int]struct{}
 	removedhyperlinks  map[int]struct{}
+	clearedhyperlinks  bool
 	equipment          map[int]struct{}
 	removedequipment   map[int]struct{}
+	clearedequipment   bool
 	properties         map[int]struct{}
 	removedproperties  map[int]struct{}
+	clearedproperties  bool
 	survey             map[int]struct{}
 	removedsurvey      map[int]struct{}
+	clearedsurvey      bool
 	wifi_scan          map[int]struct{}
 	removedwifi_scan   map[int]struct{}
+	clearedwifi_scan   bool
 	cell_scan          map[int]struct{}
 	removedcell_scan   map[int]struct{}
+	clearedcell_scan   bool
 	work_orders        map[int]struct{}
 	removedwork_orders map[int]struct{}
+	clearedwork_orders bool
 	floor_plans        map[int]struct{}
 	removedfloor_plans map[int]struct{}
+	clearedfloor_plans bool
 	done               bool
 	oldValue           func(context.Context) (*Location, error)
 }
@@ -18387,6 +18890,16 @@ func (m *LocationMutation) AddChildIDs(ids ...int) {
 	}
 }
 
+// ClearChildren clears the children edge to Location.
+func (m *LocationMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared returns if the edge children was cleared.
+func (m *LocationMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
 // RemoveChildIDs removes the children edge to Location by ids.
 func (m *LocationMutation) RemoveChildIDs(ids ...int) {
 	if m.removedchildren == nil {
@@ -18416,6 +18929,7 @@ func (m *LocationMutation) ChildrenIDs() (ids []int) {
 // ResetChildren reset all changes of the "children" edge.
 func (m *LocationMutation) ResetChildren() {
 	m.children = nil
+	m.clearedchildren = false
 	m.removedchildren = nil
 }
 
@@ -18427,6 +18941,16 @@ func (m *LocationMutation) AddFileIDs(ids ...int) {
 	for i := range ids {
 		m.files[ids[i]] = struct{}{}
 	}
+}
+
+// ClearFiles clears the files edge to File.
+func (m *LocationMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *LocationMutation) FilesCleared() bool {
+	return m.clearedfiles
 }
 
 // RemoveFileIDs removes the files edge to File by ids.
@@ -18458,6 +18982,7 @@ func (m *LocationMutation) FilesIDs() (ids []int) {
 // ResetFiles reset all changes of the "files" edge.
 func (m *LocationMutation) ResetFiles() {
 	m.files = nil
+	m.clearedfiles = false
 	m.removedfiles = nil
 }
 
@@ -18469,6 +18994,16 @@ func (m *LocationMutation) AddHyperlinkIDs(ids ...int) {
 	for i := range ids {
 		m.hyperlinks[ids[i]] = struct{}{}
 	}
+}
+
+// ClearHyperlinks clears the hyperlinks edge to Hyperlink.
+func (m *LocationMutation) ClearHyperlinks() {
+	m.clearedhyperlinks = true
+}
+
+// HyperlinksCleared returns if the edge hyperlinks was cleared.
+func (m *LocationMutation) HyperlinksCleared() bool {
+	return m.clearedhyperlinks
 }
 
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
@@ -18500,6 +19035,7 @@ func (m *LocationMutation) HyperlinksIDs() (ids []int) {
 // ResetHyperlinks reset all changes of the "hyperlinks" edge.
 func (m *LocationMutation) ResetHyperlinks() {
 	m.hyperlinks = nil
+	m.clearedhyperlinks = false
 	m.removedhyperlinks = nil
 }
 
@@ -18511,6 +19047,16 @@ func (m *LocationMutation) AddEquipmentIDs(ids ...int) {
 	for i := range ids {
 		m.equipment[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEquipment clears the equipment edge to Equipment.
+func (m *LocationMutation) ClearEquipment() {
+	m.clearedequipment = true
+}
+
+// EquipmentCleared returns if the edge equipment was cleared.
+func (m *LocationMutation) EquipmentCleared() bool {
+	return m.clearedequipment
 }
 
 // RemoveEquipmentIDs removes the equipment edge to Equipment by ids.
@@ -18542,6 +19088,7 @@ func (m *LocationMutation) EquipmentIDs() (ids []int) {
 // ResetEquipment reset all changes of the "equipment" edge.
 func (m *LocationMutation) ResetEquipment() {
 	m.equipment = nil
+	m.clearedequipment = false
 	m.removedequipment = nil
 }
 
@@ -18553,6 +19100,16 @@ func (m *LocationMutation) AddPropertyIDs(ids ...int) {
 	for i := range ids {
 		m.properties[ids[i]] = struct{}{}
 	}
+}
+
+// ClearProperties clears the properties edge to Property.
+func (m *LocationMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *LocationMutation) PropertiesCleared() bool {
+	return m.clearedproperties
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -18584,6 +19141,7 @@ func (m *LocationMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *LocationMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -18595,6 +19153,16 @@ func (m *LocationMutation) AddSurveyIDs(ids ...int) {
 	for i := range ids {
 		m.survey[ids[i]] = struct{}{}
 	}
+}
+
+// ClearSurvey clears the survey edge to Survey.
+func (m *LocationMutation) ClearSurvey() {
+	m.clearedsurvey = true
+}
+
+// SurveyCleared returns if the edge survey was cleared.
+func (m *LocationMutation) SurveyCleared() bool {
+	return m.clearedsurvey
 }
 
 // RemoveSurveyIDs removes the survey edge to Survey by ids.
@@ -18626,6 +19194,7 @@ func (m *LocationMutation) SurveyIDs() (ids []int) {
 // ResetSurvey reset all changes of the "survey" edge.
 func (m *LocationMutation) ResetSurvey() {
 	m.survey = nil
+	m.clearedsurvey = false
 	m.removedsurvey = nil
 }
 
@@ -18637,6 +19206,16 @@ func (m *LocationMutation) AddWifiScanIDs(ids ...int) {
 	for i := range ids {
 		m.wifi_scan[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWifiScan clears the wifi_scan edge to SurveyWiFiScan.
+func (m *LocationMutation) ClearWifiScan() {
+	m.clearedwifi_scan = true
+}
+
+// WifiScanCleared returns if the edge wifi_scan was cleared.
+func (m *LocationMutation) WifiScanCleared() bool {
+	return m.clearedwifi_scan
 }
 
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
@@ -18668,6 +19247,7 @@ func (m *LocationMutation) WifiScanIDs() (ids []int) {
 // ResetWifiScan reset all changes of the "wifi_scan" edge.
 func (m *LocationMutation) ResetWifiScan() {
 	m.wifi_scan = nil
+	m.clearedwifi_scan = false
 	m.removedwifi_scan = nil
 }
 
@@ -18679,6 +19259,16 @@ func (m *LocationMutation) AddCellScanIDs(ids ...int) {
 	for i := range ids {
 		m.cell_scan[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCellScan clears the cell_scan edge to SurveyCellScan.
+func (m *LocationMutation) ClearCellScan() {
+	m.clearedcell_scan = true
+}
+
+// CellScanCleared returns if the edge cell_scan was cleared.
+func (m *LocationMutation) CellScanCleared() bool {
+	return m.clearedcell_scan
 }
 
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
@@ -18710,6 +19300,7 @@ func (m *LocationMutation) CellScanIDs() (ids []int) {
 // ResetCellScan reset all changes of the "cell_scan" edge.
 func (m *LocationMutation) ResetCellScan() {
 	m.cell_scan = nil
+	m.clearedcell_scan = false
 	m.removedcell_scan = nil
 }
 
@@ -18721,6 +19312,16 @@ func (m *LocationMutation) AddWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWorkOrders clears the work_orders edge to WorkOrder.
+func (m *LocationMutation) ClearWorkOrders() {
+	m.clearedwork_orders = true
+}
+
+// WorkOrdersCleared returns if the edge work_orders was cleared.
+func (m *LocationMutation) WorkOrdersCleared() bool {
+	return m.clearedwork_orders
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
@@ -18752,6 +19353,7 @@ func (m *LocationMutation) WorkOrdersIDs() (ids []int) {
 // ResetWorkOrders reset all changes of the "work_orders" edge.
 func (m *LocationMutation) ResetWorkOrders() {
 	m.work_orders = nil
+	m.clearedwork_orders = false
 	m.removedwork_orders = nil
 }
 
@@ -18763,6 +19365,16 @@ func (m *LocationMutation) AddFloorPlanIDs(ids ...int) {
 	for i := range ids {
 		m.floor_plans[ids[i]] = struct{}{}
 	}
+}
+
+// ClearFloorPlans clears the floor_plans edge to FloorPlan.
+func (m *LocationMutation) ClearFloorPlans() {
+	m.clearedfloor_plans = true
+}
+
+// FloorPlansCleared returns if the edge floor_plans was cleared.
+func (m *LocationMutation) FloorPlansCleared() bool {
+	return m.clearedfloor_plans
 }
 
 // RemoveFloorPlanIDs removes the floor_plans edge to FloorPlan by ids.
@@ -18794,6 +19406,7 @@ func (m *LocationMutation) FloorPlansIDs() (ids []int) {
 // ResetFloorPlans reset all changes of the "floor_plans" edge.
 func (m *LocationMutation) ResetFloorPlans() {
 	m.floor_plans = nil
+	m.clearedfloor_plans = false
 	m.removedfloor_plans = nil
 }
 
@@ -19287,6 +19900,36 @@ func (m *LocationMutation) ClearedEdges() []string {
 	if m.clearedparent {
 		edges = append(edges, location.EdgeParent)
 	}
+	if m.clearedchildren {
+		edges = append(edges, location.EdgeChildren)
+	}
+	if m.clearedfiles {
+		edges = append(edges, location.EdgeFiles)
+	}
+	if m.clearedhyperlinks {
+		edges = append(edges, location.EdgeHyperlinks)
+	}
+	if m.clearedequipment {
+		edges = append(edges, location.EdgeEquipment)
+	}
+	if m.clearedproperties {
+		edges = append(edges, location.EdgeProperties)
+	}
+	if m.clearedsurvey {
+		edges = append(edges, location.EdgeSurvey)
+	}
+	if m.clearedwifi_scan {
+		edges = append(edges, location.EdgeWifiScan)
+	}
+	if m.clearedcell_scan {
+		edges = append(edges, location.EdgeCellScan)
+	}
+	if m.clearedwork_orders {
+		edges = append(edges, location.EdgeWorkOrders)
+	}
+	if m.clearedfloor_plans {
+		edges = append(edges, location.EdgeFloorPlans)
+	}
 	return edges
 }
 
@@ -19298,6 +19941,26 @@ func (m *LocationMutation) EdgeCleared(name string) bool {
 		return m.cleared_type
 	case location.EdgeParent:
 		return m.clearedparent
+	case location.EdgeChildren:
+		return m.clearedchildren
+	case location.EdgeFiles:
+		return m.clearedfiles
+	case location.EdgeHyperlinks:
+		return m.clearedhyperlinks
+	case location.EdgeEquipment:
+		return m.clearedequipment
+	case location.EdgeProperties:
+		return m.clearedproperties
+	case location.EdgeSurvey:
+		return m.clearedsurvey
+	case location.EdgeWifiScan:
+		return m.clearedwifi_scan
+	case location.EdgeCellScan:
+		return m.clearedcell_scan
+	case location.EdgeWorkOrders:
+		return m.clearedwork_orders
+	case location.EdgeFloorPlans:
+		return m.clearedfloor_plans
 	}
 	return false
 }
@@ -19380,10 +20043,13 @@ type LocationTypeMutation struct {
 	clearedFields                     map[string]struct{}
 	locations                         map[int]struct{}
 	removedlocations                  map[int]struct{}
+	clearedlocations                  bool
 	property_types                    map[int]struct{}
 	removedproperty_types             map[int]struct{}
+	clearedproperty_types             bool
 	survey_template_categories        map[int]struct{}
 	removedsurvey_template_categories map[int]struct{}
+	clearedsurvey_template_categories bool
 	done                              bool
 	oldValue                          func(context.Context) (*LocationType, error)
 }
@@ -19803,6 +20469,16 @@ func (m *LocationTypeMutation) AddLocationIDs(ids ...int) {
 	}
 }
 
+// ClearLocations clears the locations edge to Location.
+func (m *LocationTypeMutation) ClearLocations() {
+	m.clearedlocations = true
+}
+
+// LocationsCleared returns if the edge locations was cleared.
+func (m *LocationTypeMutation) LocationsCleared() bool {
+	return m.clearedlocations
+}
+
 // RemoveLocationIDs removes the locations edge to Location by ids.
 func (m *LocationTypeMutation) RemoveLocationIDs(ids ...int) {
 	if m.removedlocations == nil {
@@ -19832,6 +20508,7 @@ func (m *LocationTypeMutation) LocationsIDs() (ids []int) {
 // ResetLocations reset all changes of the "locations" edge.
 func (m *LocationTypeMutation) ResetLocations() {
 	m.locations = nil
+	m.clearedlocations = false
 	m.removedlocations = nil
 }
 
@@ -19843,6 +20520,16 @@ func (m *LocationTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	for i := range ids {
 		m.property_types[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *LocationTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *LocationTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
 }
 
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
@@ -19874,6 +20561,7 @@ func (m *LocationTypeMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *LocationTypeMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -19885,6 +20573,16 @@ func (m *LocationTypeMutation) AddSurveyTemplateCategoryIDs(ids ...int) {
 	for i := range ids {
 		m.survey_template_categories[ids[i]] = struct{}{}
 	}
+}
+
+// ClearSurveyTemplateCategories clears the survey_template_categories edge to SurveyTemplateCategory.
+func (m *LocationTypeMutation) ClearSurveyTemplateCategories() {
+	m.clearedsurvey_template_categories = true
+}
+
+// SurveyTemplateCategoriesCleared returns if the edge survey_template_categories was cleared.
+func (m *LocationTypeMutation) SurveyTemplateCategoriesCleared() bool {
+	return m.clearedsurvey_template_categories
 }
 
 // RemoveSurveyTemplateCategoryIDs removes the survey_template_categories edge to SurveyTemplateCategory by ids.
@@ -19916,6 +20614,7 @@ func (m *LocationTypeMutation) SurveyTemplateCategoriesIDs() (ids []int) {
 // ResetSurveyTemplateCategories reset all changes of the "survey_template_categories" edge.
 func (m *LocationTypeMutation) ResetSurveyTemplateCategories() {
 	m.survey_template_categories = nil
+	m.clearedsurvey_template_categories = false
 	m.removedsurvey_template_categories = nil
 }
 
@@ -20263,6 +20962,15 @@ func (m *LocationTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *LocationTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedlocations {
+		edges = append(edges, locationtype.EdgeLocations)
+	}
+	if m.clearedproperty_types {
+		edges = append(edges, locationtype.EdgePropertyTypes)
+	}
+	if m.clearedsurvey_template_categories {
+		edges = append(edges, locationtype.EdgeSurveyTemplateCategories)
+	}
 	return edges
 }
 
@@ -20270,6 +20978,12 @@ func (m *LocationTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *LocationTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case locationtype.EdgeLocations:
+		return m.clearedlocations
+	case locationtype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case locationtype.EdgeSurveyTemplateCategories:
+		return m.clearedsurvey_template_categories
 	}
 	return false
 }
@@ -20317,6 +21031,7 @@ type PermissionsPolicyMutation struct {
 	clearedFields    map[string]struct{}
 	groups           map[int]struct{}
 	removedgroups    map[int]struct{}
+	clearedgroups    bool
 	done             bool
 	oldValue         func(context.Context) (*PermissionsPolicy, error)
 }
@@ -20721,6 +21436,16 @@ func (m *PermissionsPolicyMutation) AddGroupIDs(ids ...int) {
 	}
 }
 
+// ClearGroups clears the groups edge to UsersGroup.
+func (m *PermissionsPolicyMutation) ClearGroups() {
+	m.clearedgroups = true
+}
+
+// GroupsCleared returns if the edge groups was cleared.
+func (m *PermissionsPolicyMutation) GroupsCleared() bool {
+	return m.clearedgroups
+}
+
 // RemoveGroupIDs removes the groups edge to UsersGroup by ids.
 func (m *PermissionsPolicyMutation) RemoveGroupIDs(ids ...int) {
 	if m.removedgroups == nil {
@@ -20750,6 +21475,7 @@ func (m *PermissionsPolicyMutation) GroupsIDs() (ids []int) {
 // ResetGroups reset all changes of the "groups" edge.
 func (m *PermissionsPolicyMutation) ResetGroups() {
 	m.groups = nil
+	m.clearedgroups = false
 	m.removedgroups = nil
 }
 
@@ -21046,6 +21772,9 @@ func (m *PermissionsPolicyMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *PermissionsPolicyMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.clearedgroups {
+		edges = append(edges, permissionspolicy.EdgeGroups)
+	}
 	return edges
 }
 
@@ -21053,6 +21782,8 @@ func (m *PermissionsPolicyMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *PermissionsPolicyMutation) EdgeCleared(name string) bool {
 	switch name {
+	case permissionspolicy.EdgeGroups:
+		return m.clearedgroups
 	}
 	return false
 }
@@ -21098,10 +21829,13 @@ type ProjectMutation struct {
 	clearedlocation    bool
 	comments           map[int]struct{}
 	removedcomments    map[int]struct{}
+	clearedcomments    bool
 	work_orders        map[int]struct{}
 	removedwork_orders map[int]struct{}
+	clearedwork_orders bool
 	properties         map[int]struct{}
 	removedproperties  map[int]struct{}
+	clearedproperties  bool
 	creator            *int
 	clearedcreator     bool
 	done               bool
@@ -21512,6 +22246,16 @@ func (m *ProjectMutation) AddCommentIDs(ids ...int) {
 	}
 }
 
+// ClearComments clears the comments edge to Comment.
+func (m *ProjectMutation) ClearComments() {
+	m.clearedcomments = true
+}
+
+// CommentsCleared returns if the edge comments was cleared.
+func (m *ProjectMutation) CommentsCleared() bool {
+	return m.clearedcomments
+}
+
 // RemoveCommentIDs removes the comments edge to Comment by ids.
 func (m *ProjectMutation) RemoveCommentIDs(ids ...int) {
 	if m.removedcomments == nil {
@@ -21541,6 +22285,7 @@ func (m *ProjectMutation) CommentsIDs() (ids []int) {
 // ResetComments reset all changes of the "comments" edge.
 func (m *ProjectMutation) ResetComments() {
 	m.comments = nil
+	m.clearedcomments = false
 	m.removedcomments = nil
 }
 
@@ -21552,6 +22297,16 @@ func (m *ProjectMutation) AddWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWorkOrders clears the work_orders edge to WorkOrder.
+func (m *ProjectMutation) ClearWorkOrders() {
+	m.clearedwork_orders = true
+}
+
+// WorkOrdersCleared returns if the edge work_orders was cleared.
+func (m *ProjectMutation) WorkOrdersCleared() bool {
+	return m.clearedwork_orders
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
@@ -21583,6 +22338,7 @@ func (m *ProjectMutation) WorkOrdersIDs() (ids []int) {
 // ResetWorkOrders reset all changes of the "work_orders" edge.
 func (m *ProjectMutation) ResetWorkOrders() {
 	m.work_orders = nil
+	m.clearedwork_orders = false
 	m.removedwork_orders = nil
 }
 
@@ -21594,6 +22350,16 @@ func (m *ProjectMutation) AddPropertyIDs(ids ...int) {
 	for i := range ids {
 		m.properties[ids[i]] = struct{}{}
 	}
+}
+
+// ClearProperties clears the properties edge to Property.
+func (m *ProjectMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *ProjectMutation) PropertiesCleared() bool {
+	return m.clearedproperties
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -21625,6 +22391,7 @@ func (m *ProjectMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *ProjectMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -21981,6 +22748,15 @@ func (m *ProjectMutation) ClearedEdges() []string {
 	if m.clearedlocation {
 		edges = append(edges, project.EdgeLocation)
 	}
+	if m.clearedcomments {
+		edges = append(edges, project.EdgeComments)
+	}
+	if m.clearedwork_orders {
+		edges = append(edges, project.EdgeWorkOrders)
+	}
+	if m.clearedproperties {
+		edges = append(edges, project.EdgeProperties)
+	}
 	if m.clearedcreator {
 		edges = append(edges, project.EdgeCreator)
 	}
@@ -21997,6 +22773,12 @@ func (m *ProjectMutation) EdgeCleared(name string) bool {
 		return m.clearedtemplate
 	case project.EdgeLocation:
 		return m.clearedlocation
+	case project.EdgeComments:
+		return m.clearedcomments
+	case project.EdgeWorkOrders:
+		return m.clearedwork_orders
+	case project.EdgeProperties:
+		return m.clearedproperties
 	case project.EdgeCreator:
 		return m.clearedcreator
 	}
@@ -22065,8 +22847,10 @@ type ProjectTemplateMutation struct {
 	clearedFields      map[string]struct{}
 	properties         map[int]struct{}
 	removedproperties  map[int]struct{}
+	clearedproperties  bool
 	work_orders        map[int]struct{}
 	removedwork_orders map[int]struct{}
+	clearedwork_orders bool
 	_type              *int
 	cleared_type       bool
 	done               bool
@@ -22249,6 +23033,16 @@ func (m *ProjectTemplateMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to PropertyType.
+func (m *ProjectTemplateMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *ProjectTemplateMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
 func (m *ProjectTemplateMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -22278,6 +23072,7 @@ func (m *ProjectTemplateMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *ProjectTemplateMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -22289,6 +23084,16 @@ func (m *ProjectTemplateMutation) AddWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWorkOrders clears the work_orders edge to WorkOrderDefinition.
+func (m *ProjectTemplateMutation) ClearWorkOrders() {
+	m.clearedwork_orders = true
+}
+
+// WorkOrdersCleared returns if the edge work_orders was cleared.
+func (m *ProjectTemplateMutation) WorkOrdersCleared() bool {
+	return m.clearedwork_orders
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
@@ -22320,6 +23125,7 @@ func (m *ProjectTemplateMutation) WorkOrdersIDs() (ids []int) {
 // ResetWorkOrders reset all changes of the "work_orders" edge.
 func (m *ProjectTemplateMutation) ResetWorkOrders() {
 	m.work_orders = nil
+	m.clearedwork_orders = false
 	m.removedwork_orders = nil
 }
 
@@ -22577,6 +23383,12 @@ func (m *ProjectTemplateMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *ProjectTemplateMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedproperties {
+		edges = append(edges, projecttemplate.EdgeProperties)
+	}
+	if m.clearedwork_orders {
+		edges = append(edges, projecttemplate.EdgeWorkOrders)
+	}
 	if m.cleared_type {
 		edges = append(edges, projecttemplate.EdgeType)
 	}
@@ -22587,6 +23399,10 @@ func (m *ProjectTemplateMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ProjectTemplateMutation) EdgeCleared(name string) bool {
 	switch name {
+	case projecttemplate.EdgeProperties:
+		return m.clearedproperties
+	case projecttemplate.EdgeWorkOrders:
+		return m.clearedwork_orders
 	case projecttemplate.EdgeType:
 		return m.cleared_type
 	}
@@ -22634,10 +23450,13 @@ type ProjectTypeMutation struct {
 	clearedFields      map[string]struct{}
 	properties         map[int]struct{}
 	removedproperties  map[int]struct{}
+	clearedproperties  bool
 	work_orders        map[int]struct{}
 	removedwork_orders map[int]struct{}
+	clearedwork_orders bool
 	projects           map[int]struct{}
 	removedprojects    map[int]struct{}
+	clearedprojects    bool
 	done               bool
 	oldValue           func(context.Context) (*ProjectType, error)
 }
@@ -22818,6 +23637,16 @@ func (m *ProjectTypeMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to PropertyType.
+func (m *ProjectTypeMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *ProjectTypeMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
 func (m *ProjectTypeMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -22847,6 +23676,7 @@ func (m *ProjectTypeMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *ProjectTypeMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -22858,6 +23688,16 @@ func (m *ProjectTypeMutation) AddWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWorkOrders clears the work_orders edge to WorkOrderDefinition.
+func (m *ProjectTypeMutation) ClearWorkOrders() {
+	m.clearedwork_orders = true
+}
+
+// WorkOrdersCleared returns if the edge work_orders was cleared.
+func (m *ProjectTypeMutation) WorkOrdersCleared() bool {
+	return m.clearedwork_orders
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
@@ -22889,6 +23729,7 @@ func (m *ProjectTypeMutation) WorkOrdersIDs() (ids []int) {
 // ResetWorkOrders reset all changes of the "work_orders" edge.
 func (m *ProjectTypeMutation) ResetWorkOrders() {
 	m.work_orders = nil
+	m.clearedwork_orders = false
 	m.removedwork_orders = nil
 }
 
@@ -22900,6 +23741,16 @@ func (m *ProjectTypeMutation) AddProjectIDs(ids ...int) {
 	for i := range ids {
 		m.projects[ids[i]] = struct{}{}
 	}
+}
+
+// ClearProjects clears the projects edge to Project.
+func (m *ProjectTypeMutation) ClearProjects() {
+	m.clearedprojects = true
+}
+
+// ProjectsCleared returns if the edge projects was cleared.
+func (m *ProjectTypeMutation) ProjectsCleared() bool {
+	return m.clearedprojects
 }
 
 // RemoveProjectIDs removes the projects edge to Project by ids.
@@ -22931,6 +23782,7 @@ func (m *ProjectTypeMutation) ProjectsIDs() (ids []int) {
 // ResetProjects reset all changes of the "projects" edge.
 func (m *ProjectTypeMutation) ResetProjects() {
 	m.projects = nil
+	m.clearedprojects = false
 	m.removedprojects = nil
 }
 
@@ -23160,6 +24012,15 @@ func (m *ProjectTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *ProjectTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedproperties {
+		edges = append(edges, projecttype.EdgeProperties)
+	}
+	if m.clearedwork_orders {
+		edges = append(edges, projecttype.EdgeWorkOrders)
+	}
+	if m.clearedprojects {
+		edges = append(edges, projecttype.EdgeProjects)
+	}
 	return edges
 }
 
@@ -23167,6 +24028,12 @@ func (m *ProjectTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ProjectTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case projecttype.EdgeProperties:
+		return m.clearedproperties
+	case projecttype.EdgeWorkOrders:
+		return m.clearedwork_orders
+	case projecttype.EdgeProjects:
+		return m.clearedprojects
 	}
 	return false
 }
@@ -25161,6 +26028,7 @@ type PropertyTypeMutation struct {
 	clearedFields                   map[string]struct{}
 	properties                      map[int]struct{}
 	removedproperties               map[int]struct{}
+	clearedproperties               bool
 	location_type                   *int
 	clearedlocation_type            bool
 	equipment_port_type             *int
@@ -26315,6 +27183,16 @@ func (m *PropertyTypeMutation) AddPropertyIDs(ids ...int) {
 	}
 }
 
+// ClearProperties clears the properties edge to Property.
+func (m *PropertyTypeMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *PropertyTypeMutation) PropertiesCleared() bool {
+	return m.clearedproperties
+}
+
 // RemovePropertyIDs removes the properties edge to Property by ids.
 func (m *PropertyTypeMutation) RemovePropertyIDs(ids ...int) {
 	if m.removedproperties == nil {
@@ -26344,6 +27222,7 @@ func (m *PropertyTypeMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *PropertyTypeMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -27410,6 +28289,9 @@ func (m *PropertyTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *PropertyTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 10)
+	if m.clearedproperties {
+		edges = append(edges, propertytype.EdgeProperties)
+	}
 	if m.clearedlocation_type {
 		edges = append(edges, propertytype.EdgeLocationType)
 	}
@@ -27444,6 +28326,8 @@ func (m *PropertyTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *PropertyTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case propertytype.EdgeProperties:
+		return m.clearedproperties
 	case propertytype.EdgeLocationType:
 		return m.clearedlocation_type
 	case propertytype.EdgeEquipmentPortType:
@@ -28070,18 +28954,25 @@ type ServiceMutation struct {
 	cleared_type      bool
 	downstream        map[int]struct{}
 	removeddownstream map[int]struct{}
+	cleareddownstream bool
 	upstream          map[int]struct{}
 	removedupstream   map[int]struct{}
+	clearedupstream   bool
 	properties        map[int]struct{}
 	removedproperties map[int]struct{}
+	clearedproperties bool
 	links             map[int]struct{}
 	removedlinks      map[int]struct{}
+	clearedlinks      bool
 	ports             map[int]struct{}
 	removedports      map[int]struct{}
+	clearedports      bool
 	customer          map[int]struct{}
 	removedcustomer   map[int]struct{}
+	clearedcustomer   bool
 	endpoints         map[int]struct{}
 	removedendpoints  map[int]struct{}
+	clearedendpoints  bool
 	done              bool
 	oldValue          func(context.Context) (*Service, error)
 }
@@ -28412,6 +29303,16 @@ func (m *ServiceMutation) AddDownstreamIDs(ids ...int) {
 	}
 }
 
+// ClearDownstream clears the downstream edge to Service.
+func (m *ServiceMutation) ClearDownstream() {
+	m.cleareddownstream = true
+}
+
+// DownstreamCleared returns if the edge downstream was cleared.
+func (m *ServiceMutation) DownstreamCleared() bool {
+	return m.cleareddownstream
+}
+
 // RemoveDownstreamIDs removes the downstream edge to Service by ids.
 func (m *ServiceMutation) RemoveDownstreamIDs(ids ...int) {
 	if m.removeddownstream == nil {
@@ -28441,6 +29342,7 @@ func (m *ServiceMutation) DownstreamIDs() (ids []int) {
 // ResetDownstream reset all changes of the "downstream" edge.
 func (m *ServiceMutation) ResetDownstream() {
 	m.downstream = nil
+	m.cleareddownstream = false
 	m.removeddownstream = nil
 }
 
@@ -28452,6 +29354,16 @@ func (m *ServiceMutation) AddUpstreamIDs(ids ...int) {
 	for i := range ids {
 		m.upstream[ids[i]] = struct{}{}
 	}
+}
+
+// ClearUpstream clears the upstream edge to Service.
+func (m *ServiceMutation) ClearUpstream() {
+	m.clearedupstream = true
+}
+
+// UpstreamCleared returns if the edge upstream was cleared.
+func (m *ServiceMutation) UpstreamCleared() bool {
+	return m.clearedupstream
 }
 
 // RemoveUpstreamIDs removes the upstream edge to Service by ids.
@@ -28483,6 +29395,7 @@ func (m *ServiceMutation) UpstreamIDs() (ids []int) {
 // ResetUpstream reset all changes of the "upstream" edge.
 func (m *ServiceMutation) ResetUpstream() {
 	m.upstream = nil
+	m.clearedupstream = false
 	m.removedupstream = nil
 }
 
@@ -28494,6 +29407,16 @@ func (m *ServiceMutation) AddPropertyIDs(ids ...int) {
 	for i := range ids {
 		m.properties[ids[i]] = struct{}{}
 	}
+}
+
+// ClearProperties clears the properties edge to Property.
+func (m *ServiceMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *ServiceMutation) PropertiesCleared() bool {
+	return m.clearedproperties
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -28525,6 +29448,7 @@ func (m *ServiceMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *ServiceMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -28536,6 +29460,16 @@ func (m *ServiceMutation) AddLinkIDs(ids ...int) {
 	for i := range ids {
 		m.links[ids[i]] = struct{}{}
 	}
+}
+
+// ClearLinks clears the links edge to Link.
+func (m *ServiceMutation) ClearLinks() {
+	m.clearedlinks = true
+}
+
+// LinksCleared returns if the edge links was cleared.
+func (m *ServiceMutation) LinksCleared() bool {
+	return m.clearedlinks
 }
 
 // RemoveLinkIDs removes the links edge to Link by ids.
@@ -28567,6 +29501,7 @@ func (m *ServiceMutation) LinksIDs() (ids []int) {
 // ResetLinks reset all changes of the "links" edge.
 func (m *ServiceMutation) ResetLinks() {
 	m.links = nil
+	m.clearedlinks = false
 	m.removedlinks = nil
 }
 
@@ -28578,6 +29513,16 @@ func (m *ServiceMutation) AddPortIDs(ids ...int) {
 	for i := range ids {
 		m.ports[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPorts clears the ports edge to EquipmentPort.
+func (m *ServiceMutation) ClearPorts() {
+	m.clearedports = true
+}
+
+// PortsCleared returns if the edge ports was cleared.
+func (m *ServiceMutation) PortsCleared() bool {
+	return m.clearedports
 }
 
 // RemovePortIDs removes the ports edge to EquipmentPort by ids.
@@ -28609,6 +29554,7 @@ func (m *ServiceMutation) PortsIDs() (ids []int) {
 // ResetPorts reset all changes of the "ports" edge.
 func (m *ServiceMutation) ResetPorts() {
 	m.ports = nil
+	m.clearedports = false
 	m.removedports = nil
 }
 
@@ -28620,6 +29566,16 @@ func (m *ServiceMutation) AddCustomerIDs(ids ...int) {
 	for i := range ids {
 		m.customer[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCustomer clears the customer edge to Customer.
+func (m *ServiceMutation) ClearCustomer() {
+	m.clearedcustomer = true
+}
+
+// CustomerCleared returns if the edge customer was cleared.
+func (m *ServiceMutation) CustomerCleared() bool {
+	return m.clearedcustomer
 }
 
 // RemoveCustomerIDs removes the customer edge to Customer by ids.
@@ -28651,6 +29607,7 @@ func (m *ServiceMutation) CustomerIDs() (ids []int) {
 // ResetCustomer reset all changes of the "customer" edge.
 func (m *ServiceMutation) ResetCustomer() {
 	m.customer = nil
+	m.clearedcustomer = false
 	m.removedcustomer = nil
 }
 
@@ -28662,6 +29619,16 @@ func (m *ServiceMutation) AddEndpointIDs(ids ...int) {
 	for i := range ids {
 		m.endpoints[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEndpoints clears the endpoints edge to ServiceEndpoint.
+func (m *ServiceMutation) ClearEndpoints() {
+	m.clearedendpoints = true
+}
+
+// EndpointsCleared returns if the edge endpoints was cleared.
+func (m *ServiceMutation) EndpointsCleared() bool {
+	return m.clearedendpoints
 }
 
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
@@ -28693,6 +29660,7 @@ func (m *ServiceMutation) EndpointsIDs() (ids []int) {
 // ResetEndpoints reset all changes of the "endpoints" edge.
 func (m *ServiceMutation) ResetEndpoints() {
 	m.endpoints = nil
+	m.clearedendpoints = false
 	m.removedendpoints = nil
 }
 
@@ -29055,6 +30023,27 @@ func (m *ServiceMutation) ClearedEdges() []string {
 	if m.cleared_type {
 		edges = append(edges, service.EdgeType)
 	}
+	if m.cleareddownstream {
+		edges = append(edges, service.EdgeDownstream)
+	}
+	if m.clearedupstream {
+		edges = append(edges, service.EdgeUpstream)
+	}
+	if m.clearedproperties {
+		edges = append(edges, service.EdgeProperties)
+	}
+	if m.clearedlinks {
+		edges = append(edges, service.EdgeLinks)
+	}
+	if m.clearedports {
+		edges = append(edges, service.EdgePorts)
+	}
+	if m.clearedcustomer {
+		edges = append(edges, service.EdgeCustomer)
+	}
+	if m.clearedendpoints {
+		edges = append(edges, service.EdgeEndpoints)
+	}
 	return edges
 }
 
@@ -29064,6 +30053,20 @@ func (m *ServiceMutation) EdgeCleared(name string) bool {
 	switch name {
 	case service.EdgeType:
 		return m.cleared_type
+	case service.EdgeDownstream:
+		return m.cleareddownstream
+	case service.EdgeUpstream:
+		return m.clearedupstream
+	case service.EdgeProperties:
+		return m.clearedproperties
+	case service.EdgeLinks:
+		return m.clearedlinks
+	case service.EdgePorts:
+		return m.clearedports
+	case service.EdgeCustomer:
+		return m.clearedcustomer
+	case service.EdgeEndpoints:
+		return m.clearedendpoints
 	}
 	return false
 }
@@ -29722,6 +30725,7 @@ type ServiceEndpointDefinitionMutation struct {
 	clearedFields         map[string]struct{}
 	endpoints             map[int]struct{}
 	removedendpoints      map[int]struct{}
+	clearedendpoints      bool
 	service_type          *int
 	clearedservice_type   bool
 	equipment_type        *int
@@ -30037,6 +31041,16 @@ func (m *ServiceEndpointDefinitionMutation) AddEndpointIDs(ids ...int) {
 	}
 }
 
+// ClearEndpoints clears the endpoints edge to ServiceEndpoint.
+func (m *ServiceEndpointDefinitionMutation) ClearEndpoints() {
+	m.clearedendpoints = true
+}
+
+// EndpointsCleared returns if the edge endpoints was cleared.
+func (m *ServiceEndpointDefinitionMutation) EndpointsCleared() bool {
+	return m.clearedendpoints
+}
+
 // RemoveEndpointIDs removes the endpoints edge to ServiceEndpoint by ids.
 func (m *ServiceEndpointDefinitionMutation) RemoveEndpointIDs(ids ...int) {
 	if m.removedendpoints == nil {
@@ -30066,6 +31080,7 @@ func (m *ServiceEndpointDefinitionMutation) EndpointsIDs() (ids []int) {
 // ResetEndpoints reset all changes of the "endpoints" edge.
 func (m *ServiceEndpointDefinitionMutation) ResetEndpoints() {
 	m.endpoints = nil
+	m.clearedendpoints = false
 	m.removedendpoints = nil
 }
 
@@ -30417,6 +31432,9 @@ func (m *ServiceEndpointDefinitionMutation) RemovedIDs(name string) []ent.Value 
 // mutation.
 func (m *ServiceEndpointDefinitionMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedendpoints {
+		edges = append(edges, serviceendpointdefinition.EdgeEndpoints)
+	}
 	if m.clearedservice_type {
 		edges = append(edges, serviceendpointdefinition.EdgeServiceType)
 	}
@@ -30430,6 +31448,8 @@ func (m *ServiceEndpointDefinitionMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ServiceEndpointDefinitionMutation) EdgeCleared(name string) bool {
 	switch name {
+	case serviceendpointdefinition.EdgeEndpoints:
+		return m.clearedendpoints
 	case serviceendpointdefinition.EdgeServiceType:
 		return m.clearedservice_type
 	case serviceendpointdefinition.EdgeEquipmentType:
@@ -30486,10 +31506,13 @@ type ServiceTypeMutation struct {
 	clearedFields               map[string]struct{}
 	services                    map[int]struct{}
 	removedservices             map[int]struct{}
+	clearedservices             bool
 	property_types              map[int]struct{}
 	removedproperty_types       map[int]struct{}
+	clearedproperty_types       bool
 	endpoint_definitions        map[int]struct{}
 	removedendpoint_definitions map[int]struct{}
+	clearedendpoint_definitions bool
 	done                        bool
 	oldValue                    func(context.Context) (*ServiceType, error)
 }
@@ -30805,6 +31828,16 @@ func (m *ServiceTypeMutation) AddServiceIDs(ids ...int) {
 	}
 }
 
+// ClearServices clears the services edge to Service.
+func (m *ServiceTypeMutation) ClearServices() {
+	m.clearedservices = true
+}
+
+// ServicesCleared returns if the edge services was cleared.
+func (m *ServiceTypeMutation) ServicesCleared() bool {
+	return m.clearedservices
+}
+
 // RemoveServiceIDs removes the services edge to Service by ids.
 func (m *ServiceTypeMutation) RemoveServiceIDs(ids ...int) {
 	if m.removedservices == nil {
@@ -30834,6 +31867,7 @@ func (m *ServiceTypeMutation) ServicesIDs() (ids []int) {
 // ResetServices reset all changes of the "services" edge.
 func (m *ServiceTypeMutation) ResetServices() {
 	m.services = nil
+	m.clearedservices = false
 	m.removedservices = nil
 }
 
@@ -30845,6 +31879,16 @@ func (m *ServiceTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	for i := range ids {
 		m.property_types[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *ServiceTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *ServiceTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
 }
 
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
@@ -30876,6 +31920,7 @@ func (m *ServiceTypeMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *ServiceTypeMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -30887,6 +31932,16 @@ func (m *ServiceTypeMutation) AddEndpointDefinitionIDs(ids ...int) {
 	for i := range ids {
 		m.endpoint_definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearEndpointDefinitions clears the endpoint_definitions edge to ServiceEndpointDefinition.
+func (m *ServiceTypeMutation) ClearEndpointDefinitions() {
+	m.clearedendpoint_definitions = true
+}
+
+// EndpointDefinitionsCleared returns if the edge endpoint_definitions was cleared.
+func (m *ServiceTypeMutation) EndpointDefinitionsCleared() bool {
+	return m.clearedendpoint_definitions
 }
 
 // RemoveEndpointDefinitionIDs removes the endpoint_definitions edge to ServiceEndpointDefinition by ids.
@@ -30918,6 +31973,7 @@ func (m *ServiceTypeMutation) EndpointDefinitionsIDs() (ids []int) {
 // ResetEndpointDefinitions reset all changes of the "endpoint_definitions" edge.
 func (m *ServiceTypeMutation) ResetEndpointDefinitions() {
 	m.endpoint_definitions = nil
+	m.clearedendpoint_definitions = false
 	m.removedendpoint_definitions = nil
 }
 
@@ -31206,6 +32262,15 @@ func (m *ServiceTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *ServiceTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedservices {
+		edges = append(edges, servicetype.EdgeServices)
+	}
+	if m.clearedproperty_types {
+		edges = append(edges, servicetype.EdgePropertyTypes)
+	}
+	if m.clearedendpoint_definitions {
+		edges = append(edges, servicetype.EdgeEndpointDefinitions)
+	}
 	return edges
 }
 
@@ -31213,6 +32278,12 @@ func (m *ServiceTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *ServiceTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case servicetype.EdgeServices:
+		return m.clearedservices
+	case servicetype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case servicetype.EdgeEndpointDefinitions:
+		return m.clearedendpoint_definitions
 	}
 	return false
 }
@@ -31263,6 +32334,7 @@ type SurveyMutation struct {
 	clearedsource_file   bool
 	questions            map[int]struct{}
 	removedquestions     map[int]struct{}
+	clearedquestions     bool
 	done                 bool
 	oldValue             func(context.Context) (*Survey, error)
 }
@@ -31682,6 +32754,16 @@ func (m *SurveyMutation) AddQuestionIDs(ids ...int) {
 	}
 }
 
+// ClearQuestions clears the questions edge to SurveyQuestion.
+func (m *SurveyMutation) ClearQuestions() {
+	m.clearedquestions = true
+}
+
+// QuestionsCleared returns if the edge questions was cleared.
+func (m *SurveyMutation) QuestionsCleared() bool {
+	return m.clearedquestions
+}
+
 // RemoveQuestionIDs removes the questions edge to SurveyQuestion by ids.
 func (m *SurveyMutation) RemoveQuestionIDs(ids ...int) {
 	if m.removedquestions == nil {
@@ -31711,6 +32793,7 @@ func (m *SurveyMutation) QuestionsIDs() (ids []int) {
 // ResetQuestions reset all changes of the "questions" edge.
 func (m *SurveyMutation) ResetQuestions() {
 	m.questions = nil
+	m.clearedquestions = false
 	m.removedquestions = nil
 }
 
@@ -31998,6 +33081,9 @@ func (m *SurveyMutation) ClearedEdges() []string {
 	if m.clearedsource_file {
 		edges = append(edges, survey.EdgeSourceFile)
 	}
+	if m.clearedquestions {
+		edges = append(edges, survey.EdgeQuestions)
+	}
 	return edges
 }
 
@@ -32009,6 +33095,8 @@ func (m *SurveyMutation) EdgeCleared(name string) bool {
 		return m.clearedlocation
 	case survey.EdgeSourceFile:
 		return m.clearedsource_file
+	case survey.EdgeQuestions:
+		return m.clearedquestions
 	}
 	return false
 }
@@ -34629,12 +35717,16 @@ type SurveyQuestionMutation struct {
 	clearedsurvey        bool
 	wifi_scan            map[int]struct{}
 	removedwifi_scan     map[int]struct{}
+	clearedwifi_scan     bool
 	cell_scan            map[int]struct{}
 	removedcell_scan     map[int]struct{}
+	clearedcell_scan     bool
 	photo_data           map[int]struct{}
 	removedphoto_data    map[int]struct{}
+	clearedphoto_data    bool
 	images               map[int]struct{}
 	removedimages        map[int]struct{}
+	clearedimages        bool
 	done                 bool
 	oldValue             func(context.Context) (*SurveyQuestion, error)
 }
@@ -35881,6 +36973,16 @@ func (m *SurveyQuestionMutation) AddWifiScanIDs(ids ...int) {
 	}
 }
 
+// ClearWifiScan clears the wifi_scan edge to SurveyWiFiScan.
+func (m *SurveyQuestionMutation) ClearWifiScan() {
+	m.clearedwifi_scan = true
+}
+
+// WifiScanCleared returns if the edge wifi_scan was cleared.
+func (m *SurveyQuestionMutation) WifiScanCleared() bool {
+	return m.clearedwifi_scan
+}
+
 // RemoveWifiScanIDs removes the wifi_scan edge to SurveyWiFiScan by ids.
 func (m *SurveyQuestionMutation) RemoveWifiScanIDs(ids ...int) {
 	if m.removedwifi_scan == nil {
@@ -35910,6 +37012,7 @@ func (m *SurveyQuestionMutation) WifiScanIDs() (ids []int) {
 // ResetWifiScan reset all changes of the "wifi_scan" edge.
 func (m *SurveyQuestionMutation) ResetWifiScan() {
 	m.wifi_scan = nil
+	m.clearedwifi_scan = false
 	m.removedwifi_scan = nil
 }
 
@@ -35921,6 +37024,16 @@ func (m *SurveyQuestionMutation) AddCellScanIDs(ids ...int) {
 	for i := range ids {
 		m.cell_scan[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCellScan clears the cell_scan edge to SurveyCellScan.
+func (m *SurveyQuestionMutation) ClearCellScan() {
+	m.clearedcell_scan = true
+}
+
+// CellScanCleared returns if the edge cell_scan was cleared.
+func (m *SurveyQuestionMutation) CellScanCleared() bool {
+	return m.clearedcell_scan
 }
 
 // RemoveCellScanIDs removes the cell_scan edge to SurveyCellScan by ids.
@@ -35952,6 +37065,7 @@ func (m *SurveyQuestionMutation) CellScanIDs() (ids []int) {
 // ResetCellScan reset all changes of the "cell_scan" edge.
 func (m *SurveyQuestionMutation) ResetCellScan() {
 	m.cell_scan = nil
+	m.clearedcell_scan = false
 	m.removedcell_scan = nil
 }
 
@@ -35963,6 +37077,16 @@ func (m *SurveyQuestionMutation) AddPhotoDatumIDs(ids ...int) {
 	for i := range ids {
 		m.photo_data[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPhotoData clears the photo_data edge to File.
+func (m *SurveyQuestionMutation) ClearPhotoData() {
+	m.clearedphoto_data = true
+}
+
+// PhotoDataCleared returns if the edge photo_data was cleared.
+func (m *SurveyQuestionMutation) PhotoDataCleared() bool {
+	return m.clearedphoto_data
 }
 
 // RemovePhotoDatumIDs removes the photo_data edge to File by ids.
@@ -35994,6 +37118,7 @@ func (m *SurveyQuestionMutation) PhotoDataIDs() (ids []int) {
 // ResetPhotoData reset all changes of the "photo_data" edge.
 func (m *SurveyQuestionMutation) ResetPhotoData() {
 	m.photo_data = nil
+	m.clearedphoto_data = false
 	m.removedphoto_data = nil
 }
 
@@ -36005,6 +37130,16 @@ func (m *SurveyQuestionMutation) AddImageIDs(ids ...int) {
 	for i := range ids {
 		m.images[ids[i]] = struct{}{}
 	}
+}
+
+// ClearImages clears the images edge to File.
+func (m *SurveyQuestionMutation) ClearImages() {
+	m.clearedimages = true
+}
+
+// ImagesCleared returns if the edge images was cleared.
+func (m *SurveyQuestionMutation) ImagesCleared() bool {
+	return m.clearedimages
 }
 
 // RemoveImageIDs removes the images edge to File by ids.
@@ -36036,6 +37171,7 @@ func (m *SurveyQuestionMutation) ImagesIDs() (ids []int) {
 // ResetImages reset all changes of the "images" edge.
 func (m *SurveyQuestionMutation) ResetImages() {
 	m.images = nil
+	m.clearedimages = false
 	m.removedimages = nil
 }
 
@@ -36788,6 +37924,18 @@ func (m *SurveyQuestionMutation) ClearedEdges() []string {
 	if m.clearedsurvey {
 		edges = append(edges, surveyquestion.EdgeSurvey)
 	}
+	if m.clearedwifi_scan {
+		edges = append(edges, surveyquestion.EdgeWifiScan)
+	}
+	if m.clearedcell_scan {
+		edges = append(edges, surveyquestion.EdgeCellScan)
+	}
+	if m.clearedphoto_data {
+		edges = append(edges, surveyquestion.EdgePhotoData)
+	}
+	if m.clearedimages {
+		edges = append(edges, surveyquestion.EdgeImages)
+	}
 	return edges
 }
 
@@ -36797,6 +37945,14 @@ func (m *SurveyQuestionMutation) EdgeCleared(name string) bool {
 	switch name {
 	case surveyquestion.EdgeSurvey:
 		return m.clearedsurvey
+	case surveyquestion.EdgeWifiScan:
+		return m.clearedwifi_scan
+	case surveyquestion.EdgeCellScan:
+		return m.clearedcell_scan
+	case surveyquestion.EdgePhotoData:
+		return m.clearedphoto_data
+	case surveyquestion.EdgeImages:
+		return m.clearedimages
 	}
 	return false
 }
@@ -36850,6 +38006,7 @@ type SurveyTemplateCategoryMutation struct {
 	clearedFields                    map[string]struct{}
 	survey_template_questions        map[int]struct{}
 	removedsurvey_template_questions map[int]struct{}
+	clearedsurvey_template_questions bool
 	location_type                    *int
 	clearedlocation_type             bool
 	done                             bool
@@ -37093,6 +38250,16 @@ func (m *SurveyTemplateCategoryMutation) AddSurveyTemplateQuestionIDs(ids ...int
 	}
 }
 
+// ClearSurveyTemplateQuestions clears the survey_template_questions edge to SurveyTemplateQuestion.
+func (m *SurveyTemplateCategoryMutation) ClearSurveyTemplateQuestions() {
+	m.clearedsurvey_template_questions = true
+}
+
+// SurveyTemplateQuestionsCleared returns if the edge survey_template_questions was cleared.
+func (m *SurveyTemplateCategoryMutation) SurveyTemplateQuestionsCleared() bool {
+	return m.clearedsurvey_template_questions
+}
+
 // RemoveSurveyTemplateQuestionIDs removes the survey_template_questions edge to SurveyTemplateQuestion by ids.
 func (m *SurveyTemplateCategoryMutation) RemoveSurveyTemplateQuestionIDs(ids ...int) {
 	if m.removedsurvey_template_questions == nil {
@@ -37122,6 +38289,7 @@ func (m *SurveyTemplateCategoryMutation) SurveyTemplateQuestionsIDs() (ids []int
 // ResetSurveyTemplateQuestions reset all changes of the "survey_template_questions" edge.
 func (m *SurveyTemplateCategoryMutation) ResetSurveyTemplateQuestions() {
 	m.survey_template_questions = nil
+	m.clearedsurvey_template_questions = false
 	m.removedsurvey_template_questions = nil
 }
 
@@ -37386,6 +38554,9 @@ func (m *SurveyTemplateCategoryMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *SurveyTemplateCategoryMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
+	if m.clearedsurvey_template_questions {
+		edges = append(edges, surveytemplatecategory.EdgeSurveyTemplateQuestions)
+	}
 	if m.clearedlocation_type {
 		edges = append(edges, surveytemplatecategory.EdgeLocationType)
 	}
@@ -37396,6 +38567,8 @@ func (m *SurveyTemplateCategoryMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *SurveyTemplateCategoryMutation) EdgeCleared(name string) bool {
 	switch name {
+	case surveytemplatecategory.EdgeSurveyTemplateQuestions:
+		return m.clearedsurvey_template_questions
 	case surveytemplatecategory.EdgeLocationType:
 		return m.clearedlocation_type
 	}
@@ -39907,12 +41080,16 @@ type UserMutation struct {
 	clearedprofile_photo        bool
 	groups                      map[int]struct{}
 	removedgroups               map[int]struct{}
+	clearedgroups               bool
 	owned_work_orders           map[int]struct{}
 	removedowned_work_orders    map[int]struct{}
+	clearedowned_work_orders    bool
 	assigned_work_orders        map[int]struct{}
 	removedassigned_work_orders map[int]struct{}
+	clearedassigned_work_orders bool
 	created_projects            map[int]struct{}
 	removedcreated_projects     map[int]struct{}
+	clearedcreated_projects     bool
 	done                        bool
 	oldValue                    func(context.Context) (*User, error)
 }
@@ -40417,6 +41594,16 @@ func (m *UserMutation) AddGroupIDs(ids ...int) {
 	}
 }
 
+// ClearGroups clears the groups edge to UsersGroup.
+func (m *UserMutation) ClearGroups() {
+	m.clearedgroups = true
+}
+
+// GroupsCleared returns if the edge groups was cleared.
+func (m *UserMutation) GroupsCleared() bool {
+	return m.clearedgroups
+}
+
 // RemoveGroupIDs removes the groups edge to UsersGroup by ids.
 func (m *UserMutation) RemoveGroupIDs(ids ...int) {
 	if m.removedgroups == nil {
@@ -40446,6 +41633,7 @@ func (m *UserMutation) GroupsIDs() (ids []int) {
 // ResetGroups reset all changes of the "groups" edge.
 func (m *UserMutation) ResetGroups() {
 	m.groups = nil
+	m.clearedgroups = false
 	m.removedgroups = nil
 }
 
@@ -40457,6 +41645,16 @@ func (m *UserMutation) AddOwnedWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.owned_work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearOwnedWorkOrders clears the owned_work_orders edge to WorkOrder.
+func (m *UserMutation) ClearOwnedWorkOrders() {
+	m.clearedowned_work_orders = true
+}
+
+// OwnedWorkOrdersCleared returns if the edge owned_work_orders was cleared.
+func (m *UserMutation) OwnedWorkOrdersCleared() bool {
+	return m.clearedowned_work_orders
 }
 
 // RemoveOwnedWorkOrderIDs removes the owned_work_orders edge to WorkOrder by ids.
@@ -40488,6 +41686,7 @@ func (m *UserMutation) OwnedWorkOrdersIDs() (ids []int) {
 // ResetOwnedWorkOrders reset all changes of the "owned_work_orders" edge.
 func (m *UserMutation) ResetOwnedWorkOrders() {
 	m.owned_work_orders = nil
+	m.clearedowned_work_orders = false
 	m.removedowned_work_orders = nil
 }
 
@@ -40499,6 +41698,16 @@ func (m *UserMutation) AddAssignedWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.assigned_work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearAssignedWorkOrders clears the assigned_work_orders edge to WorkOrder.
+func (m *UserMutation) ClearAssignedWorkOrders() {
+	m.clearedassigned_work_orders = true
+}
+
+// AssignedWorkOrdersCleared returns if the edge assigned_work_orders was cleared.
+func (m *UserMutation) AssignedWorkOrdersCleared() bool {
+	return m.clearedassigned_work_orders
 }
 
 // RemoveAssignedWorkOrderIDs removes the assigned_work_orders edge to WorkOrder by ids.
@@ -40530,6 +41739,7 @@ func (m *UserMutation) AssignedWorkOrdersIDs() (ids []int) {
 // ResetAssignedWorkOrders reset all changes of the "assigned_work_orders" edge.
 func (m *UserMutation) ResetAssignedWorkOrders() {
 	m.assigned_work_orders = nil
+	m.clearedassigned_work_orders = false
 	m.removedassigned_work_orders = nil
 }
 
@@ -40541,6 +41751,16 @@ func (m *UserMutation) AddCreatedProjectIDs(ids ...int) {
 	for i := range ids {
 		m.created_projects[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCreatedProjects clears the created_projects edge to Project.
+func (m *UserMutation) ClearCreatedProjects() {
+	m.clearedcreated_projects = true
+}
+
+// CreatedProjectsCleared returns if the edge created_projects was cleared.
+func (m *UserMutation) CreatedProjectsCleared() bool {
+	return m.clearedcreated_projects
 }
 
 // RemoveCreatedProjectIDs removes the created_projects edge to Project by ids.
@@ -40572,6 +41792,7 @@ func (m *UserMutation) CreatedProjectsIDs() (ids []int) {
 // ResetCreatedProjects reset all changes of the "created_projects" edge.
 func (m *UserMutation) ResetCreatedProjects() {
 	m.created_projects = nil
+	m.clearedcreated_projects = false
 	m.removedcreated_projects = nil
 }
 
@@ -40960,6 +42181,18 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
+	if m.clearedgroups {
+		edges = append(edges, user.EdgeGroups)
+	}
+	if m.clearedowned_work_orders {
+		edges = append(edges, user.EdgeOwnedWorkOrders)
+	}
+	if m.clearedassigned_work_orders {
+		edges = append(edges, user.EdgeAssignedWorkOrders)
+	}
+	if m.clearedcreated_projects {
+		edges = append(edges, user.EdgeCreatedProjects)
+	}
 	return edges
 }
 
@@ -40969,6 +42202,14 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeProfilePhoto:
 		return m.clearedprofile_photo
+	case user.EdgeGroups:
+		return m.clearedgroups
+	case user.EdgeOwnedWorkOrders:
+		return m.clearedowned_work_orders
+	case user.EdgeAssignedWorkOrders:
+		return m.clearedassigned_work_orders
+	case user.EdgeCreatedProjects:
+		return m.clearedcreated_projects
 	}
 	return false
 }
@@ -41023,8 +42264,10 @@ type UsersGroupMutation struct {
 	clearedFields   map[string]struct{}
 	members         map[int]struct{}
 	removedmembers  map[int]struct{}
+	clearedmembers  bool
 	policies        map[int]struct{}
 	removedpolicies map[int]struct{}
+	clearedpolicies bool
 	done            bool
 	oldValue        func(context.Context) (*UsersGroup, error)
 }
@@ -41316,6 +42559,16 @@ func (m *UsersGroupMutation) AddMemberIDs(ids ...int) {
 	}
 }
 
+// ClearMembers clears the members edge to User.
+func (m *UsersGroupMutation) ClearMembers() {
+	m.clearedmembers = true
+}
+
+// MembersCleared returns if the edge members was cleared.
+func (m *UsersGroupMutation) MembersCleared() bool {
+	return m.clearedmembers
+}
+
 // RemoveMemberIDs removes the members edge to User by ids.
 func (m *UsersGroupMutation) RemoveMemberIDs(ids ...int) {
 	if m.removedmembers == nil {
@@ -41345,6 +42598,7 @@ func (m *UsersGroupMutation) MembersIDs() (ids []int) {
 // ResetMembers reset all changes of the "members" edge.
 func (m *UsersGroupMutation) ResetMembers() {
 	m.members = nil
+	m.clearedmembers = false
 	m.removedmembers = nil
 }
 
@@ -41356,6 +42610,16 @@ func (m *UsersGroupMutation) AddPolicyIDs(ids ...int) {
 	for i := range ids {
 		m.policies[ids[i]] = struct{}{}
 	}
+}
+
+// ClearPolicies clears the policies edge to PermissionsPolicy.
+func (m *UsersGroupMutation) ClearPolicies() {
+	m.clearedpolicies = true
+}
+
+// PoliciesCleared returns if the edge policies was cleared.
+func (m *UsersGroupMutation) PoliciesCleared() bool {
+	return m.clearedpolicies
 }
 
 // RemovePolicyIDs removes the policies edge to PermissionsPolicy by ids.
@@ -41387,6 +42651,7 @@ func (m *UsersGroupMutation) PoliciesIDs() (ids []int) {
 // ResetPolicies reset all changes of the "policies" edge.
 func (m *UsersGroupMutation) ResetPolicies() {
 	m.policies = nil
+	m.clearedpolicies = false
 	m.removedpolicies = nil
 }
 
@@ -41649,6 +42914,12 @@ func (m *UsersGroupMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *UsersGroupMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
+	if m.clearedmembers {
+		edges = append(edges, usersgroup.EdgeMembers)
+	}
+	if m.clearedpolicies {
+		edges = append(edges, usersgroup.EdgePolicies)
+	}
 	return edges
 }
 
@@ -41656,6 +42927,10 @@ func (m *UsersGroupMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *UsersGroupMutation) EdgeCleared(name string) bool {
 	switch name {
+	case usersgroup.EdgeMembers:
+		return m.clearedmembers
+	case usersgroup.EdgePolicies:
+		return m.clearedpolicies
 	}
 	return false
 }
@@ -41708,22 +42983,30 @@ type WorkOrderMutation struct {
 	clearedtemplate              bool
 	equipment                    map[int]struct{}
 	removedequipment             map[int]struct{}
+	clearedequipment             bool
 	links                        map[int]struct{}
 	removedlinks                 map[int]struct{}
+	clearedlinks                 bool
 	files                        map[int]struct{}
 	removedfiles                 map[int]struct{}
+	clearedfiles                 bool
 	hyperlinks                   map[int]struct{}
 	removedhyperlinks            map[int]struct{}
+	clearedhyperlinks            bool
 	location                     *int
 	clearedlocation              bool
 	comments                     map[int]struct{}
 	removedcomments              map[int]struct{}
+	clearedcomments              bool
 	activities                   map[int]struct{}
 	removedactivities            map[int]struct{}
+	clearedactivities            bool
 	properties                   map[int]struct{}
 	removedproperties            map[int]struct{}
+	clearedproperties            bool
 	check_list_categories        map[int]struct{}
 	removedcheck_list_categories map[int]struct{}
+	clearedcheck_list_categories bool
 	project                      *int
 	clearedproject               bool
 	owner                        *int
@@ -42344,6 +43627,16 @@ func (m *WorkOrderMutation) AddEquipmentIDs(ids ...int) {
 	}
 }
 
+// ClearEquipment clears the equipment edge to Equipment.
+func (m *WorkOrderMutation) ClearEquipment() {
+	m.clearedequipment = true
+}
+
+// EquipmentCleared returns if the edge equipment was cleared.
+func (m *WorkOrderMutation) EquipmentCleared() bool {
+	return m.clearedequipment
+}
+
 // RemoveEquipmentIDs removes the equipment edge to Equipment by ids.
 func (m *WorkOrderMutation) RemoveEquipmentIDs(ids ...int) {
 	if m.removedequipment == nil {
@@ -42373,6 +43666,7 @@ func (m *WorkOrderMutation) EquipmentIDs() (ids []int) {
 // ResetEquipment reset all changes of the "equipment" edge.
 func (m *WorkOrderMutation) ResetEquipment() {
 	m.equipment = nil
+	m.clearedequipment = false
 	m.removedequipment = nil
 }
 
@@ -42384,6 +43678,16 @@ func (m *WorkOrderMutation) AddLinkIDs(ids ...int) {
 	for i := range ids {
 		m.links[ids[i]] = struct{}{}
 	}
+}
+
+// ClearLinks clears the links edge to Link.
+func (m *WorkOrderMutation) ClearLinks() {
+	m.clearedlinks = true
+}
+
+// LinksCleared returns if the edge links was cleared.
+func (m *WorkOrderMutation) LinksCleared() bool {
+	return m.clearedlinks
 }
 
 // RemoveLinkIDs removes the links edge to Link by ids.
@@ -42415,6 +43719,7 @@ func (m *WorkOrderMutation) LinksIDs() (ids []int) {
 // ResetLinks reset all changes of the "links" edge.
 func (m *WorkOrderMutation) ResetLinks() {
 	m.links = nil
+	m.clearedlinks = false
 	m.removedlinks = nil
 }
 
@@ -42426,6 +43731,16 @@ func (m *WorkOrderMutation) AddFileIDs(ids ...int) {
 	for i := range ids {
 		m.files[ids[i]] = struct{}{}
 	}
+}
+
+// ClearFiles clears the files edge to File.
+func (m *WorkOrderMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared returns if the edge files was cleared.
+func (m *WorkOrderMutation) FilesCleared() bool {
+	return m.clearedfiles
 }
 
 // RemoveFileIDs removes the files edge to File by ids.
@@ -42457,6 +43772,7 @@ func (m *WorkOrderMutation) FilesIDs() (ids []int) {
 // ResetFiles reset all changes of the "files" edge.
 func (m *WorkOrderMutation) ResetFiles() {
 	m.files = nil
+	m.clearedfiles = false
 	m.removedfiles = nil
 }
 
@@ -42468,6 +43784,16 @@ func (m *WorkOrderMutation) AddHyperlinkIDs(ids ...int) {
 	for i := range ids {
 		m.hyperlinks[ids[i]] = struct{}{}
 	}
+}
+
+// ClearHyperlinks clears the hyperlinks edge to Hyperlink.
+func (m *WorkOrderMutation) ClearHyperlinks() {
+	m.clearedhyperlinks = true
+}
+
+// HyperlinksCleared returns if the edge hyperlinks was cleared.
+func (m *WorkOrderMutation) HyperlinksCleared() bool {
+	return m.clearedhyperlinks
 }
 
 // RemoveHyperlinkIDs removes the hyperlinks edge to Hyperlink by ids.
@@ -42499,6 +43825,7 @@ func (m *WorkOrderMutation) HyperlinksIDs() (ids []int) {
 // ResetHyperlinks reset all changes of the "hyperlinks" edge.
 func (m *WorkOrderMutation) ResetHyperlinks() {
 	m.hyperlinks = nil
+	m.clearedhyperlinks = false
 	m.removedhyperlinks = nil
 }
 
@@ -42551,6 +43878,16 @@ func (m *WorkOrderMutation) AddCommentIDs(ids ...int) {
 	}
 }
 
+// ClearComments clears the comments edge to Comment.
+func (m *WorkOrderMutation) ClearComments() {
+	m.clearedcomments = true
+}
+
+// CommentsCleared returns if the edge comments was cleared.
+func (m *WorkOrderMutation) CommentsCleared() bool {
+	return m.clearedcomments
+}
+
 // RemoveCommentIDs removes the comments edge to Comment by ids.
 func (m *WorkOrderMutation) RemoveCommentIDs(ids ...int) {
 	if m.removedcomments == nil {
@@ -42580,6 +43917,7 @@ func (m *WorkOrderMutation) CommentsIDs() (ids []int) {
 // ResetComments reset all changes of the "comments" edge.
 func (m *WorkOrderMutation) ResetComments() {
 	m.comments = nil
+	m.clearedcomments = false
 	m.removedcomments = nil
 }
 
@@ -42591,6 +43929,16 @@ func (m *WorkOrderMutation) AddActivityIDs(ids ...int) {
 	for i := range ids {
 		m.activities[ids[i]] = struct{}{}
 	}
+}
+
+// ClearActivities clears the activities edge to Activity.
+func (m *WorkOrderMutation) ClearActivities() {
+	m.clearedactivities = true
+}
+
+// ActivitiesCleared returns if the edge activities was cleared.
+func (m *WorkOrderMutation) ActivitiesCleared() bool {
+	return m.clearedactivities
 }
 
 // RemoveActivityIDs removes the activities edge to Activity by ids.
@@ -42622,6 +43970,7 @@ func (m *WorkOrderMutation) ActivitiesIDs() (ids []int) {
 // ResetActivities reset all changes of the "activities" edge.
 func (m *WorkOrderMutation) ResetActivities() {
 	m.activities = nil
+	m.clearedactivities = false
 	m.removedactivities = nil
 }
 
@@ -42633,6 +43982,16 @@ func (m *WorkOrderMutation) AddPropertyIDs(ids ...int) {
 	for i := range ids {
 		m.properties[ids[i]] = struct{}{}
 	}
+}
+
+// ClearProperties clears the properties edge to Property.
+func (m *WorkOrderMutation) ClearProperties() {
+	m.clearedproperties = true
+}
+
+// PropertiesCleared returns if the edge properties was cleared.
+func (m *WorkOrderMutation) PropertiesCleared() bool {
+	return m.clearedproperties
 }
 
 // RemovePropertyIDs removes the properties edge to Property by ids.
@@ -42664,6 +44023,7 @@ func (m *WorkOrderMutation) PropertiesIDs() (ids []int) {
 // ResetProperties reset all changes of the "properties" edge.
 func (m *WorkOrderMutation) ResetProperties() {
 	m.properties = nil
+	m.clearedproperties = false
 	m.removedproperties = nil
 }
 
@@ -42675,6 +44035,16 @@ func (m *WorkOrderMutation) AddCheckListCategoryIDs(ids ...int) {
 	for i := range ids {
 		m.check_list_categories[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCheckListCategories clears the check_list_categories edge to CheckListCategory.
+func (m *WorkOrderMutation) ClearCheckListCategories() {
+	m.clearedcheck_list_categories = true
+}
+
+// CheckListCategoriesCleared returns if the edge check_list_categories was cleared.
+func (m *WorkOrderMutation) CheckListCategoriesCleared() bool {
+	return m.clearedcheck_list_categories
 }
 
 // RemoveCheckListCategoryIDs removes the check_list_categories edge to CheckListCategory by ids.
@@ -42706,6 +44076,7 @@ func (m *WorkOrderMutation) CheckListCategoriesIDs() (ids []int) {
 // ResetCheckListCategories reset all changes of the "check_list_categories" edge.
 func (m *WorkOrderMutation) ResetCheckListCategories() {
 	m.check_list_categories = nil
+	m.clearedcheck_list_categories = false
 	m.removedcheck_list_categories = nil
 }
 
@@ -43359,8 +44730,32 @@ func (m *WorkOrderMutation) ClearedEdges() []string {
 	if m.clearedtemplate {
 		edges = append(edges, workorder.EdgeTemplate)
 	}
+	if m.clearedequipment {
+		edges = append(edges, workorder.EdgeEquipment)
+	}
+	if m.clearedlinks {
+		edges = append(edges, workorder.EdgeLinks)
+	}
+	if m.clearedfiles {
+		edges = append(edges, workorder.EdgeFiles)
+	}
+	if m.clearedhyperlinks {
+		edges = append(edges, workorder.EdgeHyperlinks)
+	}
 	if m.clearedlocation {
 		edges = append(edges, workorder.EdgeLocation)
+	}
+	if m.clearedcomments {
+		edges = append(edges, workorder.EdgeComments)
+	}
+	if m.clearedactivities {
+		edges = append(edges, workorder.EdgeActivities)
+	}
+	if m.clearedproperties {
+		edges = append(edges, workorder.EdgeProperties)
+	}
+	if m.clearedcheck_list_categories {
+		edges = append(edges, workorder.EdgeCheckListCategories)
 	}
 	if m.clearedproject {
 		edges = append(edges, workorder.EdgeProject)
@@ -43382,8 +44777,24 @@ func (m *WorkOrderMutation) EdgeCleared(name string) bool {
 		return m.cleared_type
 	case workorder.EdgeTemplate:
 		return m.clearedtemplate
+	case workorder.EdgeEquipment:
+		return m.clearedequipment
+	case workorder.EdgeLinks:
+		return m.clearedlinks
+	case workorder.EdgeFiles:
+		return m.clearedfiles
+	case workorder.EdgeHyperlinks:
+		return m.clearedhyperlinks
 	case workorder.EdgeLocation:
 		return m.clearedlocation
+	case workorder.EdgeComments:
+		return m.clearedcomments
+	case workorder.EdgeActivities:
+		return m.clearedactivities
+	case workorder.EdgeProperties:
+		return m.clearedproperties
+	case workorder.EdgeCheckListCategories:
+		return m.clearedcheck_list_categories
 	case workorder.EdgeProject:
 		return m.clearedproject
 	case workorder.EdgeOwner:
@@ -44133,8 +45544,10 @@ type WorkOrderTemplateMutation struct {
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
+	clearedproperty_types                  bool
 	check_list_category_definitions        map[int]struct{}
 	removedcheck_list_category_definitions map[int]struct{}
+	clearedcheck_list_category_definitions bool
 	_type                                  *int
 	cleared_type                           bool
 	done                                   bool
@@ -44367,6 +45780,16 @@ func (m *WorkOrderTemplateMutation) AddPropertyTypeIDs(ids ...int) {
 	}
 }
 
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *WorkOrderTemplateMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *WorkOrderTemplateMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (m *WorkOrderTemplateMutation) RemovePropertyTypeIDs(ids ...int) {
 	if m.removedproperty_types == nil {
@@ -44396,6 +45819,7 @@ func (m *WorkOrderTemplateMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *WorkOrderTemplateMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -44407,6 +45831,16 @@ func (m *WorkOrderTemplateMutation) AddCheckListCategoryDefinitionIDs(ids ...int
 	for i := range ids {
 		m.check_list_category_definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCheckListCategoryDefinitions clears the check_list_category_definitions edge to CheckListCategoryDefinition.
+func (m *WorkOrderTemplateMutation) ClearCheckListCategoryDefinitions() {
+	m.clearedcheck_list_category_definitions = true
+}
+
+// CheckListCategoryDefinitionsCleared returns if the edge check_list_category_definitions was cleared.
+func (m *WorkOrderTemplateMutation) CheckListCategoryDefinitionsCleared() bool {
+	return m.clearedcheck_list_category_definitions
 }
 
 // RemoveCheckListCategoryDefinitionIDs removes the check_list_category_definitions edge to CheckListCategoryDefinition by ids.
@@ -44438,6 +45872,7 @@ func (m *WorkOrderTemplateMutation) CheckListCategoryDefinitionsIDs() (ids []int
 // ResetCheckListCategoryDefinitions reset all changes of the "check_list_category_definitions" edge.
 func (m *WorkOrderTemplateMutation) ResetCheckListCategoryDefinitions() {
 	m.check_list_category_definitions = nil
+	m.clearedcheck_list_category_definitions = false
 	m.removedcheck_list_category_definitions = nil
 }
 
@@ -44718,6 +46153,12 @@ func (m *WorkOrderTemplateMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *WorkOrderTemplateMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 3)
+	if m.clearedproperty_types {
+		edges = append(edges, workordertemplate.EdgePropertyTypes)
+	}
+	if m.clearedcheck_list_category_definitions {
+		edges = append(edges, workordertemplate.EdgeCheckListCategoryDefinitions)
+	}
 	if m.cleared_type {
 		edges = append(edges, workordertemplate.EdgeType)
 	}
@@ -44728,6 +46169,10 @@ func (m *WorkOrderTemplateMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *WorkOrderTemplateMutation) EdgeCleared(name string) bool {
 	switch name {
+	case workordertemplate.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case workordertemplate.EdgeCheckListCategoryDefinitions:
+		return m.clearedcheck_list_category_definitions
 	case workordertemplate.EdgeType:
 		return m.cleared_type
 	}
@@ -44776,12 +46221,16 @@ type WorkOrderTypeMutation struct {
 	clearedFields                          map[string]struct{}
 	property_types                         map[int]struct{}
 	removedproperty_types                  map[int]struct{}
+	clearedproperty_types                  bool
 	check_list_category_definitions        map[int]struct{}
 	removedcheck_list_category_definitions map[int]struct{}
+	clearedcheck_list_category_definitions bool
 	work_orders                            map[int]struct{}
 	removedwork_orders                     map[int]struct{}
+	clearedwork_orders                     bool
 	definitions                            map[int]struct{}
 	removeddefinitions                     map[int]struct{}
+	cleareddefinitions                     bool
 	done                                   bool
 	oldValue                               func(context.Context) (*WorkOrderType, error)
 }
@@ -45012,6 +46461,16 @@ func (m *WorkOrderTypeMutation) AddPropertyTypeIDs(ids ...int) {
 	}
 }
 
+// ClearPropertyTypes clears the property_types edge to PropertyType.
+func (m *WorkOrderTypeMutation) ClearPropertyTypes() {
+	m.clearedproperty_types = true
+}
+
+// PropertyTypesCleared returns if the edge property_types was cleared.
+func (m *WorkOrderTypeMutation) PropertyTypesCleared() bool {
+	return m.clearedproperty_types
+}
+
 // RemovePropertyTypeIDs removes the property_types edge to PropertyType by ids.
 func (m *WorkOrderTypeMutation) RemovePropertyTypeIDs(ids ...int) {
 	if m.removedproperty_types == nil {
@@ -45041,6 +46500,7 @@ func (m *WorkOrderTypeMutation) PropertyTypesIDs() (ids []int) {
 // ResetPropertyTypes reset all changes of the "property_types" edge.
 func (m *WorkOrderTypeMutation) ResetPropertyTypes() {
 	m.property_types = nil
+	m.clearedproperty_types = false
 	m.removedproperty_types = nil
 }
 
@@ -45052,6 +46512,16 @@ func (m *WorkOrderTypeMutation) AddCheckListCategoryDefinitionIDs(ids ...int) {
 	for i := range ids {
 		m.check_list_category_definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearCheckListCategoryDefinitions clears the check_list_category_definitions edge to CheckListCategoryDefinition.
+func (m *WorkOrderTypeMutation) ClearCheckListCategoryDefinitions() {
+	m.clearedcheck_list_category_definitions = true
+}
+
+// CheckListCategoryDefinitionsCleared returns if the edge check_list_category_definitions was cleared.
+func (m *WorkOrderTypeMutation) CheckListCategoryDefinitionsCleared() bool {
+	return m.clearedcheck_list_category_definitions
 }
 
 // RemoveCheckListCategoryDefinitionIDs removes the check_list_category_definitions edge to CheckListCategoryDefinition by ids.
@@ -45083,6 +46553,7 @@ func (m *WorkOrderTypeMutation) CheckListCategoryDefinitionsIDs() (ids []int) {
 // ResetCheckListCategoryDefinitions reset all changes of the "check_list_category_definitions" edge.
 func (m *WorkOrderTypeMutation) ResetCheckListCategoryDefinitions() {
 	m.check_list_category_definitions = nil
+	m.clearedcheck_list_category_definitions = false
 	m.removedcheck_list_category_definitions = nil
 }
 
@@ -45094,6 +46565,16 @@ func (m *WorkOrderTypeMutation) AddWorkOrderIDs(ids ...int) {
 	for i := range ids {
 		m.work_orders[ids[i]] = struct{}{}
 	}
+}
+
+// ClearWorkOrders clears the work_orders edge to WorkOrder.
+func (m *WorkOrderTypeMutation) ClearWorkOrders() {
+	m.clearedwork_orders = true
+}
+
+// WorkOrdersCleared returns if the edge work_orders was cleared.
+func (m *WorkOrderTypeMutation) WorkOrdersCleared() bool {
+	return m.clearedwork_orders
 }
 
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrder by ids.
@@ -45125,6 +46606,7 @@ func (m *WorkOrderTypeMutation) WorkOrdersIDs() (ids []int) {
 // ResetWorkOrders reset all changes of the "work_orders" edge.
 func (m *WorkOrderTypeMutation) ResetWorkOrders() {
 	m.work_orders = nil
+	m.clearedwork_orders = false
 	m.removedwork_orders = nil
 }
 
@@ -45136,6 +46618,16 @@ func (m *WorkOrderTypeMutation) AddDefinitionIDs(ids ...int) {
 	for i := range ids {
 		m.definitions[ids[i]] = struct{}{}
 	}
+}
+
+// ClearDefinitions clears the definitions edge to WorkOrderDefinition.
+func (m *WorkOrderTypeMutation) ClearDefinitions() {
+	m.cleareddefinitions = true
+}
+
+// DefinitionsCleared returns if the edge definitions was cleared.
+func (m *WorkOrderTypeMutation) DefinitionsCleared() bool {
+	return m.cleareddefinitions
 }
 
 // RemoveDefinitionIDs removes the definitions edge to WorkOrderDefinition by ids.
@@ -45167,6 +46659,7 @@ func (m *WorkOrderTypeMutation) DefinitionsIDs() (ids []int) {
 // ResetDefinitions reset all changes of the "definitions" edge.
 func (m *WorkOrderTypeMutation) ResetDefinitions() {
 	m.definitions = nil
+	m.cleareddefinitions = false
 	m.removeddefinitions = nil
 }
 
@@ -45437,6 +46930,18 @@ func (m *WorkOrderTypeMutation) RemovedIDs(name string) []ent.Value {
 // mutation.
 func (m *WorkOrderTypeMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
+	if m.clearedproperty_types {
+		edges = append(edges, workordertype.EdgePropertyTypes)
+	}
+	if m.clearedcheck_list_category_definitions {
+		edges = append(edges, workordertype.EdgeCheckListCategoryDefinitions)
+	}
+	if m.clearedwork_orders {
+		edges = append(edges, workordertype.EdgeWorkOrders)
+	}
+	if m.cleareddefinitions {
+		edges = append(edges, workordertype.EdgeDefinitions)
+	}
 	return edges
 }
 
@@ -45444,6 +46949,14 @@ func (m *WorkOrderTypeMutation) ClearedEdges() []string {
 // cleared in this mutation.
 func (m *WorkOrderTypeMutation) EdgeCleared(name string) bool {
 	switch name {
+	case workordertype.EdgePropertyTypes:
+		return m.clearedproperty_types
+	case workordertype.EdgeCheckListCategoryDefinitions:
+		return m.clearedcheck_list_category_definitions
+	case workordertype.EdgeWorkOrders:
+		return m.clearedwork_orders
+	case workordertype.EdgeDefinitions:
+		return m.cleareddefinitions
 	}
 	return false
 }

@@ -599,19 +599,19 @@ func (scsu *SurveyCellScanUpdate) Mutation() *SurveyCellScanMutation {
 	return scsu.mutation
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (scsu *SurveyCellScanUpdate) ClearChecklistItem() *SurveyCellScanUpdate {
 	scsu.mutation.ClearChecklistItem()
 	return scsu
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (scsu *SurveyCellScanUpdate) ClearSurveyQuestion() *SurveyCellScanUpdate {
 	scsu.mutation.ClearSurveyQuestion()
 	return scsu
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (scsu *SurveyCellScanUpdate) ClearLocation() *SurveyCellScanUpdate {
 	scsu.mutation.ClearLocation()
 	return scsu
@@ -1747,19 +1747,19 @@ func (scsuo *SurveyCellScanUpdateOne) Mutation() *SurveyCellScanMutation {
 	return scsuo.mutation
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (scsuo *SurveyCellScanUpdateOne) ClearChecklistItem() *SurveyCellScanUpdateOne {
 	scsuo.mutation.ClearChecklistItem()
 	return scsuo
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (scsuo *SurveyCellScanUpdateOne) ClearSurveyQuestion() *SurveyCellScanUpdateOne {
 	scsuo.mutation.ClearSurveyQuestion()
 	return scsuo
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (scsuo *SurveyCellScanUpdateOne) ClearLocation() *SurveyCellScanUpdateOne {
 	scsuo.mutation.ClearLocation()
 	return scsuo

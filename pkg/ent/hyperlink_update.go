@@ -142,19 +142,19 @@ func (hu *HyperlinkUpdate) Mutation() *HyperlinkMutation {
 	return hu.mutation
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (hu *HyperlinkUpdate) ClearEquipment() *HyperlinkUpdate {
 	hu.mutation.ClearEquipment()
 	return hu
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (hu *HyperlinkUpdate) ClearLocation() *HyperlinkUpdate {
 	hu.mutation.ClearLocation()
 	return hu
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (hu *HyperlinkUpdate) ClearWorkOrder() *HyperlinkUpdate {
 	hu.mutation.ClearWorkOrder()
 	return hu
@@ -505,19 +505,19 @@ func (huo *HyperlinkUpdateOne) Mutation() *HyperlinkMutation {
 	return huo.mutation
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (huo *HyperlinkUpdateOne) ClearEquipment() *HyperlinkUpdateOne {
 	huo.mutation.ClearEquipment()
 	return huo
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (huo *HyperlinkUpdateOne) ClearLocation() *HyperlinkUpdateOne {
 	huo.mutation.ClearLocation()
 	return huo
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (huo *HyperlinkUpdateOne) ClearWorkOrder() *HyperlinkUpdateOne {
 	huo.mutation.ClearWorkOrder()
 	return huo

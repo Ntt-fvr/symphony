@@ -221,9 +221,15 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
-// ClearProfilePhoto clears the profile_photo edge to File.
+// ClearProfilePhoto clears the "profile_photo" edge to type File.
 func (uu *UserUpdate) ClearProfilePhoto() *UserUpdate {
 	uu.mutation.ClearProfilePhoto()
+	return uu
+}
+
+// ClearGroups clears all "groups" edges to type UsersGroup.
+func (uu *UserUpdate) ClearGroups() *UserUpdate {
+	uu.mutation.ClearGroups()
 	return uu
 }
 
@@ -242,6 +248,12 @@ func (uu *UserUpdate) RemoveGroups(u ...*UsersGroup) *UserUpdate {
 	return uu.RemoveGroupIDs(ids...)
 }
 
+// ClearOwnedWorkOrders clears all "owned_work_orders" edges to type WorkOrder.
+func (uu *UserUpdate) ClearOwnedWorkOrders() *UserUpdate {
+	uu.mutation.ClearOwnedWorkOrders()
+	return uu
+}
+
 // RemoveOwnedWorkOrderIDs removes the owned_work_orders edge to WorkOrder by ids.
 func (uu *UserUpdate) RemoveOwnedWorkOrderIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveOwnedWorkOrderIDs(ids...)
@@ -257,6 +269,12 @@ func (uu *UserUpdate) RemoveOwnedWorkOrders(w ...*WorkOrder) *UserUpdate {
 	return uu.RemoveOwnedWorkOrderIDs(ids...)
 }
 
+// ClearAssignedWorkOrders clears all "assigned_work_orders" edges to type WorkOrder.
+func (uu *UserUpdate) ClearAssignedWorkOrders() *UserUpdate {
+	uu.mutation.ClearAssignedWorkOrders()
+	return uu
+}
+
 // RemoveAssignedWorkOrderIDs removes the assigned_work_orders edge to WorkOrder by ids.
 func (uu *UserUpdate) RemoveAssignedWorkOrderIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveAssignedWorkOrderIDs(ids...)
@@ -270,6 +288,12 @@ func (uu *UserUpdate) RemoveAssignedWorkOrders(w ...*WorkOrder) *UserUpdate {
 		ids[i] = w[i].ID
 	}
 	return uu.RemoveAssignedWorkOrderIDs(ids...)
+}
+
+// ClearCreatedProjects clears all "created_projects" edges to type Project.
+func (uu *UserUpdate) ClearCreatedProjects() *UserUpdate {
+	uu.mutation.ClearCreatedProjects()
+	return uu
 }
 
 // RemoveCreatedProjectIDs removes the created_projects edge to Project by ids.
@@ -493,7 +517,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uu.mutation.RemovedGroupsIDs(); len(nodes) > 0 {
+	if uu.mutation.GroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.GroupsTable,
+			Columns: user.GroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !uu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -531,7 +571,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uu.mutation.RemovedOwnedWorkOrdersIDs(); len(nodes) > 0 {
+	if uu.mutation.OwnedWorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OwnedWorkOrdersTable,
+			Columns: []string{user.OwnedWorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOwnedWorkOrdersIDs(); len(nodes) > 0 && !uu.mutation.OwnedWorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -569,7 +625,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uu.mutation.RemovedAssignedWorkOrdersIDs(); len(nodes) > 0 {
+	if uu.mutation.AssignedWorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.AssignedWorkOrdersTable,
+			Columns: []string{user.AssignedWorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAssignedWorkOrdersIDs(); len(nodes) > 0 && !uu.mutation.AssignedWorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -607,7 +679,23 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uu.mutation.RemovedCreatedProjectsIDs(); len(nodes) > 0 {
+	if uu.mutation.CreatedProjectsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.CreatedProjectsTable,
+			Columns: []string{user.CreatedProjectsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: project.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedCreatedProjectsIDs(); len(nodes) > 0 && !uu.mutation.CreatedProjectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -849,9 +937,15 @@ func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
 }
 
-// ClearProfilePhoto clears the profile_photo edge to File.
+// ClearProfilePhoto clears the "profile_photo" edge to type File.
 func (uuo *UserUpdateOne) ClearProfilePhoto() *UserUpdateOne {
 	uuo.mutation.ClearProfilePhoto()
+	return uuo
+}
+
+// ClearGroups clears all "groups" edges to type UsersGroup.
+func (uuo *UserUpdateOne) ClearGroups() *UserUpdateOne {
+	uuo.mutation.ClearGroups()
 	return uuo
 }
 
@@ -870,6 +964,12 @@ func (uuo *UserUpdateOne) RemoveGroups(u ...*UsersGroup) *UserUpdateOne {
 	return uuo.RemoveGroupIDs(ids...)
 }
 
+// ClearOwnedWorkOrders clears all "owned_work_orders" edges to type WorkOrder.
+func (uuo *UserUpdateOne) ClearOwnedWorkOrders() *UserUpdateOne {
+	uuo.mutation.ClearOwnedWorkOrders()
+	return uuo
+}
+
 // RemoveOwnedWorkOrderIDs removes the owned_work_orders edge to WorkOrder by ids.
 func (uuo *UserUpdateOne) RemoveOwnedWorkOrderIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveOwnedWorkOrderIDs(ids...)
@@ -885,6 +985,12 @@ func (uuo *UserUpdateOne) RemoveOwnedWorkOrders(w ...*WorkOrder) *UserUpdateOne 
 	return uuo.RemoveOwnedWorkOrderIDs(ids...)
 }
 
+// ClearAssignedWorkOrders clears all "assigned_work_orders" edges to type WorkOrder.
+func (uuo *UserUpdateOne) ClearAssignedWorkOrders() *UserUpdateOne {
+	uuo.mutation.ClearAssignedWorkOrders()
+	return uuo
+}
+
 // RemoveAssignedWorkOrderIDs removes the assigned_work_orders edge to WorkOrder by ids.
 func (uuo *UserUpdateOne) RemoveAssignedWorkOrderIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveAssignedWorkOrderIDs(ids...)
@@ -898,6 +1004,12 @@ func (uuo *UserUpdateOne) RemoveAssignedWorkOrders(w ...*WorkOrder) *UserUpdateO
 		ids[i] = w[i].ID
 	}
 	return uuo.RemoveAssignedWorkOrderIDs(ids...)
+}
+
+// ClearCreatedProjects clears all "created_projects" edges to type Project.
+func (uuo *UserUpdateOne) ClearCreatedProjects() *UserUpdateOne {
+	uuo.mutation.ClearCreatedProjects()
+	return uuo
 }
 
 // RemoveCreatedProjectIDs removes the created_projects edge to Project by ids.
@@ -1119,7 +1231,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uuo.mutation.RemovedGroupsIDs(); len(nodes) > 0 {
+	if uuo.mutation.GroupsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.GroupsTable,
+			Columns: user.GroupsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: usersgroup.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedGroupsIDs(); len(nodes) > 0 && !uuo.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1157,7 +1285,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uuo.mutation.RemovedOwnedWorkOrdersIDs(); len(nodes) > 0 {
+	if uuo.mutation.OwnedWorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OwnedWorkOrdersTable,
+			Columns: []string{user.OwnedWorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOwnedWorkOrdersIDs(); len(nodes) > 0 && !uuo.mutation.OwnedWorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1195,7 +1339,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uuo.mutation.RemovedAssignedWorkOrdersIDs(); len(nodes) > 0 {
+	if uuo.mutation.AssignedWorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.AssignedWorkOrdersTable,
+			Columns: []string{user.AssignedWorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorder.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAssignedWorkOrdersIDs(); len(nodes) > 0 && !uuo.mutation.AssignedWorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -1233,7 +1393,23 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := uuo.mutation.RemovedCreatedProjectsIDs(); len(nodes) > 0 {
+	if uuo.mutation.CreatedProjectsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.CreatedProjectsTable,
+			Columns: []string{user.CreatedProjectsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: project.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedCreatedProjectsIDs(); len(nodes) > 0 && !uuo.mutation.CreatedProjectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,

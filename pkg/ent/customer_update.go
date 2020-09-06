@@ -78,6 +78,12 @@ func (cu *CustomerUpdate) Mutation() *CustomerMutation {
 	return cu.mutation
 }
 
+// ClearServices clears all "services" edges to type Service.
+func (cu *CustomerUpdate) ClearServices() *CustomerUpdate {
+	cu.mutation.ClearServices()
+	return cu
+}
+
 // RemoveServiceIDs removes the services edge to Service by ids.
 func (cu *CustomerUpdate) RemoveServiceIDs(ids ...int) *CustomerUpdate {
 	cu.mutation.RemoveServiceIDs(ids...)
@@ -204,7 +210,23 @@ func (cu *CustomerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: customer.FieldExternalID,
 		})
 	}
-	if nodes := cu.mutation.RemovedServicesIDs(); len(nodes) > 0 {
+	if cu.mutation.ServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   customer.ServicesTable,
+			Columns: customer.ServicesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.RemovedServicesIDs(); len(nodes) > 0 && !cu.mutation.ServicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -304,6 +326,12 @@ func (cuo *CustomerUpdateOne) AddServices(s ...*Service) *CustomerUpdateOne {
 // Mutation returns the CustomerMutation object of the builder.
 func (cuo *CustomerUpdateOne) Mutation() *CustomerMutation {
 	return cuo.mutation
+}
+
+// ClearServices clears all "services" edges to type Service.
+func (cuo *CustomerUpdateOne) ClearServices() *CustomerUpdateOne {
+	cuo.mutation.ClearServices()
+	return cuo
 }
 
 // RemoveServiceIDs removes the services edge to Service by ids.
@@ -430,7 +458,23 @@ func (cuo *CustomerUpdateOne) sqlSave(ctx context.Context) (c *Customer, err err
 			Column: customer.FieldExternalID,
 		})
 	}
-	if nodes := cuo.mutation.RemovedServicesIDs(); len(nodes) > 0 {
+	if cuo.mutation.ServicesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   customer.ServicesTable,
+			Columns: customer.ServicesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: service.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.RemovedServicesIDs(); len(nodes) > 0 && !cuo.mutation.ServicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,

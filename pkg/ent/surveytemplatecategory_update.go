@@ -84,6 +84,12 @@ func (stcu *SurveyTemplateCategoryUpdate) Mutation() *SurveyTemplateCategoryMuta
 	return stcu.mutation
 }
 
+// ClearSurveyTemplateQuestions clears all "survey_template_questions" edges to type SurveyTemplateQuestion.
+func (stcu *SurveyTemplateCategoryUpdate) ClearSurveyTemplateQuestions() *SurveyTemplateCategoryUpdate {
+	stcu.mutation.ClearSurveyTemplateQuestions()
+	return stcu
+}
+
 // RemoveSurveyTemplateQuestionIDs removes the survey_template_questions edge to SurveyTemplateQuestion by ids.
 func (stcu *SurveyTemplateCategoryUpdate) RemoveSurveyTemplateQuestionIDs(ids ...int) *SurveyTemplateCategoryUpdate {
 	stcu.mutation.RemoveSurveyTemplateQuestionIDs(ids...)
@@ -99,7 +105,7 @@ func (stcu *SurveyTemplateCategoryUpdate) RemoveSurveyTemplateQuestions(s ...*Su
 	return stcu.RemoveSurveyTemplateQuestionIDs(ids...)
 }
 
-// ClearLocationType clears the location_type edge to LocationType.
+// ClearLocationType clears the "location_type" edge to type LocationType.
 func (stcu *SurveyTemplateCategoryUpdate) ClearLocationType() *SurveyTemplateCategoryUpdate {
 	stcu.mutation.ClearLocationType()
 	return stcu
@@ -200,7 +206,23 @@ func (stcu *SurveyTemplateCategoryUpdate) sqlSave(ctx context.Context) (n int, e
 			Column: surveytemplatecategory.FieldCategoryDescription,
 		})
 	}
-	if nodes := stcu.mutation.RemovedSurveyTemplateQuestionsIDs(); len(nodes) > 0 {
+	if stcu.mutation.SurveyTemplateQuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveytemplatecategory.SurveyTemplateQuestionsTable,
+			Columns: []string{surveytemplatecategory.SurveyTemplateQuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveytemplatequestion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stcu.mutation.RemovedSurveyTemplateQuestionsIDs(); len(nodes) > 0 && !stcu.mutation.SurveyTemplateQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -342,6 +364,12 @@ func (stcuo *SurveyTemplateCategoryUpdateOne) Mutation() *SurveyTemplateCategory
 	return stcuo.mutation
 }
 
+// ClearSurveyTemplateQuestions clears all "survey_template_questions" edges to type SurveyTemplateQuestion.
+func (stcuo *SurveyTemplateCategoryUpdateOne) ClearSurveyTemplateQuestions() *SurveyTemplateCategoryUpdateOne {
+	stcuo.mutation.ClearSurveyTemplateQuestions()
+	return stcuo
+}
+
 // RemoveSurveyTemplateQuestionIDs removes the survey_template_questions edge to SurveyTemplateQuestion by ids.
 func (stcuo *SurveyTemplateCategoryUpdateOne) RemoveSurveyTemplateQuestionIDs(ids ...int) *SurveyTemplateCategoryUpdateOne {
 	stcuo.mutation.RemoveSurveyTemplateQuestionIDs(ids...)
@@ -357,7 +385,7 @@ func (stcuo *SurveyTemplateCategoryUpdateOne) RemoveSurveyTemplateQuestions(s ..
 	return stcuo.RemoveSurveyTemplateQuestionIDs(ids...)
 }
 
-// ClearLocationType clears the location_type edge to LocationType.
+// ClearLocationType clears the "location_type" edge to type LocationType.
 func (stcuo *SurveyTemplateCategoryUpdateOne) ClearLocationType() *SurveyTemplateCategoryUpdateOne {
 	stcuo.mutation.ClearLocationType()
 	return stcuo
@@ -456,7 +484,23 @@ func (stcuo *SurveyTemplateCategoryUpdateOne) sqlSave(ctx context.Context) (stc 
 			Column: surveytemplatecategory.FieldCategoryDescription,
 		})
 	}
-	if nodes := stcuo.mutation.RemovedSurveyTemplateQuestionsIDs(); len(nodes) > 0 {
+	if stcuo.mutation.SurveyTemplateQuestionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   surveytemplatecategory.SurveyTemplateQuestionsTable,
+			Columns: []string{surveytemplatecategory.SurveyTemplateQuestionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: surveytemplatequestion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := stcuo.mutation.RemovedSurveyTemplateQuestionsIDs(); len(nodes) > 0 && !stcuo.mutation.SurveyTemplateQuestionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

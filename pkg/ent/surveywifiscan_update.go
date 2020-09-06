@@ -370,19 +370,19 @@ func (swfsu *SurveyWiFiScanUpdate) Mutation() *SurveyWiFiScanMutation {
 	return swfsu.mutation
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (swfsu *SurveyWiFiScanUpdate) ClearChecklistItem() *SurveyWiFiScanUpdate {
 	swfsu.mutation.ClearChecklistItem()
 	return swfsu
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (swfsu *SurveyWiFiScanUpdate) ClearSurveyQuestion() *SurveyWiFiScanUpdate {
 	swfsu.mutation.ClearSurveyQuestion()
 	return swfsu
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (swfsu *SurveyWiFiScanUpdate) ClearLocation() *SurveyWiFiScanUpdate {
 	swfsu.mutation.ClearLocation()
 	return swfsu
@@ -1142,19 +1142,19 @@ func (swfsuo *SurveyWiFiScanUpdateOne) Mutation() *SurveyWiFiScanMutation {
 	return swfsuo.mutation
 }
 
-// ClearChecklistItem clears the checklist_item edge to CheckListItem.
+// ClearChecklistItem clears the "checklist_item" edge to type CheckListItem.
 func (swfsuo *SurveyWiFiScanUpdateOne) ClearChecklistItem() *SurveyWiFiScanUpdateOne {
 	swfsuo.mutation.ClearChecklistItem()
 	return swfsuo
 }
 
-// ClearSurveyQuestion clears the survey_question edge to SurveyQuestion.
+// ClearSurveyQuestion clears the "survey_question" edge to type SurveyQuestion.
 func (swfsuo *SurveyWiFiScanUpdateOne) ClearSurveyQuestion() *SurveyWiFiScanUpdateOne {
 	swfsuo.mutation.ClearSurveyQuestion()
 	return swfsuo
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (swfsuo *SurveyWiFiScanUpdateOne) ClearLocation() *SurveyWiFiScanUpdateOne {
 	swfsuo.mutation.ClearLocation()
 	return swfsuo

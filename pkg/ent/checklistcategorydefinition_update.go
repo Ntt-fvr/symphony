@@ -118,6 +118,12 @@ func (clcdu *CheckListCategoryDefinitionUpdate) Mutation() *CheckListCategoryDef
 	return clcdu.mutation
 }
 
+// ClearCheckListItemDefinitions clears all "check_list_item_definitions" edges to type CheckListItemDefinition.
+func (clcdu *CheckListCategoryDefinitionUpdate) ClearCheckListItemDefinitions() *CheckListCategoryDefinitionUpdate {
+	clcdu.mutation.ClearCheckListItemDefinitions()
+	return clcdu
+}
+
 // RemoveCheckListItemDefinitionIDs removes the check_list_item_definitions edge to CheckListItemDefinition by ids.
 func (clcdu *CheckListCategoryDefinitionUpdate) RemoveCheckListItemDefinitionIDs(ids ...int) *CheckListCategoryDefinitionUpdate {
 	clcdu.mutation.RemoveCheckListItemDefinitionIDs(ids...)
@@ -133,13 +139,13 @@ func (clcdu *CheckListCategoryDefinitionUpdate) RemoveCheckListItemDefinitions(c
 	return clcdu.RemoveCheckListItemDefinitionIDs(ids...)
 }
 
-// ClearWorkOrderType clears the work_order_type edge to WorkOrderType.
+// ClearWorkOrderType clears the "work_order_type" edge to type WorkOrderType.
 func (clcdu *CheckListCategoryDefinitionUpdate) ClearWorkOrderType() *CheckListCategoryDefinitionUpdate {
 	clcdu.mutation.ClearWorkOrderType()
 	return clcdu
 }
 
-// ClearWorkOrderTemplate clears the work_order_template edge to WorkOrderTemplate.
+// ClearWorkOrderTemplate clears the "work_order_template" edge to type WorkOrderTemplate.
 func (clcdu *CheckListCategoryDefinitionUpdate) ClearWorkOrderTemplate() *CheckListCategoryDefinitionUpdate {
 	clcdu.mutation.ClearWorkOrderTemplate()
 	return clcdu
@@ -251,7 +257,23 @@ func (clcdu *CheckListCategoryDefinitionUpdate) sqlSave(ctx context.Context) (n 
 			Column: checklistcategorydefinition.FieldDescription,
 		})
 	}
-	if nodes := clcdu.mutation.RemovedCheckListItemDefinitionsIDs(); len(nodes) > 0 {
+	if clcdu.mutation.CheckListItemDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistcategorydefinition.CheckListItemDefinitionsTable,
+			Columns: []string{checklistcategorydefinition.CheckListItemDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistitemdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := clcdu.mutation.RemovedCheckListItemDefinitionsIDs(); len(nodes) > 0 && !clcdu.mutation.CheckListItemDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -461,6 +483,12 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) Mutation() *CheckListCategor
 	return clcduo.mutation
 }
 
+// ClearCheckListItemDefinitions clears all "check_list_item_definitions" edges to type CheckListItemDefinition.
+func (clcduo *CheckListCategoryDefinitionUpdateOne) ClearCheckListItemDefinitions() *CheckListCategoryDefinitionUpdateOne {
+	clcduo.mutation.ClearCheckListItemDefinitions()
+	return clcduo
+}
+
 // RemoveCheckListItemDefinitionIDs removes the check_list_item_definitions edge to CheckListItemDefinition by ids.
 func (clcduo *CheckListCategoryDefinitionUpdateOne) RemoveCheckListItemDefinitionIDs(ids ...int) *CheckListCategoryDefinitionUpdateOne {
 	clcduo.mutation.RemoveCheckListItemDefinitionIDs(ids...)
@@ -476,13 +504,13 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) RemoveCheckListItemDefinitio
 	return clcduo.RemoveCheckListItemDefinitionIDs(ids...)
 }
 
-// ClearWorkOrderType clears the work_order_type edge to WorkOrderType.
+// ClearWorkOrderType clears the "work_order_type" edge to type WorkOrderType.
 func (clcduo *CheckListCategoryDefinitionUpdateOne) ClearWorkOrderType() *CheckListCategoryDefinitionUpdateOne {
 	clcduo.mutation.ClearWorkOrderType()
 	return clcduo
 }
 
-// ClearWorkOrderTemplate clears the work_order_template edge to WorkOrderTemplate.
+// ClearWorkOrderTemplate clears the "work_order_template" edge to type WorkOrderTemplate.
 func (clcduo *CheckListCategoryDefinitionUpdateOne) ClearWorkOrderTemplate() *CheckListCategoryDefinitionUpdateOne {
 	clcduo.mutation.ClearWorkOrderTemplate()
 	return clcduo
@@ -592,7 +620,23 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context)
 			Column: checklistcategorydefinition.FieldDescription,
 		})
 	}
-	if nodes := clcduo.mutation.RemovedCheckListItemDefinitionsIDs(); len(nodes) > 0 {
+	if clcduo.mutation.CheckListItemDefinitionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   checklistcategorydefinition.CheckListItemDefinitionsTable,
+			Columns: []string{checklistcategorydefinition.CheckListItemDefinitionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checklistitemdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := clcduo.mutation.RemovedCheckListItemDefinitionsIDs(); len(nodes) > 0 && !clcduo.mutation.CheckListItemDefinitionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

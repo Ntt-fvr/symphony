@@ -487,79 +487,79 @@ func (pu *PropertyUpdate) Mutation() *PropertyMutation {
 	return pu.mutation
 }
 
-// ClearType clears the type edge to PropertyType.
+// ClearType clears the "type" edge to type PropertyType.
 func (pu *PropertyUpdate) ClearType() *PropertyUpdate {
 	pu.mutation.ClearType()
 	return pu
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (pu *PropertyUpdate) ClearLocation() *PropertyUpdate {
 	pu.mutation.ClearLocation()
 	return pu
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (pu *PropertyUpdate) ClearEquipment() *PropertyUpdate {
 	pu.mutation.ClearEquipment()
 	return pu
 }
 
-// ClearService clears the service edge to Service.
+// ClearService clears the "service" edge to type Service.
 func (pu *PropertyUpdate) ClearService() *PropertyUpdate {
 	pu.mutation.ClearService()
 	return pu
 }
 
-// ClearEquipmentPort clears the equipment_port edge to EquipmentPort.
+// ClearEquipmentPort clears the "equipment_port" edge to type EquipmentPort.
 func (pu *PropertyUpdate) ClearEquipmentPort() *PropertyUpdate {
 	pu.mutation.ClearEquipmentPort()
 	return pu
 }
 
-// ClearLink clears the link edge to Link.
+// ClearLink clears the "link" edge to type Link.
 func (pu *PropertyUpdate) ClearLink() *PropertyUpdate {
 	pu.mutation.ClearLink()
 	return pu
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (pu *PropertyUpdate) ClearWorkOrder() *PropertyUpdate {
 	pu.mutation.ClearWorkOrder()
 	return pu
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (pu *PropertyUpdate) ClearProject() *PropertyUpdate {
 	pu.mutation.ClearProject()
 	return pu
 }
 
-// ClearEquipmentValue clears the equipment_value edge to Equipment.
+// ClearEquipmentValue clears the "equipment_value" edge to type Equipment.
 func (pu *PropertyUpdate) ClearEquipmentValue() *PropertyUpdate {
 	pu.mutation.ClearEquipmentValue()
 	return pu
 }
 
-// ClearLocationValue clears the location_value edge to Location.
+// ClearLocationValue clears the "location_value" edge to type Location.
 func (pu *PropertyUpdate) ClearLocationValue() *PropertyUpdate {
 	pu.mutation.ClearLocationValue()
 	return pu
 }
 
-// ClearServiceValue clears the service_value edge to Service.
+// ClearServiceValue clears the "service_value" edge to type Service.
 func (pu *PropertyUpdate) ClearServiceValue() *PropertyUpdate {
 	pu.mutation.ClearServiceValue()
 	return pu
 }
 
-// ClearWorkOrderValue clears the work_order_value edge to WorkOrder.
+// ClearWorkOrderValue clears the "work_order_value" edge to type WorkOrder.
 func (pu *PropertyUpdate) ClearWorkOrderValue() *PropertyUpdate {
 	pu.mutation.ClearWorkOrderValue()
 	return pu
 }
 
-// ClearUserValue clears the user_value edge to User.
+// ClearUserValue clears the "user_value" edge to type User.
 func (pu *PropertyUpdate) ClearUserValue() *PropertyUpdate {
 	pu.mutation.ClearUserValue()
 	return pu
@@ -1715,79 +1715,79 @@ func (puo *PropertyUpdateOne) Mutation() *PropertyMutation {
 	return puo.mutation
 }
 
-// ClearType clears the type edge to PropertyType.
+// ClearType clears the "type" edge to type PropertyType.
 func (puo *PropertyUpdateOne) ClearType() *PropertyUpdateOne {
 	puo.mutation.ClearType()
 	return puo
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (puo *PropertyUpdateOne) ClearLocation() *PropertyUpdateOne {
 	puo.mutation.ClearLocation()
 	return puo
 }
 
-// ClearEquipment clears the equipment edge to Equipment.
+// ClearEquipment clears the "equipment" edge to type Equipment.
 func (puo *PropertyUpdateOne) ClearEquipment() *PropertyUpdateOne {
 	puo.mutation.ClearEquipment()
 	return puo
 }
 
-// ClearService clears the service edge to Service.
+// ClearService clears the "service" edge to type Service.
 func (puo *PropertyUpdateOne) ClearService() *PropertyUpdateOne {
 	puo.mutation.ClearService()
 	return puo
 }
 
-// ClearEquipmentPort clears the equipment_port edge to EquipmentPort.
+// ClearEquipmentPort clears the "equipment_port" edge to type EquipmentPort.
 func (puo *PropertyUpdateOne) ClearEquipmentPort() *PropertyUpdateOne {
 	puo.mutation.ClearEquipmentPort()
 	return puo
 }
 
-// ClearLink clears the link edge to Link.
+// ClearLink clears the "link" edge to type Link.
 func (puo *PropertyUpdateOne) ClearLink() *PropertyUpdateOne {
 	puo.mutation.ClearLink()
 	return puo
 }
 
-// ClearWorkOrder clears the work_order edge to WorkOrder.
+// ClearWorkOrder clears the "work_order" edge to type WorkOrder.
 func (puo *PropertyUpdateOne) ClearWorkOrder() *PropertyUpdateOne {
 	puo.mutation.ClearWorkOrder()
 	return puo
 }
 
-// ClearProject clears the project edge to Project.
+// ClearProject clears the "project" edge to type Project.
 func (puo *PropertyUpdateOne) ClearProject() *PropertyUpdateOne {
 	puo.mutation.ClearProject()
 	return puo
 }
 
-// ClearEquipmentValue clears the equipment_value edge to Equipment.
+// ClearEquipmentValue clears the "equipment_value" edge to type Equipment.
 func (puo *PropertyUpdateOne) ClearEquipmentValue() *PropertyUpdateOne {
 	puo.mutation.ClearEquipmentValue()
 	return puo
 }
 
-// ClearLocationValue clears the location_value edge to Location.
+// ClearLocationValue clears the "location_value" edge to type Location.
 func (puo *PropertyUpdateOne) ClearLocationValue() *PropertyUpdateOne {
 	puo.mutation.ClearLocationValue()
 	return puo
 }
 
-// ClearServiceValue clears the service_value edge to Service.
+// ClearServiceValue clears the "service_value" edge to type Service.
 func (puo *PropertyUpdateOne) ClearServiceValue() *PropertyUpdateOne {
 	puo.mutation.ClearServiceValue()
 	return puo
 }
 
-// ClearWorkOrderValue clears the work_order_value edge to WorkOrder.
+// ClearWorkOrderValue clears the "work_order_value" edge to type WorkOrder.
 func (puo *PropertyUpdateOne) ClearWorkOrderValue() *PropertyUpdateOne {
 	puo.mutation.ClearWorkOrderValue()
 	return puo
 }
 
-// ClearUserValue clears the user_value edge to User.
+// ClearUserValue clears the "user_value" edge to type User.
 func (puo *PropertyUpdateOne) ClearUserValue() *PropertyUpdateOne {
 	puo.mutation.ClearUserValue()
 	return puo

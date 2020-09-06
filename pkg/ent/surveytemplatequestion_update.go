@@ -87,7 +87,7 @@ func (stqu *SurveyTemplateQuestionUpdate) Mutation() *SurveyTemplateQuestionMuta
 	return stqu.mutation
 }
 
-// ClearCategory clears the category edge to SurveyTemplateCategory.
+// ClearCategory clears the "category" edge to type SurveyTemplateCategory.
 func (stqu *SurveyTemplateQuestionUpdate) ClearCategory() *SurveyTemplateQuestionUpdate {
 	stqu.mutation.ClearCategory()
 	return stqu
@@ -317,7 +317,7 @@ func (stquo *SurveyTemplateQuestionUpdateOne) Mutation() *SurveyTemplateQuestion
 	return stquo.mutation
 }
 
-// ClearCategory clears the category edge to SurveyTemplateCategory.
+// ClearCategory clears the "category" edge to type SurveyTemplateCategory.
 func (stquo *SurveyTemplateQuestionUpdateOne) ClearCategory() *SurveyTemplateQuestionUpdateOne {
 	stquo.mutation.ClearCategory()
 	return stquo

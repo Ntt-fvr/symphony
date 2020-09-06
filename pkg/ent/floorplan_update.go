@@ -122,25 +122,25 @@ func (fpu *FloorPlanUpdate) Mutation() *FloorPlanMutation {
 	return fpu.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (fpu *FloorPlanUpdate) ClearLocation() *FloorPlanUpdate {
 	fpu.mutation.ClearLocation()
 	return fpu
 }
 
-// ClearReferencePoint clears the reference_point edge to FloorPlanReferencePoint.
+// ClearReferencePoint clears the "reference_point" edge to type FloorPlanReferencePoint.
 func (fpu *FloorPlanUpdate) ClearReferencePoint() *FloorPlanUpdate {
 	fpu.mutation.ClearReferencePoint()
 	return fpu
 }
 
-// ClearScale clears the scale edge to FloorPlanScale.
+// ClearScale clears the "scale" edge to type FloorPlanScale.
 func (fpu *FloorPlanUpdate) ClearScale() *FloorPlanUpdate {
 	fpu.mutation.ClearScale()
 	return fpu
 }
 
-// ClearImage clears the image edge to File.
+// ClearImage clears the "image" edge to type File.
 func (fpu *FloorPlanUpdate) ClearImage() *FloorPlanUpdate {
 	fpu.mutation.ClearImage()
 	return fpu
@@ -479,25 +479,25 @@ func (fpuo *FloorPlanUpdateOne) Mutation() *FloorPlanMutation {
 	return fpuo.mutation
 }
 
-// ClearLocation clears the location edge to Location.
+// ClearLocation clears the "location" edge to type Location.
 func (fpuo *FloorPlanUpdateOne) ClearLocation() *FloorPlanUpdateOne {
 	fpuo.mutation.ClearLocation()
 	return fpuo
 }
 
-// ClearReferencePoint clears the reference_point edge to FloorPlanReferencePoint.
+// ClearReferencePoint clears the "reference_point" edge to type FloorPlanReferencePoint.
 func (fpuo *FloorPlanUpdateOne) ClearReferencePoint() *FloorPlanUpdateOne {
 	fpuo.mutation.ClearReferencePoint()
 	return fpuo
 }
 
-// ClearScale clears the scale edge to FloorPlanScale.
+// ClearScale clears the "scale" edge to type FloorPlanScale.
 func (fpuo *FloorPlanUpdateOne) ClearScale() *FloorPlanUpdateOne {
 	fpuo.mutation.ClearScale()
 	return fpuo
 }
 
-// ClearImage clears the image edge to File.
+// ClearImage clears the "image" edge to type File.
 func (fpuo *FloorPlanUpdateOne) ClearImage() *FloorPlanUpdateOne {
 	fpuo.mutation.ClearImage()
 	return fpuo

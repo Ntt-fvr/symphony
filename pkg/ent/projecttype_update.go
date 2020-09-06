@@ -110,6 +110,12 @@ func (ptu *ProjectTypeUpdate) Mutation() *ProjectTypeMutation {
 	return ptu.mutation
 }
 
+// ClearProperties clears all "properties" edges to type PropertyType.
+func (ptu *ProjectTypeUpdate) ClearProperties() *ProjectTypeUpdate {
+	ptu.mutation.ClearProperties()
+	return ptu
+}
+
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
 func (ptu *ProjectTypeUpdate) RemovePropertyIDs(ids ...int) *ProjectTypeUpdate {
 	ptu.mutation.RemovePropertyIDs(ids...)
@@ -125,6 +131,12 @@ func (ptu *ProjectTypeUpdate) RemoveProperties(p ...*PropertyType) *ProjectTypeU
 	return ptu.RemovePropertyIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrderDefinition.
+func (ptu *ProjectTypeUpdate) ClearWorkOrders() *ProjectTypeUpdate {
+	ptu.mutation.ClearWorkOrders()
+	return ptu
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
 func (ptu *ProjectTypeUpdate) RemoveWorkOrderIDs(ids ...int) *ProjectTypeUpdate {
 	ptu.mutation.RemoveWorkOrderIDs(ids...)
@@ -138,6 +150,12 @@ func (ptu *ProjectTypeUpdate) RemoveWorkOrders(w ...*WorkOrderDefinition) *Proje
 		ids[i] = w[i].ID
 	}
 	return ptu.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearProjects clears all "projects" edges to type Project.
+func (ptu *ProjectTypeUpdate) ClearProjects() *ProjectTypeUpdate {
+	ptu.mutation.ClearProjects()
+	return ptu
 }
 
 // RemoveProjectIDs removes the projects edge to Project by ids.
@@ -250,7 +268,23 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: projecttype.FieldDescription,
 		})
 	}
-	if nodes := ptu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if ptu.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.PropertiesTable,
+			Columns: []string{projecttype.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !ptu.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -288,7 +322,23 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if ptu.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.WorkOrdersTable,
+			Columns: []string{projecttype.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorderdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !ptu.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -326,7 +376,23 @@ func (ptu *ProjectTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptu.mutation.RemovedProjectsIDs(); len(nodes) > 0 {
+	if ptu.mutation.ProjectsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.ProjectsTable,
+			Columns: []string{projecttype.ProjectsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: project.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedProjectsIDs(); len(nodes) > 0 && !ptu.mutation.ProjectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -458,6 +524,12 @@ func (ptuo *ProjectTypeUpdateOne) Mutation() *ProjectTypeMutation {
 	return ptuo.mutation
 }
 
+// ClearProperties clears all "properties" edges to type PropertyType.
+func (ptuo *ProjectTypeUpdateOne) ClearProperties() *ProjectTypeUpdateOne {
+	ptuo.mutation.ClearProperties()
+	return ptuo
+}
+
 // RemovePropertyIDs removes the properties edge to PropertyType by ids.
 func (ptuo *ProjectTypeUpdateOne) RemovePropertyIDs(ids ...int) *ProjectTypeUpdateOne {
 	ptuo.mutation.RemovePropertyIDs(ids...)
@@ -473,6 +545,12 @@ func (ptuo *ProjectTypeUpdateOne) RemoveProperties(p ...*PropertyType) *ProjectT
 	return ptuo.RemovePropertyIDs(ids...)
 }
 
+// ClearWorkOrders clears all "work_orders" edges to type WorkOrderDefinition.
+func (ptuo *ProjectTypeUpdateOne) ClearWorkOrders() *ProjectTypeUpdateOne {
+	ptuo.mutation.ClearWorkOrders()
+	return ptuo
+}
+
 // RemoveWorkOrderIDs removes the work_orders edge to WorkOrderDefinition by ids.
 func (ptuo *ProjectTypeUpdateOne) RemoveWorkOrderIDs(ids ...int) *ProjectTypeUpdateOne {
 	ptuo.mutation.RemoveWorkOrderIDs(ids...)
@@ -486,6 +564,12 @@ func (ptuo *ProjectTypeUpdateOne) RemoveWorkOrders(w ...*WorkOrderDefinition) *P
 		ids[i] = w[i].ID
 	}
 	return ptuo.RemoveWorkOrderIDs(ids...)
+}
+
+// ClearProjects clears all "projects" edges to type Project.
+func (ptuo *ProjectTypeUpdateOne) ClearProjects() *ProjectTypeUpdateOne {
+	ptuo.mutation.ClearProjects()
+	return ptuo
 }
 
 // RemoveProjectIDs removes the projects edge to Project by ids.
@@ -596,7 +680,23 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 			Column: projecttype.FieldDescription,
 		})
 	}
-	if nodes := ptuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 {
+	if ptuo.mutation.PropertiesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.PropertiesTable,
+			Columns: []string{projecttype.PropertiesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: propertytype.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedPropertiesIDs(); len(nodes) > 0 && !ptuo.mutation.PropertiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -634,7 +734,23 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptuo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 {
+	if ptuo.mutation.WorkOrdersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.WorkOrdersTable,
+			Columns: []string{projecttype.WorkOrdersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: workorderdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedWorkOrdersIDs(); len(nodes) > 0 && !ptuo.mutation.WorkOrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -672,7 +788,23 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := ptuo.mutation.RemovedProjectsIDs(); len(nodes) > 0 {
+	if ptuo.mutation.ProjectsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   projecttype.ProjectsTable,
+			Columns: []string{projecttype.ProjectsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: project.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedProjectsIDs(); len(nodes) > 0 && !ptuo.mutation.ProjectsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,

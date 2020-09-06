@@ -165,9 +165,15 @@ func (epdu *EquipmentPortDefinitionUpdate) Mutation() *EquipmentPortDefinitionMu
 	return epdu.mutation
 }
 
-// ClearEquipmentPortType clears the equipment_port_type edge to EquipmentPortType.
+// ClearEquipmentPortType clears the "equipment_port_type" edge to type EquipmentPortType.
 func (epdu *EquipmentPortDefinitionUpdate) ClearEquipmentPortType() *EquipmentPortDefinitionUpdate {
 	epdu.mutation.ClearEquipmentPortType()
+	return epdu
+}
+
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (epdu *EquipmentPortDefinitionUpdate) ClearPorts() *EquipmentPortDefinitionUpdate {
+	epdu.mutation.ClearPorts()
 	return epdu
 }
 
@@ -186,7 +192,7 @@ func (epdu *EquipmentPortDefinitionUpdate) RemovePorts(e ...*EquipmentPort) *Equ
 	return epdu.RemovePortIDs(ids...)
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (epdu *EquipmentPortDefinitionUpdate) ClearEquipmentType() *EquipmentPortDefinitionUpdate {
 	epdu.mutation.ClearEquipmentType()
 	return epdu
@@ -361,7 +367,23 @@ func (epdu *EquipmentPortDefinitionUpdate) sqlSave(ctx context.Context) (n int, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epdu.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if epdu.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentportdefinition.PortsTable,
+			Columns: []string{equipmentportdefinition.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epdu.mutation.RemovedPortsIDs(); len(nodes) > 0 && !epdu.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
@@ -583,9 +605,15 @@ func (epduo *EquipmentPortDefinitionUpdateOne) Mutation() *EquipmentPortDefiniti
 	return epduo.mutation
 }
 
-// ClearEquipmentPortType clears the equipment_port_type edge to EquipmentPortType.
+// ClearEquipmentPortType clears the "equipment_port_type" edge to type EquipmentPortType.
 func (epduo *EquipmentPortDefinitionUpdateOne) ClearEquipmentPortType() *EquipmentPortDefinitionUpdateOne {
 	epduo.mutation.ClearEquipmentPortType()
+	return epduo
+}
+
+// ClearPorts clears all "ports" edges to type EquipmentPort.
+func (epduo *EquipmentPortDefinitionUpdateOne) ClearPorts() *EquipmentPortDefinitionUpdateOne {
+	epduo.mutation.ClearPorts()
 	return epduo
 }
 
@@ -604,7 +632,7 @@ func (epduo *EquipmentPortDefinitionUpdateOne) RemovePorts(e ...*EquipmentPort) 
 	return epduo.RemovePortIDs(ids...)
 }
 
-// ClearEquipmentType clears the equipment_type edge to EquipmentType.
+// ClearEquipmentType clears the "equipment_type" edge to type EquipmentType.
 func (epduo *EquipmentPortDefinitionUpdateOne) ClearEquipmentType() *EquipmentPortDefinitionUpdateOne {
 	epduo.mutation.ClearEquipmentType()
 	return epduo
@@ -777,7 +805,23 @@ func (epduo *EquipmentPortDefinitionUpdateOne) sqlSave(ctx context.Context) (epd
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nodes := epduo.mutation.RemovedPortsIDs(); len(nodes) > 0 {
+	if epduo.mutation.PortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   equipmentportdefinition.PortsTable,
+			Columns: []string{equipmentportdefinition.PortsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentport.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epduo.mutation.RemovedPortsIDs(); len(nodes) > 0 && !epduo.mutation.PortsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
