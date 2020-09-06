@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"net/url"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -118,9 +117,7 @@ func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]str
 		BeforeWrite: func(asFunc func(interface{}) bool) error {
 			var req *s3manager.UploadInput
 			if asFunc(&req) {
-				req.Tagging = aws.String(
-					url.QueryEscape("autoclean=true"),
-				)
+				req.Tagging = aws.String("autoclean=true")
 			}
 			return nil
 		},

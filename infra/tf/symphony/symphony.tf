@@ -48,10 +48,11 @@ data aws_iam_policy_document async {
   statement {
     actions = [
       "s3:PutObject",
+      "s3:PutObjectTagging",
     ]
 
     resources = [
-      "${aws_s3_bucket.store.arn}/${local.store_exports_path}/*",
+      "${aws_s3_bucket.store.arn}/*/${local.store_exports_path}/*",
     ]
   }
 }
