@@ -11,9 +11,6 @@
 import Button from '@symphony/design-system/components/Button';
 import JsonInputDialog from './JsonInputDialog';
 import React, {useCallback} from 'react';
-import {TYPE as CreateCustomWorkorderType} from '../canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as GeneralStepType} from '../canvas/graph/facades/shapes/vertexes/actions/GeneralStep';
-import {TYPE as ManualStartType} from '../canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {makeStyles} from '@material-ui/styles';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {useGraph} from '../canvas/graph/GraphContext';
@@ -79,30 +76,6 @@ export default function Toolbar() {
         onClick={() => showLoadJsonDialog()}
         className={classes.marginRight}>
         Load JSON
-      </Button>
-      <Button
-        onClick={() => {
-          flow.addBlock(ManualStartType, {
-            position: {x: 200, y: 100},
-          });
-        }}>
-        Add Start
-      </Button>
-      <Button
-        onClick={() => {
-          flow.addBlock(GeneralStepType, {
-            position: {x: 500, y: 100},
-          });
-        }}>
-        Add Manual Step
-      </Button>
-      <Button
-        onClick={() => {
-          flow.addBlock(CreateCustomWorkorderType, {
-            position: {x: 500, y: 100},
-          });
-        }}>
-        Add Custom Worker
       </Button>
     </div>
   );

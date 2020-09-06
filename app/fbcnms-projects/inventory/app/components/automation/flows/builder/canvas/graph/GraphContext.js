@@ -150,6 +150,13 @@ type Props = {|
   children: React.Node,
 |};
 
+function getPaperViewPortCenter(paper: Paper): Position {
+  const viewPort = paper.el.getBoundingClientRect();
+  const x = viewPort.left + viewPort.width / 2;
+  const y = viewPort.top + viewPort.height / 2;
+  return paper.clientToLocalPoint({x, y});
+}
+
 function graphAddBlock(
   type: string,
   options: ?{
@@ -165,7 +172,8 @@ function graphAddBlock(
   const shapesFactory = this.current.shapesFactory;
   const blocksMap = this.current.blocks;
 
-  const position = options?.position || {x: 0, y: 0};
+  const position =
+    options?.position || getPaperViewPortCenter(this.current.paper);
 
   const newBlock = shapesFactory.createBlock(type);
   newBlock.model.position(position.x, position.y);

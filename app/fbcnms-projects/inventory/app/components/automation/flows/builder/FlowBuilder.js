@@ -8,6 +8,7 @@
  * @format
  */
 
+import BlocksBar from './tools/blocksBar/BlocksBar';
 import Canvas from './canvas/Canvas';
 import DetailsPane from './tools/DetailsPane';
 import FloatingBar from './tools/FloatingBar';
@@ -36,12 +37,30 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  rightPane: {
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
+    background: 'white',
+
+    display: 'flex',
+    flexDirection: 'column',
+  },
   canvasContainer: {
     position: 'relative',
     flexBasis: 0,
     flexShrink: 0,
-    flexGrow: 2,
-    paddingRight: '16px',
+    flexGrow: 4,
+    padding: '0 16px',
+  },
+  leftPane: {
+    flexGrow: 1,
+    flexShrink: 0,
+    flexBasis: 0,
+    background: 'white',
+
+    display: 'flex',
+    flexDirection: 'column',
   },
 }));
 
@@ -59,6 +78,9 @@ export default function FlowBuilder() {
             actionButtons: [<Toolbar />],
           }}>
           <div className={classes.ide}>
+            <div className={classes.leftPane}>
+              <BlocksBar />
+            </div>
             <div className={classes.canvasContainer}>
               <FloatingBar />
               <Canvas />

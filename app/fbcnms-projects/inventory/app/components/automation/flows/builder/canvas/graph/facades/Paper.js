@@ -19,6 +19,7 @@ import type {
 import type {LinkEventCallback} from './shapes/edges/Link';
 
 export type Paper = $ReadOnly<{|
+  el: HTMLElement,
   model: Graph,
   getContentArea: () => Rect,
   getContentBBox: () => Rect,

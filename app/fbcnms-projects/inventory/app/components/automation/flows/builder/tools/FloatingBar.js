@@ -63,7 +63,7 @@ export default function FloatingBar() {
       const size = newActiveBlock.model.attributes.size;
 
       setStyle({
-        left: `${position.x + size.width}px`,
+        left: `${position.x + size.width + 16}px`,
         top: `${position.y + (size.height - 24) / 2}px`,
       });
     }
