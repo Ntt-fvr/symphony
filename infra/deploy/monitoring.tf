@@ -164,7 +164,7 @@ resource helm_release blackbox_exporter {
   namespace  = "monitoring"
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {
-    circleci_token = jsondecode(data.aws_secretsmanager_secret_version.circleci.secret_string)["circleci-token"]
+    circleci_token = data.sops_file.circleci.data.token
   })]
 
   depends_on = [helm_release.prometheus_operator]

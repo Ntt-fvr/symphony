@@ -28,14 +28,8 @@ data aws_secretsmanager_secret_version alertmanager {
   provider  = aws.us-east-1
 }
 
-data aws_secretsmanager_secret circleci {
-  name     = "symphony/circleci"
-  provider = aws.us-east-1
-}
-
-data aws_secretsmanager_secret_version circleci {
-  secret_id = data.aws_secretsmanager_secret.circleci.id
-  provider  = aws.us-east-1
+data sops_file circleci {
+  source_file = "${path.module}/secrets/circleci.yaml"
 }
 
 data sops_file cidrs {
