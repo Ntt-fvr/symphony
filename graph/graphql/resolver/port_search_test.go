@@ -6,7 +6,6 @@ package resolver_test
 
 import (
 	"context"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"strconv"
 	"testing"
 
@@ -18,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"

@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -23,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
