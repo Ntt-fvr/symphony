@@ -8,10 +8,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -107,8 +107,8 @@ func TestSearchLocationAncestors(t *testing.T) {
 	require.Equal(t, all.Count, 2)
 	maxDepth := 2
 	f1 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		FilterType: enum.LocationFilterTypeLocationInst,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -118,8 +118,8 @@ func TestSearchLocationAncestors(t *testing.T) {
 	require.Equal(t, res.Count, 2)
 
 	f2 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		FilterType: enum.LocationFilterTypeLocationInst,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -148,8 +148,8 @@ func TestSearchLocationByExternalID(t *testing.T) {
 	require.Equal(t, resAll.Count, 2)
 
 	f1 := models.LocationFilterInput{
-		FilterType:  models.LocationFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		FilterType:  enum.LocationFilterTypeLocationInstExternalID,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: &data.loc1.ExternalID,
 	}
 
@@ -160,8 +160,8 @@ func TestSearchLocationByExternalID(t *testing.T) {
 
 	// same filter - with 'IS" operator
 	f2 := models.LocationFilterInput{
-		FilterType:  models.LocationFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorIs,
+		FilterType:  enum.LocationFilterTypeLocationInstExternalID,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &data.loc1.ExternalID,
 	}
 
@@ -186,8 +186,8 @@ func TestSearchLocationByName(t *testing.T) {
 	qr := r.Query()
 
 	f1 := models.LocationFilterInput{
-		FilterType:  models.LocationFilterTypeLocationInstName,
-		Operator:    models.FilterOperatorIs,
+		FilterType:  enum.LocationFilterTypeLocationInstName,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &data.loc2.Name,
 	}
 	resAll, err := qr.LocationSearch(ctx, []*models.LocationFilterInput{}, pointer.ToInt(100))
@@ -215,8 +215,8 @@ func TestSearchLocationByType(t *testing.T) {
 	*/
 	qr := r.Query()
 	f1 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationType,
-		Operator:   models.FilterOperatorIsOneOf,
+		FilterType: enum.LocationFilterTypeLocationType,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.locType2.ID},
 	}
 	res, err := qr.LocationSearch(ctx, []*models.LocationFilterInput{&f1}, pointer.ToInt(100))
@@ -239,8 +239,8 @@ func TestSearchLocationHasEquipment(t *testing.T) {
 	*/
 	qr := r.Query()
 	f1 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationInstHasEquipment,
-		Operator:   models.FilterOperatorIs,
+		FilterType: enum.LocationFilterTypeLocationInstHasEquipment,
+		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(true),
 	}
 	res, err := qr.LocationSearch(ctx, []*models.LocationFilterInput{&f1}, pointer.ToInt(100))
@@ -249,8 +249,8 @@ func TestSearchLocationHasEquipment(t *testing.T) {
 	require.Equal(t, res.Count, 1)
 
 	f2 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationInstHasEquipment,
-		Operator:   models.FilterOperatorIs,
+		FilterType: enum.LocationFilterTypeLocationInstHasEquipment,
+		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(false),
 	}
 	res, err = qr.LocationSearch(ctx, []*models.LocationFilterInput{&f2}, pointer.ToInt(100))
@@ -273,8 +273,8 @@ func TestSearchMultipleFilters(t *testing.T) {
 	*/
 	qr := r.Query()
 	f1 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		FilterType: enum.LocationFilterTypeLocationInst,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1.ID},
 		MaxDepth:   pointer.ToInt(2),
 	}
@@ -284,8 +284,8 @@ func TestSearchMultipleFilters(t *testing.T) {
 	require.Equal(t, res.Count, 2)
 
 	f2 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeLocationType,
-		Operator:   models.FilterOperatorIsOneOf,
+		FilterType: enum.LocationFilterTypeLocationType,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.locType2.ID},
 	}
 	res, err = qr.LocationSearch(ctx, []*models.LocationFilterInput{&f1, &f2}, pointer.ToInt(100))
@@ -308,8 +308,8 @@ func TestSearchLocationProperties(t *testing.T) {
 	*/
 	qr := r.Query()
 	f1 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeProperty,
-		Operator:   models.FilterOperatorDateLessThan,
+		FilterType: enum.LocationFilterTypeProperty,
+		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Type:        propertytype.TypeDate,
 			Name:        "date_established",
@@ -323,8 +323,8 @@ func TestSearchLocationProperties(t *testing.T) {
 	require.Equal(t, res.Count, 1)
 
 	f2 := models.LocationFilterInput{
-		FilterType: models.LocationFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		FilterType: enum.LocationFilterTypeProperty,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Type:        propertytype.TypeString,
 			Name:        "stringProp",

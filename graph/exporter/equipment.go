@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -28,7 +29,7 @@ const (
 
 type equipmentFilterInput struct {
 	Name          models.EquipmentFilterType `json:"name"`
-	Operator      models.FilterOperator      `jsons:"operator"`
+	Operator      enum.FilterOperator        `jsons:"operator"`
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
@@ -132,7 +133,7 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 		}
 		inp := models.EquipmentFilterInput{
 			FilterType:    models.EquipmentFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
 			IDSet:         intIDSet,

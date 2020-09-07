@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -23,14 +24,14 @@ import (
 )
 
 type locationsFilterInput struct {
-	Name          models.LocationFilterType `json:"name"`
-	Operator      models.FilterOperator     `jsons:"operator"`
-	StringValue   string                    `json:"stringValue"`
-	IDSet         []string                  `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput  `json:"propertyValue"`
-	MaxDepth      *int                      `json:"maxDepth"`
-	BoolValue     *bool                     `json:"boolValue"`
+	Name          enum.LocationFilterType  `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                     `json:"maxDepth"`
+	BoolValue     *bool                    `json:"boolValue"`
 }
 
 type LocationsRower struct {
@@ -196,8 +197,8 @@ func paramToLocationFilterInput(params string) ([]*models.LocationFilterInput, e
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.LocationFilterInput{
-			FilterType:    models.LocationFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			FilterType:    enum.LocationFilterType(upperName),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
 			IDSet:         intIDSet,

@@ -11,6 +11,7 @@ import (
 	"github.com/AlekSi/pointer"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -46,13 +47,13 @@ func TestAddReportFilter(t *testing.T) {
 			Filters: []*models.GeneralFilterInput{
 				{
 					FilterType: models.EquipmentFilterTypeLocationInst.String(),
-					Operator:   models.FilterOperatorIsOneOf,
+					Operator:   enum.FilterOperatorIsOneOf,
 					Key:        "for-ui-purposes",
 					IDSet:      []int{data.loc1, data.loc2},
 				},
 				{
 					FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
-					Operator:    models.FilterOperatorContains,
+					Operator:    enum.FilterOperatorContains,
 					Key:         "for-ui-purposes",
 					StringValue: pointer.ToString(substring),
 				},
@@ -82,10 +83,10 @@ func TestAddReportFilter(t *testing.T) {
 					require.Len(t, f.IDSet, 2)
 					require.Contains(t, f.IDSet, data.loc1)
 					require.Contains(t, f.IDSet, data.loc2)
-					require.Equal(t, models.FilterOperatorIsOneOf, f.Operator)
+					require.Equal(t, enum.FilterOperatorIsOneOf, f.Operator)
 				case models.EquipmentFilterTypeEquipInstName.String():
 					require.Equal(t, f.StringValue, pointer.ToString(substring))
-					require.Equal(t, models.FilterOperatorContains, f.Operator)
+					require.Equal(t, enum.FilterOperatorContains, f.Operator)
 				default:
 					require.Fail(t, "unsupported filter type %s", f.FilterType)
 				}
@@ -109,7 +110,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Filters: []*models.GeneralFilterInput{
 			{
 				FilterType: models.EquipmentFilterTypeLocationInst.String(),
-				Operator:   models.FilterOperatorIsOneOf,
+				Operator:   enum.FilterOperatorIsOneOf,
 				Key:        "for-ui-purposes",
 				IDSet:      []int{data.loc1, data.loc2},
 			},
@@ -123,7 +124,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Filters: []*models.GeneralFilterInput{
 			{
 				FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
-				Operator:    models.FilterOperatorContains,
+				Operator:    enum.FilterOperatorContains,
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
 			},
@@ -138,7 +139,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Filters: []*models.GeneralFilterInput{
 			{
 				FilterType:  "InvalidType",
-				Operator:    models.FilterOperatorContains,
+				Operator:    enum.FilterOperatorContains,
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
 			},
@@ -166,7 +167,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Filters: []*models.GeneralFilterInput{
 			{
 				FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
-				Operator:    models.FilterOperatorContains,
+				Operator:    enum.FilterOperatorContains,
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
 			},
@@ -189,7 +190,7 @@ func TestEditReportFilters(t *testing.T) {
 		Filters: []*models.GeneralFilterInput{
 			{
 				FilterType: models.EquipmentFilterTypeLocationInst.String(),
-				Operator:   models.FilterOperatorIsOneOf,
+				Operator:   enum.FilterOperatorIsOneOf,
 				Key:        "for-ui-purposes",
 				IDSet:      []int{data.loc1, data.loc2},
 			},

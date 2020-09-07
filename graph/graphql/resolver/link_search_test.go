@@ -304,7 +304,7 @@ func TestSearchLinksFutureState(t *testing.T) {
 	maxDepth := 2
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLinkFutureStatus,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{enum.FutureStateRemove.String()},
 		MaxDepth:   &maxDepth,
 	}
@@ -342,7 +342,7 @@ func TestSearchLinksByLocation(t *testing.T) {
 	maxDepth := 2
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 		MaxDepth:   &maxDepth,
 	}
@@ -360,7 +360,7 @@ func TestSearchLinksByLocation(t *testing.T) {
 
 	f1External := models.LinkFilterInput{
 		FilterType:  models.LinkFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("111"),
 	}
 	res1, err = qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1External}, &limit)
@@ -369,7 +369,7 @@ func TestSearchLinksByLocation(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -413,7 +413,7 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 	emptyTyp, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{Name: "empty_typ"})
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{typ1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -423,7 +423,7 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{typ2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -433,7 +433,7 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 
 	f3 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{emptyTyp.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -466,7 +466,7 @@ func TestSearchLinksByEquipment(t *testing.T) {
 
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e1, data.e2},
 		MaxDepth:   &maxDepth,
 	}
@@ -476,7 +476,7 @@ func TestSearchLinksByEquipment(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e2, data.e4},
 		MaxDepth:   &maxDepth,
 	}
@@ -514,7 +514,7 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e1},
 		MaxDepth:   &maxDepth,
 	}
@@ -524,7 +524,7 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeEquipmentInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e6},
 		MaxDepth:   &maxDepth,
 	}
@@ -582,7 +582,7 @@ func TestSearchLinksByService(t *testing.T) {
 
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -592,7 +592,7 @@ func TestSearchLinksByService(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -602,7 +602,7 @@ func TestSearchLinksByService(t *testing.T) {
 
 	f3 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsNotOneOf,
+		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -612,7 +612,7 @@ func TestSearchLinksByService(t *testing.T) {
 
 	f4 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsNotOneOf,
+		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -641,7 +641,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
@@ -656,7 +656,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeProperty,
-		Operator:   models.FilterOperatorDateLessThan,
+		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "connected_date",
 			Type:        propertytype.TypeDate,
@@ -694,7 +694,7 @@ func TestSearchLinksByServiceName(t *testing.T) {
 	maxDepth := 2
 	f1 := models.LinkFilterInput{
 		FilterType:  models.LinkFilterTypeServiceInst,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("S1"),
 		MaxDepth:    &maxDepth,
 	}
@@ -704,7 +704,7 @@ func TestSearchLinksByServiceName(t *testing.T) {
 
 	f2 := models.LinkFilterInput{
 		FilterType:  models.LinkFilterTypeServiceInst,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("S2"),
 		MaxDepth:    &maxDepth,
 	}

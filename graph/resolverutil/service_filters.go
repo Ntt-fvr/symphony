@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -41,14 +42,14 @@ func handleServiceFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput)
 }
 
 func serviceNameFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
 func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
 	statuses := make([]service.Status, 0, len(filter.StringSet))
@@ -67,7 +68,7 @@ func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput)
 }
 
 func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
 	var (
@@ -88,21 +89,21 @@ func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFil
 }
 
 func serviceTypeFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(service.HasTypeWith(servicetype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func externalIDFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(service.ExternalID(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
 func customerNameFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.HasCustomerWith(customer.NameContainsFold(*filter.StringValue))), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
@@ -118,7 +119,7 @@ func handleServicePropertyFilter(q *ent.ServiceQuery, filter *models.ServiceFilt
 func servicePropertyFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		pred, err := GetPropertyPredicate(*p)
 		if err != nil {
 			return nil, err
@@ -168,7 +169,7 @@ func handleServiceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilt
 }
 
 func serviceLocationExternalIDFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.HasEndpointsWith(serviceendpoint.HasEquipmentWith(
 			equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))))), nil
 	}
@@ -176,7 +177,7 @@ func serviceLocationExternalIDFilter(q *ent.ServiceQuery, filter *models.Service
 }
 
 func serviceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		var ps []predicate.Service
 		for _, lid := range filter.IDSet {
 			eqPred := BuildGeneralEquipmentAncestorFilter(
@@ -200,7 +201,7 @@ func handleEquipmentInServiceFilter(q *ent.ServiceQuery, filter *models.ServiceF
 }
 
 func equipmentInServiceTypeFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		equipmentNameQuery := equipment.NameContainsFold(*filter.StringValue)
 		return q.Where(
 			service.Or(service.HasLinksWith(

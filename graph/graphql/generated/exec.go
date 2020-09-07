@@ -9968,7 +9968,10 @@ input EditProjectInput {
 """
 operators to filter search by
 """
-enum FilterOperator {
+enum FilterOperator
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
+  ) {
   IS
   CONTAINS
   IS_ONE_OF
@@ -10070,7 +10073,10 @@ enum LinkFilterType {
 """
 what filters should we apply on locations
 """
-enum LocationFilterType {
+enum LocationFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
+  ) {
   LOCATION_INST
   LOCATION_INST_NAME
   LOCATION_INST_EXTERNAL_ID
@@ -22625,9 +22631,9 @@ func (ec *executionContext) _GeneralFilter_operator(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(models.FilterOperator)
+	res := resTmp.(enum.FilterOperator)
 	fc.Result = res
-	return ec.marshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, field.Selections, res)
+	return ec.marshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GeneralFilter_stringValue(ctx context.Context, field graphql.CollectedField, obj *models.GeneralFilter) (ret graphql.Marshaler) {
@@ -45611,7 +45617,7 @@ func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45903,7 +45909,7 @@ func (ec *executionContext) unmarshalInputGeneralFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46043,7 +46049,7 @@ func (ec *executionContext) unmarshalInputLinkFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46171,7 +46177,7 @@ func (ec *executionContext) unmarshalInputLocationFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLocationFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46179,7 +46185,7 @@ func (ec *executionContext) unmarshalInputLocationFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46343,7 +46349,7 @@ func (ec *executionContext) unmarshalInputPermissionsPolicyFilterInput(ctx conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46391,7 +46397,7 @@ func (ec *executionContext) unmarshalInputPortFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46471,7 +46477,7 @@ func (ec *executionContext) unmarshalInputProjectFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -47071,7 +47077,7 @@ func (ec *executionContext) unmarshalInputServiceFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48158,7 +48164,7 @@ func (ec *executionContext) unmarshalInputUserFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48238,7 +48244,7 @@ func (ec *executionContext) unmarshalInputUsersGroupFilterInput(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48322,7 +48328,7 @@ func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("operator"))
-			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx, v)
+			it.Operator, err = ec.unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -58945,14 +58951,20 @@ func (ec *executionContext) marshalNFilterEntity2githubᚗcomᚋfacebookincubato
 	return v
 }
 
-func (ec *executionContext) unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx context.Context, v interface{}) (models.FilterOperator, error) {
-	var res models.FilterOperator
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx context.Context, v interface{}) (enum.FilterOperator, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.FilterOperator(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐFilterOperator(ctx context.Context, sel ast.SelectionSet, v models.FilterOperator) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNFilterOperator2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFilterOperator(ctx context.Context, sel ast.SelectionSet, v enum.FilterOperator) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
@@ -59623,14 +59635,20 @@ func (ec *executionContext) unmarshalNLocationFilterInput2ᚖgithubᚗcomᚋface
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationFilterType(ctx context.Context, v interface{}) (models.LocationFilterType, error) {
-	var res models.LocationFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLocationFilterType(ctx context.Context, v interface{}) (enum.LocationFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.LocationFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationFilterType(ctx context.Context, sel ast.SelectionSet, v models.LocationFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNLocationFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLocationFilterType(ctx context.Context, sel ast.SelectionSet, v enum.LocationFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNLocationPermissionRule2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐLocationPermissionRule(ctx context.Context, sel ast.SelectionSet, v *models1.LocationPermissionRule) graphql.Marshaler {

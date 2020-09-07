@@ -12,18 +12,19 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/pkg/errors"
 )
 
 func handleLocationFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
 	switch filter.FilterType {
-	case models.LocationFilterTypeLocationInst:
+	case enum.LocationFilterTypeLocationInst:
 		return LocationFilterPredicate(q, filter)
-	case models.LocationFilterTypeLocationInstHasEquipment:
+	case enum.LocationFilterTypeLocationInstHasEquipment:
 		return locationHasEquipmentFilter(q, filter)
-	case models.LocationFilterTypeLocationInstName:
+	case enum.LocationFilterTypeLocationInstName:
 		return locationNameFilter(q, filter)
-	case models.LocationFilterTypeLocationInstExternalID:
+	case enum.LocationFilterTypeLocationInstExternalID:
 		return locationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -31,23 +32,23 @@ func handleLocationFilter(q *ent.LocationQuery, filter *models.LocationFilterInp
 
 func locationExternalIDFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
 	switch filter.Operator {
-	case models.FilterOperatorContains:
+	case enum.FilterOperatorContains:
 		return q.Where(location.ExternalIDContainsFold(*filter.StringValue)), nil
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		return q.Where(location.ExternalID(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
 func locationNameFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(location.NameEqualFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
 func locationHasEquipmentFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		var pp predicate.Location
 		if *filter.BoolValue {
 			pp = location.HasEquipment()
@@ -60,14 +61,14 @@ func locationHasEquipmentFilter(q *ent.LocationQuery, filter *models.LocationFil
 }
 
 func handleLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.FilterType == models.LocationFilterTypeLocationType {
+	if filter.FilterType == enum.LocationFilterTypeLocationType {
 		return locationLocationTypeFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
 func locationLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(location.HasTypeWith(locationtype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -77,7 +78,7 @@ func locationLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFil
 func handleLocationPropertyFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		pred, err := GetPropertyPredicate(*p)
 		if err != nil {
 			return nil, err
@@ -111,7 +112,7 @@ func handleLocationPropertyFilter(q *ent.LocationQuery, filter *models.LocationF
 				))))
 
 		return q, nil
-	case models.FilterOperatorDateLessThan, models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateLessThan, enum.FilterOperatorDateGreaterThan:
 		propPred, propTypePred, err := GetDatePropertyPred(*p, filter.Operator)
 		if err != nil {
 			return nil, err

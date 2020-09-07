@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/pkg/errors"
 )
@@ -178,11 +179,11 @@ func GetPropertyTypePredicate(p models.PropertyTypeInput) (predicate.PropertyTyp
 }
 
 // GetDatePropertyPred returns the property and propertyType predicate for the date
-func GetDatePropertyPred(p models.PropertyTypeInput, operator models.FilterOperator) (predicate.Property, predicate.PropertyType, error) {
+func GetDatePropertyPred(p models.PropertyTypeInput, operator enum.FilterOperator) (predicate.Property, predicate.PropertyType, error) {
 	if p.Type != propertytype.TypeDate && p.Type != propertytype.TypeDatetimeLocal {
 		return nil, nil, errors.Errorf("property kind should be type")
 	}
-	if operator == models.FilterOperatorDateLessThan {
+	if operator == enum.FilterOperatorDateLessThan {
 		return property.StringValLT(*p.StringValue), propertytype.StringValLT(*p.StringValue), nil
 	}
 	return property.StringValGT(*p.StringValue), propertytype.StringValGT(*p.StringValue), nil

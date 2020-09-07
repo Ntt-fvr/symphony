@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
@@ -27,7 +28,7 @@ import (
 
 type servicesFilterInput struct {
 	Name          models.ServiceFilterType `json:"name"`
-	Operator      models.FilterOperator    `jsons:"operator"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
 	StringValue   string                   `json:"stringValue"`
 	IDSet         []string                 `json:"idSet"`
 	StringSet     []string                 `json:"stringSet"`
@@ -203,7 +204,7 @@ func paramToServiceFilterInput(params string) ([]*models.ServiceFilterInput, err
 		}
 		inp := models.ServiceFilterInput{
 			FilterType:    models.ServiceFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
 			IDSet:         intIDSet,

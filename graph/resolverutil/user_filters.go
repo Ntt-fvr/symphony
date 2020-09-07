@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/pkg/errors"
 )
@@ -26,14 +27,14 @@ func handleUserFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.Us
 }
 
 func userStatusFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.UserQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(user.StatusEQ(*filter.StatusValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
 func userNameFilter(q *ent.UserQuery, filter *models.UserFilterInput) (*ent.UserQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		terms := strings.Split(*filter.StringValue, " ")
 		qp := user.And()
 		for _, s := range terms {

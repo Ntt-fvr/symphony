@@ -7,6 +7,7 @@ package resolverutil
 import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 
 	"github.com/pkg/errors"
@@ -21,9 +22,9 @@ func handleUsersGroupFilter(q *ent.UsersGroupQuery, filter *models.UsersGroupFil
 
 func usersGroupFilter(q *ent.UsersGroupQuery, filter *models.UsersGroupFilterInput) (*ent.UsersGroupQuery, error) {
 	switch {
-	case filter.Operator == models.FilterOperatorIs && filter.StringValue != nil:
+	case filter.Operator == enum.FilterOperatorIs && filter.StringValue != nil:
 		return q.Where(usersgroup.NameEqualFold(*filter.StringValue)), nil
-	case filter.Operator == models.FilterOperatorContains && filter.StringValue != nil:
+	case filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil:
 		return q.Where(usersgroup.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported with value of %#v", filter.Operator, filter.StringValue)

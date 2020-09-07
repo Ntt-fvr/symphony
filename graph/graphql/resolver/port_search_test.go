@@ -9,14 +9,14 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/service"
-	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -177,7 +177,7 @@ func TestSearchPortEquipmentName(t *testing.T) {
 	maxDepth := 2
 	f1 := models.PortFilterInput{
 		FilterType:  models.PortFilterTypePortInstEquipment,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString(data.e1.Name),
 		MaxDepth:    &maxDepth,
 	}
@@ -201,7 +201,7 @@ func TestSearchPortHasLink(t *testing.T) {
 	require.Equal(t, all.Count, 8)
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypePortInstHasLink,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(false),
 	}
 	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
@@ -223,7 +223,7 @@ func TestSearchPortDefinition(t *testing.T) {
 
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypePortDef,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{defs[0].ID, defs[1].ID},
 	}
 	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
@@ -243,7 +243,7 @@ func TestSearchPortLocation(t *testing.T) {
 
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{d.loc1},
 		MaxDepth:   pointer.ToInt(2),
 	}
@@ -254,7 +254,7 @@ func TestSearchPortLocation(t *testing.T) {
 
 	fExternal := models.PortFilterInput{
 		FilterType:  models.PortFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("1"),
 	}
 	res1, err = qr.PortSearch(ctx, []*models.PortFilterInput{&fExternal}, &limit)
@@ -275,7 +275,7 @@ func TestSearchPortProperties(t *testing.T) {
 
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
@@ -290,7 +290,7 @@ func TestSearchPortProperties(t *testing.T) {
 
 	f2 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
@@ -305,7 +305,7 @@ func TestSearchPortProperties(t *testing.T) {
 
 	f3 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:         "propBool",
 			Type:         propertytype.TypeBool,
@@ -320,7 +320,7 @@ func TestSearchPortProperties(t *testing.T) {
 
 	f4 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:         "propBool",
 			Type:         propertytype.TypeBool,
@@ -335,7 +335,7 @@ func TestSearchPortProperties(t *testing.T) {
 
 	f5 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
-		Operator:   models.FilterOperatorDateLessThan,
+		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "connected_date",
 			Type:        propertytype.TypeDate,
@@ -440,7 +440,7 @@ func TestSearchPortsByService(t *testing.T) {
 
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -451,7 +451,7 @@ func TestSearchPortsByService(t *testing.T) {
 
 	f2 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -461,7 +461,7 @@ func TestSearchPortsByService(t *testing.T) {
 
 	f3 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsNotOneOf,
+		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -471,7 +471,7 @@ func TestSearchPortsByService(t *testing.T) {
 
 	f4 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeServiceInst,
-		Operator:   models.FilterOperatorIsNotOneOf,
+		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}

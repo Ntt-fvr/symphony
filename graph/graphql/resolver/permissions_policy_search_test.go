@@ -11,6 +11,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -52,7 +53,7 @@ func TestPermissionsPolicySearchByName(t *testing.T) {
 
 	f1 := models.PermissionsPolicyFilterInput{
 		FilterType:  models.PermissionsPolicyFilterTypePermissionsPolicyName,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &ppName1,
 	}
 	resAll, err := r.Query().PermissionsPolicySearch(ctx, []*models.PermissionsPolicyFilterInput{&f1}, pointer.ToInt(100))

@@ -9,6 +9,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 
@@ -33,16 +34,16 @@ func handlePortFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput)
 
 func portEquipmentFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
 	switch filter.Operator {
-	case models.FilterOperatorContains:
+	case enum.FilterOperatorContains:
 		return q.Where(equipmentport.HasParentWith(equipment.NameContainsFold(*filter.StringValue))), nil
-	case models.FilterOperatorIsOneOf:
+	case enum.FilterOperatorIsOneOf:
 		return q.Where(equipmentport.HasParentWith(equipment.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func portHasLinkFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		var pp predicate.EquipmentPort
 		if *filter.BoolValue {
 			pp = equipmentport.HasLink()
@@ -65,7 +66,7 @@ func handlePortLocationFilter(q *ent.EquipmentPortQuery, filter *models.PortFilt
 }
 
 func portLocationFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		var pp []predicate.EquipmentPort
 
 		for _, lid := range filter.IDSet {
@@ -77,7 +78,7 @@ func portLocationFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInpu
 }
 
 func portLocationExternalIDFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(equipmentport.HasParentWith(equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue)))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -91,7 +92,7 @@ func handlePortDefinitionFilter(q *ent.EquipmentPortQuery, filter *models.PortFi
 }
 
 func portDefFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(equipmentport.HasDefinitionWith(equipmentportdefinition.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -100,7 +101,7 @@ func portDefFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*
 func handlePortPropertyFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		pred, err := GetPropertyPredicate(*p)
 		if err != nil {
 			return nil, err
@@ -138,7 +139,7 @@ func handlePortPropertyFilter(q *ent.EquipmentPortQuery, filter *models.PortFilt
 			),
 		)
 		return q, nil
-	case models.FilterOperatorDateLessThan, models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateLessThan, enum.FilterOperatorDateGreaterThan:
 		propPred, propTypePred, err := GetDatePropertyPred(*p, filter.Operator)
 		if err != nil {
 			return nil, err
@@ -182,9 +183,9 @@ func portServiceFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput
 	queryEndPointPorts := equipmentport.HasEndpointsWith(serviceendpoint.HasServiceWith(service.IDIn(filter.IDSet...)))
 	queryPorts := equipmentport.HasServiceWith(service.IDIn(filter.IDSet...))
 	switch filter.Operator {
-	case models.FilterOperatorIsOneOf:
+	case enum.FilterOperatorIsOneOf:
 		return q.Where(equipmentport.Or(queryEndPointPorts, queryPorts)), nil
-	case models.FilterOperatorIsNotOneOf:
+	case enum.FilterOperatorIsNotOneOf:
 		return q.Where(equipmentport.Not(equipmentport.Or(queryEndPointPorts, queryPorts))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)

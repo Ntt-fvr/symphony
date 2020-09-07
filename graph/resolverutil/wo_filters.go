@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
@@ -50,14 +51,14 @@ func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilter
 }
 
 func nameFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorContains && filter.StringValue != nil {
+	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(workorder.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func statusFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation %q is not supported", filter.Operator)
 	}
 	statuses := make([]workorder.Status, 0, len(filter.StringSet))
@@ -72,21 +73,21 @@ func statusFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*
 }
 
 func ownedByFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasOwnerWith(user.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func typeFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasTypeWith(workordertype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func assignedToFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasAssigneeWith(user.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -94,13 +95,13 @@ func assignedToFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput
 
 func creationDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	switch filter.Operator {
-	case models.FilterOperatorDateLessThan:
+	case enum.FilterOperatorDateLessThan:
 		return q.Where(workorder.CreationDateLT(*filter.TimeValue)), nil
-	case models.FilterOperatorDateLessOrEqualThan:
+	case enum.FilterOperatorDateLessOrEqualThan:
 		return q.Where(workorder.CreationDateLTE(*filter.TimeValue)), nil
-	case models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateGreaterThan:
 		return q.Where(workorder.CreationDateGT(*filter.TimeValue)), nil
-	case models.FilterOperatorDateGreaterOrEqualThan:
+	case enum.FilterOperatorDateGreaterOrEqualThan:
 		return q.Where(workorder.CreationDateGTE(*filter.TimeValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -108,27 +109,27 @@ func creationDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInp
 
 func closeDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	switch filter.Operator {
-	case models.FilterOperatorDateLessThan:
+	case enum.FilterOperatorDateLessThan:
 		return q.Where(workorder.CloseDateLT(*filter.TimeValue)), nil
-	case models.FilterOperatorDateLessOrEqualThan:
+	case enum.FilterOperatorDateLessOrEqualThan:
 		return q.Where(workorder.CloseDateLTE(*filter.TimeValue)), nil
-	case models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateGreaterThan:
 		return q.Where(workorder.CloseDateGT(*filter.TimeValue)), nil
-	case models.FilterOperatorDateGreaterOrEqualThan:
+	case enum.FilterOperatorDateGreaterOrEqualThan:
 		return q.Where(workorder.CloseDateGTE(*filter.TimeValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func locationInstFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasLocationWith(location.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func priorityFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, fmt.Errorf("operation %q is not supported", filter.Operator)
 	}
 	priorities := make([]workorder.Priority, 0, len(filter.StringSet))
@@ -153,14 +154,14 @@ func handleWOLocationFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilte
 }
 
 func woLocationExternalIDFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(workorder.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
 func woLocationFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")
 		}

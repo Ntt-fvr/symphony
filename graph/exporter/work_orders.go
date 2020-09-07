@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/pkg/errors"
@@ -25,7 +26,7 @@ import (
 
 type woFilterInput struct {
 	Name          models.EquipmentFilterType `json:"name"`
-	Operator      models.FilterOperator      `jsons:"operator"`
+	Operator      enum.FilterOperator        `jsons:"operator"`
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
@@ -180,7 +181,7 @@ func paramToWOFilterInput(params string) ([]*models.WorkOrderFilterInput, error)
 		}
 		inp := models.WorkOrderFilterInput{
 			FilterType:    models.WorkOrderFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			IDSet:         intIDSet,
 			StringSet:     f.StringSet,

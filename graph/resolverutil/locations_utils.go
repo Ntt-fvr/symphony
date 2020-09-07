@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/pkg/errors"
 )
@@ -27,7 +28,7 @@ func handleEquipmentLocationFilter(q *ent.EquipmentQuery, filter *models.Equipme
 }
 
 func equipmentLocationExternalIDFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -62,7 +63,7 @@ func GetPortLocationPredicate(locationID int, maxDepth *int) predicate.Equipment
 }
 
 func equipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")
 		}
@@ -76,7 +77,7 @@ func equipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilt
 }
 
 func LocationFilterPredicate(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")
 		}

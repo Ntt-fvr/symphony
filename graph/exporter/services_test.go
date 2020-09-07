@@ -16,6 +16,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -390,7 +391,7 @@ func TestServiceWithFilters(t *testing.T) {
 	f1, err := json.Marshal([]servicesFilterInput{
 		{
 			Name:        models.ServiceFilterTypeServiceInstCustomerName,
-			Operator:    models.FilterOperatorContains,
+			Operator:    enum.FilterOperatorContains,
 			StringValue: "Customer 1",
 		},
 	})
@@ -398,7 +399,7 @@ func TestServiceWithFilters(t *testing.T) {
 	f2, err := json.Marshal([]servicesFilterInput{
 		{
 			Name:        models.ServiceFilterTypeServiceInstExternalID,
-			Operator:    models.FilterOperatorIs,
+			Operator:    enum.FilterOperatorIs,
 			StringValue: "XS542",
 		},
 	})

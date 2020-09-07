@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -24,7 +25,7 @@ import (
 
 type linksFilterInput struct {
 	Name          models.LinkFilterType    `json:"name"`
-	Operator      models.FilterOperator    `jsons:"operator"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
 	StringValue   string                   `json:"stringValue"`
 	IDSet         []string                 `json:"idSet"`
 	StringSet     []string                 `json:"stringSet"`
@@ -214,7 +215,7 @@ func paramToLinkFilterInput(params string) ([]*models.LinkFilterInput, error) {
 		}
 		inp := models.LinkFilterInput{
 			FilterType:    models.LinkFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propVal,
 			IDSet:         intIDSet,

@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -27,13 +28,13 @@ func TestAddExportTask(t *testing.T) {
 	filters := []*models.GeneralFilterInput{
 		{
 			FilterType: models.EquipmentFilterTypeLocationInst.String(),
-			Operator:   models.FilterOperatorIsOneOf,
+			Operator:   enum.FilterOperatorIsOneOf,
 			Key:        "for-ui-purposes",
 			IDSet:      []int{data.loc1, data.loc2},
 		},
 		{
 			FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
-			Operator:    models.FilterOperatorContains,
+			Operator:    enum.FilterOperatorContains,
 			Key:         "for-ui-purposes",
 			StringValue: pointer.ToString(substring),
 		},

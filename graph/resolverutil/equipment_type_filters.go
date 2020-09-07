@@ -9,6 +9,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/pkg/errors"
 )
@@ -21,7 +22,7 @@ func handleEquipmentTypeFilter(q *ent.EquipmentQuery, filter *models.EquipmentFi
 }
 
 func equipmentTypeFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(equipment.HasTypeWith(equipmenttype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)

@@ -31,7 +31,7 @@ func handleLinkFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.Li
 }
 
 func stateFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
 	states := make([]enum.FutureState, 0, len(filter.StringSet))
@@ -64,7 +64,7 @@ func handleLinkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 }
 
 func linkLocationExternalIDFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(link.HasPortsWith(equipmentport.HasParentWith(
 			equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))))), nil
 	}
@@ -72,7 +72,7 @@ func linkLocationExternalIDFilter(q *ent.LinkQuery, filter *models.LinkFilterInp
 }
 
 func linkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		var ps []predicate.Link
 		for _, lid := range filter.IDSet {
 			ps = append(ps, link.HasPortsWith(GetPortLocationPredicate(lid, filter.MaxDepth)))
@@ -92,7 +92,7 @@ func handleLinkEquipmentFilter(q *ent.LinkQuery, filter *models.LinkFilterInput)
 }
 
 func linkEquipmentTypeFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(link.HasPortsWith(equipmentport.HasParentWith(equipment.HasTypeWith(equipmenttype.IDIn(filter.IDSet...))))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -118,7 +118,7 @@ func BuildEquipmentAncestorFilter(equipmentIDs []int, depth, maxDepth int) predi
 }
 
 func linkEquipmentFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(link.HasPortsWith(
 			equipmentport.HasParentWith(BuildEquipmentAncestorFilter(filter.IDSet, 1, *filter.MaxDepth)))), nil
 	}
@@ -134,13 +134,13 @@ func handleLinkServiceFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (
 
 func linkServiceFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
 	switch filter.Operator {
-	case models.FilterOperatorIsOneOf:
+	case enum.FilterOperatorIsOneOf:
 		return q.Where(
 			link.HasServiceWith(
 				service.IDIn(filter.IDSet...),
 			),
 		), nil
-	case models.FilterOperatorIsNotOneOf:
+	case enum.FilterOperatorIsNotOneOf:
 		return q.Where(
 			link.Not(
 				link.HasServiceWith(
@@ -148,7 +148,7 @@ func linkServiceFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.L
 				),
 			),
 		), nil
-	case models.FilterOperatorContains:
+	case enum.FilterOperatorContains:
 		return q.Where(
 			link.HasServiceWith(
 				service.NameContainsFold(*filter.StringValue),
@@ -161,7 +161,7 @@ func linkServiceFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.L
 func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		propPred, err := GetPropertyPredicate(*p)
 		if err != nil {
 			return nil, err
@@ -203,7 +203,7 @@ func handleLinkPropertyFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) 
 				),
 			),
 		)), nil
-	case models.FilterOperatorDateLessThan, models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateLessThan, enum.FilterOperatorDateGreaterThan:
 		propPred, propTypePred, err := GetDatePropertyPred(*p, filter.Operator)
 		if err != nil {
 			return nil, err

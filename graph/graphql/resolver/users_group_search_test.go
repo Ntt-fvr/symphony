@@ -10,6 +10,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -33,7 +34,7 @@ func TestUsersGroupSearchByName(t *testing.T) {
 
 	f1 := models.UsersGroupFilterInput{
 		FilterType:  models.UsersGroupFilterTypeGroupName,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &gName1,
 	}
 	resAll, err := r.Query().UsersGroupSearch(ctx, []*models.UsersGroupFilterInput{&f1}, pointer.ToInt(100))

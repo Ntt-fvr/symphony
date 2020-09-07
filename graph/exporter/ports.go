@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -25,7 +26,7 @@ import (
 
 type portFilterInput struct {
 	Name          models.EquipmentFilterType `json:"name"`
-	Operator      models.FilterOperator      `jsons:"operator"`
+	Operator      enum.FilterOperator        `jsons:"operator"`
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
@@ -245,7 +246,7 @@ func paramToPortFilterInput(params string) ([]*models.PortFilterInput, error) {
 		}
 		inp := models.PortFilterInput{
 			FilterType:    models.PortFilterType(upperName),
-			Operator:      models.FilterOperator(upperOp),
+			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
 			BoolValue:     pointer.ToBool(f.BoolValue),

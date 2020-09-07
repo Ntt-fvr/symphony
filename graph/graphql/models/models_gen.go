@@ -434,7 +434,7 @@ type EditWorkOrderTypeInput struct {
 
 type EquipmentFilterInput struct {
 	FilterType    EquipmentFilterType `json:"filterType"`
-	Operator      FilterOperator      `json:"operator"`
+	Operator      enum.FilterOperator `json:"operator"`
 	StringValue   *string             `json:"stringValue"`
 	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
 	IDSet         []int               `json:"idSet"`
@@ -476,25 +476,25 @@ type FileInput struct {
 }
 
 type GeneralFilter struct {
-	FilterType    string            `json:"filterType"`
-	Key           string            `json:"key"`
-	Operator      FilterOperator    `json:"operator"`
-	StringValue   *string           `json:"stringValue"`
-	IDSet         []int             `json:"idSet"`
-	StringSet     []string          `json:"stringSet"`
-	BoolValue     *bool             `json:"boolValue"`
-	PropertyValue *ent.PropertyType `json:"propertyValue"`
+	FilterType    string              `json:"filterType"`
+	Key           string              `json:"key"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	BoolValue     *bool               `json:"boolValue"`
+	PropertyValue *ent.PropertyType   `json:"propertyValue"`
 }
 
 type GeneralFilterInput struct {
-	FilterType    string             `json:"filterType"`
-	Key           string             `json:"key"`
-	Operator      FilterOperator     `json:"operator"`
-	StringValue   *string            `json:"stringValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	BoolValue     *bool              `json:"boolValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
+	FilterType    string              `json:"filterType"`
+	Key           string              `json:"key"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	BoolValue     *bool               `json:"boolValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
 }
 
 type LatestPythonPackageResult struct {
@@ -503,13 +503,13 @@ type LatestPythonPackageResult struct {
 }
 
 type LinkFilterInput struct {
-	FilterType    LinkFilterType     `json:"filterType"`
-	Operator      FilterOperator     `json:"operator"`
-	StringValue   *string            `json:"stringValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	MaxDepth      *int               `json:"maxDepth"`
+	FilterType    LinkFilterType      `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	MaxDepth      *int                `json:"maxDepth"`
 }
 
 type LinkSearchResult struct {
@@ -523,14 +523,14 @@ type LinkSide struct {
 }
 
 type LocationFilterInput struct {
-	FilterType    LocationFilterType `json:"filterType"`
-	Operator      FilterOperator     `json:"operator"`
-	BoolValue     *bool              `json:"boolValue"`
-	StringValue   *string            `json:"stringValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	MaxDepth      *int               `json:"maxDepth"`
+	FilterType    enum.LocationFilterType `json:"filterType"`
+	Operator      enum.FilterOperator     `json:"operator"`
+	BoolValue     *bool                   `json:"boolValue"`
+	StringValue   *string                 `json:"stringValue"`
+	PropertyValue *PropertyTypeInput      `json:"propertyValue"`
+	IDSet         []int                   `json:"idSet"`
+	StringSet     []string                `json:"stringSet"`
+	MaxDepth      *int                    `json:"maxDepth"`
 }
 
 type LocationSearchResult struct {
@@ -550,7 +550,7 @@ type NetworkTopology struct {
 
 type PermissionsPolicyFilterInput struct {
 	FilterType  PermissionsPolicyFilterType `json:"filterType"`
-	Operator    FilterOperator              `json:"operator"`
+	Operator    enum.FilterOperator         `json:"operator"`
 	StringValue *string                     `json:"stringValue"`
 	MaxDepth    *int                        `json:"maxDepth"`
 }
@@ -561,14 +561,14 @@ type PermissionsPolicySearchResult struct {
 }
 
 type PortFilterInput struct {
-	FilterType    PortFilterType     `json:"filterType"`
-	Operator      FilterOperator     `json:"operator"`
-	BoolValue     *bool              `json:"boolValue"`
-	StringValue   *string            `json:"stringValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	MaxDepth      *int               `json:"maxDepth"`
+	FilterType    PortFilterType      `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	BoolValue     *bool               `json:"boolValue"`
+	StringValue   *string             `json:"stringValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	MaxDepth      *int                `json:"maxDepth"`
 }
 
 type PortSearchResult struct {
@@ -577,12 +577,12 @@ type PortSearchResult struct {
 }
 
 type ProjectFilterInput struct {
-	FilterType  ProjectFilterType `json:"filterType"`
-	Operator    FilterOperator    `json:"operator"`
-	StringValue *string           `json:"stringValue"`
-	IDSet       []int             `json:"idSet"`
-	MaxDepth    *int              `json:"maxDepth"`
-	StringSet   []string          `json:"stringSet"`
+	FilterType  ProjectFilterType   `json:"filterType"`
+	Operator    enum.FilterOperator `json:"operator"`
+	StringValue *string             `json:"stringValue"`
+	IDSet       []int               `json:"idSet"`
+	MaxDepth    *int                `json:"maxDepth"`
+	StringSet   []string            `json:"stringSet"`
 }
 
 type PropertyInput struct {
@@ -691,13 +691,13 @@ type ServiceEndpointDefinitionInput struct {
 }
 
 type ServiceFilterInput struct {
-	FilterType    ServiceFilterType  `json:"filterType"`
-	Operator      FilterOperator     `json:"operator"`
-	StringValue   *string            `json:"stringValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	MaxDepth      *int               `json:"maxDepth"`
+	FilterType    ServiceFilterType   `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	MaxDepth      *int                `json:"maxDepth"`
 }
 
 type ServiceSearchResult struct {
@@ -847,14 +847,14 @@ type UpdateUserGroupsInput struct {
 }
 
 type UserFilterInput struct {
-	FilterType    UserFilterType     `json:"filterType"`
-	Operator      FilterOperator     `json:"operator"`
-	StringValue   *string            `json:"stringValue"`
-	PropertyValue *PropertyTypeInput `json:"propertyValue"`
-	StatusValue   *user.Status       `json:"statusValue"`
-	IDSet         []int              `json:"idSet"`
-	StringSet     []string           `json:"stringSet"`
-	MaxDepth      *int               `json:"maxDepth"`
+	FilterType    UserFilterType      `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
+	StatusValue   *user.Status        `json:"statusValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	MaxDepth      *int                `json:"maxDepth"`
 }
 
 type UserSearchResult struct {
@@ -864,7 +864,7 @@ type UserSearchResult struct {
 
 type UsersGroupFilterInput struct {
 	FilterType  UsersGroupFilterType `json:"filterType"`
-	Operator    FilterOperator       `json:"operator"`
+	Operator    enum.FilterOperator  `json:"operator"`
 	StringValue *string              `json:"stringValue"`
 	MaxDepth    *int                 `json:"maxDepth"`
 }
@@ -891,7 +891,7 @@ type WorkOrderExecutionResult struct {
 
 type WorkOrderFilterInput struct {
 	FilterType    WorkOrderFilterType `json:"filterType"`
-	Operator      FilterOperator      `json:"operator"`
+	Operator      enum.FilterOperator `json:"operator"`
 	StringValue   *string             `json:"stringValue"`
 	IDSet         []int               `json:"idSet"`
 	StringSet     []string            `json:"stringSet"`
@@ -1045,60 +1045,6 @@ func (e FilterEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// operators to filter search by
-type FilterOperator string
-
-const (
-	FilterOperatorIs                     FilterOperator = "IS"
-	FilterOperatorContains               FilterOperator = "CONTAINS"
-	FilterOperatorIsOneOf                FilterOperator = "IS_ONE_OF"
-	FilterOperatorIsNotOneOf             FilterOperator = "IS_NOT_ONE_OF"
-	FilterOperatorDateGreaterThan        FilterOperator = "DATE_GREATER_THAN"
-	FilterOperatorDateLessThan           FilterOperator = "DATE_LESS_THAN"
-	FilterOperatorDateGreaterOrEqualThan FilterOperator = "DATE_GREATER_OR_EQUAL_THAN"
-	FilterOperatorDateLessOrEqualThan    FilterOperator = "DATE_LESS_OR_EQUAL_THAN"
-)
-
-var AllFilterOperator = []FilterOperator{
-	FilterOperatorIs,
-	FilterOperatorContains,
-	FilterOperatorIsOneOf,
-	FilterOperatorIsNotOneOf,
-	FilterOperatorDateGreaterThan,
-	FilterOperatorDateLessThan,
-	FilterOperatorDateGreaterOrEqualThan,
-	FilterOperatorDateLessOrEqualThan,
-}
-
-func (e FilterOperator) IsValid() bool {
-	switch e {
-	case FilterOperatorIs, FilterOperatorContains, FilterOperatorIsOneOf, FilterOperatorIsNotOneOf, FilterOperatorDateGreaterThan, FilterOperatorDateLessThan, FilterOperatorDateGreaterOrEqualThan, FilterOperatorDateLessOrEqualThan:
-		return true
-	}
-	return false
-}
-
-func (e FilterOperator) String() string {
-	return string(e)
-}
-
-func (e *FilterOperator) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = FilterOperator(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid FilterOperator", str)
-	}
-	return nil
-}
-
-func (e FilterOperator) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type ImageEntity string
 
 const (
@@ -1197,56 +1143,6 @@ func (e *LinkFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e LinkFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// what filters should we apply on locations
-type LocationFilterType string
-
-const (
-	LocationFilterTypeLocationInst             LocationFilterType = "LOCATION_INST"
-	LocationFilterTypeLocationInstName         LocationFilterType = "LOCATION_INST_NAME"
-	LocationFilterTypeLocationInstExternalID   LocationFilterType = "LOCATION_INST_EXTERNAL_ID"
-	LocationFilterTypeLocationType             LocationFilterType = "LOCATION_TYPE"
-	LocationFilterTypeLocationInstHasEquipment LocationFilterType = "LOCATION_INST_HAS_EQUIPMENT"
-	LocationFilterTypeProperty                 LocationFilterType = "PROPERTY"
-)
-
-var AllLocationFilterType = []LocationFilterType{
-	LocationFilterTypeLocationInst,
-	LocationFilterTypeLocationInstName,
-	LocationFilterTypeLocationInstExternalID,
-	LocationFilterTypeLocationType,
-	LocationFilterTypeLocationInstHasEquipment,
-	LocationFilterTypeProperty,
-}
-
-func (e LocationFilterType) IsValid() bool {
-	switch e {
-	case LocationFilterTypeLocationInst, LocationFilterTypeLocationInstName, LocationFilterTypeLocationInstExternalID, LocationFilterTypeLocationType, LocationFilterTypeLocationInstHasEquipment, LocationFilterTypeProperty:
-		return true
-	}
-	return false
-}
-
-func (e LocationFilterType) String() string {
-	return string(e)
-}
-
-func (e *LocationFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = LocationFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid LocationFilterType", str)
-	}
-	return nil
-}
-
-func (e LocationFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

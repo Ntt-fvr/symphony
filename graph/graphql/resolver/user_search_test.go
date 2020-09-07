@@ -9,9 +9,9 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -68,7 +68,7 @@ func searchByStatus(
 	limit := 100
 	f1 := models.UserFilterInput{
 		FilterType:  models.UserFilterTypeUserStatus,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StatusValue: &status,
 	}
 	res, err := qr.UserSearch(ctx, []*models.UserFilterInput{&f1}, &limit)
@@ -84,7 +84,7 @@ func searchByName(
 	limit := 100
 	f1 := models.UserFilterInput{
 		FilterType:  models.UserFilterTypeUserName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: &searchTerm,
 	}
 	res, err := qr.UserSearch(ctx, []*models.UserFilterInput{&f1}, &limit)

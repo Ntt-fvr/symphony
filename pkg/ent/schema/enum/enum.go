@@ -166,3 +166,47 @@ func (fs *FutureState) UnmarshalGQL(v interface{}) error {
 func (fs FutureState) MarshalGQL(w io.Writer) {
 	_ = MarshalGQL(w, fs)
 }
+
+// LocationFilterType specifies what filters should we apply on locations
+type LocationFilterType string
+
+const (
+	LocationFilterTypeLocationInst             LocationFilterType = "LOCATION_INST"
+	LocationFilterTypeLocationInstName         LocationFilterType = "LOCATION_INST_NAME"
+	LocationFilterTypeLocationInstExternalID   LocationFilterType = "LOCATION_INST_EXTERNAL_ID"
+	LocationFilterTypeLocationType             LocationFilterType = "LOCATION_TYPE"
+	LocationFilterTypeLocationInstHasEquipment LocationFilterType = "LOCATION_INST_HAS_EQUIPMENT"
+	LocationFilterTypeProperty                 LocationFilterType = "PROPERTY"
+)
+
+func (l LocationFilterType) IsValid() bool {
+	switch l {
+	case LocationFilterTypeLocationInst, LocationFilterTypeLocationInstName, LocationFilterTypeLocationInstExternalID, LocationFilterTypeLocationType, LocationFilterTypeLocationInstHasEquipment, LocationFilterTypeProperty:
+		return true
+	}
+	return false
+}
+
+// String implements Getter interface.
+func (l LocationFilterType) String() string {
+	return string(l)
+}
+
+// FilterOperator is filter operator for the search
+type FilterOperator string
+
+const (
+	FilterOperatorIs                     FilterOperator = "IS"
+	FilterOperatorContains               FilterOperator = "CONTAINS"
+	FilterOperatorIsOneOf                FilterOperator = "IS_ONE_OF"
+	FilterOperatorIsNotOneOf             FilterOperator = "IS_NOT_ONE_OF"
+	FilterOperatorDateGreaterThan        FilterOperator = "DATE_GREATER_THAN"
+	FilterOperatorDateLessThan           FilterOperator = "DATE_LESS_THAN"
+	FilterOperatorDateGreaterOrEqualThan FilterOperator = "DATE_GREATER_OR_EQUAL_THAN"
+	FilterOperatorDateLessOrEqualThan    FilterOperator = "DATE_LESS_OR_EQUAL_THAN"
+)
+
+// String implements Getter interface.
+func (f FilterOperator) String() string {
+	return string(f)
+}

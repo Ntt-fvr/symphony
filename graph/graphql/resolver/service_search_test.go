@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -154,7 +155,7 @@ func TestSearchServicesByName(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Room"),
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -163,7 +164,7 @@ func TestSearchServicesByName(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Room 201"),
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -203,7 +204,7 @@ func TestSearchServicesByStatus(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceStatus,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusMaintenance.String()},
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -212,7 +213,7 @@ func TestSearchServicesByStatus(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceStatus,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusInService.String()},
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -221,7 +222,7 @@ func TestSearchServicesByStatus(t *testing.T) {
 
 	f3 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceStatus,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{service.StatusPending.String()},
 	}
 	res3, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f3}, &limit)
@@ -254,7 +255,7 @@ func TestSearchServicesByType(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st1},
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -264,7 +265,7 @@ func TestSearchServicesByType(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st2},
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -274,7 +275,7 @@ func TestSearchServicesByType(t *testing.T) {
 
 	f3 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.st1, data.st2},
 	}
 	res3, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f3}, &limit)
@@ -317,7 +318,7 @@ func TestSearchServicesByExternalID(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstExternalID,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &externalID1,
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -327,7 +328,7 @@ func TestSearchServicesByExternalID(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstExternalID,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &externalID2,
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -375,7 +376,7 @@ func TestSearchServicesByCustomerName(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstCustomerName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("Donald"),
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -385,7 +386,7 @@ func TestSearchServicesByCustomerName(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeServiceInstCustomerName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("a"),
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -428,7 +429,7 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 
 	f1 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceDiscoveryMethod,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{servicetype.DiscoveryMethodInventory.String()},
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -438,7 +439,7 @@ func TestSearchServicesByDiscoveryMethod(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeServiceDiscoveryMethod,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{servicetype.DiscoveryMethodManual.String()},
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)
@@ -485,7 +486,7 @@ func TestSearchServicesByProperties(t *testing.T) {
 	require.Len(t, all.Services, 2)
 	f := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "service_str_prop",
 			Type:        propertytype.TypeString,
@@ -591,7 +592,7 @@ func TestSearchServicesByLocations(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -601,7 +602,7 @@ func TestSearchServicesByLocations(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -611,7 +612,7 @@ func TestSearchServicesByLocations(t *testing.T) {
 
 	f2ExternalID := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("22"),
 	}
 	res2, err = qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2ExternalID}, &limit)
@@ -620,7 +621,7 @@ func TestSearchServicesByLocations(t *testing.T) {
 
 	f3 := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc2.ID, loc3.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -723,7 +724,7 @@ func TestSearchServicesByEquipmentInside(t *testing.T) {
 	limit := 100
 	f1 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeEquipmentInService,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("eq_"),
 	}
 	res1, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f1}, &limit)
@@ -732,7 +733,7 @@ func TestSearchServicesByEquipmentInside(t *testing.T) {
 
 	f2 := models.ServiceFilterInput{
 		FilterType:  models.ServiceFilterTypeEquipmentInService,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("eq_inst3"),
 	}
 	res2, err := qr.ServiceSearch(ctx, []*models.ServiceFilterInput{&f2}, &limit)

@@ -2248,7 +2248,10 @@ input EditProjectInput {
 """
 operators to filter search by
 """
-enum FilterOperator {
+enum FilterOperator
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.FilterOperator"
+  ) {
   IS
   CONTAINS
   IS_ONE_OF
@@ -2350,7 +2353,10 @@ enum LinkFilterType {
 """
 what filters should we apply on locations
 """
-enum LocationFilterType {
+enum LocationFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LocationFilterType"
+  ) {
   LOCATION_INST
   LOCATION_INST_NAME
   LOCATION_INST_EXTERNAL_ID

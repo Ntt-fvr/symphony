@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 
 	"github.com/pkg/errors"
 )
@@ -28,14 +29,14 @@ func handleEquipmentFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilter
 }
 
 func equipmentExternalID(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == models.FilterOperatorIs {
+	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(equipment.ExternalID(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
 func equipmentNameFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == models.FilterOperatorContains {
+	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(equipment.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
@@ -45,7 +46,7 @@ func equipmentNameFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterIn
 func equipmentPropertyFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
-	case models.FilterOperatorIs:
+	case enum.FilterOperatorIs:
 		pred, err := GetPropertyPredicate(*p)
 		if err != nil {
 			return nil, err
@@ -77,7 +78,7 @@ func equipmentPropertyFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilt
 					)),
 				))))
 		return q, nil
-	case models.FilterOperatorDateLessThan, models.FilterOperatorDateGreaterThan:
+	case enum.FilterOperatorDateLessThan, enum.FilterOperatorDateGreaterThan:
 		propPred, propTypePred, err := GetDatePropertyPred(*p, filter.Operator)
 		if err != nil {
 			return nil, err

@@ -11,6 +11,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -93,13 +94,13 @@ func TestSearchProjectsByName(t *testing.T) {
 
 	filter1 := models.ProjectFilterInput{
 		FilterType:  models.ProjectFilterTypeProjectName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("project"),
 	}
 
 	filter2 := models.ProjectFilterInput{
 		FilterType:  models.ProjectFilterTypeProjectName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("zzzz"),
 	}
 
@@ -123,7 +124,7 @@ func TestSearchProjectsByType(t *testing.T) {
 
 	filter := models.ProjectFilterInput{
 		FilterType: models.ProjectFilterTypeProjectType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{projectData.typ.ID},
 	}
 
@@ -142,7 +143,7 @@ func TestSearchProjectsByLocation(t *testing.T) {
 
 	filter := models.ProjectFilterInput{
 		FilterType: models.ProjectFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{projectData.location.ID},
 		MaxDepth:   pointer.ToInt(1),
 	}
@@ -162,7 +163,7 @@ func TestSearchProjectsByOwner(t *testing.T) {
 
 	filter := models.ProjectFilterInput{
 		FilterType: models.ProjectFilterTypeProjectOwnedBy,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{projectData.creator.ID},
 		MaxDepth:   pointer.ToInt(1),
 	}

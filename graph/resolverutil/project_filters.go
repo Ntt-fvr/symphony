@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/pkg/errors"
 )
@@ -35,21 +36,21 @@ func handleProjectFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput)
 }
 
 func projectNameFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator == models.FilterOperatorContains && filter.StringValue != nil {
+	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(project.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func projectOwnedByFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(project.HasCreatorWith(user.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func projectLocationInstFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(project.HasLocationWith(location.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
@@ -63,7 +64,7 @@ func handleProjectLocationFilter(q *ent.ProjectQuery, filter *models.ProjectFilt
 }
 
 func projectLocationFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")
 		}
@@ -77,14 +78,14 @@ func projectLocationFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInpu
 }
 
 func projectTypeFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator == models.FilterOperatorIsOneOf {
+	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(project.HasTypeWith(projecttype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
 func projectPriorityFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInput) (*ent.ProjectQuery, error) {
-	if filter.Operator != models.FilterOperatorIsOneOf {
+	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation %q is not supported", filter.Operator)
 	}
 	priorities := make([]project.Priority, 0, len(filter.StringSet))

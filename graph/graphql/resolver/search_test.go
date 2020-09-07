@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -299,7 +300,7 @@ func TestEquipmentSearch(t *testing.T) {
 	maxDepth := 5
 	f1 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model1.loc1, model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
@@ -310,7 +311,7 @@ func TestEquipmentSearch(t *testing.T) {
 
 	f2 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeEquipmentType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model1.equType},
 		MaxDepth:   &maxDepth,
 	}
@@ -322,7 +323,7 @@ func TestEquipmentSearch(t *testing.T) {
 	fetchedPropType := res2.Equipment[0].QueryType().QueryPropertyTypes().OnlyX(ctx)
 	f3 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
-		Operator:   models.FilterOperatorIs,
+		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        fetchedPropType.Name,
 			Type:        fetchedPropType.Type,
@@ -339,7 +340,7 @@ func TestEquipmentSearch(t *testing.T) {
 	subst := "inst1"
 	f4 := models.EquipmentFilterInput{
 		FilterType:  models.EquipmentFilterTypeEquipInstName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: &subst,
 		MaxDepth:    &maxDepth,
 	}
@@ -350,7 +351,7 @@ func TestEquipmentSearch(t *testing.T) {
 
 	f5 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
@@ -361,7 +362,7 @@ func TestEquipmentSearch(t *testing.T) {
 
 	f6 := models.EquipmentFilterInput{
 		FilterType:  models.EquipmentFilterTypeEquipInstExternalID,
-		Operator:    models.FilterOperatorIs,
+		Operator:    enum.FilterOperatorIs,
 		StringValue: &model1.equ2ExtID,
 		MaxDepth:    &maxDepth,
 	}
@@ -382,7 +383,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 	maxDepth := 5
 	f := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeLocationInst,
-		Operator:   models.FilterOperatorContains,
+		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
 	_, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
@@ -390,7 +391,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 
 	f = models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
-		Operator:   models.FilterOperatorContains,
+		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
 	_, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
@@ -398,7 +399,7 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 
 	f = models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeEquipmentType,
-		Operator:   models.FilterOperatorContains,
+		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
 	_, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
@@ -475,7 +476,7 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 	limit := 100
 	f1 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -485,7 +486,7 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 
 	f1External := models.EquipmentFilterInput{
 		FilterType:  models.EquipmentFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("11"),
 	}
 	res1, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1External}, &limit)
@@ -494,7 +495,7 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 
 	f2 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
@@ -550,7 +551,7 @@ func TestSearchEquipmentByDate(t *testing.T) {
 	date = "2015-05-05"
 	f1 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
-		Operator:   models.FilterOperatorDateGreaterThan,
+		Operator:   enum.FilterOperatorDateGreaterThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "install_date",
 			Type:        propertytype.TypeDate,
@@ -565,7 +566,7 @@ func TestSearchEquipmentByDate(t *testing.T) {
 
 	f2 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
-		Operator:   models.FilterOperatorDateLessThan,
+		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &models.PropertyTypeInput{
 			Name:        "install_date",
 			Type:        propertytype.TypeDate,
@@ -611,7 +612,7 @@ func TestSearchWO(t *testing.T) {
 	name := "_1"
 	f1 := models.WorkOrderFilterInput{
 		FilterType:  models.WorkOrderFilterTypeWorkOrderName,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: &name,
 	}
 	c.MustPost(
@@ -625,7 +626,7 @@ func TestSearchWO(t *testing.T) {
 	status := workorder.StatusPlanned.String()
 	f2 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderStatus,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{status},
 	}
 	c.MustPost(
@@ -637,7 +638,7 @@ func TestSearchWO(t *testing.T) {
 
 	f3 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderType,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.woType1},
 	}
 	c.MustPost(
@@ -649,7 +650,7 @@ func TestSearchWO(t *testing.T) {
 
 	f4 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderAssignedTo,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.assignee1},
 	}
 	c.MustPost(
@@ -661,7 +662,7 @@ func TestSearchWO(t *testing.T) {
 
 	f5 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 	}
 	c.MustPost(
@@ -680,7 +681,7 @@ func TestSearchWO(t *testing.T) {
 
 	f7 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderOwnedBy,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.owner},
 	}
 	c.MustPost(
@@ -692,7 +693,7 @@ func TestSearchWO(t *testing.T) {
 
 	f8 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderCreationDate,
-		Operator:   models.FilterOperatorDateLessOrEqualThan,
+		Operator:   enum.FilterOperatorDateLessOrEqualThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
@@ -704,7 +705,7 @@ func TestSearchWO(t *testing.T) {
 
 	f9 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderCreationDate,
-		Operator:   models.FilterOperatorDateGreaterThan,
+		Operator:   enum.FilterOperatorDateGreaterThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
@@ -716,7 +717,7 @@ func TestSearchWO(t *testing.T) {
 
 	f10 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderCloseDate,
-		Operator:   models.FilterOperatorDateLessOrEqualThan,
+		Operator:   enum.FilterOperatorDateLessOrEqualThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
@@ -728,7 +729,7 @@ func TestSearchWO(t *testing.T) {
 
 	f11 := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderCloseDate,
-		Operator:   models.FilterOperatorDateGreaterThan,
+		Operator:   enum.FilterOperatorDateGreaterThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
@@ -756,7 +757,7 @@ func TestSearchWOByPriority(t *testing.T) {
 
 	f := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderPriority,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{workorder.PriorityHigh.String()},
 	}
 	c.MustPost(
@@ -801,7 +802,7 @@ func TestSearchWOByLocation(t *testing.T) {
 	require.Equal(t, 4, result.WorkOrderSearch.Count)
 	f := models.WorkOrderFilterInput{
 		FilterType: models.WorkOrderFilterTypeWorkOrderLocationInst,
-		Operator:   models.FilterOperatorIsOneOf,
+		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 		MaxDepth:   pointer.ToInt(2),
 	}
@@ -822,7 +823,7 @@ func TestSearchWOByLocation(t *testing.T) {
 
 	f2 := models.WorkOrderFilterInput{
 		FilterType:  models.WorkOrderFilterTypeLocationInstExternalID,
-		Operator:    models.FilterOperatorContains,
+		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("111"),
 	}
 	c.MustPost(
