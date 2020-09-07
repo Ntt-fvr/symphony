@@ -23,6 +23,7 @@ import RelayEnvironment from '../../common/RelayEnvironment';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
+import AutomationFlowsView from './flows/view/AutomationFlowsView';
 import {Suspense, useContext} from 'react';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
@@ -53,7 +54,8 @@ function NavRoutes() {
   const relativeUrl = useRelativeUrl();
   return (
     <Switch>
-      <Route path={relativeUrl('/flows')} component={FlowBuilder} />
+      <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
+      <Route path={relativeUrl('/flow/x')} component={FlowBuilder} />
       <Redirect to={relativeUrl('/flows')} />
     </Switch>
   );
