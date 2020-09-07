@@ -24,7 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/uuid"
 	"github.com/shurcooL/graphql"
@@ -157,7 +157,7 @@ type locationTypeResponse struct {
 	}
 }
 
-func (c *client) addLocationType(name string, properties ...*pkg_models.PropertyTypeInput) (*locationTypeResponse, error) {
+func (c *client) addLocationType(name string, properties ...*pkgmodels.PropertyTypeInput) (*locationTypeResponse, error) {
 	var m struct {
 		Response locationTypeResponse `graphql:"addLocationType(input: $input)"`
 	}
@@ -309,7 +309,7 @@ type addEquipmentTypeResponse struct {
 	} `graphql:"propertyTypes"`
 }
 
-func (c *client) addEquipmentType(name string, properties ...*pkg_models.PropertyTypeInput) (*addEquipmentTypeResponse, error) {
+func (c *client) addEquipmentType(name string, properties ...*pkgmodels.PropertyTypeInput) (*addEquipmentTypeResponse, error) {
 	var m struct {
 		Response addEquipmentTypeResponse `graphql:"addEquipmentType(input: $input)"`
 	}
@@ -392,12 +392,12 @@ type addWorkOrderTypeResponse struct {
 	} `graphql:"propertyTypes"`
 }
 
-func (c *client) addWorkOrderType(name string, properties ...*pkg_models.PropertyTypeInput) (*addWorkOrderTypeResponse, error) {
+func (c *client) addWorkOrderType(name string, properties ...*pkgmodels.PropertyTypeInput) (*addWorkOrderTypeResponse, error) {
 	var m struct {
 		Response addWorkOrderTypeResponse `graphql:"addWorkOrderType(input: $input)"`
 	}
 	if properties == nil {
-		properties = []*pkg_models.PropertyTypeInput{}
+		properties = []*pkgmodels.PropertyTypeInput{}
 	}
 	vars := map[string]interface{}{
 		"input": models.AddWorkOrderTypeInput{
@@ -592,11 +592,11 @@ func TestPossibleProperties(t *testing.T) {
 
 	_, err := c.addEquipmentType(
 		"router_type_"+uuid.New().String(),
-		&pkg_models.PropertyTypeInput{
+		&pkgmodels.PropertyTypeInput{
 			Name: "Width",
 			Type: propertytype.TypeInt,
 		},
-		&pkg_models.PropertyTypeInput{
+		&pkgmodels.PropertyTypeInput{
 			Name: "Manufacturer",
 			Type: propertytype.TypeString,
 		},
@@ -605,7 +605,7 @@ func TestPossibleProperties(t *testing.T) {
 
 	_, err = c.addEquipmentType(
 		"router_type_"+uuid.New().String(),
-		&pkg_models.PropertyTypeInput{
+		&pkgmodels.PropertyTypeInput{
 			Name: "Width",
 			Type: propertytype.TypeInt,
 		},
@@ -619,7 +619,7 @@ func TestPossibleProperties(t *testing.T) {
 	}
 
 	vars := map[string]interface{}{
-		"entityType": models.PropertyEntityEquipment,
+		"entityType": enum.PropertyEntityEquipment,
 	}
 	err = c.client.Query(context.Background(), &q, vars)
 	require.NoError(t, err)

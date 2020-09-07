@@ -8,10 +8,10 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +31,7 @@ func (r queryResolver) PortSearch(ctx context.Context, filters []*models.PortFil
 	return resolverutil.PortSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) LocationSearch(ctx context.Context, filters []*models.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
+func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
 	return resolverutil.LocationSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 

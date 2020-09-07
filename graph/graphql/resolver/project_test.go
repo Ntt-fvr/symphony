@@ -15,7 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -344,26 +344,26 @@ func TestAddProjectWithProperties(t *testing.T) {
 	mutation, ctx := mutationctx(t)
 
 	mr, qr, pr := r.Mutation(), r.Query(), r.Project()
-	strPropType := pkg_models.PropertyTypeInput{
+	strPropType := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 	strFixedValue := "FixedFoo"
-	strFixedPropType := pkg_models.PropertyTypeInput{
+	strFixedPropType := pkgmodels.PropertyTypeInput{
 		Name:               "str_fixed_prop",
 		Type:               "string",
 		IsInstanceProperty: pointer.ToBool(false),
 		StringValue:        &strFixedValue,
 	}
-	intPropType := pkg_models.PropertyTypeInput{
+	intPropType := pkgmodels.PropertyTypeInput{
 		Name: "int_prop",
 		Type: "int",
 	}
-	rangePropType := pkg_models.PropertyTypeInput{
+	rangePropType := pkgmodels.PropertyTypeInput{
 		Name: "rng_prop",
 		Type: "range",
 	}
-	propTypeInputs := []*pkg_models.PropertyTypeInput{&strPropType, &strFixedPropType, &intPropType, &rangePropType}
+	propTypeInputs := []*pkgmodels.PropertyTypeInput{&strPropType, &strFixedPropType, &intPropType, &rangePropType}
 	typ, err := mr.CreateProjectType(ctx, models.AddProjectTypeInput{Name: "example_type", Properties: propTypeInputs})
 	require.NoError(t, err, "Adding project type")
 
@@ -529,18 +529,18 @@ func TestProjectWithWorkOrdersAndProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), resolver.client)
 	mutation := resolver.Mutation()
 
-	strPropType := pkg_models.PropertyTypeInput{
+	strPropType := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
-	intPropType := pkg_models.PropertyTypeInput{
+	intPropType := pkgmodels.PropertyTypeInput{
 		Name:        "int_prop",
 		Type:        "int",
 		IsMandatory: pointer.ToBool(true),
 	}
 	woType, err := mutation.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
 		Name:       "example_type_a",
-		Properties: []*pkg_models.PropertyTypeInput{&strPropType, &intPropType},
+		Properties: []*pkgmodels.PropertyTypeInput{&strPropType, &intPropType},
 	})
 	require.NoError(t, err)
 	woDef := models.WorkOrderDefinitionInput{Type: woType.ID, Index: pointer.ToInt(1)}

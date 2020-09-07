@@ -19,7 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/assert"
@@ -33,12 +33,12 @@ func TestAddServiceWithProperties(t *testing.T) {
 
 	mr := r.Mutation()
 	serviceTypeStrValue := "Foo"
-	serviceStrPropType := pkg_models.PropertyTypeInput{
+	serviceStrPropType := pkgmodels.PropertyTypeInput{
 		Name:        "service_str_prop",
 		Type:        "string",
 		StringValue: &serviceTypeStrValue,
 	}
-	servicePropTypeInput := []*pkg_models.PropertyTypeInput{&serviceStrPropType}
+	servicePropTypeInput := []*pkgmodels.PropertyTypeInput{&serviceStrPropType}
 
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name: "Internet Access", HasCustomer: false, Properties: servicePropTypeInput})
@@ -511,19 +511,19 @@ func TestEditServiceWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr, qr := r.Mutation(), r.Query()
-	pTypes := pkg_models.PropertyTypeInput{
+	pTypes := pkgmodels.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 
-	p2Types := pkg_models.PropertyTypeInput{
+	p2Types := pkgmodels.PropertyTypeInput{
 		Name: "str_prop2",
 		Type: "string",
 	}
 
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       "type_name_1",
-		Properties: []*pkg_models.PropertyTypeInput{&pTypes, &p2Types},
+		Properties: []*pkgmodels.PropertyTypeInput{&pTypes, &p2Types},
 	})
 	require.NoError(t, err)
 	propTypes := serviceType.QueryPropertyTypes().AllX(ctx)
@@ -845,13 +845,13 @@ func TestAddServiceWithServiceProperty(t *testing.T) {
 	require.NoError(t, err)
 
 	index := 0
-	servicePropType := pkg_models.PropertyTypeInput{
+	servicePropType := pkgmodels.PropertyTypeInput{
 		Name:  "service_prop",
 		Type:  "node",
 		Index: &index,
 	}
 
-	propTypeInputs := []*pkg_models.PropertyTypeInput{&servicePropType}
+	propTypeInputs := []*pkgmodels.PropertyTypeInput{&servicePropType}
 	serviceTypeWithServiceProp, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:        "service_type_with_service_prop",
 		HasCustomer: true,

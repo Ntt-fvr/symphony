@@ -5,7 +5,6 @@
 package resolverutil
 
 import (
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
@@ -13,10 +12,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 )
 
-func handleLocationFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func handleLocationFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	switch filter.FilterType {
 	case enum.LocationFilterTypeLocationInst:
 		return LocationFilterPredicate(q, filter)
@@ -30,7 +30,7 @@ func handleLocationFilter(q *ent.LocationQuery, filter *models.LocationFilterInp
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func locationExternalIDFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func locationExternalIDFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	switch filter.Operator {
 	case enum.FilterOperatorContains:
 		return q.Where(location.ExternalIDContainsFold(*filter.StringValue)), nil
@@ -40,14 +40,14 @@ func locationExternalIDFilter(q *ent.LocationQuery, filter *models.LocationFilte
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
-func locationNameFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func locationNameFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(location.NameEqualFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
-func locationHasEquipmentFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func locationHasEquipmentFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	if filter.Operator == enum.FilterOperatorIs {
 		var pp predicate.Location
 		if *filter.BoolValue {
@@ -60,14 +60,14 @@ func locationHasEquipmentFilter(q *ent.LocationQuery, filter *models.LocationFil
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func handleLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func handleLocationTypeFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	if filter.FilterType == enum.LocationFilterTypeLocationType {
 		return locationLocationTypeFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func locationLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func locationLocationTypeFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(location.HasTypeWith(locationtype.IDIn(filter.IDSet...))), nil
 	}
@@ -75,7 +75,7 @@ func locationLocationTypeFilter(q *ent.LocationQuery, filter *models.LocationFil
 }
 
 // nolint: dupl
-func handleLocationPropertyFilter(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func handleLocationPropertyFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
 	case enum.FilterOperatorIs:

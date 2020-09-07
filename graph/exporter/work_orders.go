@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/pkg/errors"
@@ -26,13 +26,13 @@ import (
 )
 
 type woFilterInput struct {
-	Name          models.EquipmentFilterType   `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	BoolValue     bool                         `json:"boolValue"`
+	Name          models.EquipmentFilterType  `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	BoolValue     bool                        `json:"boolValue"`
 }
 
 type woRower struct {
@@ -69,7 +69,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 	for i, w := range wosList {
 		woIDs[i] = w.ID
 	}
-	propertyTypes, err := propertyTypesSlice(ctx, woIDs, client, models.PropertyEntityWorkOrder)
+	propertyTypes, err := propertyTypesSlice(ctx, woIDs, client, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		logger.Error("cannot query property types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query property types")
@@ -99,7 +99,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 }
 
 func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) ([]string, error) {
-	properties, err := propertiesSlice(ctx, wo, propertyTypes, models.PropertyEntityWorkOrder)
+	properties, err := propertiesSlice(ctx, wo, propertyTypes, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		return nil, err
 	}

@@ -17,7 +17,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -218,7 +218,7 @@ func TestPortWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: pkg_models.PropertyTypeInput{
+			PropertyValue: pkgmodels.PropertyTypeInput{
 				ID:          pointer.ToInt(42),
 				Name:        propStr,
 				StringValue: pointer.ToString("t1"),

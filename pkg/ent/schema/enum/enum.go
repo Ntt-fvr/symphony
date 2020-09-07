@@ -210,3 +210,21 @@ const (
 func (f FilterOperator) String() string {
 	return string(f)
 }
+
+//PropertyEntity is the entity for the property.
+type PropertyEntity string
+
+const (
+	PropertyEntityEquipment PropertyEntity = "EQUIPMENT"
+	PropertyEntityService   PropertyEntity = "SERVICE"
+	PropertyEntityLink      PropertyEntity = "LINK"
+	PropertyEntityPort      PropertyEntity = "PORT"
+	PropertyEntityLocation  PropertyEntity = "LOCATION"
+	PropertyEntityWorkOrder PropertyEntity = "WORK_ORDER"
+	PropertyEntityProject   PropertyEntity = "PROJECT"
+)
+
+// String implements Getter interface.
+func (p PropertyEntity) String() string {
+	return string(p)
+}

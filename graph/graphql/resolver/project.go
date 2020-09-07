@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 
 	"github.com/AlekSi/pointer"
@@ -310,7 +311,7 @@ func (r mutationResolver) CreateProject(ctx context.Context, input models.AddPro
 	if err != nil {
 		return nil, fmt.Errorf("convert to template property inputs: %w", err)
 	}
-	propInput, err := r.validatedPropertyInputsFromTemplate(ctx, tPropInputs, pTemplate.ID, models.PropertyEntityProject, false)
+	propInput, err := r.validatedPropertyInputsFromTemplate(ctx, tPropInputs, pTemplate.ID, enum.PropertyEntityProject, false)
 	if err != nil {
 		return nil, fmt.Errorf("validating property for template : %w", err)
 	}
@@ -396,7 +397,7 @@ func (r mutationResolver) DeleteProject(ctx context.Context, id int) (bool, erro
 		}
 	}
 	if proj.Edges.Template != nil {
-		if _, err := r.deleteTemplate(ctx, proj.Edges.Template.ID, models.PropertyEntityProject); err != nil {
+		if _, err := r.deleteTemplate(ctx, proj.Edges.Template.ID, enum.PropertyEntityProject); err != nil {
 			return false, errors.Wrapf(err, "deleting project template id=%q", proj.Edges.Template.ID)
 		}
 	}

@@ -8,12 +8,12 @@ import (
 	"context"
 	"strings"
 
-	"github.com/facebookincubator/symphony/pkg/ent/service"
-	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
@@ -122,7 +122,7 @@ func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortF
 	}, nil
 }
 
-func LocationFilter(query *ent.LocationQuery, filters []*models.LocationFilterInput) (*ent.LocationQuery, error) {
+func LocationFilter(query *ent.LocationQuery, filters []*pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	var err error
 	for _, f := range filters {
 		switch {
@@ -143,7 +143,7 @@ func LocationFilter(query *ent.LocationQuery, filters []*models.LocationFilterIn
 	return query, nil
 }
 
-func LocationSearch(ctx context.Context, client *ent.Client, filters []*models.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
+func LocationSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
 	var (
 		query = client.Location.Query()
 		err   error

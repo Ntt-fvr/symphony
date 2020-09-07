@@ -18,20 +18,20 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type portFilterInput struct {
-	Name          models.EquipmentFilterType   `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	BoolValue     bool                         `json:"boolValue"`
+	Name          models.EquipmentFilterType  `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	BoolValue     bool                        `json:"boolValue"`
 }
 
 type portsRower struct {
@@ -81,7 +81,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 		for i, p := range portsList {
 			portIDs[i] = p.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, portIDs, client, models.PropertyEntityPort)
+		propertyTypes, err = propertyTypesSlice(ctx, portIDs, client, enum.PropertyEntityPort)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -139,7 +139,7 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = propertiesSlice(ctx, port, propertyTypes, models.PropertyEntityPort)
+		properties, err = propertiesSlice(ctx, port, propertyTypes, enum.PropertyEntityPort)
 		return err
 	})
 	g.Go(func(ctx context.Context) error {

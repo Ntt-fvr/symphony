@@ -12,26 +12,25 @@ import (
 	"strings"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type locationsFilterInput struct {
-	Name          enum.LocationFilterType      `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                         `json:"maxDepth"`
-	BoolValue     *bool                        `json:"boolValue"`
+	Name          enum.LocationFilterType  `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                     `json:"maxDepth"`
+	BoolValue     *bool                    `json:"boolValue"`
 }
 
 type LocationsRower struct {
@@ -94,7 +93,7 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	for i, l := range locationsList {
 		locationIDs[i] = l.ID
 	}
-	propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, models.PropertyEntityLocation)
+	propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, enum.PropertyEntityLocation)
 	if err != nil {
 		logger.Error("cannot query property types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query property types")
@@ -147,7 +146,7 @@ func locationToSlice(ctx context.Context, location *ent.Location, orderedLocType
 			return err
 		})
 		g.Go(func(ctx context.Context) (err error) {
-			properties, err = propertiesSlice(ctx, location, propertyTypes, models.PropertyEntityLocation)
+			properties, err = propertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
 			return err
 		})
 		if err := g.Wait(); err != nil {
@@ -158,7 +157,7 @@ func locationToSlice(ctx context.Context, location *ent.Location, orderedLocType
 		if err != nil {
 			return nil, err
 		}
-		properties, err = propertiesSlice(ctx, location, propertyTypes, models.PropertyEntityLocation)
+		properties, err = propertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
 		if err != nil {
 			return nil, err
 		}

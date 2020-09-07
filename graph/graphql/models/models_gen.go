@@ -565,17 +565,6 @@ type LinkSide struct {
 	Port      int `json:"port"`
 }
 
-type LocationFilterInput struct {
-	FilterType    enum.LocationFilterType   `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	BoolValue     *bool                     `json:"boolValue"`
-	StringValue   *string                   `json:"stringValue"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	MaxDepth      *int                      `json:"maxDepth"`
-}
-
 type LocationSearchResult struct {
 	Locations []*ent.Location `json:"locations"`
 	Count     int             `json:"count"`
@@ -1317,57 +1306,6 @@ func (e *ProjectFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ProjectFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type PropertyEntity string
-
-const (
-	PropertyEntityEquipment PropertyEntity = "EQUIPMENT"
-	PropertyEntityService   PropertyEntity = "SERVICE"
-	PropertyEntityLink      PropertyEntity = "LINK"
-	PropertyEntityPort      PropertyEntity = "PORT"
-	PropertyEntityLocation  PropertyEntity = "LOCATION"
-	PropertyEntityWorkOrder PropertyEntity = "WORK_ORDER"
-	PropertyEntityProject   PropertyEntity = "PROJECT"
-)
-
-var AllPropertyEntity = []PropertyEntity{
-	PropertyEntityEquipment,
-	PropertyEntityService,
-	PropertyEntityLink,
-	PropertyEntityPort,
-	PropertyEntityLocation,
-	PropertyEntityWorkOrder,
-	PropertyEntityProject,
-}
-
-func (e PropertyEntity) IsValid() bool {
-	switch e {
-	case PropertyEntityEquipment, PropertyEntityService, PropertyEntityLink, PropertyEntityPort, PropertyEntityLocation, PropertyEntityWorkOrder, PropertyEntityProject:
-		return true
-	}
-	return false
-}
-
-func (e PropertyEntity) String() string {
-	return string(e)
-}
-
-func (e *PropertyEntity) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PropertyEntity(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PropertyEntity", str)
-	}
-	return nil
-}
-
-func (e PropertyEntity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

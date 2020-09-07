@@ -16,7 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -88,13 +88,13 @@ func prepareEquipmentData(ctx context.Context, r *TestResolver, name string, pro
 		Name: name + "loc_inst2",
 		Type: locType2.ID,
 	})
-	propType := pkg_models.PropertyTypeInput{
+	propType := pkgmodels.PropertyTypeInput{
 		Name: "Owner",
 		Type: propertytype.TypeString,
 	}
 	equType, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       name + "eq_type",
-		Properties: []*pkg_models.PropertyTypeInput{&propType},
+		Properties: []*pkgmodels.PropertyTypeInput{&propType},
 	})
 	if len(props) != 0 {
 		props[0].PropertyTypeID = equType.QueryPropertyTypes().OnlyIDX(ctx)
@@ -325,7 +325,7 @@ func TestEquipmentSearch(t *testing.T) {
 	f3 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &pkg_models.PropertyTypeInput{
+		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        fetchedPropType.Name,
 			Type:        fetchedPropType.Type,
 			StringValue: &owner,
@@ -414,23 +414,23 @@ func TestQueryEquipmentPossibleProperties(t *testing.T) {
 
 	mr, qr := r.Mutation(), r.Query()
 
-	namePropType := pkg_models.PropertyTypeInput{
+	namePropType := pkgmodels.PropertyTypeInput{
 		Name: "Name",
 		Type: propertytype.TypeString,
 	}
 
-	widthPropType := pkg_models.PropertyTypeInput{
+	widthPropType := pkgmodels.PropertyTypeInput{
 		Name: "Width",
 		Type: propertytype.TypeInt,
 	}
 
 	_, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "example_type_a",
-		Properties: []*pkg_models.PropertyTypeInput{&namePropType, &widthPropType},
+		Properties: []*pkgmodels.PropertyTypeInput{&namePropType, &widthPropType},
 	})
 	require.NoError(t, err)
 
-	propDefs, err := qr.PossibleProperties(ctx, models.PropertyEntityEquipment)
+	propDefs, err := qr.PossibleProperties(ctx, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 	for _, propDef := range propDefs {
 		assert.True(t, propDef.Name == namePropType.Name || propDef.Name == widthPropType.Name)
@@ -520,14 +520,14 @@ func TestSearchEquipmentByDate(t *testing.T) {
 		Type: locType.ID,
 	})
 	date := "2020-01-01"
-	propType := pkg_models.PropertyTypeInput{
+	propType := pkgmodels.PropertyTypeInput{
 		Name:        "install_date",
 		Type:        propertytype.TypeDate,
 		StringValue: &date,
 	}
 	eqType, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "eq_type",
-		Properties: []*pkg_models.PropertyTypeInput{&propType},
+		Properties: []*pkgmodels.PropertyTypeInput{&propType},
 	})
 	date = "2010-01-01"
 	ptypeID := eqType.QueryPropertyTypes().OnlyIDX(ctx)
@@ -553,7 +553,7 @@ func TestSearchEquipmentByDate(t *testing.T) {
 	f1 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateGreaterThan,
-		PropertyValue: &pkg_models.PropertyTypeInput{
+		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "install_date",
 			Type:        propertytype.TypeDate,
 			StringValue: &date,
@@ -568,7 +568,7 @@ func TestSearchEquipmentByDate(t *testing.T) {
 	f2 := models.EquipmentFilterInput{
 		FilterType: models.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
-		PropertyValue: &pkg_models.PropertyTypeInput{
+		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "install_date",
 			Type:        propertytype.TypeDate,
 			StringValue: &date,

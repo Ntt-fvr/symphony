@@ -1438,7 +1438,10 @@ enum ImageEntity {
   CHECKLIST_ITEM
 }
 
-enum PropertyEntity {
+enum PropertyEntity
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PropertyEntity"
+  ) {
   EQUIPMENT
   SERVICE
   LINK
@@ -2438,7 +2441,10 @@ input LinkFilterInput {
   maxDepth: Int = 5
 }
 
-input LocationFilterInput {
+input LocationFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationFilterInput"
+  ) {
   filterType: LocationFilterType!
   operator: FilterOperator!
   boolValue: Boolean

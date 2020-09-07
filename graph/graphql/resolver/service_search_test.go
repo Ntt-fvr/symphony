@@ -15,7 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -37,26 +37,26 @@ type serviceSearchDataModels struct {
 	eqpd2       int
 }
 
-func preparePropertyTypes() []*pkg_models.PropertyTypeInput {
-	serviceStrPropType := pkg_models.PropertyTypeInput{
+func preparePropertyTypes() []*pkgmodels.PropertyTypeInput {
+	serviceStrPropType := pkgmodels.PropertyTypeInput{
 		Name:        "service_str_prop",
 		Type:        "string",
 		StringValue: pointer.ToString("Foo is the best"),
 	}
-	serviceIntPropType := pkg_models.PropertyTypeInput{
+	serviceIntPropType := pkgmodels.PropertyTypeInput{
 		Name: "service_int_prop",
 		Type: "int",
 	}
-	serviceBoolPropType := pkg_models.PropertyTypeInput{
+	serviceBoolPropType := pkgmodels.PropertyTypeInput{
 		Name: "service_bool_prop",
 		Type: "bool",
 	}
-	serviceFloatPropType := pkg_models.PropertyTypeInput{
+	serviceFloatPropType := pkgmodels.PropertyTypeInput{
 		Name: "service_float_prop",
 		Type: "float",
 	}
 
-	return []*pkg_models.PropertyTypeInput{
+	return []*pkgmodels.PropertyTypeInput{
 		&serviceStrPropType,
 		&serviceIntPropType,
 		&serviceBoolPropType,
@@ -92,7 +92,7 @@ func prepareServiceData(ctx context.Context, r *TestResolver) serviceSearchDataM
 		}})
 
 	st2, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
-		Name: "Internet Access 2", HasCustomer: false, Properties: []*pkg_models.PropertyTypeInput{}})
+		Name: "Internet Access 2", HasCustomer: false, Properties: []*pkgmodels.PropertyTypeInput{}})
 
 	strType, _ := st1.QueryPropertyTypes().Where(propertytype.Name("service_str_prop")).Only(ctx)
 	intType, _ := st1.QueryPropertyTypes().Where(propertytype.Name("service_int_prop")).Only(ctx)
@@ -488,7 +488,7 @@ func TestSearchServicesByProperties(t *testing.T) {
 	f := models.ServiceFilterInput{
 		FilterType: models.ServiceFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &pkg_models.PropertyTypeInput{
+		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "service_str_prop",
 			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("Foo is the best"),

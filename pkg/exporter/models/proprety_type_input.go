@@ -4,7 +4,9 @@
 
 package models
 
-import "github.com/facebookincubator/symphony/pkg/ent/propertytype"
+import (
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+)
 
 type PropertyTypeInput struct {
 	ID                 *int              `json:"id"`

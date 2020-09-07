@@ -14,9 +14,9 @@ import (
 	"unicode"
 
 	"github.com/facebookincubator/symphony/graph/resolverutil"
-
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -227,14 +227,14 @@ func getLastLocations(ctx context.Context, e *ent.Equipment, level int) (*string
 }
 
 // nolint: funlen
-func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity models.PropertyEntity) ([]string, error) {
+func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity enum.PropertyEntity) ([]string, error) {
 	var (
 		propTypes       []string
 		alreadyAppended = map[string]string{}
 	)
 
 	switch entity {
-	case models.PropertyEntityEquipment:
+	case enum.PropertyEntityEquipment:
 		var equipTypesWithEquipment []ent.EquipmentType
 		equipTypes, err := c.EquipmentType.Query().
 			Paginate(ctx, nil, nil, nil, nil)
@@ -268,7 +268,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 				}
 			}
 		}
-	case models.PropertyEntityLocation:
+	case enum.PropertyEntityLocation:
 		var locTypesWithInstances []ent.LocationType
 		locTypes, err := c.LocationType.Query().
 			Paginate(ctx, nil, nil, nil, nil)
@@ -302,7 +302,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 				}
 			}
 		}
-	case models.PropertyEntityPort, models.PropertyEntityLink:
+	case enum.PropertyEntityPort, enum.PropertyEntityLink:
 		var relevantPortTypes []ent.EquipmentPortType
 		portTypes, err := c.EquipmentPortType.Query().
 			Paginate(ctx, nil, nil, nil, nil)
@@ -312,7 +312,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 
 		for _, typ := range portTypes.Edges {
 			portType := typ.Node
-			if entity == models.PropertyEntityLink {
+			if entity == enum.PropertyEntityLink {
 				// TODO (T59268484) solve the case where there are too many IDs to check (trying to optimize)
 				if len(ids) < 50 {
 					switch exist, err := portType.QueryPortDefinitions().QueryPorts().QueryLink().Where(link.IDIn(ids...)).Exist(ctx); {
@@ -324,7 +324,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 				} else {
 					relevantPortTypes = append(relevantPortTypes, *portType)
 				}
-			} else if entity == models.PropertyEntityPort {
+			} else if entity == enum.PropertyEntityPort {
 				// TODO (T59268484) solve the case where there are too many IDs to check (trying to optimize)
 				if len(ids) < 50 {
 					switch exist, err := portType.QueryPortDefinitions().QueryPorts().Where(equipmentport.IDIn(ids...)).Exist(ctx); {
@@ -340,9 +340,9 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 		}
 		for _, portType := range relevantPortTypes {
 			var pts []*ent.PropertyType
-			if entity == models.PropertyEntityPort {
+			if entity == enum.PropertyEntityPort {
 				pts, err = portType.QueryPropertyTypes().All(ctx)
-			} else if entity == models.PropertyEntityLink {
+			} else if entity == enum.PropertyEntityLink {
 				pts, err = portType.QueryLinkPropertyTypes().All(ctx)
 			}
 			if err != nil {
@@ -355,7 +355,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 				}
 			}
 		}
-	case models.PropertyEntityService:
+	case enum.PropertyEntityService:
 		var serviceTypesWithServices []ent.ServiceType
 		serviceTypes, err := c.ServiceType.Query().
 			Paginate(ctx, nil, nil, nil, nil)
@@ -389,7 +389,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 				}
 			}
 		}
-	case models.PropertyEntityWorkOrder:
+	case enum.PropertyEntityWorkOrder:
 		types, err := c.PropertyType.Query().
 			Where(propertytype.HasPropertiesWith(property.HasWorkOrderWith(workorder.IDIn(ids...)))).
 			GroupBy(propertytype.FieldName).Strings(ctx)
@@ -404,13 +404,13 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity mo
 }
 
 // nolint: funlen
-func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []string, entityType models.PropertyEntity) ([]string, error) {
+func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []string, entityType enum.PropertyEntity) ([]string, error) {
 	var ret = make([]string, len(propertyTypes))
 	var typs []*ent.PropertyType
 	var props []*ent.Property
 
 	switch entityType {
-	case models.PropertyEntityEquipment:
+	case enum.PropertyEntityEquipment:
 		entity := instance.(*ent.Equipment)
 		var err error
 		typs, err = entity.QueryType().QueryPropertyTypes().All(ctx)
@@ -421,7 +421,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying equipment properties (id=%d)", entity.ID)
 		}
-	case models.PropertyEntityPort:
+	case enum.PropertyEntityPort:
 		entity := instance.(*ent.EquipmentPort)
 		var err error
 		typs, err = entity.QueryDefinition().QueryEquipmentPortType().QueryPropertyTypes().All(ctx)
@@ -432,7 +432,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying port properties (id=%d)", entity.ID)
 		}
-	case models.PropertyEntityLink:
+	case enum.PropertyEntityLink:
 		entity := instance.(*ent.Link)
 		ports, err := entity.QueryPorts().All(ctx)
 		if err != nil {
@@ -450,7 +450,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying link properties (id=%d)", entity.ID)
 		}
-	case models.PropertyEntityService:
+	case enum.PropertyEntityService:
 		entity := instance.(*ent.Service)
 		var err error
 		typs, err = entity.QueryType().QueryPropertyTypes().All(ctx)
@@ -461,7 +461,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying services properties (id=%d)", entity.ID)
 		}
-	case models.PropertyEntityLocation:
+	case enum.PropertyEntityLocation:
 		entity := instance.(*ent.Location)
 		var err error
 		typs, err = entity.QueryType().QueryPropertyTypes().All(ctx)
@@ -472,7 +472,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying location properties (id=%d)", entity.ID)
 		}
-	case models.PropertyEntityWorkOrder:
+	case enum.PropertyEntityWorkOrder:
 		entity := instance.(*ent.WorkOrder)
 		var err error
 		props, err = entity.QueryProperties().All(ctx)

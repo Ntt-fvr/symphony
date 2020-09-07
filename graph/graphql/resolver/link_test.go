@@ -12,7 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/assert"
@@ -116,12 +116,12 @@ func TestAddLinkWithProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	linkStrValue := "Foo"
-	linkStrPropType := pkg_models.PropertyTypeInput{
+	linkStrPropType := pkgmodels.PropertyTypeInput{
 		Name:        "link_str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
-	linkPropTypeInput := []*pkg_models.PropertyTypeInput{&linkStrPropType}
+	linkPropTypeInput := []*pkgmodels.PropertyTypeInput{&linkStrPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: linkPropTypeInput,
@@ -218,12 +218,12 @@ func TestEditLinkWithProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	linkStrValue := "Foo"
-	linkStrPropType := pkg_models.PropertyTypeInput{
+	linkStrPropType := pkgmodels.PropertyTypeInput{
 		Name:        "link_str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
-	linkPropTypeInput := []*pkg_models.PropertyTypeInput{&linkStrPropType}
+	linkPropTypeInput := []*pkgmodels.PropertyTypeInput{&linkStrPropType}
 	portType, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: linkPropTypeInput,

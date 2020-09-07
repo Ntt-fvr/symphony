@@ -21,7 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ import (
 func (m *importer) getOrCreateEquipmentType(
 	ctx context.Context, name string, positionsCount int,
 	positionPrefix string, portsCount int,
-	props []*pkg_models.PropertyTypeInput,
+	props []*pkgmodels.PropertyTypeInput,
 ) *ent.EquipmentType {
 	log := m.logger.For(ctx)
 	client := m.ClientFrom(ctx)

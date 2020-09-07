@@ -42,7 +42,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveyquestion"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/AlekSi/pointer"
@@ -77,7 +77,7 @@ func (mutationResolver) isEmptyProp(ptype *ent.PropertyType, input interface{}) 
 		floatVal = v.FloatValue
 		lat, long = v.LatitudeValue, v.LongitudeValue
 		rangeTo, rangeFrom = v.RangeToValue, v.RangeFromValue
-	case *pkg_models.PropertyTypeInput:
+	case *pkgmodels.PropertyTypeInput:
 		typ = v.Type
 		strVal = v.StringValue
 		boolVal = v.BooleanValue
@@ -220,7 +220,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 }
 
 func (r mutationResolver) AddPropertyTypes(
-	ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs ...*pkg_models.PropertyTypeInput,
+	ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs ...*pkgmodels.PropertyTypeInput,
 ) error {
 	var (
 		client = r.ClientFrom(ctx).PropertyType
@@ -1552,7 +1552,7 @@ func (r mutationResolver) RemoveWorkOrder(ctx context.Context, id int) (int, err
 		if !ent.IsNotFound(err) {
 			return id, errors.Wrapf(err, "query work order template: id=%q", wot.ID)
 		}
-	} else if _, err := r.deleteTemplate(ctx, wot.ID, models.PropertyEntityWorkOrder); err != nil {
+	} else if _, err := r.deleteTemplate(ctx, wot.ID, enum.PropertyEntityWorkOrder); err != nil {
 		return id, errors.Wrapf(err, "deleting work order template id=%q", wot.ID)
 	}
 	if err := client.WorkOrder.DeleteOne(wo).Exec(ctx); err != nil {
@@ -2384,7 +2384,7 @@ func (r mutationResolver) validateEquipmentNameIsUnique(ctx context.Context, nam
 	return nil
 }
 
-func (r mutationResolver) validateAddedNewPropertyType(input *pkg_models.PropertyTypeInput) error {
+func (r mutationResolver) validateAddedNewPropertyType(input *pkgmodels.PropertyTypeInput) error {
 	isEmpty, err := r.isEmptyProp(nil, input)
 	if err != nil {
 		return err
@@ -2806,7 +2806,7 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	return pu.Exec(ctx)
 }
 
-func (r mutationResolver) updatePropType(ctx context.Context, input *pkg_models.PropertyTypeInput) error {
+func (r mutationResolver) updatePropType(ctx context.Context, input *pkgmodels.PropertyTypeInput) error {
 	query := r.ClientFrom(ctx).PropertyType.
 		UpdateOneID(*input.ID).
 		SetName(input.Name).

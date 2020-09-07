@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
@@ -76,7 +77,7 @@ func equipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilt
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func LocationFilterPredicate(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
+func LocationFilterPredicate(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")

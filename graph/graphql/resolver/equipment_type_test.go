@@ -13,7 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -101,7 +101,7 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, qr, etr := r.Mutation(), r.Query(), r.EquipmentType()
 	extID := "12345"
-	ptype := pkg_models.PropertyTypeInput{
+	ptype := pkgmodels.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		Index:       pointer.ToInt(5),
@@ -110,7 +110,7 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	}
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "example_type_a",
-		Properties: []*pkg_models.PropertyTypeInput{&ptype},
+		Properties: []*pkgmodels.PropertyTypeInput{&ptype},
 	})
 	require.NoError(t, err)
 
@@ -220,7 +220,7 @@ func TestRemoveEquipmentType(t *testing.T) {
 		VisibleLabel: pointer.ToString("Eth1"),
 		Bandwidth:    pointer.ToString("10/100/1000BASE-T"),
 	}
-	strPropType := pkg_models.PropertyTypeInput{
+	strPropType := pkgmodels.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo"),
@@ -233,7 +233,7 @@ func TestRemoveEquipmentType(t *testing.T) {
 		Name:       "example_type_a",
 		Positions:  []*models.EquipmentPositionInput{&position1},
 		Ports:      []*models.EquipmentPortInput{&portDef},
-		Properties: []*pkg_models.PropertyTypeInput{&strPropType},
+		Properties: []*pkgmodels.PropertyTypeInput{&strPropType},
 	})
 	require.NoError(t, err)
 
@@ -322,12 +322,12 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr := r.Mutation()
-	strPropType := pkg_models.PropertyTypeInput{
+	strPropType := pkgmodels.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo"),
 	}
-	propTypeInput := []*pkg_models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType}
 	eqType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInput,
@@ -337,18 +337,18 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	strProp := eqType.QueryPropertyTypes().
 		Where(propertytype.TypeEQ(propertytype.TypeString)).
 		OnlyX(ctx)
-	strPropType = pkg_models.PropertyTypeInput{
+	strPropType = pkgmodels.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo - edited"),
 	}
-	intPropType := pkg_models.PropertyTypeInput{
+	intPropType := pkgmodels.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		IntValue: pointer.ToInt(5),
 	}
-	editedPropTypeInput := []*pkg_models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         eqType.ID,
 		Name:       "example_type_a",
@@ -369,12 +369,12 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
 	require.Equal(t, 5, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
-	intPropType = pkg_models.PropertyTypeInput{
+	intPropType = pkgmodels.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		IntValue: pointer.ToInt(6),
 	}
-	editedPropTypeInput = []*pkg_models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*pkgmodels.PropertyTypeInput{&intPropType}
 	_, err = mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         eqType.ID,
 		Name:       "example_type_a",

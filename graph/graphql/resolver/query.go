@@ -22,8 +22,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/reportfilter"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
@@ -52,7 +54,7 @@ func (r queryResolver) Locations(
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
 	orderBy *ent.LocationOrder,
-	filterBy []*models.LocationFilterInput,
+	filterBy []*pkgmodels.LocationFilterInput,
 ) (*ent.LocationConnection, error) {
 	filter := func(query *ent.LocationQuery) (*ent.LocationQuery, error) {
 		query, err := resolverutil.LocationFilter(query, filterBy)
@@ -332,18 +334,18 @@ func (r queryResolver) SearchForNode(
 	return &models.SearchNodesConnection{Edges: edges}, nil
 }
 
-func (r queryResolver) PossibleProperties(ctx context.Context, entityType models.PropertyEntity) (pts []*ent.PropertyType, err error) {
+func (r queryResolver) PossibleProperties(ctx context.Context, entityType enum.PropertyEntity) (pts []*ent.PropertyType, err error) {
 	client := r.ClientFrom(ctx)
 	switch entityType {
-	case models.PropertyEntityEquipment:
+	case enum.PropertyEntityEquipment:
 		pts, err = client.EquipmentType.Query().QueryPropertyTypes().All(ctx)
-	case models.PropertyEntityService:
+	case enum.PropertyEntityService:
 		pts, err = client.ServiceType.Query().QueryPropertyTypes().All(ctx)
-	case models.PropertyEntityLink:
+	case enum.PropertyEntityLink:
 		pts, err = client.EquipmentPortType.Query().QueryLinkPropertyTypes().All(ctx)
-	case models.PropertyEntityPort:
+	case enum.PropertyEntityPort:
 		pts, err = client.EquipmentPortType.Query().QueryPropertyTypes().All(ctx)
-	case models.PropertyEntityLocation:
+	case enum.PropertyEntityLocation:
 		pts, err = client.LocationType.Query().QueryPropertyTypes().All(ctx)
 	default:
 		return nil, fmt.Errorf("unsupported entity type: %s", entityType)

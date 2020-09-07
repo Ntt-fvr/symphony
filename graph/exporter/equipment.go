@@ -16,7 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -29,12 +29,12 @@ const (
 )
 
 type equipmentFilterInput struct {
-	Name          models.EquipmentFilterType   `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
+	Name          models.EquipmentFilterType  `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
 }
 
 type equipmentRower struct {
@@ -82,7 +82,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 		for i, e := range equips.Equipment {
 			equipIDs[i] = e.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, equipIDs, client, models.PropertyEntityEquipment)
+		propertyTypes, err = propertyTypesSlice(ctx, equipIDs, client, enum.PropertyEntityEquipment)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -157,7 +157,7 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = propertiesSlice(ctx, equipment, propertyTypes, models.PropertyEntityEquipment)
+		properties, err = propertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {

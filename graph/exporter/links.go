@@ -16,7 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -25,13 +25,13 @@ import (
 )
 
 type linksFilterInput struct {
-	Name          models.LinkFilterType        `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                         `json:"maxDepth"`
+	Name          models.LinkFilterType       `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                        `json:"maxDepth"`
 }
 
 type linksRower struct {
@@ -81,7 +81,7 @@ func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 		return nil
 	})
 	cg.Go(func(ctx context.Context) (err error) {
-		if propertyTypes, err = propertyTypesSlice(ctx, linkIDs, client, models.PropertyEntityLink); err != nil {
+		if propertyTypes, err = propertyTypesSlice(ctx, linkIDs, client, enum.PropertyEntityLink); err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
 		}
@@ -167,7 +167,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 			return nil, err
 		}
 	}
-	properties, err := propertiesSlice(ctx, link, propertyTypes, models.PropertyEntityLink)
+	properties, err := propertiesSlice(ctx, link, propertyTypes, enum.PropertyEntityLink)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot create property slice for link (id=%d)", link.ID)
 	}

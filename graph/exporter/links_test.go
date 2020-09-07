@@ -22,7 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -78,12 +78,12 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 	require.NoError(t, err)
 	strDefVal := propDefValue
 	intDefVal := propDevValInt
-	propDefInput1 := pkg_models.PropertyTypeInput{
+	propDefInput1 := pkgmodels.PropertyTypeInput{
 		Name:        propNameStr,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := pkg_models.PropertyTypeInput{
+	propDefInput2 := pkgmodels.PropertyTypeInput{
 		Name:     propNameInt,
 		Type:     "int",
 		IntValue: &intDefVal,
@@ -91,7 +91,7 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		LinkProperties: []*pkg_models.PropertyTypeInput{
+		LinkProperties: []*pkgmodels.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
@@ -125,7 +125,7 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 	}
 	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType2Name,
-		Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput1, &propDefInput2},
 		Ports:      []*models.EquipmentPortInput{&port2, &port3},
 		Positions:  []*models.EquipmentPositionInput{&position1},
 	})
@@ -401,7 +401,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: pkg_models.PropertyTypeInput{
+			PropertyValue: pkgmodels.PropertyTypeInput{
 				Name:        propStr2,
 				Type:        "string",
 				StringValue: pointer.ToString("p2"),
@@ -415,7 +415,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: pkg_models.PropertyTypeInput{
+			PropertyValue: pkgmodels.PropertyTypeInput{
 				Name:        propStr,
 				Type:        "string",
 				StringValue: pointer.ToString("t1"),

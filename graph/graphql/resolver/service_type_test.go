@@ -15,7 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -65,30 +65,30 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	mr := r.Mutation()
 
 	strValue := "Foo"
-	strPropType := pkg_models.PropertyTypeInput{
+	strPropType := pkgmodels.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*pkg_models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType}
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "example_type_a", HasCustomer: true, Properties: propTypeInput})
 	require.NoError(t, err)
 
 	strProp := serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
-	strPropType = pkg_models.PropertyTypeInput{
+	strPropType = pkgmodels.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	intPropType := pkg_models.PropertyTypeInput{
+	intPropType := pkgmodels.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*pkg_models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*pkgmodels.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditServiceType(ctx, models.ServiceTypeEditData{
 		ID:          serviceType.ID,
 		Name:        "example_type_a",
@@ -107,13 +107,13 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
-	intPropType = pkg_models.PropertyTypeInput{
+	intPropType = pkgmodels.PropertyTypeInput{
 		ID:       &intProp.ID,
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput = []*pkg_models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*pkgmodels.PropertyTypeInput{&intPropType}
 	serviceType, err = mr.EditServiceType(ctx, models.ServiceTypeEditData{
 		ID:          serviceType.ID,
 		Name:        "example_type_a",

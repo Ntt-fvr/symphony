@@ -14,7 +14,7 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -42,58 +42,58 @@ func prepareServiceTypeData(ctx context.Context, t *testing.T, r TestImporterRes
 	mr := r.importer.r.Mutation()
 
 	strDefVal := propDefValue
-	propDefInput1 := pkg_models.PropertyTypeInput{
+	propDefInput1 := pkgmodels.PropertyTypeInput{
 		Name:        propName1,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := pkg_models.PropertyTypeInput{
+	propDefInput2 := pkgmodels.PropertyTypeInput{
 		Name: propName2,
 		Type: "int",
 	}
-	propDefInput3 := pkg_models.PropertyTypeInput{
+	propDefInput3 := pkgmodels.PropertyTypeInput{
 		Name: propName3,
 		Type: "date",
 	}
-	propDefInput4 := pkg_models.PropertyTypeInput{
+	propDefInput4 := pkgmodels.PropertyTypeInput{
 		Name: propName4,
 		Type: "bool",
 	}
-	propDefInput5 := pkg_models.PropertyTypeInput{
+	propDefInput5 := pkgmodels.PropertyTypeInput{
 		Name: propName5,
 		Type: "range",
 	}
-	propDefInput6 := pkg_models.PropertyTypeInput{
+	propDefInput6 := pkgmodels.PropertyTypeInput{
 		Name: propName6,
 		Type: "gps_location",
 	}
-	propDefInput7 := pkg_models.PropertyTypeInput{
+	propDefInput7 := pkgmodels.PropertyTypeInput{
 		Name: propName7,
 		Type: "node",
 	}
-	propDefInput8 := pkg_models.PropertyTypeInput{
+	propDefInput8 := pkgmodels.PropertyTypeInput{
 		Name: propName8,
 		Type: "node",
 	}
 
 	serviceType1, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceTypeName,
-		Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput1, &propDefInput2},
 	})
 	require.NoError(t, err)
 	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType2Name,
-		Properties: []*pkg_models.PropertyTypeInput{&propDefInput3, &propDefInput4},
+		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput3, &propDefInput4},
 	})
 	require.NoError(t, err)
 	serviceType3, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType3Name,
-		Properties: []*pkg_models.PropertyTypeInput{&propDefInput5, &propDefInput6},
+		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput5, &propDefInput6},
 	})
 	require.NoError(t, err)
 	serviceType4, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType4Name,
-		Properties: []*pkg_models.PropertyTypeInput{&propDefInput7, &propDefInput8},
+		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput7, &propDefInput8},
 	})
 	require.NoError(t, err)
 	return serviceIds{

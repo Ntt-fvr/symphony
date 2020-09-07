@@ -21,19 +21,19 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type servicesFilterInput struct {
-	Name          models.ServiceFilterType     `json:"name"`
-	Operator      enum.FilterOperator          `jsons:"operator"`
-	StringValue   string                       `json:"stringValue"`
-	IDSet         []string                     `json:"idSet"`
-	StringSet     []string                     `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
+	Name          models.ServiceFilterType    `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
 }
 
 type servicesRower struct {
@@ -72,7 +72,7 @@ func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]stri
 		for i, l := range servicesList {
 			serviceIDs[i] = l.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, serviceIDs, client, models.PropertyEntityService)
+		propertyTypes, err = propertyTypesSlice(ctx, serviceIDs, client, enum.PropertyEntityService)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -139,7 +139,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		discoveryMethod = servicetype.DiscoveryMethodManual
 	}
 
-	properties, err := propertiesSlice(ctx, service, propertyTypes, models.PropertyEntityService)
+	properties, err := propertiesSlice(ctx, service, propertyTypes, enum.PropertyEntityService)
 	if err != nil {
 		return nil, err
 	}

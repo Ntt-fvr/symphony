@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 )
 
 // Infinite is the maximum possible complexity value.
@@ -42,11 +43,11 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Links = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.LinkFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.LocationSearch = func(childComplexity int, _ []*models.LocationFilterInput, limit *int) int {
+	complexity.Query.LocationSearch = func(childComplexity int, _ []*pkgmodels.LocationFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.LocationTypes = PaginationComplexity
-	complexity.Query.Locations = func(childComplexity int, _ *bool, _ []int, _ *string, _ *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.LocationOrder, _ []*models.LocationFilterInput) int {
+	complexity.Query.Locations = func(childComplexity int, _ *bool, _ []int, _ *string, _ *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.LocationOrder, _ []*pkgmodels.LocationFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.PermissionsPolicies = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.PermissionsPolicyFilterInput) int {

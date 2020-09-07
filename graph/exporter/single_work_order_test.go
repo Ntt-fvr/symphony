@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -34,7 +34,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 	typInput := models.AddWorkOrderTypeInput{
 		Name:        "woTemplate1",
 		Description: pointer.ToString("woTemplate1 = desc"),
-		Properties: []*pkg_models.PropertyTypeInput{
+		Properties: []*pkgmodels.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
