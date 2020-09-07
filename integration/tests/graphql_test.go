@@ -24,6 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/uuid"
 	"github.com/shurcooL/graphql"
@@ -156,7 +157,7 @@ type locationTypeResponse struct {
 	}
 }
 
-func (c *client) addLocationType(name string, properties ...*models.PropertyTypeInput) (*locationTypeResponse, error) {
+func (c *client) addLocationType(name string, properties ...*models1.PropertyTypeInput) (*locationTypeResponse, error) {
 	var m struct {
 		Response locationTypeResponse `graphql:"addLocationType(input: $input)"`
 	}
@@ -308,7 +309,7 @@ type addEquipmentTypeResponse struct {
 	} `graphql:"propertyTypes"`
 }
 
-func (c *client) addEquipmentType(name string, properties ...*models.PropertyTypeInput) (*addEquipmentTypeResponse, error) {
+func (c *client) addEquipmentType(name string, properties ...*models1.PropertyTypeInput) (*addEquipmentTypeResponse, error) {
 	var m struct {
 		Response addEquipmentTypeResponse `graphql:"addEquipmentType(input: $input)"`
 	}
@@ -391,15 +392,15 @@ type addWorkOrderTypeResponse struct {
 	} `graphql:"propertyTypes"`
 }
 
-func (c *client) addWorkOrderType(name string, properties ...*models.PropertyTypeInput) (*addWorkOrderTypeResponse, error) {
+func (c *client) addWorkOrderType(name string, properties ...*models1.PropertyTypeInput) (*addWorkOrderTypeResponse, error) {
 	var m struct {
 		Response addWorkOrderTypeResponse `graphql:"addWorkOrderType(input: $input)"`
 	}
 	if properties == nil {
-		properties = []*models.PropertyTypeInput{}
+		properties = []*models1.PropertyTypeInput{}
 	}
 	vars := map[string]interface{}{
-		"input": models.AddWorkOrderTypeInput{
+		"input": models1.AddWorkOrderTypeInput{
 			Name:       name,
 			Properties: properties,
 		},
@@ -591,11 +592,11 @@ func TestPossibleProperties(t *testing.T) {
 
 	_, err := c.addEquipmentType(
 		"router_type_"+uuid.New().String(),
-		&models.PropertyTypeInput{
+		&models1.PropertyTypeInput{
 			Name: "Width",
 			Type: propertytype.TypeInt,
 		},
-		&models.PropertyTypeInput{
+		&models1.PropertyTypeInput{
 			Name: "Manufacturer",
 			Type: propertytype.TypeString,
 		},
@@ -604,7 +605,7 @@ func TestPossibleProperties(t *testing.T) {
 
 	_, err = c.addEquipmentType(
 		"router_type_"+uuid.New().String(),
-		&models.PropertyTypeInput{
+		&models1.PropertyTypeInput{
 			Name: "Width",
 			Type: propertytype.TypeInt,
 		},
