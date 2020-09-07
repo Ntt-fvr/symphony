@@ -33,10 +33,12 @@ setuptools.setup(
     name="psym",
     version=find_version("psym", "common", "constant.py"),
     author="Facebook Inc.",
+    url="https://github.com/facebookincubator/symphony",
     description="Tool for accessing and modifying Symphony database",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(include=GQL_PACKAGES + PSYM_PACKAGES),
+    license="BSD License",
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3.6",
