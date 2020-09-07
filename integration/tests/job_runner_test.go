@@ -9,10 +9,9 @@ package tests
 import (
 	"testing"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/jobrunner"
 	"github.com/shurcooL/graphql"
-
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/AlekSi/pointer"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -32,7 +31,7 @@ func TestJobRun(t *testing.T) {
 		organization := uuid.New().String()
 		c := newClient(t, organization, testUser)
 		name := "location_type_" + uuid.New().String()
-		typ, err := c.addLocationType(name, &Input{
+		typ, err := c.addLocationType(name, &models.PropertyTypeInput{
 			Name:      "Property",
 			Type:      "string",
 			IsDeleted: pointer.ToBool(config.deleted),
