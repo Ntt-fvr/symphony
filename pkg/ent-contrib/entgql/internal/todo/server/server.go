@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"net/http"
 
@@ -21,6 +22,9 @@ import (
 )
 
 func main() {
+	addr := flag.String("address", ":8081", "Address to listen on")
+	flag.Parse()
+
 	client, err := ent.Open(
 		"sqlite3",
 		"file:ent?mode=memory&cache=shared&_fk=1",
@@ -36,8 +40,8 @@ func main() {
 	}
 
 	http.Handle("/", playground.Handler("Todo", "/query"))
-	server := handler.NewDefaultServer(todo.NewExecutableSchema(todo.New(client)))
+	server := handler.NewDefaultServer(todo.NewSchema(client))
 	server.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	http.Handle("/query", server)
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	log.Fatal(http.ListenAndServe(*addr, nil))
 }

@@ -27,9 +27,10 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-// Noder wraps the basic Node method.
+// Noder wraps Node/IsNode methods.
 type Noder interface {
 	Node(context.Context) (*Node, error)
+	IsNode()
 }
 
 // Node in the graph.
@@ -95,6 +96,8 @@ type Edge struct {
 		{{- end }}
 		return node, nil
 	}
+
+	func ({{ $n.Name }}) IsNode() {}
 {{ end }}
 
 {{/* add the node api to the client */}}

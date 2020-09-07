@@ -65,7 +65,7 @@ func (s *todoTestSuite) SetupTest() {
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
 	)
 
-	srv := handler.New(gen.NewExecutableSchema(gen.New(ec)))
+	srv := handler.New(gen.NewSchema(ec))
 	srv.AddTransport(transport.POST{})
 	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	s.Client = client.New(srv)

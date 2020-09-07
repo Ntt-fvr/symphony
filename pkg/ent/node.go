@@ -71,9 +71,10 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-// Noder wraps the basic Node method.
+// Noder wraps Node/IsNode methods.
 type Noder interface {
 	Node(context.Context) (*Node, error)
+	IsNode()
 }
 
 // Node in the graph.
@@ -156,6 +157,8 @@ func (ar *ActionsRule) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (ActionsRule) IsNode() {}
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -246,6 +249,8 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (Activity) IsNode() {}
 
 func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -346,6 +351,8 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Block) IsNode() {}
+
 func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     clc.ID,
@@ -411,6 +418,8 @@ func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) 
 	}
 	return node, nil
 }
+
+func (CheckListCategory) IsNode() {}
 
 func (clcd *CheckListCategoryDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -488,6 +497,8 @@ func (clcd *CheckListCategoryDefinition) Node(ctx context.Context) (node *Node, 
 	}
 	return node, nil
 }
+
+func (CheckListCategoryDefinition) IsNode() {}
 
 func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -633,6 +644,8 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (CheckListItem) IsNode() {}
+
 func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     clid.ID,
@@ -728,6 +741,8 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 	return node, nil
 }
 
+func (CheckListItemDefinition) IsNode() {}
+
 func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
@@ -797,6 +812,8 @@ func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Comment) IsNode() {}
+
 func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
@@ -851,6 +868,8 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (Customer) IsNode() {}
 
 func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1022,6 +1041,8 @@ func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Equipment) IsNode() {}
+
 func (ec *EquipmentCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ec.ID,
@@ -1068,6 +1089,8 @@ func (ec *EquipmentCategory) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (EquipmentCategory) IsNode() {}
 
 func (ep *EquipmentPort) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1163,6 +1186,8 @@ func (ep *EquipmentPort) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (EquipmentPort) IsNode() {}
+
 func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     epd.ID,
@@ -1256,6 +1281,8 @@ func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err e
 	return node, nil
 }
 
+func (EquipmentPortDefinition) IsNode() {}
+
 func (ept *EquipmentPortType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ept.ID,
@@ -1325,6 +1352,8 @@ func (ept *EquipmentPortType) Node(ctx context.Context) (node *Node, err error) 
 	return node, nil
 }
 
+func (EquipmentPortType) IsNode() {}
+
 func (ep *EquipmentPosition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ep.ID,
@@ -1385,6 +1414,8 @@ func (ep *EquipmentPosition) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (EquipmentPosition) IsNode() {}
 
 func (epd *EquipmentPositionDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1459,6 +1490,8 @@ func (epd *EquipmentPositionDefinition) Node(ctx context.Context) (node *Node, e
 	}
 	return node, nil
 }
+
+func (EquipmentPositionDefinition) IsNode() {}
 
 func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1562,6 +1595,8 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (EquipmentType) IsNode() {}
+
 func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     et.ID,
@@ -1612,6 +1647,8 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (ExportTask) IsNode() {}
 
 func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1812,6 +1849,8 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (File) IsNode() {}
+
 func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fp.ID,
@@ -1892,6 +1931,8 @@ func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (FloorPlan) IsNode() {}
+
 func (fprp *FloorPlanReferencePoint) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fprp.ID,
@@ -1950,6 +1991,8 @@ func (fprp *FloorPlanReferencePoint) Node(ctx context.Context) (node *Node, err 
 	}
 	return node, nil
 }
+
+func (FloorPlanReferencePoint) IsNode() {}
 
 func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2018,6 +2061,8 @@ func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (FloorPlanScale) IsNode() {}
+
 func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fd.ID,
@@ -2056,6 +2101,8 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (FlowDraft) IsNode() {}
 
 func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2142,6 +2189,8 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Hyperlink) IsNode() {}
+
 func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     l.ID,
@@ -2221,6 +2270,8 @@ func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (Link) IsNode() {}
 
 func (l *Location) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2422,6 +2473,8 @@ func (l *Location) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Location) IsNode() {}
+
 func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     lt.ID,
@@ -2523,6 +2576,8 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (LocationType) IsNode() {}
+
 func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
@@ -2601,6 +2656,8 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (PermissionsPolicy) IsNode() {}
 
 func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2731,6 +2788,8 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Project) IsNode() {}
+
 func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
@@ -2792,6 +2851,8 @@ func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ProjectTemplate) IsNode() {}
+
 func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
@@ -2852,6 +2913,8 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (ProjectType) IsNode() {}
 
 func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3087,6 +3150,8 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (Property) IsNode() {}
 
 func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3370,6 +3435,8 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (PropertyType) IsNode() {}
+
 func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rf.ID,
@@ -3420,6 +3487,8 @@ func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (ReportFilter) IsNode() {}
 
 func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3561,6 +3630,8 @@ func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (Service) IsNode() {}
+
 func (se *ServiceEndpoint) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     se.ID,
@@ -3632,6 +3703,8 @@ func (se *ServiceEndpoint) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (ServiceEndpoint) IsNode() {}
 
 func (sed *ServiceEndpointDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3717,6 +3790,8 @@ func (sed *ServiceEndpointDefinition) Node(ctx context.Context) (node *Node, err
 	}
 	return node, nil
 }
+
+func (ServiceEndpointDefinition) IsNode() {}
 
 func (st *ServiceType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3811,6 +3886,8 @@ func (st *ServiceType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (ServiceType) IsNode() {}
+
 func (s *Survey) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     s.ID,
@@ -3903,6 +3980,8 @@ func (s *Survey) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (Survey) IsNode() {}
 
 func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4149,6 +4228,8 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (SurveyCellScan) IsNode() {}
+
 func (sq *SurveyQuestion) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     sq.ID,
@@ -4376,6 +4457,8 @@ func (sq *SurveyQuestion) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (SurveyQuestion) IsNode() {}
+
 func (stc *SurveyTemplateCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     stc.ID,
@@ -4441,6 +4524,8 @@ func (stc *SurveyTemplateCategory) Node(ctx context.Context) (node *Node, err er
 	}
 	return node, nil
 }
+
+func (SurveyTemplateCategory) IsNode() {}
 
 func (stq *SurveyTemplateQuestion) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4512,6 +4597,8 @@ func (stq *SurveyTemplateQuestion) Node(ctx context.Context) (node *Node, err er
 	}
 	return node, nil
 }
+
+func (SurveyTemplateQuestion) IsNode() {}
 
 func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4686,6 +4773,8 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (SurveyWiFiScan) IsNode() {}
+
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
@@ -4825,6 +4914,8 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (User) IsNode() {}
+
 func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ug.ID,
@@ -4898,6 +4989,8 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (UsersGroup) IsNode() {}
 
 func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5145,6 +5238,8 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
+func (WorkOrder) IsNode() {}
+
 func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wod.ID,
@@ -5214,6 +5309,8 @@ func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error
 	return node, nil
 }
 
+func (WorkOrderDefinition) IsNode() {}
+
 func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
@@ -5282,6 +5379,8 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	}
 	return node, nil
 }
+
+func (WorkOrderTemplate) IsNode() {}
 
 func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5362,6 +5461,8 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
+
+func (WorkOrderType) IsNode() {}
 
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	n, err := c.Noder(ctx, id)

@@ -5,6 +5,10 @@
 schema:
   - todo.graphql
 
+resolver:
+  layout: follow-schema
+  dir: .
+
 autobind:
   - github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent
 
