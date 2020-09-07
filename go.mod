@@ -17,7 +17,7 @@ require (
 	github.com/alecthomas/kong v0.2.11
 	github.com/aws/aws-sdk-go v1.34.18
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.3-0.20200906172242-8e824c14eb7a
+	github.com/facebook/ent v0.4.3-0.20200907090222-545048151374
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
@@ -49,11 +49,10 @@ require (
 	gocloud.dev v0.20.0
 	gocloud.dev/pubsub/natspubsub v0.20.0
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
-	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/sys v0.0.0-20200814200057-3d37ad5750ed // indirect
 	golang.org/x/text v0.3.3
-	golang.org/x/tools v0.0.0-20200818005847-188abfa75333 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70 // indirect
