@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
@@ -181,53 +182,53 @@ func TestPropertiesForCSV(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	propInput1 := models.PropertyTypeInput{
+	propInput1 := models1.PropertyTypeInput{
 		Name: "Property type1",
 		Type: "int",
 	}
-	propInput2 := models.PropertyTypeInput{
+	propInput2 := models1.PropertyTypeInput{
 		Name: "Property type2",
 		Type: "string",
 	}
-	propInput3 := models.PropertyTypeInput{
+	propInput3 := models1.PropertyTypeInput{
 		Name: "Property type3",
 		Type: "gps_location",
 	}
-	propInput4 := models.PropertyTypeInput{
+	propInput4 := models1.PropertyTypeInput{
 		Name: "Property type4",
 		Type: "range",
 	}
-	propInput5 := models.PropertyTypeInput{
+	propInput5 := models1.PropertyTypeInput{
 		Name: "Property type5",
 		Type: "bool",
 	}
-	propInput6 := models.PropertyTypeInput{
+	propInput6 := models1.PropertyTypeInput{
 		Name: "Property type6",
 		Type: "node",
 	}
-	propInput7 := models.PropertyTypeInput{
+	propInput7 := models1.PropertyTypeInput{
 		Name: "Property type7",
 		Type: "node",
 	}
 
-	propInput8 := models.PropertyTypeInput{
+	propInput8 := models1.PropertyTypeInput{
 		Name: "Property type8",
 		Type: "node",
 	}
 
-	propInput9 := models.PropertyTypeInput{
+	propInput9 := models1.PropertyTypeInput{
 		Name: "Property type9",
 		Type: "node",
 	}
 
-	propInput10 := models.PropertyTypeInput{
+	propInput10 := models1.PropertyTypeInput{
 		Name: "Property type10",
 		Type: "node",
 	}
 
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "equipment_type",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			&propInput1, &propInput2, &propInput3, &propInput4, &propInput5, &propInput6, &propInput7, &propInput8,
 			&propInput9, &propInput10,
 		},
@@ -377,19 +378,19 @@ func TestPropertyTypesForCSV(t *testing.T) {
 
 	strVal := strVal
 	intVal := 40
-	propInput1 := models.PropertyTypeInput{
+	propInput1 := models1.PropertyTypeInput{
 		Name:     "Property type1",
 		Type:     "int",
 		IntValue: &intVal,
 	}
-	propInput2 := models.PropertyTypeInput{
+	propInput2 := models1.PropertyTypeInput{
 		Name:        "Property type2",
 		Type:        "string",
 		StringValue: &strVal,
 	}
 	latVal := 40.32
 	longVal := 40.34
-	propInput3 := models.PropertyTypeInput{
+	propInput3 := models1.PropertyTypeInput{
 		Name:           "Property type3",
 		Type:           "gps_location",
 		LatitudeValue:  &latVal,
@@ -399,7 +400,7 @@ func TestPropertyTypesForCSV(t *testing.T) {
 
 	fromVal := 10.0
 	toVal := 20.0
-	propInput4 := models.PropertyTypeInput{
+	propInput4 := models1.PropertyTypeInput{
 		Name:           "Property type4",
 		Type:           "range",
 		RangeFromValue: &fromVal,
@@ -408,7 +409,7 @@ func TestPropertyTypesForCSV(t *testing.T) {
 	rangeVal := fmt.Sprintf("%.3f", fromVal) + " - " + fmt.Sprintf("%.3f", toVal)
 
 	boolVal := true
-	propInput5 := models.PropertyTypeInput{
+	propInput5 := models1.PropertyTypeInput{
 		Name:         "Property type5",
 		Type:         "bool",
 		BooleanValue: &boolVal,
@@ -416,7 +417,7 @@ func TestPropertyTypesForCSV(t *testing.T) {
 
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "equipment_type",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			&propInput1, &propInput2, &propInput3, &propInput4, &propInput5,
 		},
 	})
@@ -458,7 +459,7 @@ func TestSamePropertyTypesForCSV(t *testing.T) {
 	require.NoError(t, err)
 
 	intVal := 40
-	propInput1 := models.PropertyTypeInput{
+	propInput1 := models1.PropertyTypeInput{
 		Name:     "Ptype1",
 		Type:     propertytype.TypeInt,
 		IntValue: &intVal,
@@ -466,18 +467,18 @@ func TestSamePropertyTypesForCSV(t *testing.T) {
 
 	equipmentTypeA, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "equipment_typeA",
-		Properties: []*models.PropertyTypeInput{&propInput1},
+		Properties: []*models1.PropertyTypeInput{&propInput1},
 	})
 	require.NoError(t, err)
 	pa := equipmentTypeA.QueryPropertyTypes().OnlyX(ctx)
-	propInput2 := models.PropertyTypeInput{
+	propInput2 := models1.PropertyTypeInput{
 		Name:     "Ptype2",
 		Type:     propertytype.TypeInt,
 		IntValue: &intVal,
 	}
 	equipmentTypeB, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "equipment_typeB",
-		Properties: []*models.PropertyTypeInput{&propInput1, &propInput2},
+		Properties: []*models1.PropertyTypeInput{&propInput1, &propInput2},
 	})
 	require.NoError(t, err)
 	equipmentTypeB.QueryPropertyTypes().Where(propertytype.Name("Ptype2")).OnlyX(ctx)

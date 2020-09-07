@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -41,58 +42,58 @@ func prepareServiceTypeData(ctx context.Context, t *testing.T, r TestImporterRes
 	mr := r.importer.r.Mutation()
 
 	strDefVal := propDefValue
-	propDefInput1 := models.PropertyTypeInput{
+	propDefInput1 := models1.PropertyTypeInput{
 		Name:        propName1,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models.PropertyTypeInput{
+	propDefInput2 := models1.PropertyTypeInput{
 		Name: propName2,
 		Type: "int",
 	}
-	propDefInput3 := models.PropertyTypeInput{
+	propDefInput3 := models1.PropertyTypeInput{
 		Name: propName3,
 		Type: "date",
 	}
-	propDefInput4 := models.PropertyTypeInput{
+	propDefInput4 := models1.PropertyTypeInput{
 		Name: propName4,
 		Type: "bool",
 	}
-	propDefInput5 := models.PropertyTypeInput{
+	propDefInput5 := models1.PropertyTypeInput{
 		Name: propName5,
 		Type: "range",
 	}
-	propDefInput6 := models.PropertyTypeInput{
+	propDefInput6 := models1.PropertyTypeInput{
 		Name: propName6,
 		Type: "gps_location",
 	}
-	propDefInput7 := models.PropertyTypeInput{
+	propDefInput7 := models1.PropertyTypeInput{
 		Name: propName7,
 		Type: "node",
 	}
-	propDefInput8 := models.PropertyTypeInput{
+	propDefInput8 := models1.PropertyTypeInput{
 		Name: propName8,
 		Type: "node",
 	}
 
 	serviceType1, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceTypeName,
-		Properties: []*models.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
 	})
 	require.NoError(t, err)
 	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType2Name,
-		Properties: []*models.PropertyTypeInput{&propDefInput3, &propDefInput4},
+		Properties: []*models1.PropertyTypeInput{&propDefInput3, &propDefInput4},
 	})
 	require.NoError(t, err)
 	serviceType3, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType3Name,
-		Properties: []*models.PropertyTypeInput{&propDefInput5, &propDefInput6},
+		Properties: []*models1.PropertyTypeInput{&propDefInput5, &propDefInput6},
 	})
 	require.NoError(t, err)
 	serviceType4, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType4Name,
-		Properties: []*models.PropertyTypeInput{&propDefInput7, &propDefInput8},
+		Properties: []*models1.PropertyTypeInput{&propDefInput7, &propDefInput8},
 	})
 	require.NoError(t, err)
 	return serviceIds{

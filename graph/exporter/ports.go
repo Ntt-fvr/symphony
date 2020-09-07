@@ -11,15 +11,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
-
-	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
@@ -30,7 +30,7 @@ type portFilterInput struct {
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput   `json:"propertyValue"`
+	PropertyValue models1.PropertyTypeInput  `json:"propertyValue"`
 	BoolValue     bool                       `json:"boolValue"`
 }
 

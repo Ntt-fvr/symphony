@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -77,12 +78,12 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 	require.NoError(t, err)
 	strDefVal := propDefValue
 	intDefVal := propDevValInt
-	propDefInput1 := models.PropertyTypeInput{
+	propDefInput1 := models1.PropertyTypeInput{
 		Name:        propNameStr,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models.PropertyTypeInput{
+	propDefInput2 := models1.PropertyTypeInput{
 		Name:     propNameInt,
 		Type:     "int",
 		IntValue: &intDefVal,
@@ -90,7 +91,7 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		LinkProperties: []*models.PropertyTypeInput{
+		LinkProperties: []*models1.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
@@ -124,7 +125,7 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 	}
 	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType2Name,
-		Properties: []*models.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
 		Ports:      []*models.EquipmentPortInput{&port2, &port3},
 		Positions:  []*models.EquipmentPositionInput{&position1},
 	})
@@ -400,7 +401,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: models.PropertyTypeInput{
+			PropertyValue: models1.PropertyTypeInput{
 				Name:        propStr2,
 				Type:        "string",
 				StringValue: pointer.ToString("p2"),
@@ -414,7 +415,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: models.PropertyTypeInput{
+			PropertyValue: models1.PropertyTypeInput{
 				Name:        propStr,
 				Type:        "string",
 				StringValue: pointer.ToString("t1"),

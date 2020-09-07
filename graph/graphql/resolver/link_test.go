@@ -6,6 +6,7 @@ package resolver_test
 
 import (
 	"context"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -116,12 +117,12 @@ func TestAddLinkWithProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	linkStrValue := "Foo"
-	linkStrPropType := models.PropertyTypeInput{
+	linkStrPropType := models1.PropertyTypeInput{
 		Name:        "link_str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
-	linkPropTypeInput := []*models.PropertyTypeInput{&linkStrPropType}
+	linkPropTypeInput := []*models1.PropertyTypeInput{&linkStrPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: linkPropTypeInput,
@@ -218,12 +219,12 @@ func TestEditLinkWithProperties(t *testing.T) {
 	require.NoError(t, err)
 
 	linkStrValue := "Foo"
-	linkStrPropType := models.PropertyTypeInput{
+	linkStrPropType := models1.PropertyTypeInput{
 		Name:        "link_str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &linkStrValue,
 	}
-	linkPropTypeInput := []*models.PropertyTypeInput{&linkStrPropType}
+	linkPropTypeInput := []*models1.PropertyTypeInput{&linkStrPropType}
 	portType, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: linkPropTypeInput,

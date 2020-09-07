@@ -11,6 +11,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
@@ -57,19 +58,19 @@ func TestAddEquipmentPortTypeWithProperties(t *testing.T) {
 	strValue, strIndex := "Foo", 7
 	intValue, intIndex := 5, 12
 
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		Index:       &strIndex,
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		Index:    &intIndex,
 		IntValue: &intValue,
 	}
-	propTypeInputs := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInputs,
@@ -98,19 +99,19 @@ func TestAddEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	strValue, strIndex := "Foo", 7
 	intValue, intIndex := 5, 12
 
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		Index:       &strIndex,
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		Index:    &intIndex,
 		IntValue: &intValue,
 	}
-	propTypeInputs := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: propTypeInputs,
@@ -206,12 +207,12 @@ func TestEditEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	mr := r.Mutation()
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: propTypeInput,
@@ -221,18 +222,18 @@ func TestEditEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	strProp := portType.QueryLinkPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditEquipmentPortType(ctx, models.EditEquipmentPortTypeInput{
 		ID:             portType.ID,
 		Name:           "example_type_a",
@@ -250,12 +251,12 @@ func TestEditEquipmentPortTypeWithLinkProperties(t *testing.T) {
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
-	intPropType = models.PropertyTypeInput{
+	intPropType = models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput = []*models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*models1.PropertyTypeInput{&intPropType}
 	_, err = mr.EditEquipmentPortType(ctx, models.EditEquipmentPortTypeInput{
 		ID:             portType.ID,
 		Name:           "example_type_a",
@@ -271,12 +272,12 @@ func TestEditEquipmentPortTypeWithLinkPropertiesSameName(t *testing.T) {
 	mr := r.Mutation()
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "foo_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:           "example_type_a",
 		LinkProperties: propTypeInput,
@@ -284,12 +285,12 @@ func TestEditEquipmentPortTypeWithLinkPropertiesSameName(t *testing.T) {
 	require.NoError(t, err)
 
 	intValue := 5
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "foo_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	_, err = mr.EditEquipmentPortType(ctx, models.EditEquipmentPortTypeInput{
 		ID:             portType.ID,
 		Name:           "example_type_a",

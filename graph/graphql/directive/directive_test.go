@@ -11,7 +11,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/directive"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -441,7 +441,7 @@ func TestDirectiveUniqueField(t *testing.T) {
 		}
 	)
 	t.Run("SliceOfStructPointers", func(t *testing.T) {
-		inputs := []*models.PropertyTypeInput{
+		inputs := []*models1.PropertyTypeInput{
 			nil,
 			{Name: "foo"},
 			{Name: "bar"},

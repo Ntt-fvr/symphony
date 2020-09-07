@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -29,7 +30,7 @@ func prepareLocationData(ctx context.Context, r *TestResolver) locationSearchDat
 	mr := r.Mutation()
 	locType1, _ := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "loc_type1",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{
 				Name: "date_established",
 				Type: propertytype.TypeDate,
@@ -310,7 +311,7 @@ func TestSearchLocationProperties(t *testing.T) {
 	f1 := models.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Type:        propertytype.TypeDate,
 			Name:        "date_established",
 			StringValue: pointer.ToString("2019-11-15"),
@@ -325,7 +326,7 @@ func TestSearchLocationProperties(t *testing.T) {
 	f2 := models.LocationFilterInput{
 		FilterType: enum.LocationFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Type:        propertytype.TypeString,
 			Name:        "stringProp",
 			StringValue: pointer.ToString("testProp"),

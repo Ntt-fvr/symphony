@@ -32,7 +32,7 @@ func TestJobRun(t *testing.T) {
 		organization := uuid.New().String()
 		c := newClient(t, organization, testUser)
 		name := "location_type_" + uuid.New().String()
-		typ, err := c.addLocationType(name, &models.PropertyTypeInput{
+		typ, err := c.addLocationType(name, &Input{
 			Name:      "Property",
 			Type:      "string",
 			IsDeleted: pointer.ToBool(config.deleted),

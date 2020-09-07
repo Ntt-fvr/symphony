@@ -21,18 +21,19 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type servicesFilterInput struct {
-	Name          models.ServiceFilterType `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	Name          models.ServiceFilterType  `json:"name"`
+	Operator      enum.FilterOperator       `jsons:"operator"`
+	StringValue   string                    `json:"stringValue"`
+	IDSet         []string                  `json:"idSet"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue models1.PropertyTypeInput `json:"propertyValue"`
 }
 
 type servicesRower struct {

@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -110,19 +111,19 @@ func TestAddWorkOrderTypeWithProperties(t *testing.T) {
 	strValue, strIndex := "Foo", 7
 	intValue, intIndex := 5, 12
 
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		Index:       &strIndex,
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		Index:    &intIndex,
 		IntValue: &intValue,
 	}
-	propTypeInputs := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInputs,
@@ -409,30 +410,30 @@ func TestEditWorkOrderTypeWithProperties(t *testing.T) {
 
 	mr := r.Mutation()
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type_a", Properties: propTypeInput})
 	require.NoError(t, err)
 
 	strProp := woType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
 		ID:         woType.ID,
 		Name:       "example_type_a",
@@ -450,12 +451,12 @@ func TestEditWorkOrderTypeWithProperties(t *testing.T) {
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
-	intPropType = models.PropertyTypeInput{
+	intPropType = models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput = []*models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*models1.PropertyTypeInput{&intPropType}
 	_, err = mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
 		ID:         woType.ID,
 		Name:       "example_type_a",
@@ -471,17 +472,17 @@ func TestDeleteWorkOrderTypeProperty(t *testing.T) {
 
 	mr := r.Mutation()
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type_a", Properties: propTypeInput})
 	require.NoError(t, err)
 
 	strProp := woType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop",
 		Type:        "string",
@@ -492,7 +493,7 @@ func TestDeleteWorkOrderTypeProperty(t *testing.T) {
 	strProp = woType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	require.False(t, strProp.Deleted, "successfully edited prop type name")
 
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	newType, err := mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
 		ID:         woType.ID,
 		Name:       "example_type_a",

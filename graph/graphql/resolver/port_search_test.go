@@ -6,6 +6,7 @@ package resolver_test
 
 import (
 	"context"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"strconv"
 	"testing"
 
@@ -65,7 +66,7 @@ func preparePortData(ctx context.Context, r *TestResolver) portSearchDataModels 
 	})
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{
 				Name:        "propStr",
 				Type:        "string",
@@ -276,7 +277,7 @@ func TestSearchPortProperties(t *testing.T) {
 	f1 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("t1"),
@@ -291,7 +292,7 @@ func TestSearchPortProperties(t *testing.T) {
 	f2 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("newVal"),
@@ -306,7 +307,7 @@ func TestSearchPortProperties(t *testing.T) {
 	f3 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Name:         "propBool",
 			Type:         propertytype.TypeBool,
 			BooleanValue: pointer.ToBool(true),
@@ -321,7 +322,7 @@ func TestSearchPortProperties(t *testing.T) {
 	f4 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Name:         "propBool",
 			Type:         propertytype.TypeBool,
 			BooleanValue: pointer.ToBool(false),
@@ -336,7 +337,7 @@ func TestSearchPortProperties(t *testing.T) {
 	f5 := models.PortFilterInput{
 		FilterType: models.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
-		PropertyValue: &models.PropertyTypeInput{
+		PropertyValue: &models1.PropertyTypeInput{
 			Name:        "connected_date",
 			Type:        propertytype.TypeDate,
 			StringValue: pointer.ToString("2019-01-01"),

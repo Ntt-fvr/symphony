@@ -42,6 +42,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveyquestion"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/AlekSi/pointer"
@@ -76,7 +77,7 @@ func (mutationResolver) isEmptyProp(ptype *ent.PropertyType, input interface{}) 
 		floatVal = v.FloatValue
 		lat, long = v.LatitudeValue, v.LongitudeValue
 		rangeTo, rangeFrom = v.RangeToValue, v.RangeFromValue
-	case *models.PropertyTypeInput:
+	case *models1.PropertyTypeInput:
 		typ = v.Type
 		strVal = v.StringValue
 		boolVal = v.BooleanValue
@@ -219,7 +220,7 @@ func (r mutationResolver) AddProperties(inputs []*models.PropertyInput, args res
 }
 
 func (r mutationResolver) AddPropertyTypes(
-	ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs ...*models.PropertyTypeInput,
+	ctx context.Context, parentSetter func(ptc *ent.PropertyTypeCreate), inputs ...*models1.PropertyTypeInput,
 ) error {
 	var (
 		client = r.ClientFrom(ctx).PropertyType
@@ -2383,7 +2384,7 @@ func (r mutationResolver) validateEquipmentNameIsUnique(ctx context.Context, nam
 	return nil
 }
 
-func (r mutationResolver) validateAddedNewPropertyType(input *models.PropertyTypeInput) error {
+func (r mutationResolver) validateAddedNewPropertyType(input *models1.PropertyTypeInput) error {
 	isEmpty, err := r.isEmptyProp(nil, input)
 	if err != nil {
 		return err
@@ -2805,7 +2806,7 @@ func (r mutationResolver) updatePropValues(ctx context.Context, input *models.Pr
 	return pu.Exec(ctx)
 }
 
-func (r mutationResolver) updatePropType(ctx context.Context, input *models.PropertyTypeInput) error {
+func (r mutationResolver) updatePropType(ctx context.Context, input *models1.PropertyTypeInput) error {
 	query := r.ClientFrom(ctx).PropertyType.
 		UpdateOneID(*input.ID).
 		SetName(input.Name).

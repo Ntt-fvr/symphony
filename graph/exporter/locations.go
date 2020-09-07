@@ -11,27 +11,27 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
-
-	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type locationsFilterInput struct {
-	Name          enum.LocationFilterType  `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                     `json:"maxDepth"`
-	BoolValue     *bool                    `json:"boolValue"`
+	Name          enum.LocationFilterType   `json:"name"`
+	Operator      enum.FilterOperator       `jsons:"operator"`
+	StringValue   string                    `json:"stringValue"`
+	IDSet         []string                  `json:"idSet"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue models1.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                      `json:"maxDepth"`
+	BoolValue     *bool                     `json:"boolValue"`
 }
 
 type LocationsRower struct {

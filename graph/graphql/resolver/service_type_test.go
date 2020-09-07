@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -64,30 +65,30 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	mr := r.Mutation()
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "example_type_a", HasCustomer: true, Properties: propTypeInput})
 	require.NoError(t, err)
 
 	strProp := serviceType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditServiceType(ctx, models.ServiceTypeEditData{
 		ID:          serviceType.ID,
 		Name:        "example_type_a",
@@ -106,13 +107,13 @@ func TestEditServiceTypeWithProperties(t *testing.T) {
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
-	intPropType = models.PropertyTypeInput{
+	intPropType = models1.PropertyTypeInput{
 		ID:       &intProp.ID,
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput = []*models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*models1.PropertyTypeInput{&intPropType}
 	serviceType, err = mr.EditServiceType(ctx, models.ServiceTypeEditData{
 		ID:          serviceType.ID,
 		Name:        "example_type_a",

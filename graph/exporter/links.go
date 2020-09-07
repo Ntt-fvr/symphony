@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -24,13 +25,13 @@ import (
 )
 
 type linksFilterInput struct {
-	Name          models.LinkFilterType    `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                     `json:"maxDepth"`
+	Name          models.LinkFilterType     `json:"name"`
+	Operator      enum.FilterOperator       `jsons:"operator"`
+	StringValue   string                    `json:"stringValue"`
+	IDSet         []string                  `json:"idSet"`
+	StringSet     []string                  `json:"stringSet"`
+	PropertyValue models1.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                      `json:"maxDepth"`
 }
 
 type linksRower struct {

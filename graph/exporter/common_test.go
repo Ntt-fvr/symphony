@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
@@ -122,7 +123,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	require.NoError(t, err)
 	locTypeM, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM})
 	require.NoError(t, err)
-	locTypeS, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*models.PropertyTypeInput{
+	locTypeS, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*models1.PropertyTypeInput{
 		{
 			Name:        propNameStr,
 			Type:        propertytype.TypeString,
@@ -198,7 +199,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
@@ -209,7 +210,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 				Type: "string",
 			},
 		},
-		LinkProperties: []*models.PropertyTypeInput{
+		LinkProperties: []*models1.PropertyTypeInput{
 			{
 				Name:        propNameStr,
 				Type:        "string",
@@ -232,12 +233,12 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	}
 	strDefVal := propDefValue
 	intDefVal := propDevValInt
-	propDefInput1 := models.PropertyTypeInput{
+	propDefInput1 := models1.PropertyTypeInput{
 		Name:        propNameStr,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models.PropertyTypeInput{
+	propDefInput2 := models1.PropertyTypeInput{
 		Name:     propNameInt,
 		Type:     "int",
 		IntValue: &intDefVal,
@@ -254,7 +255,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	}
 	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType2Name,
-		Properties: []*models.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
 		Ports:      []*models.EquipmentPortInput{&port2},
 	})
 	require.NoError(t, err)
@@ -294,11 +295,11 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	})
 
 	val := propDefValue2
-	propertyInput := models.PropertyTypeInput{Name: newPropNameStr, StringValue: &val, Type: propertytype.TypeString}
+	propertyInput := models1.PropertyTypeInput{Name: newPropNameStr, StringValue: &val, Type: propertytype.TypeString}
 	_, err = r.Mutation().EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         equipmentType2.ID,
 		Name:       equipmentType2.Name,
-		Properties: []*models.PropertyTypeInput{&propertyInput},
+		Properties: []*models1.PropertyTypeInput{&propertyInput},
 	})
 	require.NoError(t, err)
 

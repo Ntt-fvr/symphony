@@ -1311,7 +1311,10 @@ type PropertyType implements Node {
   isDeleted: Boolean
 }
 
-input PropertyTypeInput {
+input PropertyTypeInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
+  ) {
   id: ID
   externalId: String
   name: String!

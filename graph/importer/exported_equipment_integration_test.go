@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -91,7 +92,7 @@ func createLocationTypes(ctx context.Context, t *testing.T, r *TestImporterResol
 }
 
 func createEquipmentTypes(ctx context.Context, r *TestImporterResolver) {
-	proptypes := []*models.PropertyTypeInput{{
+	proptypes := []*models1.PropertyTypeInput{{
 		Name: "prop1Str",
 		Type: "string",
 	}, {

@@ -24,6 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -125,7 +126,7 @@ func TestAddEquipmentWithProperties(t *testing.T) {
 	location := prepareLocation(ctx, t, mr)
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "example_type_name",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{Name: "bar_prop", Type: propertytype.TypeString},
 		},
 	})
@@ -162,7 +163,7 @@ func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
 	location := prepareLocation(ctx, t, mr)
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "example_type_name",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{Name: "str_prop", Type: propertytype.TypeString},
 			{Name: "int_prop", Type: propertytype.TypeInt},
 			{Name: "float_prop", Type: propertytype.TypeFloat},
@@ -183,7 +184,7 @@ func TestAddEditEquipmentWithNillableProperties(t *testing.T) {
 	equipmentType, err = mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:   equipmentType.ID,
 		Name: "example_type_name",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{ID: pointer.ToInt(intPropID), Name: "int_prop", Type: propertytype.TypeInt, IntValue: pointer.ToInt(12)},
 			{ID: pointer.ToInt(intPropWithDefaultID), Name: "int_prop_with_default", Type: propertytype.TypeInt},
 		},
@@ -1082,7 +1083,7 @@ func TestEditEquipment(t *testing.T) {
 	devVal := "defVal"
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "equipment_type_name_1",
-		Properties: []*models.PropertyTypeInput{
+		Properties: []*models1.PropertyTypeInput{
 			{Name: "bar_prop", Type: propertytype.TypeString},
 			{Name: "foo_prop", Type: propertytype.TypeString, StringValue: &devVal},
 		},
@@ -1167,12 +1168,12 @@ func TestEditEquipmentPort(t *testing.T) {
 	require.NoError(t, err)
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInput,
@@ -1235,12 +1236,12 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 	require.NoError(t, err)
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 
 	portType, err := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name:       "example_type_a",

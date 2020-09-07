@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -42,26 +43,26 @@ var endpointHeader = [...]string{"Endpoint Definition 1", "Location 1", "Equipme
 	"Endpoint Definition 4", "Location 4", "Equipment 4", "Endpoint Definition 5", "Location 5", "Equipment 5",
 }
 
-func preparePropertyTypes() []*models.PropertyTypeInput {
-	serviceStrPropType := models.PropertyTypeInput{
+func preparePropertyTypes() []*models1.PropertyTypeInput {
+	serviceStrPropType := models1.PropertyTypeInput{
 		Name:        strPropTitle,
 		Type:        "string",
 		StringValue: pointer.ToString("Foo is the best"),
 	}
-	serviceIntPropType := models.PropertyTypeInput{
+	serviceIntPropType := models1.PropertyTypeInput{
 		Name: intPropTitle,
 		Type: "int",
 	}
-	serviceBoolPropType := models.PropertyTypeInput{
+	serviceBoolPropType := models1.PropertyTypeInput{
 		Name: boolPropTitle,
 		Type: "bool",
 	}
-	serviceFloatPropType := models.PropertyTypeInput{
+	serviceFloatPropType := models1.PropertyTypeInput{
 		Name: floatPropTitle,
 		Type: "float",
 	}
 
-	return []*models.PropertyTypeInput{
+	return []*models1.PropertyTypeInput{
 		&serviceStrPropType,
 		&serviceIntPropType,
 		&serviceBoolPropType,

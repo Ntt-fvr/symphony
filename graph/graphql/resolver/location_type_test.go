@@ -6,6 +6,7 @@ package resolver_test
 
 import (
 	"context"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -70,19 +71,19 @@ func TestAddLocationTypeWithProperties(t *testing.T) {
 	strValue, strIndex := "Foo", 7
 	intValue, intIndex := 5, 12
 
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		Index:       &strIndex,
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		Index:    &intIndex,
 		IntValue: &intValue,
 	}
-	propTypeInputs := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInputs,
@@ -129,12 +130,12 @@ func TestAddLocationTypeWithEquipmentProperty(t *testing.T) {
 	require.NoError(t, err)
 
 	index := 0
-	eqPropType := models.PropertyTypeInput{
+	eqPropType := models1.PropertyTypeInput{
 		Name:  "eq_prop",
 		Type:  "node",
 		Index: &index,
 	}
-	propTypeInputs := []*models.PropertyTypeInput{&eqPropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&eqPropType}
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "example_type",
 		Properties: propTypeInputs,
@@ -338,12 +339,12 @@ func TestEditLocationTypeWithProperties(t *testing.T) {
 	mr := r.Mutation()
 
 	strValue := "Foo"
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInput,
@@ -353,18 +354,18 @@ func TestEditLocationTypeWithProperties(t *testing.T) {
 	strProp := locType.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
 	strValue = "Foo - edited"
 	intValue := 5
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        "string",
 		StringValue: &strValue,
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditLocationType(ctx, models.EditLocationTypeInput{
 		ID: locType.ID, Name: "example_type_a", Properties: editedPropTypeInput,
 	})
@@ -380,12 +381,12 @@ func TestEditLocationTypeWithProperties(t *testing.T) {
 	require.Equal(t, intValue, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
 	intValue = 6
-	intPropType = models.PropertyTypeInput{
+	intPropType = models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     "int",
 		IntValue: &intValue,
 	}
-	editedPropTypeInput = []*models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*models1.PropertyTypeInput{&intPropType}
 	_, err = mr.EditLocationType(ctx, models.EditLocationTypeInput{
 		ID: locType.ID, Name: "example_type_a", Properties: editedPropTypeInput,
 	})

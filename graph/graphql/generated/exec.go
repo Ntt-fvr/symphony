@@ -36,6 +36,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	models2 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -9031,7 +9032,10 @@ type PropertyType implements Node {
   isDeleted: Boolean
 }
 
-input PropertyTypeInput {
+input PropertyTypeInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput"
+  ) {
   id: ID
   externalId: String
   name: String!
@@ -43033,7 +43037,7 @@ func (ec *executionContext) unmarshalInputAddEquipmentPortTypeInput(ctx context.
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -43054,19 +43058,19 @@ func (ec *executionContext) unmarshalInputAddEquipmentPortTypeInput(ctx context.
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "linkProperties":
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("linkProperties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -43087,12 +43091,12 @@ func (ec *executionContext) unmarshalInputAddEquipmentPortTypeInput(ctx context.
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.LinkProperties = data
 			} else if tmp == nil {
 				it.LinkProperties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		}
 	}
@@ -43143,7 +43147,7 @@ func (ec *executionContext) unmarshalInputAddEquipmentTypeInput(ctx context.Cont
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -43164,12 +43168,12 @@ func (ec *executionContext) unmarshalInputAddEquipmentTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		}
 	}
@@ -43601,7 +43605,7 @@ func (ec *executionContext) unmarshalInputAddLocationTypeInput(ctx context.Conte
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -43622,12 +43626,12 @@ func (ec *executionContext) unmarshalInputAddLocationTypeInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "surveyTemplateCategories":
 			var err error
@@ -43832,7 +43836,7 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -43853,12 +43857,12 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "workOrders":
 			var err error
@@ -44105,7 +44109,7 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -44126,12 +44130,12 @@ func (ec *executionContext) unmarshalInputAddWorkOrderTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "checkListCategories":
 			var err error
@@ -44650,7 +44654,7 @@ func (ec *executionContext) unmarshalInputEditEquipmentPortTypeInput(ctx context
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -44671,19 +44675,19 @@ func (ec *executionContext) unmarshalInputEditEquipmentPortTypeInput(ctx context
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "linkProperties":
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("linkProperties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -44704,12 +44708,12 @@ func (ec *executionContext) unmarshalInputEditEquipmentPortTypeInput(ctx context
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.LinkProperties = data
 			} else if tmp == nil {
 				it.LinkProperties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		}
 	}
@@ -44768,7 +44772,7 @@ func (ec *executionContext) unmarshalInputEditEquipmentTypeInput(ctx context.Con
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -44789,12 +44793,12 @@ func (ec *executionContext) unmarshalInputEditEquipmentTypeInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		}
 	}
@@ -44949,7 +44953,7 @@ func (ec *executionContext) unmarshalInputEditLocationTypeInput(ctx context.Cont
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -44970,12 +44974,12 @@ func (ec *executionContext) unmarshalInputEditLocationTypeInput(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		}
 	}
@@ -45196,7 +45200,7 @@ func (ec *executionContext) unmarshalInputEditProjectTypeInput(ctx context.Conte
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -45217,12 +45221,12 @@ func (ec *executionContext) unmarshalInputEditProjectTypeInput(ctx context.Conte
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "workOrders":
 			var err error
@@ -45545,7 +45549,7 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -45566,12 +45570,12 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "checkListCategories":
 			var err error
@@ -45633,7 +45637,7 @@ func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45949,7 +45953,7 @@ func (ec *executionContext) unmarshalInputGeneralFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46065,7 +46069,7 @@ func (ec *executionContext) unmarshalInputLinkFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46209,7 +46213,7 @@ func (ec *executionContext) unmarshalInputLocationFilterInput(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46421,7 +46425,7 @@ func (ec *executionContext) unmarshalInputPortFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46663,8 +46667,8 @@ func (ec *executionContext) unmarshalInputPropertyInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context, obj interface{}) (models.PropertyTypeInput, error) {
-	var it models.PropertyTypeInput
+func (ec *executionContext) unmarshalInputPropertyTypeInput(ctx context.Context, obj interface{}) (models2.PropertyTypeInput, error) {
+	var it models2.PropertyTypeInput
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -47093,7 +47097,7 @@ func (ec *executionContext) unmarshalInputServiceFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -47154,7 +47158,7 @@ func (ec *executionContext) unmarshalInputServiceTypeCreateData(ctx context.Cont
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -47175,12 +47179,12 @@ func (ec *executionContext) unmarshalInputServiceTypeCreateData(ctx context.Cont
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "endpoints":
 			var err error
@@ -47239,7 +47243,7 @@ func (ec *executionContext) unmarshalInputServiceTypeEditData(ctx context.Contex
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
 				typ, err := ec.unmarshalNString2string(ctx, "property type")
@@ -47260,12 +47264,12 @@ func (ec *executionContext) unmarshalInputServiceTypeEditData(ctx context.Contex
 			if err != nil {
 				return it, err
 			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+			if data, ok := tmp.([]*models2.PropertyTypeInput); ok {
 				it.Properties = data
 			} else if tmp == nil {
 				it.Properties = nil
 			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/pkg/exporter/models.PropertyTypeInput`, tmp)
 			}
 		case "endpoints":
 			var err error
@@ -48180,7 +48184,7 @@ func (ec *executionContext) unmarshalInputUserFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48360,7 +48364,7 @@ func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("propertyValue"))
-			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, v)
+			it.PropertyValue, err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60546,7 +60550,7 @@ func (ec *executionContext) marshalNPropertyType2ᚖgithubᚗcomᚋfacebookincub
 	return ec._PropertyType(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) (*models.PropertyTypeInput, error) {
+func (ec *executionContext) unmarshalNPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) (*models2.PropertyTypeInput, error) {
 	res, err := ec.unmarshalInputPropertyTypeInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
@@ -63752,7 +63756,7 @@ func (ec *executionContext) marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincub
 	return ec._PropertyType(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) ([]*models.PropertyTypeInput, error) {
+func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) ([]*models2.PropertyTypeInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -63765,10 +63769,10 @@ func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfac
 		}
 	}
 	var err error
-	res := make([]*models.PropertyTypeInput, len(vSlice))
+	res := make([]*models2.PropertyTypeInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -63776,7 +63780,7 @@ func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfac
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx context.Context, v interface{}) ([]*models.PropertyTypeInput, error) {
+func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx context.Context, v interface{}) ([]*models2.PropertyTypeInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -63789,10 +63793,10 @@ func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfac
 		}
 	}
 	var err error
-	res := make([]*models.PropertyTypeInput, len(vSlice))
+	res := make([]*models2.PropertyTypeInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -63800,7 +63804,7 @@ func (ec *executionContext) unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfac
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) (*models.PropertyTypeInput, error) {
+func (ec *executionContext) unmarshalOPropertyTypeInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInput(ctx context.Context, v interface{}) (*models2.PropertyTypeInput, error) {
 	if v == nil {
 		return nil, nil
 	}

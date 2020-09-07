@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -100,7 +101,7 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, qr, etr := r.Mutation(), r.Query(), r.EquipmentType()
 	extID := "12345"
-	ptype := models.PropertyTypeInput{
+	ptype := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		Index:       pointer.ToInt(5),
@@ -109,7 +110,7 @@ func TestAddEquipmentTypeWithProperties(t *testing.T) {
 	}
 	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "example_type_a",
-		Properties: []*models.PropertyTypeInput{&ptype},
+		Properties: []*models1.PropertyTypeInput{&ptype},
 	})
 	require.NoError(t, err)
 
@@ -219,7 +220,7 @@ func TestRemoveEquipmentType(t *testing.T) {
 		VisibleLabel: pointer.ToString("Eth1"),
 		Bandwidth:    pointer.ToString("10/100/1000BASE-T"),
 	}
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo"),
@@ -232,7 +233,7 @@ func TestRemoveEquipmentType(t *testing.T) {
 		Name:       "example_type_a",
 		Positions:  []*models.EquipmentPositionInput{&position1},
 		Ports:      []*models.EquipmentPortInput{&portDef},
-		Properties: []*models.PropertyTypeInput{&strPropType},
+		Properties: []*models1.PropertyTypeInput{&strPropType},
 	})
 	require.NoError(t, err)
 
@@ -321,12 +322,12 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr := r.Mutation()
-	strPropType := models.PropertyTypeInput{
+	strPropType := models1.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo"),
 	}
-	propTypeInput := []*models.PropertyTypeInput{&strPropType}
+	propTypeInput := []*models1.PropertyTypeInput{&strPropType}
 	eqType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       "example_type_a",
 		Properties: propTypeInput,
@@ -336,18 +337,18 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	strProp := eqType.QueryPropertyTypes().
 		Where(propertytype.TypeEQ(propertytype.TypeString)).
 		OnlyX(ctx)
-	strPropType = models.PropertyTypeInput{
+	strPropType = models1.PropertyTypeInput{
 		ID:          &strProp.ID,
 		Name:        "str_prop_new",
 		Type:        propertytype.TypeString,
 		StringValue: pointer.ToString("Foo - edited"),
 	}
-	intPropType := models.PropertyTypeInput{
+	intPropType := models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		IntValue: pointer.ToInt(5),
 	}
-	editedPropTypeInput := []*models.PropertyTypeInput{&strPropType, &intPropType}
+	editedPropTypeInput := []*models1.PropertyTypeInput{&strPropType, &intPropType}
 	newType, err := mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         eqType.ID,
 		Name:       "example_type_a",
@@ -368,12 +369,12 @@ func TestEditEquipmentTypeWithProperties(t *testing.T) {
 	require.Equal(t, "int_prop", intProp.Name, "successfully edited prop type name")
 	require.Equal(t, 5, pointer.GetInt(intProp.IntVal), "successfully edited prop type int value")
 
-	intPropType = models.PropertyTypeInput{
+	intPropType = models1.PropertyTypeInput{
 		Name:     "int_prop",
 		Type:     propertytype.TypeInt,
 		IntValue: pointer.ToInt(6),
 	}
-	editedPropTypeInput = []*models.PropertyTypeInput{&intPropType}
+	editedPropTypeInput = []*models1.PropertyTypeInput{&intPropType}
 	_, err = mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         eqType.ID,
 		Name:       "example_type_a",

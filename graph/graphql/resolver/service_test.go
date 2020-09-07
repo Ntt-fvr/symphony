@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/assert"
@@ -32,12 +33,12 @@ func TestAddServiceWithProperties(t *testing.T) {
 
 	mr := r.Mutation()
 	serviceTypeStrValue := "Foo"
-	serviceStrPropType := models.PropertyTypeInput{
+	serviceStrPropType := models1.PropertyTypeInput{
 		Name:        "service_str_prop",
 		Type:        "string",
 		StringValue: &serviceTypeStrValue,
 	}
-	servicePropTypeInput := []*models.PropertyTypeInput{&serviceStrPropType}
+	servicePropTypeInput := []*models1.PropertyTypeInput{&serviceStrPropType}
 
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name: "Internet Access", HasCustomer: false, Properties: servicePropTypeInput})
@@ -510,19 +511,19 @@ func TestEditServiceWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr, qr := r.Mutation(), r.Query()
-	pTypes := models.PropertyTypeInput{
+	pTypes := models1.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 
-	p2Types := models.PropertyTypeInput{
+	p2Types := models1.PropertyTypeInput{
 		Name: "str_prop2",
 		Type: "string",
 	}
 
 	serviceType, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       "type_name_1",
-		Properties: []*models.PropertyTypeInput{&pTypes, &p2Types},
+		Properties: []*models1.PropertyTypeInput{&pTypes, &p2Types},
 	})
 	require.NoError(t, err)
 	propTypes := serviceType.QueryPropertyTypes().AllX(ctx)
@@ -844,13 +845,13 @@ func TestAddServiceWithServiceProperty(t *testing.T) {
 	require.NoError(t, err)
 
 	index := 0
-	servicePropType := models.PropertyTypeInput{
+	servicePropType := models1.PropertyTypeInput{
 		Name:  "service_prop",
 		Type:  "node",
 		Index: &index,
 	}
 
-	propTypeInputs := []*models.PropertyTypeInput{&servicePropType}
+	propTypeInputs := []*models1.PropertyTypeInput{&servicePropType}
 	serviceTypeWithServiceProp, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:        "service_type_with_service_prop",
 		HasCustomer: true,

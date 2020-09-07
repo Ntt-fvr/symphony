@@ -157,7 +157,7 @@ func addLocationTypes(t *testing.T, c *client) {
 			_, err := c.addLocationType(typ.name)
 			assert.NoError(t, err)
 		} else {
-			_, err := c.addLocationType(typ.name, &models.PropertyTypeInput{
+			_, err := c.addLocationType(typ.name, &Input{
 				Name: typ.property,
 				Type: propertytype.TypeString,
 			})
