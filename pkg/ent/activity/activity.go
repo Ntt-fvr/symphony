@@ -108,6 +108,7 @@ const (
 	ActivityTypeNameChanged         ActivityType = "NAME"
 	ActivityTypeDescriptionChanged  ActivityType = "DESCRIPTION"
 	ActivityTypeClockIn             ActivityType = "CLOCK_IN"
+	ActivityTypeClockOut            ActivityType = "CLOCK_OUT"
 )
 
 func (at ActivityType) String() string {
@@ -117,7 +118,7 @@ func (at ActivityType) String() string {
 // ActivityTypeValidator is a validator for the "activity_type" field enum values. It is called by the builders before save.
 func ActivityTypeValidator(at ActivityType) error {
 	switch at {
-	case ActivityTypeStatusChanged, ActivityTypePriorityChanged, ActivityTypeAssigneeChanged, ActivityTypeCreationDateChanged, ActivityTypeOwnerChanged, ActivityTypeNameChanged, ActivityTypeDescriptionChanged, ActivityTypeClockIn:
+	case ActivityTypeStatusChanged, ActivityTypePriorityChanged, ActivityTypeAssigneeChanged, ActivityTypeCreationDateChanged, ActivityTypeOwnerChanged, ActivityTypeNameChanged, ActivityTypeDescriptionChanged, ActivityTypeClockIn, ActivityTypeClockOut:
 		return nil
 	default:
 		return fmt.Errorf("activity: invalid enum value for activity_type field: %q", at)

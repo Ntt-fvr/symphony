@@ -4,6 +4,17 @@
 
 package activity
 
+type ClockOutReason string
+
+const (
+	ClockOutReasonPause            ClockOutReason = "PAUSE"
+	ClockOutReasonSubmit           ClockOutReason = "SUBMIT"
+	ClockOutReasonSubmitIncomplete ClockOutReason = "SUBMIT_INCOMPLETE"
+	ClockOutReasonBlocked          ClockOutReason = "BLOCKED"
+)
+
 type ClockDetails struct {
+	ClockOutReason *ClockOutReason
 	DistanceMeters *float64
+	Comment        *string
 }

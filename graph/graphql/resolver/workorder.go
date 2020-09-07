@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/ent/activity"
+
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -834,32 +836,51 @@ func (r mutationResolver) RemoveWorkOrderType(ctx context.Context, id int) (int,
 	}
 }
 
-func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, input models.TechnicianWorkOrderUploadInput) (*ent.WorkOrder, error) {
+func (r mutationResolver) verifyAssigneeOrErr(ctx context.Context, workOrderID int) error {
 	client := r.ClientFrom(ctx)
-	wo, err := client.WorkOrder.Query().Where(workorder.ID(input.WorkOrderID)).WithAssignee().Only(ctx)
+	wo, err := client.WorkOrder.Query().
+		Where(workorder.ID(workOrderID)).
+		WithAssignee().
+		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("querying work order %q: err %w", input.WorkOrderID, err)
+		return fmt.Errorf("querying work order %q: err %w", workOrderID, err)
 	}
 	assignee, err := wo.Edges.AssigneeOrErr()
-	if err != nil || assignee == nil {
-		return nil, fmt.Errorf(
+	if err != nil {
+		return fmt.Errorf(
 			"work order %q is not assigned to a technician: err %w",
-			input.WorkOrderID,
+			workOrderID,
 			err,
 		)
 	}
 	v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
 	if !ok {
-		return nil, gqlerror.Errorf("could not be executed in automation")
+		return gqlerror.Errorf("could not be executed in automation")
 	}
 	if assignee.Email != v.User().Email {
-		return nil, fmt.Errorf(
+		return fmt.Errorf(
 			"mismatch between work order %q assginee %q and technician %q: err %w",
-			input.WorkOrderID,
+			workOrderID,
 			wo.Edges.Assignee.Email,
 			v.User().Email,
 			err,
 		)
+	}
+
+	return nil
+}
+
+func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, input models.TechnicianWorkOrderUploadInput) (*ent.WorkOrder, error) {
+	client := r.ClientFrom(ctx)
+	wo, err := client.WorkOrder.Query().
+		Where(workorder.ID(input.WorkOrderID)).
+		WithAssignee().
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("querying work order %q: err %w", input.WorkOrderID, err)
+	}
+	if err := r.verifyAssigneeOrErr(ctx, input.WorkOrderID); err != nil {
+		return nil, err
 	}
 
 	if input.CheckListCategories != nil && len(input.CheckListCategories) > 0 {
@@ -900,19 +921,68 @@ func (r mutationResolver) TechnicianWorkOrderUploadData(ctx context.Context, inp
 				return nil, fmt.Errorf("updating checklist item %q: err %w", clInput.ID, err)
 			}
 		}
-		if _, err = r.AddComment(ctx, models.CommentInput{
-			EntityType: models.CommentEntityWorkOrder,
-			ID:         input.WorkOrderID,
-			Text:       v.User().Email + " uploaded data",
-		}); err != nil {
-			return nil, fmt.Errorf("adding technician uploaded data comment: %w", err)
+	}
+
+	return client.WorkOrder.
+		Query().
+		Where(workorder.ID(input.WorkOrderID)).
+		WithCheckListCategories().
+		Only(ctx)
+}
+
+func (r mutationResolver) TechnicianWorkOrderCheckOut(ctx context.Context, input models.TechnicianWorkOrderCheckOutInput) (*ent.WorkOrder, error) {
+	client := r.ClientFrom(ctx)
+
+	v, ok := viewer.FromContext(ctx).(*viewer.UserViewer)
+	if !ok {
+		return nil, gqlerror.Errorf("could not be executed in automation")
+	}
+
+	if err := r.verifyAssigneeOrErr(ctx, input.WorkOrderID); err != nil {
+		return nil, err
+	}
+
+	var newStatus workorder.Status
+	switch input.Reason {
+	case activity.ClockOutReasonPause:
+		newStatus = workorder.StatusInProgress
+	case activity.ClockOutReasonBlocked:
+		newStatus = workorder.StatusBlocked
+	case activity.ClockOutReasonSubmit, activity.ClockOutReasonSubmitIncomplete:
+		newStatus = workorder.StatusSubmitted
+	}
+
+	if _, err := client.WorkOrder.UpdateOneID(input.WorkOrderID).
+		SetStatus(newStatus).
+		Save(ctx); err != nil {
+		return nil, fmt.Errorf("updating work order status %q: err %w", input.WorkOrderID, err)
+	}
+
+	if _, err := client.Activity.Create().
+		SetActivityType(activity.ActivityTypeClockOut).
+		SetIsCreate(false).
+		SetAuthorID(v.User().ID).
+		SetWorkOrderID(input.WorkOrderID).
+		SetClockDetails(activity.ClockDetails{
+			DistanceMeters: input.DistanceMeters,
+			Comment:        input.Comment,
+			ClockOutReason: &input.Reason,
+		}).
+		Save(ctx); err != nil {
+		return nil, fmt.Errorf("creating clock out activity %q: err %w", input.WorkOrderID, err)
+	}
+
+	if input.CheckListCategories != nil && len(input.CheckListCategories) > 0 {
+		for _, clInput := range input.CheckListCategories {
+			if _, err := r.createOrUpdateCheckListCategory(ctx, clInput, input.WorkOrderID); err != nil {
+				return nil, errors.Wrap(err, "updating check list category")
+			}
 		}
 	}
 
 	return client.WorkOrder.
 		Query().
 		Where(workorder.ID(input.WorkOrderID)).
-		WithComments().
 		WithCheckListCategories().
 		Only(ctx)
 }

@@ -19,7 +19,7 @@ title: Graphql API Breaking Changes
 * `usersGroupSearch` - Use `usersGroups` instead. Will be removed on 2020-09-01
 
 ## Deprecated Mutations
-
+* `technicianWorkOrderUploadData` - Use `technicianWorkOrderCheckOut` instead. Will be removed on 2020-11-01
 
 ## Deprecated Fields
 * `PermissionSettings.canWrite` - Use specific policy in `adminPolicy`, `inventoryPolicy` or `workforcePolicy` instead. Will be removed on 2020-09-01

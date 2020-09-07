@@ -30,6 +30,7 @@ func (Activity) Fields() []ent.Field {
 				"NameChanged", "NAME",
 				"DescriptionChanged", "DESCRIPTION",
 				"ClockIn", "CLOCK_IN",
+				"ClockOut", "CLOCK_OUT",
 			).
 			StorageKey("changed_field"),
 		field.Bool("is_create").

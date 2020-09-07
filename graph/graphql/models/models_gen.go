@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions/core"
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -852,6 +853,14 @@ type TechnicianCheckListItemInput struct {
 
 type TechnicianWorkOrderCheckInInput struct {
 	DistanceMeters *float64 `json:"distanceMeters"`
+}
+
+type TechnicianWorkOrderCheckOutInput struct {
+	WorkOrderID         int                       `json:"workOrderId"`
+	Reason              activity.ClockOutReason   `json:"reason"`
+	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
+	Comment             *string                   `json:"comment"`
+	DistanceMeters      *float64                  `json:"distanceMeters"`
 }
 
 type TechnicianWorkOrderUploadInput struct {

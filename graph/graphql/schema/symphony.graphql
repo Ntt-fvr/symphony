@@ -544,11 +544,22 @@ enum ActivityField
   CLOCK_IN
 }
 
+enum ClockOutReason  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockOutReason"
+) {
+  PAUSE
+  SUBMIT
+  SUBMIT_INCOMPLETE
+  BLOCKED
+}
+
 type ClockDetails
   @goModel(
     model: "github.com/facebookincubator/symphony/pkg/ent/activity.ClockDetails"
   ) {
+  clockOutReason: ClockOutReason
   distanceMeters: Float
+  comment: String
 }
 
 type Activity implements Node {
@@ -3156,6 +3167,14 @@ input AddFlowDraftInput {
   description: String
 }
 
+input TechnicianWorkOrderCheckOutInput {
+  workOrderId: ID!
+  reason: ClockOutReason!
+  checkListCategories: [CheckListCategoryInput!]
+  comment: String
+  distanceMeters: Float
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -3688,9 +3707,15 @@ type Mutation {
     workOrderId: ID!
     input: TechnicianWorkOrderCheckInInput
   ): WorkOrder!
+  technicianWorkOrderCheckOut(
+    input: TechnicianWorkOrderCheckOutInput!
+  ): WorkOrder!
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
+  @deprecated(
+    reason: "Use `technicianWorkOrderCheckOut` instead. Will be removed on 2020-11-01"
+  )
   addReportFilter(input: ReportFilterInput!): ReportFilter!
   editReportFilter(input: EditReportFilterInput!): ReportFilter!
   deleteReportFilter(id: ID!): Boolean!

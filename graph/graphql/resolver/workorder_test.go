@@ -2008,6 +2008,117 @@ func TestTechnicianUploadDataToWorkOrder(t *testing.T) {
 	}
 }
 
+func TestTechnicianWorkOrderCheckOut(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	c := r.GraphClient()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
+	wo := createWorkOrder(ctx, t, *r, "Foo")
+	mr := r.Mutation()
+	wo, err := mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
+		ID:         wo.ID,
+		Name:       longWorkOrderName,
+		AssigneeID: &u.ID,
+	})
+	require.NoError(t, err)
+
+	submitInput := models.TechnicianWorkOrderCheckOutInput{
+		WorkOrderID:    wo.ID,
+		Reason:         activity.ClockOutReasonSubmit,
+		DistanceMeters: pointer.ToFloat64(50),
+	}
+
+	var rsp struct {
+		TechnicianWorkOrderCheckOut struct {
+			ID         string
+			Status     workorder.Status
+			Activities []struct {
+				Author struct {
+					ID string
+				}
+				ClockDetails struct {
+					ClockOutReason *activity.ClockOutReason
+					DistanceMeters *float64
+					Comment        *string
+				}
+			}
+		}
+	}
+
+	query := `mutation($input: TechnicianWorkOrderCheckOutInput!) {
+			technicianWorkOrderCheckOut(input: $input) {
+				id
+				status
+				activities {
+					author {
+						id
+					}
+					clockDetails {
+						clockOutReason
+						distanceMeters
+						comment
+					}
+				}
+			}
+		}`
+
+	c.MustPost(
+		query,
+		&rsp,
+		client.Var("input", submitInput),
+	)
+
+	require.Equal(t, rsp.TechnicianWorkOrderCheckOut.Status, workorder.StatusSubmitted)
+	require.Len(t, rsp.TechnicianWorkOrderCheckOut.Activities, 1)
+	require.Equal(t, rsp.TechnicianWorkOrderCheckOut.Activities[0].Author.ID, strconv.Itoa(u.ID))
+	require.Equal(t, *rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.ClockOutReason, activity.ClockOutReasonSubmit)
+	require.Nil(t, rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.Comment)
+	require.Equal(t, *rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.DistanceMeters, 50.0)
+
+	blockedInput := models.TechnicianWorkOrderCheckOutInput{
+		WorkOrderID:    wo.ID,
+		Reason:         activity.ClockOutReasonBlocked,
+		DistanceMeters: pointer.ToFloat64(50),
+		Comment:        pointer.ToString("Cannot complete"),
+	}
+	c.MustPost(
+		query,
+		&rsp,
+		client.Var("input", blockedInput),
+	)
+
+	require.Equal(t, rsp.TechnicianWorkOrderCheckOut.Status, workorder.StatusBlocked)
+	require.Len(t, rsp.TechnicianWorkOrderCheckOut.Activities, 2)
+
+	incompleteInput := models.TechnicianWorkOrderCheckOutInput{
+		WorkOrderID:    wo.ID,
+		Reason:         activity.ClockOutReasonSubmitIncomplete,
+		DistanceMeters: pointer.ToFloat64(50),
+		Comment:        pointer.ToString("Cannot complete fully"),
+	}
+	c.MustPost(
+		query,
+		&rsp,
+		client.Var("input", incompleteInput),
+	)
+	require.Equal(t, rsp.TechnicianWorkOrderCheckOut.Status, workorder.StatusSubmitted)
+	require.Len(t, rsp.TechnicianWorkOrderCheckOut.Activities, 3)
+
+	pauseInput := models.TechnicianWorkOrderCheckOutInput{
+		WorkOrderID:    wo.ID,
+		Reason:         activity.ClockOutReasonPause,
+		DistanceMeters: pointer.ToFloat64(50),
+	}
+	c.MustPost(
+		query,
+		&rsp,
+		client.Var("input", pauseInput),
+	)
+	require.Equal(t, rsp.TechnicianWorkOrderCheckOut.Status, workorder.StatusInProgress)
+	require.Len(t, rsp.TechnicianWorkOrderCheckOut.Activities, 4)
+}
+
 func TestAssigneeCannotCompleteWorkOrder(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()

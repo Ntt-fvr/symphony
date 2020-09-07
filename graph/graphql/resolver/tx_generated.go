@@ -999,6 +999,20 @@ func (tr txResolver) TechnicianWorkOrderCheckIn(ctx context.Context, workOrderID
 	return result, nil
 }
 
+func (tr txResolver) TechnicianWorkOrderCheckOut(ctx context.Context, input models.TechnicianWorkOrderCheckOutInput) (*ent.WorkOrder, error) {
+	var result, zero *ent.WorkOrder
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.TechnicianWorkOrderCheckOut(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
 func (tr txResolver) TechnicianWorkOrderUploadData(ctx context.Context, input models.TechnicianWorkOrderUploadInput) (*ent.WorkOrder, error) {
 	var result, zero *ent.WorkOrder
 	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
