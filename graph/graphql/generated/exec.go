@@ -45072,145 +45072,6 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
-			}
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				typ, err := ec.unmarshalNString2string(ctx, "property type")
-				if err != nil {
-					return nil, err
-				}
-				field, err := ec.unmarshalNString2string(ctx, "Name")
-				if err != nil {
-					return nil, err
-				}
-				if ec.directives.UniqueField == nil {
-					return nil, errors.New("directive uniqueField is not implemented")
-				}
-				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
-			}
-
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return it, err
-			}
-			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
-				it.Properties = data
-			} else if tmp == nil {
-				it.Properties = nil
-			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
-			}
-		case "workOrders":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("workOrders"))
-			it.WorkOrders, err = ec.unmarshalOWorkOrderDefinitionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderDefinitionInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddServiceEndpointInput(ctx context.Context, obj interface{}) (models.AddServiceEndpointInput, error) {
-	var it models.AddServiceEndpointInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("id"))
-			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "portId":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("portId"))
-			it.PortID, err = ec.unmarshalOID2ᚖint(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "equipmentID":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("equipmentID"))
-			it.EquipmentID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "definition":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("definition"))
-			it.Definition, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputAddStartBlockInput(ctx context.Context, obj interface{}) (models.AddStartBlockInput, error) {
-	var it models.AddStartBlockInput
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "flowDraftId":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("flowDraftId"))
-			it.FlowDraftID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
-<<<<<<< HEAD
-			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				minLength, err := ec.unmarshalOInt2ᚖint(ctx, 1)
-				if err != nil {
-					return nil, err
-				}
-				if ec.directives.StringValue == nil {
-					return nil, errors.New("directive stringValue is not implemented")
-				}
-				return ec.directives.StringValue(ctx, obj, directive0, nil, minLength, nil, nil, nil, nil, nil, nil)
-			}
-
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return it, err
-			}
-			if data, ok := tmp.(string); ok {
-				it.Name = data
-			} else {
-				return it, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "properties":
-			var err error
-
-			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
-			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
@@ -45288,9 +45149,34 @@ func (ec *executionContext) unmarshalInputAddServiceEndpointInput(ctx context.Co
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("definition"))
 			it.Definition, err = ec.unmarshalNID2int(ctx, v)
-=======
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddStartBlockInput(ctx context.Context, obj interface{}) (models.AddStartBlockInput, error) {
+	var it models.AddStartBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "flowDraftId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("flowDraftId"))
+			it.FlowDraftID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
->>>>>>> 70bdfddf87715db38de168c749eaab3362bd6bd8
 			if err != nil {
 				return it, err
 			}
