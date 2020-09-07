@@ -25,7 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/assert"
@@ -1346,26 +1346,26 @@ func TestAddWorkOrderWithProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr, qr, wr := r.Mutation(), r.Query(), r.WorkOrder()
-	strPropType := models1.PropertyTypeInput{
+	strPropType := pkg_models.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 	strFixedValue := "FixedFoo"
-	strFixedPropType := models1.PropertyTypeInput{
+	strFixedPropType := pkg_models.PropertyTypeInput{
 		Name:               "str_fixed_prop",
 		Type:               "string",
 		IsInstanceProperty: pointer.ToBool(false),
 		StringValue:        &strFixedValue,
 	}
-	intPropType := models1.PropertyTypeInput{
+	intPropType := pkg_models.PropertyTypeInput{
 		Name: "int_prop",
 		Type: "int",
 	}
-	rangePropType := models1.PropertyTypeInput{
+	rangePropType := pkg_models.PropertyTypeInput{
 		Name: "rng_prop",
 		Type: "range",
 	}
-	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &strFixedPropType, &intPropType, &rangePropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&strPropType, &strFixedPropType, &intPropType, &rangePropType}
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type", Properties: propTypeInputs})
 	require.NoError(t, err, "Adding location type")
 
@@ -1514,13 +1514,13 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr := r.Mutation()
-	latlongPropType := models1.PropertyTypeInput{
+	latlongPropType := pkg_models.PropertyTypeInput{
 		Name:               "lat_long_prop",
 		Type:               propertytype.TypeGpsLocation,
 		IsMandatory:        pointer.ToBool(true),
 		IsInstanceProperty: pointer.ToBool(true),
 	}
-	propTypeInputs := []*models1.PropertyTypeInput{&latlongPropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&latlongPropType}
 	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type", Properties: propTypeInputs})
 	require.NoError(t, err)
 
@@ -1533,7 +1533,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	_, err = mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
 		ID:   woType.ID,
 		Name: woType.Name,
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:               "textMandatory",
 				Type:               propertytype.TypeString,

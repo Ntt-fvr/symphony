@@ -13,7 +13,7 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
@@ -56,45 +56,45 @@ func prepareEquipmentTypeData(ctx context.Context, t *testing.T, r TestImporterR
 	mr := r.importer.r.Mutation()
 
 	strDefVal := propDefValue
-	propDefInput1 := models1.PropertyTypeInput{
+	propDefInput1 := pkg_models.PropertyTypeInput{
 		Name:        propName1,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models1.PropertyTypeInput{
+	propDefInput2 := pkg_models.PropertyTypeInput{
 		Name: propName2,
 		Type: "int",
 	}
-	propDefInput3 := models1.PropertyTypeInput{
+	propDefInput3 := pkg_models.PropertyTypeInput{
 		Name: propName3,
 		Type: "date",
 	}
-	propDefInput4 := models1.PropertyTypeInput{
+	propDefInput4 := pkg_models.PropertyTypeInput{
 		Name: propName4,
 		Type: "bool",
 	}
-	propDefInput5 := models1.PropertyTypeInput{
+	propDefInput5 := pkg_models.PropertyTypeInput{
 		Name: propName5,
 		Type: "range",
 	}
-	propDefInput6 := models1.PropertyTypeInput{
+	propDefInput6 := pkg_models.PropertyTypeInput{
 		Name: propName6,
 		Type: "gps_location",
 	}
 
 	equipmentType1, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentTypeName,
-		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2},
 	})
 	require.NoError(t, err)
 	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType2Name,
-		Properties: []*models1.PropertyTypeInput{&propDefInput3, &propDefInput4},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput3, &propDefInput4},
 	})
 	require.NoError(t, err)
 	equipmentType3, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType3Name,
-		Properties: []*models1.PropertyTypeInput{&propDefInput5, &propDefInput6},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput5, &propDefInput6},
 	})
 	require.NoError(t, err)
 	return ids{

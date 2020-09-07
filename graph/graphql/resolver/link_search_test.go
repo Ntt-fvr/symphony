@@ -15,7 +15,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -64,7 +64,7 @@ func prepareLinkData(ctx context.Context, r *TestResolver, props []*models.Prope
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		LinkProperties: []*models1.PropertyTypeInput{
+		LinkProperties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        "propStr",
 				Type:        "string",
@@ -642,7 +642,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 	f1 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
-		PropertyValue: &models1.PropertyTypeInput{
+		PropertyValue: &pkg_models.PropertyTypeInput{
 			Name:        "propStr",
 			Type:        propertytype.TypeString,
 			StringValue: pointer.ToString("newVal"),
@@ -657,7 +657,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 	f2 := models.LinkFilterInput{
 		FilterType: models.LinkFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
-		PropertyValue: &models1.PropertyTypeInput{
+		PropertyValue: &pkg_models.PropertyTypeInput{
 			Name:        "connected_date",
 			Type:        propertytype.TypeDate,
 			StringValue: pointer.ToString("2019-01-01"),

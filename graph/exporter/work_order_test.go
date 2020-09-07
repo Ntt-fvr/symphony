@@ -22,7 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -41,7 +41,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	typInput1 := models.AddWorkOrderTypeInput{
 		Name:        "woTemplate1",
 		Description: pointer.ToString("woTemplate1 = desc"),
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
@@ -60,7 +60,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 	typInput2 := models.AddWorkOrderTypeInput{
 		Name:        "woTemplate2",
 		Description: pointer.ToString("woTemplate2 = desc"),
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name: propNameBool,
 				Type: "bool",

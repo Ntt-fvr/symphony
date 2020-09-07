@@ -17,7 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/AlekSi/pointer"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -228,7 +228,7 @@ func TestExportLocationWithPropertyFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: models1.PropertyTypeInput{
+			PropertyValue: pkg_models.PropertyTypeInput{
 				Name:        propNameStr,
 				Type:        "string",
 				StringValue: pointer.ToString("override"),

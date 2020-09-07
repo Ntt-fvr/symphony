@@ -21,7 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -120,32 +120,32 @@ func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify boo
 func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) {
 	mr := r.importer.r.Mutation()
 	strDefVal := propDefValue
-	propDefInput1 := models1.PropertyTypeInput{
+	propDefInput1 := pkg_models.PropertyTypeInput{
 		Name:        propName1,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models1.PropertyTypeInput{
+	propDefInput2 := pkg_models.PropertyTypeInput{
 		Name: propName2,
 		Type: "int",
 	}
-	propDefInput3 := models1.PropertyTypeInput{
+	propDefInput3 := pkg_models.PropertyTypeInput{
 		Name: propName3,
 		Type: "float",
 	}
-	propDefInput4 := models1.PropertyTypeInput{
+	propDefInput4 := pkg_models.PropertyTypeInput{
 		Name: propName4,
 		Type: "bool",
 	}
 
 	serviceType1, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceTypeName,
-		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2},
 	})
 	require.NoError(t, err)
 	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
 		Name:       serviceType2Name,
-		Properties: []*models1.PropertyTypeInput{&propDefInput3, &propDefInput4},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput3, &propDefInput4},
 	})
 	require.NoError(t, err)
 

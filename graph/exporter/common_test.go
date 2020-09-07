@@ -32,7 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ev"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -123,7 +123,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	require.NoError(t, err)
 	locTypeM, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM})
 	require.NoError(t, err)
-	locTypeS, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*models1.PropertyTypeInput{
+	locTypeS, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*pkg_models.PropertyTypeInput{
 		{
 			Name:        propNameStr,
 			Type:        propertytype.TypeString,
@@ -199,7 +199,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propStr,
 				Type:        "string",
@@ -210,7 +210,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 				Type: "string",
 			},
 		},
-		LinkProperties: []*models1.PropertyTypeInput{
+		LinkProperties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propNameStr,
 				Type:        "string",
@@ -233,12 +233,12 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	}
 	strDefVal := propDefValue
 	intDefVal := propDevValInt
-	propDefInput1 := models1.PropertyTypeInput{
+	propDefInput1 := pkg_models.PropertyTypeInput{
 		Name:        propNameStr,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models1.PropertyTypeInput{
+	propDefInput2 := pkg_models.PropertyTypeInput{
 		Name:     propNameInt,
 		Type:     "int",
 		IntValue: &intDefVal,
@@ -255,7 +255,7 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	}
 	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name:       equipmentType2Name,
-		Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2},
+		Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2},
 		Ports:      []*models.EquipmentPortInput{&port2},
 	})
 	require.NoError(t, err)
@@ -295,11 +295,11 @@ func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
 	})
 
 	val := propDefValue2
-	propertyInput := models1.PropertyTypeInput{Name: newPropNameStr, StringValue: &val, Type: propertytype.TypeString}
+	propertyInput := pkg_models.PropertyTypeInput{Name: newPropNameStr, StringValue: &val, Type: propertytype.TypeString}
 	_, err = r.Mutation().EditEquipmentType(ctx, models.EditEquipmentTypeInput{
 		ID:         equipmentType2.ID,
 		Name:       equipmentType2.Name,
-		Properties: []*models1.PropertyTypeInput{&propertyInput},
+		Properties: []*pkg_models.PropertyTypeInput{&propertyInput},
 	})
 	require.NoError(t, err)
 

@@ -14,7 +14,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
@@ -64,7 +64,7 @@ func preparePortTypeData(ctx context.Context, t *testing.T, r TestImporterResolv
 
 	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType1",
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propNameStr,
 				Type:        propertytype.TypeString,
@@ -75,7 +75,7 @@ func preparePortTypeData(ctx context.Context, t *testing.T, r TestImporterResolv
 				Type: propertytype.TypeInt,
 			},
 		},
-		LinkProperties: []*models1.PropertyTypeInput{
+		LinkProperties: []*pkg_models.PropertyTypeInput{
 			{
 				Name: propNameInt,
 				Type: propertytype.TypeInt,
@@ -99,7 +99,7 @@ func preparePortTypeData(ctx context.Context, t *testing.T, r TestImporterResolv
 
 	ptyp2, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
 		Name: "portType2",
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propNameDate,
 				Type:        propertytype.TypeDate,
@@ -110,7 +110,7 @@ func preparePortTypeData(ctx context.Context, t *testing.T, r TestImporterResolv
 				Type: propertytype.TypeBool,
 			},
 		},
-		LinkProperties: []*models1.PropertyTypeInput{
+		LinkProperties: []*pkg_models.PropertyTypeInput{
 			{
 				Name:        propNameDate,
 				Type:        propertytype.TypeDate,

@@ -14,7 +14,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -27,37 +27,37 @@ var (
 func prepareLocationTypesWithProperties(ctx context.Context, t *testing.T, r TestImporterResolver) locTypeIDs {
 	mr := r.importer.r.Mutation()
 	strDefVal := propDefValue
-	propDefInput1 := models1.PropertyTypeInput{
+	propDefInput1 := pkg_models.PropertyTypeInput{
 		Name:        propName1,
 		Type:        "string",
 		StringValue: &strDefVal,
 	}
-	propDefInput2 := models1.PropertyTypeInput{
+	propDefInput2 := pkg_models.PropertyTypeInput{
 		Name: propName2,
 		Type: "int",
 	}
-	propDefInput3 := models1.PropertyTypeInput{
+	propDefInput3 := pkg_models.PropertyTypeInput{
 		Name: propName3,
 		Type: "date",
 	}
-	propDefInput4 := models1.PropertyTypeInput{
+	propDefInput4 := pkg_models.PropertyTypeInput{
 		Name: propName4,
 		Type: "bool",
 	}
-	propDefInput5 := models1.PropertyTypeInput{
+	propDefInput5 := pkg_models.PropertyTypeInput{
 		Name: propName5,
 		Type: "range",
 	}
-	propDefInput6 := models1.PropertyTypeInput{
+	propDefInput6 := pkg_models.PropertyTypeInput{
 		Name: propName6,
 		Type: "gps_location",
 	}
 
-	l, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameL, Properties: []*models1.PropertyTypeInput{&propDefInput5, &propDefInput6}})
+	l, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameL, Properties: []*pkg_models.PropertyTypeInput{&propDefInput5, &propDefInput6}})
 	require.NoError(t, err)
-	m, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM, Properties: []*models1.PropertyTypeInput{&propDefInput3, &propDefInput4}})
+	m, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM, Properties: []*pkg_models.PropertyTypeInput{&propDefInput3, &propDefInput4}})
 	require.NoError(t, err)
-	s, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*models1.PropertyTypeInput{&propDefInput1, &propDefInput2}})
+	s, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*pkg_models.PropertyTypeInput{&propDefInput1, &propDefInput2}})
 	require.NoError(t, err)
 
 	_, err = r.importer.r.Mutation().EditLocationTypesIndex(ctx, []*models.LocationTypeIndex{

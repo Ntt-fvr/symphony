@@ -16,7 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -34,7 +34,7 @@ type equipmentFilterInput struct {
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
-	PropertyValue models1.PropertyTypeInput  `json:"propertyValue"`
+	PropertyValue pkg_models.PropertyTypeInput  `json:"propertyValue"`
 }
 
 type equipmentRower struct {

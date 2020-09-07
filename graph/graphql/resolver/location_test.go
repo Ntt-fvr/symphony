@@ -18,7 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/surveycellscan"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -183,19 +183,19 @@ func TestAddLocationWithProperties(t *testing.T) {
 
 	mr, qr := r.Mutation(), r.Query()
 	strValue := "Foo"
-	strPropType := models1.PropertyTypeInput{
+	strPropType := pkg_models.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
-	intPropType := models1.PropertyTypeInput{
+	intPropType := pkg_models.PropertyTypeInput{
 		Name: "int_prop",
 		Type: "int",
 	}
-	rangePropType := models1.PropertyTypeInput{
+	rangePropType := pkg_models.PropertyTypeInput{
 		Name: "rng_prop",
 		Type: "range",
 	}
-	propTypeInputs := []*models1.PropertyTypeInput{&strPropType, &intPropType, &rangePropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&strPropType, &intPropType, &rangePropType}
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "location_type_name_1",
 		Properties: propTypeInputs,
@@ -255,7 +255,7 @@ func TestDontAddDuplicateProperties(t *testing.T) {
 
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name: "location_type_name_1",
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name: "str_prop",
 				Type: propertytype.TypeString,
@@ -264,7 +264,7 @@ func TestDontAddDuplicateProperties(t *testing.T) {
 	require.NoError(t, err, "Adding location type")
 	eqType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
 		Name: "equip_type",
-		Properties: []*models1.PropertyTypeInput{
+		Properties: []*pkg_models.PropertyTypeInput{
 			{
 				Name: "str_prop",
 				Type: propertytype.TypeString,
@@ -335,11 +335,11 @@ func TestAddLocationWithInvalidProperties(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr := r.Mutation()
-	latlongPropType := models1.PropertyTypeInput{
+	latlongPropType := pkg_models.PropertyTypeInput{
 		Name: "lat_long_prop",
 		Type: "gps_location",
 	}
-	propTypeInputs := []*models1.PropertyTypeInput{&latlongPropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&latlongPropType}
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "location_type_name_1",
 		Properties: propTypeInputs,
@@ -622,19 +622,19 @@ func TestEditLocationWithProperties(t *testing.T) {
 
 	mr, qr := r.Mutation(), r.Query()
 
-	pTypes := models1.PropertyTypeInput{
+	pTypes := pkg_models.PropertyTypeInput{
 		Name: "str_prop",
 		Type: "string",
 	}
 
-	p2Types := models1.PropertyTypeInput{
+	p2Types := pkg_models.PropertyTypeInput{
 		Name: "str_prop2",
 		Type: "string",
 	}
 
 	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "type_name_1",
-		Properties: []*models1.PropertyTypeInput{&pTypes, &p2Types},
+		Properties: []*pkg_models.PropertyTypeInput{&pTypes, &p2Types},
 	})
 	require.NoError(t, err)
 	pTypeID := locType.QueryPropertyTypes().AllX(ctx)
@@ -891,14 +891,14 @@ func TestDeleteLocationWithEquipmentsFails(t *testing.T) {
 	mr, qr := r.Mutation(), r.Query()
 
 	strValue := "Foo"
-	strPType := models1.PropertyTypeInput{
+	strPType := pkg_models.PropertyTypeInput{
 		Name:        "str_prop",
 		Type:        "string",
 		StringValue: &strValue,
 	}
 	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "location_type_name_1",
-		Properties: []*models1.PropertyTypeInput{&strPType},
+		Properties: []*pkg_models.PropertyTypeInput{&strPType},
 	})
 	require.NoError(t, err)
 
@@ -1299,13 +1299,13 @@ func TestAddLocationWithEquipmentProperty(t *testing.T) {
 	})
 
 	index := 0
-	eqPropType := models1.PropertyTypeInput{
+	eqPropType := pkg_models.PropertyTypeInput{
 		Name:  "eq_prop",
 		Type:  "node",
 		Index: &index,
 	}
 
-	propTypeInputs := []*models1.PropertyTypeInput{&eqPropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&eqPropType}
 	lt, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "example_type_2",
 		Properties: propTypeInputs,
@@ -1348,14 +1348,14 @@ func TestAddLocationWithLocationProperty(t *testing.T) {
 	})
 
 	index := 0
-	locationPropType := models1.PropertyTypeInput{
+	locationPropType := pkg_models.PropertyTypeInput{
 		Name:     "location_prop",
 		Type:     propertytype.TypeNode,
 		NodeType: pointer.ToString("location"),
 		Index:    &index,
 	}
 
-	propTypeInputs := []*models1.PropertyTypeInput{&locationPropType}
+	propTypeInputs := []*pkg_models.PropertyTypeInput{&locationPropType}
 	lt, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
 		Name:       "location_type_with_location_prop",
 		Properties: propTypeInputs,

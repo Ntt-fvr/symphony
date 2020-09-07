@@ -17,7 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
+	pkg_models "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -29,7 +29,7 @@ type locationsFilterInput struct {
 	StringValue   string                    `json:"stringValue"`
 	IDSet         []string                  `json:"idSet"`
 	StringSet     []string                  `json:"stringSet"`
-	PropertyValue models1.PropertyTypeInput `json:"propertyValue"`
+	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
 	BoolValue     *bool                     `json:"boolValue"`
 }
