@@ -15,8 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 53,
-  "iteration": 1586779349197,
+  "id": 208,
+  "iteration": 1599484571173,
   "links": [],
   "panels": [
     {
@@ -27,6 +27,12 @@
       "dashes": false,
       "datasource": "Prometheus",
       "description": "Deployments over time",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 10,
       "fillGradient": 8,
       "gridPos": {
@@ -129,6 +135,12 @@
       "datasource": "Prometheus",
       "decimals": null,
       "description": "Image tag currently deployed by majority",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -166,7 +178,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "postfix": "",
       "postfixFontSize": "50%",
       "prefix": "",
@@ -222,6 +233,12 @@
       ],
       "datasource": "Prometheus",
       "description": "Signals whether a deployment is currently in progress",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -253,7 +270,6 @@
       "maxDataPoints": 100,
       "nullPointMode": "connected",
       "nullText": null,
-      "options": {},
       "pluginVersion": "6.6.2",
       "postfix": "",
       "postfixFontSize": "50%",
@@ -309,8 +325,8 @@
       "valueName": "current"
     }
   ],
-  "refresh": "10s",
-  "schemaVersion": 22,
+  "refresh": "30s",
+  "schemaVersion": 25,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -318,8 +334,8 @@
       {
         "current": {
           "selected": false,
-          "text": "default",
-          "value": "default"
+          "text": "symphony",
+          "value": "symphony"
         },
         "hide": 2,
         "label": null,
@@ -327,11 +343,11 @@
         "options": [
           {
             "selected": true,
-            "text": "default",
-            "value": "default"
+            "text": "symphony",
+            "value": "symphony"
           }
         ],
-        "query": "default",
+        "query": "symphony",
         "skipUrlSync": false,
         "type": "constant"
       },
@@ -358,8 +374,9 @@
       {
         "allValue": null,
         "current": {
-          "text": "2ab81dc19b111ae9eaa6cc49f2cb00fbf2626a77",
-          "value": "2ab81dc19b111ae9eaa6cc49f2cb00fbf2626a77"
+          "selected": false,
+          "text": "df989adefa11f98b421e001020b473c5462ce343",
+          "value": "df989adefa11f98b421e001020b473c5462ce343"
         },
         "datasource": "Prometheus",
         "definition": "query_result(sum(kube_pod_container_info{namespace=\"$namespace\", container=\"$container\"}) by (image))",
@@ -388,7 +405,6 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
       "10s",
       "30s",
       "1m",
@@ -401,7 +417,7 @@
     ]
   },
   "timezone": "",
-  "title": "Symphony / Deployment / Inventory",
-  "uid": "5EW3EC9Zz",
+  "title": "Symphony / Deployment",
+  "uid": "9B-aZsvGz",
   "version": 1
 }

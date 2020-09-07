@@ -120,23 +120,6 @@ data aws_iam_policy_document grafana {
   }
 }
 
-# grafana dashboards are passed as config map.
-resource kubernetes_config_map grafana_extra_dashboards {
-  metadata {
-    name      = "grafana-extra-dashboards"
-    namespace = "monitoring"
-
-    labels = {
-      grafana_dashboard = "1"
-    }
-  }
-
-  data = {
-    for f in fileset("${path.module}/dashboards", "*") :
-    f => file("${path.module}/dashboards/${f}")
-  }
-}
-
 # exports helm release stats to prometheus
 resource helm_release helm_exporter {
   name       = "helm-exporter"

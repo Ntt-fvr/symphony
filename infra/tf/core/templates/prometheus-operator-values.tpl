@@ -78,6 +78,9 @@ grafana:
   persistence:
     enabled: true
     storageClassName: efs
+  sidecar:
+    dashboards:
+      searchNamespace: ALL
   additionalDataSources:
     - name: CloudWatch
       type: cloudwatch

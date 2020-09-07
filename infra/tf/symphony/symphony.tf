@@ -325,3 +325,19 @@ resource kubernetes_cron_job tenant_cleaner {
     }
   }
 }
+
+resource kubernetes_config_map dashboards {
+  metadata {
+    name      = "grafana-dashboards"
+    namespace = kubernetes_namespace.symphony.id
+
+    labels = {
+      grafana_dashboard = "1"
+    }
+  }
+
+  data = {
+    for f in fileset("${path.module}/dashboards", "*") :
+    f => file("${path.module}/dashboards/${f}")
+  }
+}
