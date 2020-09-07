@@ -400,7 +400,7 @@ func (c *client) addWorkOrderType(name string, properties ...*models1.PropertyTy
 		properties = []*models1.PropertyTypeInput{}
 	}
 	vars := map[string]interface{}{
-		"input": models1.AddWorkOrderTypeInput{
+		"input": models.AddWorkOrderTypeInput{
 			Name:       name,
 			Properties: properties,
 		},
