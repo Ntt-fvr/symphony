@@ -20,6 +20,8 @@ type Tx struct {
 	ActionsRule *ActionsRuleClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
+	// Block is the client for interacting with the Block builders.
+	Block *BlockClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -58,6 +60,8 @@ type Tx struct {
 	FloorPlanReferencePoint *FloorPlanReferencePointClient
 	// FloorPlanScale is the client for interacting with the FloorPlanScale builders.
 	FloorPlanScale *FloorPlanScaleClient
+	// FlowDraft is the client for interacting with the FlowDraft builders.
+	FlowDraft *FlowDraftClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
 	// Link is the client for interacting with the Link builders.
@@ -249,6 +253,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.ActionsRule = NewActionsRuleClient(tx.config)
 	tx.Activity = NewActivityClient(tx.config)
+	tx.Block = NewBlockClient(tx.config)
 	tx.CheckListCategory = NewCheckListCategoryClient(tx.config)
 	tx.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(tx.config)
 	tx.CheckListItem = NewCheckListItemClient(tx.config)
@@ -268,6 +273,7 @@ func (tx *Tx) init() {
 	tx.FloorPlan = NewFloorPlanClient(tx.config)
 	tx.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(tx.config)
 	tx.FloorPlanScale = NewFloorPlanScaleClient(tx.config)
+	tx.FlowDraft = NewFlowDraftClient(tx.config)
 	tx.Hyperlink = NewHyperlinkClient(tx.config)
 	tx.Link = NewLinkClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)

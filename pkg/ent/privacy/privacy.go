@@ -262,6 +262,30 @@ func (f ActivityMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ActivityMutation", m)
 }
 
+// The BlockQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type BlockQueryRuleFunc func(context.Context, *ent.BlockQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f BlockQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.BlockQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.BlockQuery", q)
+}
+
+// The BlockMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type BlockMutationRuleFunc func(context.Context, *ent.BlockMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f BlockMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.BlockMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.BlockMutation", m)
+}
+
 // The CheckListCategoryQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CheckListCategoryQueryRuleFunc func(context.Context, *ent.CheckListCategoryQuery) error
@@ -716,6 +740,30 @@ func (f FloorPlanScaleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FloorPlanScaleMutation", m)
+}
+
+// The FlowDraftQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FlowDraftQueryRuleFunc func(context.Context, *ent.FlowDraftQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FlowDraftQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FlowDraftQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FlowDraftQuery", q)
+}
+
+// The FlowDraftMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FlowDraftMutationRuleFunc func(context.Context, *ent.FlowDraftMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FlowDraftMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FlowDraftMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FlowDraftMutation", m)
 }
 
 // The HyperlinkQueryRuleFunc type is an adapter to allow the use of ordinary

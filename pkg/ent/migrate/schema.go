@@ -64,6 +64,45 @@ var (
 			},
 		},
 	}
+	// BlocksColumns holds the columns for the "blocks" table.
+	BlocksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "GO_TO"}},
+		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_draft_blocks", Type: field.TypeInt, Nullable: true},
+	}
+	// BlocksTable holds the schema information for the "blocks" table.
+	BlocksTable = &schema.Table{
+		Name:       "blocks",
+		Columns:    BlocksColumns,
+		PrimaryKey: []*schema.Column{BlocksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "blocks_blocks_goto_block",
+				Columns: []*schema.Column{BlocksColumns[5]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "blocks_flow_drafts_blocks",
+				Columns: []*schema.Column{BlocksColumns[6]},
+
+				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "block_name_flow_draft_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[6]},
+			},
+		},
+	}
 	// CheckListCategoriesColumns holds the columns for the "check_list_categories" table.
 	CheckListCategoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -659,6 +698,19 @@ var (
 		Name:        "floor_plan_scales",
 		Columns:     FloorPlanScalesColumns,
 		PrimaryKey:  []*schema.Column{FloorPlanScalesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// FlowDraftsColumns holds the columns for the "flow_drafts" table.
+	FlowDraftsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+	}
+	// FlowDraftsTable holds the schema information for the "flow_drafts" table.
+	FlowDraftsTable = &schema.Table{
+		Name:        "flow_drafts",
+		Columns:     FlowDraftsColumns,
+		PrimaryKey:  []*schema.Column{FlowDraftsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// HyperlinksColumns holds the columns for the "hyperlinks" table.
@@ -1803,6 +1855,33 @@ var (
 			},
 		},
 	}
+	// BlockNextBlocksColumns holds the columns for the "block_next_blocks" table.
+	BlockNextBlocksColumns = []*schema.Column{
+		{Name: "block_id", Type: field.TypeInt},
+		{Name: "prev_block_id", Type: field.TypeInt},
+	}
+	// BlockNextBlocksTable holds the schema information for the "block_next_blocks" table.
+	BlockNextBlocksTable = &schema.Table{
+		Name:       "block_next_blocks",
+		Columns:    BlockNextBlocksColumns,
+		PrimaryKey: []*schema.Column{BlockNextBlocksColumns[0], BlockNextBlocksColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "block_next_blocks_block_id",
+				Columns: []*schema.Column{BlockNextBlocksColumns[0]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "block_next_blocks_prev_block_id",
+				Columns: []*schema.Column{BlockNextBlocksColumns[1]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceUpstreamColumns holds the columns for the "service_upstream" table.
 	ServiceUpstreamColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -1969,6 +2048,7 @@ var (
 	Tables = []*schema.Table{
 		ActionsRulesTable,
 		ActivitiesTable,
+		BlocksTable,
 		CheckListCategoriesTable,
 		CheckListCategoryDefinitionsTable,
 		CheckListItemsTable,
@@ -1988,6 +2068,7 @@ var (
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,
 		FloorPlanScalesTable,
+		FlowDraftsTable,
 		HyperlinksTable,
 		LinksTable,
 		LocationsTable,
@@ -2015,6 +2096,7 @@ var (
 		WorkOrderDefinitionsTable,
 		WorkOrderTemplatesTable,
 		WorkOrderTypesTable,
+		BlockNextBlocksTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -2027,6 +2109,8 @@ var (
 func init() {
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
+	BlocksTable.ForeignKeys[0].RefTable = BlocksTable
+	BlocksTable.ForeignKeys[1].RefTable = FlowDraftsTable
 	CheckListCategoriesTable.ForeignKeys[0].RefTable = WorkOrdersTable
 	CheckListCategoryDefinitionsTable.ForeignKeys[0].RefTable = WorkOrderTemplatesTable
 	CheckListCategoryDefinitionsTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
@@ -2120,6 +2204,8 @@ func init() {
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
 	WorkOrderTemplatesTable.ForeignKeys[0].RefTable = WorkOrderTypesTable
+	BlockNextBlocksTable.ForeignKeys[0].RefTable = BlocksTable
+	BlockNextBlocksTable.ForeignKeys[1].RefTable = BlocksTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

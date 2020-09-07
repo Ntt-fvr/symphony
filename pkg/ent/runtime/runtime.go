@@ -12,6 +12,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -31,6 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -117,6 +119,33 @@ func init() {
 	activityDescIsCreate := activityFields[1].Descriptor()
 	// activity.DefaultIsCreate holds the default value on creation for the is_create field.
 	activity.DefaultIsCreate = activityDescIsCreate.Default.(bool)
+	blockMixin := schema.Block{}.Mixin()
+	block.Policy = schema.Block{}.Policy()
+	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := block.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	blockMixinFields0 := blockMixin[0].Fields()
+	blockFields := schema.Block{}.Fields()
+	_ = blockFields
+	// blockDescCreateTime is the schema descriptor for create_time field.
+	blockDescCreateTime := blockMixinFields0[0].Descriptor()
+	// block.DefaultCreateTime holds the default value on creation for the create_time field.
+	block.DefaultCreateTime = blockDescCreateTime.Default.(func() time.Time)
+	// blockDescUpdateTime is the schema descriptor for update_time field.
+	blockDescUpdateTime := blockMixinFields0[1].Descriptor()
+	// block.DefaultUpdateTime holds the default value on creation for the update_time field.
+	block.DefaultUpdateTime = blockDescUpdateTime.Default.(func() time.Time)
+	// block.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	block.UpdateDefaultUpdateTime = blockDescUpdateTime.UpdateDefault.(func() time.Time)
+	// blockDescName is the schema descriptor for name field.
+	blockDescName := blockFields[0].Descriptor()
+	// block.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	block.NameValidator = blockDescName.Validators[0].(func(string) error)
 	checklistcategoryMixin := schema.CheckListCategory{}.Mixin()
 	checklistcategory.Policy = schema.CheckListCategory{}.Policy()
 	checklistcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -562,6 +591,23 @@ func init() {
 	floorplanscale.DefaultUpdateTime = floorplanscaleDescUpdateTime.Default.(func() time.Time)
 	// floorplanscale.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	floorplanscale.UpdateDefaultUpdateTime = floorplanscaleDescUpdateTime.UpdateDefault.(func() time.Time)
+	flowdraftMixin := schema.FlowDraft{}.Mixin()
+	flowdraft.Policy = schema.FlowDraft{}.Policy()
+	flowdraft.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := flowdraft.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	flowdraftMixinFields0 := flowdraftMixin[0].Fields()
+	flowdraftFields := schema.FlowDraft{}.Fields()
+	_ = flowdraftFields
+	// flowdraftDescName is the schema descriptor for name field.
+	flowdraftDescName := flowdraftMixinFields0[0].Descriptor()
+	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
 	hyperlinkMixin := schema.Hyperlink{}.Mixin()
 	hyperlink.Policy = schema.Hyperlink{}.Policy()
 	hyperlink.Hooks[0] = func(next ent.Mutator) ent.Mutator {

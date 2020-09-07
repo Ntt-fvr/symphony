@@ -37,6 +37,30 @@ func (a *ActivityQuery) collectField(ctx *graphql.OperationContext, field graphq
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (b *BlockQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		b = b.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return b
+}
+
+func (b *BlockQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *BlockQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "nextBlocks":
+			b = b.WithNextBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		case "prevBlocks":
+			b = b.WithPrevBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return b
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (clc *CheckListCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *CheckListCategoryQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		clc = clc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -394,6 +418,26 @@ func (fps *FloorPlanScaleQuery) CollectFields(ctx context.Context, satisfies ...
 
 func (fps *FloorPlanScaleQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FloorPlanScaleQuery {
 	return fps
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (fd *FlowDraftQuery) CollectFields(ctx context.Context, satisfies ...string) *FlowDraftQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		fd = fd.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return fd
+}
+
+func (fd *FlowDraftQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowDraftQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "blocks":
+			fd = fd.WithBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return fd
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

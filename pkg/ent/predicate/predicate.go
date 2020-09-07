@@ -16,6 +16,9 @@ type ActionsRule func(*sql.Selector)
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 
+// Block is the predicate function for block builders.
+type Block func(*sql.Selector)
+
 // CheckListCategory is the predicate function for checklistcategory builders.
 type CheckListCategory func(*sql.Selector)
 
@@ -72,6 +75,9 @@ type FloorPlanReferencePoint func(*sql.Selector)
 
 // FloorPlanScale is the predicate function for floorplanscale builders.
 type FloorPlanScale func(*sql.Selector)
+
+// FlowDraft is the predicate function for flowdraft builders.
+type FlowDraft func(*sql.Selector)
 
 // Hyperlink is the predicate function for hyperlink builders.
 type Hyperlink func(*sql.Selector)

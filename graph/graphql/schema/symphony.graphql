@@ -3094,6 +3094,65 @@ input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
 }
 
+# Block definitions
+
+type Block implements Node {
+  id: ID!
+  name: String!
+  nextBlocks: [Block!]!
+  prevBlocks: [Block!]!
+  details: BlockType!
+}
+
+type StartBlock  {
+  dummy: String
+}
+
+type EndBlock {
+  dummy: String
+}
+
+type GotoBlock {
+  gotoBlock: Block
+}
+
+union BlockType = StartBlock | EndBlock | GotoBlock
+
+input AddStartBlockInput {
+  flowDraftId: ID!
+  name: String!
+}
+
+input AddEndBlockInput {
+  flowDraftId: ID!
+  name: String!
+}
+
+input AddGotoBlockInput {
+  flowDraftId: ID!
+  name: String!
+  nextBlockId: ID!
+}
+
+input ConnectorInput {
+  blockId: ID!
+  nextBlockId: ID!
+}
+
+# Flow Definitions
+
+type FlowDraft implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+}
+
+input AddFlowDraftInput {
+  name: String!
+  description: String
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -3635,6 +3694,14 @@ type Mutation {
   addPermissionsPolicy(input: AddPermissionsPolicyInput!): PermissionsPolicy!
   editPermissionsPolicy(input: EditPermissionsPolicyInput!): PermissionsPolicy!
   deletePermissionsPolicy(id: ID!): Boolean!
+  addStartBlock(input: AddStartBlockInput!): Block!
+  addEndBlock(input: AddEndBlockInput!): Block!
+  addGotoBlock(input: AddGotoBlockInput!): Block!
+  deleteBlock(id: ID!): Boolean!
+  addConnector(input: ConnectorInput!): Block!
+  deleteConnector(input: ConnectorInput!): Block!
+  addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
+  deleteFlowDraft(id: ID!): Boolean!
 }
 
 type Subscription {

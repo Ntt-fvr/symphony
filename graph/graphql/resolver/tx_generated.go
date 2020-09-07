@@ -1090,3 +1090,109 @@ func (tr txResolver) DeletePermissionsPolicy(ctx context.Context, id int) (bool,
 	}
 	return result, nil
 }
+
+func (tr txResolver) AddStartBlock(ctx context.Context, input models.AddStartBlockInput) (*ent.Block, error) {
+	var result, zero *ent.Block
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddStartBlock(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) AddEndBlock(ctx context.Context, input models.AddEndBlockInput) (*ent.Block, error) {
+	var result, zero *ent.Block
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddEndBlock(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) AddGotoBlock(ctx context.Context, input models.AddGotoBlockInput) (*ent.Block, error) {
+	var result, zero *ent.Block
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddGotoBlock(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) DeleteBlock(ctx context.Context, id int) (bool, error) {
+	var result, zero bool
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.DeleteBlock(ctx, id)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	return result, nil
+}
+
+func (tr txResolver) AddConnector(ctx context.Context, input models.ConnectorInput) (*ent.Block, error) {
+	var result, zero *ent.Block
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddConnector(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) DeleteConnector(ctx context.Context, input models.ConnectorInput) (*ent.Block, error) {
+	var result, zero *ent.Block
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.DeleteConnector(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) AddFlowDraft(ctx context.Context, input models.AddFlowDraftInput) (*ent.FlowDraft, error) {
+	var result, zero *ent.FlowDraft
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.AddFlowDraft(ctx, input)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	if result != nil {
+		result = result.Unwrap()
+	}
+	return result, nil
+}
+
+func (tr txResolver) DeleteFlowDraft(ctx context.Context, id int) (bool, error) {
+	var result, zero bool
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
+		result, err = mr.DeleteFlowDraft(ctx, id)
+		return
+	}); err != nil {
+		return zero, err
+	}
+	return result, nil
+}

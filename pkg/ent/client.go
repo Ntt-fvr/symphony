@@ -15,6 +15,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -34,6 +35,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -76,6 +78,8 @@ type Client struct {
 	ActionsRule *ActionsRuleClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
+	// Block is the client for interacting with the Block builders.
+	Block *BlockClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -114,6 +118,8 @@ type Client struct {
 	FloorPlanReferencePoint *FloorPlanReferencePointClient
 	// FloorPlanScale is the client for interacting with the FloorPlanScale builders.
 	FloorPlanScale *FloorPlanScaleClient
+	// FlowDraft is the client for interacting with the FlowDraft builders.
+	FlowDraft *FlowDraftClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
 	// Link is the client for interacting with the Link builders.
@@ -186,6 +192,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.ActionsRule = NewActionsRuleClient(c.config)
 	c.Activity = NewActivityClient(c.config)
+	c.Block = NewBlockClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
 	c.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(c.config)
 	c.CheckListItem = NewCheckListItemClient(c.config)
@@ -205,6 +212,7 @@ func (c *Client) init() {
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
 	c.FloorPlanScale = NewFloorPlanScaleClient(c.config)
+	c.FlowDraft = NewFlowDraftClient(c.config)
 	c.Hyperlink = NewHyperlinkClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
@@ -266,6 +274,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:                      cfg,
 		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
+		Block:                       NewBlockClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -285,6 +294,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		FlowDraft:                   NewFlowDraftClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
@@ -329,6 +339,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:                      cfg,
 		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
+		Block:                       NewBlockClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -348,6 +359,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		FlowDraft:                   NewFlowDraftClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
@@ -405,6 +417,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.ActionsRule.Use(hooks...)
 	c.Activity.Use(hooks...)
+	c.Block.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
 	c.CheckListCategoryDefinition.Use(hooks...)
 	c.CheckListItem.Use(hooks...)
@@ -424,6 +437,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
 	c.FloorPlanScale.Use(hooks...)
+	c.FlowDraft.Use(hooks...)
 	c.Hyperlink.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
@@ -661,6 +675,175 @@ func (c *ActivityClient) QueryWorkOrder(a *Activity) *WorkOrderQuery {
 func (c *ActivityClient) Hooks() []Hook {
 	hooks := c.hooks.Activity
 	return append(hooks[:len(hooks):len(hooks)], activity.Hooks[:]...)
+}
+
+// BlockClient is a client for the Block schema.
+type BlockClient struct {
+	config
+}
+
+// NewBlockClient returns a client for the Block from the given config.
+func NewBlockClient(c config) *BlockClient {
+	return &BlockClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `block.Hooks(f(g(h())))`.
+func (c *BlockClient) Use(hooks ...Hook) {
+	c.hooks.Block = append(c.hooks.Block, hooks...)
+}
+
+// Create returns a create builder for Block.
+func (c *BlockClient) Create() *BlockCreate {
+	mutation := newBlockMutation(c.config, OpCreate)
+	return &BlockCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Block entities.
+func (c *BlockClient) CreateBulk(builders ...*BlockCreate) *BlockCreateBulk {
+	return &BlockCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Block.
+func (c *BlockClient) Update() *BlockUpdate {
+	mutation := newBlockMutation(c.config, OpUpdate)
+	return &BlockUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BlockClient) UpdateOne(b *Block) *BlockUpdateOne {
+	mutation := newBlockMutation(c.config, OpUpdateOne, withBlock(b))
+	return &BlockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BlockClient) UpdateOneID(id int) *BlockUpdateOne {
+	mutation := newBlockMutation(c.config, OpUpdateOne, withBlockID(id))
+	return &BlockUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Block.
+func (c *BlockClient) Delete() *BlockDelete {
+	mutation := newBlockMutation(c.config, OpDelete)
+	return &BlockDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *BlockClient) DeleteOne(b *Block) *BlockDeleteOne {
+	return c.DeleteOneID(b.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *BlockClient) DeleteOneID(id int) *BlockDeleteOne {
+	builder := c.Delete().Where(block.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BlockDeleteOne{builder}
+}
+
+// Query returns a query builder for Block.
+func (c *BlockClient) Query() *BlockQuery {
+	return &BlockQuery{config: c.config}
+}
+
+// Get returns a Block entity by its id.
+func (c *BlockClient) Get(ctx context.Context, id int) (*Block, error) {
+	return c.Query().Where(block.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BlockClient) GetX(ctx context.Context, id int) *Block {
+	b, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+// QueryPrevBlocks queries the prev_blocks edge of a Block.
+func (c *BlockClient) QueryPrevBlocks(b *Block) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, block.PrevBlocksTable, block.PrevBlocksPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNextBlocks queries the next_blocks edge of a Block.
+func (c *BlockClient) QueryNextBlocks(b *Block) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, block.NextBlocksTable, block.NextBlocksPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFlowDraft queries the flow_draft edge of a Block.
+func (c *BlockClient) QueryFlowDraft(b *Block) *FlowDraftQuery {
+	query := &FlowDraftQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowDraftTable, block.FlowDraftColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySourceBlock queries the source_block edge of a Block.
+func (c *BlockClient) QuerySourceBlock(b *Block) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, block.SourceBlockTable, block.SourceBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGotoBlock queries the goto_block edge of a Block.
+func (c *BlockClient) QueryGotoBlock(b *Block) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, block.GotoBlockTable, block.GotoBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *BlockClient) Hooks() []Hook {
+	hooks := c.hooks.Block
+	return append(hooks[:len(hooks):len(hooks)], block.Hooks[:]...)
 }
 
 // CheckListCategoryClient is a client for the CheckListCategory schema.
@@ -3328,6 +3511,111 @@ func (c *FloorPlanScaleClient) GetX(ctx context.Context, id int) *FloorPlanScale
 func (c *FloorPlanScaleClient) Hooks() []Hook {
 	hooks := c.hooks.FloorPlanScale
 	return append(hooks[:len(hooks):len(hooks)], floorplanscale.Hooks[:]...)
+}
+
+// FlowDraftClient is a client for the FlowDraft schema.
+type FlowDraftClient struct {
+	config
+}
+
+// NewFlowDraftClient returns a client for the FlowDraft from the given config.
+func NewFlowDraftClient(c config) *FlowDraftClient {
+	return &FlowDraftClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flowdraft.Hooks(f(g(h())))`.
+func (c *FlowDraftClient) Use(hooks ...Hook) {
+	c.hooks.FlowDraft = append(c.hooks.FlowDraft, hooks...)
+}
+
+// Create returns a create builder for FlowDraft.
+func (c *FlowDraftClient) Create() *FlowDraftCreate {
+	mutation := newFlowDraftMutation(c.config, OpCreate)
+	return &FlowDraftCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of FlowDraft entities.
+func (c *FlowDraftClient) CreateBulk(builders ...*FlowDraftCreate) *FlowDraftCreateBulk {
+	return &FlowDraftCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FlowDraft.
+func (c *FlowDraftClient) Update() *FlowDraftUpdate {
+	mutation := newFlowDraftMutation(c.config, OpUpdate)
+	return &FlowDraftUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FlowDraftClient) UpdateOne(fd *FlowDraft) *FlowDraftUpdateOne {
+	mutation := newFlowDraftMutation(c.config, OpUpdateOne, withFlowDraft(fd))
+	return &FlowDraftUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FlowDraftClient) UpdateOneID(id int) *FlowDraftUpdateOne {
+	mutation := newFlowDraftMutation(c.config, OpUpdateOne, withFlowDraftID(id))
+	return &FlowDraftUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FlowDraft.
+func (c *FlowDraftClient) Delete() *FlowDraftDelete {
+	mutation := newFlowDraftMutation(c.config, OpDelete)
+	return &FlowDraftDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FlowDraftClient) DeleteOne(fd *FlowDraft) *FlowDraftDeleteOne {
+	return c.DeleteOneID(fd.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FlowDraftClient) DeleteOneID(id int) *FlowDraftDeleteOne {
+	builder := c.Delete().Where(flowdraft.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FlowDraftDeleteOne{builder}
+}
+
+// Query returns a query builder for FlowDraft.
+func (c *FlowDraftClient) Query() *FlowDraftQuery {
+	return &FlowDraftQuery{config: c.config}
+}
+
+// Get returns a FlowDraft entity by its id.
+func (c *FlowDraftClient) Get(ctx context.Context, id int) (*FlowDraft, error) {
+	return c.Query().Where(flowdraft.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FlowDraftClient) GetX(ctx context.Context, id int) *FlowDraft {
+	fd, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return fd
+}
+
+// QueryBlocks queries the blocks edge of a FlowDraft.
+func (c *FlowDraftClient) QueryBlocks(fd *FlowDraft) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flowdraft.BlocksTable, flowdraft.BlocksColumn),
+		)
+		fromV = sqlgraph.Neighbors(fd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FlowDraftClient) Hooks() []Hook {
+	hooks := c.hooks.FlowDraft
+	return append(hooks[:len(hooks):len(hooks)], flowdraft.Hooks[:]...)
 }
 
 // HyperlinkClient is a client for the Hyperlink schema.

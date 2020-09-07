@@ -18,6 +18,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -37,6 +38,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -241,6 +243,105 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "WorkOrder",
 		Name: "work_order",
+	}
+	return node, nil
+}
+
+func (b *Block) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     b.ID,
+		Type:   "Block",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 5),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(b.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "block.Type",
+		Name:  "type",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = b.QueryPrevBlocks().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "prev_blocks",
+	}
+	ids, err = b.QueryNextBlocks().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "next_blocks",
+	}
+	ids, err = b.QueryFlowDraft().
+		Select(flowdraft.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "FlowDraft",
+		Name: "flow_draft",
+	}
+	ids, err = b.QuerySourceBlock().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "source_block",
+	}
+	ids, err = b.QueryGotoBlock().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "goto_block",
 	}
 	return node, nil
 }
@@ -1913,6 +2014,45 @@ func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "float64",
 		Name:  "scale_in_meters",
 		Value: string(buf),
+	}
+	return node, nil
+}
+
+func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     fd.ID,
+		Type:   "FlowDraft",
+		Fields: make([]*Field, 2),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(fd.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fd.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = fd.QueryBlocks().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "blocks",
 	}
 	return node, nil
 }
@@ -5276,6 +5416,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case block.Table:
+		n, err := c.Block.Query().
+			Where(block.ID(id)).
+			CollectFields(ctx, "Block").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case checklistcategory.Table:
 		n, err := c.CheckListCategory.Query().
 			Where(checklistcategory.ID(id)).
@@ -5442,6 +5591,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.FloorPlanScale.Query().
 			Where(floorplanscale.ID(id)).
 			CollectFields(ctx, "FloorPlanScale").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case flowdraft.Table:
+		n, err := c.FlowDraft.Query().
+			Where(flowdraft.ID(id)).
+			CollectFields(ctx, "FlowDraft").
 			Only(ctx)
 		if err != nil {
 			return nil, err
