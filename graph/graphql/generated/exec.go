@@ -65,6 +65,7 @@ type ResolverRoot interface {
 	ActionsRuleFilter() ActionsRuleFilterResolver
 	ActionsTrigger() ActionsTriggerResolver
 	Activity() ActivityResolver
+	Block() BlockResolver
 	CheckListCategory() CheckListCategoryResolver
 	CheckListCategoryDefinition() CheckListCategoryDefinitionResolver
 	CheckListItem() CheckListItemResolver
@@ -77,6 +78,7 @@ type ResolverRoot interface {
 	EquipmentType() EquipmentTypeResolver
 	ExportTask() ExportTaskResolver
 	FloorPlan() FloorPlanResolver
+	FlowDraft() FlowDraftResolver
 	Link() LinkResolver
 	Location() LocationResolver
 	LocationType() LocationTypeResolver
@@ -198,6 +200,14 @@ type ComplexityRoot struct {
 		IsAllowed func(childComplexity int) int
 	}
 
+	Block struct {
+		Details    func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Name       func(childComplexity int) int
+		NextBlocks func(childComplexity int) int
+		PrevBlocks func(childComplexity int) int
+	}
+
 	Cud struct {
 		Create func(childComplexity int) int
 		Delete func(childComplexity int) int
@@ -290,6 +300,10 @@ type ComplexityRoot struct {
 		IDs  func(childComplexity int) int
 		Name func(childComplexity int) int
 		Type func(childComplexity int) int
+	}
+
+	EndBlock struct {
+		Dummy func(childComplexity int) int
 	}
 
 	Equipment struct {
@@ -479,6 +493,13 @@ type ComplexityRoot struct {
 		ScaleInMeters    func(childComplexity int) int
 	}
 
+	FlowDraft struct {
+		Blocks      func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+	}
+
 	GeneralFilter struct {
 		BoolValue     func(childComplexity int) int
 		FilterType    func(childComplexity int) int
@@ -488,6 +509,10 @@ type ComplexityRoot struct {
 		PropertyValue func(childComplexity int) int
 		StringSet     func(childComplexity int) int
 		StringValue   func(childComplexity int) int
+	}
+
+	GotoBlock struct {
+		GotoBlock func(childComplexity int) int
 	}
 
 	Hyperlink struct {
@@ -619,11 +644,15 @@ type ComplexityRoot struct {
 		AddActionsRule                           func(childComplexity int, input models.AddActionsRuleInput) int
 		AddCellScans                             func(childComplexity int, data []*models.SurveyCellScanData, locationID int) int
 		AddComment                               func(childComplexity int, input models.CommentInput) int
+		AddConnector                             func(childComplexity int, input models.ConnectorInput) int
 		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
+		AddEndBlock                              func(childComplexity int, input models.AddEndBlockInput) int
 		AddEquipment                             func(childComplexity int, input models.AddEquipmentInput) int
 		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
 		AddEquipmentType                         func(childComplexity int, input models.AddEquipmentTypeInput) int
 		AddFloorPlan                             func(childComplexity int, input models.AddFloorPlanInput) int
+		AddFlowDraft                             func(childComplexity int, input models.AddFlowDraftInput) int
+		AddGotoBlock                             func(childComplexity int, input models.AddGotoBlockInput) int
 		AddHyperlink                             func(childComplexity int, input models.AddHyperlinkInput) int
 		AddImage                                 func(childComplexity int, input models.AddImageInput) int
 		AddLink                                  func(childComplexity int, input models.AddLinkInput) int
@@ -636,6 +665,7 @@ type ComplexityRoot struct {
 		AddServiceLink                           func(childComplexity int, id int, linkID int) int
 		AddServicePort                           func(childComplexity int, id int, portID int) int
 		AddServiceType                           func(childComplexity int, data models.ServiceTypeCreateData) int
+		AddStartBlock                            func(childComplexity int, input models.AddStartBlockInput) int
 		AddUsersGroup                            func(childComplexity int, input models.AddUsersGroupInput) int
 		AddWiFiScans                             func(childComplexity int, data []*models.SurveyWiFiScanData, locationID int) int
 		AddWorkOrder                             func(childComplexity int, input models.AddWorkOrderInput) int
@@ -643,7 +673,10 @@ type ComplexityRoot struct {
 		CreateProject                            func(childComplexity int, input models.AddProjectInput) int
 		CreateProjectType                        func(childComplexity int, input models.AddProjectTypeInput) int
 		CreateSurvey                             func(childComplexity int, data models.SurveyCreateData) int
+		DeleteBlock                              func(childComplexity int, id int) int
+		DeleteConnector                          func(childComplexity int, input models.ConnectorInput) int
 		DeleteFloorPlan                          func(childComplexity int, id int) int
+		DeleteFlowDraft                          func(childComplexity int, id int) int
 		DeleteHyperlink                          func(childComplexity int, id int) int
 		DeleteImage                              func(childComplexity int, entityType models.ImageEntity, entityID int, id int) int
 		DeletePermissionsPolicy                  func(childComplexity int, id int) int
@@ -989,6 +1022,10 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	StartBlock struct {
+		Dummy func(childComplexity int) int
+	}
+
 	Subscription struct {
 		WorkOrderAdded func(childComplexity int) int
 		WorkOrderDone  func(childComplexity int) int
@@ -1296,6 +1333,11 @@ type ActivityResolver interface {
 
 	WorkOrder(ctx context.Context, obj *ent.Activity) (*ent.WorkOrder, error)
 }
+type BlockResolver interface {
+	NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
+	PrevBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error)
+	Details(ctx context.Context, obj *ent.Block) (models.BlockType, error)
+}
 type CheckListCategoryResolver interface {
 	CheckList(ctx context.Context, obj *ent.CheckListCategory) ([]*ent.CheckListItem, error)
 }
@@ -1367,6 +1409,9 @@ type FloorPlanResolver interface {
 	Image(ctx context.Context, obj *ent.FloorPlan) (*ent.File, error)
 	ReferencePoint(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanReferencePoint, error)
 	Scale(ctx context.Context, obj *ent.FloorPlan) (*ent.FloorPlanScale, error)
+}
+type FlowDraftResolver interface {
+	Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*ent.Block, error)
 }
 type LinkResolver interface {
 	Ports(ctx context.Context, obj *ent.Link) ([]*ent.EquipmentPort, error)
@@ -1482,6 +1527,14 @@ type MutationResolver interface {
 	AddPermissionsPolicy(ctx context.Context, input models.AddPermissionsPolicyInput) (*ent.PermissionsPolicy, error)
 	EditPermissionsPolicy(ctx context.Context, input models.EditPermissionsPolicyInput) (*ent.PermissionsPolicy, error)
 	DeletePermissionsPolicy(ctx context.Context, id int) (bool, error)
+	AddStartBlock(ctx context.Context, input models.AddStartBlockInput) (*ent.Block, error)
+	AddEndBlock(ctx context.Context, input models.AddEndBlockInput) (*ent.Block, error)
+	AddGotoBlock(ctx context.Context, input models.AddGotoBlockInput) (*ent.Block, error)
+	DeleteBlock(ctx context.Context, id int) (bool, error)
+	AddConnector(ctx context.Context, input models.ConnectorInput) (*ent.Block, error)
+	DeleteConnector(ctx context.Context, input models.ConnectorInput) (*ent.Block, error)
+	AddFlowDraft(ctx context.Context, input models.AddFlowDraftInput) (*ent.FlowDraft, error)
+	DeleteFlowDraft(ctx context.Context, id int) (bool, error)
 }
 type PermissionsPolicyResolver interface {
 	Policy(ctx context.Context, obj *ent.PermissionsPolicy) (models1.SystemPolicy, error)
@@ -1996,6 +2049,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.BasicPermissionRule.IsAllowed(childComplexity), true
 
+	case "Block.details":
+		if e.complexity.Block.Details == nil {
+			break
+		}
+
+		return e.complexity.Block.Details(childComplexity), true
+
+	case "Block.id":
+		if e.complexity.Block.ID == nil {
+			break
+		}
+
+		return e.complexity.Block.ID(childComplexity), true
+
+	case "Block.name":
+		if e.complexity.Block.Name == nil {
+			break
+		}
+
+		return e.complexity.Block.Name(childComplexity), true
+
+	case "Block.nextBlocks":
+		if e.complexity.Block.NextBlocks == nil {
+			break
+		}
+
+		return e.complexity.Block.NextBlocks(childComplexity), true
+
+	case "Block.prevBlocks":
+		if e.complexity.Block.PrevBlocks == nil {
+			break
+		}
+
+		return e.complexity.Block.PrevBlocks(childComplexity), true
+
 	case "CUD.create":
 		if e.complexity.Cud.Create == nil {
 			break
@@ -2380,6 +2468,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Edge.Type(childComplexity), true
+
+	case "EndBlock.dummy":
+		if e.complexity.EndBlock.Dummy == nil {
+			break
+		}
+
+		return e.complexity.EndBlock.Dummy(childComplexity), true
 
 	case "Equipment.descendentsIncludingSelf":
 		if e.complexity.Equipment.DescendentsIncludingSelf == nil {
@@ -3191,6 +3286,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FloorPlanScale.ScaleInMeters(childComplexity), true
 
+	case "FlowDraft.blocks":
+		if e.complexity.FlowDraft.Blocks == nil {
+			break
+		}
+
+		return e.complexity.FlowDraft.Blocks(childComplexity), true
+
+	case "FlowDraft.description":
+		if e.complexity.FlowDraft.Description == nil {
+			break
+		}
+
+		return e.complexity.FlowDraft.Description(childComplexity), true
+
+	case "FlowDraft.id":
+		if e.complexity.FlowDraft.ID == nil {
+			break
+		}
+
+		return e.complexity.FlowDraft.ID(childComplexity), true
+
+	case "FlowDraft.name":
+		if e.complexity.FlowDraft.Name == nil {
+			break
+		}
+
+		return e.complexity.FlowDraft.Name(childComplexity), true
+
 	case "GeneralFilter.boolValue":
 		if e.complexity.GeneralFilter.BoolValue == nil {
 			break
@@ -3246,6 +3369,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GeneralFilter.StringValue(childComplexity), true
+
+	case "GotoBlock.gotoBlock":
+		if e.complexity.GotoBlock.GotoBlock == nil {
+			break
+		}
+
+		return e.complexity.GotoBlock.GotoBlock(childComplexity), true
 
 	case "Hyperlink.category":
 		if e.complexity.Hyperlink.Category == nil {
@@ -3837,6 +3967,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddComment(childComplexity, args["input"].(models.CommentInput)), true
 
+	case "Mutation.addConnector":
+		if e.complexity.Mutation.AddConnector == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addConnector_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddConnector(childComplexity, args["input"].(models.ConnectorInput)), true
+
 	case "Mutation.addCustomer":
 		if e.complexity.Mutation.AddCustomer == nil {
 			break
@@ -3848,6 +3990,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddCustomer(childComplexity, args["input"].(models.AddCustomerInput)), true
+
+	case "Mutation.addEndBlock":
+		if e.complexity.Mutation.AddEndBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addEndBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddEndBlock(childComplexity, args["input"].(models.AddEndBlockInput)), true
 
 	case "Mutation.addEquipment":
 		if e.complexity.Mutation.AddEquipment == nil {
@@ -3896,6 +4050,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddFloorPlan(childComplexity, args["input"].(models.AddFloorPlanInput)), true
+
+	case "Mutation.addFlowDraft":
+		if e.complexity.Mutation.AddFlowDraft == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addFlowDraft_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddFlowDraft(childComplexity, args["input"].(models.AddFlowDraftInput)), true
+
+	case "Mutation.addGotoBlock":
+		if e.complexity.Mutation.AddGotoBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addGotoBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddGotoBlock(childComplexity, args["input"].(models.AddGotoBlockInput)), true
 
 	case "Mutation.addHyperlink":
 		if e.complexity.Mutation.AddHyperlink == nil {
@@ -4041,6 +4219,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AddServiceType(childComplexity, args["data"].(models.ServiceTypeCreateData)), true
 
+	case "Mutation.addStartBlock":
+		if e.complexity.Mutation.AddStartBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addStartBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddStartBlock(childComplexity, args["input"].(models.AddStartBlockInput)), true
+
 	case "Mutation.addUsersGroup":
 		if e.complexity.Mutation.AddUsersGroup == nil {
 			break
@@ -4125,6 +4315,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateSurvey(childComplexity, args["data"].(models.SurveyCreateData)), true
 
+	case "Mutation.deleteBlock":
+		if e.complexity.Mutation.DeleteBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteBlock(childComplexity, args["id"].(int)), true
+
+	case "Mutation.deleteConnector":
+		if e.complexity.Mutation.DeleteConnector == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteConnector_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteConnector(childComplexity, args["input"].(models.ConnectorInput)), true
+
 	case "Mutation.deleteFloorPlan":
 		if e.complexity.Mutation.DeleteFloorPlan == nil {
 			break
@@ -4136,6 +4350,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteFloorPlan(childComplexity, args["id"].(int)), true
+
+	case "Mutation.deleteFlowDraft":
+		if e.complexity.Mutation.DeleteFlowDraft == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFlowDraft_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFlowDraft(childComplexity, args["id"].(int)), true
 
 	case "Mutation.deleteHyperlink":
 		if e.complexity.Mutation.DeleteHyperlink == nil {
@@ -6300,6 +6526,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ServiceTypeEdge.Node(childComplexity), true
+
+	case "StartBlock.dummy":
+		if e.complexity.StartBlock.Dummy == nil {
+			break
+		}
+
+		return e.complexity.StartBlock.Dummy(childComplexity), true
 
 	case "Subscription.workOrderAdded":
 		if e.complexity.Subscription.WorkOrderAdded == nil {
@@ -10818,6 +11051,65 @@ input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
 }
 
+# Block definitions
+
+type Block implements Node {
+  id: ID!
+  name: String!
+  nextBlocks: [Block!]!
+  prevBlocks: [Block!]!
+  details: BlockType!
+}
+
+type StartBlock  {
+  dummy: String
+}
+
+type EndBlock {
+  dummy: String
+}
+
+type GotoBlock {
+  gotoBlock: Block
+}
+
+union BlockType = StartBlock | EndBlock | GotoBlock
+
+input AddStartBlockInput {
+  flowDraftId: ID!
+  name: String!
+}
+
+input AddEndBlockInput {
+  flowDraftId: ID!
+  name: String!
+}
+
+input AddGotoBlockInput {
+  flowDraftId: ID!
+  name: String!
+  nextBlockId: ID!
+}
+
+input ConnectorInput {
+  blockId: ID!
+  nextBlockId: ID!
+}
+
+# Flow Definitions
+
+type FlowDraft implements Node {
+  id: ID!
+  name: String!
+  description: String
+  blocks: [Block!]!
+}
+
+input AddFlowDraftInput {
+  name: String!
+  description: String
+}
+
 type Query {
   """
   Fetches current viewer.
@@ -11359,6 +11651,14 @@ type Mutation {
   addPermissionsPolicy(input: AddPermissionsPolicyInput!): PermissionsPolicy!
   editPermissionsPolicy(input: EditPermissionsPolicyInput!): PermissionsPolicy!
   deletePermissionsPolicy(id: ID!): Boolean!
+  addStartBlock(input: AddStartBlockInput!): Block!
+  addEndBlock(input: AddEndBlockInput!): Block!
+  addGotoBlock(input: AddGotoBlockInput!): Block!
+  deleteBlock(id: ID!): Boolean!
+  addConnector(input: ConnectorInput!): Block!
+  deleteConnector(input: ConnectorInput!): Block!
+  addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
+  deleteFlowDraft(id: ID!): Boolean!
 }
 
 type Subscription {
@@ -11764,6 +12064,21 @@ func (ec *executionContext) field_Mutation_addComment_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addConnector_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ConnectorInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNConnectorInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnectorInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addCustomer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -11771,6 +12086,21 @@ func (ec *executionContext) field_Mutation_addCustomer_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
 		arg0, err = ec.unmarshalNAddCustomerInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddCustomerInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addEndBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddEndBlockInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNAddEndBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEndBlockInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11831,6 +12161,36 @@ func (ec *executionContext) field_Mutation_addFloorPlan_args(ctx context.Context
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
 		arg0, err = ec.unmarshalNAddFloorPlanInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFloorPlanInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addFlowDraft_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddFlowDraftInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNAddFlowDraftInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFlowDraftInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addGotoBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddGotoBlockInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNAddGotoBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddGotoBlockInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -12037,6 +12397,21 @@ func (ec *executionContext) field_Mutation_addService_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_addStartBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.AddStartBlockInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNAddStartBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddStartBlockInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_addUsersGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -12151,7 +12526,52 @@ func (ec *executionContext) field_Mutation_createSurvey_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteConnector_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.ConnectorInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNConnectorInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnectorInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteFloorPlan_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("id"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteFlowDraft_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -16904,6 +17324,176 @@ func (ec *executionContext) _BasicPermissionRule_isAllowed(ctx context.Context, 
 	return ec.marshalNPermissionValue2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐPermissionValue(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Block_id(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Block",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_name(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Block",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_nextBlocks(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Block",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().NextBlocks(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_prevBlocks(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Block",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().PrevBlocks(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Block_details(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Block",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Block().Details(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.BlockType)
+	fc.Result = res
+	return ec.marshalNBlockType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBlockType(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _CUD_create(ctx context.Context, field graphql.CollectedField, obj *models1.Cud) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -18703,6 +19293,37 @@ func (ec *executionContext) _Edge_ids(ctx context.Context, field graphql.Collect
 	res := resTmp.([]int)
 	fc.Result = res
 	return ec.marshalNID2ᚕintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EndBlock_dummy(ctx context.Context, field graphql.CollectedField, obj *models.EndBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "EndBlock",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Dummy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Equipment_id(ctx context.Context, field graphql.CollectedField, obj *ent.Equipment) (ret graphql.Marshaler) {
@@ -22538,6 +23159,139 @@ func (ec *executionContext) _FloorPlanScale_scaleInMeters(ctx context.Context, f
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _FlowDraft_id(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraft) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraft",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraft_name(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraft) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraft",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraft_description(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraft) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraft",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraft_blocks(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraft) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraft",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.FlowDraft().Blocks(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _GeneralFilter_filterType(ctx context.Context, field graphql.CollectedField, obj *models.GeneralFilter) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -22793,6 +23547,37 @@ func (ec *executionContext) _GeneralFilter_propertyValue(ctx context.Context, fi
 	res := resTmp.(*ent.PropertyType)
 	fc.Result = res
 	return ec.marshalOPropertyType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPropertyType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GotoBlock_gotoBlock(ctx context.Context, field graphql.CollectedField, obj *models.GotoBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "GotoBlock",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GotoBlock, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalOBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Hyperlink_id(ctx context.Context, field graphql.CollectedField, obj *ent.Hyperlink) (ret graphql.Marshaler) {
@@ -28591,6 +29376,334 @@ func (ec *executionContext) _Mutation_deletePermissionsPolicy(ctx context.Contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().DeletePermissionsPolicy(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addStartBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addStartBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddStartBlock(rctx, args["input"].(models.AddStartBlockInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addEndBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addEndBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddEndBlock(rctx, args["input"].(models.AddEndBlockInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addGotoBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addGotoBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddGotoBlock(rctx, args["input"].(models.AddGotoBlockInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteBlock(rctx, args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addConnector(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addConnector_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddConnector(rctx, args["input"].(models.ConnectorInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteConnector(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteConnector_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteConnector(rctx, args["input"].(models.ConnectorInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addFlowDraft(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addFlowDraft_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddFlowDraft(rctx, args["input"].(models.AddFlowDraftInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.FlowDraft)
+	fc.Result = res
+	return ec.marshalNFlowDraft2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraft(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deleteFlowDraft(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deleteFlowDraft_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteFlowDraft(rctx, args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35446,6 +36559,37 @@ func (ec *executionContext) _ServiceTypeEdge_cursor(ctx context.Context, field g
 	res := resTmp.(ent.Cursor)
 	fc.Result = res
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _StartBlock_dummy(ctx context.Context, field graphql.CollectedField, obj *models.StartBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "StartBlock",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Dummy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subscription_workOrderAdded(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
@@ -42942,6 +44086,34 @@ func (ec *executionContext) unmarshalInputAddCustomerInput(ctx context.Context, 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAddEndBlockInput(ctx context.Context, obj interface{}) (models.AddEndBlockInput, error) {
+	var it models.AddEndBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "flowDraftId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("flowDraftId"))
+			it.FlowDraftID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddEquipmentInput(ctx context.Context, obj interface{}) (models.AddEquipmentInput, error) {
 	var it models.AddEquipmentInput
 	var asMap = obj.(map[string]interface{})
@@ -43280,6 +44452,70 @@ func (ec *executionContext) unmarshalInputAddFloorPlanInput(ctx context.Context,
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("scaleInMeters"))
 			it.ScaleInMeters, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddFlowDraftInput(ctx context.Context, obj interface{}) (models.AddFlowDraftInput, error) {
+	var it models.AddFlowDraftInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddGotoBlockInput(ctx context.Context, obj interface{}) (models.AddGotoBlockInput, error) {
+	var it models.AddGotoBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "flowDraftId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("flowDraftId"))
+			it.FlowDraftID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nextBlockId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("nextBlockId"))
+			it.NextBlockID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -43836,6 +45072,145 @@ func (ec *executionContext) unmarshalInputAddProjectTypeInput(ctx context.Contex
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
 			directive0 := func(ctx context.Context) (interface{}, error) {
+				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
+			}
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				typ, err := ec.unmarshalNString2string(ctx, "property type")
+				if err != nil {
+					return nil, err
+				}
+				field, err := ec.unmarshalNString2string(ctx, "Name")
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.UniqueField == nil {
+					return nil, errors.New("directive uniqueField is not implemented")
+				}
+				return ec.directives.UniqueField(ctx, obj, directive0, typ, field)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, err
+			}
+			if data, ok := tmp.([]*models.PropertyTypeInput); ok {
+				it.Properties = data
+			} else if tmp == nil {
+				it.Properties = nil
+			} else {
+				return it, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/graph/graphql/models.PropertyTypeInput`, tmp)
+			}
+		case "workOrders":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("workOrders"))
+			it.WorkOrders, err = ec.unmarshalOWorkOrderDefinitionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderDefinitionInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddServiceEndpointInput(ctx context.Context, obj interface{}) (models.AddServiceEndpointInput, error) {
+	var it models.AddServiceEndpointInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("id"))
+			it.ID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "portId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("portId"))
+			it.PortID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "equipmentID":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("equipmentID"))
+			it.EquipmentID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "definition":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("definition"))
+			it.Definition, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputAddStartBlockInput(ctx context.Context, obj interface{}) (models.AddStartBlockInput, error) {
+	var it models.AddStartBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "flowDraftId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("flowDraftId"))
+			it.FlowDraftID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+<<<<<<< HEAD
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				minLength, err := ec.unmarshalOInt2ᚖint(ctx, 1)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.StringValue == nil {
+					return nil, errors.New("directive stringValue is not implemented")
+				}
+				return ec.directives.StringValue(ctx, obj, directive0, nil, minLength, nil, nil, nil, nil, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, err
+			}
+			if data, ok := tmp.(string); ok {
+				it.Name = data
+			} else {
+				return it, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "properties":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("properties"))
+			directive0 := func(ctx context.Context) (interface{}, error) {
 				return ec.unmarshalOPropertyTypeInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPropertyTypeInputᚄ(ctx, v)
 			}
 			directive1 := func(ctx context.Context) (interface{}, error) {
@@ -43913,6 +45288,9 @@ func (ec *executionContext) unmarshalInputAddServiceEndpointInput(ctx context.Co
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("definition"))
 			it.Definition, err = ec.unmarshalNID2int(ctx, v)
+=======
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+>>>>>>> 70bdfddf87715db38de168c749eaab3362bd6bd8
 			if err != nil {
 				return it, err
 			}
@@ -44538,6 +45916,34 @@ func (ec *executionContext) unmarshalInputCommentInput(ctx context.Context, obj 
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("text"))
 			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, obj interface{}) (models.ConnectorInput, error) {
+	var it models.ConnectorInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "blockId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("blockId"))
+			it.BlockID, err = ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "nextBlockId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("nextBlockId"))
+			it.NextBlockID, err = ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48546,6 +49952,36 @@ func (ec *executionContext) unmarshalInputWorkforcePolicyInput(ctx context.Conte
 
 // region    ************************** interface.gotpl ***************************
 
+func (ec *executionContext) _BlockType(ctx context.Context, sel ast.SelectionSet, obj models.BlockType) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case models.StartBlock:
+		return ec._StartBlock(ctx, sel, &obj)
+	case *models.StartBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._StartBlock(ctx, sel, obj)
+	case models.EndBlock:
+		return ec._EndBlock(ctx, sel, &obj)
+	case *models.EndBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._EndBlock(ctx, sel, obj)
+	case models.GotoBlock:
+		return ec._GotoBlock(ctx, sel, &obj)
+	case *models.GotoBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._GotoBlock(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
 func (ec *executionContext) _NamedNode(ctx context.Context, sel ast.SelectionSet, obj models.NamedNode) graphql.Marshaler {
 	switch obj := (obj).(type) {
 	case nil:
@@ -48789,6 +50225,16 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._ActionsRule(ctx, sel, obj)
+	case *ent.Block:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Block(ctx, sel, obj)
+	case *ent.FlowDraft:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FlowDraft(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -49371,6 +50817,80 @@ func (ec *executionContext) _BasicPermissionRule(ctx context.Context, sel ast.Se
 	return out
 }
 
+var blockImplementors = []string{"Block", "Node"}
+
+func (ec *executionContext) _Block(ctx context.Context, sel ast.SelectionSet, obj *ent.Block) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, blockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Block")
+		case "id":
+			out.Values[i] = ec._Block_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._Block_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "nextBlocks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_nextBlocks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "prevBlocks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_prevBlocks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "details":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Block_details(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var cUDImplementors = []string{"CUD"}
 
 func (ec *executionContext) _CUD(ctx context.Context, sel ast.SelectionSet, obj *models1.Cud) graphql.Marshaler {
@@ -49906,6 +51426,30 @@ func (ec *executionContext) _Edge(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var endBlockImplementors = []string{"EndBlock", "BlockType"}
+
+func (ec *executionContext) _EndBlock(ctx context.Context, sel ast.SelectionSet, obj *models.EndBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, endBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EndBlock")
+		case "dummy":
+			out.Values[i] = ec._EndBlock_dummy(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -51296,6 +52840,54 @@ func (ec *executionContext) _FloorPlanScale(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var flowDraftImplementors = []string{"FlowDraft", "Node"}
+
+func (ec *executionContext) _FlowDraft(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowDraft) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowDraftImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowDraft")
+		case "id":
+			out.Values[i] = ec._FlowDraft_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._FlowDraft_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "description":
+			out.Values[i] = ec._FlowDraft_description(ctx, field, obj)
+		case "blocks":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FlowDraft_blocks(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var generalFilterImplementors = []string{"GeneralFilter"}
 
 func (ec *executionContext) _GeneralFilter(ctx context.Context, sel ast.SelectionSet, obj *models.GeneralFilter) graphql.Marshaler {
@@ -51332,6 +52924,30 @@ func (ec *executionContext) _GeneralFilter(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._GeneralFilter_boolValue(ctx, field, obj)
 		case "propertyValue":
 			out.Values[i] = ec._GeneralFilter_propertyValue(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var gotoBlockImplementors = []string{"GotoBlock", "BlockType"}
+
+func (ec *executionContext) _GotoBlock(ctx context.Context, sel ast.SelectionSet, obj *models.GotoBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gotoBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GotoBlock")
+		case "gotoBlock":
+			out.Values[i] = ec._GotoBlock_gotoBlock(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -52646,6 +54262,46 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deletePermissionsPolicy":
 			out.Values[i] = ec._Mutation_deletePermissionsPolicy(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addStartBlock":
+			out.Values[i] = ec._Mutation_addStartBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addEndBlock":
+			out.Values[i] = ec._Mutation_addEndBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addGotoBlock":
+			out.Values[i] = ec._Mutation_addGotoBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteBlock":
+			out.Values[i] = ec._Mutation_deleteBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addConnector":
+			out.Values[i] = ec._Mutation_addConnector(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteConnector":
+			out.Values[i] = ec._Mutation_deleteConnector(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addFlowDraft":
+			out.Values[i] = ec._Mutation_addFlowDraft(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deleteFlowDraft":
+			out.Values[i] = ec._Mutation_deleteFlowDraft(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -54905,6 +56561,30 @@ func (ec *executionContext) _ServiceTypeEdge(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var startBlockImplementors = []string{"StartBlock", "BlockType"}
+
+func (ec *executionContext) _StartBlock(ctx context.Context, sel ast.SelectionSet, obj *models.StartBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, startBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StartBlock")
+		case "dummy":
+			out.Values[i] = ec._StartBlock_dummy(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -57415,6 +59095,11 @@ func (ec *executionContext) unmarshalNAddCustomerInput2githubᚗcomᚋfacebookin
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddEndBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEndBlockInput(ctx context.Context, v interface{}) (models.AddEndBlockInput, error) {
+	res, err := ec.unmarshalInputAddEndBlockInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddEquipmentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddEquipmentInput(ctx context.Context, v interface{}) (models.AddEquipmentInput, error) {
 	res, err := ec.unmarshalInputAddEquipmentInput(ctx, v)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
@@ -57432,6 +59117,16 @@ func (ec *executionContext) unmarshalNAddEquipmentTypeInput2githubᚗcomᚋfaceb
 
 func (ec *executionContext) unmarshalNAddFloorPlanInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFloorPlanInput(ctx context.Context, v interface{}) (models.AddFloorPlanInput, error) {
 	res, err := ec.unmarshalInputAddFloorPlanInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddFlowDraftInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddFlowDraftInput(ctx context.Context, v interface{}) (models.AddFlowDraftInput, error) {
+	res, err := ec.unmarshalInputAddFlowDraftInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNAddGotoBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddGotoBlockInput(ctx context.Context, v interface{}) (models.AddGotoBlockInput, error) {
+	res, err := ec.unmarshalInputAddGotoBlockInput(ctx, v)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
@@ -57485,6 +59180,11 @@ func (ec *executionContext) unmarshalNAddServiceEndpointInput2githubᚗcomᚋfac
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAddStartBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddStartBlockInput(ctx context.Context, v interface{}) (models.AddStartBlockInput, error) {
+	res, err := ec.unmarshalInputAddStartBlockInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNAddUsersGroupInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐAddUsersGroupInput(ctx context.Context, v interface{}) (models.AddUsersGroupInput, error) {
 	res, err := ec.unmarshalInputAddUsersGroupInput(ctx, v)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
@@ -57518,6 +59218,67 @@ func (ec *executionContext) marshalNBasicPermissionRule2ᚖgithubᚗcomᚋfacebo
 		return graphql.Null
 	}
 	return ec._BasicPermissionRule(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNBlock2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx context.Context, sel ast.SelectionSet, v ent.Block) graphql.Marshaler {
+	return ec._Block(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBlock2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Block) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
+}
+
+func (ec *executionContext) marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx context.Context, sel ast.SelectionSet, v *ent.Block) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Block(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNBlockType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐBlockType(ctx context.Context, sel ast.SelectionSet, v models.BlockType) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._BlockType(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
@@ -57857,6 +59618,11 @@ func (ec *executionContext) marshalNCommentEntity2githubᚗcomᚋfacebookincubat
 
 func (ec *executionContext) unmarshalNCommentInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐCommentInput(ctx context.Context, v interface{}) (models.CommentInput, error) {
 	res, err := ec.unmarshalInputCommentInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNConnectorInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐConnectorInput(ctx context.Context, v interface{}) (models.ConnectorInput, error) {
+	res, err := ec.unmarshalInputConnectorInput(ctx, v)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
@@ -59063,6 +60829,20 @@ func (ec *executionContext) marshalNFloorPlanScale2ᚖgithubᚗcomᚋfacebookinc
 		return graphql.Null
 	}
 	return ec._FloorPlanScale(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFlowDraft2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraft(ctx context.Context, sel ast.SelectionSet, v ent.FlowDraft) graphql.Marshaler {
+	return ec._FlowDraft(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFlowDraft2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraft(ctx context.Context, sel ast.SelectionSet, v *ent.FlowDraft) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowDraft(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGeneralFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐGeneralFilterᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.GeneralFilter) graphql.Marshaler {
@@ -62674,6 +64454,13 @@ func (ec *executionContext) unmarshalOBasicPermissionRuleInput2ᚖgithubᚗcom�
 	}
 	res, err := ec.unmarshalInputBasicPermissionRuleInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx context.Context, sel ast.SelectionSet, v *ent.Block) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Block(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

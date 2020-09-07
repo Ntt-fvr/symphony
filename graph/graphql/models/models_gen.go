@@ -28,6 +28,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
 )
 
+type BlockType interface {
+	IsBlockType()
+}
+
 type NamedNode interface {
 	IsNamedNode()
 }
@@ -91,6 +95,11 @@ type AddCustomerInput struct {
 	ExternalID *string `json:"externalId"`
 }
 
+type AddEndBlockInput struct {
+	FlowDraftID int    `json:"flowDraftId"`
+	Name        string `json:"name"`
+}
+
 type AddEquipmentInput struct {
 	Name               string           `json:"name"`
 	Type               int              `json:"type"`
@@ -129,6 +138,17 @@ type AddFloorPlanInput struct {
 	ReferencePoint2x int            `json:"referencePoint2X"`
 	ReferencePoint2y int            `json:"referencePoint2Y"`
 	ScaleInMeters    float64        `json:"scaleInMeters"`
+}
+
+type AddFlowDraftInput struct {
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+}
+
+type AddGotoBlockInput struct {
+	FlowDraftID int    `json:"flowDraftId"`
+	Name        string `json:"name"`
+	NextBlockID int    `json:"nextBlockId"`
 }
 
 type AddHyperlinkInput struct {
@@ -210,6 +230,11 @@ type AddServiceEndpointInput struct {
 	Definition  int  `json:"definition"`
 }
 
+type AddStartBlockInput struct {
+	FlowDraftID int    `json:"flowDraftId"`
+	Name        string `json:"name"`
+}
+
 type AddUsersGroupInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
@@ -288,6 +313,11 @@ type CommentInput struct {
 	EntityType CommentEntity `json:"entityType"`
 	ID         int           `json:"id"`
 	Text       string        `json:"text"`
+}
+
+type ConnectorInput struct {
+	BlockID     int `json:"blockId"`
+	NextBlockID int `json:"nextBlockId"`
 }
 
 type Coordinates struct {
@@ -432,6 +462,12 @@ type EditWorkOrderTypeInput struct {
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
 }
 
+type EndBlock struct {
+	Dummy *string `json:"dummy"`
+}
+
+func (EndBlock) IsBlockType() {}
+
 type EquipmentFilterInput struct {
 	FilterType    EquipmentFilterType       `json:"filterType"`
 	Operator      enum.FilterOperator       `json:"operator"`
@@ -496,6 +532,12 @@ type GeneralFilterInput struct {
 	BoolValue     *bool                     `json:"boolValue"`
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 }
+
+type GotoBlock struct {
+	GotoBlock *ent.Block `json:"gotoBlock"`
+}
+
+func (GotoBlock) IsBlockType() {}
 
 type LatestPythonPackageResult struct {
 	LastPythonPackage         *PythonPackage `json:"lastPythonPackage"`
@@ -698,6 +740,12 @@ type ServiceTypeEditData struct {
 	Properties  []*models.PropertyTypeInput       `json:"properties"`
 	Endpoints   []*ServiceEndpointDefinitionInput `json:"endpoints"`
 }
+
+type StartBlock struct {
+	Dummy *string `json:"dummy"`
+}
+
+func (StartBlock) IsBlockType() {}
 
 type SurveyCellScanData struct {
 	NetworkType           surveycellscan.NetworkType `json:"networkType"`

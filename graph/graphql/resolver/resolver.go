@@ -258,3 +258,11 @@ func (r resolver) PermissionsPolicy() generated.PermissionsPolicyResolver {
 func (r resolver) Activity() generated.ActivityResolver {
 	return activityResolver{}
 }
+
+func (r resolver) FlowDraft() generated.FlowDraftResolver {
+	return flowDraftResolver{}
+}
+
+func (r resolver) Block() generated.BlockResolver {
+	return blockResolver{}
+}

@@ -638,6 +638,41 @@ jobs:
           <<: *clidir
           command: python3 -m flake8
 
+  psym-release:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Install setuptools, wheel and twine
+          command: python3 -m pip install setuptools wheel twine
+      - run:
+          name: Install latest psym package
+          command: python3 -m pip install psym
+      - run:
+          name: Verify psym version
+          <<: *clidir
+          command: |
+            published=$(pip3 show psym | grep Version | sed 's/Version: \(.*\)/\1/')
+            current=$(grep __version__ psym/common/constant.py | sed 's/__version__ = \"\(.*\)\"/\1/')
+            if [[ $published == $current ]]; then
+              circleci step halt
+            fi
+      - run:
+          name: Init .pypirc
+          <<: *clidir
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__ " >> ~/.pypirc
+            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
+      - run:
+          name: Create packages
+          <<: *clidir
+          command: python3 -m setup sdist bdist_wheel
+      - run:
+          name: Upload to PyPi
+          <<: *clidir
+          command: python3 -m twine upload dist/*
+
   yarntest:
     executor: yarnnode
     steps:
@@ -802,6 +837,9 @@ workflows:
         - equal: [master, << pipeline.git.branch >>]
         - << pipeline.parameters.deploy >>
     jobs:
+      - psym-release:
+          name: psym/release
+          context: symphony
       - tfdiff:
           workspace: production
           context: symphony

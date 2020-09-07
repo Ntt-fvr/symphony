@@ -39,6 +39,19 @@ func (f ActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The BlockFunc type is an adapter to allow the use of ordinary
+// function as Block mutator.
+type BlockFunc func(context.Context, *ent.BlockMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BlockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.BlockMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BlockMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CheckListCategoryFunc type is an adapter to allow the use of ordinary
 // function as CheckListCategory mutator.
 type CheckListCategoryFunc func(context.Context, *ent.CheckListCategoryMutation) (ent.Value, error)
@@ -282,6 +295,19 @@ func (f FloorPlanScaleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	mv, ok := m.(*ent.FloorPlanScaleMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FloorPlanScaleMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FlowDraftFunc type is an adapter to allow the use of ordinary
+// function as FlowDraft mutator.
+type FlowDraftFunc func(context.Context, *ent.FlowDraftMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FlowDraftFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FlowDraftMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowDraftMutation", m)
 	}
 	return f(ctx, mv)
 }

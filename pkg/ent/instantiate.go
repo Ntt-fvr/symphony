@@ -19,6 +19,12 @@ func (c *ActivityClient) Instantiate(a *Activity) *Activity {
 }
 
 // Instantiate entity configuration.
+func (c *BlockClient) Instantiate(b *Block) *Block {
+	b.config = c.config
+	return b
+}
+
+// Instantiate entity configuration.
 func (c *CheckListCategoryClient) Instantiate(clc *CheckListCategory) *CheckListCategory {
 	clc.config = c.config
 	return clc
@@ -130,6 +136,12 @@ func (c *FloorPlanReferencePointClient) Instantiate(fprp *FloorPlanReferencePoin
 func (c *FloorPlanScaleClient) Instantiate(fps *FloorPlanScale) *FloorPlanScale {
 	fps.config = c.config
 	return fps
+}
+
+// Instantiate entity configuration.
+func (c *FlowDraftClient) Instantiate(fd *FlowDraft) *FlowDraft {
+	fd.config = c.config
+	return fd
 }
 
 // Instantiate entity configuration.

@@ -20,6 +20,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -39,6 +40,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -717,6 +719,225 @@ var DefaultActivityOrder = &ActivityOrder{
 		field: activity.FieldID,
 		toCursor: func(a *Activity) Cursor {
 			return Cursor{ID: a.ID}
+		},
+	},
+}
+
+// BlockEdge is the edge representation of Block.
+type BlockEdge struct {
+	Node   *Block `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// BlockConnection is the connection containing edges to Block.
+type BlockConnection struct {
+	Edges      []*BlockEdge `json:"edges"`
+	PageInfo   PageInfo     `json:"pageInfo"`
+	TotalCount int          `json:"totalCount"`
+}
+
+// BlockPaginateOption enables pagination customization.
+type BlockPaginateOption func(*blockPager) error
+
+// WithBlockOrder configures pagination ordering.
+func WithBlockOrder(order *BlockOrder) BlockPaginateOption {
+	if order == nil {
+		order = DefaultBlockOrder
+	}
+	o := *order
+	return func(pager *blockPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultBlockOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithBlockFilter configures pagination filter.
+func WithBlockFilter(filter func(*BlockQuery) (*BlockQuery, error)) BlockPaginateOption {
+	return func(pager *blockPager) error {
+		if filter == nil {
+			return errors.New("BlockQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type blockPager struct {
+	order  *BlockOrder
+	filter func(*BlockQuery) (*BlockQuery, error)
+}
+
+func newBlockPager(opts []BlockPaginateOption) (*blockPager, error) {
+	pager := &blockPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultBlockOrder
+	}
+	return pager, nil
+}
+
+func (p *blockPager) applyFilter(query *BlockQuery) (*BlockQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *blockPager) toCursor(b *Block) Cursor {
+	return p.order.Field.toCursor(b)
+}
+
+func (p *blockPager) applyCursors(query *BlockQuery, after, before *Cursor) *BlockQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultBlockOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *blockPager) applyOrder(query *BlockQuery, reverse bool) *BlockQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultBlockOrder.Field {
+		query = query.Order(Asc(DefaultBlockOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Block.
+func (b *BlockQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...BlockPaginateOption,
+) (*BlockConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newBlockPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if b, err = pager.applyFilter(b); err != nil {
+		return nil, err
+	}
+
+	conn := &BlockConnection{Edges: []*BlockEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := b.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := b.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	b = pager.applyCursors(b, after, before)
+	b = pager.applyOrder(b, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		b = b.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		b = b.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := b.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Block
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Block {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Block {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*BlockEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &BlockEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// BlockOrderField defines the ordering field of Block.
+type BlockOrderField struct {
+	field    string
+	toCursor func(*Block) Cursor
+}
+
+// BlockOrder defines the ordering of Block.
+type BlockOrder struct {
+	Direction OrderDirection   `json:"direction"`
+	Field     *BlockOrderField `json:"field"`
+}
+
+// DefaultBlockOrder is the default ordering of Block.
+var DefaultBlockOrder = &BlockOrder{
+	Direction: OrderDirectionAsc,
+	Field: &BlockOrderField{
+		field: block.FieldID,
+		toCursor: func(b *Block) Cursor {
+			return Cursor{ID: b.ID}
 		},
 	},
 }
@@ -4935,6 +5156,225 @@ var DefaultFloorPlanScaleOrder = &FloorPlanScaleOrder{
 		field: floorplanscale.FieldID,
 		toCursor: func(fps *FloorPlanScale) Cursor {
 			return Cursor{ID: fps.ID}
+		},
+	},
+}
+
+// FlowDraftEdge is the edge representation of FlowDraft.
+type FlowDraftEdge struct {
+	Node   *FlowDraft `json:"node"`
+	Cursor Cursor     `json:"cursor"`
+}
+
+// FlowDraftConnection is the connection containing edges to FlowDraft.
+type FlowDraftConnection struct {
+	Edges      []*FlowDraftEdge `json:"edges"`
+	PageInfo   PageInfo         `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
+}
+
+// FlowDraftPaginateOption enables pagination customization.
+type FlowDraftPaginateOption func(*flowDraftPager) error
+
+// WithFlowDraftOrder configures pagination ordering.
+func WithFlowDraftOrder(order *FlowDraftOrder) FlowDraftPaginateOption {
+	if order == nil {
+		order = DefaultFlowDraftOrder
+	}
+	o := *order
+	return func(pager *flowDraftPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFlowDraftOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFlowDraftFilter configures pagination filter.
+func WithFlowDraftFilter(filter func(*FlowDraftQuery) (*FlowDraftQuery, error)) FlowDraftPaginateOption {
+	return func(pager *flowDraftPager) error {
+		if filter == nil {
+			return errors.New("FlowDraftQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type flowDraftPager struct {
+	order  *FlowDraftOrder
+	filter func(*FlowDraftQuery) (*FlowDraftQuery, error)
+}
+
+func newFlowDraftPager(opts []FlowDraftPaginateOption) (*flowDraftPager, error) {
+	pager := &flowDraftPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFlowDraftOrder
+	}
+	return pager, nil
+}
+
+func (p *flowDraftPager) applyFilter(query *FlowDraftQuery) (*FlowDraftQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *flowDraftPager) toCursor(fd *FlowDraft) Cursor {
+	return p.order.Field.toCursor(fd)
+}
+
+func (p *flowDraftPager) applyCursors(query *FlowDraftQuery, after, before *Cursor) *FlowDraftQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFlowDraftOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *flowDraftPager) applyOrder(query *FlowDraftQuery, reverse bool) *FlowDraftQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFlowDraftOrder.Field {
+		query = query.Order(Asc(DefaultFlowDraftOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FlowDraft.
+func (fd *FlowDraftQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FlowDraftPaginateOption,
+) (*FlowDraftConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFlowDraftPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if fd, err = pager.applyFilter(fd); err != nil {
+		return nil, err
+	}
+
+	conn := &FlowDraftConnection{Edges: []*FlowDraftEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := fd.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := fd.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	fd = pager.applyCursors(fd, after, before)
+	fd = pager.applyOrder(fd, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		fd = fd.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		fd = fd.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := fd.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *FlowDraft
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FlowDraft {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FlowDraft {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*FlowDraftEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &FlowDraftEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// FlowDraftOrderField defines the ordering field of FlowDraft.
+type FlowDraftOrderField struct {
+	field    string
+	toCursor func(*FlowDraft) Cursor
+}
+
+// FlowDraftOrder defines the ordering of FlowDraft.
+type FlowDraftOrder struct {
+	Direction OrderDirection       `json:"direction"`
+	Field     *FlowDraftOrderField `json:"field"`
+}
+
+// DefaultFlowDraftOrder is the default ordering of FlowDraft.
+var DefaultFlowDraftOrder = &FlowDraftOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FlowDraftOrderField{
+		field: flowdraft.FieldID,
+		toCursor: func(fd *FlowDraft) Cursor {
+			return Cursor{ID: fd.ID}
 		},
 	},
 }
