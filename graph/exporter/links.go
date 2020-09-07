@@ -25,13 +25,13 @@ import (
 )
 
 type linksFilterInput struct {
-	Name          models.LinkFilterType     `json:"name"`
-	Operator      enum.FilterOperator       `jsons:"operator"`
-	StringValue   string                    `json:"stringValue"`
-	IDSet         []string                  `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
+	Name          models.LinkFilterType        `json:"name"`
+	Operator      enum.FilterOperator          `jsons:"operator"`
+	StringValue   string                       `json:"stringValue"`
+	IDSet         []string                     `json:"idSet"`
+	StringSet     []string                     `json:"stringSet"`
 	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                      `json:"maxDepth"`
+	MaxDepth      *int                         `json:"maxDepth"`
 }
 
 type linksRower struct {

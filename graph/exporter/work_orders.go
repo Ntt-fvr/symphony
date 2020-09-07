@@ -26,13 +26,13 @@ import (
 )
 
 type woFilterInput struct {
-	Name          models.EquipmentFilterType `json:"name"`
-	Operator      enum.FilterOperator        `jsons:"operator"`
-	StringValue   string                     `json:"stringValue"`
-	IDSet         []string                   `json:"idSet"`
-	StringSet     []string                   `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput  `json:"propertyValue"`
-	BoolValue     bool                       `json:"boolValue"`
+	Name          models.EquipmentFilterType   `json:"name"`
+	Operator      enum.FilterOperator          `jsons:"operator"`
+	StringValue   string                       `json:"stringValue"`
+	IDSet         []string                     `json:"idSet"`
+	StringSet     []string                     `json:"stringSet"`
+	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
+	BoolValue     bool                         `json:"boolValue"`
 }
 
 type woRower struct {

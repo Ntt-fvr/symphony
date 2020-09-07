@@ -29,12 +29,12 @@ const (
 )
 
 type equipmentFilterInput struct {
-	Name          models.EquipmentFilterType `json:"name"`
-	Operator      enum.FilterOperator        `jsons:"operator"`
-	StringValue   string                     `json:"stringValue"`
-	IDSet         []string                   `json:"idSet"`
-	StringSet     []string                   `json:"stringSet"`
-	PropertyValue pkg_models.PropertyTypeInput  `json:"propertyValue"`
+	Name          models.EquipmentFilterType   `json:"name"`
+	Operator      enum.FilterOperator          `jsons:"operator"`
+	StringValue   string                       `json:"stringValue"`
+	IDSet         []string                     `json:"idSet"`
+	StringSet     []string                     `json:"stringSet"`
+	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
 }
 
 type equipmentRower struct {

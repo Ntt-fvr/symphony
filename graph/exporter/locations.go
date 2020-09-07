@@ -24,14 +24,14 @@ import (
 )
 
 type locationsFilterInput struct {
-	Name          enum.LocationFilterType   `json:"name"`
-	Operator      enum.FilterOperator       `jsons:"operator"`
-	StringValue   string                    `json:"stringValue"`
-	IDSet         []string                  `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
+	Name          enum.LocationFilterType      `json:"name"`
+	Operator      enum.FilterOperator          `jsons:"operator"`
+	StringValue   string                       `json:"stringValue"`
+	IDSet         []string                     `json:"idSet"`
+	StringSet     []string                     `json:"stringSet"`
 	PropertyValue pkg_models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                      `json:"maxDepth"`
-	BoolValue     *bool                     `json:"boolValue"`
+	MaxDepth      *int                         `json:"maxDepth"`
+	BoolValue     *bool                        `json:"boolValue"`
 }
 
 type LocationsRower struct {
