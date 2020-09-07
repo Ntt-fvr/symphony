@@ -6,14 +6,13 @@ package resolver_test
 
 import (
 	"context"
-	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"testing"
 
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-
-	"github.com/facebookincubator/symphony/graph/graphql/models"
+	models1 "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/assert"

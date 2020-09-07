@@ -9,11 +9,11 @@ package tests
 import (
 	"testing"
 
-	"github.com/facebookincubator/symphony/jobrunner"
-	"github.com/shurcooL/graphql"
-	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/jobrunner"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/google/uuid"
+	"github.com/shurcooL/graphql"
 	"github.com/stretchr/testify/require"
 )
 

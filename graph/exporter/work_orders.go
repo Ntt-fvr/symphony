@@ -31,7 +31,7 @@ type woFilterInput struct {
 	StringValue   string                     `json:"stringValue"`
 	IDSet         []string                   `json:"idSet"`
 	StringSet     []string                   `json:"stringSet"`
-	PropertyValue models1.PropertyTypeInput   `json:"propertyValue"`
+	PropertyValue models1.PropertyTypeInput  `json:"propertyValue"`
 	BoolValue     bool                       `json:"boolValue"`
 }
 
