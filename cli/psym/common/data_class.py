@@ -21,6 +21,8 @@ from typing import (
 from psym.graphql.enum.property_kind import PropertyKind
 from psym.graphql.enum.user_role import UserRole
 from psym.graphql.enum.user_status import UserStatus
+from psym.graphql.enum.work_order_priority import WorkOrderPriority
+from psym.graphql.enum.work_order_status import WorkOrderStatus
 from psym.graphql.fragment.equipment_port_definition import (
     EquipmentPortDefinitionFragment,
 )
@@ -471,7 +473,34 @@ class WorkOrder(NamedTuple):
     :type id: str
     :param name: Name
     :type name: str
+    :param description: Description
+    :type description: str, optional
+    :param work_order_type_id: Existing work order type ID
+    :type work_order_type_id: str
+    :param location_id: Existing location ID
+    :type location_id: str, optional
+    :param project_id: Existing project ID
+    :type project_id: str, optional
+    :param properties: PropertyFragment sequence
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ]), optional
+    :param owner_id: Existing user ID, work order owner
+    :type owner_id: str, optional
+    :param assignee_id: Existing user ID, assigned to work order
+    :type assignee_id: str, optional
+    :param status: Work order status
+    :type status: :class:`~psym.graphql.enum.work_order_status.WorkOrderStatus`, optional
+    :param priority: Work order priority
+    :type priority: :class:`~psym.graphql.enum.work_order_priority.WorkOrderPriority`, optional
     """
 
     id: str
     name: str
+    description: Optional[str]
+    work_order_type_id: str
+    location_id: Optional[str]
+    project_id: Optional[str]
+    properties: Optional[Sequence[PropertyFragment]]
+    owner_id: Optional[str]
+    assignee_id: Optional[str]
+    status: Optional[WorkOrderStatus]
+    priority: Optional[WorkOrderPriority]

@@ -25,6 +25,7 @@ def load_tests(
     from .test_service import TestService
     from .test_service_type import TestServiceType
     from .test_user import TestUser
+    from .test_work_order import TestWorkOrder
     from .test_work_order_type import TestWorkOrderType
     from .test_site_survey import TestSiteSurvey
     from .test_work_order_subscription import TestWorkOrderSubscription
@@ -39,6 +40,7 @@ def load_tests(
         TestService,
         TestServiceType,
         TestUser,
+        TestWorkOrder,
         TestWorkOrderType,
         TestSiteSurvey,
         TestWorkOrderSubscription,

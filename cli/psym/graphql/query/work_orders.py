@@ -14,35 +14,44 @@ from time import perf_counter
 from dataclasses_json import DataClassJsonMixin
 
 from ..fragment.work_order import WorkOrderFragment, QUERY as WorkOrderFragmentQuery
-from ..input.add_work_order import AddWorkOrderInput
-
 
 QUERY: List[str] = WorkOrderFragmentQuery + ["""
-mutation AddWorkOrderMutation($input: AddWorkOrderInput!) {
-  addWorkOrder(input: $input) {
-    ...WorkOrderFragment
+query WorkOrdersQuery {
+  workOrders {
+    edges {
+      node {
+        ...WorkOrderFragment
+      }
+    }
   }
 }
-
 """]
 
 @dataclass
-class AddWorkOrderMutation(DataClassJsonMixin):
+class WorkOrdersQuery(DataClassJsonMixin):
     @dataclass
-    class AddWorkOrderMutationData(DataClassJsonMixin):
+    class WorkOrdersQueryData(DataClassJsonMixin):
         @dataclass
-        class WorkOrder(WorkOrderFragment):
-            pass
+        class WorkOrderConnection(DataClassJsonMixin):
+            @dataclass
+            class WorkOrderEdge(DataClassJsonMixin):
+                @dataclass
+                class WorkOrder(WorkOrderFragment):
+                    pass
 
-        addWorkOrder: WorkOrder
+                node: Optional[WorkOrder]
 
-    data: AddWorkOrderMutationData
+            edges: List[WorkOrderEdge]
+
+        workOrders: WorkOrderConnection
+
+    data: WorkOrdersQueryData
 
     @classmethod
     # fmt: off
-    def execute(cls, client: GraphqlClient, input: AddWorkOrderInput) -> AddWorkOrderMutationData.WorkOrder:
+    def execute(cls, client: GraphqlClient) -> WorkOrdersQueryData.WorkOrderConnection:
         # fmt: off
-        variables: Dict[str, Any] = {"input": input}
+        variables: Dict[str, Any] = {}
         try:
             network_start = perf_counter()
             response_text = client.call(''.join(set(QUERY)), variables=variables)
@@ -50,13 +59,13 @@ class AddWorkOrderMutation(DataClassJsonMixin):
             res = cls.from_json(response_text).data
             decode_time = perf_counter() - decode_start
             network_time = decode_start - network_start
-            client.reporter.log_successful_operation("AddWorkOrderMutation", variables, network_time, decode_time)
-            return res.addWorkOrder
+            client.reporter.log_successful_operation("WorkOrdersQuery", variables, network_time, decode_time)
+            return res.workOrders
         except OperationException as e:
             raise FailedOperationException(
                 client.reporter,
                 e.err_msg,
                 e.err_id,
-                "AddWorkOrderMutation",
+                "WorkOrdersQuery",
                 variables,
             )
