@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
@@ -72,7 +73,7 @@ func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]stri
 		for i, l := range servicesList {
 			serviceIDs[i] = l.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, serviceIDs, client, enum.PropertyEntityService)
+		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, serviceIDs, client, enum.PropertyEntityService)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -139,7 +140,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		discoveryMethod = servicetype.DiscoveryMethodManual
 	}
 
-	properties, err := propertiesSlice(ctx, service, propertyTypes, enum.PropertyEntityService)
+	properties, err := pkgexporter.PropertiesSlice(ctx, service, propertyTypes, enum.PropertyEntityService)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +179,7 @@ func endpointsToSlice(ctx context.Context, service *ent.Service, st *ent.Service
 			continue
 		}
 
-		loc, err := getLastLocations(ctx, e, 3)
+		loc, err := pkgexporter.GetLastLocations(ctx, e, 3)
 		if err != nil || loc == nil {
 			return nil, errors.Wrap(err, "error while getting first location of equipment")
 		}
@@ -199,7 +200,7 @@ func paramToServiceFilterInput(params string) ([]*models.ServiceFilterInput, err
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}

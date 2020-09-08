@@ -5,7 +5,6 @@
 package models
 
 import (
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
@@ -18,9 +17,4 @@ type LocationFilterInput struct {
 	IDSet         []int                   `json:"idSet"`
 	StringSet     []string                `json:"stringSet"`
 	MaxDepth      *int                    `json:"maxDepth"`
-}
-
-type LocationSearchResult struct {
-	Locations []*ent.Location `json:"locations"`
-	Count     int             `json:"count"`
 }

@@ -75,17 +75,3 @@ func equipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilt
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
-
-func LocationFilterPredicate(q *ent.LocationQuery, filter *models.LocationFilterInput) (*ent.LocationQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf {
-		if filter.MaxDepth == nil {
-			return nil, errors.New("max depth not supplied to location filter")
-		}
-		var ps []predicate.Location
-		for _, lid := range filter.IDSet {
-			ps = append(ps, BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth))
-		}
-		return q.Where(location.Or(ps...)), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-}

@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -115,7 +116,7 @@ func TestExportAndEditLocations(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, LocationsRower{log, true}}
+			e := &exporter{log: log, rower: pkgexporter.LocationsRower{Log: log, Concurrent: true}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 			importLocationsFile(t, r.client, res.Body, MethodEdit, withVerify, skipLines)
 			res.Body.Close()
@@ -164,7 +165,7 @@ func TestExportAndAddLocations(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, LocationsRower{log, true}}
+			e := &exporter{log: log, rower: pkgexporter.LocationsRower{Log: log, Concurrent: true}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
 			locs := r.client.Location.Query().AllX(ctx)

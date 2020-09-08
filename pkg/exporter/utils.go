@@ -13,29 +13,26 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/facebookincubator/symphony/graph/resolverutil"
-	"github.com/facebookincubator/symphony/pkg/ent/property"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/property"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
 
 const (
-	maxEquipmentParents = 3
+	MaxEquipmentParents = 3
 )
 
-func toIntSlice(a []string) ([]int, error) {
+func ToIntSlice(a []string) ([]int, error) {
 	var intSlice []int
 	for _, i := range a {
 		j, err := strconv.Atoi(i)
@@ -56,20 +53,20 @@ func index(a []string, x string) int {
 	return -1
 }
 
-func getQueryFields(e ExportEntity) []string {
+func GetQueryFields(e ExportEntity) []string {
 	var v reflect.Value
 	switch e {
 	case ExportEntityWorkOrders:
 		model := models.WorkOrderSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityLocation:
-		model := pkgmodels.LocationSearchResult{}
+		model := models.LocationSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityPort:
 		model := models.PortSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityEquipment:
-		model := pkgmodels.EquipmentSearchResult{}
+		model := models.EquipmentSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityLink:
 		model := models.LinkSearchResult{}
@@ -90,7 +87,7 @@ func getQueryFields(e ExportEntity) []string {
 	return fields
 }
 
-func locationTypeHierarchy(ctx context.Context, c *ent.Client) ([]string, error) {
+func LocationTypeHierarchy(ctx context.Context, c *ent.Client) ([]string, error) {
 	locTypeResult, err := c.LocationType.Query().
 		Paginate(ctx, nil, nil, nil, nil)
 	if err != nil {
@@ -112,10 +109,10 @@ func locationTypeHierarchy(ctx context.Context, c *ent.Client) ([]string, error)
 	return hierarchy, nil
 }
 
-func parentHierarchy(ctx context.Context, equipment ent.Equipment) []string {
-	var parents = make([]string, maxEquipmentParents)
+func ParentHierarchy(ctx context.Context, equipment ent.Equipment) []string {
+	var parents = make([]string, MaxEquipmentParents)
 	pos, _ := equipment.QueryParentPosition().Only(ctx)
-	for i := maxEquipmentParents - 1; i >= 0; i-- {
+	for i := MaxEquipmentParents - 1; i >= 0; i-- {
 		if pos == nil {
 			break
 		}
@@ -126,10 +123,10 @@ func parentHierarchy(ctx context.Context, equipment ent.Equipment) []string {
 	return parents
 }
 
-func parentHierarchyWithAllPositions(ctx context.Context, equipment ent.Equipment) []string {
-	var parents = make([]string, 2*maxEquipmentParents)
+func ParentHierarchyWithAllPositions(ctx context.Context, equipment ent.Equipment) []string {
+	var parents = make([]string, 2*MaxEquipmentParents)
 	pos, _ := equipment.QueryParentPosition().Only(ctx)
-	for i := (2 * maxEquipmentParents) - 1; i >= 1; i -= 2 {
+	for i := (2 * MaxEquipmentParents) - 1; i >= 1; i -= 2 {
 		if pos == nil {
 			break
 		}
@@ -141,7 +138,7 @@ func parentHierarchyWithAllPositions(ctx context.Context, equipment ent.Equipmen
 	return parents
 }
 
-func locationHierarchyForEquipment(ctx context.Context, equipment *ent.Equipment, orderedLocTypes []string) ([]string, error) {
+func LocationHierarchyForEquipment(ctx context.Context, equipment *ent.Equipment, orderedLocTypes []string) ([]string, error) {
 	firstEquipmentWithLocation := equipment
 	for {
 		exist, err := firstEquipmentWithLocation.QueryLocation().Exist(ctx)
@@ -187,7 +184,7 @@ func locationHierarchy(ctx context.Context, location *ent.Location, orderedLocTy
 	return parents, nil
 }
 
-func getLastLocations(ctx context.Context, e *ent.Equipment, level int) (*string, error) {
+func GetLastLocations(ctx context.Context, e *ent.Equipment, level int) (*string, error) {
 	ppos, err := e.QueryParentPosition().Only(ctx)
 	if err != nil && !ent.IsNotFound(err) {
 		return nil, fmt.Errorf("querying parent position: %w", err)
@@ -226,8 +223,8 @@ func getLastLocations(ctx context.Context, e *ent.Equipment, level int) (*string
 	return &locations, nil
 }
 
-// nolint: funlen
-func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity enum.PropertyEntity) ([]string, error) {
+// nolint: funlen, interfacer
+func PropertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity enum.PropertyEntity) ([]string, error) {
 	var (
 		propTypes       []string
 		alreadyAppended = map[string]string{}
@@ -404,7 +401,7 @@ func propertyTypesSlice(ctx context.Context, ids []int, c *ent.Client, entity en
 }
 
 // nolint: funlen
-func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []string, entityType enum.PropertyEntity) ([]string, error) {
+func PropertiesSlice(ctx context.Context, instance interface{}, propertyTypes []string, entityType enum.PropertyEntity) ([]string, error) {
 	var ret = make([]string, len(propertyTypes))
 	var typs []*ent.PropertyType
 	var props []*ent.Property
@@ -488,7 +485,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if idx == -1 {
 			continue
 		}
-		val, err := resolverutil.PropertyValue(ctx, typ.Type, typ.NodeType, typ)
+		val, err := PropertyValue(ctx, typ.Type, typ.NodeType, typ)
 		if err != nil {
 			return nil, err
 		}
@@ -505,7 +502,7 @@ func propertiesSlice(ctx context.Context, instance interface{}, propertyTypes []
 		if idx == -1 {
 			return nil, errors.Errorf("Property type does not exist in header: %s", propTypeName)
 		}
-		val, err := resolverutil.PropertyValue(ctx, propTyp.Type, propTyp.NodeType, p)
+		val, err := PropertyValue(ctx, propTyp.Type, propTyp.NodeType, p)
 		if err != nil {
 			return nil, err
 		}

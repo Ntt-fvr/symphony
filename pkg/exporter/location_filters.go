@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -74,7 +74,6 @@ func locationLocationTypeFilter(q *ent.LocationQuery, filter *pkgmodels.Location
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-// nolint: dupl
 func handleLocationPropertyFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {

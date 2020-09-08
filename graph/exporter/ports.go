@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
@@ -69,7 +70,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 
 	var orderedLocTypes, propertyTypes []string
 	cg.Go(func(ctx context.Context) (err error) {
-		orderedLocTypes, err = locationTypeHierarchy(ctx, client)
+		orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client)
 		if err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
@@ -81,7 +82,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 		for i, p := range portsList {
 			portIDs[i] = p.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, portIDs, client, enum.PropertyEntityPort)
+		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, portIDs, client, enum.PropertyEntityPort)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -124,7 +125,7 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 		posName              string
 		lParents, properties []string
 		linkData             = make([]string, 4)
-		eParents             = make([]string, maxEquipmentParents)
+		eParents             = make([]string, pkgexporter.MaxEquipmentParents)
 		serviceData          = make([]string, 2)
 	)
 	parentEquip, err := port.QueryParent().Only(ctx)
@@ -135,11 +136,11 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 	g := ctxgroup.WithContext(ctx)
 
 	g.Go(func(ctx context.Context) (err error) {
-		lParents, err = locationHierarchyForEquipment(ctx, parentEquip, orderedLocTypes)
+		lParents, err = pkgexporter.LocationHierarchyForEquipment(ctx, parentEquip, orderedLocTypes)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = propertiesSlice(ctx, port, propertyTypes, enum.PropertyEntityPort)
+		properties, err = pkgexporter.PropertiesSlice(ctx, port, propertyTypes, enum.PropertyEntityPort)
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
@@ -154,7 +155,7 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 				return err
 			}
 			posName = def.Name
-			eParents = parentHierarchy(ctx, *parentEquip)
+			eParents = pkgexporter.ParentHierarchy(ctx, *parentEquip)
 		}
 		return nil
 	})
@@ -240,7 +241,7 @@ func paramToPortFilterInput(params string) ([]*models.PortFilterInput, error) {
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}

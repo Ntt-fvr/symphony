@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -32,6 +31,10 @@ type locationsFilterInput struct {
 	MaxDepth      *int                     `json:"maxDepth"`
 	BoolValue     *bool                    `json:"boolValue"`
 }
+
+const (
+	bom = "\uFEFF"
+)
 
 type LocationsRower struct {
 	Log        log.Logger
@@ -61,7 +64,6 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 		locationIDHeader = [...]string{bom + "Location ID"}
 		fixedHeaders     = [...]string{"External ID", "Latitude", "Longitude"}
 	)
-
 	filterInput, err := getFilterInput(filtersParam, logger)
 	if err != nil {
 		logger.Error("cannot filter location", zap.Error(err))
@@ -70,7 +72,7 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 
 	client := ent.FromContext(ctx)
 
-	locations, err := resolverutil.LocationSearch(ctx, client, filterInput, nil)
+	locations, err := LocationSearch(ctx, client, filterInput, nil)
 	if err != nil {
 		logger.Error("cannot query location", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query location")
@@ -84,7 +86,7 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	}
 
 	var orderedLocTypes, propertyTypes []string
-	orderedLocTypes, err = locationTypeHierarchy(ctx, client)
+	orderedLocTypes, err = LocationTypeHierarchy(ctx, client)
 	if err != nil {
 		logger.Error("cannot query location types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query location types")
@@ -93,7 +95,7 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	for i, l := range locationsList {
 		locationIDs[i] = l.ID
 	}
-	propertyTypes, err = propertyTypesSlice(ctx, locationIDs, client, enum.PropertyEntityLocation)
+	propertyTypes, err = PropertyTypesSlice(ctx, locationIDs, client, enum.PropertyEntityLocation)
 	if err != nil {
 		logger.Error("cannot query property types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query property types")
@@ -146,7 +148,7 @@ func locationToSlice(ctx context.Context, location *ent.Location, orderedLocType
 			return err
 		})
 		g.Go(func(ctx context.Context) (err error) {
-			properties, err = propertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
+			properties, err = PropertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
 			return err
 		})
 		if err := g.Wait(); err != nil {
@@ -157,7 +159,7 @@ func locationToSlice(ctx context.Context, location *ent.Location, orderedLocType
 		if err != nil {
 			return nil, err
 		}
-		properties, err = propertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
+		properties, err = PropertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +193,7 @@ func paramToLocationFilterInput(params string) ([]*models.LocationFilterInput, e
 		if f.MaxDepth != nil {
 			maxDepth = *f.MaxDepth
 		}
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
@@ -208,4 +210,51 @@ func paramToLocationFilterInput(params string) ([]*models.LocationFilterInput, e
 		ret = append(ret, &inp)
 	}
 	return ret, nil
+}
+
+func LocationFilter(query *ent.LocationQuery, filters []*models.LocationFilterInput) (*ent.LocationQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handleLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_TYPE"):
+			if query, err = handleLocationTypeFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handleLocationPropertyFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func LocationSearch(ctx context.Context, client *ent.Client, filters []*models.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
+	var (
+		query = client.Location.Query()
+		err   error
+	)
+	query, err = LocationFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	count, err := query.Clone().Count(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Count query failed")
+	}
+	if limit != nil {
+		query.Limit(*limit)
+	}
+	locs, err := query.All(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Querying locations failed")
+	}
+	return &models.LocationSearchResult{
+		Locations: locs,
+		Count:     count,
+	}, nil
 }

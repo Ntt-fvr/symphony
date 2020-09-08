@@ -42,7 +42,6 @@ func equipmentNameFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterIn
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
-// nolint: dupl
 func equipmentPropertyFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {

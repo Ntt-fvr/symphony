@@ -96,7 +96,7 @@ func PortFilter(query *ent.EquipmentPortQuery, filters []*models.PortFilterInput
 	return query, nil
 }
 
-func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortFilterInput, limit *int) (*models.PortSearchResult, error) {
+func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {
 	var (
 		query = client.EquipmentPort.Query()
 		err   error
@@ -116,56 +116,9 @@ func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortF
 	if err != nil {
 		return nil, errors.Wrapf(err, "Querying links failed")
 	}
-	return &models.PortSearchResult{
+	return &pkgmodels.PortSearchResult{
 		Ports: ports,
 		Count: count,
-	}, nil
-}
-
-func LocationFilter(query *ent.LocationQuery, filters []*pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
-	var err error
-	for _, f := range filters {
-		switch {
-		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
-			if query, err = handleLocationFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "LOCATION_TYPE"):
-			if query, err = handleLocationTypeFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
-			if query, err = handleLocationPropertyFilter(query, f); err != nil {
-				return nil, err
-			}
-		}
-	}
-	return query, nil
-}
-
-func LocationSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.LocationFilterInput, limit *int) (*pkgmodels.LocationSearchResult, error) {
-	var (
-		query = client.Location.Query()
-		err   error
-	)
-	query, err = LocationFilter(query, filters)
-	if err != nil {
-		return nil, err
-	}
-	count, err := query.Clone().Count(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Count query failed")
-	}
-	if limit != nil {
-		query.Limit(*limit)
-	}
-	locs, err := query.All(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Querying locations failed")
-	}
-	return &pkgmodels.LocationSearchResult{
-		Locations: locs,
-		Count:     count,
 	}, nil
 }
 
@@ -198,7 +151,7 @@ func LinkFilter(query *ent.LinkQuery, filters []*models.LinkFilterInput) (*ent.L
 	return query, nil
 }
 
-func LinkSearch(ctx context.Context, client *ent.Client, filters []*models.LinkFilterInput, limit *int) (*models.LinkSearchResult, error) {
+func LinkSearch(ctx context.Context, client *ent.Client, filters []*models.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
 	var (
 		query = client.Link.Query()
 		err   error
@@ -218,7 +171,7 @@ func LinkSearch(ctx context.Context, client *ent.Client, filters []*models.LinkF
 	if err != nil {
 		return nil, errors.Wrapf(err, "Querying links failed")
 	}
-	return &models.LinkSearchResult{
+	return &pkgmodels.LinkSearchResult{
 		Links: links,
 		Count: count,
 	}, nil
@@ -249,7 +202,7 @@ func ServiceFilter(query *ent.ServiceQuery, filters []*models.ServiceFilterInput
 	return query, nil
 }
 
-func ServiceSearch(ctx context.Context, client *ent.Client, filters []*models.ServiceFilterInput, limit *int) (*models.ServiceSearchResult, error) {
+func ServiceSearch(ctx context.Context, client *ent.Client, filters []*models.ServiceFilterInput, limit *int) (*pkgmodels.ServiceSearchResult, error) {
 	var (
 		query = client.Service.Query().Where(service.HasTypeWith(servicetype.IsDeleted(false)))
 		err   error
@@ -269,7 +222,7 @@ func ServiceSearch(ctx context.Context, client *ent.Client, filters []*models.Se
 	if err != nil {
 		return nil, errors.Wrapf(err, "Querying services failed")
 	}
-	return &models.ServiceSearchResult{
+	return &pkgmodels.ServiceSearchResult{
 		Services: services,
 		Count:    count,
 	}, nil
@@ -292,7 +245,7 @@ func WorkOrderFilter(query *ent.WorkOrderQuery, filters []*models.WorkOrderFilte
 	return query, nil
 }
 
-func WorkOrderSearch(ctx context.Context, client *ent.Client, filters []*models.WorkOrderFilterInput, limit *int, fields []string) (*models.WorkOrderSearchResult, error) {
+func WorkOrderSearch(ctx context.Context, client *ent.Client, filters []*models.WorkOrderFilterInput, limit *int, fields []string) (*pkgmodels.WorkOrderSearchResult, error) {
 	var (
 		query = client.WorkOrder.Query()
 		err   error
@@ -301,7 +254,7 @@ func WorkOrderSearch(ctx context.Context, client *ent.Client, filters []*models.
 	if err != nil {
 		return nil, err
 	}
-	var woResult models.WorkOrderSearchResult
+	var woResult pkgmodels.WorkOrderSearchResult
 	for _, field := range fields {
 		switch field {
 		case "count":

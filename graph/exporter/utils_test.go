@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -53,7 +54,7 @@ func TestLocationHierarchy(t *testing.T) {
 	})
 	require.NoError(t, err)
 	client := ent.FromContext(ctx)
-	locTypeHierarchy, err := locationTypeHierarchy(ctx, client)
+	locTypeHierarchy, err := pkgexporter.LocationTypeHierarchy(ctx, client)
 	require.NoError(t, err)
 
 	require.Equal(t, locTypeHierarchy[0], locTypeL.Name)
@@ -89,7 +90,7 @@ func TestLocationHierarchy(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	locHierarchy, err := locationHierarchyForEquipment(ctx, equipment, locTypeHierarchy)
+	locHierarchy, err := pkgexporter.LocationHierarchyForEquipment(ctx, equipment, locTypeHierarchy)
 	require.NoError(t, err)
 
 	require.Equal(t, locHierarchy[0], gpLocation.Name)
@@ -156,7 +157,7 @@ func TestParentHierarchy(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	hierarchy := parentHierarchyWithAllPositions(ctx, *childEquipment)
+	hierarchy := pkgexporter.ParentHierarchyWithAllPositions(ctx, *childEquipment)
 	require.NoError(t, err)
 
 	require.Equal(t, hierarchy[0], "")
@@ -349,10 +350,10 @@ func TestPropertiesForCSV(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	propertyTypes, err := propertyTypesSlice(ctx, []int{equipment.ID}, client, enum.PropertyEntityEquipment)
+	propertyTypes, err := pkgexporter.PropertyTypesSlice(ctx, []int{equipment.ID}, client, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 
-	props, err := propertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
+	props, err := pkgexporter.PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 	require.Contains(t, props, strVal)
 	require.Contains(t, props, strconv.Itoa(intVal))
@@ -431,10 +432,10 @@ func TestPropertyTypesForCSV(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	propertyTypes, err := propertyTypesSlice(ctx, []int{equipment.ID}, client, enum.PropertyEntityEquipment)
+	propertyTypes, err := pkgexporter.PropertyTypesSlice(ctx, []int{equipment.ID}, client, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 
-	props, err := propertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
+	props, err := pkgexporter.PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 	require.NoError(t, err)
 	require.Contains(t, props, strVal)
 	require.Contains(t, props, strconv.Itoa(intVal))
@@ -491,7 +492,7 @@ func TestSamePropertyTypesForCSV(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	propertyTypes, err := propertyTypesSlice(ctx, []int{equ.ID}, client, enum.PropertyEntityEquipment)
+	propertyTypes, err := pkgexporter.PropertyTypesSlice(ctx, []int{equ.ID}, client, enum.PropertyEntityEquipment)
 	require.Len(t, propertyTypes, 1)
 	require.Contains(t, propertyTypes, pa.Name)
 	require.NoError(t, err)

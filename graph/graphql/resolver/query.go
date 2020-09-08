@@ -25,6 +25,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
@@ -57,7 +58,7 @@ func (r queryResolver) Locations(
 	filterBy []*pkgmodels.LocationFilterInput,
 ) (*ent.LocationConnection, error) {
 	filter := func(query *ent.LocationQuery) (*ent.LocationQuery, error) {
-		query, err := resolverutil.LocationFilter(query, filterBy)
+		query, err := pkgexporter.LocationFilter(query, filterBy)
 		if err != nil {
 			return nil, err
 		}

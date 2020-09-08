@@ -5,7 +5,6 @@
 package models
 
 import (
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
@@ -17,9 +16,4 @@ type EquipmentFilterInput struct {
 	IDSet         []int                    `json:"idSet"`
 	StringSet     []string                 `json:"stringSet"`
 	MaxDepth      *int                     `json:"maxDepth"`
-}
-
-type EquipmentSearchResult struct {
-	Equipment []*ent.Equipment `json:"equipment"`
-	Count     int              `json:"count"`
 }

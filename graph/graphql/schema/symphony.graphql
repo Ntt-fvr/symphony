@@ -2307,12 +2307,18 @@ input EquipmentFilterInput
   maxDepth: Int = 5
 }
 
-type PortSearchResult {
+type PortSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
+  ) {
   ports: [EquipmentPort]!
   count: Int!
 }
 
-type LinkSearchResult {
+type LinkSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
+  ) {
   links: [Link]!
   count: Int!
 }
@@ -2325,7 +2331,10 @@ type LocationSearchResult
   count: Int!
 }
 
-type ServiceSearchResult {
+type ServiceSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
+  ) {
   services: [Service]!
   count: Int!
 }
@@ -2335,7 +2344,10 @@ type UserSearchResult {
   count: Int!
 }
 
-type WorkOrderSearchResult {
+type WorkOrderSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
+  ) {
   workOrders: [WorkOrder]!
   count: Int!
 }

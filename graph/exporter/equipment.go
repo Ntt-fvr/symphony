@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
@@ -69,7 +70,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 
 	var orderedLocTypes, propertyTypes []string
 	cg.Go(func(ctx context.Context) (err error) {
-		orderedLocTypes, err = locationTypeHierarchy(ctx, client)
+		orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client)
 		if err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
@@ -81,7 +82,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 		for i, e := range equips.Equipment {
 			equipIDs[i] = e.ID
 		}
-		propertyTypes, err = propertyTypesSlice(ctx, equipIDs, client, enum.PropertyEntityEquipment)
+		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, equipIDs, client, enum.PropertyEntityEquipment)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -127,7 +128,7 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
@@ -148,15 +149,15 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes []string, propertyTypes []string) ([]string, error) {
 	var (
 		lParents, properties []string
-		eParents             = make([]string, maxEquipmentParents*2)
+		eParents             = make([]string, pkgexporter.MaxEquipmentParents*2)
 	)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(ctx context.Context) (err error) {
-		lParents, err = locationHierarchyForEquipment(ctx, equipment, orderedLocTypes)
+		lParents, err = pkgexporter.LocationHierarchyForEquipment(ctx, equipment, orderedLocTypes)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = propertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
+		properties, err = pkgexporter.PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
@@ -166,7 +167,7 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 		}
 		err = nil
 		if pos != nil {
-			eParents = parentHierarchyWithAllPositions(ctx, *equipment)
+			eParents = pkgexporter.ParentHierarchyWithAllPositions(ctx, *equipment)
 		}
 		return
 	})

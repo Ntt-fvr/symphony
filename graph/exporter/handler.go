@@ -16,6 +16,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
@@ -174,7 +175,7 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 		{"ports", exporter{log, portsRower{log}}},
 		{"work_orders", exporter{log, woRower{log}}},
 		{"links", exporter{log, linksRower{log}}},
-		{"locations", exporter{log, LocationsRower{log, true}}},
+		{name: "locations", handler: exporter{log: log, rower: pkgexporter.LocationsRower{Log: log, Concurrent: true}}},
 		{"services", exporter{log, servicesRower{log}}},
 	}
 

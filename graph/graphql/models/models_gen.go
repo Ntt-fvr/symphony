@@ -540,11 +540,6 @@ type LinkFilterInput struct {
 	MaxDepth      *int                      `json:"maxDepth"`
 }
 
-type LinkSearchResult struct {
-	Links []*ent.Link `json:"links"`
-	Count int         `json:"count"`
-}
-
 type LinkSide struct {
 	Equipment int `json:"equipment"`
 	Port      int `json:"port"`
@@ -581,11 +576,6 @@ type PortFilterInput struct {
 	IDSet         []int                     `json:"idSet"`
 	StringSet     []string                  `json:"stringSet"`
 	MaxDepth      *int                      `json:"maxDepth"`
-}
-
-type PortSearchResult struct {
-	Ports []*ent.EquipmentPort `json:"ports"`
-	Count int                  `json:"count"`
 }
 
 type ProjectFilterInput struct {
@@ -688,11 +678,6 @@ type ServiceFilterInput struct {
 	IDSet         []int                     `json:"idSet"`
 	StringSet     []string                  `json:"stringSet"`
 	MaxDepth      *int                      `json:"maxDepth"`
-}
-
-type ServiceSearchResult struct {
-	Services []*ent.Service `json:"services"`
-	Count    int            `json:"count"`
 }
 
 type ServiceTypeCreateData struct {
@@ -902,11 +887,6 @@ type WorkOrderFilterInput struct {
 	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
 	TimeValue     *time.Time                `json:"timeValue"`
 	MaxDepth      *int                      `json:"maxDepth"`
-}
-
-type WorkOrderSearchResult struct {
-	WorkOrders []*ent.WorkOrder `json:"workOrders"`
-	Count      int              `json:"count"`
 }
 
 type CommentEntity string

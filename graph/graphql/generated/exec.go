@@ -1594,13 +1594,13 @@ type QueryResolver interface {
 	PermissionsPolicies(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) (*ent.PermissionsPolicyConnection, error)
 	SearchForNode(ctx context.Context, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*models.SearchNodesConnection, error)
 	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
-	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models.WorkOrderSearchResult, error)
-	LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models.LinkSearchResult, error)
-	PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*models.PortSearchResult, error)
+	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
+	LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
+	PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
 	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
 	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
 	CustomerSearch(ctx context.Context, limit *int) ([]*ent.Customer, error)
-	ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*models.ServiceSearchResult, error)
+	ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*models1.ServiceSearchResult, error)
 	UserSearch(ctx context.Context, filters []*models.UserFilterInput, limit *int) (*models.UserSearchResult, error)
 	PermissionsPolicySearch(ctx context.Context, filters []*models.PermissionsPolicyFilterInput, limit *int) (*models.PermissionsPolicySearchResult, error)
 	UsersGroupSearch(ctx context.Context, filters []*models.UsersGroupFilterInput, limit *int) (*models.UsersGroupSearchResult, error)
@@ -10291,12 +10291,18 @@ input EquipmentFilterInput
   maxDepth: Int = 5
 }
 
-type PortSearchResult {
+type PortSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortSearchResult"
+  ) {
   ports: [EquipmentPort]!
   count: Int!
 }
 
-type LinkSearchResult {
+type LinkSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkSearchResult"
+  ) {
   links: [Link]!
   count: Int!
 }
@@ -10309,7 +10315,10 @@ type LocationSearchResult
   count: Int!
 }
 
-type ServiceSearchResult {
+type ServiceSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceSearchResult"
+  ) {
   services: [Service]!
   count: Int!
 }
@@ -10319,7 +10328,10 @@ type UserSearchResult {
   count: Int!
 }
 
-type WorkOrderSearchResult {
+type WorkOrderSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderSearchResult"
+  ) {
   workOrders: [WorkOrder]!
   count: Int!
 }
@@ -24559,7 +24571,7 @@ func (ec *executionContext) _LinkEdge_cursor(ctx context.Context, field graphql.
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LinkSearchResult_links(ctx context.Context, field graphql.CollectedField, obj *models.LinkSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _LinkSearchResult_links(ctx context.Context, field graphql.CollectedField, obj *models1.LinkSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -24593,7 +24605,7 @@ func (ec *executionContext) _LinkSearchResult_links(ctx context.Context, field g
 	return ec.marshalNLink2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLink(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LinkSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.LinkSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _LinkSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.LinkSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -30681,7 +30693,7 @@ func (ec *executionContext) _PermissionsPolicySearchResult_count(ctx context.Con
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PortSearchResult_ports(ctx context.Context, field graphql.CollectedField, obj *models.PortSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PortSearchResult_ports(ctx context.Context, field graphql.CollectedField, obj *models1.PortSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -30715,7 +30727,7 @@ func (ec *executionContext) _PortSearchResult_ports(ctx context.Context, field g
 	return ec.marshalNEquipmentPort2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PortSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.PortSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PortSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.PortSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -33860,9 +33872,9 @@ func (ec *executionContext) _Query_workOrderSearch(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.WorkOrderSearchResult)
+	res := resTmp.(*models1.WorkOrderSearchResult)
 	fc.Result = res
-	return ec.marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderSearchResult(ctx, field.Selections, res)
+	return ec.marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_linkSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -33901,9 +33913,9 @@ func (ec *executionContext) _Query_linkSearch(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.LinkSearchResult)
+	res := resTmp.(*models1.LinkSearchResult)
 	fc.Result = res
-	return ec.marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkSearchResult(ctx, field.Selections, res)
+	return ec.marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_portSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -33942,9 +33954,9 @@ func (ec *executionContext) _Query_portSearch(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.PortSearchResult)
+	res := resTmp.(*models1.PortSearchResult)
 	fc.Result = res
-	return ec.marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortSearchResult(ctx, field.Selections, res)
+	return ec.marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_locationSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -34106,9 +34118,9 @@ func (ec *executionContext) _Query_serviceSearch(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.ServiceSearchResult)
+	res := resTmp.(*models1.ServiceSearchResult)
 	fc.Result = res
-	return ec.marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceSearchResult(ctx, field.Selections, res)
+	return ec.marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_userSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -36211,7 +36223,7 @@ func (ec *executionContext) _ServiceEndpointDefinition_serviceType(ctx context.C
 	return ec.marshalNServiceType2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐServiceType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ServiceSearchResult_services(ctx context.Context, field graphql.CollectedField, obj *models.ServiceSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _ServiceSearchResult_services(ctx context.Context, field graphql.CollectedField, obj *models1.ServiceSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -36245,7 +36257,7 @@ func (ec *executionContext) _ServiceSearchResult_services(ctx context.Context, f
 	return ec.marshalNService2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐService(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ServiceSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.ServiceSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _ServiceSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.ServiceSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -42070,7 +42082,7 @@ func (ec *executionContext) _WorkOrderExecutionResult_linkRemoved(ctx context.Co
 	return ec.marshalNID2ᚕintᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkOrderSearchResult_workOrders(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkOrderSearchResult_workOrders(ctx context.Context, field graphql.CollectedField, obj *models1.WorkOrderSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -42104,7 +42116,7 @@ func (ec *executionContext) _WorkOrderSearchResult_workOrders(ctx context.Contex
 	return ec.marshalNWorkOrder2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _WorkOrderSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.WorkOrderSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _WorkOrderSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.WorkOrderSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -53366,7 +53378,7 @@ func (ec *executionContext) _LinkEdge(ctx context.Context, sel ast.SelectionSet,
 
 var linkSearchResultImplementors = []string{"LinkSearchResult"}
 
-func (ec *executionContext) _LinkSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.LinkSearchResult) graphql.Marshaler {
+func (ec *executionContext) _LinkSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.LinkSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, linkSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -54731,7 +54743,7 @@ func (ec *executionContext) _PermissionsPolicySearchResult(ctx context.Context, 
 
 var portSearchResultImplementors = []string{"PortSearchResult"}
 
-func (ec *executionContext) _PortSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.PortSearchResult) graphql.Marshaler {
+func (ec *executionContext) _PortSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.PortSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, portSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -56511,7 +56523,7 @@ func (ec *executionContext) _ServiceEndpointDefinition(ctx context.Context, sel 
 
 var serviceSearchResultImplementors = []string{"ServiceSearchResult"}
 
-func (ec *executionContext) _ServiceSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.ServiceSearchResult) graphql.Marshaler {
+func (ec *executionContext) _ServiceSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.ServiceSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, serviceSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -58196,7 +58208,7 @@ func (ec *executionContext) _WorkOrderExecutionResult(ctx context.Context, sel a
 
 var workOrderSearchResultImplementors = []string{"WorkOrderSearchResult"}
 
-func (ec *executionContext) _WorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.WorkOrderSearchResult) graphql.Marshaler {
+func (ec *executionContext) _WorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.WorkOrderSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, workOrderSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -61368,11 +61380,11 @@ func (ec *executionContext) marshalNLinkFilterType2githubᚗcomᚋfacebookincuba
 	return v
 }
 
-func (ec *executionContext) marshalNLinkSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v models.LinkSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNLinkSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.LinkSearchResult) graphql.Marshaler {
 	return ec._LinkSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.LinkSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNLinkSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.LinkSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -62037,11 +62049,11 @@ func (ec *executionContext) marshalNPortFilterType2githubᚗcomᚋfacebookincuba
 	return v
 }
 
-func (ec *executionContext) marshalNPortSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v models.PortSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPortSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.PortSearchResult) graphql.Marshaler {
 	return ec._PortSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.PortSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPortSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.PortSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -62921,11 +62933,11 @@ func (ec *executionContext) marshalNServiceFilterType2githubᚗcomᚋfacebookinc
 	return v
 }
 
-func (ec *executionContext) marshalNServiceSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v models.ServiceSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNServiceSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.ServiceSearchResult) graphql.Marshaler {
 	return ec._ServiceSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.ServiceSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNServiceSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.ServiceSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -64159,11 +64171,11 @@ func (ec *executionContext) marshalNWorkOrderPriority2githubᚗcomᚋfacebookinc
 	return v
 }
 
-func (ec *executionContext) marshalNWorkOrderSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkOrderSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.WorkOrderSearchResult) graphql.Marshaler {
 	return ec._WorkOrderSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.WorkOrderSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNWorkOrderSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.WorkOrderSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

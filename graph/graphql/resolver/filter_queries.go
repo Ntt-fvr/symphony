@@ -11,6 +11,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 )
@@ -19,23 +20,23 @@ func (r queryResolver) EquipmentSearch(ctx context.Context, filters []*pkgmodels
 	return resolverutil.EquipmentSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models.WorkOrderSearchResult, error) {
+func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*pkgmodels.WorkOrderSearchResult, error) {
 	return resolverutil.WorkOrderSearch(ctx, r.ClientFrom(ctx), filters, limit, graphql.CollectAllFields(ctx))
 }
 
-func (r queryResolver) LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models.LinkSearchResult, error) {
+func (r queryResolver) LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
 	return resolverutil.LinkSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*models.PortSearchResult, error) {
+func (r queryResolver) PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {
 	return resolverutil.PortSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
 func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.LocationFilterInput, limit *int) (*pkgmodels.LocationSearchResult, error) {
-	return resolverutil.LocationSearch(ctx, r.ClientFrom(ctx), filters, limit)
+	return pkgexporter.LocationSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*models.ServiceSearchResult, error) {
+func (r queryResolver) ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*pkgmodels.ServiceSearchResult, error) {
 	return resolverutil.ServiceSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 

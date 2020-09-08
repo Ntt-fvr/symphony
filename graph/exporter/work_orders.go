@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
@@ -55,7 +56,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 		}
 	}
 	client := ent.FromContext(ctx)
-	fields := getQueryFields(ExportEntityWorkOrders)
+	fields := pkgexporter.GetQueryFields(pkgexporter.ExportEntityWorkOrders)
 	searchResult, err := resolverutil.WorkOrderSearch(ctx, client, filterInput, nil, fields)
 	if err != nil {
 		logger.Error("cannot query work orders", zap.Error(err))
@@ -69,7 +70,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 	for i, w := range wosList {
 		woIDs[i] = w.ID
 	}
-	propertyTypes, err := propertyTypesSlice(ctx, woIDs, client, enum.PropertyEntityWorkOrder)
+	propertyTypes, err := pkgexporter.PropertyTypesSlice(ctx, woIDs, client, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		logger.Error("cannot query property types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query property types")
@@ -99,7 +100,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 }
 
 func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) ([]string, error) {
-	properties, err := propertiesSlice(ctx, wo, propertyTypes, enum.PropertyEntityWorkOrder)
+	properties, err := pkgexporter.PropertiesSlice(ctx, wo, propertyTypes, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +177,7 @@ func paramToWOFilterInput(params string) ([]*models.WorkOrderFilterInput, error)
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}

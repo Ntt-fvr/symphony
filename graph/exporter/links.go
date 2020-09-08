@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
@@ -74,14 +75,14 @@ func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 	}
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
 	cg.Go(func(ctx context.Context) (err error) {
-		if orderedLocTypes, err = locationTypeHierarchy(ctx, client); err != nil {
+		if orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client); err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
 		}
 		return nil
 	})
 	cg.Go(func(ctx context.Context) (err error) {
-		if propertyTypes, err = propertyTypesSlice(ctx, linkIDs, client, enum.PropertyEntityLink); err != nil {
+		if propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, linkIDs, client, enum.PropertyEntityLink); err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
 		}
@@ -149,7 +150,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 
 		g := ctxgroup.WithContext(ctx)
 		g.Go(func(ctx context.Context) (err error) {
-			locationData[i], err = locationHierarchyForEquipment(ctx, portEquipment, orderedLocTypes)
+			locationData[i], err = pkgexporter.LocationHierarchyForEquipment(ctx, portEquipment, orderedLocTypes)
 			return err
 		})
 		g.Go(func(ctx context.Context) error {
@@ -157,9 +158,9 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 			if err != nil && !ent.IsNotFound(err) {
 				return err
 			}
-			positionData[i] = make([]string, maxEquipmentParents*2)
+			positionData[i] = make([]string, pkgexporter.MaxEquipmentParents*2)
 			if pos != nil {
-				positionData[i] = parentHierarchyWithAllPositions(ctx, *portEquipment)
+				positionData[i] = pkgexporter.ParentHierarchyWithAllPositions(ctx, *portEquipment)
 			}
 			return nil
 		})
@@ -167,7 +168,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 			return nil, err
 		}
 	}
-	properties, err := propertiesSlice(ctx, link, propertyTypes, enum.PropertyEntityLink)
+	properties, err := pkgexporter.PropertiesSlice(ctx, link, propertyTypes, enum.PropertyEntityLink)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot create property slice for link (id=%d)", link.ID)
 	}
@@ -210,7 +211,7 @@ func paramToLinkFilterInput(params string) ([]*models.LinkFilterInput, error) {
 		if f.MaxDepth != nil {
 			maxDepth = *f.MaxDepth
 		}
-		intIDSet, err := toIntSlice(f.IDSet)
+		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
