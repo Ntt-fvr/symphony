@@ -15,7 +15,7 @@ import (
 
 	"github.com/99designs/gqlgen/api"
 	"github.com/99designs/gqlgen/codegen/config"
-	"github.com/facebookincubator/symphony/graph/graphql/plugin/txgen"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/plugin/txgen"
 )
 
 func main() {
@@ -41,9 +41,10 @@ func main() {
 		log.Println("cannot load config file", err)
 		return
 	}
-	if err = api.Generate(cfg, api.AddPlugin(
-		txgen.New(config.PackageConfig{}),
-	)); err != nil {
+	if err = api.Generate(cfg, api.AddPlugin(txgen.New(
+		txgen.WithFileName("resolver/tx_generated.go"),
+		txgen.WithTypeName("txResolver"),
+	))); err != nil {
 		log.Println("cannot generate code", err)
 	}
 }

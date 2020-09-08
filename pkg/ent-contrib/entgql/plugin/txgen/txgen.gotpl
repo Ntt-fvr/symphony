@@ -1,14 +1,18 @@
 {{ reserveImport "context" }}
 {{ reserveImport "fmt" }}
+{{ reserveImport $.Exec.ImportPath }}
 
-{{ reserveImport "github.com/facebookincubator/symphony/graph/graphql/generated" }}
+{{- range $import := $.Imports }}
+{{ reserveImport $import }}
+{{- end }}
 
-// {{$.Type}} wraps a mutation resolver and executes every mutation under a transaction.
-type {{$.Type}} struct {
-	generated.MutationResolver
+{{- $mutationResolver := printf "%s.MutationResolver" $.Exec.Package -}}
+// {{ $.Type }} wraps a mutation resolver and executes every mutation under a transaction.
+type {{ $.Type }} struct {
+	{{ $mutationResolver }}
 }
 
-func (tr {{$.Type}}) WithTransaction(ctx context.Context, f func(context.Context, generated.MutationResolver) error) error {
+func (tr {{ $.Type }}) WithTransaction(ctx context.Context, f func(context.Context, {{ $mutationResolver }}) error) error {
 	tx, err := ent.FromContext(ctx).Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("creating transaction: %w", err)
@@ -36,13 +40,13 @@ func (tr {{$.Type}}) WithTransaction(ctx context.Context, f func(context.Context
 {{ $root := . }}
 
 {{ range $field := $root.Fields -}}
-func (tr {{$root.Type}}) {{$field.GoFieldName}}{{$field.ShortResolverDeclaration}} {
-	var result, zero {{ResultType $field}}
-	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr generated.MutationResolver) (err error) {
-		result, err = mr.{{$field.GoFieldName}}(ctx,
-			{{- if not $root.Root }}obj,{{end -}}
-			{{- range $arg := $field.Args}}
-				{{- $arg.VarName}},
+func (tr {{ $root.Type }}) {{ $field.GoFieldName }}{{ $field.ShortResolverDeclaration }} {
+	var result, zero {{ ResultType $field }}
+	if err := tr.WithTransaction(ctx, func(ctx context.Context, mr {{ $mutationResolver }}) (err error) {
+		result, err = mr.{{ $field.GoFieldName }}(ctx,
+			{{- if not $root.Root }}obj,{{ end -}}
+			{{- range $arg := $field.Args }}
+				{{- $arg.VarName }},
 			{{- end}}
 		)
 		return
