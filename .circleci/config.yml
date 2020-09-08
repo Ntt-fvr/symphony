@@ -53,7 +53,7 @@ executors:
   golangci:
     parameters:
       tag:
-        default: v1.30
+        default: v1.31
         type: string
     docker:
       - image: golangci/golangci-lint:<<parameters.tag>>

@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
@@ -61,7 +62,6 @@ func init() {
 func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	rsv := resolver.New(
 		resolver.Config{
-			Client:          cfg.Client,
 			Logger:          cfg.Logger,
 			ReceiverFactory: cfg.ReceiverFactory,
 		},
@@ -103,6 +103,11 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 	})
+	srv.AroundResponses(
+		entgql.TransactionMiddleware(
+			entgql.TxOpenerFunc(ent.OpenTxFromContext),
+		),
+	)
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
 	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))

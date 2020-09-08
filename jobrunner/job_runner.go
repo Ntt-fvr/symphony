@@ -11,10 +11,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
 	"github.com/golang/protobuf/ptypes/empty"
+	"go.opencensus.io/plugin/ocgrpc"
+	"go.opencensus.io/plugin/ochttp"
 	"google.golang.org/grpc"
 )
 
@@ -32,24 +33,12 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-func getTenantList(client schema.TenantServiceClient) []string {
-	var tenantNames []string
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	log.Printf("getting tenant list")
-	tenants, err := client.List(ctx, &empty.Empty{})
-	if err != nil {
-		log.Fatalf("failed to fetch list of tenants: %v", err)
-	}
-	for _, tenant := range tenants.Tenants {
-		tenantNames = append(tenantNames, tenant.Name)
-	}
-	return tenantNames
+var httpClient = http.Client{
+	Transport: &ochttp.Transport{},
 }
 
 func runJob(url, tenant string) error {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %v", err)
 	}
@@ -57,7 +46,7 @@ func runJob(url, tenant string) error {
 	req.Header.Add("x-auth-automation-name", "job_runner")
 	req.Header.Add("x-auth-user-role", "OWNER")
 	log.Printf("running job on url %s, tenant %s", url, tenant)
-	resp, err := client.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to get response: %v", err)
 	}
@@ -78,20 +67,27 @@ func runJob(url, tenant string) error {
 func RunJobOnAllTenants(jobs ...string) {
 	graphHost := getEnv(graphHostEnv, defaultGraphHost)
 	address := fmt.Sprintf(grpcAddr, graphHost)
-	log.Printf("connecting to grpc server %s", address)
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	log.Printf("connecting to grpc server: %s", address)
+	conn, err := grpc.Dial(address,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
+	)
 	if err != nil {
-		log.Fatalf("fail to dial: %v", err)
+		log.Panicf("cannot connect to grpc server: %v", err)
 	}
 	defer conn.Close()
 	client := schema.NewTenantServiceClient(conn)
-	tenants := getTenantList(client)
-	for _, tenant := range tenants {
+	tenants, err := client.List(context.Background(), &empty.Empty{})
+	if err != nil {
+		log.Panicf("cannot get tenant list: %v", err)
+	}
+	for _, tenant := range tenants.Tenants {
 		for _, job := range jobs {
 			url := fmt.Sprintf(jobsURL, graphHost, job)
-			err := runJob(url, tenant)
+			err := runJob(url, tenant.Name)
 			if err != nil {
-				log.Printf("failed connecting url %s: %v", url, err)
+				log.Printf("cannot run job on url %s: %v", url, err)
 			}
 		}
 	}

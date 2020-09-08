@@ -236,7 +236,7 @@ func (f FilterOperator) String() string {
 	return string(f)
 }
 
-//PropertyEntity is the entity for the property.
+// PropertyEntity is the entity for the property.
 type PropertyEntity string
 
 const (
