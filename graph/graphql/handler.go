@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/NYTimes/gziphandler"
 	"github.com/facebookincubator/symphony/graph/graphql/complexity"
@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -90,7 +91,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 		})
 	})
 
-	srv := handler.NewDefaultServer(
+	srv := gqlutil.NewServer(
 		generated.NewExecutableSchema(
 			generated.Config{
 				Resolvers:  rsv,
@@ -99,11 +100,12 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 			},
 		),
 	)
+	srv.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second,
+	})
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
-	srv.SetRecoverFunc(recoverFunc(cfg.Logger))
+	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
 	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))
-	srv.Use(ocgql.Tracer{})
-	srv.Use(ocgql.Metrics{})
 
 	router.Path("/graphiql").
 		Handler(
@@ -152,15 +154,5 @@ func errorPresenter(logger log.Logger) graphql.ErrorPresenterFunc {
 			gqlerr.Extensions = ee.Extensions()
 		}
 		return gqlerr
-	}
-}
-
-func recoverFunc(logger log.Logger) graphql.RecoverFunc {
-	return func(ctx context.Context, err interface{}) error {
-		logger.For(ctx).Error("graphql panic recovery",
-			zap.Any("error", err),
-			zap.Stack("stack"),
-		)
-		return errors.New("internal system error")
 	}
 }

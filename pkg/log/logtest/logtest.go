@@ -8,7 +8,9 @@ import (
 	"context"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 // TestLogger is a logger to be used for testing.
@@ -33,4 +35,15 @@ func (l TestLogger) Background() *zap.Logger {
 // For ignores context and returns background logger.
 func (l TestLogger) For(context.Context) *zap.Logger {
 	return l.Background()
+}
+
+// WithObserver creates an observer for emitted logs.
+func (l TestLogger) WithObserver(enabler zapcore.LevelEnabler) (TestLogger, *observer.ObservedLogs) {
+	core, o := observer.New(enabler)
+	logger := l.logger.WithOptions(
+		zap.WrapCore(func(c zapcore.Core) zapcore.Core {
+			return zapcore.NewTee(c, core)
+		}),
+	)
+	return TestLogger{logger}, o
 }
