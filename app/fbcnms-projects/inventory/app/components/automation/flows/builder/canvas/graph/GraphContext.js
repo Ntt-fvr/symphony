@@ -33,6 +33,7 @@ import GraphFactory from './GraphFactory';
 import Lasso from './facades/shapes/vertexes/helpers/Lasso';
 import ShapesFactory from './shapes/ShapesFactory';
 import emptyFunction from '@fbcnms/util/emptyFunction';
+import {Events} from './facades/Helpers';
 import {getRectCenter, getRectDiff} from '../../../utils/helpers';
 import {useCallback, useContext, useRef} from 'react';
 
@@ -344,11 +345,18 @@ function graphOnGraphEvent(
     return;
   }
   const wrappedHandler: GraphEventCallback = (shape: IShape) => {
-    const block = this.current?.blocks.get(shape.id);
-    if (block == null) {
-      return;
+    const getBlockAndCallHandler = () => {
+      const block = this.current?.blocks.get(shape.id);
+      if (block == null) {
+        return;
+      }
+      handler(block);
+    };
+    if (event === Events.Graph.BlockAdded) {
+      setTimeout(getBlockAndCallHandler);
+    } else {
+      getBlockAndCallHandler();
     }
-    handler(block);
   };
   this.current.graph.on(event, wrappedHandler);
 }
