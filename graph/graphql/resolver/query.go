@@ -156,7 +156,7 @@ func (r queryResolver) Equipments(
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
 	orderBy *ent.EquipmentOrder,
-	filterBy []*models.EquipmentFilterInput,
+	filterBy []*pkgmodels.EquipmentFilterInput,
 ) (*ent.EquipmentConnection, error) {
 	return r.ClientFrom(ctx).
 		Equipment.

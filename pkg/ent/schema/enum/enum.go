@@ -192,6 +192,31 @@ func (l LocationFilterType) String() string {
 	return string(l)
 }
 
+// EquipmentFilterType specifies what filters should we apply on equipments
+type EquipmentFilterType string
+
+const (
+	EquipmentFilterTypeEquipInstName          EquipmentFilterType = "EQUIP_INST_NAME"
+	EquipmentFilterTypeEquipInstExternalID    EquipmentFilterType = "EQUIP_INST_EXTERNAL_ID"
+	EquipmentFilterTypeProperty               EquipmentFilterType = "PROPERTY"
+	EquipmentFilterTypeLocationInst           EquipmentFilterType = "LOCATION_INST"
+	EquipmentFilterTypeLocationInstExternalID EquipmentFilterType = "LOCATION_INST_EXTERNAL_ID"
+	EquipmentFilterTypeEquipmentType          EquipmentFilterType = "EQUIPMENT_TYPE"
+)
+
+func (e EquipmentFilterType) IsValid() bool {
+	switch e {
+	case EquipmentFilterTypeEquipInstName, EquipmentFilterTypeEquipInstExternalID, EquipmentFilterTypeProperty, EquipmentFilterTypeLocationInst, EquipmentFilterTypeLocationInstExternalID, EquipmentFilterTypeEquipmentType:
+		return true
+	}
+	return false
+}
+
+// String implements Getter interface.
+func (e EquipmentFilterType) String() string {
+	return string(e)
+}
+
 // FilterOperator is filter operator for the search
 type FilterOperator string
 

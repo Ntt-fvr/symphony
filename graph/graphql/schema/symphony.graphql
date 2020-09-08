@@ -2282,7 +2282,10 @@ enum FilterOperator
 """
 what type of equipment we filter about
 """
-enum EquipmentFilterType {
+enum EquipmentFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
+  ) {
   EQUIP_INST_NAME
   EQUIP_INST_EXTERNAL_ID
   PROPERTY
@@ -2291,7 +2294,10 @@ enum EquipmentFilterType {
   EQUIPMENT_TYPE
 }
 
-input EquipmentFilterInput {
+input EquipmentFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
+  ) {
   filterType: EquipmentFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -2311,7 +2317,10 @@ type LinkSearchResult {
   count: Int!
 }
 
-type LocationSearchResult {
+type LocationSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
+  ) {
   locations: [Location]!
   count: Int!
 }
@@ -2956,7 +2965,10 @@ type SurveyCellScan implements Node {
   rssi: Float
 }
 
-type EquipmentSearchResult {
+type EquipmentSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
+  ) {
   equipment: [Equipment]!
   count: Int!
 }

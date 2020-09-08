@@ -469,16 +469,6 @@ type EndBlock struct {
 
 func (EndBlock) IsBlockType() {}
 
-type EquipmentFilterInput struct {
-	FilterType    EquipmentFilterType       `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	StringValue   *string                   `json:"stringValue"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	MaxDepth      *int                      `json:"maxDepth"`
-}
-
 type EquipmentPortInput struct {
 	ID           *int    `json:"id"`
 	Name         string  `json:"name"`
@@ -493,11 +483,6 @@ type EquipmentPositionInput struct {
 	Name         string  `json:"name"`
 	Index        *int    `json:"index"`
 	VisibleLabel *string `json:"visibleLabel"`
-}
-
-type EquipmentSearchResult struct {
-	Equipment []*ent.Equipment `json:"equipment"`
-	Count     int              `json:"count"`
 }
 
 type FileInput struct {
@@ -563,11 +548,6 @@ type LinkSearchResult struct {
 type LinkSide struct {
 	Equipment int `json:"equipment"`
 	Port      int `json:"port"`
-}
-
-type LocationSearchResult struct {
-	Locations []*ent.Location `json:"locations"`
-	Count     int             `json:"count"`
 }
 
 type LocationTypeIndex struct {
@@ -967,56 +947,6 @@ func (e *CommentEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CommentEntity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// what type of equipment we filter about
-type EquipmentFilterType string
-
-const (
-	EquipmentFilterTypeEquipInstName          EquipmentFilterType = "EQUIP_INST_NAME"
-	EquipmentFilterTypeEquipInstExternalID    EquipmentFilterType = "EQUIP_INST_EXTERNAL_ID"
-	EquipmentFilterTypeProperty               EquipmentFilterType = "PROPERTY"
-	EquipmentFilterTypeLocationInst           EquipmentFilterType = "LOCATION_INST"
-	EquipmentFilterTypeLocationInstExternalID EquipmentFilterType = "LOCATION_INST_EXTERNAL_ID"
-	EquipmentFilterTypeEquipmentType          EquipmentFilterType = "EQUIPMENT_TYPE"
-)
-
-var AllEquipmentFilterType = []EquipmentFilterType{
-	EquipmentFilterTypeEquipInstName,
-	EquipmentFilterTypeEquipInstExternalID,
-	EquipmentFilterTypeProperty,
-	EquipmentFilterTypeLocationInst,
-	EquipmentFilterTypeLocationInstExternalID,
-	EquipmentFilterTypeEquipmentType,
-}
-
-func (e EquipmentFilterType) IsValid() bool {
-	switch e {
-	case EquipmentFilterTypeEquipInstName, EquipmentFilterTypeEquipInstExternalID, EquipmentFilterTypeProperty, EquipmentFilterTypeLocationInst, EquipmentFilterTypeLocationInstExternalID, EquipmentFilterTypeEquipmentType:
-		return true
-	}
-	return false
-}
-
-func (e EquipmentFilterType) String() string {
-	return string(e)
-}
-
-func (e *EquipmentFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = EquipmentFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid EquipmentFilterType", str)
-	}
-	return nil
-}
-
-func (e EquipmentFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

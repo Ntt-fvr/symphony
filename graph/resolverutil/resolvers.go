@@ -18,7 +18,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func EquipmentFilter(query *ent.EquipmentQuery, filters []*models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
+func EquipmentFilter(query *ent.EquipmentQuery, filters []*pkgmodels.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
 	var err error
 	for _, f := range filters {
 		switch {
@@ -39,7 +39,7 @@ func EquipmentFilter(query *ent.EquipmentQuery, filters []*models.EquipmentFilte
 	return query, nil
 }
 
-func EquipmentSearch(ctx context.Context, client *ent.Client, filters []*models.EquipmentFilterInput, limit *int) (*models.EquipmentSearchResult, error) {
+func EquipmentSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.EquipmentFilterInput, limit *int) (*pkgmodels.EquipmentSearchResult, error) {
 	var (
 		res []*ent.Equipment
 		c   int
@@ -61,7 +61,7 @@ func EquipmentSearch(ctx context.Context, client *ent.Client, filters []*models.
 	if err != nil {
 		return nil, err
 	}
-	return &models.EquipmentSearchResult{
+	return &pkgmodels.EquipmentSearchResult{
 		Equipment: res,
 		Count:     c,
 	}, nil
@@ -143,7 +143,7 @@ func LocationFilter(query *ent.LocationQuery, filters []*pkgmodels.LocationFilte
 	return query, nil
 }
 
-func LocationSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
+func LocationSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.LocationFilterInput, limit *int) (*pkgmodels.LocationSearchResult, error) {
 	var (
 		query = client.Location.Query()
 		err   error
@@ -163,7 +163,7 @@ func LocationSearch(ctx context.Context, client *ent.Client, filters []*pkgmodel
 	if err != nil {
 		return nil, errors.Wrapf(err, "Querying locations failed")
 	}
-	return &models.LocationSearchResult{
+	return &pkgmodels.LocationSearchResult{
 		Locations: locs,
 		Count:     count,
 	}, nil

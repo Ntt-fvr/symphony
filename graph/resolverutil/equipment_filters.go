@@ -5,24 +5,24 @@
 package resolverutil
 
 import (
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
 
 func handleEquipmentFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
 	switch filter.FilterType {
-	case models.EquipmentFilterTypeEquipInstExternalID:
+	case enum.EquipmentFilterTypeEquipInstExternalID:
 		return equipmentExternalID(q, filter)
-	case models.EquipmentFilterTypeEquipInstName:
+	case enum.EquipmentFilterTypeEquipInstName:
 		return equipmentNameFilter(q, filter)
-	case models.EquipmentFilterTypeProperty:
+	case enum.EquipmentFilterTypeProperty:
 		return equipmentPropertyFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)

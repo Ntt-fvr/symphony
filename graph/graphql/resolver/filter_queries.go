@@ -15,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r queryResolver) EquipmentSearch(ctx context.Context, filters []*models.EquipmentFilterInput, limit *int) (*models.EquipmentSearchResult, error) {
+func (r queryResolver) EquipmentSearch(ctx context.Context, filters []*pkgmodels.EquipmentFilterInput, limit *int) (*pkgmodels.EquipmentSearchResult, error) {
 	return resolverutil.EquipmentSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
@@ -31,7 +31,7 @@ func (r queryResolver) PortSearch(ctx context.Context, filters []*models.PortFil
 	return resolverutil.PortSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.LocationFilterInput, limit *int) (*models.LocationSearchResult, error) {
+func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.LocationFilterInput, limit *int) (*pkgmodels.LocationSearchResult, error) {
 	return resolverutil.LocationSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 

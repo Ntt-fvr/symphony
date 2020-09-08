@@ -889,9 +889,9 @@ type ComplexityRoot struct {
 		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) int
-		EquipmentSearch          func(childComplexity int, filters []*models.EquipmentFilterInput, limit *int) int
+		EquipmentSearch          func(childComplexity int, filters []*models1.EquipmentFilterInput, limit *int) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models.EquipmentFilterInput) int
+		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
 		LatestPythonPackage      func(childComplexity int) int
 		LinkSearch               func(childComplexity int, filters []*models.LinkFilterInput, limit *int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) int
@@ -1583,7 +1583,7 @@ type QueryResolver interface {
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
 	EquipmentPorts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) (*ent.EquipmentPortConnection, error)
 	EquipmentTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentTypeConnection, error)
-	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models.EquipmentFilterInput) (*ent.EquipmentConnection, error)
+	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) (*ent.EquipmentConnection, error)
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
 	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
 	WorkOrderTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkOrderTypeConnection, error)
@@ -1593,11 +1593,11 @@ type QueryResolver interface {
 	UsersGroups(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) (*ent.UsersGroupConnection, error)
 	PermissionsPolicies(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) (*ent.PermissionsPolicyConnection, error)
 	SearchForNode(ctx context.Context, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*models.SearchNodesConnection, error)
-	EquipmentSearch(ctx context.Context, filters []*models.EquipmentFilterInput, limit *int) (*models.EquipmentSearchResult, error)
+	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
 	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models.WorkOrderSearchResult, error)
 	LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models.LinkSearchResult, error)
 	PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*models.PortSearchResult, error)
-	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models.LocationSearchResult, error)
+	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
 	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
 	CustomerSearch(ctx context.Context, limit *int) ([]*ent.Customer, error)
 	ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*models.ServiceSearchResult, error)
@@ -5747,7 +5747,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.EquipmentSearch(childComplexity, args["filters"].([]*models.EquipmentFilterInput), args["limit"].(*int)), true
+		return e.complexity.Query.EquipmentSearch(childComplexity, args["filters"].([]*models1.EquipmentFilterInput), args["limit"].(*int)), true
 
 	case "Query.equipmentTypes":
 		if e.complexity.Query.EquipmentTypes == nil {
@@ -5771,7 +5771,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models.EquipmentFilterInput)), true
+		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models1.EquipmentFilterInput)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -10266,7 +10266,10 @@ enum FilterOperator
 """
 what type of equipment we filter about
 """
-enum EquipmentFilterType {
+enum EquipmentFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.EquipmentFilterType"
+  ) {
   EQUIP_INST_NAME
   EQUIP_INST_EXTERNAL_ID
   PROPERTY
@@ -10275,7 +10278,10 @@ enum EquipmentFilterType {
   EQUIPMENT_TYPE
 }
 
-input EquipmentFilterInput {
+input EquipmentFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentFilterInput"
+  ) {
   filterType: EquipmentFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -10295,7 +10301,10 @@ type LinkSearchResult {
   count: Int!
 }
 
-type LocationSearchResult {
+type LocationSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LocationSearchResult"
+  ) {
   locations: [Location]!
   count: Int!
 }
@@ -10940,7 +10949,10 @@ type SurveyCellScan implements Node {
   rssi: Float
 }
 
-type EquipmentSearchResult {
+type EquipmentSearchResult
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.EquipmentSearchResult"
+  ) {
   equipment: [Equipment]!
   count: Int!
 }
@@ -11703,6 +11715,9 @@ type Mutation {
   technicianWorkOrderUploadData(
     input: TechnicianWorkOrderUploadInput!
   ): WorkOrder!
+  @deprecated(
+    reason: "Use ` + "`" + `technicianWorkOrderCheckOut` + "`" + ` instead. Will be removed on 2020-11-01"
+  )
   addReportFilter(input: ReportFilterInput!): ReportFilter!
   editReportFilter(input: EditReportFilterInput!): ReportFilter!
   deleteReportFilter(id: ID!): Boolean!
@@ -13931,10 +13946,10 @@ func (ec *executionContext) field_Query_equipmentPorts_args(ctx context.Context,
 func (ec *executionContext) field_Query_equipmentSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []*models.EquipmentFilterInput
+	var arg0 []*models1.EquipmentFilterInput
 	if tmp, ok := rawArgs["filters"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filters"))
-		arg0, err = ec.unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -14137,10 +14152,10 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 		}
 	}
 	args["orderBy"] = arg4
-	var arg5 []*models.EquipmentFilterInput
+	var arg5 []*models1.EquipmentFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterBy"))
-		arg5, err = ec.unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
+		arg5, err = ec.unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -21658,7 +21673,7 @@ func (ec *executionContext) _EquipmentPositionDefinition_visibleLabel(ctx contex
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _EquipmentSearchResult_equipment(ctx context.Context, field graphql.CollectedField, obj *models.EquipmentSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _EquipmentSearchResult_equipment(ctx context.Context, field graphql.CollectedField, obj *models1.EquipmentSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -21692,7 +21707,7 @@ func (ec *executionContext) _EquipmentSearchResult_equipment(ctx context.Context
 	return ec.marshalNEquipment2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipment(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _EquipmentSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.EquipmentSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _EquipmentSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.EquipmentSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -25733,7 +25748,7 @@ func (ec *executionContext) _LocationPermissionRule_locationTypeIds(ctx context.
 	return ec.marshalOID2ᚕintᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LocationSearchResult_locations(ctx context.Context, field graphql.CollectedField, obj *models.LocationSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _LocationSearchResult_locations(ctx context.Context, field graphql.CollectedField, obj *models1.LocationSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -25767,7 +25782,7 @@ func (ec *executionContext) _LocationSearchResult_locations(ctx context.Context,
 	return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐLocation(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LocationSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models.LocationSearchResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _LocationSearchResult_count(ctx context.Context, field graphql.CollectedField, obj *models1.LocationSearchResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -33394,7 +33409,7 @@ func (ec *executionContext) _Query_equipments(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Equipments(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models.EquipmentFilterInput))
+		return ec.resolvers.Query().Equipments(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models1.EquipmentFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33792,7 +33807,7 @@ func (ec *executionContext) _Query_equipmentSearch(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().EquipmentSearch(rctx, args["filters"].([]*models.EquipmentFilterInput), args["limit"].(*int))
+		return ec.resolvers.Query().EquipmentSearch(rctx, args["filters"].([]*models1.EquipmentFilterInput), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33804,9 +33819,9 @@ func (ec *executionContext) _Query_equipmentSearch(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.EquipmentSearchResult)
+	res := resTmp.(*models1.EquipmentSearchResult)
 	fc.Result = res
-	return ec.marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentSearchResult(ctx, field.Selections, res)
+	return ec.marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_workOrderSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -33968,9 +33983,9 @@ func (ec *executionContext) _Query_locationSearch(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.LocationSearchResult)
+	res := resTmp.(*models1.LocationSearchResult)
 	fc.Result = res
-	return ec.marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationSearchResult(ctx, field.Selections, res)
+	return ec.marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_projectSearch(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -47067,8 +47082,8 @@ func (ec *executionContext) unmarshalInputEditWorkOrderTypeInput(ctx context.Con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Context, obj interface{}) (models.EquipmentFilterInput, error) {
-	var it models.EquipmentFilterInput
+func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Context, obj interface{}) (models1.EquipmentFilterInput, error) {
+	var it models1.EquipmentFilterInput
 	var asMap = obj.(map[string]interface{})
 
 	if _, present := asMap["maxDepth"]; !present {
@@ -47081,7 +47096,7 @@ func (ec *executionContext) unmarshalInputEquipmentFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐEquipmentFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52426,7 +52441,7 @@ func (ec *executionContext) _EquipmentPositionDefinition(ctx context.Context, se
 
 var equipmentSearchResultImplementors = []string{"EquipmentSearchResult"}
 
-func (ec *executionContext) _EquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.EquipmentSearchResult) graphql.Marshaler {
+func (ec *executionContext) _EquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.EquipmentSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, equipmentSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -53796,7 +53811,7 @@ func (ec *executionContext) _LocationPermissionRule(ctx context.Context, sel ast
 
 var locationSearchResultImplementors = []string{"LocationSearchResult"}
 
-func (ec *executionContext) _LocationSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models.LocationSearchResult) graphql.Marshaler {
+func (ec *executionContext) _LocationSearchResult(ctx context.Context, sel ast.SelectionSet, obj *models1.LocationSearchResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, locationSearchResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -60154,7 +60169,7 @@ func (ec *executionContext) marshalNEquipmentEdge2ᚖgithubᚗcomᚋfacebookincu
 	return ec._EquipmentEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.EquipmentFilterInput, error) {
+func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.EquipmentFilterInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -60164,10 +60179,10 @@ func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋ
 		}
 	}
 	var err error
-	res := make([]*models.EquipmentFilterInput, len(vSlice))
+	res := make([]*models1.EquipmentFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -60175,19 +60190,25 @@ func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚕᚖgithubᚗcomᚋ
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInput(ctx context.Context, v interface{}) (*models.EquipmentFilterInput, error) {
+func (ec *executionContext) unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInput(ctx context.Context, v interface{}) (*models1.EquipmentFilterInput, error) {
 	res, err := ec.unmarshalInputEquipmentFilterInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterType(ctx context.Context, v interface{}) (models.EquipmentFilterType, error) {
-	var res models.EquipmentFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐEquipmentFilterType(ctx context.Context, v interface{}) (enum.EquipmentFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.EquipmentFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterType(ctx context.Context, sel ast.SelectionSet, v models.EquipmentFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNEquipmentFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐEquipmentFilterType(ctx context.Context, sel ast.SelectionSet, v enum.EquipmentFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNEquipmentPort2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPort(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentPort) graphql.Marshaler {
@@ -60638,11 +60659,11 @@ func (ec *executionContext) unmarshalNEquipmentPositionInput2ᚖgithubᚗcomᚋf
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNEquipmentSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v models.EquipmentSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNEquipmentSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.EquipmentSearchResult) graphql.Marshaler {
 	return ec._EquipmentSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.EquipmentSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNEquipmentSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.EquipmentSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -61584,11 +61605,11 @@ func (ec *executionContext) marshalNLocationPermissionRule2ᚖgithubᚗcomᚋfac
 	return ec._LocationPermissionRule(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLocationSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v models.LocationSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNLocationSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.LocationSearchResult) graphql.Marshaler {
 	return ec._LocationSearchResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v *models.LocationSearchResult) graphql.Marshaler {
+func (ec *executionContext) marshalNLocationSearchResult2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLocationSearchResult(ctx context.Context, sel ast.SelectionSet, v *models1.LocationSearchResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -64845,7 +64866,7 @@ func (ec *executionContext) marshalOEquipment2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._Equipment(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.EquipmentFilterInput, error) {
+func (ec *executionContext) unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.EquipmentFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -64858,10 +64879,10 @@ func (ec *executionContext) unmarshalOEquipmentFilterInput2ᚕᚖgithubᚗcomᚋ
 		}
 	}
 	var err error
-	res := make([]*models.EquipmentFilterInput, len(vSlice))
+	res := make([]*models1.EquipmentFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNEquipmentFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐEquipmentFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}

@@ -3202,7 +3202,7 @@ func validateFilterTypeEntity(input models.ReportFilterInput) error {
 		var validator interface{ IsValid() bool }
 		switch input.Entity {
 		case models.FilterEntityEquipment:
-			validator = models.EquipmentFilterType(f.FilterType)
+			validator = enum.EquipmentFilterType(f.FilterType)
 		case models.FilterEntityLink:
 			validator = models.LinkFilterType(f.FilterType)
 		case models.FilterEntityLocation:

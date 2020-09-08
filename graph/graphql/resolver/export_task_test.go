@@ -27,13 +27,13 @@ func TestAddExportTask(t *testing.T) {
 	data := prepareEquipmentData(ctx, r, "A", nil)
 	filters := []*models.GeneralFilterInput{
 		{
-			FilterType: models.EquipmentFilterTypeLocationInst.String(),
+			FilterType: enum.EquipmentFilterTypeLocationInst.String(),
 			Operator:   enum.FilterOperatorIsOneOf,
 			Key:        "for-ui-purposes",
 			IDSet:      []int{data.loc1, data.loc2},
 		},
 		{
-			FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
+			FilterType:  enum.EquipmentFilterTypeEquipInstName.String(),
 			Operator:    enum.FilterOperatorContains,
 			Key:         "for-ui-purposes",
 			StringValue: pointer.ToString(substring),

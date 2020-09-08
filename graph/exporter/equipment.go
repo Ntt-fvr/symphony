@@ -11,12 +11,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -29,12 +28,12 @@ const (
 )
 
 type equipmentFilterInput struct {
-	Name          models.EquipmentFilterType  `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	Name          enum.EquipmentFilterType `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
 }
 
 type equipmentRower struct {
@@ -133,7 +132,7 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.EquipmentFilterInput{
-			FilterType:    models.EquipmentFilterType(upperName),
+			FilterType:    enum.EquipmentFilterType(upperName),
 			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,

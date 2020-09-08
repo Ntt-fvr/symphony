@@ -46,13 +46,13 @@ func TestAddReportFilter(t *testing.T) {
 			Entity: entity,
 			Filters: []*models.GeneralFilterInput{
 				{
-					FilterType: models.EquipmentFilterTypeLocationInst.String(),
+					FilterType: enum.EquipmentFilterTypeLocationInst.String(),
 					Operator:   enum.FilterOperatorIsOneOf,
 					Key:        "for-ui-purposes",
 					IDSet:      []int{data.loc1, data.loc2},
 				},
 				{
-					FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
+					FilterType:  enum.EquipmentFilterTypeEquipInstName.String(),
 					Operator:    enum.FilterOperatorContains,
 					Key:         "for-ui-purposes",
 					StringValue: pointer.ToString(substring),
@@ -79,12 +79,12 @@ func TestAddReportFilter(t *testing.T) {
 			require.Len(t, actualFilters, 2)
 			for _, f := range actualFilters {
 				switch f.FilterType {
-				case models.EquipmentFilterTypeLocationInst.String():
+				case enum.EquipmentFilterTypeLocationInst.String():
 					require.Len(t, f.IDSet, 2)
 					require.Contains(t, f.IDSet, data.loc1)
 					require.Contains(t, f.IDSet, data.loc2)
 					require.Equal(t, enum.FilterOperatorIsOneOf, f.Operator)
-				case models.EquipmentFilterTypeEquipInstName.String():
+				case enum.EquipmentFilterTypeEquipInstName.String():
 					require.Equal(t, f.StringValue, pointer.ToString(substring))
 					require.Equal(t, enum.FilterOperatorContains, f.Operator)
 				default:
@@ -109,7 +109,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Entity: models.FilterEntityEquipment,
 		Filters: []*models.GeneralFilterInput{
 			{
-				FilterType: models.EquipmentFilterTypeLocationInst.String(),
+				FilterType: enum.EquipmentFilterTypeLocationInst.String(),
 				Operator:   enum.FilterOperatorIsOneOf,
 				Key:        "for-ui-purposes",
 				IDSet:      []int{data.loc1, data.loc2},
@@ -123,7 +123,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Entity: models.FilterEntityEquipment,
 		Filters: []*models.GeneralFilterInput{
 			{
-				FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
+				FilterType:  enum.EquipmentFilterTypeEquipInstName.String(),
 				Operator:    enum.FilterOperatorContains,
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
@@ -152,7 +152,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Entity: models.FilterEntityEquipment,
 		Filters: []*models.GeneralFilterInput{
 			{
-				FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
+				FilterType:  enum.EquipmentFilterTypeEquipInstName.String(),
 				Operator:    "invalidOperator",
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
@@ -166,7 +166,7 @@ func TestAddInvalidReportFilters(t *testing.T) {
 		Entity: "no entity",
 		Filters: []*models.GeneralFilterInput{
 			{
-				FilterType:  models.EquipmentFilterTypeEquipInstName.String(),
+				FilterType:  enum.EquipmentFilterTypeEquipInstName.String(),
 				Operator:    enum.FilterOperatorContains,
 				Key:         "for-ui-purposes",
 				StringValue: pointer.ToString(substring),
@@ -189,7 +189,7 @@ func TestEditReportFilters(t *testing.T) {
 		Entity: models.FilterEntityEquipment,
 		Filters: []*models.GeneralFilterInput{
 			{
-				FilterType: models.EquipmentFilterTypeLocationInst.String(),
+				FilterType: enum.EquipmentFilterTypeLocationInst.String(),
 				Operator:   enum.FilterOperatorIsOneOf,
 				Key:        "for-ui-purposes",
 				IDSet:      []int{data.loc1, data.loc2},

@@ -30,11 +30,11 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.EquipmentPorts = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.PortFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.EquipmentSearch = func(childComplexity int, _ []*models.EquipmentFilterInput, limit *int) int {
+	complexity.Query.EquipmentSearch = func(childComplexity int, _ []*pkgmodels.EquipmentFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.EquipmentTypes = PaginationComplexity
-	complexity.Query.Equipments = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.EquipmentOrder, _ []*models.EquipmentFilterInput) int {
+	complexity.Query.Equipments = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.EquipmentOrder, _ []*pkgmodels.EquipmentFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.LinkSearch = func(childComplexity int, _ []*models.LinkFilterInput, limit *int) int {

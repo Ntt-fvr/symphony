@@ -293,37 +293,37 @@ func TestEquipmentSearch(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{}, &limit)
+	all, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Equipment, 4)
 	require.Equal(t, all.Count, 4)
 
 	maxDepth := 5
-	f1 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeLocationInst,
+	f1 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model1.loc1, model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Equipment, 2)
 	require.Equal(t, res1.Count, 2)
 
-	f2 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeEquipmentType,
+	f2 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeEquipmentType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model1.equType},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1, &f2}, &limit)
+	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1, &f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Equipment, 1)
 	require.Equal(t, res2.Count, 1)
 
 	fetchedPropType := res2.Equipment[0].QueryType().QueryPropertyTypes().OnlyX(ctx)
-	f3 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeProperty,
+	f3 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        fetchedPropType.Name,
@@ -332,42 +332,42 @@ func TestEquipmentSearch(t *testing.T) {
 		},
 		MaxDepth: &maxDepth,
 	}
-	res3, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f3}, &limit)
+	res3, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3}, &limit)
 	require.NoError(t, err)
 
 	require.Len(t, res3.Equipment, 2)
 	require.Equal(t, res3.Count, 2)
 
 	subst := "inst1"
-	f4 := models.EquipmentFilterInput{
-		FilterType:  models.EquipmentFilterTypeEquipInstName,
+	f4 := pkgmodels.EquipmentFilterInput{
+		FilterType:  enum.EquipmentFilterTypeEquipInstName,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: &subst,
 		MaxDepth:    &maxDepth,
 	}
-	res4, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f3, &f4}, &limit)
+	res4, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3, &f4}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res4.Equipment, 1)
 	require.Equal(t, res4.Count, 1)
 
-	f5 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeLocationInst,
+	f5 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{model2.loc1},
 		MaxDepth:   &maxDepth,
 	}
-	res5, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f3, &f4, &f5}, &limit)
+	res5, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f3, &f4, &f5}, &limit)
 	require.NoError(t, err)
 	require.Empty(t, res5.Equipment)
 	require.Zero(t, res5.Count)
 
-	f6 := models.EquipmentFilterInput{
-		FilterType:  models.EquipmentFilterTypeEquipInstExternalID,
+	f6 := pkgmodels.EquipmentFilterInput{
+		FilterType:  enum.EquipmentFilterTypeEquipInstExternalID,
 		Operator:    enum.FilterOperatorIs,
 		StringValue: &model1.equ2ExtID,
 		MaxDepth:    &maxDepth,
 	}
-	res6, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f6}, &limit)
+	res6, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f6}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res6.Equipment, 1)
 	require.Equal(t, res6.Count, 1)
@@ -382,28 +382,28 @@ func TestUnsupportedEquipmentSearch(t *testing.T) {
 	limit := 100
 
 	maxDepth := 5
-	f := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeLocationInst,
+	f := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
+	_, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
 	require.Error(t, err)
 
-	f = models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeProperty,
+	f = pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
+	_, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
 	require.Error(t, err)
 
-	f = models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeEquipmentType,
+	f = pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeEquipmentType,
 		Operator:   enum.FilterOperatorContains,
 		MaxDepth:   &maxDepth,
 	}
-	_, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f}, &limit)
+	_, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f}, &limit)
 	require.Error(t, err)
 }
 
@@ -475,32 +475,32 @@ func TestSearchEquipmentByLocation(t *testing.T) {
 
 	maxDepth := 2
 	limit := 100
-	f1 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeLocationInst,
+	f1 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Equipment, 2)
 
-	f1External := models.EquipmentFilterInput{
-		FilterType:  models.EquipmentFilterTypeLocationInstExternalID,
+	f1External := pkgmodels.EquipmentFilterInput{
+		FilterType:  enum.EquipmentFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("11"),
 	}
-	res1, err = qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1External}, &limit)
+	res1, err = qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1External}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Equipment, 1, "1 equipment on the direct location")
 
-	f2 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeLocationInst,
+	f2 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f2}, &limit)
+	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Equipment, 1)
 }
@@ -550,8 +550,8 @@ func TestSearchEquipmentByDate(t *testing.T) {
 	_ = e2
 	limit := 100
 	date = "2015-05-05"
-	f1 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeProperty,
+	f1 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateGreaterThan,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "install_date",
@@ -560,13 +560,13 @@ func TestSearchEquipmentByDate(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1}, &limit)
+	res1, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Equipment, 1)
 	require.Equal(t, res1.Equipment[0].ID, e2.ID)
 
-	f2 := models.EquipmentFilterInput{
-		FilterType: models.EquipmentFilterTypeProperty,
+	f2 := pkgmodels.EquipmentFilterInput{
+		FilterType: enum.EquipmentFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "install_date",
@@ -574,12 +574,12 @@ func TestSearchEquipmentByDate(t *testing.T) {
 			StringValue: &date,
 		},
 	}
-	res2, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f2}, &limit)
+	res2, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Equipment, 1)
 	require.Equal(t, res2.Equipment[0].ID, e1.ID)
 
-	res3, err := qr.EquipmentSearch(ctx, []*models.EquipmentFilterInput{&f1, &f2}, &limit)
+	res3, err := qr.EquipmentSearch(ctx, []*pkgmodels.EquipmentFilterInput{&f1, &f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res3.Equipment, 0)
 }

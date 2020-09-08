@@ -26,7 +26,7 @@ import (
 )
 
 type woFilterInput struct {
-	Name          models.EquipmentFilterType  `json:"name"`
+	Name          enum.EquipmentFilterType    `json:"name"`
 	Operator      enum.FilterOperator         `jsons:"operator"`
 	StringValue   string                      `json:"stringValue"`
 	IDSet         []string                    `json:"idSet"`

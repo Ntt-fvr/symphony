@@ -19,14 +19,14 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 
-	"github.com/facebookincubator/symphony/pkg/ent/location"
-
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
+	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
@@ -63,13 +63,13 @@ func getQueryFields(e ExportEntity) []string {
 		model := models.WorkOrderSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityLocation:
-		model := models.LocationSearchResult{}
+		model := pkgmodels.LocationSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityPort:
 		model := models.PortSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityEquipment:
-		model := models.EquipmentSearchResult{}
+		model := pkgmodels.EquipmentSearchResult{}
 		v = reflect.ValueOf(&model).Elem()
 	case ExportEntityLink:
 		model := models.LinkSearchResult{}
