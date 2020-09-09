@@ -22,10 +22,9 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-// Noder wraps Node/IsNode methods.
+// Noder wraps the basic Node method.
 type Noder interface {
 	Node(context.Context) (*Node, error)
-	IsNode()
 }
 
 // Node in the graph.
@@ -115,8 +114,6 @@ func (t *Todo) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Todo) IsNode() {}
 
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	n, err := c.Noder(ctx, id)
