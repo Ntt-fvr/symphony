@@ -10,62 +10,12 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
-
-func EquipmentFilter(query *ent.EquipmentQuery, filters []*pkgmodels.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	var err error
-	for _, f := range filters {
-		switch {
-		case strings.HasPrefix(f.FilterType.String(), "EQUIPMENT_TYPE"):
-			if query, err = handleEquipmentTypeFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "EQUIP_INST"), strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
-			if query, err = handleEquipmentFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
-			if query, err = handleEquipmentLocationFilter(query, f); err != nil {
-				return nil, err
-			}
-		}
-	}
-	return query, nil
-}
-
-func EquipmentSearch(ctx context.Context, client *ent.Client, filters []*pkgmodels.EquipmentFilterInput, limit *int) (*pkgmodels.EquipmentSearchResult, error) {
-	var (
-		res []*ent.Equipment
-		c   int
-		err error
-	)
-	query := client.Equipment.Query()
-	query, err = EquipmentFilter(query, filters)
-	if err != nil {
-		return nil, err
-	}
-	c, err = query.Clone().Count(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Count query failed")
-	}
-	if limit != nil {
-		query.Limit(*limit)
-	}
-	res, err = query.Order(ent.Asc(equipment.FieldName)).All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &pkgmodels.EquipmentSearchResult{
-		Equipment: res,
-		Count:     c,
-	}, nil
-}
 
 func PortFilter(query *ent.EquipmentPortQuery, filters []*models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
 	var err error

@@ -32,10 +32,6 @@ type locationsFilterInput struct {
 	BoolValue     *bool                    `json:"boolValue"`
 }
 
-const (
-	bom = "\uFEFF"
-)
-
 type LocationsRower struct {
 	Log        log.Logger
 	Concurrent bool

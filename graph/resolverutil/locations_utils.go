@@ -5,34 +5,12 @@
 package resolverutil
 
 import (
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	"github.com/facebookincubator/symphony/pkg/exporter/models"
-
-	"github.com/pkg/errors"
 )
-
-func handleEquipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	switch filter.FilterType {
-	case enum.EquipmentFilterTypeLocationInst:
-		return equipmentLocationFilter(q, filter)
-	case enum.EquipmentFilterTypeLocationInstExternalID:
-		return equipmentLocationExternalIDFilter(q, filter)
-	}
-	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
-}
-
-func equipmentLocationExternalIDFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == enum.FilterOperatorContains {
-		return q.Where(equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
-}
 
 // BuildLocationAncestorFilter returns a joined predicate for location ancestors
 func BuildLocationAncestorFilter(locationID, depth, maxDepth int) predicate.Location {
@@ -60,18 +38,4 @@ func GetPortLocationPredicate(locationID int, maxDepth *int) predicate.Equipment
 			),
 		),
 	)
-}
-
-func equipmentLocationFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
-	if filter.Operator == enum.FilterOperatorIsOneOf {
-		if filter.MaxDepth == nil {
-			return nil, errors.New("max depth not supplied to location filter")
-		}
-		var ps []predicate.Equipment
-		for _, lid := range filter.IDSet {
-			ps = append(ps, equipment.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
-		}
-		return q.Where(equipment.Or(ps...)), nil
-	}
-	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }

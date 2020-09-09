@@ -165,7 +165,7 @@ func (r queryResolver) Equipments(
 		Paginate(ctx, after, first, before, last,
 			ent.WithEquipmentOrder(orderBy),
 			ent.WithEquipmentFilter(func(query *ent.EquipmentQuery) (*ent.EquipmentQuery, error) {
-				return resolverutil.EquipmentFilter(query, filterBy)
+				return pkgexporter.EquipmentFilter(query, filterBy)
 			}),
 		)
 }

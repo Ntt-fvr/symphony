@@ -11,11 +11,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
@@ -37,13 +36,13 @@ type equipmentFilterInput struct {
 	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
 }
 
-type equipmentRower struct {
-	log log.Logger
+type EquipmentRower struct {
+	Log log.Logger
 }
 
-func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er EquipmentRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
-		logger          = er.log.For(ctx)
+		logger          = er.Log.For(ctx)
 		err             error
 		filterInput     []*models.EquipmentFilterInput
 		equipDataHeader = [...]string{bom + "Equipment ID", "Equipment Name", "Equipment Type", "External ID"}
@@ -58,7 +57,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	}
 	client := ent.FromContext(ctx)
 
-	equips, err := resolverutil.EquipmentSearch(ctx, client, filterInput, nil)
+	equips, err := EquipmentSearch(ctx, client, filterInput, nil)
 	if err != nil {
 		logger.Error("cannot query equipment", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query equipment")
@@ -70,7 +69,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 
 	var orderedLocTypes, propertyTypes []string
 	cg.Go(func(ctx context.Context) (err error) {
-		orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client)
+		orderedLocTypes, err = LocationTypeHierarchy(ctx, client)
 		if err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
@@ -82,7 +81,7 @@ func (er equipmentRower) Rows(ctx context.Context, filtersParam string) ([][]str
 		for i, e := range equips.Equipment {
 			equipIDs[i] = e.ID
 		}
-		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, equipIDs, client, enum.PropertyEntityEquipment)
+		propertyTypes, err = PropertyTypesSlice(ctx, equipIDs, client, enum.PropertyEntityEquipment)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -128,7 +127,7 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
@@ -149,15 +148,15 @@ func paramToFilterInput(params string) ([]*models.EquipmentFilterInput, error) {
 func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes []string, propertyTypes []string) ([]string, error) {
 	var (
 		lParents, properties []string
-		eParents             = make([]string, pkgexporter.MaxEquipmentParents*2)
+		eParents             = make([]string, MaxEquipmentParents*2)
 	)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(ctx context.Context) (err error) {
-		lParents, err = pkgexporter.LocationHierarchyForEquipment(ctx, equipment, orderedLocTypes)
+		lParents, err = LocationHierarchyForEquipment(ctx, equipment, orderedLocTypes)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = pkgexporter.PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
+		properties, err = PropertiesSlice(ctx, equipment, propertyTypes, enum.PropertyEntityEquipment)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
@@ -167,7 +166,7 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 		}
 		err = nil
 		if pos != nil {
-			eParents = pkgexporter.ParentHierarchyWithAllPositions(ctx, *equipment)
+			eParents = ParentHierarchyWithAllPositions(ctx, *equipment)
 		}
 		return
 	})
@@ -180,4 +179,53 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 	row = append(row, properties...)
 
 	return row, nil
+}
+
+func EquipmentFilter(query *ent.EquipmentQuery, filters []*models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "EQUIPMENT_TYPE"):
+			if query, err = handleEquipmentTypeFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "EQUIP_INST"), strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handleEquipmentFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handleEquipmentLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func EquipmentSearch(ctx context.Context, client *ent.Client, filters []*models.EquipmentFilterInput, limit *int) (*models.EquipmentSearchResult, error) {
+	var (
+		res []*ent.Equipment
+		c   int
+		err error
+	)
+	query := client.Equipment.Query()
+	query, err = EquipmentFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	c, err = query.Clone().Count(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Count query failed")
+	}
+	if limit != nil {
+		query.Limit(*limit)
+	}
+	res, err = query.Order(ent.Asc(equipment.FieldName)).All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &models.EquipmentSearchResult{
+		Equipment: res,
+		Count:     c,
+	}, nil
 }

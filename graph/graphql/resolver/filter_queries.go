@@ -17,7 +17,7 @@ import (
 )
 
 func (r queryResolver) EquipmentSearch(ctx context.Context, filters []*pkgmodels.EquipmentFilterInput, limit *int) (*pkgmodels.EquipmentSearchResult, error) {
-	return resolverutil.EquipmentSearch(ctx, r.ClientFrom(ctx), filters, limit)
+	return pkgexporter.EquipmentSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
 func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*pkgmodels.WorkOrderSearchResult, error) {

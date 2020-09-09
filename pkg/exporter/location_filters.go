@@ -74,6 +74,7 @@ func locationLocationTypeFilter(q *ent.LocationQuery, filter *pkgmodels.Location
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
+//nolint: dupl
 func handleLocationPropertyFilter(q *ent.LocationQuery, filter *pkgmodels.LocationFilterInput) (*ent.LocationQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {

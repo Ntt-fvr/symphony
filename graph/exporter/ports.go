@@ -39,6 +39,10 @@ type portsRower struct {
 	log log.Logger
 }
 
+const (
+	bom = "\uFEFF"
+)
+
 func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger         = er.log.For(ctx)

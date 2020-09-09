@@ -15,17 +15,29 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent/location"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
 
 const nameTitle = "Equipment Name"
 
+type equipmentFilterInput struct {
+	Name          enum.EquipmentFilterType `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+}
+
 func TestEmptyWOExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, equipmentRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -64,7 +76,7 @@ func TestExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, equipmentRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -153,7 +165,7 @@ func TestExportWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log, equipmentRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

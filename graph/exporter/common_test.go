@@ -32,6 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/testdb"
@@ -112,7 +113,7 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver {
 		Logger:          logger,
 		ReceiverFactory: ev.ErrFactory{},
 	})
-	e := exporter{logger, equipmentRower{logger}}
+	e := exporter{log: logger, rower: pkgexporter.EquipmentRower{Log: logger}}
 	return &TestExporterResolver{r, drv, client, e}
 }
 

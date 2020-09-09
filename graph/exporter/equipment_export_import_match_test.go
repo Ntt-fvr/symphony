@@ -24,6 +24,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
@@ -145,7 +146,7 @@ func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResol
 
 func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.Context, *http.Response) {
 	log := r.exporter.log
-	var h http.Handler = &exporter{log, equipmentRower{log}}
+	var h http.Handler = &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, h, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -42,6 +42,7 @@ func equipmentNameFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterIn
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
+//nolint: dupl
 func equipmentPropertyFilter(q *ent.EquipmentQuery, filter *models.EquipmentFilterInput) (*ent.EquipmentQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
