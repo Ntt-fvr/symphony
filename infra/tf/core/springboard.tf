@@ -1,3 +1,27 @@
+locals {
+  # public domain name.
+  springboard_root_domain_name = "fbcinternal.cloud"
+  springboard_domain_name      = terraform.workspace != "default" ? "${terraform.workspace}.${local.springboard_root_domain_name}" : local.springboard_root_domain_name
+}
+
+resource aws_route53_zone springboard {
+  name = local.springboard_domain_name
+}
+
+data aws_route53_zone springboard {
+  name  = local.springboard_root_domain_name
+  count = local.subdomain_count
+}
+
+resource aws_route53_record springboard_subdomain {
+  name    = aws_route53_zone.springboard.name
+  type    = "NS"
+  zone_id = data.aws_route53_zone.springboard[count.index].id
+  records = aws_route53_zone.springboard.name_servers
+  ttl     = 300
+  count   = local.subdomain_count
+}
+
 module springboard {
   source    = "./modules/team"
   team_name = "springboard"
