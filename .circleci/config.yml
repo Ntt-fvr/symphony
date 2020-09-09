@@ -714,6 +714,9 @@ parameters:
   deploy:
     type: boolean
     default: false
+  pypi_release:
+    type: boolean
+    default: false
 
 workflows:
   version: 2.1
@@ -831,15 +834,27 @@ workflows:
           build-integration: false
           <<: *promote
 
+  pypi-release:
+    when:
+      and:
+        - equal: [master, << pipeline.git.branch >>]
+        - << pipeline.parameters.pypi_release >>
+    jobs:
+      - psym-release:
+          name: psym/release
+          context: symphony
+          requires:
+            - validate-gql-test
+            - mypytest
+            - py_formatting
+            - flake8test
+
   deploy:
     when:
       and:
         - equal: [master, << pipeline.git.branch >>]
         - << pipeline.parameters.deploy >>
     jobs:
-      - psym-release:
-          name: psym/release
-          context: symphony
       - tfdiff:
           workspace: production
           context: symphony
