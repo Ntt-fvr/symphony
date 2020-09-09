@@ -8,7 +8,16 @@
  * @format
  */
 
-import {gray14, green30, orange} from '@fbcnms/ui/theme/colors';
+import symphony from '@fbcnms/ui/theme/symphony';
+import {
+  blockedStatus,
+  closedStatus,
+  doneStatus,
+  inProgressStatus,
+  pendingStatus,
+  plannedStatus,
+  submittedStatus,
+} from '../../common/FilterTypes';
 import type {BasicLocation} from '../../common/Location';
 import type {CustomGeoJSONFeature} from './MapView';
 import type {GeoJSONFeatureCollection} from '@mapbox/geojson-types';
@@ -132,22 +141,36 @@ export const workOrderToGeoFeature = <T: {}>(
   };
 };
 
-const getWorkOrderStatusIcon = (status: string) => {
-  if (status === 'DONE') {
-    return 'doneActive';
-  } else if (status == 'PENDING') {
-    return 'pendingActive';
+const getWorkOrderStatusIcon = (status: WorkOrderStatus) => {
+  switch (status) {
+    case doneStatus.value:
+    case closedStatus.value:
+      return 'doneActive';
+    case pendingStatus.value:
+    case inProgressStatus.value:
+      return 'pendingActive';
+    default:
+      return 'plannedActive';
   }
-  return 'plannedActive';
 };
 
-const getWorkOrderIconTextColor = (status: string) => {
-  if (status === 'DONE') {
-    return green30;
-  } else if (status == 'PENDING') {
-    return orange;
+const getWorkOrderIconTextColor = (status: WorkOrderStatus) => {
+  switch (status) {
+    case plannedStatus.value:
+      return symphony.palette.primary;
+    case pendingStatus.value:
+    case inProgressStatus.value:
+      return symphony.palette.Y600;
+    case submittedStatus.value:
+    case doneStatus.value:
+      return symphony.palette.G600;
+    case blockedStatus.value:
+      return symphony.palette.R600;
+    case closedStatus.value:
+      return symphony.palette.D200;
+    default:
+      return symphony.palette.D300;
   }
-  return gray14;
 };
 
 export const locationToGeoFeature = (

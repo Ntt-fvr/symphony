@@ -54,17 +54,13 @@ import symphony from '@fbcnms/ui/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {
-  doneStatus,
-  priorityValues,
-  statusValues,
-} from '../../common/FilterTypes';
 import {formatDateForTextInput} from '@fbcnms/ui/utils/displayUtils';
 import {
   getInitialState,
   reducer,
 } from '../checklist/ChecklistCategoriesMutateReducer';
 import {makeStyles} from '@material-ui/styles';
+import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toMutableProperty} from '../../common/Property';
 import {useMainContext} from '../MainContext';
 import {withRouter} from 'react-router-dom';
@@ -221,23 +217,27 @@ const WorkOrderDetails = ({
   };
 
   const setWorkOrderStatus = value => {
-    if (!value || value == workOrder.status) {
+    if (!value || value === workOrder.status) {
       return;
     }
 
     const verification = new Promise((resolve, reject) => {
-      if (value != doneStatus.value) {
+      if (value !== closedStatus.value) {
         resolve();
       } else {
         confirm({
           title: fbt(
             // eslint-disable-next-line prettier/prettier
-            "Are you sure you want to mark this work order as 'Done'?",
+            "Are you sure you want to mark this work order as '" +
+              fbt.param('the closed status', closedStatus.label) +
+              "'?",
             'Verification message title',
           ),
           message: fbt(
             // eslint-disable-next-line prettier/prettier
-            "Once saved with 'Done' status, the work order will be locked for editing.",
+            "Once saved with '" +
+              fbt.param('the closed status', closedStatus.label) +
+              "' status, the work order will be locked for editing.",
             'Verification message details',
           ),
           confirmLabel: Strings.common.okButton,
@@ -283,18 +283,19 @@ const WorkOrderDetails = ({
   const assigneeCanCompleteWorkOrder =
     propsWorkOrder.workOrderTemplate?.assigneeCanCompleteWorkOrder;
 
+  const {statusValues, closedStatus} = useStatusValues();
   const filteredStatusValues = useMemo(() => {
     if (
       userHasAdminPermissions ||
       isOwner ||
-      updatePermission?.isAllowed == 'YES' ||
-      (updatePermission?.isAllowed == 'BY_CONDITION' &&
+      updatePermission?.isAllowed === 'YES' ||
+      (updatePermission?.isAllowed === 'BY_CONDITION' &&
         updatePermission.workOrderTypeIds?.includes(templateId)) ||
       (isAssignee && assigneeCanCompleteWorkOrder)
     ) {
       return statusValues;
     }
-    return statusValues.filter(status => status != doneStatus);
+    return statusValues.filter(status => status.key !== closedStatus.key);
   }, [
     userHasAdminPermissions,
     isOwner,
@@ -330,8 +331,8 @@ const WorkOrderDetails = ({
               fieldDisplayName: 'Status',
               value: propsWorkOrder.status,
               checkCallback: value =>
-                value === doneStatus.value
-                  ? `Work order is on '${doneStatus.label}' state`
+                value === closedStatus.value
+                  ? `Work order is on '${closedStatus.label}' state`
                   : '',
             });
             return (
@@ -425,7 +426,7 @@ const WorkOrderDetails = ({
                               )}
                               onChange={event => {
                                 const value =
-                                  event.target.value != ''
+                                  event.target.value !== ''
                                     ? new Date(event.target.value).toISOString()
                                     : '';
                                 _setWorkOrderDetail('installDate', value);
@@ -464,7 +465,7 @@ const WorkOrderDetails = ({
                             <PropertyValueInput
                               required={
                                 !!property.propertyType.isMandatory &&
-                                (workOrder.status === 'DONE' ||
+                                (workOrder.status === closedStatus.value ||
                                   !mandatoryPropertiesOnCloseEnabled)
                               }
                               disabled={

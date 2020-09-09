@@ -8,6 +8,8 @@
  * @format
  */
 
+import fbt from 'fbt';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
 
 export type PriorityType = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
@@ -54,20 +56,64 @@ export const doneStatus = {
   label: 'Done',
 };
 
-export const statusValues: Array<{|
+export const closedStatus = {
+  key: 'closed',
+  value: 'CLOSED',
+  label: `${fbt('Closed', '')}`,
+};
+
+export const plannedStatus = {
+  key: 'planned',
+  value: 'PLANNED',
+  label: `${fbt('Planned', '')}`,
+};
+
+export const pendingStatus = {
+  key: 'pending',
+  value: 'PENDING',
+  label: 'Pending',
+};
+
+export const inProgressStatus = {
+  key: 'in_progress',
+  value: 'IN_PROGRESS',
+  label: `${fbt('In Progress', '')}`,
+};
+
+export const submittedStatus = {
+  key: 'submitted',
+  value: 'SUBMITTED',
+  label: `${fbt('Submitted', '')}`,
+};
+
+export const blockedStatus = {
+  key: 'blocked',
+  value: 'BLOCKED',
+  label: `${fbt('Blocked', '')}`,
+};
+
+const oldStatusValues: Array<{|
+  key: string,
+  value: GraphQLStatusType,
+  label: string,
+|}> = [plannedStatus, pendingStatus, doneStatus];
+
+const newStatusValues: Array<{|
   key: string,
   value: GraphQLStatusType,
   label: string,
 |}> = [
-  {
-    key: 'planned',
-    value: 'PLANNED',
-    label: 'Planned',
-  },
-  {
-    key: 'pending',
-    value: 'PENDING',
-    label: 'Pending',
-  },
-  doneStatus,
+  plannedStatus,
+  inProgressStatus,
+  submittedStatus,
+  closedStatus,
+  blockedStatus,
 ];
+
+export function useStatusValues() {
+  const shouldUseNewWorkOrderStatus = useFeatureFlag('workorder_new_status');
+
+  return shouldUseNewWorkOrderStatus
+    ? {statusValues: newStatusValues, closedStatus}
+    : {statusValues: oldStatusValues, closedStatus: doneStatus};
+}

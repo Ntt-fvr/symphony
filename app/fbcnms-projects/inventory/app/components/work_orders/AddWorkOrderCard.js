@@ -55,7 +55,7 @@ import {
 } from '../checklist/ChecklistCategoriesMutateReducer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/FilterTypes';
+import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 import {sortPropertiesByIndex, toPropertyInput} from '../../common/Property';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useRouteMatch} from 'react-router';
@@ -99,12 +99,6 @@ const useStyles = makeStyles(theme => ({
   },
   breadcrumbs: {
     flexGrow: 1,
-  },
-  separator: {
-    borderBottom: `1px solid ${theme.palette.grey[100]}`,
-    margin: '0 0 24px -24px',
-    paddingBottom: '24px',
-    width: 'calc(100% + 48px)',
   },
   separator: {
     borderBottom: `1px solid ${theme.palette.grey[100]}`,
@@ -177,6 +171,7 @@ type Props = $ReadOnly<{|
 const AddWorkOrderCard = (props: Props) => {
   const {workOrderTypeId} = props;
   const classes = useStyles();
+  const {statusValues, closedStatus} = useStatusValues();
 
   const {
     workOrderType,
@@ -484,7 +479,7 @@ const AddWorkOrderCard = (props: Props) => {
                           <PropertyValueInput
                             required={
                               !!property.propertyType.isMandatory &&
-                              (workOrder.status === 'DONE' ||
+                              (workOrder.status === closedStatus.value ||
                                 !mandatoryPropertiesOnCloseEnabled)
                             }
                             disabled={!property.propertyType.isInstanceProperty}

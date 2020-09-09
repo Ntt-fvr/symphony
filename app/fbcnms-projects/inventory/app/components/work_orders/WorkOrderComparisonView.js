@@ -31,13 +31,13 @@ import {
   WORK_ORDER_FILTERS,
   WorkOrderSearchConfig,
 } from './WorkOrderSearchConfig';
-import {doneStatus, statusValues} from '../../common/FilterTypes';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
 import {
   getInitialFilterValue,
   getPredefinedFilterSetWithValues,
 } from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
+import {useStatusValues} from '../../common/FilterTypes';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -60,19 +60,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const selectedStatusValues = statusValues
-  .filter(status => status.key !== doneStatus.key)
-  .map(status => status.value);
-
-// For additional default filters, just create another variable
-// and add it to the initial state array
-const defaultStatusFilter = getPredefinedFilterSetWithValues(
-  WORK_ORDER_FILTERS.STATUS,
-  WorkOrderSearchConfig,
-  selectedStatusValues,
-);
-
 const WorkOrderComparisonView = () => {
+  const {statusValues, closedStatus} = useStatusValues();
+  const selectedStatusValues = statusValues
+    .filter(status => status.key !== closedStatus.key)
+    .map(status => status.value);
+
+  // For additional default filters, just create another variable
+  // and add it to the initial state array
+  const defaultStatusFilter = getPredefinedFilterSetWithValues(
+    WORK_ORDER_FILTERS.STATUS,
+    WorkOrderSearchConfig,
+    selectedStatusValues,
+  );
+
   const [filters, setFilters] = useState([defaultStatusFilter]);
   const [orderBy, setOrderBy] = useState<WorkOrderOrder>({
     direction: 'DESC',

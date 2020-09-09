@@ -24,8 +24,17 @@ import WorkOrderSaveButton from './WorkOrderSaveButton';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
+import {
+  blockedStatus,
+  closedStatus,
+  doneStatus,
+  inProgressStatus,
+  pendingStatus,
+  priorityValues,
+  submittedStatus,
+  useStatusValues,
+} from '../../common/FilterTypes.js';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/FilterTypes.js';
 import {useRouter} from '@fbcnms/ui/hooks';
 
 const useStyles = makeStyles(_theme => ({
@@ -92,6 +101,7 @@ const WorkOrderHeader = (props: Props) => {
   } = props;
 
   const skin = getSkinFromStatus(workOrder.status);
+  const {statusValues} = useStatusValues();
 
   return (
     <div className={classes.nameHeader}>
@@ -166,10 +176,16 @@ const WorkOrderHeader = (props: Props) => {
 
 const getSkinFromStatus = status => {
   switch (status) {
-    case 'DONE':
+    case doneStatus.value:
+    case submittedStatus.value:
       return 'green';
-    case 'PENDING':
+    case pendingStatus.value:
+    case inProgressStatus.value:
       return 'orange';
+    case blockedStatus.value:
+      return 'red';
+    case closedStatus.value:
+      return 'secondaryGray';
     default:
       return 'regular';
   }

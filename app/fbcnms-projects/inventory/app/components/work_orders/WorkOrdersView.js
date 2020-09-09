@@ -25,9 +25,9 @@ import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableCo
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import {statusValues} from '../../common/FilterTypes';
 import {useHistory} from 'react-router';
 import {usePaginationFragment} from 'react-relay/hooks';
+import {useStatusValues} from '../../common/FilterTypes';
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -47,6 +47,7 @@ type Props = $ReadOnly<{|
 const WorkOrdersView = (props: Props) => {
   const {onWorkOrderSelected, onOrderChanged, orderBy} = props;
   const classes = useStyles();
+  const {statusValues} = useStatusValues();
 
   // $FlowFixMe[missing-type-arg] $FlowFixMe T74239404 Found via relay types
   const {data, loadNext} = usePaginationFragment<WorkOrdersViewPaginationQuery>(

@@ -13,7 +13,7 @@ import type {FilterProps} from '../comparison_view/ComparisonViewTypes';
 import * as React from 'react';
 import MutipleSelectInput from '../comparison_view/MutipleSelectInput';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
-import {statusValues} from '../../common/FilterTypes';
+import {useStatusValues} from '../../common/FilterTypes';
 
 const PowerSearchWorkOrderStatusFilter = (props: FilterProps) => {
   const {
@@ -23,6 +23,7 @@ const PowerSearchWorkOrderStatusFilter = (props: FilterProps) => {
     onRemoveFilter,
     editMode,
   } = props;
+  const {statusValues} = useStatusValues();
   return (
     <PowerSearchFilter
       name="Status"

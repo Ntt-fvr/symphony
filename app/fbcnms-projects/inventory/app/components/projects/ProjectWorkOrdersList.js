@@ -23,7 +23,7 @@ import TableRow from '@material-ui/core/TableRow';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, statusValues} from '../../common/FilterTypes';
+import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 
 type Props = {
   onNavigateToWorkOrder: (workOrderId: string) => void,
@@ -49,6 +49,7 @@ const useStyles = makeStyles(theme => ({
 const ProjectWorkOrdersList = (props: Props) => {
   const classes = useStyles();
   const {onNavigateToWorkOrder, workOrders} = props;
+  const {statusValues} = useStatusValues();
 
   return workOrders.length > 0 ? (
     <Table>
