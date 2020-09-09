@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -103,6 +104,21 @@ func (ugu *UsersGroupUpdate) AddPolicies(p ...*PermissionsPolicy) *UsersGroupUpd
 	return ugu.AddPolicyIDs(ids...)
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (ugu *UsersGroupUpdate) AddFeatureIDs(ids ...int) *UsersGroupUpdate {
+	ugu.mutation.AddFeatureIDs(ids...)
+	return ugu
+}
+
+// AddFeatures adds the features edges to Feature.
+func (ugu *UsersGroupUpdate) AddFeatures(f ...*Feature) *UsersGroupUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ugu.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the UsersGroupMutation object of the builder.
 func (ugu *UsersGroupUpdate) Mutation() *UsersGroupMutation {
 	return ugu.mutation
@@ -148,6 +164,27 @@ func (ugu *UsersGroupUpdate) RemovePolicies(p ...*PermissionsPolicy) *UsersGroup
 		ids[i] = p[i].ID
 	}
 	return ugu.RemovePolicyIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to type Feature.
+func (ugu *UsersGroupUpdate) ClearFeatures() *UsersGroupUpdate {
+	ugu.mutation.ClearFeatures()
+	return ugu
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (ugu *UsersGroupUpdate) RemoveFeatureIDs(ids ...int) *UsersGroupUpdate {
+	ugu.mutation.RemoveFeatureIDs(ids...)
+	return ugu
+}
+
+// RemoveFeatures removes features edges to Feature.
+func (ugu *UsersGroupUpdate) RemoveFeatures(f ...*Feature) *UsersGroupUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ugu.RemoveFeatureIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -376,6 +413,60 @@ func (ugu *UsersGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ugu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ugu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !ugu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ugu.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, ugu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{usersgroup.Label}
@@ -464,6 +555,21 @@ func (uguo *UsersGroupUpdateOne) AddPolicies(p ...*PermissionsPolicy) *UsersGrou
 	return uguo.AddPolicyIDs(ids...)
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (uguo *UsersGroupUpdateOne) AddFeatureIDs(ids ...int) *UsersGroupUpdateOne {
+	uguo.mutation.AddFeatureIDs(ids...)
+	return uguo
+}
+
+// AddFeatures adds the features edges to Feature.
+func (uguo *UsersGroupUpdateOne) AddFeatures(f ...*Feature) *UsersGroupUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uguo.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the UsersGroupMutation object of the builder.
 func (uguo *UsersGroupUpdateOne) Mutation() *UsersGroupMutation {
 	return uguo.mutation
@@ -509,6 +615,27 @@ func (uguo *UsersGroupUpdateOne) RemovePolicies(p ...*PermissionsPolicy) *UsersG
 		ids[i] = p[i].ID
 	}
 	return uguo.RemovePolicyIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to type Feature.
+func (uguo *UsersGroupUpdateOne) ClearFeatures() *UsersGroupUpdateOne {
+	uguo.mutation.ClearFeatures()
+	return uguo
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (uguo *UsersGroupUpdateOne) RemoveFeatureIDs(ids ...int) *UsersGroupUpdateOne {
+	uguo.mutation.RemoveFeatureIDs(ids...)
+	return uguo
+}
+
+// RemoveFeatures removes features edges to Feature.
+func (uguo *UsersGroupUpdateOne) RemoveFeatures(f ...*Feature) *UsersGroupUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uguo.RemoveFeatureIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -727,6 +854,60 @@ func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, e
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: permissionspolicy.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uguo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uguo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !uguo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uguo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   usersgroup.FeaturesTable,
+			Columns: usersgroup.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
 				},
 			},
 		}

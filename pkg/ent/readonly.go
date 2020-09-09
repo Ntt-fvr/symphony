@@ -41,6 +41,7 @@ func (c *Client) ReadOnly() *Client {
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
+		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),

@@ -56,9 +56,11 @@ type UserEdges struct {
 	AssignedWorkOrders []*WorkOrder
 	// CreatedProjects holds the value of the created_projects edge.
 	CreatedProjects []*Project
+	// Features holds the value of the features edge.
+	Features []*Feature
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // ProfilePhotoOrErr returns the ProfilePhoto value or an error if the edge
@@ -109,6 +111,15 @@ func (e UserEdges) CreatedProjectsOrErr() ([]*Project, error) {
 		return e.CreatedProjects, nil
 	}
 	return nil, &NotLoadedError{edge: "created_projects"}
+}
+
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
+	if e.loadedTypes[5] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -210,6 +221,11 @@ func (u *User) QueryAssignedWorkOrders() *WorkOrderQuery {
 // QueryCreatedProjects queries the created_projects edge of the User.
 func (u *User) QueryCreatedProjects() *ProjectQuery {
 	return (&UserClient{config: u.config}).QueryCreatedProjects(u)
+}
+
+// QueryFeatures queries the features edge of the User.
+func (u *User) QueryFeatures() *FeatureQuery {
+	return (&UserClient{config: u.config}).QueryFeatures(u)
 }
 
 // Update returns a builder for updating this User.

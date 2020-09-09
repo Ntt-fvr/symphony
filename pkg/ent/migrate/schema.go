@@ -605,6 +605,21 @@ var (
 		PrimaryKey:  []*schema.Column{ExportTasksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// FeaturesColumns holds the columns for the "features" table.
+	FeaturesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "global", Type: field.TypeBool, Nullable: true},
+	}
+	// FeaturesTable holds the schema information for the "features" table.
+	FeaturesTable = &schema.Table{
+		Name:        "features",
+		Columns:     FeaturesColumns,
+		PrimaryKey:  []*schema.Column{FeaturesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -2151,6 +2166,33 @@ var (
 			},
 		},
 	}
+	// UserFeaturesColumns holds the columns for the "user_features" table.
+	UserFeaturesColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "feature_id", Type: field.TypeInt},
+	}
+	// UserFeaturesTable holds the schema information for the "user_features" table.
+	UserFeaturesTable = &schema.Table{
+		Name:       "user_features",
+		Columns:    UserFeaturesColumns,
+		PrimaryKey: []*schema.Column{UserFeaturesColumns[0], UserFeaturesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "user_features_user_id",
+				Columns: []*schema.Column{UserFeaturesColumns[0]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "user_features_feature_id",
+				Columns: []*schema.Column{UserFeaturesColumns[1]},
+
+				RefColumns: []*schema.Column{FeaturesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// UsersGroupMembersColumns holds the columns for the "users_group_members" table.
 	UsersGroupMembersColumns = []*schema.Column{
 		{Name: "users_group_id", Type: field.TypeInt},
@@ -2205,6 +2247,33 @@ var (
 			},
 		},
 	}
+	// UsersGroupFeaturesColumns holds the columns for the "users_group_features" table.
+	UsersGroupFeaturesColumns = []*schema.Column{
+		{Name: "users_group_id", Type: field.TypeInt},
+		{Name: "feature_id", Type: field.TypeInt},
+	}
+	// UsersGroupFeaturesTable holds the schema information for the "users_group_features" table.
+	UsersGroupFeaturesTable = &schema.Table{
+		Name:       "users_group_features",
+		Columns:    UsersGroupFeaturesColumns,
+		PrimaryKey: []*schema.Column{UsersGroupFeaturesColumns[0], UsersGroupFeaturesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "users_group_features_users_group_id",
+				Columns: []*schema.Column{UsersGroupFeaturesColumns[0]},
+
+				RefColumns: []*schema.Column{UsersGroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "users_group_features_feature_id",
+				Columns: []*schema.Column{UsersGroupFeaturesColumns[1]},
+
+				RefColumns: []*schema.Column{FeaturesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ActionsRulesTable,
@@ -2226,6 +2295,7 @@ var (
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
 		ExportTasksTable,
+		FeaturesTable,
 		FilesTable,
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,
@@ -2266,8 +2336,10 @@ var (
 		ServiceLinksTable,
 		ServicePortsTable,
 		ServiceCustomerTable,
+		UserFeaturesTable,
 		UsersGroupMembersTable,
 		UsersGroupPoliciesTable,
+		UsersGroupFeaturesTable,
 	}
 )
 
@@ -2388,8 +2460,12 @@ func init() {
 	ServicePortsTable.ForeignKeys[1].RefTable = EquipmentPortsTable
 	ServiceCustomerTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceCustomerTable.ForeignKeys[1].RefTable = CustomersTable
+	UserFeaturesTable.ForeignKeys[0].RefTable = UsersTable
+	UserFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
 	UsersGroupMembersTable.ForeignKeys[0].RefTable = UsersGroupsTable
 	UsersGroupMembersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersGroupPoliciesTable.ForeignKeys[0].RefTable = UsersGroupsTable
 	UsersGroupPoliciesTable.ForeignKeys[1].RefTable = PermissionsPoliciesTable
+	UsersGroupFeaturesTable.ForeignKeys[0].RefTable = UsersGroupsTable
+	UsersGroupFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
 }

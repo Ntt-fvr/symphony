@@ -385,6 +385,18 @@ func (et *ExportTaskQuery) collectField(ctx *graphql.OperationContext, field gra
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (f *FeatureQuery) CollectFields(ctx context.Context, satisfies ...string) *FeatureQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		f = f.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return f
+}
+
+func (f *FeatureQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FeatureQuery {
+	return f
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (f *FileQuery) CollectFields(ctx context.Context, satisfies ...string) *FileQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		f = f.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

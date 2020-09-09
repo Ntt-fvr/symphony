@@ -35,6 +35,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -1798,6 +1799,72 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 		Type:  "string",
 		Name:  "store_key",
 		Value: string(buf),
+	}
+	return node, nil
+}
+
+func (f *Feature) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     f.ID,
+		Type:   "Feature",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(f.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Global); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "bool",
+		Name:  "global",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = f.QueryUsers().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "User",
+		Name: "users",
+	}
+	ids, err = f.QueryGroups().
+		Select(usersgroup.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "UsersGroup",
+		Name: "groups",
 	}
 	return node, nil
 }
@@ -5108,7 +5175,7 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 5),
+		Edges:  make([]*Edge, 6),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -5239,6 +5306,17 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		Type: "Project",
 		Name: "created_projects",
 	}
+	ids, err = u.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[5] = &Edge{
+		IDs:  ids,
+		Type: "Feature",
+		Name: "features",
+	}
 	return node, nil
 }
 
@@ -5247,7 +5325,7 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 		ID:     ug.ID,
 		Type:   "UsersGroup",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(ug.CreateTime); err != nil {
@@ -5312,6 +5390,17 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 		IDs:  ids,
 		Type: "PermissionsPolicy",
 		Name: "policies",
+	}
+	ids, err = ug.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "Feature",
+		Name: "features",
 	}
 	return node, nil
 }
@@ -5981,6 +6070,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.ExportTask.Query().
 			Where(exporttask.ID(id)).
 			CollectFields(ctx, "ExportTask").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case feature.Table:
+		n, err := c.Feature.Query().
+			Where(feature.ID(id)).
+			CollectFields(ctx, "Feature").
 			Only(ctx)
 		if err != nil {
 			return nil, err

@@ -49,6 +49,8 @@ const (
 	EdgeAssignedWorkOrders = "assigned_work_orders"
 	// EdgeCreatedProjects holds the string denoting the created_projects edge name in mutations.
 	EdgeCreatedProjects = "created_projects"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
 
 	// Table holds the table name of the user in the database.
 	Table = "users"
@@ -85,6 +87,11 @@ const (
 	CreatedProjectsInverseTable = "projects"
 	// CreatedProjectsColumn is the table column denoting the created_projects relation/edge.
 	CreatedProjectsColumn = "project_creator"
+	// FeaturesTable is the table the holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "user_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -105,6 +112,9 @@ var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
 	GroupsPrimaryKey = []string{"users_group_id", "user_id"}
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"user_id", "feature_id"}
 )
 
 // Note that the variables below are initialized by the runtime

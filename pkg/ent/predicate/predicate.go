@@ -67,6 +67,9 @@ type EquipmentType func(*sql.Selector)
 // ExportTask is the predicate function for exporttask builders.
 type ExportTask func(*sql.Selector)
 
+// Feature is the predicate function for feature builders.
+type Feature func(*sql.Selector)
+
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 

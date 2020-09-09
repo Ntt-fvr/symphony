@@ -1061,6 +1061,34 @@ func HasCreatedProjectsWith(preds ...predicate.Project) predicate.User {
 	})
 }
 
+// HasFeatures applies the HasEdge predicate on the "features" edge.
+func HasFeatures() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FeaturesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFeaturesWith applies the HasEdge predicate on the "features" edge with a given conditions (other predicates).
+func HasFeaturesWith(preds ...predicate.Feature) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FeaturesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {

@@ -70,6 +70,7 @@ func (User) Edges() []ent.Edge {
 			Ref("assignee"),
 		edge.From("created_projects", Project.Type).
 			Ref("creator"),
+		edge.To("features", Feature.Type),
 	}
 }
 

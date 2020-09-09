@@ -29,6 +29,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -525,6 +526,33 @@ func init() {
 	exporttaskDescFilters := exporttaskFields[3].Descriptor()
 	// exporttask.DefaultFilters holds the default value on creation for the filters field.
 	exporttask.DefaultFilters = exporttaskDescFilters.Default.(string)
+	featureMixin := schema.Feature{}.Mixin()
+	feature.Policy = schema.Feature{}.Policy()
+	feature.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := feature.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	featureMixinFields0 := featureMixin[0].Fields()
+	featureFields := schema.Feature{}.Fields()
+	_ = featureFields
+	// featureDescCreateTime is the schema descriptor for create_time field.
+	featureDescCreateTime := featureMixinFields0[0].Descriptor()
+	// feature.DefaultCreateTime holds the default value on creation for the create_time field.
+	feature.DefaultCreateTime = featureDescCreateTime.Default.(func() time.Time)
+	// featureDescUpdateTime is the schema descriptor for update_time field.
+	featureDescUpdateTime := featureMixinFields0[1].Descriptor()
+	// feature.DefaultUpdateTime holds the default value on creation for the update_time field.
+	feature.DefaultUpdateTime = featureDescUpdateTime.Default.(func() time.Time)
+	// feature.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	feature.UpdateDefaultUpdateTime = featureDescUpdateTime.UpdateDefault.(func() time.Time)
+	// featureDescName is the schema descriptor for name field.
+	featureDescName := featureFields[0].Descriptor()
+	// feature.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	feature.NameValidator = featureDescName.Validators[0].(func(string) error)
 	fileMixin := schema.File{}.Mixin()
 	file.Policy = schema.File{}.Policy()
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {

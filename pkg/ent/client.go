@@ -32,6 +32,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -116,6 +117,8 @@ type Client struct {
 	EquipmentType *EquipmentTypeClient
 	// ExportTask is the client for interacting with the ExportTask builders.
 	ExportTask *ExportTaskClient
+	// Feature is the client for interacting with the Feature builders.
+	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
@@ -221,6 +224,7 @@ func (c *Client) init() {
 	c.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(c.config)
 	c.EquipmentType = NewEquipmentTypeClient(c.config)
 	c.ExportTask = NewExportTaskClient(c.config)
+	c.Feature = NewFeatureClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
@@ -307,6 +311,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
+		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
@@ -376,6 +381,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		EquipmentPositionDefinition: NewEquipmentPositionDefinitionClient(cfg),
 		EquipmentType:               NewEquipmentTypeClient(cfg),
 		ExportTask:                  NewExportTaskClient(cfg),
+		Feature:                     NewFeatureClient(cfg),
 		File:                        NewFileClient(cfg),
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
@@ -458,6 +464,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.EquipmentPositionDefinition.Use(hooks...)
 	c.EquipmentType.Use(hooks...)
 	c.ExportTask.Use(hooks...)
+	c.Feature.Use(hooks...)
 	c.File.Use(hooks...)
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
@@ -3176,6 +3183,127 @@ func (c *ExportTaskClient) GetX(ctx context.Context, id int) *ExportTask {
 func (c *ExportTaskClient) Hooks() []Hook {
 	hooks := c.hooks.ExportTask
 	return append(hooks[:len(hooks):len(hooks)], exporttask.Hooks[:]...)
+}
+
+// FeatureClient is a client for the Feature schema.
+type FeatureClient struct {
+	config
+}
+
+// NewFeatureClient returns a client for the Feature from the given config.
+func NewFeatureClient(c config) *FeatureClient {
+	return &FeatureClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `feature.Hooks(f(g(h())))`.
+func (c *FeatureClient) Use(hooks ...Hook) {
+	c.hooks.Feature = append(c.hooks.Feature, hooks...)
+}
+
+// Create returns a create builder for Feature.
+func (c *FeatureClient) Create() *FeatureCreate {
+	mutation := newFeatureMutation(c.config, OpCreate)
+	return &FeatureCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Feature entities.
+func (c *FeatureClient) CreateBulk(builders ...*FeatureCreate) *FeatureCreateBulk {
+	return &FeatureCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Feature.
+func (c *FeatureClient) Update() *FeatureUpdate {
+	mutation := newFeatureMutation(c.config, OpUpdate)
+	return &FeatureUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FeatureClient) UpdateOne(f *Feature) *FeatureUpdateOne {
+	mutation := newFeatureMutation(c.config, OpUpdateOne, withFeature(f))
+	return &FeatureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FeatureClient) UpdateOneID(id int) *FeatureUpdateOne {
+	mutation := newFeatureMutation(c.config, OpUpdateOne, withFeatureID(id))
+	return &FeatureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Feature.
+func (c *FeatureClient) Delete() *FeatureDelete {
+	mutation := newFeatureMutation(c.config, OpDelete)
+	return &FeatureDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FeatureClient) DeleteOne(f *Feature) *FeatureDeleteOne {
+	return c.DeleteOneID(f.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FeatureClient) DeleteOneID(id int) *FeatureDeleteOne {
+	builder := c.Delete().Where(feature.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FeatureDeleteOne{builder}
+}
+
+// Query returns a query builder for Feature.
+func (c *FeatureClient) Query() *FeatureQuery {
+	return &FeatureQuery{config: c.config}
+}
+
+// Get returns a Feature entity by its id.
+func (c *FeatureClient) Get(ctx context.Context, id int) (*Feature, error) {
+	return c.Query().Where(feature.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FeatureClient) GetX(ctx context.Context, id int) *Feature {
+	f, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
+
+// QueryUsers queries the users edge of a Feature.
+func (c *FeatureClient) QueryUsers(f *Feature) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, feature.UsersTable, feature.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGroups queries the groups edge of a Feature.
+func (c *FeatureClient) QueryGroups(f *Feature) *UsersGroupQuery {
+	query := &UsersGroupQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, id),
+			sqlgraph.To(usersgroup.Table, usersgroup.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, feature.GroupsTable, feature.GroupsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FeatureClient) Hooks() []Hook {
+	hooks := c.hooks.Feature
+	return append(hooks[:len(hooks):len(hooks)], feature.Hooks[:]...)
 }
 
 // FileClient is a client for the File schema.
@@ -7778,6 +7906,22 @@ func (c *UserClient) QueryCreatedProjects(u *User) *ProjectQuery {
 	return query
 }
 
+// QueryFeatures queries the features edge of a User.
+func (c *UserClient) QueryFeatures(u *User) *FeatureQuery {
+	query := &FeatureQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.FeaturesTable, user.FeaturesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -7892,6 +8036,22 @@ func (c *UsersGroupClient) QueryPolicies(ug *UsersGroup) *PermissionsPolicyQuery
 			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, id),
 			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, usersgroup.PoliciesTable, usersgroup.PoliciesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ug.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFeatures queries the features edge of a UsersGroup.
+func (c *UsersGroupClient) QueryFeatures(ug *UsersGroup) *FeatureQuery {
+	query := &FeatureQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ug.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, id),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, usersgroup.FeaturesTable, usersgroup.FeaturesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(ug.driver.Dialect(), step)
 		return fromV, nil
