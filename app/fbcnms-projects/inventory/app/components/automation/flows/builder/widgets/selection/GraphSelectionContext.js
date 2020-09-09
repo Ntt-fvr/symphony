@@ -14,7 +14,9 @@ import * as React from 'react';
 import useExplicitSelection from './useExplicitSelection';
 import useLassoSelection from './useLassoSelection';
 import useLinkSelection from './useLinkSelection';
-import {useCallback, useContext, useState} from 'react';
+import {Events} from '../../canvas/graph/facades/Helpers';
+import {useCallback, useContext, useEffect, useState} from 'react';
+import {useGraph} from '../../canvas/graph/GraphContext';
 
 type SelectedElement = $ReadOnly<IBlock>;
 
@@ -40,6 +42,7 @@ type Props = {|
 |};
 
 export function GraphSelectionContextProvider(props: Props) {
+  const flow = useGraph();
   const [selectedElements, setSelectedElements] = useState<
     $ReadOnlyArray<IBlock>,
   >([]);
@@ -74,8 +77,17 @@ export function GraphSelectionContextProvider(props: Props) {
     selectedElements,
     changeSelection,
   );
+
+  const onBlockRemoved = useCallback(() => {
+    setSelectedElements([]);
+  }, []);
+
   useExplicitSelection(changeSelection, checkIfElementShouldBeIgnored);
   useLinkSelection();
+
+  useEffect(() => {
+    flow.onGraphEvent(Events.Graph.BlockRemoved, onBlockRemoved);
+  }, [flow, onBlockRemoved]);
 
   return (
     <GraphSelectionContext.Provider

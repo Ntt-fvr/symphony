@@ -14,6 +14,7 @@ import React, {useCallback} from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {useGraph} from '../canvas/graph/GraphContext';
+import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -31,6 +32,7 @@ export default function Toolbar() {
   const classes = useStyles();
 
   const flow = useGraph();
+  const selection = useGraphSelection();
 
   const dialogShowingContext = useDialogShowingContext();
 
@@ -71,6 +73,12 @@ export default function Toolbar() {
       <Button onClick={() => flow.zoomOut()}>Zoom Out</Button>
       <Button onClick={() => flow.reset()} className={classes.marginRight}>
         Reset
+      </Button>
+      <Button
+        onClick={() => flow.removeBlocks([...selection.selectedElements])}
+        className={classes.marginRight}
+        disabled={selection.selectedElements.length == 0}>
+        Delete
       </Button>
       <Button
         onClick={() => showLoadJsonDialog()}

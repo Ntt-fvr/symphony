@@ -37,6 +37,7 @@ export const Events = {
   },
   Graph: {
     BlockAdded: 'add',
+    BlockRemoved: 'remove',
   },
   Block: {
     MouseUp: 'element:pointerup',

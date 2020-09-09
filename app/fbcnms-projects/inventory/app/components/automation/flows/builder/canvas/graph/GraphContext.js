@@ -87,7 +87,7 @@ export type ConnectorEventCallback = (
   number,
 ) => void;
 
-export type GraphEvent = 'add';
+export type GraphEvent = 'add' | 'remove';
 export type PaperEvent =
   | 'blank:pointerclick'
   | 'blank:pointerdown'
@@ -103,6 +103,7 @@ export type GraphContextType = {
   bindGraphContainer: HTMLElement => void,
   getMainPaper: () => ?Paper,
   addBlock: AddBlockFunctionType,
+  removeBlocks: (IBlock[]) => void,
   addConnector: AddConnectorFunctionType,
   getBlock: string => ?IBlock,
   getConnector: string => ?IConnector,
@@ -125,6 +126,7 @@ const GraphContextDefaults = {
   bindGraphContainer: emptyFunction,
   getMainPaper: emptyFunction,
   addBlock: emptyFunction,
+  removeBlocks: emptyFunction,
   addConnector: emptyFunction,
   getBlock: emptyFunction,
   getConnector: emptyFunction,
@@ -189,6 +191,31 @@ function graphAddBlock(
   blocksMap.set(newBlock.id, newBlock);
 
   return newBlock;
+}
+
+function graphRemoveBlocks(blocks: IBlock[]) {
+  if (this.current == null) {
+    return;
+  }
+  const blocksMap = this.current.blocks;
+  const graph = this.current.graph;
+  const connectorsMap = this.current.connectors;
+  const idsToRemove = blocks.map(block => block.model.id);
+
+  // This is a temporary way to handle the update of connectorsMap
+  // after the removal of the blocks and it's connectors from the graph
+  // This is temporary until we finalize the connectors logic implementation
+  connectorsMap.forEach(({id, model}: IConnector) => {
+    if (
+      idsToRemove.includes(model.attributes.source.id) ||
+      idsToRemove.includes(model.attributes.target.id)
+    ) {
+      connectorsMap.delete(id);
+    }
+  });
+
+  graph.removeCells(blocks.map(block => block.model));
+  idsToRemove.forEach(id => blocksMap.delete(id));
 }
 
 function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
@@ -513,6 +540,7 @@ export function GraphContextProvider(props: Props) {
 
   const getMainPaper = graphGetMainPaper.bind(flowWrapper);
   const addBlock = graphAddBlock.bind(flowWrapper);
+  const removeBlocks = graphRemoveBlocks.bind(flowWrapper);
   const addConnector = graphAddConnector.bind(flowWrapper);
   const zoomIn = paperZoomIn.bind(flowWrapper);
   const zoomOut = paperZoomOut.bind(flowWrapper);
@@ -534,6 +562,7 @@ export function GraphContextProvider(props: Props) {
     bindGraphContainer,
     getMainPaper,
     addBlock,
+    removeBlocks,
     addConnector,
     zoomIn,
     zoomOut,
