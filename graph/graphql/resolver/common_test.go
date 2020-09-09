@@ -23,11 +23,16 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/hashicorp/go-multierror"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,6 +48,10 @@ type option func(*options)
 type options struct {
 	opts    []resolver.Option
 	factory ev.Factory
+	flow    struct {
+		triggerFactory triggers.Factory
+		actionFactory  actions.Factory
+	}
 }
 
 func withResolverOptions(opts ...resolver.Option) option {
@@ -54,6 +63,18 @@ func withResolverOptions(opts ...resolver.Option) option {
 func withEventFactory(factory ev.Factory) option {
 	return func(o *options) {
 		o.factory = factory
+	}
+}
+
+func withTriggerFactory(factory triggers.Factory) option {
+	return func(o *options) {
+		o.flow.triggerFactory = factory
+	}
+}
+
+func withActionFactory(factory actions.Factory) option {
+	return func(o *options) {
+		o.flow.actionFactory = factory
 	}
 }
 
@@ -75,6 +96,18 @@ func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 	if factory == nil {
 		factory = &ev.MemFactory{}
 	}
+	triggerFactory := o.flow.triggerFactory
+	if triggerFactory == nil {
+		triggerFactory = triggers.FactoryFunc(func(_ flowschema.TriggerTypeID) (triggers.TriggerType, error) {
+			return nil, errors.New("not found")
+		})
+	}
+	actionFactory := o.flow.actionFactory
+	if actionFactory == nil {
+		actionFactory = actions.FactoryFunc(func(_ flowschema.ActionTypeID) (actions.ActionType, error) {
+			return nil, errors.New("not found")
+		})
+	}
 
 	ctx := context.Background()
 	emitter, err := factory.NewEmitter(ctx)
@@ -85,11 +118,20 @@ func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 		Emitter: emitter,
 	}
 	eventer.HookTo(c)
+	hooker := hooks.Flower{
+		TriggerFactory: o.flow.triggerFactory,
+		ActionFactory:  o.flow.actionFactory,
+	}
+	hooker.HookTo(c)
 
 	logger := logtest.NewTestLogger(t)
 	r := resolver.New(resolver.Config{
 		Logger:          logger,
 		ReceiverFactory: factory,
+		Flow: resolver.FlowConfig{
+			TriggerFactory: triggerFactory,
+			ActionFactory:  actionFactory,
+		},
 	}, o.opts...)
 
 	return &TestResolver{

@@ -11,8 +11,8 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
-	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/suite"
@@ -215,7 +215,7 @@ func (s *propertiesTestSuite) TestEmptyEnumPropertyExists() {
 
 func (s *propertiesTestSuite) TestNodePropertyExists() {
 	pType := s.createPropertyType(propertytype.TypeNode, "node", func(create *ent.PropertyTypeCreate) {
-		create.SetNodeType(hooks.NodeTypeLocation)
+		create.SetNodeType(enum.NodeTypeLocation.String())
 	})
 	err := s.withTransaction(func(ctx context.Context, client *ent.Client) {
 		locationType := client.LocationType.Create().
@@ -238,7 +238,7 @@ func (s *propertiesTestSuite) TestNodePropertyExists() {
 
 func (s *propertiesTestSuite) TestNodePropertyNotExists() {
 	_ = s.createPropertyType(propertytype.TypeNode, "node", func(create *ent.PropertyTypeCreate) {
-		create.SetNodeType(hooks.NodeTypeLocation)
+		create.SetNodeType(enum.NodeTypeLocation.String())
 	})
 	err := s.withTransaction(func(ctx context.Context, client *ent.Client) {
 		s.closeWorkOrder(ctx, client)
@@ -248,7 +248,7 @@ func (s *propertiesTestSuite) TestNodePropertyNotExists() {
 
 func (s *propertiesTestSuite) TestEmptyNodePropertyExists() {
 	pType := s.createPropertyType(propertytype.TypeNode, "node", func(create *ent.PropertyTypeCreate) {
-		create.SetNodeType(hooks.NodeTypeLocation)
+		create.SetNodeType(enum.NodeTypeLocation.String())
 	})
 	err := s.withTransaction(func(ctx context.Context, client *ent.Client) {
 		_, err := client.Property.Create().

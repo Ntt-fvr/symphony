@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -35,7 +36,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -80,6 +84,8 @@ type Client struct {
 	Activity *ActivityClient
 	// Block is the client for interacting with the Block builders.
 	Block *BlockClient
+	// BlockInstance is the client for interacting with the BlockInstance builders.
+	BlockInstance *BlockInstanceClient
 	// CheckListCategory is the client for interacting with the CheckListCategory builders.
 	CheckListCategory *CheckListCategoryClient
 	// CheckListCategoryDefinition is the client for interacting with the CheckListCategoryDefinition builders.
@@ -118,8 +124,14 @@ type Client struct {
 	FloorPlanReferencePoint *FloorPlanReferencePointClient
 	// FloorPlanScale is the client for interacting with the FloorPlanScale builders.
 	FloorPlanScale *FloorPlanScaleClient
+	// Flow is the client for interacting with the Flow builders.
+	Flow *FlowClient
 	// FlowDraft is the client for interacting with the FlowDraft builders.
 	FlowDraft *FlowDraftClient
+	// FlowExecutionTemplate is the client for interacting with the FlowExecutionTemplate builders.
+	FlowExecutionTemplate *FlowExecutionTemplateClient
+	// FlowInstance is the client for interacting with the FlowInstance builders.
+	FlowInstance *FlowInstanceClient
 	// Hyperlink is the client for interacting with the Hyperlink builders.
 	Hyperlink *HyperlinkClient
 	// Link is the client for interacting with the Link builders.
@@ -193,6 +205,7 @@ func (c *Client) init() {
 	c.ActionsRule = NewActionsRuleClient(c.config)
 	c.Activity = NewActivityClient(c.config)
 	c.Block = NewBlockClient(c.config)
+	c.BlockInstance = NewBlockInstanceClient(c.config)
 	c.CheckListCategory = NewCheckListCategoryClient(c.config)
 	c.CheckListCategoryDefinition = NewCheckListCategoryDefinitionClient(c.config)
 	c.CheckListItem = NewCheckListItemClient(c.config)
@@ -212,7 +225,10 @@ func (c *Client) init() {
 	c.FloorPlan = NewFloorPlanClient(c.config)
 	c.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(c.config)
 	c.FloorPlanScale = NewFloorPlanScaleClient(c.config)
+	c.Flow = NewFlowClient(c.config)
 	c.FlowDraft = NewFlowDraftClient(c.config)
+	c.FlowExecutionTemplate = NewFlowExecutionTemplateClient(c.config)
+	c.FlowInstance = NewFlowInstanceClient(c.config)
 	c.Hyperlink = NewHyperlinkClient(c.config)
 	c.Link = NewLinkClient(c.config)
 	c.Location = NewLocationClient(c.config)
@@ -275,6 +291,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
 		Block:                       NewBlockClient(cfg),
+		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -294,7 +311,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		Flow:                        NewFlowClient(cfg),
 		FlowDraft:                   NewFlowDraftClient(cfg),
+		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
+		FlowInstance:                NewFlowInstanceClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
@@ -340,6 +360,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
 		Block:                       NewBlockClient(cfg),
+		BlockInstance:               NewBlockInstanceClient(cfg),
 		CheckListCategory:           NewCheckListCategoryClient(cfg),
 		CheckListCategoryDefinition: NewCheckListCategoryDefinitionClient(cfg),
 		CheckListItem:               NewCheckListItemClient(cfg),
@@ -359,7 +380,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FloorPlan:                   NewFloorPlanClient(cfg),
 		FloorPlanReferencePoint:     NewFloorPlanReferencePointClient(cfg),
 		FloorPlanScale:              NewFloorPlanScaleClient(cfg),
+		Flow:                        NewFlowClient(cfg),
 		FlowDraft:                   NewFlowDraftClient(cfg),
+		FlowExecutionTemplate:       NewFlowExecutionTemplateClient(cfg),
+		FlowInstance:                NewFlowInstanceClient(cfg),
 		Hyperlink:                   NewHyperlinkClient(cfg),
 		Link:                        NewLinkClient(cfg),
 		Location:                    NewLocationClient(cfg),
@@ -418,6 +442,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ActionsRule.Use(hooks...)
 	c.Activity.Use(hooks...)
 	c.Block.Use(hooks...)
+	c.BlockInstance.Use(hooks...)
 	c.CheckListCategory.Use(hooks...)
 	c.CheckListCategoryDefinition.Use(hooks...)
 	c.CheckListItem.Use(hooks...)
@@ -437,7 +462,10 @@ func (c *Client) Use(hooks ...Hook) {
 	c.FloorPlan.Use(hooks...)
 	c.FloorPlanReferencePoint.Use(hooks...)
 	c.FloorPlanScale.Use(hooks...)
+	c.Flow.Use(hooks...)
 	c.FlowDraft.Use(hooks...)
+	c.FlowExecutionTemplate.Use(hooks...)
+	c.FlowInstance.Use(hooks...)
 	c.Hyperlink.Use(hooks...)
 	c.Link.Use(hooks...)
 	c.Location.Use(hooks...)
@@ -792,6 +820,38 @@ func (c *BlockClient) QueryNextBlocks(b *Block) *BlockQuery {
 	return query
 }
 
+// QueryFlow queries the flow edge of a Block.
+func (c *BlockClient) QueryFlow(b *Block) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTable, block.FlowColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFlowTemplate queries the flow_template edge of a Block.
+func (c *BlockClient) QueryFlowTemplate(b *Block) *FlowExecutionTemplateQuery {
+	query := &FlowExecutionTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTemplateTable, block.FlowTemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryFlowDraft queries the flow_draft edge of a Block.
 func (c *BlockClient) QueryFlowDraft(b *Block) *FlowDraftQuery {
 	query := &FlowDraftQuery{config: c.config}
@@ -801,6 +861,22 @@ func (c *BlockClient) QueryFlowDraft(b *Block) *FlowDraftQuery {
 			sqlgraph.From(block.Table, block.FieldID, id),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowDraftTable, block.FlowDraftColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySubFlow queries the sub_flow edge of a Block.
+func (c *BlockClient) QuerySubFlow(b *Block) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, block.SubFlowTable, block.SubFlowColumn),
 		)
 		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
 		return fromV, nil
@@ -840,10 +916,163 @@ func (c *BlockClient) QueryGotoBlock(b *Block) *BlockQuery {
 	return query
 }
 
+// QueryInstances queries the instances edge of a Block.
+func (c *BlockClient) QueryInstances(b *Block) *BlockInstanceQuery {
+	query := &BlockInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := b.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, id),
+			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, block.InstancesTable, block.InstancesColumn),
+		)
+		fromV = sqlgraph.Neighbors(b.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *BlockClient) Hooks() []Hook {
 	hooks := c.hooks.Block
 	return append(hooks[:len(hooks):len(hooks)], block.Hooks[:]...)
+}
+
+// BlockInstanceClient is a client for the BlockInstance schema.
+type BlockInstanceClient struct {
+	config
+}
+
+// NewBlockInstanceClient returns a client for the BlockInstance from the given config.
+func NewBlockInstanceClient(c config) *BlockInstanceClient {
+	return &BlockInstanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `blockinstance.Hooks(f(g(h())))`.
+func (c *BlockInstanceClient) Use(hooks ...Hook) {
+	c.hooks.BlockInstance = append(c.hooks.BlockInstance, hooks...)
+}
+
+// Create returns a create builder for BlockInstance.
+func (c *BlockInstanceClient) Create() *BlockInstanceCreate {
+	mutation := newBlockInstanceMutation(c.config, OpCreate)
+	return &BlockInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of BlockInstance entities.
+func (c *BlockInstanceClient) CreateBulk(builders ...*BlockInstanceCreate) *BlockInstanceCreateBulk {
+	return &BlockInstanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BlockInstance.
+func (c *BlockInstanceClient) Update() *BlockInstanceUpdate {
+	mutation := newBlockInstanceMutation(c.config, OpUpdate)
+	return &BlockInstanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BlockInstanceClient) UpdateOne(bi *BlockInstance) *BlockInstanceUpdateOne {
+	mutation := newBlockInstanceMutation(c.config, OpUpdateOne, withBlockInstance(bi))
+	return &BlockInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BlockInstanceClient) UpdateOneID(id int) *BlockInstanceUpdateOne {
+	mutation := newBlockInstanceMutation(c.config, OpUpdateOne, withBlockInstanceID(id))
+	return &BlockInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BlockInstance.
+func (c *BlockInstanceClient) Delete() *BlockInstanceDelete {
+	mutation := newBlockInstanceMutation(c.config, OpDelete)
+	return &BlockInstanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *BlockInstanceClient) DeleteOne(bi *BlockInstance) *BlockInstanceDeleteOne {
+	return c.DeleteOneID(bi.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *BlockInstanceClient) DeleteOneID(id int) *BlockInstanceDeleteOne {
+	builder := c.Delete().Where(blockinstance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BlockInstanceDeleteOne{builder}
+}
+
+// Query returns a query builder for BlockInstance.
+func (c *BlockInstanceClient) Query() *BlockInstanceQuery {
+	return &BlockInstanceQuery{config: c.config}
+}
+
+// Get returns a BlockInstance entity by its id.
+func (c *BlockInstanceClient) Get(ctx context.Context, id int) (*BlockInstance, error) {
+	return c.Query().Where(blockinstance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BlockInstanceClient) GetX(ctx context.Context, id int) *BlockInstance {
+	bi, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return bi
+}
+
+// QueryFlowInstance queries the flow_instance edge of a BlockInstance.
+func (c *BlockInstanceClient) QueryFlowInstance(bi *BlockInstance) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := bi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, blockinstance.FlowInstanceTable, blockinstance.FlowInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(bi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBlock queries the block edge of a BlockInstance.
+func (c *BlockInstanceClient) QueryBlock(bi *BlockInstance) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := bi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, blockinstance.BlockTable, blockinstance.BlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(bi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySubflowInstance queries the subflow_instance edge of a BlockInstance.
+func (c *BlockInstanceClient) QuerySubflowInstance(bi *BlockInstance) *FlowInstanceQuery {
+	query := &FlowInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := bi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, id),
+			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, blockinstance.SubflowInstanceTable, blockinstance.SubflowInstanceColumn),
+		)
+		fromV = sqlgraph.Neighbors(bi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *BlockInstanceClient) Hooks() []Hook {
+	hooks := c.hooks.BlockInstance
+	return append(hooks[:len(hooks):len(hooks)], blockinstance.Hooks[:]...)
 }
 
 // CheckListCategoryClient is a client for the CheckListCategory schema.
@@ -3513,6 +3742,127 @@ func (c *FloorPlanScaleClient) Hooks() []Hook {
 	return append(hooks[:len(hooks):len(hooks)], floorplanscale.Hooks[:]...)
 }
 
+// FlowClient is a client for the Flow schema.
+type FlowClient struct {
+	config
+}
+
+// NewFlowClient returns a client for the Flow from the given config.
+func NewFlowClient(c config) *FlowClient {
+	return &FlowClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flow.Hooks(f(g(h())))`.
+func (c *FlowClient) Use(hooks ...Hook) {
+	c.hooks.Flow = append(c.hooks.Flow, hooks...)
+}
+
+// Create returns a create builder for Flow.
+func (c *FlowClient) Create() *FlowCreate {
+	mutation := newFlowMutation(c.config, OpCreate)
+	return &FlowCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of Flow entities.
+func (c *FlowClient) CreateBulk(builders ...*FlowCreate) *FlowCreateBulk {
+	return &FlowCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Flow.
+func (c *FlowClient) Update() *FlowUpdate {
+	mutation := newFlowMutation(c.config, OpUpdate)
+	return &FlowUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FlowClient) UpdateOne(f *Flow) *FlowUpdateOne {
+	mutation := newFlowMutation(c.config, OpUpdateOne, withFlow(f))
+	return &FlowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FlowClient) UpdateOneID(id int) *FlowUpdateOne {
+	mutation := newFlowMutation(c.config, OpUpdateOne, withFlowID(id))
+	return &FlowUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Flow.
+func (c *FlowClient) Delete() *FlowDelete {
+	mutation := newFlowMutation(c.config, OpDelete)
+	return &FlowDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FlowClient) DeleteOne(f *Flow) *FlowDeleteOne {
+	return c.DeleteOneID(f.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FlowClient) DeleteOneID(id int) *FlowDeleteOne {
+	builder := c.Delete().Where(flow.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FlowDeleteOne{builder}
+}
+
+// Query returns a query builder for Flow.
+func (c *FlowClient) Query() *FlowQuery {
+	return &FlowQuery{config: c.config}
+}
+
+// Get returns a Flow entity by its id.
+func (c *FlowClient) Get(ctx context.Context, id int) (*Flow, error) {
+	return c.Query().Where(flow.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FlowClient) GetX(ctx context.Context, id int) *Flow {
+	f, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
+
+// QueryBlocks queries the blocks edge of a Flow.
+func (c *FlowClient) QueryBlocks(f *Flow) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flow.BlocksTable, flow.BlocksColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDraft queries the draft edge of a Flow.
+func (c *FlowClient) QueryDraft(f *Flow) *FlowDraftQuery {
+	query := &FlowDraftQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flow.Table, flow.FieldID, id),
+			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flow.DraftTable, flow.DraftColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FlowClient) Hooks() []Hook {
+	hooks := c.hooks.Flow
+	return append(hooks[:len(hooks):len(hooks)], flow.Hooks[:]...)
+}
+
 // FlowDraftClient is a client for the FlowDraft schema.
 type FlowDraftClient struct {
 	config
@@ -3612,10 +3962,284 @@ func (c *FlowDraftClient) QueryBlocks(fd *FlowDraft) *BlockQuery {
 	return query
 }
 
+// QueryFlow queries the flow edge of a FlowDraft.
+func (c *FlowDraftClient) QueryFlow(fd *FlowDraft) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
+		)
+		fromV = sqlgraph.Neighbors(fd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FlowDraftClient) Hooks() []Hook {
 	hooks := c.hooks.FlowDraft
 	return append(hooks[:len(hooks):len(hooks)], flowdraft.Hooks[:]...)
+}
+
+// FlowExecutionTemplateClient is a client for the FlowExecutionTemplate schema.
+type FlowExecutionTemplateClient struct {
+	config
+}
+
+// NewFlowExecutionTemplateClient returns a client for the FlowExecutionTemplate from the given config.
+func NewFlowExecutionTemplateClient(c config) *FlowExecutionTemplateClient {
+	return &FlowExecutionTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flowexecutiontemplate.Hooks(f(g(h())))`.
+func (c *FlowExecutionTemplateClient) Use(hooks ...Hook) {
+	c.hooks.FlowExecutionTemplate = append(c.hooks.FlowExecutionTemplate, hooks...)
+}
+
+// Create returns a create builder for FlowExecutionTemplate.
+func (c *FlowExecutionTemplateClient) Create() *FlowExecutionTemplateCreate {
+	mutation := newFlowExecutionTemplateMutation(c.config, OpCreate)
+	return &FlowExecutionTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of FlowExecutionTemplate entities.
+func (c *FlowExecutionTemplateClient) CreateBulk(builders ...*FlowExecutionTemplateCreate) *FlowExecutionTemplateCreateBulk {
+	return &FlowExecutionTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FlowExecutionTemplate.
+func (c *FlowExecutionTemplateClient) Update() *FlowExecutionTemplateUpdate {
+	mutation := newFlowExecutionTemplateMutation(c.config, OpUpdate)
+	return &FlowExecutionTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FlowExecutionTemplateClient) UpdateOne(fet *FlowExecutionTemplate) *FlowExecutionTemplateUpdateOne {
+	mutation := newFlowExecutionTemplateMutation(c.config, OpUpdateOne, withFlowExecutionTemplate(fet))
+	return &FlowExecutionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FlowExecutionTemplateClient) UpdateOneID(id int) *FlowExecutionTemplateUpdateOne {
+	mutation := newFlowExecutionTemplateMutation(c.config, OpUpdateOne, withFlowExecutionTemplateID(id))
+	return &FlowExecutionTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FlowExecutionTemplate.
+func (c *FlowExecutionTemplateClient) Delete() *FlowExecutionTemplateDelete {
+	mutation := newFlowExecutionTemplateMutation(c.config, OpDelete)
+	return &FlowExecutionTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FlowExecutionTemplateClient) DeleteOne(fet *FlowExecutionTemplate) *FlowExecutionTemplateDeleteOne {
+	return c.DeleteOneID(fet.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FlowExecutionTemplateClient) DeleteOneID(id int) *FlowExecutionTemplateDeleteOne {
+	builder := c.Delete().Where(flowexecutiontemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FlowExecutionTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for FlowExecutionTemplate.
+func (c *FlowExecutionTemplateClient) Query() *FlowExecutionTemplateQuery {
+	return &FlowExecutionTemplateQuery{config: c.config}
+}
+
+// Get returns a FlowExecutionTemplate entity by its id.
+func (c *FlowExecutionTemplateClient) Get(ctx context.Context, id int) (*FlowExecutionTemplate, error) {
+	return c.Query().Where(flowexecutiontemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FlowExecutionTemplateClient) GetX(ctx context.Context, id int) *FlowExecutionTemplate {
+	fet, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return fet
+}
+
+// QueryBlocks queries the blocks edge of a FlowExecutionTemplate.
+func (c *FlowExecutionTemplateClient) QueryBlocks(fet *FlowExecutionTemplate) *BlockQuery {
+	query := &BlockQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fet.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID, id),
+			sqlgraph.To(block.Table, block.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flowexecutiontemplate.BlocksTable, flowexecutiontemplate.BlocksColumn),
+		)
+		fromV = sqlgraph.Neighbors(fet.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FlowExecutionTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.FlowExecutionTemplate
+	return append(hooks[:len(hooks):len(hooks)], flowexecutiontemplate.Hooks[:]...)
+}
+
+// FlowInstanceClient is a client for the FlowInstance schema.
+type FlowInstanceClient struct {
+	config
+}
+
+// NewFlowInstanceClient returns a client for the FlowInstance from the given config.
+func NewFlowInstanceClient(c config) *FlowInstanceClient {
+	return &FlowInstanceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flowinstance.Hooks(f(g(h())))`.
+func (c *FlowInstanceClient) Use(hooks ...Hook) {
+	c.hooks.FlowInstance = append(c.hooks.FlowInstance, hooks...)
+}
+
+// Create returns a create builder for FlowInstance.
+func (c *FlowInstanceClient) Create() *FlowInstanceCreate {
+	mutation := newFlowInstanceMutation(c.config, OpCreate)
+	return &FlowInstanceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of FlowInstance entities.
+func (c *FlowInstanceClient) CreateBulk(builders ...*FlowInstanceCreate) *FlowInstanceCreateBulk {
+	return &FlowInstanceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FlowInstance.
+func (c *FlowInstanceClient) Update() *FlowInstanceUpdate {
+	mutation := newFlowInstanceMutation(c.config, OpUpdate)
+	return &FlowInstanceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FlowInstanceClient) UpdateOne(fi *FlowInstance) *FlowInstanceUpdateOne {
+	mutation := newFlowInstanceMutation(c.config, OpUpdateOne, withFlowInstance(fi))
+	return &FlowInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FlowInstanceClient) UpdateOneID(id int) *FlowInstanceUpdateOne {
+	mutation := newFlowInstanceMutation(c.config, OpUpdateOne, withFlowInstanceID(id))
+	return &FlowInstanceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FlowInstance.
+func (c *FlowInstanceClient) Delete() *FlowInstanceDelete {
+	mutation := newFlowInstanceMutation(c.config, OpDelete)
+	return &FlowInstanceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *FlowInstanceClient) DeleteOne(fi *FlowInstance) *FlowInstanceDeleteOne {
+	return c.DeleteOneID(fi.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *FlowInstanceClient) DeleteOneID(id int) *FlowInstanceDeleteOne {
+	builder := c.Delete().Where(flowinstance.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FlowInstanceDeleteOne{builder}
+}
+
+// Query returns a query builder for FlowInstance.
+func (c *FlowInstanceClient) Query() *FlowInstanceQuery {
+	return &FlowInstanceQuery{config: c.config}
+}
+
+// Get returns a FlowInstance entity by its id.
+func (c *FlowInstanceClient) Get(ctx context.Context, id int) (*FlowInstance, error) {
+	return c.Query().Where(flowinstance.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FlowInstanceClient) GetX(ctx context.Context, id int) *FlowInstance {
+	fi, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return fi
+}
+
+// QueryFlow queries the flow edge of a FlowInstance.
+func (c *FlowInstanceClient) QueryFlow(fi *FlowInstance) *FlowQuery {
+	query := &FlowQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, flowinstance.FlowTable, flowinstance.FlowColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTemplate queries the template edge of a FlowInstance.
+func (c *FlowInstanceClient) QueryTemplate(fi *FlowInstance) *FlowExecutionTemplateQuery {
+	query := &FlowExecutionTemplateQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
+			sqlgraph.To(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, flowinstance.TemplateTable, flowinstance.TemplateColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryBlocks queries the blocks edge of a FlowInstance.
+func (c *FlowInstanceClient) QueryBlocks(fi *FlowInstance) *BlockInstanceQuery {
+	query := &BlockInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
+			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, flowinstance.BlocksTable, flowinstance.BlocksColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParentSubflowBlock queries the parent_subflow_block edge of a FlowInstance.
+func (c *FlowInstanceClient) QueryParentSubflowBlock(fi *FlowInstance) *BlockInstanceQuery {
+	query := &BlockInstanceQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, id),
+			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, flowinstance.ParentSubflowBlockTable, flowinstance.ParentSubflowBlockColumn),
+		)
+		fromV = sqlgraph.Neighbors(fi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FlowInstanceClient) Hooks() []Hook {
+	hooks := c.hooks.FlowInstance
+	return append(hooks[:len(hooks):len(hooks)], flowinstance.Hooks[:]...)
 }
 
 // HyperlinkClient is a client for the Hyperlink schema.

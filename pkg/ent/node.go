@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -38,7 +39,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -256,8 +260,8 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 4),
-		Edges:  make([]*Edge, 5),
+		Fields: make([]*Field, 9),
+		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(b.CreateTime); err != nil {
@@ -292,6 +296,46 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "type",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(b.ActionType); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "flowschema.ActionTypeID",
+		Name:  "action_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.TriggerType); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "flowschema.TriggerTypeID",
+		Name:  "trigger_type",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.StartParamDefinitions); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "[]*flowschema.VariableDefinition",
+		Name:  "start_param_definitions",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.InputParams); err != nil {
+		return nil, err
+	}
+	node.Fields[7] = &Field{
+		Type:  "[]*flowschema.VariableExpression",
+		Name:  "input_params",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.UIRepresentation); err != nil {
+		return nil, err
+	}
+	node.Fields[8] = &Field{
+		Type:  "flowschema.BlockUIRepresentation",
+		Name:  "ui_representation",
+		Value: string(buf),
+	}
 	var ids []int
 	ids, err = b.QueryPrevBlocks().
 		Select(block.FieldID).
@@ -315,16 +359,49 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Type: "Block",
 		Name: "next_blocks",
 	}
-	ids, err = b.QueryFlowDraft().
-		Select(flowdraft.FieldID).
+	ids, err = b.QueryFlow().
+		Select(flow.FieldID).
 		Ints(ctx)
 	if err != nil {
 		return nil, err
 	}
 	node.Edges[2] = &Edge{
 		IDs:  ids,
+		Type: "Flow",
+		Name: "flow",
+	}
+	ids, err = b.QueryFlowTemplate().
+		Select(flowexecutiontemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		IDs:  ids,
+		Type: "FlowExecutionTemplate",
+		Name: "flow_template",
+	}
+	ids, err = b.QueryFlowDraft().
+		Select(flowdraft.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[4] = &Edge{
+		IDs:  ids,
 		Type: "FlowDraft",
 		Name: "flow_draft",
+	}
+	ids, err = b.QuerySubFlow().
+		Select(flow.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[5] = &Edge{
+		IDs:  ids,
+		Type: "Flow",
+		Name: "sub_flow",
 	}
 	ids, err = b.QuerySourceBlock().
 		Select(block.FieldID).
@@ -332,7 +409,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[3] = &Edge{
+	node.Edges[6] = &Edge{
 		IDs:  ids,
 		Type: "Block",
 		Name: "source_block",
@@ -343,15 +420,129 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if err != nil {
 		return nil, err
 	}
-	node.Edges[4] = &Edge{
+	node.Edges[7] = &Edge{
 		IDs:  ids,
 		Type: "Block",
 		Name: "goto_block",
+	}
+	ids, err = b.QueryInstances().
+		Select(blockinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[8] = &Edge{
+		IDs:  ids,
+		Type: "BlockInstance",
+		Name: "instances",
 	}
 	return node, nil
 }
 
 func (Block) IsNode() {}
+
+func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     bi.ID,
+		Type:   "BlockInstance",
+		Fields: make([]*Field, 7),
+		Edges:  make([]*Edge, 3),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(bi.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "blockinstance.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.Inputs); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "[]*flowschema.VariableValue",
+		Name:  "inputs",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.Outputs); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "[]*flowschema.VariableValue",
+		Name:  "outputs",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.FailureReason); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "failure_reason",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(bi.BlockInstanceCounter); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "int",
+		Name:  "block_instance_counter",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = bi.QueryFlowInstance().
+		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "FlowInstance",
+		Name: "flow_instance",
+	}
+	ids, err = bi.QueryBlock().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "block",
+	}
+	ids, err = bi.QuerySubflowInstance().
+		Select(flowinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "FlowInstance",
+		Name: "subflow_instance",
+	}
+	return node, nil
+}
+
+func (BlockInstance) IsNode() {}
 
 func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2063,12 +2254,80 @@ func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 
 func (FloorPlanScale) IsNode() {}
 
+func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     f.ID,
+		Type:   "Flow",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(f.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.EndParamDefinitions); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "[]*flowschema.VariableDefinition",
+		Name:  "end_param_definitions",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "flow.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = f.QueryBlocks().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "blocks",
+	}
+	ids, err = f.QueryDraft().
+		Select(flowdraft.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "FlowDraft",
+		Name: "draft",
+	}
+	return node, nil
+}
+
+func (Flow) IsNode() {}
+
 func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fd.ID,
 		Type:   "FlowDraft",
-		Fields: make([]*Field, 2),
-		Edges:  make([]*Edge, 1),
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(fd.Name); err != nil {
@@ -2087,8 +2346,76 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "description",
 		Value: string(buf),
 	}
+	if buf, err = json.Marshal(fd.EndParamDefinitions); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "[]*flowschema.VariableDefinition",
+		Name:  "end_param_definitions",
+		Value: string(buf),
+	}
 	var ids []int
 	ids, err = fd.QueryBlocks().
+		Select(block.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "Block",
+		Name: "blocks",
+	}
+	ids, err = fd.QueryFlow().
+		Select(flow.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "Flow",
+		Name: "flow",
+	}
+	return node, nil
+}
+
+func (FlowDraft) IsNode() {}
+
+func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     fet.ID,
+		Type:   "FlowExecutionTemplate",
+		Fields: make([]*Field, 3),
+		Edges:  make([]*Edge, 1),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(fet.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fet.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "string",
+		Name:  "description",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fet.EndParamDefinitions); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "[]*flowschema.VariableDefinition",
+		Name:  "end_param_definitions",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = fet.QueryBlocks().
 		Select(block.FieldID).
 		Ints(ctx)
 	if err != nil {
@@ -2102,7 +2429,105 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (FlowDraft) IsNode() {}
+func (FlowExecutionTemplate) IsNode() {}
+
+func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     fi.ID,
+		Type:   "FlowInstance",
+		Fields: make([]*Field, 5),
+		Edges:  make([]*Edge, 4),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(fi.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.Status); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "flowinstance.Status",
+		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.OutputParams); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "[]*flowschema.VariableValue",
+		Name:  "output_params",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fi.IncompletionReason); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "string",
+		Name:  "incompletion_reason",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = fi.QueryFlow().
+		Select(flow.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "Flow",
+		Name: "flow",
+	}
+	ids, err = fi.QueryTemplate().
+		Select(flowexecutiontemplate.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "FlowExecutionTemplate",
+		Name: "template",
+	}
+	ids, err = fi.QueryBlocks().
+		Select(blockinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "BlockInstance",
+		Name: "blocks",
+	}
+	ids, err = fi.QueryParentSubflowBlock().
+		Select(blockinstance.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		IDs:  ids,
+		Type: "BlockInstance",
+		Name: "parent_subflow_block",
+	}
+	return node, nil
+}
+
+func (FlowInstance) IsNode() {}
 
 func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5526,6 +5951,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case blockinstance.Table:
+		n, err := c.BlockInstance.Query().
+			Where(blockinstance.ID(id)).
+			CollectFields(ctx, "BlockInstance").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case checklistcategory.Table:
 		n, err := c.CheckListCategory.Query().
 			Where(checklistcategory.ID(id)).
@@ -5697,10 +6131,37 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 			return nil, err
 		}
 		return n, nil
+	case flow.Table:
+		n, err := c.Flow.Query().
+			Where(flow.ID(id)).
+			CollectFields(ctx, "Flow").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case flowdraft.Table:
 		n, err := c.FlowDraft.Query().
 			Where(flowdraft.ID(id)).
 			CollectFields(ctx, "FlowDraft").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case flowexecutiontemplate.Table:
+		n, err := c.FlowExecutionTemplate.Query().
+			Where(flowexecutiontemplate.ID(id)).
+			CollectFields(ctx, "FlowExecutionTemplate").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case flowinstance.Table:
+		n, err := c.FlowInstance.Query().
+			Where(flowinstance.ID(id)).
+			CollectFields(ctx, "FlowInstance").
 			Only(ctx)
 		if err != nil {
 			return nil, err

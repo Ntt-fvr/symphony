@@ -19,9 +19,13 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldEndParamDefinitions holds the string denoting the end_param_definitions field in the database.
+	FieldEndParamDefinitions = "end_param_definitions"
 
 	// EdgeBlocks holds the string denoting the blocks edge name in mutations.
 	EdgeBlocks = "blocks"
+	// EdgeFlow holds the string denoting the flow edge name in mutations.
+	EdgeFlow = "flow"
 
 	// Table holds the table name of the flowdraft in the database.
 	Table = "flow_drafts"
@@ -32,6 +36,13 @@ const (
 	BlocksInverseTable = "blocks"
 	// BlocksColumn is the table column denoting the blocks relation/edge.
 	BlocksColumn = "flow_draft_blocks"
+	// FlowTable is the table the holds the flow relation/edge.
+	FlowTable = "flow_drafts"
+	// FlowInverseTable is the table name for the Flow entity.
+	// It exists in this package in order to avoid circular dependency with the "flow" package.
+	FlowInverseTable = "flows"
+	// FlowColumn is the table column denoting the flow relation/edge.
+	FlowColumn = "flow_draft"
 )
 
 // Columns holds all SQL columns for flowdraft fields.
@@ -39,6 +50,12 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldDescription,
+	FieldEndParamDefinitions,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the FlowDraft type.
+var ForeignKeys = []string{
+	"flow_draft",
 }
 
 // Note that the variables below are initialized by the runtime
@@ -48,7 +65,7 @@ var Columns = []string{
 //	import _ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 //
 var (
-	Hooks  [1]ent.Hook
+	Hooks  [2]ent.Hook
 	Policy ent.Policy
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error

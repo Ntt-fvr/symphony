@@ -31,6 +31,7 @@ type hooks struct {
 	ActionsRule                 []ent.Hook
 	Activity                    []ent.Hook
 	Block                       []ent.Hook
+	BlockInstance               []ent.Hook
 	CheckListCategory           []ent.Hook
 	CheckListCategoryDefinition []ent.Hook
 	CheckListItem               []ent.Hook
@@ -50,7 +51,10 @@ type hooks struct {
 	FloorPlan                   []ent.Hook
 	FloorPlanReferencePoint     []ent.Hook
 	FloorPlanScale              []ent.Hook
+	Flow                        []ent.Hook
 	FlowDraft                   []ent.Hook
+	FlowExecutionTemplate       []ent.Hook
+	FlowInstance                []ent.Hook
 	Hyperlink                   []ent.Hook
 	Link                        []ent.Hook
 	Location                    []ent.Hook

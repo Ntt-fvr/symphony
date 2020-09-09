@@ -27,15 +27,25 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/usersgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 )
 
-type BlockType interface {
-	IsBlockType()
+type BlockDetails interface {
+	IsBlockDetails()
 }
 
 type NamedNode interface {
 	IsNamedNode()
 }
+
+type ActionBlock struct {
+	ActionType actions.ActionType               `json:"actionType"`
+	Params     []*flowschema.VariableExpression `json:"params"`
+}
+
+func (ActionBlock) IsBlockDetails() {}
 
 type ActionsAction struct {
 	ActionID    core.ActionID `json:"actionID"`
@@ -84,6 +94,14 @@ type ActionsTriggersSearchResult struct {
 	Count   int               `json:"count"`
 }
 
+type AddActionBlockInput struct {
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	ActionType       flowschema.ActionTypeID           `json:"actionType"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type AddActionsRuleInput struct {
 	Name        string                    `json:"name"`
 	TriggerID   core.TriggerID            `json:"triggerID"`
@@ -97,8 +115,10 @@ type AddCustomerInput struct {
 }
 
 type AddEndBlockInput struct {
-	FlowDraftID int    `json:"flowDraftId"`
-	Name        string `json:"name"`
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type AddEquipmentInput struct {
@@ -142,14 +162,17 @@ type AddFloorPlanInput struct {
 }
 
 type AddFlowDraftInput struct {
-	Name        string  `json:"name"`
-	Description *string `json:"description"`
+	Name                string                           `json:"name"`
+	Description         *string                          `json:"description"`
+	FlowID              *int                             `json:"flowID"`
+	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 }
 
 type AddGotoBlockInput struct {
-	FlowDraftID int    `json:"flowDraftId"`
-	Name        string `json:"name"`
-	NextBlockID int    `json:"nextBlockId"`
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	TargetBlockID    int                               `json:"targetBlockId"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type AddHyperlinkInput struct {
@@ -232,8 +255,26 @@ type AddServiceEndpointInput struct {
 }
 
 type AddStartBlockInput struct {
-	FlowDraftID int    `json:"flowDraftId"`
-	Name        string `json:"name"`
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	ParamDefinitions []*flowschema.VariableDefinition  `json:"paramDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type AddSubflowBlockInput struct {
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	FlowID           int                               `json:"flowId"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type AddTriggerBlockInput struct {
+	FlowDraftID      int                               `json:"flowDraftId"`
+	Name             string                            `json:"name"`
+	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type AddUsersGroupInput struct {
@@ -317,8 +358,13 @@ type CommentInput struct {
 }
 
 type ConnectorInput struct {
-	BlockID     int `json:"blockId"`
-	NextBlockID int `json:"nextBlockId"`
+	SourceBlockID int `json:"sourceBlockId"`
+	TargetBlockID int `json:"targetBlockId"`
+}
+
+type ConnectorResult struct {
+	Source *ent.Block `json:"source"`
+	Target *ent.Block `json:"target"`
 }
 
 type Coordinates struct {
@@ -464,10 +510,10 @@ type EditWorkOrderTypeInput struct {
 }
 
 type EndBlock struct {
-	Dummy *string `json:"dummy"`
+	Params []*flowschema.VariableExpression `json:"params"`
 }
 
-func (EndBlock) IsBlockType() {}
+func (EndBlock) IsBlockDetails() {}
 
 type EquipmentPortInput struct {
 	ID           *int    `json:"id"`
@@ -520,10 +566,10 @@ type GeneralFilterInput struct {
 }
 
 type GotoBlock struct {
-	GotoBlock *ent.Block `json:"gotoBlock"`
+	Target *ent.Block `json:"target"`
 }
 
-func (GotoBlock) IsBlockType() {}
+func (GotoBlock) IsBlockDetails() {}
 
 type LatestPythonPackageResult struct {
 	LastPythonPackage         *PythonPackage `json:"lastPythonPackage"`
@@ -601,6 +647,10 @@ type PropertyInput struct {
 	NodeIDValue        *int     `json:"nodeIDValue"`
 	IsEditable         *bool    `json:"isEditable"`
 	IsInstanceProperty *bool    `json:"isInstanceProperty"`
+}
+
+type PublishFlowInput struct {
+	FlowDraftID int `json:"flowDraftID"`
 }
 
 type PythonPackage struct {
@@ -697,10 +747,22 @@ type ServiceTypeEditData struct {
 }
 
 type StartBlock struct {
-	Dummy *string `json:"dummy"`
+	ParamDefinitions []*flowschema.VariableDefinition `json:"paramDefinitions"`
 }
 
-func (StartBlock) IsBlockType() {}
+func (StartBlock) IsBlockDetails() {}
+
+type StartFlowInput struct {
+	FlowID int                         `json:"flowID"`
+	Params []*flowschema.VariableValue `json:"params"`
+}
+
+type SubflowBlock struct {
+	Flow   *ent.Flow                        `json:"flow"`
+	Params []*flowschema.VariableExpression `json:"params"`
+}
+
+func (SubflowBlock) IsBlockDetails() {}
 
 type SurveyCellScanData struct {
 	NetworkType           surveycellscan.NetworkType `json:"networkType"`
@@ -829,6 +891,13 @@ type TopologyLink struct {
 	Target ent.Noder        `json:"target"`
 }
 
+type TriggerBlock struct {
+	TriggerType triggers.TriggerType             `json:"triggerType"`
+	Params      []*flowschema.VariableExpression `json:"params"`
+}
+
+func (TriggerBlock) IsBlockDetails() {}
+
 type UpdateUserGroupsInput struct {
 	ID             int   `json:"id"`
 	AddGroupIds    []int `json:"addGroupIds"`
@@ -861,6 +930,12 @@ type UsersGroupFilterInput struct {
 type UsersGroupSearchResult struct {
 	UsersGroups []*ent.UsersGroup `json:"usersGroups"`
 	Count       int               `json:"count"`
+}
+
+type VariableExpressionInput struct {
+	VariableDefinitionKey string                      `json:"variableDefinitionKey"`
+	Expression            string                      `json:"expression"`
+	BlockVariables        []*flowschema.BlockVariable `json:"blockVariables"`
 }
 
 type WorkOrderDefinitionInput struct {

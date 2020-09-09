@@ -24,6 +24,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
@@ -41,6 +43,8 @@ type HandlerConfig struct {
 	Client          *ent.Client
 	Logger          log.Logger
 	ReceiverFactory ev.ReceiverFactory
+	TriggerFactory  triggers.Factory
+	ActionFactory   actions.Factory
 	Orc8rClient     *http.Client
 }
 
@@ -64,6 +68,10 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 		resolver.Config{
 			Logger:          cfg.Logger,
 			ReceiverFactory: cfg.ReceiverFactory,
+			Flow: resolver.FlowConfig{
+				TriggerFactory: cfg.TriggerFactory,
+				ActionFactory:  cfg.ActionFactory,
+			},
 		},
 		resolver.WithOrc8rClient(
 			cfg.Orc8rClient,

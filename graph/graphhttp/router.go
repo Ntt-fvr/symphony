@@ -16,6 +16,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	flowactions "github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
@@ -27,8 +29,12 @@ type routerConfig struct {
 		tenancy viewer.Tenancy
 		authurl string
 	}
-	logger  log.Logger
-	events  struct{ ev.ReceiverFactory }
+	logger log.Logger
+	events struct{ ev.ReceiverFactory }
+	flow   struct {
+		triggerFactory triggers.Factory
+		actionFactory  flowactions.Factory
+	}
 	orc8r   struct{ client *http.Client }
 	actions struct{ registry *executor.Registry }
 }
@@ -85,6 +91,8 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		graphql.HandlerConfig{
 			Logger:          cfg.logger,
 			ReceiverFactory: cfg.events.ReceiverFactory,
+			TriggerFactory:  cfg.flow.triggerFactory,
+			ActionFactory:   cfg.flow.actionFactory,
 			Orc8rClient:     cfg.orc8r.client,
 		},
 	)

@@ -14,6 +14,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/actions/trigger/magmaalert"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/orc8r"
@@ -33,6 +35,8 @@ type Config struct {
 	Tenancy         viewer.Tenancy
 	AuthURL         *url.URL
 	ReceiverFactory ev.ReceiverFactory
+	TriggerFactory  triggers.Factory
+	ActionFactory   actions.Factory
 	Logger          log.Logger
 	Telemetry       *telemetry.Config
 	HealthChecks    []health.Checker
@@ -65,6 +69,8 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 	cfg.viewer.tenancy = config.Tenancy
 	cfg.viewer.authurl = config.AuthURL.String()
 	cfg.events.ReceiverFactory = config.ReceiverFactory
+	cfg.flow.triggerFactory = config.TriggerFactory
+	cfg.flow.actionFactory = config.ActionFactory
 	cfg.orc8r.client = client
 	cfg.actions.registry = registry
 	return cfg, nil

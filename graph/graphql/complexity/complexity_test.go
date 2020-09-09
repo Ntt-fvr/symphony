@@ -19,6 +19,7 @@ func TestComplexityRoot(t *testing.T) {
 		"Equipment.Ports",
 		"Location.DistanceKm",
 		"LocationType.Locations",
+		"VariableDefinition.NestedVariables",
 	)
 	root := reflect.ValueOf(complexity.New())
 	trivial := reflect.TypeOf(func(int) (_ int) { return })
@@ -53,6 +54,7 @@ func TestQueryComplexity(t *testing.T) {
 		"ActionsRules", "ActionsTriggers", "LatestPythonPackage",
 		"Me", "NearestSites", "Node", "PossibleProperties",
 		"PythonPackages", "ReportFilters", "Surveys", "User", "Vertex",
+		"TriggerType", "ActionType",
 	)
 	query := reflect.ValueOf(complexity.New().Query)
 	for i, n := 0, query.NumField(); i < n; i++ {

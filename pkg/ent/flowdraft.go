@@ -7,11 +7,14 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // FlowDraft is the model entity for the FlowDraft schema.
@@ -23,18 +26,23 @@ type FlowDraft struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description *string `json:"description,omitempty"`
+	// EndParamDefinitions holds the value of the "end_param_definitions" field.
+	EndParamDefinitions []*flowschema.VariableDefinition `json:"end_param_definitions,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FlowDraftQuery when eager-loading is set.
-	Edges FlowDraftEdges `json:"edges"`
+	Edges      FlowDraftEdges `json:"edges"`
+	flow_draft *int
 }
 
 // FlowDraftEdges holds the relations/edges for other nodes in the graph.
 type FlowDraftEdges struct {
 	// Blocks holds the value of the blocks edge.
 	Blocks []*Block
+	// Flow holds the value of the flow edge.
+	Flow *Flow
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // BlocksOrErr returns the Blocks value or an error if the edge
@@ -46,12 +54,34 @@ func (e FlowDraftEdges) BlocksOrErr() ([]*Block, error) {
 	return nil, &NotLoadedError{edge: "blocks"}
 }
 
+// FlowOrErr returns the Flow value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FlowDraftEdges) FlowOrErr() (*Flow, error) {
+	if e.loadedTypes[1] {
+		if e.Flow == nil {
+			// The edge flow was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flow.Label}
+		}
+		return e.Flow, nil
+	}
+	return nil, &NotLoadedError{edge: "flow"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*FlowDraft) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
+		&[]byte{},         // end_param_definitions
+	}
+}
+
+// fkValues returns the types for scanning foreign-keys values from sql.Rows.
+func (*FlowDraft) fkValues() []interface{} {
+	return []interface{}{
+		&sql.NullInt64{}, // flow_draft
 	}
 }
 
@@ -78,12 +108,34 @@ func (fd *FlowDraft) assignValues(values ...interface{}) error {
 		fd.Description = new(string)
 		*fd.Description = value.String
 	}
+
+	if value, ok := values[2].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field end_param_definitions", values[2])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &fd.EndParamDefinitions); err != nil {
+			return fmt.Errorf("unmarshal field end_param_definitions: %v", err)
+		}
+	}
+	values = values[3:]
+	if len(values) == len(flowdraft.ForeignKeys) {
+		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field flow_draft", value)
+		} else if value.Valid {
+			fd.flow_draft = new(int)
+			*fd.flow_draft = int(value.Int64)
+		}
+	}
 	return nil
 }
 
 // QueryBlocks queries the blocks edge of the FlowDraft.
 func (fd *FlowDraft) QueryBlocks() *BlockQuery {
 	return (&FlowDraftClient{config: fd.config}).QueryBlocks(fd)
+}
+
+// QueryFlow queries the flow edge of the FlowDraft.
+func (fd *FlowDraft) QueryFlow() *FlowQuery {
+	return (&FlowDraftClient{config: fd.config}).QueryFlow(fd)
 }
 
 // Update returns a builder for updating this FlowDraft.
@@ -115,6 +167,8 @@ func (fd *FlowDraft) String() string {
 		builder.WriteString(", description=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", end_param_definitions=")
+	builder.WriteString(fmt.Sprintf("%v", fd.EndParamDefinitions))
 	builder.WriteByte(')')
 	return builder.String()
 }

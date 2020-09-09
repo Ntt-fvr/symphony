@@ -61,6 +61,18 @@ func (b *BlockQuery) collectField(ctx *graphql.OperationContext, field graphql.C
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (bi *BlockInstanceQuery) CollectFields(ctx context.Context, satisfies ...string) *BlockInstanceQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		bi = bi.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return bi
+}
+
+func (bi *BlockInstanceQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *BlockInstanceQuery {
+	return bi
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (clc *CheckListCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) *CheckListCategoryQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		clc = clc.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -421,6 +433,26 @@ func (fps *FloorPlanScaleQuery) collectField(ctx *graphql.OperationContext, fiel
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (f *FlowQuery) CollectFields(ctx context.Context, satisfies ...string) *FlowQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		f = f.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return f
+}
+
+func (f *FlowQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "blocks":
+			f = f.WithBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return f
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (fd *FlowDraftQuery) CollectFields(ctx context.Context, satisfies ...string) *FlowDraftQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		fd = fd.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
@@ -438,6 +470,38 @@ func (fd *FlowDraftQuery) collectField(ctx *graphql.OperationContext, field grap
 		}
 	}
 	return fd
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (fet *FlowExecutionTemplateQuery) CollectFields(ctx context.Context, satisfies ...string) *FlowExecutionTemplateQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		fet = fet.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return fet
+}
+
+func (fet *FlowExecutionTemplateQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowExecutionTemplateQuery {
+	for _, field := range graphql.CollectFields(ctx, field.Selections, satisfies) {
+		switch field.Name {
+		case "blocks":
+			fet = fet.WithBlocks(func(query *BlockQuery) {
+				query.collectField(ctx, field)
+			})
+		}
+	}
+	return fet
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (fi *FlowInstanceQuery) CollectFields(ctx context.Context, satisfies ...string) *FlowInstanceQuery {
+	if fc := graphql.GetFieldContext(ctx); fc != nil {
+		fi = fi.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
+	}
+	return fi
+}
+
+func (fi *FlowInstanceQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *FlowInstanceQuery {
+	return fi
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.

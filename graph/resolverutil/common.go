@@ -16,7 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
-	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/pkg/errors"
 )
 
@@ -29,23 +28,23 @@ type AddPropertyArgs struct {
 func NodePropertyValue(ctx context.Context, p *ent.Property, nodeType string) string {
 	var id *int
 	switch nodeType {
-	case hooks.NodeTypeLocation:
+	case enum.NodeTypeLocation.String():
 		if i, err := p.QueryLocationValue().OnlyID(ctx); err == nil {
 			id = &i
 		}
-	case hooks.NodeTypeEquipment:
+	case enum.NodeTypeEquipment.String():
 		if i, err := p.QueryEquipmentValue().OnlyID(ctx); err == nil {
 			id = &i
 		}
-	case hooks.NodeTypeService:
+	case enum.NodeTypeService.String():
 		if i, err := p.QueryServiceValue().OnlyID(ctx); err == nil {
 			id = &i
 		}
-	case hooks.NodeTypeWorkOrder:
+	case enum.NodeTypeWorkOrder.String():
 		if i, err := p.QueryWorkOrderValue().OnlyID(ctx); err == nil {
 			id = &i
 		}
-	case hooks.NodeTypeUser:
+	case enum.NodeTypeUser.String():
 		if i, err := p.QueryUserValue().OnlyID(ctx); err == nil {
 			id = &i
 		}

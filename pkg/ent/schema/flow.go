@@ -8,10 +8,13 @@ import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/edge"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/index"
 	"github.com/facebook/ent/schema/mixin"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 )
 
 // FlowMixin defines the flow mixin schema.
@@ -27,6 +30,8 @@ func (FlowMixin) Fields() []ent.Field {
 		field.String("description").
 			Optional().
 			Nillable(),
+		field.JSON("end_param_definitions", []*flowschema.VariableDefinition{}).
+			Optional(),
 	}
 }
 
@@ -36,6 +41,81 @@ func (FlowMixin) Edges() []ent.Edge {
 		edge.To("blocks", Block.Type).
 			Annotations(entgql.Bind()),
 	}
+}
+
+// Edges returns flow mixin hooks.
+func (FlowMixin) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.VerifyEndParamDefinitionsHook(),
+	}
+}
+
+// Flow defines the flow schema.
+type Flow struct {
+	schema
+}
+
+// Mixin returns flow mixins.
+func (Flow) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		FlowMixin{},
+	}
+}
+
+// Fields returns flow fields.
+func (Flow) Fields() []ent.Field {
+	return []ent.Field{
+		field.Enum("status").
+			NamedValues(
+				"Enabled", "ENABLED",
+				"Disabled", "DISABLED",
+			).Default("ENABLED"),
+	}
+}
+
+// Edges returns flow edges.
+func (Flow) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("draft", FlowDraft.Type),
+	}
+}
+
+// Indexes returns flow indexes.
+func (Flow) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("name").
+			Unique(),
+	}
+}
+
+// Policy returns flow policy.
+func (Flow) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
+}
+
+// FlowExecutionTemplate defines the flow execution template schema.
+type FlowExecutionTemplate struct {
+	schema
+}
+
+// Mixin returns flow execution template mixins.
+func (FlowExecutionTemplate) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		FlowMixin{},
+	}
+}
+
+// Policy returns flow execution template policy.
+func (FlowExecutionTemplate) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
 }
 
 // FlowDraft defines the flow draft schema.
@@ -50,8 +130,70 @@ func (FlowDraft) Mixin() []ent.Mixin {
 	}
 }
 
+// Edges returns flow draft edges.
+func (FlowDraft) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.From("flow", Flow.Type).
+			Unique().
+			Ref("draft"),
+	}
+}
+
 // Policy returns flow draft policy.
 func (FlowDraft) Policy() ent.Policy {
+	return authz.NewPolicy(
+		authz.WithMutationRules(
+			privacy.AlwaysAllowRule(),
+		),
+	)
+}
+
+// FlowInstance defines the flow instance schema.
+type FlowInstance struct {
+	schema
+}
+
+// Fields returns flow instance fields.
+func (FlowInstance) Fields() []ent.Field {
+	return []ent.Field{
+		field.Enum("status").
+			NamedValues(
+				"InProgress", "IN_PROGRESS",
+				"Failed", "FAILED",
+				"Completed", "COMPLETED",
+				"Cancelled", "CANCELLED",
+			).Default("IN_PROGRESS"),
+		field.JSON("output_params", []*flowschema.VariableValue{}).
+			Optional(),
+		field.String("incompletion_reason").
+			Optional(),
+	}
+}
+
+// Edges returns flow instance edges.
+func (FlowInstance) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("flow", Flow.Type).
+			Unique(),
+		edge.To("template", FlowExecutionTemplate.Type).
+			Unique(),
+		edge.To("blocks", BlockInstance.Type),
+		edge.From("parent_subflow_block", BlockInstance.Type).
+			Unique().
+			Ref("subflow_instance"),
+	}
+}
+
+// Hooks returns flow instance hooks.
+func (FlowInstance) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.DenyCreationOfInstanceOfDisabledFlowHook(),
+		hooks.CopyFlowToFlowExecutionTemplateHook(),
+	}
+}
+
+// Policy returns flow instance policy.
+func (FlowInstance) Policy() ent.Policy {
 	return authz.NewPolicy(
 		authz.WithMutationRules(
 			privacy.AlwaysAllowRule(),

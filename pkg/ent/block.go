@@ -7,13 +7,17 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // Block is the model entity for the Block schema.
@@ -29,11 +33,24 @@ type Block struct {
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
 	Type block.Type `json:"type,omitempty"`
+	// ActionType holds the value of the "action_type" field.
+	ActionType *flowschema.ActionTypeID `json:"action_type,omitempty"`
+	// TriggerType holds the value of the "trigger_type" field.
+	TriggerType *flowschema.TriggerTypeID `json:"trigger_type,omitempty"`
+	// StartParamDefinitions holds the value of the "start_param_definitions" field.
+	StartParamDefinitions []*flowschema.VariableDefinition `json:"start_param_definitions,omitempty"`
+	// InputParams holds the value of the "input_params" field.
+	InputParams []*flowschema.VariableExpression `json:"input_params,omitempty"`
+	// UIRepresentation holds the value of the "ui_representation" field.
+	UIRepresentation flowschema.BlockUIRepresentation `json:"ui_representation,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the BlockQuery when eager-loading is set.
-	Edges             BlockEdges `json:"edges"`
-	block_goto_block  *int
-	flow_draft_blocks *int
+	Edges                          BlockEdges `json:"edges"`
+	block_sub_flow                 *int
+	block_goto_block               *int
+	flow_blocks                    *int
+	flow_draft_blocks              *int
+	flow_execution_template_blocks *int
 }
 
 // BlockEdges holds the relations/edges for other nodes in the graph.
@@ -42,15 +59,23 @@ type BlockEdges struct {
 	PrevBlocks []*Block
 	// NextBlocks holds the value of the next_blocks edge.
 	NextBlocks []*Block
+	// Flow holds the value of the flow edge.
+	Flow *Flow
+	// FlowTemplate holds the value of the flow_template edge.
+	FlowTemplate *FlowExecutionTemplate
 	// FlowDraft holds the value of the flow_draft edge.
 	FlowDraft *FlowDraft
+	// SubFlow holds the value of the sub_flow edge.
+	SubFlow *Flow
 	// SourceBlock holds the value of the source_block edge.
 	SourceBlock []*Block
 	// GotoBlock holds the value of the goto_block edge.
 	GotoBlock *Block
+	// Instances holds the value of the instances edge.
+	Instances []*BlockInstance
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [9]bool
 }
 
 // PrevBlocksOrErr returns the PrevBlocks value or an error if the edge
@@ -71,10 +96,38 @@ func (e BlockEdges) NextBlocksOrErr() ([]*Block, error) {
 	return nil, &NotLoadedError{edge: "next_blocks"}
 }
 
+// FlowOrErr returns the Flow value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BlockEdges) FlowOrErr() (*Flow, error) {
+	if e.loadedTypes[2] {
+		if e.Flow == nil {
+			// The edge flow was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flow.Label}
+		}
+		return e.Flow, nil
+	}
+	return nil, &NotLoadedError{edge: "flow"}
+}
+
+// FlowTemplateOrErr returns the FlowTemplate value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BlockEdges) FlowTemplateOrErr() (*FlowExecutionTemplate, error) {
+	if e.loadedTypes[3] {
+		if e.FlowTemplate == nil {
+			// The edge flow_template was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flowexecutiontemplate.Label}
+		}
+		return e.FlowTemplate, nil
+	}
+	return nil, &NotLoadedError{edge: "flow_template"}
+}
+
 // FlowDraftOrErr returns the FlowDraft value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) FlowDraftOrErr() (*FlowDraft, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[4] {
 		if e.FlowDraft == nil {
 			// The edge flow_draft was loaded in eager-loading,
 			// but was not found.
@@ -85,10 +138,24 @@ func (e BlockEdges) FlowDraftOrErr() (*FlowDraft, error) {
 	return nil, &NotLoadedError{edge: "flow_draft"}
 }
 
+// SubFlowOrErr returns the SubFlow value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BlockEdges) SubFlowOrErr() (*Flow, error) {
+	if e.loadedTypes[5] {
+		if e.SubFlow == nil {
+			// The edge sub_flow was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flow.Label}
+		}
+		return e.SubFlow, nil
+	}
+	return nil, &NotLoadedError{edge: "sub_flow"}
+}
+
 // SourceBlockOrErr returns the SourceBlock value or an error if the edge
 // was not loaded in eager-loading.
 func (e BlockEdges) SourceBlockOrErr() ([]*Block, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[6] {
 		return e.SourceBlock, nil
 	}
 	return nil, &NotLoadedError{edge: "source_block"}
@@ -97,7 +164,7 @@ func (e BlockEdges) SourceBlockOrErr() ([]*Block, error) {
 // GotoBlockOrErr returns the GotoBlock value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) GotoBlockOrErr() (*Block, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[7] {
 		if e.GotoBlock == nil {
 			// The edge goto_block was loaded in eager-loading,
 			// but was not found.
@@ -108,6 +175,15 @@ func (e BlockEdges) GotoBlockOrErr() (*Block, error) {
 	return nil, &NotLoadedError{edge: "goto_block"}
 }
 
+// InstancesOrErr returns the Instances value or an error if the edge
+// was not loaded in eager-loading.
+func (e BlockEdges) InstancesOrErr() ([]*BlockInstance, error) {
+	if e.loadedTypes[8] {
+		return e.Instances, nil
+	}
+	return nil, &NotLoadedError{edge: "instances"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Block) scanValues() []interface{} {
 	return []interface{}{
@@ -116,14 +192,22 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // type
+		&sql.NullString{}, // action_type
+		&sql.NullString{}, // trigger_type
+		&[]byte{},         // start_param_definitions
+		&[]byte{},         // input_params
+		&[]byte{},         // ui_representation
 	}
 }
 
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*Block) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // block_sub_flow
 		&sql.NullInt64{}, // block_goto_block
+		&sql.NullInt64{}, // flow_blocks
 		&sql.NullInt64{}, // flow_draft_blocks
+		&sql.NullInt64{}, // flow_execution_template_blocks
 	}
 }
 
@@ -159,19 +243,73 @@ func (b *Block) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		b.Type = block.Type(value.String)
 	}
-	values = values[4:]
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field action_type", values[4])
+	} else if value.Valid {
+		b.ActionType = new(flowschema.ActionTypeID)
+		*b.ActionType = flowschema.ActionTypeID(value.String)
+	}
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field trigger_type", values[5])
+	} else if value.Valid {
+		b.TriggerType = new(flowschema.TriggerTypeID)
+		*b.TriggerType = flowschema.TriggerTypeID(value.String)
+	}
+
+	if value, ok := values[6].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field start_param_definitions", values[6])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &b.StartParamDefinitions); err != nil {
+			return fmt.Errorf("unmarshal field start_param_definitions: %v", err)
+		}
+	}
+
+	if value, ok := values[7].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field input_params", values[7])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &b.InputParams); err != nil {
+			return fmt.Errorf("unmarshal field input_params: %v", err)
+		}
+	}
+
+	if value, ok := values[8].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field ui_representation", values[8])
+	} else if value != nil && len(*value) > 0 {
+		if err := json.Unmarshal(*value, &b.UIRepresentation); err != nil {
+			return fmt.Errorf("unmarshal field ui_representation: %v", err)
+		}
+	}
+	values = values[9:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
+		} else if value.Valid {
+			b.block_sub_flow = new(int)
+			*b.block_sub_flow = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_goto_block", value)
 		} else if value.Valid {
 			b.block_goto_block = new(int)
 			*b.block_goto_block = int(value.Int64)
 		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
+		if value, ok := values[2].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field flow_blocks", value)
+		} else if value.Valid {
+			b.flow_blocks = new(int)
+			*b.flow_blocks = int(value.Int64)
+		}
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field flow_draft_blocks", value)
 		} else if value.Valid {
 			b.flow_draft_blocks = new(int)
 			*b.flow_draft_blocks = int(value.Int64)
+		}
+		if value, ok := values[4].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field flow_execution_template_blocks", value)
+		} else if value.Valid {
+			b.flow_execution_template_blocks = new(int)
+			*b.flow_execution_template_blocks = int(value.Int64)
 		}
 	}
 	return nil
@@ -187,9 +325,24 @@ func (b *Block) QueryNextBlocks() *BlockQuery {
 	return (&BlockClient{config: b.config}).QueryNextBlocks(b)
 }
 
+// QueryFlow queries the flow edge of the Block.
+func (b *Block) QueryFlow() *FlowQuery {
+	return (&BlockClient{config: b.config}).QueryFlow(b)
+}
+
+// QueryFlowTemplate queries the flow_template edge of the Block.
+func (b *Block) QueryFlowTemplate() *FlowExecutionTemplateQuery {
+	return (&BlockClient{config: b.config}).QueryFlowTemplate(b)
+}
+
 // QueryFlowDraft queries the flow_draft edge of the Block.
 func (b *Block) QueryFlowDraft() *FlowDraftQuery {
 	return (&BlockClient{config: b.config}).QueryFlowDraft(b)
+}
+
+// QuerySubFlow queries the sub_flow edge of the Block.
+func (b *Block) QuerySubFlow() *FlowQuery {
+	return (&BlockClient{config: b.config}).QuerySubFlow(b)
 }
 
 // QuerySourceBlock queries the source_block edge of the Block.
@@ -200,6 +353,11 @@ func (b *Block) QuerySourceBlock() *BlockQuery {
 // QueryGotoBlock queries the goto_block edge of the Block.
 func (b *Block) QueryGotoBlock() *BlockQuery {
 	return (&BlockClient{config: b.config}).QueryGotoBlock(b)
+}
+
+// QueryInstances queries the instances edge of the Block.
+func (b *Block) QueryInstances() *BlockInstanceQuery {
+	return (&BlockClient{config: b.config}).QueryInstances(b)
 }
 
 // Update returns a builder for updating this Block.
@@ -233,6 +391,20 @@ func (b *Block) String() string {
 	builder.WriteString(b.Name)
 	builder.WriteString(", type=")
 	builder.WriteString(fmt.Sprintf("%v", b.Type))
+	if v := b.ActionType; v != nil {
+		builder.WriteString(", action_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := b.TriggerType; v != nil {
+		builder.WriteString(", trigger_type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", start_param_definitions=")
+	builder.WriteString(fmt.Sprintf("%v", b.StartParamDefinitions))
+	builder.WriteString(", input_params=")
+	builder.WriteString(fmt.Sprintf("%v", b.InputParams))
+	builder.WriteString(", ui_representation=")
+	builder.WriteString(fmt.Sprintf("%v", b.UIRepresentation))
 	builder.WriteByte(')')
 	return builder.String()
 }

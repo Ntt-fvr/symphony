@@ -345,6 +345,20 @@ func DescriptionContainsFold(v string) predicate.FlowDraft {
 	})
 }
 
+// EndParamDefinitionsIsNil applies the IsNil predicate on the "end_param_definitions" field.
+func EndParamDefinitionsIsNil() predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldEndParamDefinitions)))
+	})
+}
+
+// EndParamDefinitionsNotNil applies the NotNil predicate on the "end_param_definitions" field.
+func EndParamDefinitionsNotNil() predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldEndParamDefinitions)))
+	})
+}
+
 // HasBlocks applies the HasEdge predicate on the "blocks" edge.
 func HasBlocks() predicate.FlowDraft {
 	return predicate.FlowDraft(func(s *sql.Selector) {
@@ -364,6 +378,34 @@ func HasBlocksWith(preds ...predicate.Block) predicate.FlowDraft {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(BlocksInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, BlocksTable, BlocksColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFlow applies the HasEdge predicate on the "flow" edge.
+func HasFlow() predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFlowWith applies the HasEdge predicate on the "flow" edge with a given conditions (other predicates).
+func HasFlowWith(preds ...predicate.Flow) predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

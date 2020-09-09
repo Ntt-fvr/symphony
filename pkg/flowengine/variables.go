@@ -1,0 +1,407 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package flowengine
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+)
+
+func parseIntVariable(ctx context.Context, value int, variableType enum.VariableType) (interface{}, error) {
+	client := ent.FromContext(ctx)
+	switch variableType {
+	case enum.VariableTypeInt, enum.VariableTypeDate:
+		return value, nil
+	case enum.VariableTypeWorkOrder:
+		return client.WorkOrder.Get(ctx, value)
+	case enum.VariableTypeWorkOrderType:
+		return client.WorkOrderType.Get(ctx, value)
+	case enum.VariableTypeLocation:
+		return client.Location.Get(ctx, value)
+	case enum.VariableTypeProject:
+		return client.Project.Get(ctx, value)
+	case enum.VariableTypeUser:
+		return client.User.Get(ctx, value)
+	default:
+		return nil, fmt.Errorf("type not found: %v", variableType)
+	}
+}
+
+func parseSingleVariable(ctx context.Context, value string, variableType enum.VariableType) (values []interface{}, err error) {
+	var (
+		stringVal string
+		intVal    int
+		parsedVal interface{}
+	)
+	byteVal := []byte(value)
+	switch variableType {
+	case enum.VariableTypeString:
+		if err = json.Unmarshal(byteVal, &stringVal); err != nil {
+			return
+		}
+		values = append(values, stringVal)
+	case enum.VariableTypeDate,
+		enum.VariableTypeInt,
+		enum.VariableTypeWorkOrder,
+		enum.VariableTypeWorkOrderType,
+		enum.VariableTypeLocation,
+		enum.VariableTypeProject,
+		enum.VariableTypeUser:
+		if err = json.Unmarshal(byteVal, &intVal); err != nil {
+			return
+		}
+		parsedVal, err = parseIntVariable(ctx, intVal, variableType)
+		if err != nil {
+			return
+		}
+		values = append(values, parsedVal)
+	default:
+		err = fmt.Errorf("type not found: %v", variableType)
+	}
+	return
+}
+
+func parseMultiVariable(ctx context.Context, value string, variableType enum.VariableType) (values []interface{}, err error) {
+	var (
+		stringVals []string
+		intVals    []int
+		parsedVal  interface{}
+	)
+	byteVal := []byte(value)
+	switch variableType {
+	case enum.VariableTypeString:
+		if err = json.Unmarshal(byteVal, &stringVals); err != nil {
+			return
+		}
+		for _, stringVal := range stringVals {
+			values = append(values, stringVal)
+		}
+	case enum.VariableTypeDate,
+		enum.VariableTypeInt,
+		enum.VariableTypeWorkOrder,
+		enum.VariableTypeWorkOrderType,
+		enum.VariableTypeLocation,
+		enum.VariableTypeProject,
+		enum.VariableTypeUser:
+		if err = json.Unmarshal(byteVal, &intVals); err != nil {
+			return
+		}
+		for _, intVal := range intVals {
+			parsedVal, err = parseIntVariable(ctx, intVal, variableType)
+			if err != nil {
+				return
+			}
+			values = append(values, parsedVal)
+		}
+	default:
+		err = fmt.Errorf("type not found: %v", variableType)
+	}
+	return
+}
+
+// ParseVariableDefinitionValue parses an a value by the definition
+func ParseVariableDefinitionValue(ctx context.Context, v *flowschema.VariableDefinition, value string) ([]interface{}, error) {
+	if v.MultipleValues {
+		return parseMultiVariable(ctx, value, v.Type)
+	}
+	return parseSingleVariable(ctx, value, v.Type)
+}
+
+// ValidateVariableDefinitionValueNotEmpty validates if variable that the value of variable definition is not empty
+func ValidateVariableDefinitionValueNotEmpty(ctx context.Context, v *flowschema.VariableDefinition, value string) error {
+	vars, err := ParseVariableDefinitionValue(ctx, v, value)
+	if err != nil {
+		return err
+	}
+	if v.MultipleValues && len(vars) == 0 {
+		return fmt.Errorf("multiple values value has to have at least one value when mandatory")
+	}
+	if v.Type == enum.VariableTypeString && vars[0].(string) == "" {
+		return fmt.Errorf("string value cannot be empty when mandatory")
+	}
+	return nil
+}
+
+func verifyVariableDefinition(ctx context.Context, v *flowschema.VariableDefinition) error {
+	if v.Key == "" {
+		return fmt.Errorf("key cannot be empty")
+	}
+	if v.Name() == "" {
+		return fmt.Errorf("name cannot be empty, key=%s", v.Key)
+	}
+	if err := enum.VariableTypeValidator(v.Type); err != nil {
+		return err
+	}
+	if v.Choices != nil && len(v.Choices) == 0 {
+		return fmt.Errorf("multiple choices of variable definition cannot be empty, key=%s", v.Key)
+	}
+	for _, choice := range v.Choices {
+		if _, err := parseSingleVariable(ctx, choice, v.Type); err != nil {
+			return fmt.Errorf("failed to parse variable choice by type: %w", err)
+		}
+	}
+	if v.DefaultValue != nil {
+		if _, err := ParseVariableDefinitionValue(ctx, v, *v.DefaultValue); err != nil {
+			return fmt.Errorf("failed to parse default variable value by type: %w", err)
+		}
+	}
+	return nil
+}
+
+// VerifyVariableDefinitions verifies if variable definitions of block are correct
+func VerifyVariableDefinitions(ctx context.Context, variableDefinitions []*flowschema.VariableDefinition) error {
+	keys := make(map[string]struct{}, len(variableDefinitions))
+	names := make(map[string]struct{}, len(variableDefinitions))
+	for _, variableDefinition := range variableDefinitions {
+		if err := verifyVariableDefinition(ctx, variableDefinition); err != nil {
+			return err
+		}
+		if _, ok := keys[variableDefinition.Key]; ok {
+			return fmt.Errorf("duplicate key name: %s", variableDefinition.Key)
+		}
+		keys[variableDefinition.Key] = struct{}{}
+		if _, ok := names[variableDefinition.Name()]; ok {
+			return fmt.Errorf("duplicate name: %s", variableDefinition.Name())
+		}
+		names[variableDefinition.Name()] = struct{}{}
+	}
+	return nil
+}
+
+func verifyVariableExpression(ctx context.Context, definition *flowschema.VariableDefinition, param *flowschema.VariableExpression) error {
+	if len(param.BlockVariables) != 0 {
+		return nil
+	}
+	values, err := ParseVariableDefinitionValue(ctx, definition, param.Expression)
+	if err != nil {
+		return fmt.Errorf("failed to validate variable type: %w", err)
+	}
+	if definition.Choices != nil {
+		var multipleChoiceValues []interface{}
+		for _, choice := range definition.Choices {
+			choiceValue, err := parseSingleVariable(ctx, choice, definition.Type)
+			if err != nil {
+				return fmt.Errorf("failed to validate variable type: %w", err)
+			}
+			multipleChoiceValues = append(multipleChoiceValues, choiceValue...)
+		}
+		checkInChoices := func(value interface{}) bool {
+			for _, choice := range multipleChoiceValues {
+				switch definition.Type {
+				case enum.VariableTypeString:
+					if value.(string) == choice.(string) {
+						return true
+					}
+				case enum.VariableTypeInt,
+					enum.VariableTypeDate:
+					if value.(int) == choice.(int) {
+						return true
+					}
+				case enum.VariableTypeWorkOrderType:
+					if value.(*ent.WorkOrderType).ID == choice.(*ent.WorkOrderType).ID {
+						return true
+					}
+				case enum.VariableTypeWorkOrder:
+					if value.(*ent.WorkOrder).ID == choice.(*ent.WorkOrder).ID {
+						return true
+					}
+				case enum.VariableTypeLocation:
+					if value.(*ent.Location).ID == choice.(*ent.Location).ID {
+						return true
+					}
+				case enum.VariableTypeProject:
+					if value.(*ent.Project).ID == choice.(*ent.Project).ID {
+						return true
+					}
+				case enum.VariableTypeUser:
+					if value.(*ent.User).ID == choice.(*ent.User).ID {
+						return true
+					}
+				}
+			}
+			return false
+		}
+		for _, value := range values {
+			if !checkInChoices(value) {
+				return fmt.Errorf("value not found in choices, key=%s", param.VariableDefinitionKey)
+			}
+		}
+	}
+	return nil
+}
+
+// VerifyVariableExpressions verifies if variable expressions of block are according to their definition
+func VerifyVariableExpressions(ctx context.Context, params []*flowschema.VariableExpression, definitions []*flowschema.VariableDefinition) error {
+	keys := make(map[string]struct{}, len(params))
+	for _, param := range params {
+		definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
+		if !ok {
+			return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+		}
+		if _, ok := keys[param.VariableDefinitionKey]; ok {
+			return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
+		}
+		keys[param.VariableDefinitionKey] = struct{}{}
+		if err := verifyVariableExpression(ctx, definition, param); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*flowschema.VariableDefinition, bool) {
+	for _, definition := range definitions {
+		if definition.Key == key {
+			return definition, true
+		}
+	}
+	return nil, false
+}
+
+// FindAllNestedVariables uses variable expressions to check nested definitions and returns the full list of available definitions
+func FindAllNestedVariables(
+	ctx context.Context,
+	definitions []*flowschema.VariableDefinition,
+	params []*flowschema.VariableExpression,
+	usages []enum.VariableUsage) ([]*flowschema.VariableDefinition, error) {
+	var allDefinitions []*flowschema.VariableDefinition
+	for _, definition := range definitions {
+		if definition.Usage.In(usages...) {
+			allDefinitions = append(allDefinitions, definition)
+		}
+		if definition.NestedVariables == nil {
+			continue
+		}
+		for _, param := range params {
+			if param.VariableDefinitionKey == definition.Key && len(param.BlockVariables) == 0 {
+				values, err := ParseVariableDefinitionValue(ctx, definition, param.Expression)
+				if err != nil {
+					return nil, err
+				}
+				nestedDefinitions, err := definition.NestedVariables(ctx, values)
+				if err != nil {
+					return nil, err
+				}
+				allNestedDefinitions, err := FindAllNestedVariables(ctx, nestedDefinitions, params, usages)
+				if err != nil {
+					return nil, err
+				}
+				allDefinitions = append(allDefinitions, allNestedDefinitions...)
+			}
+		}
+	}
+	return allDefinitions, nil
+}
+
+// GetInputVariableDefinitions returns all input variable definitions of specific block
+func GetInputVariableDefinitions(ctx context.Context, b *ent.Block, triggerFactory triggers.Factory, actionFactory actions.Factory) ([]*flowschema.VariableDefinition, error) {
+	var variableDefinitions []*flowschema.VariableDefinition
+	switch b.Type {
+	case block.TypeStart:
+		variableDefinitions = append(variableDefinitions, b.StartParamDefinitions...)
+	case block.TypeEnd:
+		flowDraft, err := b.QueryFlowDraft().
+			Only(ctx)
+		switch {
+		case err != nil && !ent.IsNotFound(err):
+			return nil, err
+		case err != nil && ent.IsNotFound(err):
+			flow, err := b.QueryFlow().Only(ctx)
+			if err != nil {
+				return nil, err
+			}
+			variableDefinitions = append(variableDefinitions, flow.EndParamDefinitions...)
+		case err == nil:
+			variableDefinitions = append(variableDefinitions, flowDraft.EndParamDefinitions...)
+		}
+	case block.TypeTrigger:
+		triggerType, err := triggerFactory.GetType(*b.TriggerType)
+		if err != nil {
+			return nil, err
+		}
+		allDefinitions, err := FindAllNestedVariables(ctx,
+			triggerType.Variables(),
+			b.InputParams,
+			[]enum.VariableUsage{enum.VariableUsageInput, enum.VariableUsageInputAndOutput})
+		if err != nil {
+			return nil, err
+		}
+		variableDefinitions = append(variableDefinitions, allDefinitions...)
+	case block.TypeAction:
+		actionType, err := actionFactory.GetType(*b.ActionType)
+		if err != nil {
+			return nil, err
+		}
+		allDefinitions, err := FindAllNestedVariables(ctx,
+			actionType.Variables(),
+			b.InputParams,
+			[]enum.VariableUsage{enum.VariableUsageInput, enum.VariableUsageInputAndOutput})
+		if err != nil {
+			return nil, err
+		}
+		variableDefinitions = append(variableDefinitions, allDefinitions...)
+	case block.TypeSubFlow:
+		subFlowStart, err := b.QuerySubFlow().
+			QueryBlocks().
+			Where(block.TypeEQ(block.TypeStart)).
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find single start for subflow: %w", err)
+		}
+		variableDefinitions = append(variableDefinitions, subFlowStart.StartParamDefinitions...)
+	}
+	return variableDefinitions, nil
+}
+
+// GetOutputVariableDefinitions returns all output variable definitions of specific block
+func GetOutputVariableDefinitions(ctx context.Context, b *ent.Block, triggerFactory triggers.Factory, actionFactory actions.Factory) ([]*flowschema.VariableDefinition, error) {
+	var variableDefinitions []*flowschema.VariableDefinition
+	switch b.Type {
+	case block.TypeStart:
+		variableDefinitions = append(variableDefinitions, b.StartParamDefinitions...)
+	case block.TypeTrigger:
+		triggerType, err := triggerFactory.GetType(*b.TriggerType)
+		if err != nil {
+			return nil, err
+		}
+		allDefinitions, err := FindAllNestedVariables(ctx,
+			triggerType.Variables(),
+			b.InputParams,
+			[]enum.VariableUsage{enum.VariableUsageOutput, enum.VariableUsageInputAndOutput})
+		if err != nil {
+			return nil, err
+		}
+		variableDefinitions = append(variableDefinitions, allDefinitions...)
+	case block.TypeAction:
+		actionType, err := actionFactory.GetType(*b.ActionType)
+		if err != nil {
+			return nil, err
+		}
+		allDefinitions, err := FindAllNestedVariables(ctx,
+			actionType.Variables(),
+			b.InputParams,
+			[]enum.VariableUsage{enum.VariableUsageOutput, enum.VariableUsageInputAndOutput})
+		if err != nil {
+			return nil, err
+		}
+		variableDefinitions = append(variableDefinitions, allDefinitions...)
+	case block.TypeSubFlow:
+		subFlow, err := b.QuerySubFlow().
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query subflow: %w", err)
+		}
+		variableDefinitions = append(variableDefinitions, subFlow.EndParamDefinitions...)
+	}
+	return variableDefinitions, nil
+}

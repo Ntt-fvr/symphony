@@ -13,17 +13,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-)
-
-const (
-	NodeTypeLocation  = "location"
-	NodeTypeEquipment = "equipment"
-	NodeTypeService   = "service"
-	NodeTypeWorkOrder = "work_order"
-	NodeTypeUser      = "user"
 )
 
 // errWorkOrderTemplateNotFound error is returned when work order template not found.
@@ -38,15 +31,15 @@ func isEmptyNodeProp(ctx context.Context, property *ent.Property, nodeType strin
 		return true, nil
 	}
 	switch nodeType {
-	case NodeTypeLocation:
+	case enum.NodeTypeLocation.String():
 		exists, err = property.QueryLocationValue().Exist(ctx)
-	case NodeTypeEquipment:
+	case enum.NodeTypeEquipment.String():
 		exists, err = property.QueryEquipmentValue().Exist(ctx)
-	case NodeTypeService:
+	case enum.NodeTypeService.String():
 		exists, err = property.QueryServiceValue().Exist(ctx)
-	case NodeTypeWorkOrder:
+	case enum.NodeTypeWorkOrder.String():
 		exists, err = property.QueryWorkOrderValue().Exist(ctx)
-	case NodeTypeUser:
+	case enum.NodeTypeUser.String():
 		exists, err = property.QueryUserValue().Exist(ctx)
 	default:
 		return false, fmt.Errorf("unknown node type: %s", nodeType)

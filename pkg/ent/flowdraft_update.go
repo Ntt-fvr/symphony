@@ -14,8 +14,10 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // FlowDraftUpdate is the builder for updating FlowDraft entities.
@@ -58,6 +60,18 @@ func (fdu *FlowDraftUpdate) ClearDescription() *FlowDraftUpdate {
 	return fdu
 }
 
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (fdu *FlowDraftUpdate) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) *FlowDraftUpdate {
+	fdu.mutation.SetEndParamDefinitions(fd)
+	return fdu
+}
+
+// ClearEndParamDefinitions clears the value of end_param_definitions.
+func (fdu *FlowDraftUpdate) ClearEndParamDefinitions() *FlowDraftUpdate {
+	fdu.mutation.ClearEndParamDefinitions()
+	return fdu
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fdu *FlowDraftUpdate) AddBlockIDs(ids ...int) *FlowDraftUpdate {
 	fdu.mutation.AddBlockIDs(ids...)
@@ -71,6 +85,25 @@ func (fdu *FlowDraftUpdate) AddBlocks(b ...*Block) *FlowDraftUpdate {
 		ids[i] = b[i].ID
 	}
 	return fdu.AddBlockIDs(ids...)
+}
+
+// SetFlowID sets the flow edge to Flow by id.
+func (fdu *FlowDraftUpdate) SetFlowID(id int) *FlowDraftUpdate {
+	fdu.mutation.SetFlowID(id)
+	return fdu
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (fdu *FlowDraftUpdate) SetNillableFlowID(id *int) *FlowDraftUpdate {
+	if id != nil {
+		fdu = fdu.SetFlowID(*id)
+	}
+	return fdu
+}
+
+// SetFlow sets the flow edge to Flow.
+func (fdu *FlowDraftUpdate) SetFlow(f *Flow) *FlowDraftUpdate {
+	return fdu.SetFlowID(f.ID)
 }
 
 // Mutation returns the FlowDraftMutation object of the builder.
@@ -97,6 +130,12 @@ func (fdu *FlowDraftUpdate) RemoveBlocks(b ...*Block) *FlowDraftUpdate {
 		ids[i] = b[i].ID
 	}
 	return fdu.RemoveBlockIDs(ids...)
+}
+
+// ClearFlow clears the "flow" edge to type Flow.
+func (fdu *FlowDraftUpdate) ClearFlow() *FlowDraftUpdate {
+	fdu.mutation.ClearFlow()
+	return fdu
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -194,6 +233,19 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: flowdraft.FieldDescription,
 		})
 	}
+	if value, ok := fdu.mutation.EndParamDefinitions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowdraft.FieldEndParamDefinitions,
+		})
+	}
+	if fdu.mutation.EndParamDefinitionsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: flowdraft.FieldEndParamDefinitions,
+		})
+	}
 	if fdu.mutation.BlocksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -248,6 +300,41 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fdu.mutation.FlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   flowdraft.FlowTable,
+			Columns: []string{flowdraft.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fdu.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   flowdraft.FlowTable,
+			Columns: []string{flowdraft.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fdu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{flowdraft.Label}
@@ -292,6 +379,18 @@ func (fduo *FlowDraftUpdateOne) ClearDescription() *FlowDraftUpdateOne {
 	return fduo
 }
 
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (fduo *FlowDraftUpdateOne) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) *FlowDraftUpdateOne {
+	fduo.mutation.SetEndParamDefinitions(fd)
+	return fduo
+}
+
+// ClearEndParamDefinitions clears the value of end_param_definitions.
+func (fduo *FlowDraftUpdateOne) ClearEndParamDefinitions() *FlowDraftUpdateOne {
+	fduo.mutation.ClearEndParamDefinitions()
+	return fduo
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fduo *FlowDraftUpdateOne) AddBlockIDs(ids ...int) *FlowDraftUpdateOne {
 	fduo.mutation.AddBlockIDs(ids...)
@@ -305,6 +404,25 @@ func (fduo *FlowDraftUpdateOne) AddBlocks(b ...*Block) *FlowDraftUpdateOne {
 		ids[i] = b[i].ID
 	}
 	return fduo.AddBlockIDs(ids...)
+}
+
+// SetFlowID sets the flow edge to Flow by id.
+func (fduo *FlowDraftUpdateOne) SetFlowID(id int) *FlowDraftUpdateOne {
+	fduo.mutation.SetFlowID(id)
+	return fduo
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (fduo *FlowDraftUpdateOne) SetNillableFlowID(id *int) *FlowDraftUpdateOne {
+	if id != nil {
+		fduo = fduo.SetFlowID(*id)
+	}
+	return fduo
+}
+
+// SetFlow sets the flow edge to Flow.
+func (fduo *FlowDraftUpdateOne) SetFlow(f *Flow) *FlowDraftUpdateOne {
+	return fduo.SetFlowID(f.ID)
 }
 
 // Mutation returns the FlowDraftMutation object of the builder.
@@ -331,6 +449,12 @@ func (fduo *FlowDraftUpdateOne) RemoveBlocks(b ...*Block) *FlowDraftUpdateOne {
 		ids[i] = b[i].ID
 	}
 	return fduo.RemoveBlockIDs(ids...)
+}
+
+// ClearFlow clears the "flow" edge to type Flow.
+func (fduo *FlowDraftUpdateOne) ClearFlow() *FlowDraftUpdateOne {
+	fduo.mutation.ClearFlow()
+	return fduo
 }
 
 // Save executes the query and returns the updated entity.
@@ -426,6 +550,19 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err
 			Column: flowdraft.FieldDescription,
 		})
 	}
+	if value, ok := fduo.mutation.EndParamDefinitions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowdraft.FieldEndParamDefinitions,
+		})
+	}
+	if fduo.mutation.EndParamDefinitionsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: flowdraft.FieldEndParamDefinitions,
+		})
+	}
 	if fduo.mutation.BlocksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -472,6 +609,41 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: block.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fduo.mutation.FlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   flowdraft.FlowTable,
+			Columns: []string{flowdraft.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fduo.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   flowdraft.FlowTable,
+			Columns: []string{flowdraft.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}

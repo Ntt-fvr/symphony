@@ -70,9 +70,17 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "GO_TO"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION"}},
+		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
+		{Name: "trigger_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
+		{Name: "start_param_definitions", Type: field.TypeJSON, Nullable: true},
+		{Name: "input_params", Type: field.TypeJSON, Nullable: true},
+		{Name: "ui_representation", Type: field.TypeJSON, Nullable: true},
+		{Name: "block_sub_flow", Type: field.TypeInt, Nullable: true},
 		{Name: "block_goto_block", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_blocks", Type: field.TypeInt, Nullable: true},
 		{Name: "flow_draft_blocks", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_execution_template_blocks", Type: field.TypeInt, Nullable: true},
 	}
 	// BlocksTable holds the schema information for the "blocks" table.
 	BlocksTable = &schema.Table{
@@ -81,17 +89,38 @@ var (
 		PrimaryKey: []*schema.Column{BlocksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:  "blocks_flows_sub_flow",
+				Columns: []*schema.Column{BlocksColumns[10]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[5]},
+				Columns: []*schema.Column{BlocksColumns[11]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
+				Symbol:  "blocks_flows_blocks",
+				Columns: []*schema.Column{BlocksColumns[12]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[6]},
+				Columns: []*schema.Column{BlocksColumns[13]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "blocks_flow_execution_templates_blocks",
+				Columns: []*schema.Column{BlocksColumns[14]},
+
+				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -99,7 +128,52 @@ var (
 			{
 				Name:    "block_name_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[6]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[13]},
+			},
+			{
+				Name:    "block_name_flow_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[12]},
+			},
+			{
+				Name:    "block_name_flow_execution_template_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[14]},
+			},
+		},
+	}
+	// BlockInstancesColumns holds the columns for the "block_instances" table.
+	BlockInstancesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "FAILED", "COMPLETED", "WAITING"}, Default: "PENDING"},
+		{Name: "inputs", Type: field.TypeJSON, Nullable: true},
+		{Name: "outputs", Type: field.TypeJSON, Nullable: true},
+		{Name: "failure_reason", Type: field.TypeString, Nullable: true},
+		{Name: "block_instance_counter", Type: field.TypeInt, Nullable: true},
+		{Name: "block_instance_block", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_instance_blocks", Type: field.TypeInt, Nullable: true},
+	}
+	// BlockInstancesTable holds the schema information for the "block_instances" table.
+	BlockInstancesTable = &schema.Table{
+		Name:       "block_instances",
+		Columns:    BlockInstancesColumns,
+		PrimaryKey: []*schema.Column{BlockInstancesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "block_instances_blocks_block",
+				Columns: []*schema.Column{BlockInstancesColumns[8]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "block_instances_flow_instances_blocks",
+				Columns: []*schema.Column{BlockInstancesColumns[9]},
+
+				RefColumns: []*schema.Column{FlowInstancesColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -700,18 +774,105 @@ var (
 		PrimaryKey:  []*schema.Column{FloorPlanScalesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// FlowsColumns holds the columns for the "flows" table.
+	FlowsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "ENABLED"},
+	}
+	// FlowsTable holds the schema information for the "flows" table.
+	FlowsTable = &schema.Table{
+		Name:        "flows",
+		Columns:     FlowsColumns,
+		PrimaryKey:  []*schema.Column{FlowsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+		Indexes: []*schema.Index{
+			{
+				Name:    "flow_name",
+				Unique:  true,
+				Columns: []*schema.Column{FlowsColumns[1]},
+			},
+		},
+	}
 	// FlowDraftsColumns holds the columns for the "flow_drafts" table.
 	FlowDraftsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
+		{Name: "flow_draft", Type: field.TypeInt, Nullable: true},
 	}
 	// FlowDraftsTable holds the schema information for the "flow_drafts" table.
 	FlowDraftsTable = &schema.Table{
-		Name:        "flow_drafts",
-		Columns:     FlowDraftsColumns,
-		PrimaryKey:  []*schema.Column{FlowDraftsColumns[0]},
+		Name:       "flow_drafts",
+		Columns:    FlowDraftsColumns,
+		PrimaryKey: []*schema.Column{FlowDraftsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "flow_drafts_flows_draft",
+				Columns: []*schema.Column{FlowDraftsColumns[4]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// FlowExecutionTemplatesColumns holds the columns for the "flow_execution_templates" table.
+	FlowExecutionTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
+	}
+	// FlowExecutionTemplatesTable holds the schema information for the "flow_execution_templates" table.
+	FlowExecutionTemplatesTable = &schema.Table{
+		Name:        "flow_execution_templates",
+		Columns:     FlowExecutionTemplatesColumns,
+		PrimaryKey:  []*schema.Column{FlowExecutionTemplatesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// FlowInstancesColumns holds the columns for the "flow_instances" table.
+	FlowInstancesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "FAILED", "COMPLETED", "CANCELLED"}, Default: "IN_PROGRESS"},
+		{Name: "output_params", Type: field.TypeJSON, Nullable: true},
+		{Name: "incompletion_reason", Type: field.TypeString, Nullable: true},
+		{Name: "block_instance_subflow_instance", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "flow_instance_flow", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_instance_template", Type: field.TypeInt, Nullable: true},
+	}
+	// FlowInstancesTable holds the schema information for the "flow_instances" table.
+	FlowInstancesTable = &schema.Table{
+		Name:       "flow_instances",
+		Columns:    FlowInstancesColumns,
+		PrimaryKey: []*schema.Column{FlowInstancesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "flow_instances_block_instances_subflow_instance",
+				Columns: []*schema.Column{FlowInstancesColumns[6]},
+
+				RefColumns: []*schema.Column{BlockInstancesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "flow_instances_flows_flow",
+				Columns: []*schema.Column{FlowInstancesColumns[7]},
+
+				RefColumns: []*schema.Column{FlowsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "flow_instances_flow_execution_templates_template",
+				Columns: []*schema.Column{FlowInstancesColumns[8]},
+
+				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// HyperlinksColumns holds the columns for the "hyperlinks" table.
 	HyperlinksColumns = []*schema.Column{
@@ -2049,6 +2210,7 @@ var (
 		ActionsRulesTable,
 		ActivitiesTable,
 		BlocksTable,
+		BlockInstancesTable,
 		CheckListCategoriesTable,
 		CheckListCategoryDefinitionsTable,
 		CheckListItemsTable,
@@ -2068,7 +2230,10 @@ var (
 		FloorPlansTable,
 		FloorPlanReferencePointsTable,
 		FloorPlanScalesTable,
+		FlowsTable,
 		FlowDraftsTable,
+		FlowExecutionTemplatesTable,
+		FlowInstancesTable,
 		HyperlinksTable,
 		LinksTable,
 		LocationsTable,
@@ -2109,8 +2274,13 @@ var (
 func init() {
 	ActivitiesTable.ForeignKeys[0].RefTable = UsersTable
 	ActivitiesTable.ForeignKeys[1].RefTable = WorkOrdersTable
-	BlocksTable.ForeignKeys[0].RefTable = BlocksTable
-	BlocksTable.ForeignKeys[1].RefTable = FlowDraftsTable
+	BlocksTable.ForeignKeys[0].RefTable = FlowsTable
+	BlocksTable.ForeignKeys[1].RefTable = BlocksTable
+	BlocksTable.ForeignKeys[2].RefTable = FlowsTable
+	BlocksTable.ForeignKeys[3].RefTable = FlowDraftsTable
+	BlocksTable.ForeignKeys[4].RefTable = FlowExecutionTemplatesTable
+	BlockInstancesTable.ForeignKeys[0].RefTable = BlocksTable
+	BlockInstancesTable.ForeignKeys[1].RefTable = FlowInstancesTable
 	CheckListCategoriesTable.ForeignKeys[0].RefTable = WorkOrdersTable
 	CheckListCategoryDefinitionsTable.ForeignKeys[0].RefTable = WorkOrderTemplatesTable
 	CheckListCategoryDefinitionsTable.ForeignKeys[1].RefTable = WorkOrderTypesTable
@@ -2144,6 +2314,10 @@ func init() {
 	FloorPlansTable.ForeignKeys[0].RefTable = LocationsTable
 	FloorPlansTable.ForeignKeys[1].RefTable = FloorPlanReferencePointsTable
 	FloorPlansTable.ForeignKeys[2].RefTable = FloorPlanScalesTable
+	FlowDraftsTable.ForeignKeys[0].RefTable = FlowsTable
+	FlowInstancesTable.ForeignKeys[0].RefTable = BlockInstancesTable
+	FlowInstancesTable.ForeignKeys[1].RefTable = FlowsTable
+	FlowInstancesTable.ForeignKeys[2].RefTable = FlowExecutionTemplatesTable
 	HyperlinksTable.ForeignKeys[0].RefTable = EquipmentTable
 	HyperlinksTable.ForeignKeys[1].RefTable = LocationsTable
 	HyperlinksTable.ForeignKeys[2].RefTable = WorkOrdersTable

@@ -15,7 +15,11 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // BlockCreate is the builder for creating a Block entity.
@@ -65,6 +69,60 @@ func (bc *BlockCreate) SetType(b block.Type) *BlockCreate {
 	return bc
 }
 
+// SetActionType sets the action_type field.
+func (bc *BlockCreate) SetActionType(fti flowschema.ActionTypeID) *BlockCreate {
+	bc.mutation.SetActionType(fti)
+	return bc
+}
+
+// SetNillableActionType sets the action_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableActionType(fti *flowschema.ActionTypeID) *BlockCreate {
+	if fti != nil {
+		bc.SetActionType(*fti)
+	}
+	return bc
+}
+
+// SetTriggerType sets the trigger_type field.
+func (bc *BlockCreate) SetTriggerType(fti flowschema.TriggerTypeID) *BlockCreate {
+	bc.mutation.SetTriggerType(fti)
+	return bc
+}
+
+// SetNillableTriggerType sets the trigger_type field if the given value is not nil.
+func (bc *BlockCreate) SetNillableTriggerType(fti *flowschema.TriggerTypeID) *BlockCreate {
+	if fti != nil {
+		bc.SetTriggerType(*fti)
+	}
+	return bc
+}
+
+// SetStartParamDefinitions sets the start_param_definitions field.
+func (bc *BlockCreate) SetStartParamDefinitions(fd []*flowschema.VariableDefinition) *BlockCreate {
+	bc.mutation.SetStartParamDefinitions(fd)
+	return bc
+}
+
+// SetInputParams sets the input_params field.
+func (bc *BlockCreate) SetInputParams(fe []*flowschema.VariableExpression) *BlockCreate {
+	bc.mutation.SetInputParams(fe)
+	return bc
+}
+
+// SetUIRepresentation sets the ui_representation field.
+func (bc *BlockCreate) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockCreate {
+	bc.mutation.SetUIRepresentation(fur)
+	return bc
+}
+
+// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
+func (bc *BlockCreate) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockCreate {
+	if fur != nil {
+		bc.SetUIRepresentation(*fur)
+	}
+	return bc
+}
+
 // AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
 func (bc *BlockCreate) AddPrevBlockIDs(ids ...int) *BlockCreate {
 	bc.mutation.AddPrevBlockIDs(ids...)
@@ -95,15 +153,80 @@ func (bc *BlockCreate) AddNextBlocks(b ...*Block) *BlockCreate {
 	return bc.AddNextBlockIDs(ids...)
 }
 
+// SetFlowID sets the flow edge to Flow by id.
+func (bc *BlockCreate) SetFlowID(id int) *BlockCreate {
+	bc.mutation.SetFlowID(id)
+	return bc
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (bc *BlockCreate) SetNillableFlowID(id *int) *BlockCreate {
+	if id != nil {
+		bc = bc.SetFlowID(*id)
+	}
+	return bc
+}
+
+// SetFlow sets the flow edge to Flow.
+func (bc *BlockCreate) SetFlow(f *Flow) *BlockCreate {
+	return bc.SetFlowID(f.ID)
+}
+
+// SetFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id.
+func (bc *BlockCreate) SetFlowTemplateID(id int) *BlockCreate {
+	bc.mutation.SetFlowTemplateID(id)
+	return bc
+}
+
+// SetNillableFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id if the given value is not nil.
+func (bc *BlockCreate) SetNillableFlowTemplateID(id *int) *BlockCreate {
+	if id != nil {
+		bc = bc.SetFlowTemplateID(*id)
+	}
+	return bc
+}
+
+// SetFlowTemplate sets the flow_template edge to FlowExecutionTemplate.
+func (bc *BlockCreate) SetFlowTemplate(f *FlowExecutionTemplate) *BlockCreate {
+	return bc.SetFlowTemplateID(f.ID)
+}
+
 // SetFlowDraftID sets the flow_draft edge to FlowDraft by id.
 func (bc *BlockCreate) SetFlowDraftID(id int) *BlockCreate {
 	bc.mutation.SetFlowDraftID(id)
 	return bc
 }
 
+// SetNillableFlowDraftID sets the flow_draft edge to FlowDraft by id if the given value is not nil.
+func (bc *BlockCreate) SetNillableFlowDraftID(id *int) *BlockCreate {
+	if id != nil {
+		bc = bc.SetFlowDraftID(*id)
+	}
+	return bc
+}
+
 // SetFlowDraft sets the flow_draft edge to FlowDraft.
 func (bc *BlockCreate) SetFlowDraft(f *FlowDraft) *BlockCreate {
 	return bc.SetFlowDraftID(f.ID)
+}
+
+// SetSubFlowID sets the sub_flow edge to Flow by id.
+func (bc *BlockCreate) SetSubFlowID(id int) *BlockCreate {
+	bc.mutation.SetSubFlowID(id)
+	return bc
+}
+
+// SetNillableSubFlowID sets the sub_flow edge to Flow by id if the given value is not nil.
+func (bc *BlockCreate) SetNillableSubFlowID(id *int) *BlockCreate {
+	if id != nil {
+		bc = bc.SetSubFlowID(*id)
+	}
+	return bc
+}
+
+// SetSubFlow sets the sub_flow edge to Flow.
+func (bc *BlockCreate) SetSubFlow(f *Flow) *BlockCreate {
+	return bc.SetSubFlowID(f.ID)
 }
 
 // AddSourceBlockIDs adds the source_block edge to Block by ids.
@@ -138,6 +261,21 @@ func (bc *BlockCreate) SetNillableGotoBlockID(id *int) *BlockCreate {
 // SetGotoBlock sets the goto_block edge to Block.
 func (bc *BlockCreate) SetGotoBlock(b *Block) *BlockCreate {
 	return bc.SetGotoBlockID(b.ID)
+}
+
+// AddInstanceIDs adds the instances edge to BlockInstance by ids.
+func (bc *BlockCreate) AddInstanceIDs(ids ...int) *BlockCreate {
+	bc.mutation.AddInstanceIDs(ids...)
+	return bc
+}
+
+// AddInstances adds the instances edges to BlockInstance.
+func (bc *BlockCreate) AddInstances(b ...*BlockInstance) *BlockCreate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return bc.AddInstanceIDs(ids...)
 }
 
 // Mutation returns the BlockMutation object of the builder.
@@ -211,8 +349,15 @@ func (bc *BlockCreate) preSave() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
 		}
 	}
-	if _, ok := bc.mutation.FlowDraftID(); !ok {
-		return &ValidationError{Name: "flow_draft", err: errors.New("ent: missing required edge \"flow_draft\"")}
+	if v, ok := bc.mutation.ActionType(); ok {
+		if err := block.ActionTypeValidator(v); err != nil {
+			return &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
+		}
+	}
+	if v, ok := bc.mutation.TriggerType(); ok {
+		if err := block.TriggerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
+		}
 	}
 	return nil
 }
@@ -273,6 +418,46 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		})
 		b.Type = value
 	}
+	if value, ok := bc.mutation.ActionType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldActionType,
+		})
+		b.ActionType = &value
+	}
+	if value, ok := bc.mutation.TriggerType(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTriggerType,
+		})
+		b.TriggerType = &value
+	}
+	if value, ok := bc.mutation.StartParamDefinitions(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldStartParamDefinitions,
+		})
+		b.StartParamDefinitions = value
+	}
+	if value, ok := bc.mutation.InputParams(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldInputParams,
+		})
+		b.InputParams = value
+	}
+	if value, ok := bc.mutation.UIRepresentation(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldUIRepresentation,
+		})
+		b.UIRepresentation = value
+	}
 	if nodes := bc.mutation.PrevBlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -311,6 +496,44 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := bc.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTable,
+			Columns: []string{block.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.FlowTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTemplateTable,
+			Columns: []string{block.FlowTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowexecutiontemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := bc.mutation.FlowDraftIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -322,6 +545,25 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.SubFlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   block.SubFlowTable,
+			Columns: []string{block.SubFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}
@@ -360,6 +602,25 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: block.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := bc.mutation.InstancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
 				},
 			},
 		}

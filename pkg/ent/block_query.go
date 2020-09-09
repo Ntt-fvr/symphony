@@ -17,7 +17,10 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
 
@@ -30,12 +33,16 @@ type BlockQuery struct {
 	unique     []string
 	predicates []predicate.Block
 	// eager-loading edges.
-	withPrevBlocks  *BlockQuery
-	withNextBlocks  *BlockQuery
-	withFlowDraft   *FlowDraftQuery
-	withSourceBlock *BlockQuery
-	withGotoBlock   *BlockQuery
-	withFKs         bool
+	withPrevBlocks   *BlockQuery
+	withNextBlocks   *BlockQuery
+	withFlow         *FlowQuery
+	withFlowTemplate *FlowExecutionTemplateQuery
+	withFlowDraft    *FlowDraftQuery
+	withSubFlow      *FlowQuery
+	withSourceBlock  *BlockQuery
+	withGotoBlock    *BlockQuery
+	withInstances    *BlockInstanceQuery
+	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -101,6 +108,42 @@ func (bq *BlockQuery) QueryNextBlocks() *BlockQuery {
 	return query
 }
 
+// QueryFlow chains the current query on the flow edge.
+func (bq *BlockQuery) QueryFlow() *FlowQuery {
+	query := &FlowQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTable, block.FlowColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFlowTemplate chains the current query on the flow_template edge.
+func (bq *BlockQuery) QueryFlowTemplate() *FlowExecutionTemplateQuery {
+	query := &FlowExecutionTemplateQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.To(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTemplateTable, block.FlowTemplateColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryFlowDraft chains the current query on the flow_draft edge.
 func (bq *BlockQuery) QueryFlowDraft() *FlowDraftQuery {
 	query := &FlowDraftQuery{config: bq.config}
@@ -112,6 +155,24 @@ func (bq *BlockQuery) QueryFlowDraft() *FlowDraftQuery {
 			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowDraftTable, block.FlowDraftColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySubFlow chains the current query on the sub_flow edge.
+func (bq *BlockQuery) QuerySubFlow() *FlowQuery {
+	query := &FlowQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, block.SubFlowTable, block.SubFlowColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -148,6 +209,24 @@ func (bq *BlockQuery) QueryGotoBlock() *BlockQuery {
 			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, block.GotoBlockTable, block.GotoBlockColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInstances chains the current query on the instances edge.
+func (bq *BlockQuery) QueryInstances() *BlockInstanceQuery {
+	query := &BlockInstanceQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, block.InstancesTable, block.InstancesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -356,6 +435,28 @@ func (bq *BlockQuery) WithNextBlocks(opts ...func(*BlockQuery)) *BlockQuery {
 	return bq
 }
 
+//  WithFlow tells the query-builder to eager-loads the nodes that are connected to
+// the "flow" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithFlow(opts ...func(*FlowQuery)) *BlockQuery {
+	query := &FlowQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withFlow = query
+	return bq
+}
+
+//  WithFlowTemplate tells the query-builder to eager-loads the nodes that are connected to
+// the "flow_template" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithFlowTemplate(opts ...func(*FlowExecutionTemplateQuery)) *BlockQuery {
+	query := &FlowExecutionTemplateQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withFlowTemplate = query
+	return bq
+}
+
 //  WithFlowDraft tells the query-builder to eager-loads the nodes that are connected to
 // the "flow_draft" edge. The optional arguments used to configure the query builder of the edge.
 func (bq *BlockQuery) WithFlowDraft(opts ...func(*FlowDraftQuery)) *BlockQuery {
@@ -364,6 +465,17 @@ func (bq *BlockQuery) WithFlowDraft(opts ...func(*FlowDraftQuery)) *BlockQuery {
 		opt(query)
 	}
 	bq.withFlowDraft = query
+	return bq
+}
+
+//  WithSubFlow tells the query-builder to eager-loads the nodes that are connected to
+// the "sub_flow" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithSubFlow(opts ...func(*FlowQuery)) *BlockQuery {
+	query := &FlowQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withSubFlow = query
 	return bq
 }
 
@@ -386,6 +498,17 @@ func (bq *BlockQuery) WithGotoBlock(opts ...func(*BlockQuery)) *BlockQuery {
 		opt(query)
 	}
 	bq.withGotoBlock = query
+	return bq
+}
+
+//  WithInstances tells the query-builder to eager-loads the nodes that are connected to
+// the "instances" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithInstances(opts ...func(*BlockInstanceQuery)) *BlockQuery {
+	query := &BlockInstanceQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withInstances = query
 	return bq
 }
 
@@ -459,15 +582,19 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		nodes       = []*Block{}
 		withFKs     = bq.withFKs
 		_spec       = bq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [9]bool{
 			bq.withPrevBlocks != nil,
 			bq.withNextBlocks != nil,
+			bq.withFlow != nil,
+			bq.withFlowTemplate != nil,
 			bq.withFlowDraft != nil,
+			bq.withSubFlow != nil,
 			bq.withSourceBlock != nil,
 			bq.withGotoBlock != nil,
+			bq.withInstances != nil,
 		}
 	)
-	if bq.withFlowDraft != nil || bq.withGotoBlock != nil {
+	if bq.withFlow != nil || bq.withFlowTemplate != nil || bq.withFlowDraft != nil || bq.withSubFlow != nil || bq.withGotoBlock != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -623,6 +750,56 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		}
 	}
 
+	if query := bq.withFlow; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Block)
+		for i := range nodes {
+			if fk := nodes[i].flow_blocks; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(flow.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_blocks" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Flow = n
+			}
+		}
+	}
+
+	if query := bq.withFlowTemplate; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Block)
+		for i := range nodes {
+			if fk := nodes[i].flow_execution_template_blocks; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(flowexecutiontemplate.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_execution_template_blocks" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.FlowTemplate = n
+			}
+		}
+	}
+
 	if query := bq.withFlowDraft; query != nil {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Block)
@@ -644,6 +821,31 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.FlowDraft = n
+			}
+		}
+	}
+
+	if query := bq.withSubFlow; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Block)
+		for i := range nodes {
+			if fk := nodes[i].block_sub_flow; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(flow.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "block_sub_flow" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.SubFlow = n
 			}
 		}
 	}
@@ -698,6 +900,34 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 			for i := range nodes {
 				nodes[i].Edges.GotoBlock = n
 			}
+		}
+	}
+
+	if query := bq.withInstances; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Block)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.BlockInstance(func(s *sql.Selector) {
+			s.Where(sql.InValues(block.InstancesColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.block_instance_block
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "block_instance_block" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "block_instance_block" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Instances = append(node.Edges.Instances, n)
 		}
 	}
 

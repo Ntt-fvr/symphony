@@ -253,3 +253,138 @@ const (
 func (p PropertyEntity) String() string {
 	return string(p)
 }
+
+// VariableType is the type of block variable.
+type VariableType string
+
+// Possible variable types
+const (
+	VariableTypeString        VariableType = "STRING"
+	VariableTypeInt           VariableType = "INT"
+	VariableTypeDate          VariableType = "DATE"
+	VariableTypeWorkOrder     VariableType = "WORK_ORDER"
+	VariableTypeWorkOrderType VariableType = "WORK_ORDER_TYPE"
+	VariableTypeLocation      VariableType = "LOCATION"
+	VariableTypeProject       VariableType = "PROJECT"
+	VariableTypeUser          VariableType = "USER"
+)
+
+// Values returns variable type possible values.
+func (VariableType) Values() []string {
+	return []string{
+		VariableTypeString.String(),
+		VariableTypeInt.String(),
+		VariableTypeDate.String(),
+		VariableTypeWorkOrder.String(),
+		VariableTypeWorkOrderType.String(),
+		VariableTypeLocation.String(),
+		VariableTypeProject.String(),
+		VariableTypeUser.String(),
+	}
+}
+
+// VariableTypeValidator variable type value.
+func VariableTypeValidator(v VariableType) error {
+	switch v {
+	case VariableTypeString,
+		VariableTypeInt,
+		VariableTypeDate,
+		VariableTypeWorkOrder,
+		VariableTypeWorkOrderType,
+		VariableTypeLocation,
+		VariableTypeProject,
+		VariableTypeUser:
+		return nil
+	default:
+		return fmt.Errorf("%v is not a valid variable type", v)
+	}
+}
+
+// String implements Getter interface.
+func (vt VariableType) String() string {
+	return string(vt)
+}
+
+// Set sets the value stored in variable type.
+func (vt *VariableType) Set(s string) {
+	*vt = VariableType(s)
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (vt *VariableType) UnmarshalGQL(v interface{}) error {
+	return UnmarshalGQL(v, vt)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (vt VariableType) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, vt)
+}
+
+// VariableUsage determines the if the variable is used as input param, output param or both
+type VariableUsage int
+
+const (
+	VariableUsageInput VariableUsage = iota
+	VariableUsageOutput
+	VariableUsageInputAndOutput
+)
+
+// String implements Getter interface.
+func (vu VariableUsage) String() string {
+	values := []string{"INPUT", "OUTPUT", "INPUT_AND_OUTPUT"}
+	if int(vu) < 0 || int(vu) >= len(values) {
+		return ""
+	}
+	return values[vu]
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (vu *VariableUsage) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return errors.New("enums must be strings")
+	}
+
+	switch str {
+	case "INPUT":
+		*vu = VariableUsageInput
+	case "OUTPUT":
+		*vu = VariableUsageOutput
+	case "INPUT_AND_OUTPUT":
+		*vu = VariableUsageInputAndOutput
+	default:
+		return fmt.Errorf("%s is not a valid VariableUsage", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaller interface.
+func (vu VariableUsage) MarshalGQL(w io.Writer) {
+	_ = MarshalGQL(w, vu)
+}
+
+// In reports whether variable usage is in list of variable usages.
+func (vu VariableUsage) In(vars ...VariableUsage) bool {
+	for _, v := range vars {
+		if v == vu {
+			return true
+		}
+	}
+	return false
+}
+
+// NodeType determines the node type of property of type node
+type NodeType string
+
+const (
+	NodeTypeLocation  NodeType = "location"
+	NodeTypeEquipment NodeType = "equipment"
+	NodeTypeService   NodeType = "service"
+	NodeTypeWorkOrder NodeType = "work_order"
+	NodeTypeUser      NodeType = "user"
+)
+
+// String implements Getter interface.
+func (vt NodeType) String() string {
+	return string(vt)
+}

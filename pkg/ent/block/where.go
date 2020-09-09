@@ -12,6 +12,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // ID filters vertices based on their identifier.
@@ -429,6 +430,176 @@ func TypeNotIn(vs ...Type) predicate.Block {
 	})
 }
 
+// ActionTypeEQ applies the EQ predicate on the "action_type" field.
+func ActionTypeEQ(v flowschema.ActionTypeID) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldActionType), vc))
+	})
+}
+
+// ActionTypeNEQ applies the NEQ predicate on the "action_type" field.
+func ActionTypeNEQ(v flowschema.ActionTypeID) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldActionType), vc))
+	})
+}
+
+// ActionTypeIn applies the In predicate on the "action_type" field.
+func ActionTypeIn(vs ...flowschema.ActionTypeID) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldActionType), v...))
+	})
+}
+
+// ActionTypeNotIn applies the NotIn predicate on the "action_type" field.
+func ActionTypeNotIn(vs ...flowschema.ActionTypeID) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldActionType), v...))
+	})
+}
+
+// ActionTypeIsNil applies the IsNil predicate on the "action_type" field.
+func ActionTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldActionType)))
+	})
+}
+
+// ActionTypeNotNil applies the NotNil predicate on the "action_type" field.
+func ActionTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldActionType)))
+	})
+}
+
+// TriggerTypeEQ applies the EQ predicate on the "trigger_type" field.
+func TriggerTypeEQ(v flowschema.TriggerTypeID) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTriggerType), vc))
+	})
+}
+
+// TriggerTypeNEQ applies the NEQ predicate on the "trigger_type" field.
+func TriggerTypeNEQ(v flowschema.TriggerTypeID) predicate.Block {
+	vc := v
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTriggerType), vc))
+	})
+}
+
+// TriggerTypeIn applies the In predicate on the "trigger_type" field.
+func TriggerTypeIn(vs ...flowschema.TriggerTypeID) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTriggerType), v...))
+	})
+}
+
+// TriggerTypeNotIn applies the NotIn predicate on the "trigger_type" field.
+func TriggerTypeNotIn(vs ...flowschema.TriggerTypeID) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTriggerType), v...))
+	})
+}
+
+// TriggerTypeIsNil applies the IsNil predicate on the "trigger_type" field.
+func TriggerTypeIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTriggerType)))
+	})
+}
+
+// TriggerTypeNotNil applies the NotNil predicate on the "trigger_type" field.
+func TriggerTypeNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTriggerType)))
+	})
+}
+
+// StartParamDefinitionsIsNil applies the IsNil predicate on the "start_param_definitions" field.
+func StartParamDefinitionsIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldStartParamDefinitions)))
+	})
+}
+
+// StartParamDefinitionsNotNil applies the NotNil predicate on the "start_param_definitions" field.
+func StartParamDefinitionsNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldStartParamDefinitions)))
+	})
+}
+
+// InputParamsIsNil applies the IsNil predicate on the "input_params" field.
+func InputParamsIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldInputParams)))
+	})
+}
+
+// InputParamsNotNil applies the NotNil predicate on the "input_params" field.
+func InputParamsNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldInputParams)))
+	})
+}
+
+// UIRepresentationIsNil applies the IsNil predicate on the "ui_representation" field.
+func UIRepresentationIsNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldUIRepresentation)))
+	})
+}
+
+// UIRepresentationNotNil applies the NotNil predicate on the "ui_representation" field.
+func UIRepresentationNotNil() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldUIRepresentation)))
+	})
+}
+
 // HasPrevBlocks applies the HasEdge predicate on the "prev_blocks" edge.
 func HasPrevBlocks() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -485,6 +656,62 @@ func HasNextBlocksWith(preds ...predicate.Block) predicate.Block {
 	})
 }
 
+// HasFlow applies the HasEdge predicate on the "flow" edge.
+func HasFlow() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFlowWith applies the HasEdge predicate on the "flow" edge with a given conditions (other predicates).
+func HasFlowWith(preds ...predicate.Flow) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFlowTemplate applies the HasEdge predicate on the "flow_template" edge.
+func HasFlowTemplate() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowTemplateTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTemplateTable, FlowTemplateColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFlowTemplateWith applies the HasEdge predicate on the "flow_template" edge with a given conditions (other predicates).
+func HasFlowTemplateWith(preds ...predicate.FlowExecutionTemplate) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(FlowTemplateInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FlowTemplateTable, FlowTemplateColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFlowDraft applies the HasEdge predicate on the "flow_draft" edge.
 func HasFlowDraft() predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -504,6 +731,34 @@ func HasFlowDraftWith(preds ...predicate.FlowDraft) predicate.Block {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(FlowDraftInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, FlowDraftTable, FlowDraftColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSubFlow applies the HasEdge predicate on the "sub_flow" edge.
+func HasSubFlow() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(SubFlowTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, SubFlowTable, SubFlowColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSubFlowWith applies the HasEdge predicate on the "sub_flow" edge with a given conditions (other predicates).
+func HasSubFlowWith(preds ...predicate.Flow) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(SubFlowInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, SubFlowTable, SubFlowColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
@@ -560,6 +815,34 @@ func HasGotoBlockWith(preds ...predicate.Block) predicate.Block {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(Table, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, GotoBlockTable, GotoBlockColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasInstances applies the HasEdge predicate on the "instances" edge.
+func HasInstances() predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InstancesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InstancesTable, InstancesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInstancesWith applies the HasEdge predicate on the "instances" edge with a given conditions (other predicates).
+func HasInstancesWith(preds ...predicate.BlockInstance) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(InstancesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, InstancesTable, InstancesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

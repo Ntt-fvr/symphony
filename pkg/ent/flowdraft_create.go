@@ -14,7 +14,9 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // FlowDraftCreate is the builder for creating a FlowDraft entity.
@@ -44,6 +46,12 @@ func (fdc *FlowDraftCreate) SetNillableDescription(s *string) *FlowDraftCreate {
 	return fdc
 }
 
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (fdc *FlowDraftCreate) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) *FlowDraftCreate {
+	fdc.mutation.SetEndParamDefinitions(fd)
+	return fdc
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fdc *FlowDraftCreate) AddBlockIDs(ids ...int) *FlowDraftCreate {
 	fdc.mutation.AddBlockIDs(ids...)
@@ -57,6 +65,25 @@ func (fdc *FlowDraftCreate) AddBlocks(b ...*Block) *FlowDraftCreate {
 		ids[i] = b[i].ID
 	}
 	return fdc.AddBlockIDs(ids...)
+}
+
+// SetFlowID sets the flow edge to Flow by id.
+func (fdc *FlowDraftCreate) SetFlowID(id int) *FlowDraftCreate {
+	fdc.mutation.SetFlowID(id)
+	return fdc
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (fdc *FlowDraftCreate) SetNillableFlowID(id *int) *FlowDraftCreate {
+	if id != nil {
+		fdc = fdc.SetFlowID(*id)
+	}
+	return fdc
+}
+
+// SetFlow sets the flow edge to Flow.
+func (fdc *FlowDraftCreate) SetFlow(f *Flow) *FlowDraftCreate {
+	return fdc.SetFlowID(f.ID)
 }
 
 // Mutation returns the FlowDraftMutation object of the builder.
@@ -157,6 +184,14 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 		})
 		fd.Description = &value
 	}
+	if value, ok := fdc.mutation.EndParamDefinitions(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: flowdraft.FieldEndParamDefinitions,
+		})
+		fd.EndParamDefinitions = value
+	}
 	if nodes := fdc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -168,6 +203,25 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: block.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fdc.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   flowdraft.FlowTable,
+			Columns: []string{flowdraft.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}

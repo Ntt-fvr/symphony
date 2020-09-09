@@ -12,9 +12,14 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
@@ -27,13 +32,15 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
-)
 
-import (
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+
 	_ "github.com/go-sql-driver/mysql"
+
 	_ "gocloud.dev/blob/s3blob"
+
 	_ "gocloud.dev/pubsub/mempubsub"
+
 	_ "gocloud.dev/pubsub/natspubsub"
 )
 
@@ -62,7 +69,9 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Logger:  logger,
 		Emitter: emitter,
 	}
-	tenancy := newTenancy(mySQLTenancy, eventer)
+	factory := triggers.NewFactory()
+	actionsFactory := actions.NewFactory()
+	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
 	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
 	if err != nil {
 		cleanup2()
@@ -163,8 +172,15 @@ func newApplication(server2 *handler.Server, http *server.Server, logger *zap.Lo
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
+		hooker := hooks.Flower{
+			TriggerFactory: triggerFactory,
+			ActionFactory:  actionFactory,
+		}
+		hooker.HookTo(client)
+		eventer.HookTo(client)
+	})
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {

@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -32,7 +33,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -129,6 +133,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	blockHooks := schema.Block{}.Hooks()
+
+	block.Hooks[1] = blockHooks[0]
 	blockMixinFields0 := blockMixin[0].Fields()
 	blockFields := schema.Block{}.Fields()
 	_ = blockFields
@@ -146,6 +153,29 @@ func init() {
 	blockDescName := blockFields[0].Descriptor()
 	// block.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	block.NameValidator = blockDescName.Validators[0].(func(string) error)
+	blockinstanceMixin := schema.BlockInstance{}.Mixin()
+	blockinstance.Policy = schema.BlockInstance{}.Policy()
+	blockinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := blockinstance.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	blockinstanceMixinFields0 := blockinstanceMixin[0].Fields()
+	blockinstanceFields := schema.BlockInstance{}.Fields()
+	_ = blockinstanceFields
+	// blockinstanceDescCreateTime is the schema descriptor for create_time field.
+	blockinstanceDescCreateTime := blockinstanceMixinFields0[0].Descriptor()
+	// blockinstance.DefaultCreateTime holds the default value on creation for the create_time field.
+	blockinstance.DefaultCreateTime = blockinstanceDescCreateTime.Default.(func() time.Time)
+	// blockinstanceDescUpdateTime is the schema descriptor for update_time field.
+	blockinstanceDescUpdateTime := blockinstanceMixinFields0[1].Descriptor()
+	// blockinstance.DefaultUpdateTime holds the default value on creation for the update_time field.
+	blockinstance.DefaultUpdateTime = blockinstanceDescUpdateTime.Default.(func() time.Time)
+	// blockinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	blockinstance.UpdateDefaultUpdateTime = blockinstanceDescUpdateTime.UpdateDefault.(func() time.Time)
 	checklistcategoryMixin := schema.CheckListCategory{}.Mixin()
 	checklistcategory.Policy = schema.CheckListCategory{}.Policy()
 	checklistcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -591,6 +621,26 @@ func init() {
 	floorplanscale.DefaultUpdateTime = floorplanscaleDescUpdateTime.Default.(func() time.Time)
 	// floorplanscale.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	floorplanscale.UpdateDefaultUpdateTime = floorplanscaleDescUpdateTime.UpdateDefault.(func() time.Time)
+	flowMixin := schema.Flow{}.Mixin()
+	flow.Policy = schema.Flow{}.Policy()
+	flow.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := flow.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	flowMixinHooks0 := flowMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+
+	flow.Hooks[1] = flowMixinHooks0[0]
+	flowMixinFields0 := flowMixin[0].Fields()
+	flowFields := schema.Flow{}.Fields()
+	_ = flowFields
+	// flowDescName is the schema descriptor for name field.
+	flowDescName := flowMixinFields0[0].Descriptor()
+	// flow.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flow.NameValidator = flowDescName.Validators[0].(func(string) error)
 	flowdraftMixin := schema.FlowDraft{}.Mixin()
 	flowdraft.Policy = schema.FlowDraft{}.Policy()
 	flowdraft.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -601,6 +651,9 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
+	flowdraftMixinHooks0 := flowdraftMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+
+	flowdraft.Hooks[1] = flowdraftMixinHooks0[0]
 	flowdraftMixinFields0 := flowdraftMixin[0].Fields()
 	flowdraftFields := schema.FlowDraft{}.Fields()
 	_ = flowdraftFields
@@ -608,6 +661,54 @@ func init() {
 	flowdraftDescName := flowdraftMixinFields0[0].Descriptor()
 	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
+	flowexecutiontemplateMixin := schema.FlowExecutionTemplate{}.Mixin()
+	flowexecutiontemplate.Policy = schema.FlowExecutionTemplate{}.Policy()
+	flowexecutiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := flowexecutiontemplate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	flowexecutiontemplateMixinHooks0 := flowexecutiontemplateMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+
+	flowexecutiontemplate.Hooks[1] = flowexecutiontemplateMixinHooks0[0]
+	flowexecutiontemplateMixinFields0 := flowexecutiontemplateMixin[0].Fields()
+	flowexecutiontemplateFields := schema.FlowExecutionTemplate{}.Fields()
+	_ = flowexecutiontemplateFields
+	// flowexecutiontemplateDescName is the schema descriptor for name field.
+	flowexecutiontemplateDescName := flowexecutiontemplateMixinFields0[0].Descriptor()
+	// flowexecutiontemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flowexecutiontemplate.NameValidator = flowexecutiontemplateDescName.Validators[0].(func(string) error)
+	flowinstanceMixin := schema.FlowInstance{}.Mixin()
+	flowinstance.Policy = schema.FlowInstance{}.Policy()
+	flowinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := flowinstance.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	flowinstanceHooks := schema.FlowInstance{}.Hooks()
+
+	flowinstance.Hooks[1] = flowinstanceHooks[0]
+
+	flowinstance.Hooks[2] = flowinstanceHooks[1]
+	flowinstanceMixinFields0 := flowinstanceMixin[0].Fields()
+	flowinstanceFields := schema.FlowInstance{}.Fields()
+	_ = flowinstanceFields
+	// flowinstanceDescCreateTime is the schema descriptor for create_time field.
+	flowinstanceDescCreateTime := flowinstanceMixinFields0[0].Descriptor()
+	// flowinstance.DefaultCreateTime holds the default value on creation for the create_time field.
+	flowinstance.DefaultCreateTime = flowinstanceDescCreateTime.Default.(func() time.Time)
+	// flowinstanceDescUpdateTime is the schema descriptor for update_time field.
+	flowinstanceDescUpdateTime := flowinstanceMixinFields0[1].Descriptor()
+	// flowinstance.DefaultUpdateTime holds the default value on creation for the update_time field.
+	flowinstance.DefaultUpdateTime = flowinstanceDescUpdateTime.Default.(func() time.Time)
+	// flowinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	flowinstance.UpdateDefaultUpdateTime = flowinstanceDescUpdateTime.UpdateDefault.(func() time.Time)
 	hyperlinkMixin := schema.Hyperlink{}.Mixin()
 	hyperlink.Policy = schema.Hyperlink{}.Policy()
 	hyperlink.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -6,11 +6,16 @@ package resolver_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	action_mocks "github.com/facebookincubator/symphony/pkg/flowengine/actions/mocks"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	trigger_mocks "github.com/facebookincubator/symphony/pkg/flowengine/triggers/mocks"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -88,12 +93,12 @@ func TestAddDeleteConnectors(t *testing.T) {
 		Name:        "End",
 	})
 	require.NoError(t, err)
-	b, err := mr.AddConnector(ctx, models.ConnectorInput{
-		BlockID:     startBlock.ID,
-		NextBlockID: endBlock.ID,
+	connector, err := mr.AddConnector(ctx, models.ConnectorInput{
+		SourceBlockID: startBlock.ID,
+		TargetBlockID: endBlock.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, startBlock.ID, b.ID)
+	require.Equal(t, startBlock.ID, connector.Source.ID)
 
 	blocks, err := br.NextBlocks(ctx, startBlock)
 	require.NoError(t, err)
@@ -112,13 +117,13 @@ func TestAddDeleteConnectors(t *testing.T) {
 	require.Equal(t, blocks[0].ID, startBlock.ID)
 
 	_, err = mr.DeleteConnector(ctx, models.ConnectorInput{
-		BlockID:     endBlock.ID,
-		NextBlockID: startBlock.ID,
+		SourceBlockID: endBlock.ID,
+		TargetBlockID: startBlock.ID,
 	})
 	require.Error(t, err)
 	_, err = mr.DeleteConnector(ctx, models.ConnectorInput{
-		BlockID:     startBlock.ID,
-		NextBlockID: endBlock.ID,
+		SourceBlockID: startBlock.ID,
+		TargetBlockID: endBlock.ID,
 	})
 	require.NoError(t, err)
 	blocks, err = br.NextBlocks(ctx, startBlock)
@@ -143,14 +148,118 @@ func TestGotoBlock(t *testing.T) {
 	require.NoError(t, err)
 
 	b, err := mr.AddGotoBlock(ctx, models.AddGotoBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "GotoEnd",
-		NextBlockID: endBlock.ID,
+		FlowDraftID:   flowDraft.ID,
+		Name:          "GotoEnd",
+		TargetBlockID: endBlock.ID,
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
 	require.NoError(t, err)
 	goTo, ok := details.(*models.GotoBlock)
 	require.True(t, ok)
-	require.Equal(t, endBlock.ID, goTo.GotoBlock.ID)
+	require.Equal(t, endBlock.ID, goTo.Target.ID)
+}
+
+func TestTriggerBlockNotExists(t *testing.T) {
+	triggerFactory := trigger_mocks.Factory{}
+	r := newTestResolver(t, withTriggerFactory(&triggerFactory))
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow",
+	})
+	require.NoError(t, err)
+	triggerFactory.On("GetType", mock.Anything).
+		Return(nil, errors.New("not found")).
+		Once()
+	_, err = mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Trigger Block",
+		TriggerType: flowschema.TriggerTypeWorkOrder,
+	})
+	require.Error(t, err)
+	triggerType := trigger_mocks.TriggerType{}
+	description := "Some desc"
+	triggerType.On("Description").
+		Return(description)
+	triggerType.On("Variables").
+		Return([]*flowschema.VariableDefinition{})
+	triggerFactory.On("GetType", mock.Anything).
+		Return(&triggerType, nil).
+		Times(3)
+	_, err = mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Trigger Block",
+		TriggerType: "Invalid",
+	})
+	require.Error(t, err)
+	triggerBlock, err := mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Trigger Block",
+		TriggerType: flowschema.TriggerTypeWorkOrder,
+	})
+	require.NoError(t, err)
+
+	require.Equal(t, "Trigger Block", triggerBlock.Name)
+	details, err := br.Details(ctx, triggerBlock)
+	require.NoError(t, err)
+	trigger, ok := details.(*models.TriggerBlock)
+	require.True(t, ok)
+	require.Equal(t, description, trigger.TriggerType.Description())
+	triggerFactory.On("GetType", mock.Anything).
+		Return(nil, errors.New("not found")).
+		Once()
+	_, err = br.Details(ctx, triggerBlock)
+	require.Error(t, err)
+}
+
+func TestActionBlockNotExists(t *testing.T) {
+	actionFactory := action_mocks.Factory{}
+	r := newTestResolver(t, withActionFactory(&actionFactory))
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, br := r.Mutation(), r.Block()
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow",
+	})
+	require.NoError(t, err)
+	actionFactory.On("GetType", mock.Anything).
+		Return(nil, errors.New("not found")).
+		Once()
+	_, err = mr.AddActionBlock(ctx, models.AddActionBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Action Block",
+		ActionType:  flowschema.ActionTypeWorkOrder,
+	})
+	require.Error(t, err)
+
+	description := "Some desc"
+	actionType := action_mocks.ActionType{}
+	actionType.On("Description").
+		Return(description)
+	actionType.On("Variables").
+		Return([]*flowschema.VariableDefinition{})
+	actionFactory.On("GetType", mock.Anything).
+		Return(&actionType, nil).
+		Times(3)
+	actionBlock, err := mr.AddActionBlock(ctx, models.AddActionBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Action Block",
+		ActionType:  flowschema.ActionTypeWorkOrder,
+	})
+	require.NoError(t, err)
+	require.Equal(t, "Action Block", actionBlock.Name)
+	details, err := br.Details(ctx, actionBlock)
+	require.NoError(t, err)
+	action, ok := details.(*models.ActionBlock)
+	require.True(t, ok)
+	require.Equal(t, description, action.ActionType.Description())
+	actionFactory.On("GetType", mock.Anything).
+		Return(nil, errors.New("not found")).
+		Once()
+	_, err = br.Details(ctx, actionBlock)
+	require.Error(t, err)
 }

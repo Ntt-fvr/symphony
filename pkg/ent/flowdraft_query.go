@@ -17,6 +17,7 @@ import (
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 )
@@ -31,6 +32,8 @@ type FlowDraftQuery struct {
 	predicates []predicate.FlowDraft
 	// eager-loading edges.
 	withBlocks *BlockQuery
+	withFlow   *FlowQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -71,6 +74,24 @@ func (fdq *FlowDraftQuery) QueryBlocks() *BlockQuery {
 			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, fdq.sqlQuery()),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, flowdraft.BlocksTable, flowdraft.BlocksColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fdq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFlow chains the current query on the flow edge.
+func (fdq *FlowDraftQuery) QueryFlow() *FlowQuery {
+	query := &FlowQuery{config: fdq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fdq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, fdq.sqlQuery()),
+			sqlgraph.To(flow.Table, flow.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fdq.driver.Dialect(), step)
 		return fromU, nil
@@ -268,6 +289,17 @@ func (fdq *FlowDraftQuery) WithBlocks(opts ...func(*BlockQuery)) *FlowDraftQuery
 	return fdq
 }
 
+//  WithFlow tells the query-builder to eager-loads the nodes that are connected to
+// the "flow" edge. The optional arguments used to configure the query builder of the edge.
+func (fdq *FlowDraftQuery) WithFlow(opts ...func(*FlowQuery)) *FlowDraftQuery {
+	query := &FlowQuery{config: fdq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fdq.withFlow = query
+	return fdq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -336,15 +368,26 @@ func (fdq *FlowDraftQuery) prepareQuery(ctx context.Context) error {
 func (fdq *FlowDraftQuery) sqlAll(ctx context.Context) ([]*FlowDraft, error) {
 	var (
 		nodes       = []*FlowDraft{}
+		withFKs     = fdq.withFKs
 		_spec       = fdq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			fdq.withBlocks != nil,
+			fdq.withFlow != nil,
 		}
 	)
+	if fdq.withFlow != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, flowdraft.ForeignKeys...)
+	}
 	_spec.ScanValues = func() []interface{} {
 		node := &FlowDraft{config: fdq.config}
 		nodes = append(nodes, node)
 		values := node.scanValues()
+		if withFKs {
+			values = append(values, node.fkValues()...)
+		}
 		return values
 	}
 	_spec.Assign = func(values ...interface{}) error {
@@ -387,6 +430,31 @@ func (fdq *FlowDraftQuery) sqlAll(ctx context.Context) ([]*FlowDraft, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "flow_draft_blocks" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Blocks = append(node.Edges.Blocks, n)
+		}
+	}
+
+	if query := fdq.withFlow; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*FlowDraft)
+		for i := range nodes {
+			if fk := nodes[i].flow_draft; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(flow.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "flow_draft" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Flow = n
+			}
 		}
 	}
 

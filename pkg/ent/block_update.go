@@ -8,15 +8,18 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 // BlockUpdate is the builder for updating Block entities.
@@ -42,6 +45,90 @@ func (bu *BlockUpdate) SetName(s string) *BlockUpdate {
 // SetType sets the type field.
 func (bu *BlockUpdate) SetType(b block.Type) *BlockUpdate {
 	bu.mutation.SetType(b)
+	return bu
+}
+
+// SetActionType sets the action_type field.
+func (bu *BlockUpdate) SetActionType(fti flowschema.ActionTypeID) *BlockUpdate {
+	bu.mutation.SetActionType(fti)
+	return bu
+}
+
+// SetNillableActionType sets the action_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableActionType(fti *flowschema.ActionTypeID) *BlockUpdate {
+	if fti != nil {
+		bu.SetActionType(*fti)
+	}
+	return bu
+}
+
+// ClearActionType clears the value of action_type.
+func (bu *BlockUpdate) ClearActionType() *BlockUpdate {
+	bu.mutation.ClearActionType()
+	return bu
+}
+
+// SetTriggerType sets the trigger_type field.
+func (bu *BlockUpdate) SetTriggerType(fti flowschema.TriggerTypeID) *BlockUpdate {
+	bu.mutation.SetTriggerType(fti)
+	return bu
+}
+
+// SetNillableTriggerType sets the trigger_type field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableTriggerType(fti *flowschema.TriggerTypeID) *BlockUpdate {
+	if fti != nil {
+		bu.SetTriggerType(*fti)
+	}
+	return bu
+}
+
+// ClearTriggerType clears the value of trigger_type.
+func (bu *BlockUpdate) ClearTriggerType() *BlockUpdate {
+	bu.mutation.ClearTriggerType()
+	return bu
+}
+
+// SetStartParamDefinitions sets the start_param_definitions field.
+func (bu *BlockUpdate) SetStartParamDefinitions(fd []*flowschema.VariableDefinition) *BlockUpdate {
+	bu.mutation.SetStartParamDefinitions(fd)
+	return bu
+}
+
+// ClearStartParamDefinitions clears the value of start_param_definitions.
+func (bu *BlockUpdate) ClearStartParamDefinitions() *BlockUpdate {
+	bu.mutation.ClearStartParamDefinitions()
+	return bu
+}
+
+// SetInputParams sets the input_params field.
+func (bu *BlockUpdate) SetInputParams(fe []*flowschema.VariableExpression) *BlockUpdate {
+	bu.mutation.SetInputParams(fe)
+	return bu
+}
+
+// ClearInputParams clears the value of input_params.
+func (bu *BlockUpdate) ClearInputParams() *BlockUpdate {
+	bu.mutation.ClearInputParams()
+	return bu
+}
+
+// SetUIRepresentation sets the ui_representation field.
+func (bu *BlockUpdate) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockUpdate {
+	bu.mutation.SetUIRepresentation(fur)
+	return bu
+}
+
+// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
+func (bu *BlockUpdate) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdate {
+	if fur != nil {
+		bu.SetUIRepresentation(*fur)
+	}
+	return bu
+}
+
+// ClearUIRepresentation clears the value of ui_representation.
+func (bu *BlockUpdate) ClearUIRepresentation() *BlockUpdate {
+	bu.mutation.ClearUIRepresentation()
 	return bu
 }
 
@@ -75,15 +162,80 @@ func (bu *BlockUpdate) AddNextBlocks(b ...*Block) *BlockUpdate {
 	return bu.AddNextBlockIDs(ids...)
 }
 
+// SetFlowID sets the flow edge to Flow by id.
+func (bu *BlockUpdate) SetFlowID(id int) *BlockUpdate {
+	bu.mutation.SetFlowID(id)
+	return bu
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (bu *BlockUpdate) SetNillableFlowID(id *int) *BlockUpdate {
+	if id != nil {
+		bu = bu.SetFlowID(*id)
+	}
+	return bu
+}
+
+// SetFlow sets the flow edge to Flow.
+func (bu *BlockUpdate) SetFlow(f *Flow) *BlockUpdate {
+	return bu.SetFlowID(f.ID)
+}
+
+// SetFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id.
+func (bu *BlockUpdate) SetFlowTemplateID(id int) *BlockUpdate {
+	bu.mutation.SetFlowTemplateID(id)
+	return bu
+}
+
+// SetNillableFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id if the given value is not nil.
+func (bu *BlockUpdate) SetNillableFlowTemplateID(id *int) *BlockUpdate {
+	if id != nil {
+		bu = bu.SetFlowTemplateID(*id)
+	}
+	return bu
+}
+
+// SetFlowTemplate sets the flow_template edge to FlowExecutionTemplate.
+func (bu *BlockUpdate) SetFlowTemplate(f *FlowExecutionTemplate) *BlockUpdate {
+	return bu.SetFlowTemplateID(f.ID)
+}
+
 // SetFlowDraftID sets the flow_draft edge to FlowDraft by id.
 func (bu *BlockUpdate) SetFlowDraftID(id int) *BlockUpdate {
 	bu.mutation.SetFlowDraftID(id)
 	return bu
 }
 
+// SetNillableFlowDraftID sets the flow_draft edge to FlowDraft by id if the given value is not nil.
+func (bu *BlockUpdate) SetNillableFlowDraftID(id *int) *BlockUpdate {
+	if id != nil {
+		bu = bu.SetFlowDraftID(*id)
+	}
+	return bu
+}
+
 // SetFlowDraft sets the flow_draft edge to FlowDraft.
 func (bu *BlockUpdate) SetFlowDraft(f *FlowDraft) *BlockUpdate {
 	return bu.SetFlowDraftID(f.ID)
+}
+
+// SetSubFlowID sets the sub_flow edge to Flow by id.
+func (bu *BlockUpdate) SetSubFlowID(id int) *BlockUpdate {
+	bu.mutation.SetSubFlowID(id)
+	return bu
+}
+
+// SetNillableSubFlowID sets the sub_flow edge to Flow by id if the given value is not nil.
+func (bu *BlockUpdate) SetNillableSubFlowID(id *int) *BlockUpdate {
+	if id != nil {
+		bu = bu.SetSubFlowID(*id)
+	}
+	return bu
+}
+
+// SetSubFlow sets the sub_flow edge to Flow.
+func (bu *BlockUpdate) SetSubFlow(f *Flow) *BlockUpdate {
+	return bu.SetSubFlowID(f.ID)
 }
 
 // AddSourceBlockIDs adds the source_block edge to Block by ids.
@@ -118,6 +270,21 @@ func (bu *BlockUpdate) SetNillableGotoBlockID(id *int) *BlockUpdate {
 // SetGotoBlock sets the goto_block edge to Block.
 func (bu *BlockUpdate) SetGotoBlock(b *Block) *BlockUpdate {
 	return bu.SetGotoBlockID(b.ID)
+}
+
+// AddInstanceIDs adds the instances edge to BlockInstance by ids.
+func (bu *BlockUpdate) AddInstanceIDs(ids ...int) *BlockUpdate {
+	bu.mutation.AddInstanceIDs(ids...)
+	return bu
+}
+
+// AddInstances adds the instances edges to BlockInstance.
+func (bu *BlockUpdate) AddInstances(b ...*BlockInstance) *BlockUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return bu.AddInstanceIDs(ids...)
 }
 
 // Mutation returns the BlockMutation object of the builder.
@@ -167,9 +334,27 @@ func (bu *BlockUpdate) RemoveNextBlocks(b ...*Block) *BlockUpdate {
 	return bu.RemoveNextBlockIDs(ids...)
 }
 
+// ClearFlow clears the "flow" edge to type Flow.
+func (bu *BlockUpdate) ClearFlow() *BlockUpdate {
+	bu.mutation.ClearFlow()
+	return bu
+}
+
+// ClearFlowTemplate clears the "flow_template" edge to type FlowExecutionTemplate.
+func (bu *BlockUpdate) ClearFlowTemplate() *BlockUpdate {
+	bu.mutation.ClearFlowTemplate()
+	return bu
+}
+
 // ClearFlowDraft clears the "flow_draft" edge to type FlowDraft.
 func (bu *BlockUpdate) ClearFlowDraft() *BlockUpdate {
 	bu.mutation.ClearFlowDraft()
+	return bu
+}
+
+// ClearSubFlow clears the "sub_flow" edge to type Flow.
+func (bu *BlockUpdate) ClearSubFlow() *BlockUpdate {
+	bu.mutation.ClearSubFlow()
 	return bu
 }
 
@@ -200,6 +385,27 @@ func (bu *BlockUpdate) ClearGotoBlock() *BlockUpdate {
 	return bu
 }
 
+// ClearInstances clears all "instances" edges to type BlockInstance.
+func (bu *BlockUpdate) ClearInstances() *BlockUpdate {
+	bu.mutation.ClearInstances()
+	return bu
+}
+
+// RemoveInstanceIDs removes the instances edge to BlockInstance by ids.
+func (bu *BlockUpdate) RemoveInstanceIDs(ids ...int) *BlockUpdate {
+	bu.mutation.RemoveInstanceIDs(ids...)
+	return bu
+}
+
+// RemoveInstances removes instances edges to BlockInstance.
+func (bu *BlockUpdate) RemoveInstances(b ...*BlockInstance) *BlockUpdate {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return bu.RemoveInstanceIDs(ids...)
+}
+
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (bu *BlockUpdate) Save(ctx context.Context) (int, error) {
 	if _, ok := bu.mutation.UpdateTime(); !ok {
@@ -216,9 +422,15 @@ func (bu *BlockUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
 		}
 	}
-
-	if _, ok := bu.mutation.FlowDraftID(); bu.mutation.FlowDraftCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"flow_draft\"")
+	if v, ok := bu.mutation.ActionType(); ok {
+		if err := block.ActionTypeValidator(v); err != nil {
+			return 0, &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.TriggerType(); ok {
+		if err := block.TriggerTypeValidator(v); err != nil {
+			return 0, &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
+		}
 	}
 
 	var (
@@ -307,6 +519,71 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: block.FieldType,
+		})
+	}
+	if value, ok := bu.mutation.ActionType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldActionType,
+		})
+	}
+	if bu.mutation.ActionTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldActionType,
+		})
+	}
+	if value, ok := bu.mutation.TriggerType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTriggerType,
+		})
+	}
+	if bu.mutation.TriggerTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldTriggerType,
+		})
+	}
+	if value, ok := bu.mutation.StartParamDefinitions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldStartParamDefinitions,
+		})
+	}
+	if bu.mutation.StartParamDefinitionsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldStartParamDefinitions,
+		})
+	}
+	if value, ok := bu.mutation.InputParams(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldInputParams,
+		})
+	}
+	if bu.mutation.InputParamsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldInputParams,
+		})
+	}
+	if value, ok := bu.mutation.UIRepresentation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldUIRepresentation,
+		})
+	}
+	if bu.mutation.UIRepresentationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldUIRepresentation,
 		})
 	}
 	if bu.mutation.PrevBlocksCleared() {
@@ -417,6 +694,76 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if bu.mutation.FlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTable,
+			Columns: []string{block.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTable,
+			Columns: []string{block.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if bu.mutation.FlowTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTemplateTable,
+			Columns: []string{block.FlowTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowexecutiontemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.FlowTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTemplateTable,
+			Columns: []string{block.FlowTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowexecutiontemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if bu.mutation.FlowDraftCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -444,6 +791,41 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if bu.mutation.SubFlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   block.SubFlowTable,
+			Columns: []string{block.SubFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.SubFlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   block.SubFlowTable,
+			Columns: []string{block.SubFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}
@@ -541,6 +923,60 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if bu.mutation.InstancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.RemovedInstancesIDs(); len(nodes) > 0 && !bu.mutation.InstancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := bu.mutation.InstancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{block.Label}
@@ -568,6 +1004,90 @@ func (buo *BlockUpdateOne) SetName(s string) *BlockUpdateOne {
 // SetType sets the type field.
 func (buo *BlockUpdateOne) SetType(b block.Type) *BlockUpdateOne {
 	buo.mutation.SetType(b)
+	return buo
+}
+
+// SetActionType sets the action_type field.
+func (buo *BlockUpdateOne) SetActionType(fti flowschema.ActionTypeID) *BlockUpdateOne {
+	buo.mutation.SetActionType(fti)
+	return buo
+}
+
+// SetNillableActionType sets the action_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableActionType(fti *flowschema.ActionTypeID) *BlockUpdateOne {
+	if fti != nil {
+		buo.SetActionType(*fti)
+	}
+	return buo
+}
+
+// ClearActionType clears the value of action_type.
+func (buo *BlockUpdateOne) ClearActionType() *BlockUpdateOne {
+	buo.mutation.ClearActionType()
+	return buo
+}
+
+// SetTriggerType sets the trigger_type field.
+func (buo *BlockUpdateOne) SetTriggerType(fti flowschema.TriggerTypeID) *BlockUpdateOne {
+	buo.mutation.SetTriggerType(fti)
+	return buo
+}
+
+// SetNillableTriggerType sets the trigger_type field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableTriggerType(fti *flowschema.TriggerTypeID) *BlockUpdateOne {
+	if fti != nil {
+		buo.SetTriggerType(*fti)
+	}
+	return buo
+}
+
+// ClearTriggerType clears the value of trigger_type.
+func (buo *BlockUpdateOne) ClearTriggerType() *BlockUpdateOne {
+	buo.mutation.ClearTriggerType()
+	return buo
+}
+
+// SetStartParamDefinitions sets the start_param_definitions field.
+func (buo *BlockUpdateOne) SetStartParamDefinitions(fd []*flowschema.VariableDefinition) *BlockUpdateOne {
+	buo.mutation.SetStartParamDefinitions(fd)
+	return buo
+}
+
+// ClearStartParamDefinitions clears the value of start_param_definitions.
+func (buo *BlockUpdateOne) ClearStartParamDefinitions() *BlockUpdateOne {
+	buo.mutation.ClearStartParamDefinitions()
+	return buo
+}
+
+// SetInputParams sets the input_params field.
+func (buo *BlockUpdateOne) SetInputParams(fe []*flowschema.VariableExpression) *BlockUpdateOne {
+	buo.mutation.SetInputParams(fe)
+	return buo
+}
+
+// ClearInputParams clears the value of input_params.
+func (buo *BlockUpdateOne) ClearInputParams() *BlockUpdateOne {
+	buo.mutation.ClearInputParams()
+	return buo
+}
+
+// SetUIRepresentation sets the ui_representation field.
+func (buo *BlockUpdateOne) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockUpdateOne {
+	buo.mutation.SetUIRepresentation(fur)
+	return buo
+}
+
+// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdateOne {
+	if fur != nil {
+		buo.SetUIRepresentation(*fur)
+	}
+	return buo
+}
+
+// ClearUIRepresentation clears the value of ui_representation.
+func (buo *BlockUpdateOne) ClearUIRepresentation() *BlockUpdateOne {
+	buo.mutation.ClearUIRepresentation()
 	return buo
 }
 
@@ -601,15 +1121,80 @@ func (buo *BlockUpdateOne) AddNextBlocks(b ...*Block) *BlockUpdateOne {
 	return buo.AddNextBlockIDs(ids...)
 }
 
+// SetFlowID sets the flow edge to Flow by id.
+func (buo *BlockUpdateOne) SetFlowID(id int) *BlockUpdateOne {
+	buo.mutation.SetFlowID(id)
+	return buo
+}
+
+// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableFlowID(id *int) *BlockUpdateOne {
+	if id != nil {
+		buo = buo.SetFlowID(*id)
+	}
+	return buo
+}
+
+// SetFlow sets the flow edge to Flow.
+func (buo *BlockUpdateOne) SetFlow(f *Flow) *BlockUpdateOne {
+	return buo.SetFlowID(f.ID)
+}
+
+// SetFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id.
+func (buo *BlockUpdateOne) SetFlowTemplateID(id int) *BlockUpdateOne {
+	buo.mutation.SetFlowTemplateID(id)
+	return buo
+}
+
+// SetNillableFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableFlowTemplateID(id *int) *BlockUpdateOne {
+	if id != nil {
+		buo = buo.SetFlowTemplateID(*id)
+	}
+	return buo
+}
+
+// SetFlowTemplate sets the flow_template edge to FlowExecutionTemplate.
+func (buo *BlockUpdateOne) SetFlowTemplate(f *FlowExecutionTemplate) *BlockUpdateOne {
+	return buo.SetFlowTemplateID(f.ID)
+}
+
 // SetFlowDraftID sets the flow_draft edge to FlowDraft by id.
 func (buo *BlockUpdateOne) SetFlowDraftID(id int) *BlockUpdateOne {
 	buo.mutation.SetFlowDraftID(id)
 	return buo
 }
 
+// SetNillableFlowDraftID sets the flow_draft edge to FlowDraft by id if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableFlowDraftID(id *int) *BlockUpdateOne {
+	if id != nil {
+		buo = buo.SetFlowDraftID(*id)
+	}
+	return buo
+}
+
 // SetFlowDraft sets the flow_draft edge to FlowDraft.
 func (buo *BlockUpdateOne) SetFlowDraft(f *FlowDraft) *BlockUpdateOne {
 	return buo.SetFlowDraftID(f.ID)
+}
+
+// SetSubFlowID sets the sub_flow edge to Flow by id.
+func (buo *BlockUpdateOne) SetSubFlowID(id int) *BlockUpdateOne {
+	buo.mutation.SetSubFlowID(id)
+	return buo
+}
+
+// SetNillableSubFlowID sets the sub_flow edge to Flow by id if the given value is not nil.
+func (buo *BlockUpdateOne) SetNillableSubFlowID(id *int) *BlockUpdateOne {
+	if id != nil {
+		buo = buo.SetSubFlowID(*id)
+	}
+	return buo
+}
+
+// SetSubFlow sets the sub_flow edge to Flow.
+func (buo *BlockUpdateOne) SetSubFlow(f *Flow) *BlockUpdateOne {
+	return buo.SetSubFlowID(f.ID)
 }
 
 // AddSourceBlockIDs adds the source_block edge to Block by ids.
@@ -644,6 +1229,21 @@ func (buo *BlockUpdateOne) SetNillableGotoBlockID(id *int) *BlockUpdateOne {
 // SetGotoBlock sets the goto_block edge to Block.
 func (buo *BlockUpdateOne) SetGotoBlock(b *Block) *BlockUpdateOne {
 	return buo.SetGotoBlockID(b.ID)
+}
+
+// AddInstanceIDs adds the instances edge to BlockInstance by ids.
+func (buo *BlockUpdateOne) AddInstanceIDs(ids ...int) *BlockUpdateOne {
+	buo.mutation.AddInstanceIDs(ids...)
+	return buo
+}
+
+// AddInstances adds the instances edges to BlockInstance.
+func (buo *BlockUpdateOne) AddInstances(b ...*BlockInstance) *BlockUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return buo.AddInstanceIDs(ids...)
 }
 
 // Mutation returns the BlockMutation object of the builder.
@@ -693,9 +1293,27 @@ func (buo *BlockUpdateOne) RemoveNextBlocks(b ...*Block) *BlockUpdateOne {
 	return buo.RemoveNextBlockIDs(ids...)
 }
 
+// ClearFlow clears the "flow" edge to type Flow.
+func (buo *BlockUpdateOne) ClearFlow() *BlockUpdateOne {
+	buo.mutation.ClearFlow()
+	return buo
+}
+
+// ClearFlowTemplate clears the "flow_template" edge to type FlowExecutionTemplate.
+func (buo *BlockUpdateOne) ClearFlowTemplate() *BlockUpdateOne {
+	buo.mutation.ClearFlowTemplate()
+	return buo
+}
+
 // ClearFlowDraft clears the "flow_draft" edge to type FlowDraft.
 func (buo *BlockUpdateOne) ClearFlowDraft() *BlockUpdateOne {
 	buo.mutation.ClearFlowDraft()
+	return buo
+}
+
+// ClearSubFlow clears the "sub_flow" edge to type Flow.
+func (buo *BlockUpdateOne) ClearSubFlow() *BlockUpdateOne {
+	buo.mutation.ClearSubFlow()
 	return buo
 }
 
@@ -726,6 +1344,27 @@ func (buo *BlockUpdateOne) ClearGotoBlock() *BlockUpdateOne {
 	return buo
 }
 
+// ClearInstances clears all "instances" edges to type BlockInstance.
+func (buo *BlockUpdateOne) ClearInstances() *BlockUpdateOne {
+	buo.mutation.ClearInstances()
+	return buo
+}
+
+// RemoveInstanceIDs removes the instances edge to BlockInstance by ids.
+func (buo *BlockUpdateOne) RemoveInstanceIDs(ids ...int) *BlockUpdateOne {
+	buo.mutation.RemoveInstanceIDs(ids...)
+	return buo
+}
+
+// RemoveInstances removes instances edges to BlockInstance.
+func (buo *BlockUpdateOne) RemoveInstances(b ...*BlockInstance) *BlockUpdateOne {
+	ids := make([]int, len(b))
+	for i := range b {
+		ids[i] = b[i].ID
+	}
+	return buo.RemoveInstanceIDs(ids...)
+}
+
 // Save executes the query and returns the updated entity.
 func (buo *BlockUpdateOne) Save(ctx context.Context) (*Block, error) {
 	if _, ok := buo.mutation.UpdateTime(); !ok {
@@ -742,9 +1381,15 @@ func (buo *BlockUpdateOne) Save(ctx context.Context) (*Block, error) {
 			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
 		}
 	}
-
-	if _, ok := buo.mutation.FlowDraftID(); buo.mutation.FlowDraftCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"flow_draft\"")
+	if v, ok := buo.mutation.ActionType(); ok {
+		if err := block.ActionTypeValidator(v); err != nil {
+			return nil, &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.TriggerType(); ok {
+		if err := block.TriggerTypeValidator(v); err != nil {
+			return nil, &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
+		}
 	}
 
 	var (
@@ -831,6 +1476,71 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 			Type:   field.TypeEnum,
 			Value:  value,
 			Column: block.FieldType,
+		})
+	}
+	if value, ok := buo.mutation.ActionType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldActionType,
+		})
+	}
+	if buo.mutation.ActionTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldActionType,
+		})
+	}
+	if value, ok := buo.mutation.TriggerType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: block.FieldTriggerType,
+		})
+	}
+	if buo.mutation.TriggerTypeCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Column: block.FieldTriggerType,
+		})
+	}
+	if value, ok := buo.mutation.StartParamDefinitions(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldStartParamDefinitions,
+		})
+	}
+	if buo.mutation.StartParamDefinitionsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldStartParamDefinitions,
+		})
+	}
+	if value, ok := buo.mutation.InputParams(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldInputParams,
+		})
+	}
+	if buo.mutation.InputParamsCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldInputParams,
+		})
+	}
+	if value, ok := buo.mutation.UIRepresentation(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Value:  value,
+			Column: block.FieldUIRepresentation,
+		})
+	}
+	if buo.mutation.UIRepresentationCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeJSON,
+			Column: block.FieldUIRepresentation,
 		})
 	}
 	if buo.mutation.PrevBlocksCleared() {
@@ -941,6 +1651,76 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if buo.mutation.FlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTable,
+			Columns: []string{block.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.FlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTable,
+			Columns: []string{block.FlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.FlowTemplateCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTemplateTable,
+			Columns: []string{block.FlowTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowexecutiontemplate.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.FlowTemplateIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   block.FlowTemplateTable,
+			Columns: []string{block.FlowTemplateColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flowexecutiontemplate.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if buo.mutation.FlowDraftCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -968,6 +1748,41 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: flowdraft.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.SubFlowCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   block.SubFlowTable,
+			Columns: []string{block.SubFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.SubFlowIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   block.SubFlowTable,
+			Columns: []string{block.SubFlowColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: flow.FieldID,
 				},
 			},
 		}
@@ -1057,6 +1872,60 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: block.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if buo.mutation.InstancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.RemovedInstancesIDs(); len(nodes) > 0 && !buo.mutation.InstancesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := buo.mutation.InstancesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   block.InstancesTable,
+			Columns: []string{block.InstancesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: blockinstance.FieldID,
 				},
 			},
 		}

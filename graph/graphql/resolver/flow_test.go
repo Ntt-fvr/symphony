@@ -8,11 +8,69 @@ import (
 	"context"
 	"testing"
 
+	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
+
+func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationResolver, name string) *ent.Flow {
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: name,
+		EndParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "param",
+				Type: enum.VariableTypeString,
+			},
+		},
+	})
+	require.NoError(t, err)
+	startBlock, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Start",
+		ParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "start_param",
+				Type: enum.VariableTypeString,
+			},
+		},
+	})
+	require.NoError(t, err)
+	endBlock, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "End",
+		Params: []*models.VariableExpressionInput{
+			{
+				VariableDefinitionKey: "param",
+				Expression:            "${b_0}",
+				BlockVariables: []*flowschema.BlockVariable{
+					{
+						BlockID:               startBlock.ID,
+						VariableDefinitionKey: "start_param",
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	_, err = mr.AddConnector(ctx, models.ConnectorInput{
+		SourceBlockID: startBlock.ID,
+		TargetBlockID: endBlock.ID,
+	})
+	require.NoError(t, err)
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{
+		FlowDraftID: draft.ID,
+	})
+	require.NoError(t, err)
+	return flw
+}
 
 func TestAddDeleteFlowDraft(t *testing.T) {
 	r := newTestResolver(t)
@@ -41,4 +99,216 @@ func TestAddDeleteFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	_, err = qr.Node(ctx, flowDraft.ID)
 	require.Error(t, err)
+}
+
+func TestPublishDraftToNewFlow(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+
+	mr, qr, fr := r.Mutation(), r.Query(), r.Flow()
+	name := "5G Deployment"
+	description := "Flow used for managing all technical operation around deployment"
+	endParamDefinitions := []*flowschema.VariableDefinition{
+		{
+			Key:  "param",
+			Type: enum.VariableTypeInt,
+		},
+	}
+	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name:                name,
+		Description:         &description,
+		EndParamDefinitions: endParamDefinitions,
+	})
+	require.NoError(t, err)
+	startBlock, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
+		FlowDraftID: flowDraft.ID,
+		Name:        "Start",
+	})
+	require.NoError(t, err)
+	endBlock, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
+		FlowDraftID: flowDraft.ID,
+		Name:        "End",
+	})
+	require.NoError(t, err)
+	gotoBlock, err := mr.AddGotoBlock(ctx, models.AddGotoBlockInput{
+		FlowDraftID:   flowDraft.ID,
+		Name:          "Shortcut",
+		TargetBlockID: endBlock.ID,
+	})
+	require.NoError(t, err)
+	_, err = mr.AddConnector(ctx, models.ConnectorInput{
+		SourceBlockID: startBlock.ID,
+		TargetBlockID: gotoBlock.ID,
+	})
+	require.NoError(t, err)
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{
+		FlowDraftID: flowDraft.ID,
+	})
+	require.NoError(t, err)
+	require.Equal(t, name, flw.Name)
+	require.Equal(t, description, *flw.Description)
+	require.Equal(t, endParamDefinitions, flw.EndParamDefinitions)
+	require.Equal(t, flow.StatusEnabled, flw.Status)
+	draft, err := fr.Draft(ctx, flw)
+	require.NoError(t, err)
+	require.Nil(t, draft)
+	_, err = qr.Node(ctx, flowDraft.ID)
+	require.Error(t, err)
+	blocks, err := fr.Blocks(ctx, flw)
+	require.NoError(t, err)
+	require.Len(t, blocks, 3)
+	for _, blk := range blocks {
+		draftExists, err := blk.QueryFlowDraft().Exist(ctx)
+		require.NoError(t, err)
+		require.False(t, draftExists)
+		flowExists, err := blk.QueryFlow().Exist(ctx)
+		require.NoError(t, err)
+		require.True(t, flowExists)
+		switch blk.Type {
+		case block.TypeStart:
+			require.Equal(t, startBlock.ID, blk.ID)
+		case block.TypeGoTo:
+			require.Equal(t, gotoBlock.ID, blk.ID)
+		case block.TypeEnd:
+			require.Equal(t, endBlock.ID, blk.ID)
+		default:
+			require.Fail(t, "unknown type")
+		}
+	}
+}
+
+func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr, qr, fr, fdr, br, ver, bvr := r.Mutation(), r.Query(), r.Flow(), r.FlowDraft(), r.Block(), r.VariableExpression(), r.BlockVariable()
+	subFlow := prepareBasicFlow(ctx, t, mr, "Subflow")
+	mainFlow := prepareBasicFlow(ctx, t, mr, "Main")
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name:   "New name",
+		FlowID: pointer.ToInt(mainFlow.ID),
+		EndParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "param",
+				Type: enum.VariableTypeString,
+			},
+		},
+	})
+	require.NoError(t, err)
+	require.Equal(t, "New name", draft.Name)
+	foundDraft, err := fr.Draft(ctx, mainFlow)
+	require.NoError(t, err)
+	require.Equal(t, draft.ID, foundDraft.ID)
+	foundFlow, err := qr.Node(ctx, mainFlow.ID)
+	require.NoError(t, err)
+	require.Equal(t, "Main", foundFlow.(*ent.Flow).Name)
+	_, err = mr.AddSubflowBlock(ctx, models.AddSubflowBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Blackbox",
+		FlowID:      subFlow.ID,
+		Params: []*models.VariableExpressionInput{
+			{
+				VariableDefinitionKey: "start_param",
+				Expression:            "\"Start\"",
+			},
+		},
+	})
+	require.NoError(t, err)
+	blks, err := fdr.Blocks(ctx, draft)
+	require.NoError(t, err)
+	require.Len(t, blks, 3)
+	blks, err = fr.Blocks(ctx, mainFlow)
+	require.NoError(t, err)
+	require.Len(t, blks, 2)
+	startWithNext, err := draft.QueryBlocks().
+		Where(block.TypeEQ(block.TypeStart)).
+		WithNextBlocks().
+		Only(ctx)
+	require.NoError(t, err)
+	require.Len(t, startWithNext.Edges.NextBlocks, 1)
+
+	endBlock, err := draft.QueryBlocks().
+		Where(block.TypeEQ(block.TypeEnd)).
+		WithNextBlocks().
+		Only(ctx)
+	require.NoError(t, err)
+	details, err := br.Details(ctx, endBlock)
+	require.NoError(t, err)
+	params := details.(*models.EndBlock).Params
+	require.Len(t, params, 1)
+	paramDef, err := ver.Definition(ctx, params[0])
+	require.NoError(t, err)
+	require.Equal(t, "param", paramDef.Key)
+	require.Equal(t, "param", paramDef.Name())
+	blockVariables := params[0].BlockVariables
+	require.Len(t, blockVariables, 1)
+	refBlock, err := bvr.Block(ctx, blockVariables[0])
+	require.NoError(t, err)
+	require.Equal(t, startWithNext.ID, refBlock.ID)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	require.NoError(t, err)
+	require.Equal(t, mainFlow.ID, flw.ID)
+	require.Equal(t, "New name", flw.Name)
+	blks, err = fr.Blocks(ctx, flw)
+	require.NoError(t, err)
+	require.Len(t, blks, 3)
+	_, err = qr.Node(ctx, draft.ID)
+	require.Error(t, err)
+}
+
+func TestStartFlow(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name: "Flow with no start",
+	})
+	require.NoError(t, err)
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	require.NoError(t, err)
+	_, err = mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID: flw.ID,
+	})
+	require.Error(t, err)
+	draft, err = mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
+		Name:   "Flow with start",
+		FlowID: pointer.ToInt(flw.ID),
+	})
+	require.NoError(t, err)
+	_, err = mr.AddStartBlock(ctx, models.AddStartBlockInput{
+		FlowDraftID: draft.ID,
+		Name:        "Start",
+		ParamDefinitions: []*flowschema.VariableDefinition{
+			{
+				Key:  "param",
+				Type: enum.VariableTypeInt,
+			},
+		},
+	})
+	require.NoError(t, err)
+	_, err = mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	require.NoError(t, err)
+	inputParams := []*flowschema.VariableValue{
+		{
+			VariableDefinitionKey: "param",
+			Value:                 "23",
+		},
+	}
+	instance, err := mr.StartFlow(ctx, models.StartFlowInput{
+		FlowID: flw.ID,
+		Params: inputParams,
+	})
+	require.NoError(t, err)
+	startBlock, err := instance.QueryBlocks().
+		WithBlock().
+		Only(ctx)
+	require.NoError(t, err)
+	require.Equal(t, inputParams, startBlock.Inputs)
+	require.NotNil(t, startBlock.Edges.Block)
+	require.Equal(t, block.TypeStart, startBlock.Edges.Block.Type)
+	require.Equal(t, blockinstance.StatusPending, startBlock.Status)
 }

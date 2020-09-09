@@ -27,6 +27,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	actions2 "github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
@@ -38,6 +41,14 @@ func (queryResolver) Me(ctx context.Context) (viewer.Viewer, error) {
 
 func (r queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
 	return r.ClientFrom(ctx).Noder(ctx, id)
+}
+
+func (r queryResolver) ActionType(_ context.Context, id flowschema.ActionTypeID) (actions2.ActionType, error) {
+	return r.flow.actionFactory.GetType(id)
+}
+
+func (r queryResolver) TriggerType(_ context.Context, id flowschema.TriggerTypeID) (triggers.TriggerType, error) {
+	return r.flow.triggerFactory.GetType(id)
 }
 
 func (r queryResolver) LocationTypes(

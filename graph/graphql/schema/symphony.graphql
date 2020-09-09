@@ -3138,6 +3138,64 @@ input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
 }
 
+enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
+  STRING
+  INT
+  DATE
+  WORK_ORDER
+  WORK_ORDER_TYPE
+  LOCATION
+  PROJECT
+  USER
+}
+
+enum VariableUsage @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableUsage") {
+  INPUT
+  OUTPUT
+  INPUT_AND_OUTPUT
+}
+
+type VariableDefinition @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+  key: String!
+  name: String!
+  type: VariableType!
+  mandatory: Boolean!
+  multipleValues: Boolean!
+  choices: [String!]
+  defaultValue: String
+  usage: VariableUsage!
+  nestedVariables(value: String!): [VariableDefinition!]!
+}
+
+input VariableDefinitionInput @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableDefinition") {
+  key: String!
+  type: VariableType!
+  mandatory: Boolean!
+  multipleValues: Boolean!
+  choices: [String!]
+  defaultValue: String
+}
+
+type ActionType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/actions.ActionType") {
+id: ActionTypeId!
+description: String!
+variables: [VariableDefinition!]!
+}
+
+enum TriggerTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.TriggerTypeID") {
+  work_order
+}
+
+enum ActionTypeId @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ActionTypeID") {
+  work_order
+}
+
+type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/triggers.TriggerType") {
+  id: TriggerTypeId!
+  description: String!
+  variables: [VariableDefinition!]!
+}
+
 # Block definitions
 
 type Block implements Node {
@@ -3145,56 +3203,183 @@ type Block implements Node {
   name: String!
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
-  details: BlockType!
+  details: BlockDetails!
+  inputParamDefinitions: [VariableDefinition!]!
+  outputParamDefinitions: [VariableDefinition!]!
+  uiRepresentation: BlockUIRepresentation
+}
+
+
+type BlockVariable @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable") {
+  block: Block!
+  outputParamDefinition: VariableDefinition!
+}
+
+input BlockVariableInput @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockVariable") {
+  blockId: ID!
+  variableDefinitionKey: String!
+}
+
+type VariableExpression @goModel(model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableExpression") {
+  definition: VariableDefinition!
+  expression: String!
+  blockVariables: [BlockVariable!]
+}
+
+input VariableExpressionInput {
+  variableDefinitionKey: String!
+  expression: String!
+  blockVariables: [BlockVariableInput!]
+}
+
+type BlockUIRepresentation @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+) {
+  xPosition: Int!
+  yPosition: Int!
+}
+
+input BlockUIRepresentationInput @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
+) {
+  xPosition: Int!
+  yPosition: Int!
 }
 
 type StartBlock  {
-  dummy: String
+  paramDefinitions: [VariableDefinition!]!
 }
 
 type EndBlock {
-  dummy: String
+  params: [VariableExpression!]!
+}
+
+type SubflowBlock {
+  flow: Flow
+  params: [VariableExpression!]!
 }
 
 type GotoBlock {
-  gotoBlock: Block
+  target: Block
 }
 
-union BlockType = StartBlock | EndBlock | GotoBlock
+type TriggerBlock {
+  triggerType: TriggerType!
+  params: [VariableExpression!]!
+}
+
+type ActionBlock {
+  actionType: ActionType!
+  params: [VariableExpression!]!
+}
+
+union BlockDetails = StartBlock | EndBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
 
 input AddStartBlockInput {
   flowDraftId: ID!
   name: String!
+  paramDefinitions: [VariableDefinitionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 input AddEndBlockInput {
   flowDraftId: ID!
   name: String!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 input AddGotoBlockInput {
   flowDraftId: ID!
   name: String!
-  nextBlockId: ID!
+  targetBlockId: ID!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input AddSubflowBlockInput {
+  flowDraftId: ID!
+  name: String!
+  flowId: ID!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input AddTriggerBlockInput {
+  flowDraftId: ID!
+  name: String!
+  triggerType: TriggerTypeId!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input AddActionBlockInput {
+  flowDraftId: ID!
+  name: String!
+  actionType: ActionTypeId!
+  params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
 }
 
 input ConnectorInput {
-  blockId: ID!
-  nextBlockId: ID!
+  sourceBlockId: ID!
+  targetBlockId: ID!
+}
+
+type ConnectorResult {
+  source: Block!
+  target: Block!
 }
 
 # Flow Definitions
+
+enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+  ENABLED
+  DISABLED
+}
+
+type Flow implements Node {
+  id: ID!
+  name: String!
+  description: String
+  endParamDefinitions: [VariableDefinition!]!
+  status: FlowStatus!
+  blocks: [Block!]!
+  draft: FlowDraft
+}
 
 type FlowDraft implements Node {
   id: ID!
   name: String!
   description: String
+  endParamDefinitions: [VariableDefinition!]!
   blocks: [Block!]!
+}
+
+type FlowInstance implements Node {
+  id: ID!
 }
 
 input AddFlowDraftInput {
   name: String!
   description: String
+  flowID: ID
+  endParamDefinitions: [VariableDefinitionInput!]!
+}
+
+input PublishFlowInput {
+  flowDraftID: ID!
+}
+
+input VariableValue @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.VariableValue"
+) {
+  variableDefinitionKey: String!
+  value: String!
+}
+
+input StartFlowInput {
+  flowID: ID!
+  params: [VariableValue]!
 }
 
 input TechnicianWorkOrderCheckOutInput {
@@ -3221,6 +3406,8 @@ type Query {
     id: ID!
   ): Node
   user(authID: String!): User
+  actionType(type: ActionTypeId!): ActionType
+  triggerType(id: TriggerTypeId!): TriggerType
   locationTypes(
     after: Cursor
     first: Int @numberValue(min: 0)
@@ -3755,11 +3942,16 @@ type Mutation {
   addStartBlock(input: AddStartBlockInput!): Block!
   addEndBlock(input: AddEndBlockInput!): Block!
   addGotoBlock(input: AddGotoBlockInput!): Block!
+  addSubflowBlock(input: AddSubflowBlockInput!): Block!
+  addTriggerBlock(input: AddTriggerBlockInput!): Block!
+  addActionBlock(input: AddActionBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
-  addConnector(input: ConnectorInput!): Block!
-  deleteConnector(input: ConnectorInput!): Block!
+  addConnector(input: ConnectorInput!): ConnectorResult!
+  deleteConnector(input: ConnectorInput!): ConnectorResult!
   addFlowDraft(input: AddFlowDraftInput!): FlowDraft!
+  publishFlow(input: PublishFlowInput!): Flow!
   deleteFlowDraft(id: ID!): Boolean!
+  startFlow(input: StartFlowInput!): FlowInstance!
 }
 
 type Subscription {

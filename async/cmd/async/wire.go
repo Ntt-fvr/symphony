@@ -12,8 +12,12 @@ import (
 	"net/http"
 
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
@@ -58,6 +62,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(ev.EventObject),
 			event.LogEntry{},
 		),
+		triggers.NewFactory,
+		actions.NewFactory,
 		newHealthChecks,
 		mux.NewRouter,
 		wire.Bind(
@@ -86,8 +92,15 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
+		hooker := hooks.Flower{
+			TriggerFactory: triggerFactory,
+			ActionFactory:  actionFactory,
+		}
+		hooker.HookTo(client)
+		eventer.HookTo(client)
+	})
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {

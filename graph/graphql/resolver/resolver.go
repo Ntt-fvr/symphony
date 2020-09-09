@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/facebookincubator/symphony/pkg/ev"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -16,10 +18,16 @@ import (
 )
 
 type (
+	// Config add configuration for flow resolvers.
+	FlowConfig struct {
+		TriggerFactory triggers.Factory
+		ActionFactory  actions.Factory
+	}
 	// Config configures resolver.
 	Config struct {
 		Logger          log.Logger
 		ReceiverFactory ev.ReceiverFactory
+		Flow            FlowConfig
 	}
 
 	// Option allows for managing resolver configuration using functional options.
@@ -28,7 +36,11 @@ type (
 	resolver struct {
 		logger log.Logger
 		event  struct{ ev.ReceiverFactory }
-		orc8r  struct{ client *http.Client }
+		flow   struct {
+			triggerFactory triggers.Factory
+			actionFactory  actions.Factory
+		}
+		orc8r struct{ client *http.Client }
 	}
 )
 
@@ -36,6 +48,8 @@ type (
 func New(cfg Config, opts ...Option) generated.ResolverRoot {
 	r := &resolver{logger: cfg.Logger}
 	r.event.ReceiverFactory = cfg.ReceiverFactory
+	r.flow.triggerFactory = cfg.Flow.TriggerFactory
+	r.flow.actionFactory = cfg.Flow.ActionFactory
 	for _, opt := range opts {
 		opt(r)
 	}
@@ -245,10 +259,26 @@ func (r resolver) Activity() generated.ActivityResolver {
 	return activityResolver{}
 }
 
+func (r resolver) Flow() generated.FlowResolver {
+	return flowResolver{}
+}
+
 func (r resolver) FlowDraft() generated.FlowDraftResolver {
 	return flowDraftResolver{}
 }
 
 func (r resolver) Block() generated.BlockResolver {
-	return blockResolver{}
+	return blockResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
+}
+
+func (r resolver) VariableDefinition() generated.VariableDefinitionResolver {
+	return variableDefinitionResolver{}
+}
+
+func (r resolver) VariableExpression() generated.VariableExpressionResolver {
+	return variableExpressionResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
+}
+
+func (r resolver) BlockVariable() generated.BlockVariableResolver {
+	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }

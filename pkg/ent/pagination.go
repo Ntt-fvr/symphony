@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -40,7 +41,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -938,6 +942,225 @@ var DefaultBlockOrder = &BlockOrder{
 		field: block.FieldID,
 		toCursor: func(b *Block) Cursor {
 			return Cursor{ID: b.ID}
+		},
+	},
+}
+
+// BlockInstanceEdge is the edge representation of BlockInstance.
+type BlockInstanceEdge struct {
+	Node   *BlockInstance `json:"node"`
+	Cursor Cursor         `json:"cursor"`
+}
+
+// BlockInstanceConnection is the connection containing edges to BlockInstance.
+type BlockInstanceConnection struct {
+	Edges      []*BlockInstanceEdge `json:"edges"`
+	PageInfo   PageInfo             `json:"pageInfo"`
+	TotalCount int                  `json:"totalCount"`
+}
+
+// BlockInstancePaginateOption enables pagination customization.
+type BlockInstancePaginateOption func(*blockInstancePager) error
+
+// WithBlockInstanceOrder configures pagination ordering.
+func WithBlockInstanceOrder(order *BlockInstanceOrder) BlockInstancePaginateOption {
+	if order == nil {
+		order = DefaultBlockInstanceOrder
+	}
+	o := *order
+	return func(pager *blockInstancePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultBlockInstanceOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithBlockInstanceFilter configures pagination filter.
+func WithBlockInstanceFilter(filter func(*BlockInstanceQuery) (*BlockInstanceQuery, error)) BlockInstancePaginateOption {
+	return func(pager *blockInstancePager) error {
+		if filter == nil {
+			return errors.New("BlockInstanceQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type blockInstancePager struct {
+	order  *BlockInstanceOrder
+	filter func(*BlockInstanceQuery) (*BlockInstanceQuery, error)
+}
+
+func newBlockInstancePager(opts []BlockInstancePaginateOption) (*blockInstancePager, error) {
+	pager := &blockInstancePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultBlockInstanceOrder
+	}
+	return pager, nil
+}
+
+func (p *blockInstancePager) applyFilter(query *BlockInstanceQuery) (*BlockInstanceQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *blockInstancePager) toCursor(bi *BlockInstance) Cursor {
+	return p.order.Field.toCursor(bi)
+}
+
+func (p *blockInstancePager) applyCursors(query *BlockInstanceQuery, after, before *Cursor) *BlockInstanceQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultBlockInstanceOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *blockInstancePager) applyOrder(query *BlockInstanceQuery, reverse bool) *BlockInstanceQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultBlockInstanceOrder.Field {
+		query = query.Order(Asc(DefaultBlockInstanceOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to BlockInstance.
+func (bi *BlockInstanceQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...BlockInstancePaginateOption,
+) (*BlockInstanceConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newBlockInstancePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if bi, err = pager.applyFilter(bi); err != nil {
+		return nil, err
+	}
+
+	conn := &BlockInstanceConnection{Edges: []*BlockInstanceEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := bi.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := bi.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	bi = pager.applyCursors(bi, after, before)
+	bi = pager.applyOrder(bi, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		bi = bi.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		bi = bi.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := bi.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *BlockInstance
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *BlockInstance {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *BlockInstance {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*BlockInstanceEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &BlockInstanceEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// BlockInstanceOrderField defines the ordering field of BlockInstance.
+type BlockInstanceOrderField struct {
+	field    string
+	toCursor func(*BlockInstance) Cursor
+}
+
+// BlockInstanceOrder defines the ordering of BlockInstance.
+type BlockInstanceOrder struct {
+	Direction OrderDirection           `json:"direction"`
+	Field     *BlockInstanceOrderField `json:"field"`
+}
+
+// DefaultBlockInstanceOrder is the default ordering of BlockInstance.
+var DefaultBlockInstanceOrder = &BlockInstanceOrder{
+	Direction: OrderDirectionAsc,
+	Field: &BlockInstanceOrderField{
+		field: blockinstance.FieldID,
+		toCursor: func(bi *BlockInstance) Cursor {
+			return Cursor{ID: bi.ID}
 		},
 	},
 }
@@ -5160,6 +5383,225 @@ var DefaultFloorPlanScaleOrder = &FloorPlanScaleOrder{
 	},
 }
 
+// FlowEdge is the edge representation of Flow.
+type FlowEdge struct {
+	Node   *Flow  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// FlowConnection is the connection containing edges to Flow.
+type FlowConnection struct {
+	Edges      []*FlowEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+// FlowPaginateOption enables pagination customization.
+type FlowPaginateOption func(*flowPager) error
+
+// WithFlowOrder configures pagination ordering.
+func WithFlowOrder(order *FlowOrder) FlowPaginateOption {
+	if order == nil {
+		order = DefaultFlowOrder
+	}
+	o := *order
+	return func(pager *flowPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFlowOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFlowFilter configures pagination filter.
+func WithFlowFilter(filter func(*FlowQuery) (*FlowQuery, error)) FlowPaginateOption {
+	return func(pager *flowPager) error {
+		if filter == nil {
+			return errors.New("FlowQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type flowPager struct {
+	order  *FlowOrder
+	filter func(*FlowQuery) (*FlowQuery, error)
+}
+
+func newFlowPager(opts []FlowPaginateOption) (*flowPager, error) {
+	pager := &flowPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFlowOrder
+	}
+	return pager, nil
+}
+
+func (p *flowPager) applyFilter(query *FlowQuery) (*FlowQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *flowPager) toCursor(f *Flow) Cursor {
+	return p.order.Field.toCursor(f)
+}
+
+func (p *flowPager) applyCursors(query *FlowQuery, after, before *Cursor) *FlowQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFlowOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *flowPager) applyOrder(query *FlowQuery, reverse bool) *FlowQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFlowOrder.Field {
+		query = query.Order(Asc(DefaultFlowOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Flow.
+func (f *FlowQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FlowPaginateOption,
+) (*FlowConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFlowPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if f, err = pager.applyFilter(f); err != nil {
+		return nil, err
+	}
+
+	conn := &FlowConnection{Edges: []*FlowEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := f.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := f.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	f = pager.applyCursors(f, after, before)
+	f = pager.applyOrder(f, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		f = f.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		f = f.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := f.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *Flow
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Flow {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Flow {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*FlowEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &FlowEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// FlowOrderField defines the ordering field of Flow.
+type FlowOrderField struct {
+	field    string
+	toCursor func(*Flow) Cursor
+}
+
+// FlowOrder defines the ordering of Flow.
+type FlowOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *FlowOrderField `json:"field"`
+}
+
+// DefaultFlowOrder is the default ordering of Flow.
+var DefaultFlowOrder = &FlowOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FlowOrderField{
+		field: flow.FieldID,
+		toCursor: func(f *Flow) Cursor {
+			return Cursor{ID: f.ID}
+		},
+	},
+}
+
 // FlowDraftEdge is the edge representation of FlowDraft.
 type FlowDraftEdge struct {
 	Node   *FlowDraft `json:"node"`
@@ -5375,6 +5817,444 @@ var DefaultFlowDraftOrder = &FlowDraftOrder{
 		field: flowdraft.FieldID,
 		toCursor: func(fd *FlowDraft) Cursor {
 			return Cursor{ID: fd.ID}
+		},
+	},
+}
+
+// FlowExecutionTemplateEdge is the edge representation of FlowExecutionTemplate.
+type FlowExecutionTemplateEdge struct {
+	Node   *FlowExecutionTemplate `json:"node"`
+	Cursor Cursor                 `json:"cursor"`
+}
+
+// FlowExecutionTemplateConnection is the connection containing edges to FlowExecutionTemplate.
+type FlowExecutionTemplateConnection struct {
+	Edges      []*FlowExecutionTemplateEdge `json:"edges"`
+	PageInfo   PageInfo                     `json:"pageInfo"`
+	TotalCount int                          `json:"totalCount"`
+}
+
+// FlowExecutionTemplatePaginateOption enables pagination customization.
+type FlowExecutionTemplatePaginateOption func(*flowExecutionTemplatePager) error
+
+// WithFlowExecutionTemplateOrder configures pagination ordering.
+func WithFlowExecutionTemplateOrder(order *FlowExecutionTemplateOrder) FlowExecutionTemplatePaginateOption {
+	if order == nil {
+		order = DefaultFlowExecutionTemplateOrder
+	}
+	o := *order
+	return func(pager *flowExecutionTemplatePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFlowExecutionTemplateOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFlowExecutionTemplateFilter configures pagination filter.
+func WithFlowExecutionTemplateFilter(filter func(*FlowExecutionTemplateQuery) (*FlowExecutionTemplateQuery, error)) FlowExecutionTemplatePaginateOption {
+	return func(pager *flowExecutionTemplatePager) error {
+		if filter == nil {
+			return errors.New("FlowExecutionTemplateQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type flowExecutionTemplatePager struct {
+	order  *FlowExecutionTemplateOrder
+	filter func(*FlowExecutionTemplateQuery) (*FlowExecutionTemplateQuery, error)
+}
+
+func newFlowExecutionTemplatePager(opts []FlowExecutionTemplatePaginateOption) (*flowExecutionTemplatePager, error) {
+	pager := &flowExecutionTemplatePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFlowExecutionTemplateOrder
+	}
+	return pager, nil
+}
+
+func (p *flowExecutionTemplatePager) applyFilter(query *FlowExecutionTemplateQuery) (*FlowExecutionTemplateQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *flowExecutionTemplatePager) toCursor(fet *FlowExecutionTemplate) Cursor {
+	return p.order.Field.toCursor(fet)
+}
+
+func (p *flowExecutionTemplatePager) applyCursors(query *FlowExecutionTemplateQuery, after, before *Cursor) *FlowExecutionTemplateQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFlowExecutionTemplateOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *flowExecutionTemplatePager) applyOrder(query *FlowExecutionTemplateQuery, reverse bool) *FlowExecutionTemplateQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFlowExecutionTemplateOrder.Field {
+		query = query.Order(Asc(DefaultFlowExecutionTemplateOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FlowExecutionTemplate.
+func (fet *FlowExecutionTemplateQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FlowExecutionTemplatePaginateOption,
+) (*FlowExecutionTemplateConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFlowExecutionTemplatePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if fet, err = pager.applyFilter(fet); err != nil {
+		return nil, err
+	}
+
+	conn := &FlowExecutionTemplateConnection{Edges: []*FlowExecutionTemplateEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := fet.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := fet.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	fet = pager.applyCursors(fet, after, before)
+	fet = pager.applyOrder(fet, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		fet = fet.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		fet = fet.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := fet.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *FlowExecutionTemplate
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FlowExecutionTemplate {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FlowExecutionTemplate {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*FlowExecutionTemplateEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &FlowExecutionTemplateEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// FlowExecutionTemplateOrderField defines the ordering field of FlowExecutionTemplate.
+type FlowExecutionTemplateOrderField struct {
+	field    string
+	toCursor func(*FlowExecutionTemplate) Cursor
+}
+
+// FlowExecutionTemplateOrder defines the ordering of FlowExecutionTemplate.
+type FlowExecutionTemplateOrder struct {
+	Direction OrderDirection                   `json:"direction"`
+	Field     *FlowExecutionTemplateOrderField `json:"field"`
+}
+
+// DefaultFlowExecutionTemplateOrder is the default ordering of FlowExecutionTemplate.
+var DefaultFlowExecutionTemplateOrder = &FlowExecutionTemplateOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FlowExecutionTemplateOrderField{
+		field: flowexecutiontemplate.FieldID,
+		toCursor: func(fet *FlowExecutionTemplate) Cursor {
+			return Cursor{ID: fet.ID}
+		},
+	},
+}
+
+// FlowInstanceEdge is the edge representation of FlowInstance.
+type FlowInstanceEdge struct {
+	Node   *FlowInstance `json:"node"`
+	Cursor Cursor        `json:"cursor"`
+}
+
+// FlowInstanceConnection is the connection containing edges to FlowInstance.
+type FlowInstanceConnection struct {
+	Edges      []*FlowInstanceEdge `json:"edges"`
+	PageInfo   PageInfo            `json:"pageInfo"`
+	TotalCount int                 `json:"totalCount"`
+}
+
+// FlowInstancePaginateOption enables pagination customization.
+type FlowInstancePaginateOption func(*flowInstancePager) error
+
+// WithFlowInstanceOrder configures pagination ordering.
+func WithFlowInstanceOrder(order *FlowInstanceOrder) FlowInstancePaginateOption {
+	if order == nil {
+		order = DefaultFlowInstanceOrder
+	}
+	o := *order
+	return func(pager *flowInstancePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFlowInstanceOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFlowInstanceFilter configures pagination filter.
+func WithFlowInstanceFilter(filter func(*FlowInstanceQuery) (*FlowInstanceQuery, error)) FlowInstancePaginateOption {
+	return func(pager *flowInstancePager) error {
+		if filter == nil {
+			return errors.New("FlowInstanceQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type flowInstancePager struct {
+	order  *FlowInstanceOrder
+	filter func(*FlowInstanceQuery) (*FlowInstanceQuery, error)
+}
+
+func newFlowInstancePager(opts []FlowInstancePaginateOption) (*flowInstancePager, error) {
+	pager := &flowInstancePager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFlowInstanceOrder
+	}
+	return pager, nil
+}
+
+func (p *flowInstancePager) applyFilter(query *FlowInstanceQuery) (*FlowInstanceQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *flowInstancePager) toCursor(fi *FlowInstance) Cursor {
+	return p.order.Field.toCursor(fi)
+}
+
+func (p *flowInstancePager) applyCursors(query *FlowInstanceQuery, after, before *Cursor) *FlowInstanceQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultFlowInstanceOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *flowInstancePager) applyOrder(query *FlowInstanceQuery, reverse bool) *FlowInstanceQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultFlowInstanceOrder.Field {
+		query = query.Order(Asc(DefaultFlowInstanceOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FlowInstance.
+func (fi *FlowInstanceQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FlowInstancePaginateOption,
+) (*FlowInstanceConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFlowInstancePager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if fi, err = pager.applyFilter(fi); err != nil {
+		return nil, err
+	}
+
+	conn := &FlowInstanceConnection{Edges: []*FlowInstanceEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := fi.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := fi.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	fi = pager.applyCursors(fi, after, before)
+	fi = pager.applyOrder(fi, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		fi = fi.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		fi = fi.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := fi.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *FlowInstance
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FlowInstance {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FlowInstance {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*FlowInstanceEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &FlowInstanceEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// FlowInstanceOrderField defines the ordering field of FlowInstance.
+type FlowInstanceOrderField struct {
+	field    string
+	toCursor func(*FlowInstance) Cursor
+}
+
+// FlowInstanceOrder defines the ordering of FlowInstance.
+type FlowInstanceOrder struct {
+	Direction OrderDirection          `json:"direction"`
+	Field     *FlowInstanceOrderField `json:"field"`
+}
+
+// DefaultFlowInstanceOrder is the default ordering of FlowInstance.
+var DefaultFlowInstanceOrder = &FlowInstanceOrder{
+	Direction: OrderDirectionAsc,
+	Field: &FlowInstanceOrderField{
+		field: flowinstance.FieldID,
+		toCursor: func(fi *FlowInstance) Cursor {
+			return Cursor{ID: fi.ID}
 		},
 	},
 }

@@ -12,21 +12,26 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
+	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"gocloud.dev/server/health"
 	"google.golang.org/grpc"
-)
 
-import (
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+
 	_ "gocloud.dev/pubsub/mempubsub"
+
 	_ "gocloud.dev/pubsub/natspubsub"
 )
 
@@ -55,7 +60,9 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Logger:  logger,
 		Emitter: emitter,
 	}
-	tenancy := newTenancy(mySQLTenancy, eventer)
+	factory := triggers.NewFactory()
+	actionsFactory := actions.NewFactory()
+	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
 	url := flags.AuthURL
 	telemetryConfig := &flags.TelemetryConfig
 	v := newHealthChecks(mySQLTenancy)
@@ -64,6 +71,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Tenancy:         tenancy,
 		AuthURL:         url,
 		ReceiverFactory: topicFactory,
+		TriggerFactory:  factory,
+		ActionFactory:   actionsFactory,
 		Logger:          logger,
 		Telemetry:       telemetryConfig,
 		HealthChecks:    v,
@@ -113,8 +122,15 @@ func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Serve
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, eventer.HookTo)
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
+		hooker := hooks.Flower{
+			TriggerFactory: triggerFactory,
+			ActionFactory:  actionFactory,
+		}
+		hooker.HookTo(client)
+		eventer.HookTo(client)
+	})
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {

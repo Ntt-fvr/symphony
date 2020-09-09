@@ -17,6 +17,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistcategorydefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -36,7 +37,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanscale"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hyperlink"
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -65,6 +69,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workorderdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 
 	"github.com/facebook/ent"
 )
@@ -81,6 +86,7 @@ const (
 	TypeActionsRule                 = "ActionsRule"
 	TypeActivity                    = "Activity"
 	TypeBlock                       = "Block"
+	TypeBlockInstance               = "BlockInstance"
 	TypeCheckListCategory           = "CheckListCategory"
 	TypeCheckListCategoryDefinition = "CheckListCategoryDefinition"
 	TypeCheckListItem               = "CheckListItem"
@@ -100,7 +106,10 @@ const (
 	TypeFloorPlan                   = "FloorPlan"
 	TypeFloorPlanReferencePoint     = "FloorPlanReferencePoint"
 	TypeFloorPlanScale              = "FloorPlanScale"
+	TypeFlow                        = "Flow"
 	TypeFlowDraft                   = "FlowDraft"
+	TypeFlowExecutionTemplate       = "FlowExecutionTemplate"
+	TypeFlowInstance                = "FlowInstance"
 	TypeHyperlink                   = "Hyperlink"
 	TypeLink                        = "Link"
 	TypeLocation                    = "Location"
@@ -1513,29 +1522,43 @@ func (m *ActivityMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type BlockMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *int
-	create_time         *time.Time
-	update_time         *time.Time
-	name                *string
-	_type               *block.Type
-	clearedFields       map[string]struct{}
-	prev_blocks         map[int]struct{}
-	removedprev_blocks  map[int]struct{}
-	clearedprev_blocks  bool
-	next_blocks         map[int]struct{}
-	removednext_blocks  map[int]struct{}
-	clearednext_blocks  bool
-	flow_draft          *int
-	clearedflow_draft   bool
-	source_block        map[int]struct{}
-	removedsource_block map[int]struct{}
-	clearedsource_block bool
-	goto_block          *int
-	clearedgoto_block   bool
-	done                bool
-	oldValue            func(context.Context) (*Block, error)
+	op                      Op
+	typ                     string
+	id                      *int
+	create_time             *time.Time
+	update_time             *time.Time
+	name                    *string
+	_type                   *block.Type
+	action_type             *flowschema.ActionTypeID
+	trigger_type            *flowschema.TriggerTypeID
+	start_param_definitions *[]*flowschema.VariableDefinition
+	input_params            *[]*flowschema.VariableExpression
+	ui_representation       *flowschema.BlockUIRepresentation
+	clearedFields           map[string]struct{}
+	prev_blocks             map[int]struct{}
+	removedprev_blocks      map[int]struct{}
+	clearedprev_blocks      bool
+	next_blocks             map[int]struct{}
+	removednext_blocks      map[int]struct{}
+	clearednext_blocks      bool
+	flow                    *int
+	clearedflow             bool
+	flow_template           *int
+	clearedflow_template    bool
+	flow_draft              *int
+	clearedflow_draft       bool
+	sub_flow                *int
+	clearedsub_flow         bool
+	source_block            map[int]struct{}
+	removedsource_block     map[int]struct{}
+	clearedsource_block     bool
+	goto_block              *int
+	clearedgoto_block       bool
+	instances               map[int]struct{}
+	removedinstances        map[int]struct{}
+	clearedinstances        bool
+	done                    bool
+	oldValue                func(context.Context) (*Block, error)
 }
 
 var _ ent.Mutation = (*BlockMutation)(nil)
@@ -1765,6 +1788,256 @@ func (m *BlockMutation) ResetType() {
 	m._type = nil
 }
 
+// SetActionType sets the action_type field.
+func (m *BlockMutation) SetActionType(fti flowschema.ActionTypeID) {
+	m.action_type = &fti
+}
+
+// ActionType returns the action_type value in the mutation.
+func (m *BlockMutation) ActionType() (r flowschema.ActionTypeID, exists bool) {
+	v := m.action_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldActionType returns the old action_type value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldActionType(ctx context.Context) (v *flowschema.ActionTypeID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldActionType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldActionType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldActionType: %w", err)
+	}
+	return oldValue.ActionType, nil
+}
+
+// ClearActionType clears the value of action_type.
+func (m *BlockMutation) ClearActionType() {
+	m.action_type = nil
+	m.clearedFields[block.FieldActionType] = struct{}{}
+}
+
+// ActionTypeCleared returns if the field action_type was cleared in this mutation.
+func (m *BlockMutation) ActionTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldActionType]
+	return ok
+}
+
+// ResetActionType reset all changes of the "action_type" field.
+func (m *BlockMutation) ResetActionType() {
+	m.action_type = nil
+	delete(m.clearedFields, block.FieldActionType)
+}
+
+// SetTriggerType sets the trigger_type field.
+func (m *BlockMutation) SetTriggerType(fti flowschema.TriggerTypeID) {
+	m.trigger_type = &fti
+}
+
+// TriggerType returns the trigger_type value in the mutation.
+func (m *BlockMutation) TriggerType() (r flowschema.TriggerTypeID, exists bool) {
+	v := m.trigger_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTriggerType returns the old trigger_type value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldTriggerType(ctx context.Context) (v *flowschema.TriggerTypeID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTriggerType is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTriggerType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTriggerType: %w", err)
+	}
+	return oldValue.TriggerType, nil
+}
+
+// ClearTriggerType clears the value of trigger_type.
+func (m *BlockMutation) ClearTriggerType() {
+	m.trigger_type = nil
+	m.clearedFields[block.FieldTriggerType] = struct{}{}
+}
+
+// TriggerTypeCleared returns if the field trigger_type was cleared in this mutation.
+func (m *BlockMutation) TriggerTypeCleared() bool {
+	_, ok := m.clearedFields[block.FieldTriggerType]
+	return ok
+}
+
+// ResetTriggerType reset all changes of the "trigger_type" field.
+func (m *BlockMutation) ResetTriggerType() {
+	m.trigger_type = nil
+	delete(m.clearedFields, block.FieldTriggerType)
+}
+
+// SetStartParamDefinitions sets the start_param_definitions field.
+func (m *BlockMutation) SetStartParamDefinitions(fd []*flowschema.VariableDefinition) {
+	m.start_param_definitions = &fd
+}
+
+// StartParamDefinitions returns the start_param_definitions value in the mutation.
+func (m *BlockMutation) StartParamDefinitions() (r []*flowschema.VariableDefinition, exists bool) {
+	v := m.start_param_definitions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartParamDefinitions returns the old start_param_definitions value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldStartParamDefinitions(ctx context.Context) (v []*flowschema.VariableDefinition, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStartParamDefinitions is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStartParamDefinitions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartParamDefinitions: %w", err)
+	}
+	return oldValue.StartParamDefinitions, nil
+}
+
+// ClearStartParamDefinitions clears the value of start_param_definitions.
+func (m *BlockMutation) ClearStartParamDefinitions() {
+	m.start_param_definitions = nil
+	m.clearedFields[block.FieldStartParamDefinitions] = struct{}{}
+}
+
+// StartParamDefinitionsCleared returns if the field start_param_definitions was cleared in this mutation.
+func (m *BlockMutation) StartParamDefinitionsCleared() bool {
+	_, ok := m.clearedFields[block.FieldStartParamDefinitions]
+	return ok
+}
+
+// ResetStartParamDefinitions reset all changes of the "start_param_definitions" field.
+func (m *BlockMutation) ResetStartParamDefinitions() {
+	m.start_param_definitions = nil
+	delete(m.clearedFields, block.FieldStartParamDefinitions)
+}
+
+// SetInputParams sets the input_params field.
+func (m *BlockMutation) SetInputParams(fe []*flowschema.VariableExpression) {
+	m.input_params = &fe
+}
+
+// InputParams returns the input_params value in the mutation.
+func (m *BlockMutation) InputParams() (r []*flowschema.VariableExpression, exists bool) {
+	v := m.input_params
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputParams returns the old input_params value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldInputParams(ctx context.Context) (v []*flowschema.VariableExpression, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputParams is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputParams requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputParams: %w", err)
+	}
+	return oldValue.InputParams, nil
+}
+
+// ClearInputParams clears the value of input_params.
+func (m *BlockMutation) ClearInputParams() {
+	m.input_params = nil
+	m.clearedFields[block.FieldInputParams] = struct{}{}
+}
+
+// InputParamsCleared returns if the field input_params was cleared in this mutation.
+func (m *BlockMutation) InputParamsCleared() bool {
+	_, ok := m.clearedFields[block.FieldInputParams]
+	return ok
+}
+
+// ResetInputParams reset all changes of the "input_params" field.
+func (m *BlockMutation) ResetInputParams() {
+	m.input_params = nil
+	delete(m.clearedFields, block.FieldInputParams)
+}
+
+// SetUIRepresentation sets the ui_representation field.
+func (m *BlockMutation) SetUIRepresentation(fur flowschema.BlockUIRepresentation) {
+	m.ui_representation = &fur
+}
+
+// UIRepresentation returns the ui_representation value in the mutation.
+func (m *BlockMutation) UIRepresentation() (r flowschema.BlockUIRepresentation, exists bool) {
+	v := m.ui_representation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUIRepresentation returns the old ui_representation value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldUIRepresentation(ctx context.Context) (v flowschema.BlockUIRepresentation, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUIRepresentation is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUIRepresentation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUIRepresentation: %w", err)
+	}
+	return oldValue.UIRepresentation, nil
+}
+
+// ClearUIRepresentation clears the value of ui_representation.
+func (m *BlockMutation) ClearUIRepresentation() {
+	m.ui_representation = nil
+	m.clearedFields[block.FieldUIRepresentation] = struct{}{}
+}
+
+// UIRepresentationCleared returns if the field ui_representation was cleared in this mutation.
+func (m *BlockMutation) UIRepresentationCleared() bool {
+	_, ok := m.clearedFields[block.FieldUIRepresentation]
+	return ok
+}
+
+// ResetUIRepresentation reset all changes of the "ui_representation" field.
+func (m *BlockMutation) ResetUIRepresentation() {
+	m.ui_representation = nil
+	delete(m.clearedFields, block.FieldUIRepresentation)
+}
+
 // AddPrevBlockIDs adds the prev_blocks edge to Block by ids.
 func (m *BlockMutation) AddPrevBlockIDs(ids ...int) {
 	if m.prev_blocks == nil {
@@ -1871,6 +2144,84 @@ func (m *BlockMutation) ResetNextBlocks() {
 	m.removednext_blocks = nil
 }
 
+// SetFlowID sets the flow edge to Flow by id.
+func (m *BlockMutation) SetFlowID(id int) {
+	m.flow = &id
+}
+
+// ClearFlow clears the flow edge to Flow.
+func (m *BlockMutation) ClearFlow() {
+	m.clearedflow = true
+}
+
+// FlowCleared returns if the edge flow was cleared.
+func (m *BlockMutation) FlowCleared() bool {
+	return m.clearedflow
+}
+
+// FlowID returns the flow id in the mutation.
+func (m *BlockMutation) FlowID() (id int, exists bool) {
+	if m.flow != nil {
+		return *m.flow, true
+	}
+	return
+}
+
+// FlowIDs returns the flow ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowID instead. It exists only for internal usage by the builders.
+func (m *BlockMutation) FlowIDs() (ids []int) {
+	if id := m.flow; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlow reset all changes of the "flow" edge.
+func (m *BlockMutation) ResetFlow() {
+	m.flow = nil
+	m.clearedflow = false
+}
+
+// SetFlowTemplateID sets the flow_template edge to FlowExecutionTemplate by id.
+func (m *BlockMutation) SetFlowTemplateID(id int) {
+	m.flow_template = &id
+}
+
+// ClearFlowTemplate clears the flow_template edge to FlowExecutionTemplate.
+func (m *BlockMutation) ClearFlowTemplate() {
+	m.clearedflow_template = true
+}
+
+// FlowTemplateCleared returns if the edge flow_template was cleared.
+func (m *BlockMutation) FlowTemplateCleared() bool {
+	return m.clearedflow_template
+}
+
+// FlowTemplateID returns the flow_template id in the mutation.
+func (m *BlockMutation) FlowTemplateID() (id int, exists bool) {
+	if m.flow_template != nil {
+		return *m.flow_template, true
+	}
+	return
+}
+
+// FlowTemplateIDs returns the flow_template ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowTemplateID instead. It exists only for internal usage by the builders.
+func (m *BlockMutation) FlowTemplateIDs() (ids []int) {
+	if id := m.flow_template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlowTemplate reset all changes of the "flow_template" edge.
+func (m *BlockMutation) ResetFlowTemplate() {
+	m.flow_template = nil
+	m.clearedflow_template = false
+}
+
 // SetFlowDraftID sets the flow_draft edge to FlowDraft by id.
 func (m *BlockMutation) SetFlowDraftID(id int) {
 	m.flow_draft = &id
@@ -1908,6 +2259,45 @@ func (m *BlockMutation) FlowDraftIDs() (ids []int) {
 func (m *BlockMutation) ResetFlowDraft() {
 	m.flow_draft = nil
 	m.clearedflow_draft = false
+}
+
+// SetSubFlowID sets the sub_flow edge to Flow by id.
+func (m *BlockMutation) SetSubFlowID(id int) {
+	m.sub_flow = &id
+}
+
+// ClearSubFlow clears the sub_flow edge to Flow.
+func (m *BlockMutation) ClearSubFlow() {
+	m.clearedsub_flow = true
+}
+
+// SubFlowCleared returns if the edge sub_flow was cleared.
+func (m *BlockMutation) SubFlowCleared() bool {
+	return m.clearedsub_flow
+}
+
+// SubFlowID returns the sub_flow id in the mutation.
+func (m *BlockMutation) SubFlowID() (id int, exists bool) {
+	if m.sub_flow != nil {
+		return *m.sub_flow, true
+	}
+	return
+}
+
+// SubFlowIDs returns the sub_flow ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// SubFlowID instead. It exists only for internal usage by the builders.
+func (m *BlockMutation) SubFlowIDs() (ids []int) {
+	if id := m.sub_flow; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSubFlow reset all changes of the "sub_flow" edge.
+func (m *BlockMutation) ResetSubFlow() {
+	m.sub_flow = nil
+	m.clearedsub_flow = false
 }
 
 // AddSourceBlockIDs adds the source_block edge to Block by ids.
@@ -2002,6 +2392,59 @@ func (m *BlockMutation) ResetGotoBlock() {
 	m.clearedgoto_block = false
 }
 
+// AddInstanceIDs adds the instances edge to BlockInstance by ids.
+func (m *BlockMutation) AddInstanceIDs(ids ...int) {
+	if m.instances == nil {
+		m.instances = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.instances[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInstances clears the instances edge to BlockInstance.
+func (m *BlockMutation) ClearInstances() {
+	m.clearedinstances = true
+}
+
+// InstancesCleared returns if the edge instances was cleared.
+func (m *BlockMutation) InstancesCleared() bool {
+	return m.clearedinstances
+}
+
+// RemoveInstanceIDs removes the instances edge to BlockInstance by ids.
+func (m *BlockMutation) RemoveInstanceIDs(ids ...int) {
+	if m.removedinstances == nil {
+		m.removedinstances = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedinstances[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInstances returns the removed ids of instances.
+func (m *BlockMutation) RemovedInstancesIDs() (ids []int) {
+	for id := range m.removedinstances {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InstancesIDs returns the instances ids in the mutation.
+func (m *BlockMutation) InstancesIDs() (ids []int) {
+	for id := range m.instances {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInstances reset all changes of the "instances" edge.
+func (m *BlockMutation) ResetInstances() {
+	m.instances = nil
+	m.clearedinstances = false
+	m.removedinstances = nil
+}
+
 // Op returns the operation name.
 func (m *BlockMutation) Op() Op {
 	return m.op
@@ -2016,7 +2459,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -2028,6 +2471,21 @@ func (m *BlockMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, block.FieldType)
+	}
+	if m.action_type != nil {
+		fields = append(fields, block.FieldActionType)
+	}
+	if m.trigger_type != nil {
+		fields = append(fields, block.FieldTriggerType)
+	}
+	if m.start_param_definitions != nil {
+		fields = append(fields, block.FieldStartParamDefinitions)
+	}
+	if m.input_params != nil {
+		fields = append(fields, block.FieldInputParams)
+	}
+	if m.ui_representation != nil {
+		fields = append(fields, block.FieldUIRepresentation)
 	}
 	return fields
 }
@@ -2045,6 +2503,16 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case block.FieldType:
 		return m.GetType()
+	case block.FieldActionType:
+		return m.ActionType()
+	case block.FieldTriggerType:
+		return m.TriggerType()
+	case block.FieldStartParamDefinitions:
+		return m.StartParamDefinitions()
+	case block.FieldInputParams:
+		return m.InputParams()
+	case block.FieldUIRepresentation:
+		return m.UIRepresentation()
 	}
 	return nil, false
 }
@@ -2062,6 +2530,16 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case block.FieldType:
 		return m.OldType(ctx)
+	case block.FieldActionType:
+		return m.OldActionType(ctx)
+	case block.FieldTriggerType:
+		return m.OldTriggerType(ctx)
+	case block.FieldStartParamDefinitions:
+		return m.OldStartParamDefinitions(ctx)
+	case block.FieldInputParams:
+		return m.OldInputParams(ctx)
+	case block.FieldUIRepresentation:
+		return m.OldUIRepresentation(ctx)
 	}
 	return nil, fmt.Errorf("unknown Block field %s", name)
 }
@@ -2099,6 +2577,41 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
+	case block.FieldActionType:
+		v, ok := value.(flowschema.ActionTypeID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetActionType(v)
+		return nil
+	case block.FieldTriggerType:
+		v, ok := value.(flowschema.TriggerTypeID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTriggerType(v)
+		return nil
+	case block.FieldStartParamDefinitions:
+		v, ok := value.([]*flowschema.VariableDefinition)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartParamDefinitions(v)
+		return nil
+	case block.FieldInputParams:
+		v, ok := value.([]*flowschema.VariableExpression)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputParams(v)
+		return nil
+	case block.FieldUIRepresentation:
+		v, ok := value.(flowschema.BlockUIRepresentation)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUIRepresentation(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
 }
@@ -2128,7 +2641,23 @@ func (m *BlockMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared
 // during this mutation.
 func (m *BlockMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(block.FieldActionType) {
+		fields = append(fields, block.FieldActionType)
+	}
+	if m.FieldCleared(block.FieldTriggerType) {
+		fields = append(fields, block.FieldTriggerType)
+	}
+	if m.FieldCleared(block.FieldStartParamDefinitions) {
+		fields = append(fields, block.FieldStartParamDefinitions)
+	}
+	if m.FieldCleared(block.FieldInputParams) {
+		fields = append(fields, block.FieldInputParams)
+	}
+	if m.FieldCleared(block.FieldUIRepresentation) {
+		fields = append(fields, block.FieldUIRepresentation)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicates if this field was
@@ -2141,6 +2670,23 @@ func (m *BlockMutation) FieldCleared(name string) bool {
 // ClearField clears the value for the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *BlockMutation) ClearField(name string) error {
+	switch name {
+	case block.FieldActionType:
+		m.ClearActionType()
+		return nil
+	case block.FieldTriggerType:
+		m.ClearTriggerType()
+		return nil
+	case block.FieldStartParamDefinitions:
+		m.ClearStartParamDefinitions()
+		return nil
+	case block.FieldInputParams:
+		m.ClearInputParams()
+		return nil
+	case block.FieldUIRepresentation:
+		m.ClearUIRepresentation()
+		return nil
+	}
 	return fmt.Errorf("unknown Block nullable field %s", name)
 }
 
@@ -2161,6 +2707,21 @@ func (m *BlockMutation) ResetField(name string) error {
 	case block.FieldType:
 		m.ResetType()
 		return nil
+	case block.FieldActionType:
+		m.ResetActionType()
+		return nil
+	case block.FieldTriggerType:
+		m.ResetTriggerType()
+		return nil
+	case block.FieldStartParamDefinitions:
+		m.ResetStartParamDefinitions()
+		return nil
+	case block.FieldInputParams:
+		m.ResetInputParams()
+		return nil
+	case block.FieldUIRepresentation:
+		m.ResetUIRepresentation()
+		return nil
 	}
 	return fmt.Errorf("unknown Block field %s", name)
 }
@@ -2168,21 +2729,33 @@ func (m *BlockMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *BlockMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 9)
 	if m.prev_blocks != nil {
 		edges = append(edges, block.EdgePrevBlocks)
 	}
 	if m.next_blocks != nil {
 		edges = append(edges, block.EdgeNextBlocks)
 	}
+	if m.flow != nil {
+		edges = append(edges, block.EdgeFlow)
+	}
+	if m.flow_template != nil {
+		edges = append(edges, block.EdgeFlowTemplate)
+	}
 	if m.flow_draft != nil {
 		edges = append(edges, block.EdgeFlowDraft)
+	}
+	if m.sub_flow != nil {
+		edges = append(edges, block.EdgeSubFlow)
 	}
 	if m.source_block != nil {
 		edges = append(edges, block.EdgeSourceBlock)
 	}
 	if m.goto_block != nil {
 		edges = append(edges, block.EdgeGotoBlock)
+	}
+	if m.instances != nil {
+		edges = append(edges, block.EdgeInstances)
 	}
 	return edges
 }
@@ -2203,8 +2776,20 @@ func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case block.EdgeFlow:
+		if id := m.flow; id != nil {
+			return []ent.Value{*id}
+		}
+	case block.EdgeFlowTemplate:
+		if id := m.flow_template; id != nil {
+			return []ent.Value{*id}
+		}
 	case block.EdgeFlowDraft:
 		if id := m.flow_draft; id != nil {
+			return []ent.Value{*id}
+		}
+	case block.EdgeSubFlow:
+		if id := m.sub_flow; id != nil {
 			return []ent.Value{*id}
 		}
 	case block.EdgeSourceBlock:
@@ -2217,6 +2802,12 @@ func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 		if id := m.goto_block; id != nil {
 			return []ent.Value{*id}
 		}
+	case block.EdgeInstances:
+		ids := make([]ent.Value, 0, len(m.instances))
+		for id := range m.instances {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2224,7 +2815,7 @@ func (m *BlockMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *BlockMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 9)
 	if m.removedprev_blocks != nil {
 		edges = append(edges, block.EdgePrevBlocks)
 	}
@@ -2233,6 +2824,9 @@ func (m *BlockMutation) RemovedEdges() []string {
 	}
 	if m.removedsource_block != nil {
 		edges = append(edges, block.EdgeSourceBlock)
+	}
+	if m.removedinstances != nil {
+		edges = append(edges, block.EdgeInstances)
 	}
 	return edges
 }
@@ -2259,6 +2853,12 @@ func (m *BlockMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case block.EdgeInstances:
+		ids := make([]ent.Value, 0, len(m.removedinstances))
+		for id := range m.removedinstances {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2266,21 +2866,33 @@ func (m *BlockMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *BlockMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 9)
 	if m.clearedprev_blocks {
 		edges = append(edges, block.EdgePrevBlocks)
 	}
 	if m.clearednext_blocks {
 		edges = append(edges, block.EdgeNextBlocks)
 	}
+	if m.clearedflow {
+		edges = append(edges, block.EdgeFlow)
+	}
+	if m.clearedflow_template {
+		edges = append(edges, block.EdgeFlowTemplate)
+	}
 	if m.clearedflow_draft {
 		edges = append(edges, block.EdgeFlowDraft)
+	}
+	if m.clearedsub_flow {
+		edges = append(edges, block.EdgeSubFlow)
 	}
 	if m.clearedsource_block {
 		edges = append(edges, block.EdgeSourceBlock)
 	}
 	if m.clearedgoto_block {
 		edges = append(edges, block.EdgeGotoBlock)
+	}
+	if m.clearedinstances {
+		edges = append(edges, block.EdgeInstances)
 	}
 	return edges
 }
@@ -2293,12 +2905,20 @@ func (m *BlockMutation) EdgeCleared(name string) bool {
 		return m.clearedprev_blocks
 	case block.EdgeNextBlocks:
 		return m.clearednext_blocks
+	case block.EdgeFlow:
+		return m.clearedflow
+	case block.EdgeFlowTemplate:
+		return m.clearedflow_template
 	case block.EdgeFlowDraft:
 		return m.clearedflow_draft
+	case block.EdgeSubFlow:
+		return m.clearedsub_flow
 	case block.EdgeSourceBlock:
 		return m.clearedsource_block
 	case block.EdgeGotoBlock:
 		return m.clearedgoto_block
+	case block.EdgeInstances:
+		return m.clearedinstances
 	}
 	return false
 }
@@ -2307,8 +2927,17 @@ func (m *BlockMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *BlockMutation) ClearEdge(name string) error {
 	switch name {
+	case block.EdgeFlow:
+		m.ClearFlow()
+		return nil
+	case block.EdgeFlowTemplate:
+		m.ClearFlowTemplate()
+		return nil
 	case block.EdgeFlowDraft:
 		m.ClearFlowDraft()
+		return nil
+	case block.EdgeSubFlow:
+		m.ClearSubFlow()
 		return nil
 	case block.EdgeGotoBlock:
 		m.ClearGotoBlock()
@@ -2328,8 +2957,17 @@ func (m *BlockMutation) ResetEdge(name string) error {
 	case block.EdgeNextBlocks:
 		m.ResetNextBlocks()
 		return nil
+	case block.EdgeFlow:
+		m.ResetFlow()
+		return nil
+	case block.EdgeFlowTemplate:
+		m.ResetFlowTemplate()
+		return nil
 	case block.EdgeFlowDraft:
 		m.ResetFlowDraft()
+		return nil
+	case block.EdgeSubFlow:
+		m.ResetSubFlow()
 		return nil
 	case block.EdgeSourceBlock:
 		m.ResetSourceBlock()
@@ -2337,8 +2975,937 @@ func (m *BlockMutation) ResetEdge(name string) error {
 	case block.EdgeGotoBlock:
 		m.ResetGotoBlock()
 		return nil
+	case block.EdgeInstances:
+		m.ResetInstances()
+		return nil
 	}
 	return fmt.Errorf("unknown Block edge %s", name)
+}
+
+// BlockInstanceMutation represents an operation that mutate the BlockInstances
+// nodes in the graph.
+type BlockInstanceMutation struct {
+	config
+	op                        Op
+	typ                       string
+	id                        *int
+	create_time               *time.Time
+	update_time               *time.Time
+	status                    *blockinstance.Status
+	inputs                    *[]*flowschema.VariableValue
+	outputs                   *[]*flowschema.VariableValue
+	failure_reason            *string
+	block_instance_counter    *int
+	addblock_instance_counter *int
+	clearedFields             map[string]struct{}
+	flow_instance             *int
+	clearedflow_instance      bool
+	block                     *int
+	clearedblock              bool
+	subflow_instance          *int
+	clearedsubflow_instance   bool
+	done                      bool
+	oldValue                  func(context.Context) (*BlockInstance, error)
+}
+
+var _ ent.Mutation = (*BlockInstanceMutation)(nil)
+
+// blockinstanceOption allows to manage the mutation configuration using functional options.
+type blockinstanceOption func(*BlockInstanceMutation)
+
+// newBlockInstanceMutation creates new mutation for $n.Name.
+func newBlockInstanceMutation(c config, op Op, opts ...blockinstanceOption) *BlockInstanceMutation {
+	m := &BlockInstanceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeBlockInstance,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withBlockInstanceID sets the id field of the mutation.
+func withBlockInstanceID(id int) blockinstanceOption {
+	return func(m *BlockInstanceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *BlockInstance
+		)
+		m.oldValue = func(ctx context.Context) (*BlockInstance, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().BlockInstance.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withBlockInstance sets the old BlockInstance of the mutation.
+func withBlockInstance(node *BlockInstance) blockinstanceOption {
+	return func(m *BlockInstanceMutation) {
+		m.oldValue = func(context.Context) (*BlockInstance, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m BlockInstanceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m BlockInstanceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *BlockInstanceMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *BlockInstanceMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *BlockInstanceMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *BlockInstanceMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *BlockInstanceMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *BlockInstanceMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *BlockInstanceMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetStatus sets the status field.
+func (m *BlockInstanceMutation) SetStatus(b blockinstance.Status) {
+	m.status = &b
+}
+
+// Status returns the status value in the mutation.
+func (m *BlockInstanceMutation) Status() (r blockinstance.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldStatus(ctx context.Context) (v blockinstance.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *BlockInstanceMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetInputs sets the inputs field.
+func (m *BlockInstanceMutation) SetInputs(fv []*flowschema.VariableValue) {
+	m.inputs = &fv
+}
+
+// Inputs returns the inputs value in the mutation.
+func (m *BlockInstanceMutation) Inputs() (r []*flowschema.VariableValue, exists bool) {
+	v := m.inputs
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInputs returns the old inputs value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldInputs(ctx context.Context) (v []*flowschema.VariableValue, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldInputs is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldInputs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInputs: %w", err)
+	}
+	return oldValue.Inputs, nil
+}
+
+// ClearInputs clears the value of inputs.
+func (m *BlockInstanceMutation) ClearInputs() {
+	m.inputs = nil
+	m.clearedFields[blockinstance.FieldInputs] = struct{}{}
+}
+
+// InputsCleared returns if the field inputs was cleared in this mutation.
+func (m *BlockInstanceMutation) InputsCleared() bool {
+	_, ok := m.clearedFields[blockinstance.FieldInputs]
+	return ok
+}
+
+// ResetInputs reset all changes of the "inputs" field.
+func (m *BlockInstanceMutation) ResetInputs() {
+	m.inputs = nil
+	delete(m.clearedFields, blockinstance.FieldInputs)
+}
+
+// SetOutputs sets the outputs field.
+func (m *BlockInstanceMutation) SetOutputs(fv []*flowschema.VariableValue) {
+	m.outputs = &fv
+}
+
+// Outputs returns the outputs value in the mutation.
+func (m *BlockInstanceMutation) Outputs() (r []*flowschema.VariableValue, exists bool) {
+	v := m.outputs
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputs returns the old outputs value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldOutputs(ctx context.Context) (v []*flowschema.VariableValue, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputs is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputs: %w", err)
+	}
+	return oldValue.Outputs, nil
+}
+
+// ClearOutputs clears the value of outputs.
+func (m *BlockInstanceMutation) ClearOutputs() {
+	m.outputs = nil
+	m.clearedFields[blockinstance.FieldOutputs] = struct{}{}
+}
+
+// OutputsCleared returns if the field outputs was cleared in this mutation.
+func (m *BlockInstanceMutation) OutputsCleared() bool {
+	_, ok := m.clearedFields[blockinstance.FieldOutputs]
+	return ok
+}
+
+// ResetOutputs reset all changes of the "outputs" field.
+func (m *BlockInstanceMutation) ResetOutputs() {
+	m.outputs = nil
+	delete(m.clearedFields, blockinstance.FieldOutputs)
+}
+
+// SetFailureReason sets the failure_reason field.
+func (m *BlockInstanceMutation) SetFailureReason(s string) {
+	m.failure_reason = &s
+}
+
+// FailureReason returns the failure_reason value in the mutation.
+func (m *BlockInstanceMutation) FailureReason() (r string, exists bool) {
+	v := m.failure_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFailureReason returns the old failure_reason value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldFailureReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFailureReason is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFailureReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFailureReason: %w", err)
+	}
+	return oldValue.FailureReason, nil
+}
+
+// ClearFailureReason clears the value of failure_reason.
+func (m *BlockInstanceMutation) ClearFailureReason() {
+	m.failure_reason = nil
+	m.clearedFields[blockinstance.FieldFailureReason] = struct{}{}
+}
+
+// FailureReasonCleared returns if the field failure_reason was cleared in this mutation.
+func (m *BlockInstanceMutation) FailureReasonCleared() bool {
+	_, ok := m.clearedFields[blockinstance.FieldFailureReason]
+	return ok
+}
+
+// ResetFailureReason reset all changes of the "failure_reason" field.
+func (m *BlockInstanceMutation) ResetFailureReason() {
+	m.failure_reason = nil
+	delete(m.clearedFields, blockinstance.FieldFailureReason)
+}
+
+// SetBlockInstanceCounter sets the block_instance_counter field.
+func (m *BlockInstanceMutation) SetBlockInstanceCounter(i int) {
+	m.block_instance_counter = &i
+	m.addblock_instance_counter = nil
+}
+
+// BlockInstanceCounter returns the block_instance_counter value in the mutation.
+func (m *BlockInstanceMutation) BlockInstanceCounter() (r int, exists bool) {
+	v := m.block_instance_counter
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockInstanceCounter returns the old block_instance_counter value of the BlockInstance.
+// If the BlockInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockInstanceMutation) OldBlockInstanceCounter(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldBlockInstanceCounter is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldBlockInstanceCounter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockInstanceCounter: %w", err)
+	}
+	return oldValue.BlockInstanceCounter, nil
+}
+
+// AddBlockInstanceCounter adds i to block_instance_counter.
+func (m *BlockInstanceMutation) AddBlockInstanceCounter(i int) {
+	if m.addblock_instance_counter != nil {
+		*m.addblock_instance_counter += i
+	} else {
+		m.addblock_instance_counter = &i
+	}
+}
+
+// AddedBlockInstanceCounter returns the value that was added to the block_instance_counter field in this mutation.
+func (m *BlockInstanceMutation) AddedBlockInstanceCounter() (r int, exists bool) {
+	v := m.addblock_instance_counter
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBlockInstanceCounter clears the value of block_instance_counter.
+func (m *BlockInstanceMutation) ClearBlockInstanceCounter() {
+	m.block_instance_counter = nil
+	m.addblock_instance_counter = nil
+	m.clearedFields[blockinstance.FieldBlockInstanceCounter] = struct{}{}
+}
+
+// BlockInstanceCounterCleared returns if the field block_instance_counter was cleared in this mutation.
+func (m *BlockInstanceMutation) BlockInstanceCounterCleared() bool {
+	_, ok := m.clearedFields[blockinstance.FieldBlockInstanceCounter]
+	return ok
+}
+
+// ResetBlockInstanceCounter reset all changes of the "block_instance_counter" field.
+func (m *BlockInstanceMutation) ResetBlockInstanceCounter() {
+	m.block_instance_counter = nil
+	m.addblock_instance_counter = nil
+	delete(m.clearedFields, blockinstance.FieldBlockInstanceCounter)
+}
+
+// SetFlowInstanceID sets the flow_instance edge to FlowInstance by id.
+func (m *BlockInstanceMutation) SetFlowInstanceID(id int) {
+	m.flow_instance = &id
+}
+
+// ClearFlowInstance clears the flow_instance edge to FlowInstance.
+func (m *BlockInstanceMutation) ClearFlowInstance() {
+	m.clearedflow_instance = true
+}
+
+// FlowInstanceCleared returns if the edge flow_instance was cleared.
+func (m *BlockInstanceMutation) FlowInstanceCleared() bool {
+	return m.clearedflow_instance
+}
+
+// FlowInstanceID returns the flow_instance id in the mutation.
+func (m *BlockInstanceMutation) FlowInstanceID() (id int, exists bool) {
+	if m.flow_instance != nil {
+		return *m.flow_instance, true
+	}
+	return
+}
+
+// FlowInstanceIDs returns the flow_instance ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowInstanceID instead. It exists only for internal usage by the builders.
+func (m *BlockInstanceMutation) FlowInstanceIDs() (ids []int) {
+	if id := m.flow_instance; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlowInstance reset all changes of the "flow_instance" edge.
+func (m *BlockInstanceMutation) ResetFlowInstance() {
+	m.flow_instance = nil
+	m.clearedflow_instance = false
+}
+
+// SetBlockID sets the block edge to Block by id.
+func (m *BlockInstanceMutation) SetBlockID(id int) {
+	m.block = &id
+}
+
+// ClearBlock clears the block edge to Block.
+func (m *BlockInstanceMutation) ClearBlock() {
+	m.clearedblock = true
+}
+
+// BlockCleared returns if the edge block was cleared.
+func (m *BlockInstanceMutation) BlockCleared() bool {
+	return m.clearedblock
+}
+
+// BlockID returns the block id in the mutation.
+func (m *BlockInstanceMutation) BlockID() (id int, exists bool) {
+	if m.block != nil {
+		return *m.block, true
+	}
+	return
+}
+
+// BlockIDs returns the block ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// BlockID instead. It exists only for internal usage by the builders.
+func (m *BlockInstanceMutation) BlockIDs() (ids []int) {
+	if id := m.block; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetBlock reset all changes of the "block" edge.
+func (m *BlockInstanceMutation) ResetBlock() {
+	m.block = nil
+	m.clearedblock = false
+}
+
+// SetSubflowInstanceID sets the subflow_instance edge to FlowInstance by id.
+func (m *BlockInstanceMutation) SetSubflowInstanceID(id int) {
+	m.subflow_instance = &id
+}
+
+// ClearSubflowInstance clears the subflow_instance edge to FlowInstance.
+func (m *BlockInstanceMutation) ClearSubflowInstance() {
+	m.clearedsubflow_instance = true
+}
+
+// SubflowInstanceCleared returns if the edge subflow_instance was cleared.
+func (m *BlockInstanceMutation) SubflowInstanceCleared() bool {
+	return m.clearedsubflow_instance
+}
+
+// SubflowInstanceID returns the subflow_instance id in the mutation.
+func (m *BlockInstanceMutation) SubflowInstanceID() (id int, exists bool) {
+	if m.subflow_instance != nil {
+		return *m.subflow_instance, true
+	}
+	return
+}
+
+// SubflowInstanceIDs returns the subflow_instance ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// SubflowInstanceID instead. It exists only for internal usage by the builders.
+func (m *BlockInstanceMutation) SubflowInstanceIDs() (ids []int) {
+	if id := m.subflow_instance; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetSubflowInstance reset all changes of the "subflow_instance" edge.
+func (m *BlockInstanceMutation) ResetSubflowInstance() {
+	m.subflow_instance = nil
+	m.clearedsubflow_instance = false
+}
+
+// Op returns the operation name.
+func (m *BlockInstanceMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (BlockInstance).
+func (m *BlockInstanceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *BlockInstanceMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.create_time != nil {
+		fields = append(fields, blockinstance.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, blockinstance.FieldUpdateTime)
+	}
+	if m.status != nil {
+		fields = append(fields, blockinstance.FieldStatus)
+	}
+	if m.inputs != nil {
+		fields = append(fields, blockinstance.FieldInputs)
+	}
+	if m.outputs != nil {
+		fields = append(fields, blockinstance.FieldOutputs)
+	}
+	if m.failure_reason != nil {
+		fields = append(fields, blockinstance.FieldFailureReason)
+	}
+	if m.block_instance_counter != nil {
+		fields = append(fields, blockinstance.FieldBlockInstanceCounter)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *BlockInstanceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case blockinstance.FieldCreateTime:
+		return m.CreateTime()
+	case blockinstance.FieldUpdateTime:
+		return m.UpdateTime()
+	case blockinstance.FieldStatus:
+		return m.Status()
+	case blockinstance.FieldInputs:
+		return m.Inputs()
+	case blockinstance.FieldOutputs:
+		return m.Outputs()
+	case blockinstance.FieldFailureReason:
+		return m.FailureReason()
+	case blockinstance.FieldBlockInstanceCounter:
+		return m.BlockInstanceCounter()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *BlockInstanceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case blockinstance.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case blockinstance.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case blockinstance.FieldStatus:
+		return m.OldStatus(ctx)
+	case blockinstance.FieldInputs:
+		return m.OldInputs(ctx)
+	case blockinstance.FieldOutputs:
+		return m.OldOutputs(ctx)
+	case blockinstance.FieldFailureReason:
+		return m.OldFailureReason(ctx)
+	case blockinstance.FieldBlockInstanceCounter:
+		return m.OldBlockInstanceCounter(ctx)
+	}
+	return nil, fmt.Errorf("unknown BlockInstance field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *BlockInstanceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case blockinstance.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case blockinstance.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case blockinstance.FieldStatus:
+		v, ok := value.(blockinstance.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case blockinstance.FieldInputs:
+		v, ok := value.([]*flowschema.VariableValue)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInputs(v)
+		return nil
+	case blockinstance.FieldOutputs:
+		v, ok := value.([]*flowschema.VariableValue)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputs(v)
+		return nil
+	case blockinstance.FieldFailureReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFailureReason(v)
+		return nil
+	case blockinstance.FieldBlockInstanceCounter:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockInstanceCounter(v)
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *BlockInstanceMutation) AddedFields() []string {
+	var fields []string
+	if m.addblock_instance_counter != nil {
+		fields = append(fields, blockinstance.FieldBlockInstanceCounter)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *BlockInstanceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case blockinstance.FieldBlockInstanceCounter:
+		return m.AddedBlockInstanceCounter()
+	}
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *BlockInstanceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case blockinstance.FieldBlockInstanceCounter:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBlockInstanceCounter(v)
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *BlockInstanceMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(blockinstance.FieldInputs) {
+		fields = append(fields, blockinstance.FieldInputs)
+	}
+	if m.FieldCleared(blockinstance.FieldOutputs) {
+		fields = append(fields, blockinstance.FieldOutputs)
+	}
+	if m.FieldCleared(blockinstance.FieldFailureReason) {
+		fields = append(fields, blockinstance.FieldFailureReason)
+	}
+	if m.FieldCleared(blockinstance.FieldBlockInstanceCounter) {
+		fields = append(fields, blockinstance.FieldBlockInstanceCounter)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *BlockInstanceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *BlockInstanceMutation) ClearField(name string) error {
+	switch name {
+	case blockinstance.FieldInputs:
+		m.ClearInputs()
+		return nil
+	case blockinstance.FieldOutputs:
+		m.ClearOutputs()
+		return nil
+	case blockinstance.FieldFailureReason:
+		m.ClearFailureReason()
+		return nil
+	case blockinstance.FieldBlockInstanceCounter:
+		m.ClearBlockInstanceCounter()
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *BlockInstanceMutation) ResetField(name string) error {
+	switch name {
+	case blockinstance.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case blockinstance.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case blockinstance.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case blockinstance.FieldInputs:
+		m.ResetInputs()
+		return nil
+	case blockinstance.FieldOutputs:
+		m.ResetOutputs()
+		return nil
+	case blockinstance.FieldFailureReason:
+		m.ResetFailureReason()
+		return nil
+	case blockinstance.FieldBlockInstanceCounter:
+		m.ResetBlockInstanceCounter()
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *BlockInstanceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.flow_instance != nil {
+		edges = append(edges, blockinstance.EdgeFlowInstance)
+	}
+	if m.block != nil {
+		edges = append(edges, blockinstance.EdgeBlock)
+	}
+	if m.subflow_instance != nil {
+		edges = append(edges, blockinstance.EdgeSubflowInstance)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *BlockInstanceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case blockinstance.EdgeFlowInstance:
+		if id := m.flow_instance; id != nil {
+			return []ent.Value{*id}
+		}
+	case blockinstance.EdgeBlock:
+		if id := m.block; id != nil {
+			return []ent.Value{*id}
+		}
+	case blockinstance.EdgeSubflowInstance:
+		if id := m.subflow_instance; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *BlockInstanceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *BlockInstanceMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *BlockInstanceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedflow_instance {
+		edges = append(edges, blockinstance.EdgeFlowInstance)
+	}
+	if m.clearedblock {
+		edges = append(edges, blockinstance.EdgeBlock)
+	}
+	if m.clearedsubflow_instance {
+		edges = append(edges, blockinstance.EdgeSubflowInstance)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *BlockInstanceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case blockinstance.EdgeFlowInstance:
+		return m.clearedflow_instance
+	case blockinstance.EdgeBlock:
+		return m.clearedblock
+	case blockinstance.EdgeSubflowInstance:
+		return m.clearedsubflow_instance
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *BlockInstanceMutation) ClearEdge(name string) error {
+	switch name {
+	case blockinstance.EdgeFlowInstance:
+		m.ClearFlowInstance()
+		return nil
+	case blockinstance.EdgeBlock:
+		m.ClearBlock()
+		return nil
+	case blockinstance.EdgeSubflowInstance:
+		m.ClearSubflowInstance()
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *BlockInstanceMutation) ResetEdge(name string) error {
+	switch name {
+	case blockinstance.EdgeFlowInstance:
+		m.ResetFlowInstance()
+		return nil
+	case blockinstance.EdgeBlock:
+		m.ResetBlock()
+		return nil
+	case blockinstance.EdgeSubflowInstance:
+		m.ResetSubflowInstance()
+		return nil
+	}
+	return fmt.Errorf("unknown BlockInstance edge %s", name)
 }
 
 // CheckListCategoryMutation represents an operation that mutate the CheckListCategories
@@ -17698,21 +19265,697 @@ func (m *FloorPlanScaleMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown FloorPlanScale edge %s", name)
 }
 
+// FlowMutation represents an operation that mutate the Flows
+// nodes in the graph.
+type FlowMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *int
+	name                  *string
+	description           *string
+	end_param_definitions *[]*flowschema.VariableDefinition
+	status                *flow.Status
+	clearedFields         map[string]struct{}
+	blocks                map[int]struct{}
+	removedblocks         map[int]struct{}
+	clearedblocks         bool
+	draft                 map[int]struct{}
+	removeddraft          map[int]struct{}
+	cleareddraft          bool
+	done                  bool
+	oldValue              func(context.Context) (*Flow, error)
+}
+
+var _ ent.Mutation = (*FlowMutation)(nil)
+
+// flowOption allows to manage the mutation configuration using functional options.
+type flowOption func(*FlowMutation)
+
+// newFlowMutation creates new mutation for $n.Name.
+func newFlowMutation(c config, op Op, opts ...flowOption) *FlowMutation {
+	m := &FlowMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFlow,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFlowID sets the id field of the mutation.
+func withFlowID(id int) flowOption {
+	return func(m *FlowMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Flow
+		)
+		m.oldValue = func(ctx context.Context) (*Flow, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Flow.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFlow sets the old Flow of the mutation.
+func withFlow(node *Flow) flowOption {
+	return func(m *FlowMutation) {
+		m.oldValue = func(context.Context) (*Flow, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FlowMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FlowMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *FlowMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the name field.
+func (m *FlowMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *FlowMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *FlowMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the description field.
+func (m *FlowMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *FlowMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of description.
+func (m *FlowMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[flow.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the field description was cleared in this mutation.
+func (m *FlowMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[flow.FieldDescription]
+	return ok
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *FlowMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, flow.FieldDescription)
+}
+
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (m *FlowMutation) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) {
+	m.end_param_definitions = &fd
+}
+
+// EndParamDefinitions returns the end_param_definitions value in the mutation.
+func (m *FlowMutation) EndParamDefinitions() (r []*flowschema.VariableDefinition, exists bool) {
+	v := m.end_param_definitions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndParamDefinitions returns the old end_param_definitions value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldEndParamDefinitions(ctx context.Context) (v []*flowschema.VariableDefinition, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndParamDefinitions is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndParamDefinitions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndParamDefinitions: %w", err)
+	}
+	return oldValue.EndParamDefinitions, nil
+}
+
+// ClearEndParamDefinitions clears the value of end_param_definitions.
+func (m *FlowMutation) ClearEndParamDefinitions() {
+	m.end_param_definitions = nil
+	m.clearedFields[flow.FieldEndParamDefinitions] = struct{}{}
+}
+
+// EndParamDefinitionsCleared returns if the field end_param_definitions was cleared in this mutation.
+func (m *FlowMutation) EndParamDefinitionsCleared() bool {
+	_, ok := m.clearedFields[flow.FieldEndParamDefinitions]
+	return ok
+}
+
+// ResetEndParamDefinitions reset all changes of the "end_param_definitions" field.
+func (m *FlowMutation) ResetEndParamDefinitions() {
+	m.end_param_definitions = nil
+	delete(m.clearedFields, flow.FieldEndParamDefinitions)
+}
+
+// SetStatus sets the status field.
+func (m *FlowMutation) SetStatus(f flow.Status) {
+	m.status = &f
+}
+
+// Status returns the status value in the mutation.
+func (m *FlowMutation) Status() (r flow.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldStatus(ctx context.Context) (v flow.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *FlowMutation) ResetStatus() {
+	m.status = nil
+}
+
+// AddBlockIDs adds the blocks edge to Block by ids.
+func (m *FlowMutation) AddBlockIDs(ids ...int) {
+	if m.blocks == nil {
+		m.blocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.blocks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBlocks clears the blocks edge to Block.
+func (m *FlowMutation) ClearBlocks() {
+	m.clearedblocks = true
+}
+
+// BlocksCleared returns if the edge blocks was cleared.
+func (m *FlowMutation) BlocksCleared() bool {
+	return m.clearedblocks
+}
+
+// RemoveBlockIDs removes the blocks edge to Block by ids.
+func (m *FlowMutation) RemoveBlockIDs(ids ...int) {
+	if m.removedblocks == nil {
+		m.removedblocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedblocks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBlocks returns the removed ids of blocks.
+func (m *FlowMutation) RemovedBlocksIDs() (ids []int) {
+	for id := range m.removedblocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BlocksIDs returns the blocks ids in the mutation.
+func (m *FlowMutation) BlocksIDs() (ids []int) {
+	for id := range m.blocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBlocks reset all changes of the "blocks" edge.
+func (m *FlowMutation) ResetBlocks() {
+	m.blocks = nil
+	m.clearedblocks = false
+	m.removedblocks = nil
+}
+
+// AddDraftIDs adds the draft edge to FlowDraft by ids.
+func (m *FlowMutation) AddDraftIDs(ids ...int) {
+	if m.draft == nil {
+		m.draft = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.draft[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDraft clears the draft edge to FlowDraft.
+func (m *FlowMutation) ClearDraft() {
+	m.cleareddraft = true
+}
+
+// DraftCleared returns if the edge draft was cleared.
+func (m *FlowMutation) DraftCleared() bool {
+	return m.cleareddraft
+}
+
+// RemoveDraftIDs removes the draft edge to FlowDraft by ids.
+func (m *FlowMutation) RemoveDraftIDs(ids ...int) {
+	if m.removeddraft == nil {
+		m.removeddraft = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removeddraft[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDraft returns the removed ids of draft.
+func (m *FlowMutation) RemovedDraftIDs() (ids []int) {
+	for id := range m.removeddraft {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DraftIDs returns the draft ids in the mutation.
+func (m *FlowMutation) DraftIDs() (ids []int) {
+	for id := range m.draft {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDraft reset all changes of the "draft" edge.
+func (m *FlowMutation) ResetDraft() {
+	m.draft = nil
+	m.cleareddraft = false
+	m.removeddraft = nil
+}
+
+// Op returns the operation name.
+func (m *FlowMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Flow).
+func (m *FlowMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *FlowMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.name != nil {
+		fields = append(fields, flow.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, flow.FieldDescription)
+	}
+	if m.end_param_definitions != nil {
+		fields = append(fields, flow.FieldEndParamDefinitions)
+	}
+	if m.status != nil {
+		fields = append(fields, flow.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *FlowMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flow.FieldName:
+		return m.Name()
+	case flow.FieldDescription:
+		return m.Description()
+	case flow.FieldEndParamDefinitions:
+		return m.EndParamDefinitions()
+	case flow.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flow.FieldName:
+		return m.OldName(ctx)
+	case flow.FieldDescription:
+		return m.OldDescription(ctx)
+	case flow.FieldEndParamDefinitions:
+		return m.OldEndParamDefinitions(ctx)
+	case flow.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown Flow field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flow.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case flow.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case flow.FieldEndParamDefinitions:
+		v, ok := value.([]*flowschema.VariableDefinition)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndParamDefinitions(v)
+		return nil
+	case flow.FieldStatus:
+		v, ok := value.(flow.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Flow field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *FlowMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *FlowMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Flow numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *FlowMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(flow.FieldDescription) {
+		fields = append(fields, flow.FieldDescription)
+	}
+	if m.FieldCleared(flow.FieldEndParamDefinitions) {
+		fields = append(fields, flow.FieldEndParamDefinitions)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *FlowMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FlowMutation) ClearField(name string) error {
+	switch name {
+	case flow.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case flow.FieldEndParamDefinitions:
+		m.ClearEndParamDefinitions()
+		return nil
+	}
+	return fmt.Errorf("unknown Flow nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *FlowMutation) ResetField(name string) error {
+	switch name {
+	case flow.FieldName:
+		m.ResetName()
+		return nil
+	case flow.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case flow.FieldEndParamDefinitions:
+		m.ResetEndParamDefinitions()
+		return nil
+	case flow.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Flow field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *FlowMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.blocks != nil {
+		edges = append(edges, flow.EdgeBlocks)
+	}
+	if m.draft != nil {
+		edges = append(edges, flow.EdgeDraft)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *FlowMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case flow.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.blocks))
+		for id := range m.blocks {
+			ids = append(ids, id)
+		}
+		return ids
+	case flow.EdgeDraft:
+		ids := make([]ent.Value, 0, len(m.draft))
+		for id := range m.draft {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *FlowMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedblocks != nil {
+		edges = append(edges, flow.EdgeBlocks)
+	}
+	if m.removeddraft != nil {
+		edges = append(edges, flow.EdgeDraft)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *FlowMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case flow.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.removedblocks))
+		for id := range m.removedblocks {
+			ids = append(ids, id)
+		}
+		return ids
+	case flow.EdgeDraft:
+		ids := make([]ent.Value, 0, len(m.removeddraft))
+		for id := range m.removeddraft {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *FlowMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedblocks {
+		edges = append(edges, flow.EdgeBlocks)
+	}
+	if m.cleareddraft {
+		edges = append(edges, flow.EdgeDraft)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *FlowMutation) EdgeCleared(name string) bool {
+	switch name {
+	case flow.EdgeBlocks:
+		return m.clearedblocks
+	case flow.EdgeDraft:
+		return m.cleareddraft
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *FlowMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Flow unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *FlowMutation) ResetEdge(name string) error {
+	switch name {
+	case flow.EdgeBlocks:
+		m.ResetBlocks()
+		return nil
+	case flow.EdgeDraft:
+		m.ResetDraft()
+		return nil
+	}
+	return fmt.Errorf("unknown Flow edge %s", name)
+}
+
 // FlowDraftMutation represents an operation that mutate the FlowDrafts
 // nodes in the graph.
 type FlowDraftMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	name          *string
-	description   *string
-	clearedFields map[string]struct{}
-	blocks        map[int]struct{}
-	removedblocks map[int]struct{}
-	clearedblocks bool
-	done          bool
-	oldValue      func(context.Context) (*FlowDraft, error)
+	op                    Op
+	typ                   string
+	id                    *int
+	name                  *string
+	description           *string
+	end_param_definitions *[]*flowschema.VariableDefinition
+	clearedFields         map[string]struct{}
+	blocks                map[int]struct{}
+	removedblocks         map[int]struct{}
+	clearedblocks         bool
+	flow                  *int
+	clearedflow           bool
+	done                  bool
+	oldValue              func(context.Context) (*FlowDraft, error)
 }
 
 var _ ent.Mutation = (*FlowDraftMutation)(nil)
@@ -17881,6 +20124,56 @@ func (m *FlowDraftMutation) ResetDescription() {
 	delete(m.clearedFields, flowdraft.FieldDescription)
 }
 
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (m *FlowDraftMutation) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) {
+	m.end_param_definitions = &fd
+}
+
+// EndParamDefinitions returns the end_param_definitions value in the mutation.
+func (m *FlowDraftMutation) EndParamDefinitions() (r []*flowschema.VariableDefinition, exists bool) {
+	v := m.end_param_definitions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndParamDefinitions returns the old end_param_definitions value of the FlowDraft.
+// If the FlowDraft object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowDraftMutation) OldEndParamDefinitions(ctx context.Context) (v []*flowschema.VariableDefinition, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndParamDefinitions is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndParamDefinitions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndParamDefinitions: %w", err)
+	}
+	return oldValue.EndParamDefinitions, nil
+}
+
+// ClearEndParamDefinitions clears the value of end_param_definitions.
+func (m *FlowDraftMutation) ClearEndParamDefinitions() {
+	m.end_param_definitions = nil
+	m.clearedFields[flowdraft.FieldEndParamDefinitions] = struct{}{}
+}
+
+// EndParamDefinitionsCleared returns if the field end_param_definitions was cleared in this mutation.
+func (m *FlowDraftMutation) EndParamDefinitionsCleared() bool {
+	_, ok := m.clearedFields[flowdraft.FieldEndParamDefinitions]
+	return ok
+}
+
+// ResetEndParamDefinitions reset all changes of the "end_param_definitions" field.
+func (m *FlowDraftMutation) ResetEndParamDefinitions() {
+	m.end_param_definitions = nil
+	delete(m.clearedFields, flowdraft.FieldEndParamDefinitions)
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (m *FlowDraftMutation) AddBlockIDs(ids ...int) {
 	if m.blocks == nil {
@@ -17934,6 +20227,45 @@ func (m *FlowDraftMutation) ResetBlocks() {
 	m.removedblocks = nil
 }
 
+// SetFlowID sets the flow edge to Flow by id.
+func (m *FlowDraftMutation) SetFlowID(id int) {
+	m.flow = &id
+}
+
+// ClearFlow clears the flow edge to Flow.
+func (m *FlowDraftMutation) ClearFlow() {
+	m.clearedflow = true
+}
+
+// FlowCleared returns if the edge flow was cleared.
+func (m *FlowDraftMutation) FlowCleared() bool {
+	return m.clearedflow
+}
+
+// FlowID returns the flow id in the mutation.
+func (m *FlowDraftMutation) FlowID() (id int, exists bool) {
+	if m.flow != nil {
+		return *m.flow, true
+	}
+	return
+}
+
+// FlowIDs returns the flow ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowID instead. It exists only for internal usage by the builders.
+func (m *FlowDraftMutation) FlowIDs() (ids []int) {
+	if id := m.flow; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlow reset all changes of the "flow" edge.
+func (m *FlowDraftMutation) ResetFlow() {
+	m.flow = nil
+	m.clearedflow = false
+}
+
 // Op returns the operation name.
 func (m *FlowDraftMutation) Op() Op {
 	return m.op
@@ -17948,12 +20280,15 @@ func (m *FlowDraftMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowDraftMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, flowdraft.FieldName)
 	}
 	if m.description != nil {
 		fields = append(fields, flowdraft.FieldDescription)
+	}
+	if m.end_param_definitions != nil {
+		fields = append(fields, flowdraft.FieldEndParamDefinitions)
 	}
 	return fields
 }
@@ -17967,6 +20302,8 @@ func (m *FlowDraftMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case flowdraft.FieldDescription:
 		return m.Description()
+	case flowdraft.FieldEndParamDefinitions:
+		return m.EndParamDefinitions()
 	}
 	return nil, false
 }
@@ -17980,6 +20317,8 @@ func (m *FlowDraftMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldName(ctx)
 	case flowdraft.FieldDescription:
 		return m.OldDescription(ctx)
+	case flowdraft.FieldEndParamDefinitions:
+		return m.OldEndParamDefinitions(ctx)
 	}
 	return nil, fmt.Errorf("unknown FlowDraft field %s", name)
 }
@@ -18002,6 +20341,13 @@ func (m *FlowDraftMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDescription(v)
+		return nil
+	case flowdraft.FieldEndParamDefinitions:
+		v, ok := value.([]*flowschema.VariableDefinition)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndParamDefinitions(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft field %s", name)
@@ -18036,6 +20382,9 @@ func (m *FlowDraftMutation) ClearedFields() []string {
 	if m.FieldCleared(flowdraft.FieldDescription) {
 		fields = append(fields, flowdraft.FieldDescription)
 	}
+	if m.FieldCleared(flowdraft.FieldEndParamDefinitions) {
+		fields = append(fields, flowdraft.FieldEndParamDefinitions)
+	}
 	return fields
 }
 
@@ -18053,6 +20402,9 @@ func (m *FlowDraftMutation) ClearField(name string) error {
 	case flowdraft.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case flowdraft.FieldEndParamDefinitions:
+		m.ClearEndParamDefinitions()
+		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft nullable field %s", name)
 }
@@ -18068,6 +20420,9 @@ func (m *FlowDraftMutation) ResetField(name string) error {
 	case flowdraft.FieldDescription:
 		m.ResetDescription()
 		return nil
+	case flowdraft.FieldEndParamDefinitions:
+		m.ResetEndParamDefinitions()
+		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft field %s", name)
 }
@@ -18075,9 +20430,12 @@ func (m *FlowDraftMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FlowDraftMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.blocks != nil {
 		edges = append(edges, flowdraft.EdgeBlocks)
+	}
+	if m.flow != nil {
+		edges = append(edges, flowdraft.EdgeFlow)
 	}
 	return edges
 }
@@ -18092,6 +20450,10 @@ func (m *FlowDraftMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case flowdraft.EdgeFlow:
+		if id := m.flow; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -18099,7 +20461,7 @@ func (m *FlowDraftMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FlowDraftMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedblocks != nil {
 		edges = append(edges, flowdraft.EdgeBlocks)
 	}
@@ -18123,9 +20485,12 @@ func (m *FlowDraftMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FlowDraftMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedblocks {
 		edges = append(edges, flowdraft.EdgeBlocks)
+	}
+	if m.clearedflow {
+		edges = append(edges, flowdraft.EdgeFlow)
 	}
 	return edges
 }
@@ -18136,6 +20501,8 @@ func (m *FlowDraftMutation) EdgeCleared(name string) bool {
 	switch name {
 	case flowdraft.EdgeBlocks:
 		return m.clearedblocks
+	case flowdraft.EdgeFlow:
+		return m.clearedflow
 	}
 	return false
 }
@@ -18144,6 +20511,9 @@ func (m *FlowDraftMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *FlowDraftMutation) ClearEdge(name string) error {
 	switch name {
+	case flowdraft.EdgeFlow:
+		m.ClearFlow()
+		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft unique edge %s", name)
 }
@@ -18156,8 +20526,1370 @@ func (m *FlowDraftMutation) ResetEdge(name string) error {
 	case flowdraft.EdgeBlocks:
 		m.ResetBlocks()
 		return nil
+	case flowdraft.EdgeFlow:
+		m.ResetFlow()
+		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft edge %s", name)
+}
+
+// FlowExecutionTemplateMutation represents an operation that mutate the FlowExecutionTemplates
+// nodes in the graph.
+type FlowExecutionTemplateMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *int
+	name                  *string
+	description           *string
+	end_param_definitions *[]*flowschema.VariableDefinition
+	clearedFields         map[string]struct{}
+	blocks                map[int]struct{}
+	removedblocks         map[int]struct{}
+	clearedblocks         bool
+	done                  bool
+	oldValue              func(context.Context) (*FlowExecutionTemplate, error)
+}
+
+var _ ent.Mutation = (*FlowExecutionTemplateMutation)(nil)
+
+// flowexecutiontemplateOption allows to manage the mutation configuration using functional options.
+type flowexecutiontemplateOption func(*FlowExecutionTemplateMutation)
+
+// newFlowExecutionTemplateMutation creates new mutation for $n.Name.
+func newFlowExecutionTemplateMutation(c config, op Op, opts ...flowexecutiontemplateOption) *FlowExecutionTemplateMutation {
+	m := &FlowExecutionTemplateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFlowExecutionTemplate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFlowExecutionTemplateID sets the id field of the mutation.
+func withFlowExecutionTemplateID(id int) flowexecutiontemplateOption {
+	return func(m *FlowExecutionTemplateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FlowExecutionTemplate
+		)
+		m.oldValue = func(ctx context.Context) (*FlowExecutionTemplate, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FlowExecutionTemplate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFlowExecutionTemplate sets the old FlowExecutionTemplate of the mutation.
+func withFlowExecutionTemplate(node *FlowExecutionTemplate) flowexecutiontemplateOption {
+	return func(m *FlowExecutionTemplateMutation) {
+		m.oldValue = func(context.Context) (*FlowExecutionTemplate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FlowExecutionTemplateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FlowExecutionTemplateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *FlowExecutionTemplateMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the name field.
+func (m *FlowExecutionTemplateMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *FlowExecutionTemplateMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the FlowExecutionTemplate.
+// If the FlowExecutionTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowExecutionTemplateMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *FlowExecutionTemplateMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the description field.
+func (m *FlowExecutionTemplateMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *FlowExecutionTemplateMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the FlowExecutionTemplate.
+// If the FlowExecutionTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowExecutionTemplateMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of description.
+func (m *FlowExecutionTemplateMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[flowexecutiontemplate.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the field description was cleared in this mutation.
+func (m *FlowExecutionTemplateMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[flowexecutiontemplate.FieldDescription]
+	return ok
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *FlowExecutionTemplateMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, flowexecutiontemplate.FieldDescription)
+}
+
+// SetEndParamDefinitions sets the end_param_definitions field.
+func (m *FlowExecutionTemplateMutation) SetEndParamDefinitions(fd []*flowschema.VariableDefinition) {
+	m.end_param_definitions = &fd
+}
+
+// EndParamDefinitions returns the end_param_definitions value in the mutation.
+func (m *FlowExecutionTemplateMutation) EndParamDefinitions() (r []*flowschema.VariableDefinition, exists bool) {
+	v := m.end_param_definitions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEndParamDefinitions returns the old end_param_definitions value of the FlowExecutionTemplate.
+// If the FlowExecutionTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowExecutionTemplateMutation) OldEndParamDefinitions(ctx context.Context) (v []*flowschema.VariableDefinition, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEndParamDefinitions is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEndParamDefinitions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEndParamDefinitions: %w", err)
+	}
+	return oldValue.EndParamDefinitions, nil
+}
+
+// ClearEndParamDefinitions clears the value of end_param_definitions.
+func (m *FlowExecutionTemplateMutation) ClearEndParamDefinitions() {
+	m.end_param_definitions = nil
+	m.clearedFields[flowexecutiontemplate.FieldEndParamDefinitions] = struct{}{}
+}
+
+// EndParamDefinitionsCleared returns if the field end_param_definitions was cleared in this mutation.
+func (m *FlowExecutionTemplateMutation) EndParamDefinitionsCleared() bool {
+	_, ok := m.clearedFields[flowexecutiontemplate.FieldEndParamDefinitions]
+	return ok
+}
+
+// ResetEndParamDefinitions reset all changes of the "end_param_definitions" field.
+func (m *FlowExecutionTemplateMutation) ResetEndParamDefinitions() {
+	m.end_param_definitions = nil
+	delete(m.clearedFields, flowexecutiontemplate.FieldEndParamDefinitions)
+}
+
+// AddBlockIDs adds the blocks edge to Block by ids.
+func (m *FlowExecutionTemplateMutation) AddBlockIDs(ids ...int) {
+	if m.blocks == nil {
+		m.blocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.blocks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBlocks clears the blocks edge to Block.
+func (m *FlowExecutionTemplateMutation) ClearBlocks() {
+	m.clearedblocks = true
+}
+
+// BlocksCleared returns if the edge blocks was cleared.
+func (m *FlowExecutionTemplateMutation) BlocksCleared() bool {
+	return m.clearedblocks
+}
+
+// RemoveBlockIDs removes the blocks edge to Block by ids.
+func (m *FlowExecutionTemplateMutation) RemoveBlockIDs(ids ...int) {
+	if m.removedblocks == nil {
+		m.removedblocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedblocks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBlocks returns the removed ids of blocks.
+func (m *FlowExecutionTemplateMutation) RemovedBlocksIDs() (ids []int) {
+	for id := range m.removedblocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BlocksIDs returns the blocks ids in the mutation.
+func (m *FlowExecutionTemplateMutation) BlocksIDs() (ids []int) {
+	for id := range m.blocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBlocks reset all changes of the "blocks" edge.
+func (m *FlowExecutionTemplateMutation) ResetBlocks() {
+	m.blocks = nil
+	m.clearedblocks = false
+	m.removedblocks = nil
+}
+
+// Op returns the operation name.
+func (m *FlowExecutionTemplateMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (FlowExecutionTemplate).
+func (m *FlowExecutionTemplateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *FlowExecutionTemplateMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.name != nil {
+		fields = append(fields, flowexecutiontemplate.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, flowexecutiontemplate.FieldDescription)
+	}
+	if m.end_param_definitions != nil {
+		fields = append(fields, flowexecutiontemplate.FieldEndParamDefinitions)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *FlowExecutionTemplateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flowexecutiontemplate.FieldName:
+		return m.Name()
+	case flowexecutiontemplate.FieldDescription:
+		return m.Description()
+	case flowexecutiontemplate.FieldEndParamDefinitions:
+		return m.EndParamDefinitions()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *FlowExecutionTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flowexecutiontemplate.FieldName:
+		return m.OldName(ctx)
+	case flowexecutiontemplate.FieldDescription:
+		return m.OldDescription(ctx)
+	case flowexecutiontemplate.FieldEndParamDefinitions:
+		return m.OldEndParamDefinitions(ctx)
+	}
+	return nil, fmt.Errorf("unknown FlowExecutionTemplate field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowExecutionTemplateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flowexecutiontemplate.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case flowexecutiontemplate.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case flowexecutiontemplate.FieldEndParamDefinitions:
+		v, ok := value.([]*flowschema.VariableDefinition)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEndParamDefinitions(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *FlowExecutionTemplateMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *FlowExecutionTemplateMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowExecutionTemplateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *FlowExecutionTemplateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(flowexecutiontemplate.FieldDescription) {
+		fields = append(fields, flowexecutiontemplate.FieldDescription)
+	}
+	if m.FieldCleared(flowexecutiontemplate.FieldEndParamDefinitions) {
+		fields = append(fields, flowexecutiontemplate.FieldEndParamDefinitions)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *FlowExecutionTemplateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FlowExecutionTemplateMutation) ClearField(name string) error {
+	switch name {
+	case flowexecutiontemplate.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case flowexecutiontemplate.FieldEndParamDefinitions:
+		m.ClearEndParamDefinitions()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *FlowExecutionTemplateMutation) ResetField(name string) error {
+	switch name {
+	case flowexecutiontemplate.FieldName:
+		m.ResetName()
+		return nil
+	case flowexecutiontemplate.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case flowexecutiontemplate.FieldEndParamDefinitions:
+		m.ResetEndParamDefinitions()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *FlowExecutionTemplateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.blocks != nil {
+		edges = append(edges, flowexecutiontemplate.EdgeBlocks)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *FlowExecutionTemplateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case flowexecutiontemplate.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.blocks))
+		for id := range m.blocks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *FlowExecutionTemplateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedblocks != nil {
+		edges = append(edges, flowexecutiontemplate.EdgeBlocks)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *FlowExecutionTemplateMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case flowexecutiontemplate.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.removedblocks))
+		for id := range m.removedblocks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *FlowExecutionTemplateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedblocks {
+		edges = append(edges, flowexecutiontemplate.EdgeBlocks)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *FlowExecutionTemplateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case flowexecutiontemplate.EdgeBlocks:
+		return m.clearedblocks
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *FlowExecutionTemplateMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *FlowExecutionTemplateMutation) ResetEdge(name string) error {
+	switch name {
+	case flowexecutiontemplate.EdgeBlocks:
+		m.ResetBlocks()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowExecutionTemplate edge %s", name)
+}
+
+// FlowInstanceMutation represents an operation that mutate the FlowInstances
+// nodes in the graph.
+type FlowInstanceMutation struct {
+	config
+	op                          Op
+	typ                         string
+	id                          *int
+	create_time                 *time.Time
+	update_time                 *time.Time
+	status                      *flowinstance.Status
+	output_params               *[]*flowschema.VariableValue
+	incompletion_reason         *string
+	clearedFields               map[string]struct{}
+	flow                        *int
+	clearedflow                 bool
+	template                    *int
+	clearedtemplate             bool
+	blocks                      map[int]struct{}
+	removedblocks               map[int]struct{}
+	clearedblocks               bool
+	parent_subflow_block        *int
+	clearedparent_subflow_block bool
+	done                        bool
+	oldValue                    func(context.Context) (*FlowInstance, error)
+}
+
+var _ ent.Mutation = (*FlowInstanceMutation)(nil)
+
+// flowinstanceOption allows to manage the mutation configuration using functional options.
+type flowinstanceOption func(*FlowInstanceMutation)
+
+// newFlowInstanceMutation creates new mutation for $n.Name.
+func newFlowInstanceMutation(c config, op Op, opts ...flowinstanceOption) *FlowInstanceMutation {
+	m := &FlowInstanceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFlowInstance,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFlowInstanceID sets the id field of the mutation.
+func withFlowInstanceID(id int) flowinstanceOption {
+	return func(m *FlowInstanceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FlowInstance
+		)
+		m.oldValue = func(ctx context.Context) (*FlowInstance, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FlowInstance.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFlowInstance sets the old FlowInstance of the mutation.
+func withFlowInstance(node *FlowInstance) flowinstanceOption {
+	return func(m *FlowInstanceMutation) {
+		m.oldValue = func(context.Context) (*FlowInstance, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FlowInstanceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FlowInstanceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *FlowInstanceMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *FlowInstanceMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *FlowInstanceMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *FlowInstanceMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *FlowInstanceMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *FlowInstanceMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *FlowInstanceMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetStatus sets the status field.
+func (m *FlowInstanceMutation) SetStatus(f flowinstance.Status) {
+	m.status = &f
+}
+
+// Status returns the status value in the mutation.
+func (m *FlowInstanceMutation) Status() (r flowinstance.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old status value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldStatus(ctx context.Context) (v flowinstance.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatus is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus reset all changes of the "status" field.
+func (m *FlowInstanceMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetOutputParams sets the output_params field.
+func (m *FlowInstanceMutation) SetOutputParams(fv []*flowschema.VariableValue) {
+	m.output_params = &fv
+}
+
+// OutputParams returns the output_params value in the mutation.
+func (m *FlowInstanceMutation) OutputParams() (r []*flowschema.VariableValue, exists bool) {
+	v := m.output_params
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOutputParams returns the old output_params value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldOutputParams(ctx context.Context) (v []*flowschema.VariableValue, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOutputParams is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOutputParams requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOutputParams: %w", err)
+	}
+	return oldValue.OutputParams, nil
+}
+
+// ClearOutputParams clears the value of output_params.
+func (m *FlowInstanceMutation) ClearOutputParams() {
+	m.output_params = nil
+	m.clearedFields[flowinstance.FieldOutputParams] = struct{}{}
+}
+
+// OutputParamsCleared returns if the field output_params was cleared in this mutation.
+func (m *FlowInstanceMutation) OutputParamsCleared() bool {
+	_, ok := m.clearedFields[flowinstance.FieldOutputParams]
+	return ok
+}
+
+// ResetOutputParams reset all changes of the "output_params" field.
+func (m *FlowInstanceMutation) ResetOutputParams() {
+	m.output_params = nil
+	delete(m.clearedFields, flowinstance.FieldOutputParams)
+}
+
+// SetIncompletionReason sets the incompletion_reason field.
+func (m *FlowInstanceMutation) SetIncompletionReason(s string) {
+	m.incompletion_reason = &s
+}
+
+// IncompletionReason returns the incompletion_reason value in the mutation.
+func (m *FlowInstanceMutation) IncompletionReason() (r string, exists bool) {
+	v := m.incompletion_reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIncompletionReason returns the old incompletion_reason value of the FlowInstance.
+// If the FlowInstance object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowInstanceMutation) OldIncompletionReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIncompletionReason is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIncompletionReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIncompletionReason: %w", err)
+	}
+	return oldValue.IncompletionReason, nil
+}
+
+// ClearIncompletionReason clears the value of incompletion_reason.
+func (m *FlowInstanceMutation) ClearIncompletionReason() {
+	m.incompletion_reason = nil
+	m.clearedFields[flowinstance.FieldIncompletionReason] = struct{}{}
+}
+
+// IncompletionReasonCleared returns if the field incompletion_reason was cleared in this mutation.
+func (m *FlowInstanceMutation) IncompletionReasonCleared() bool {
+	_, ok := m.clearedFields[flowinstance.FieldIncompletionReason]
+	return ok
+}
+
+// ResetIncompletionReason reset all changes of the "incompletion_reason" field.
+func (m *FlowInstanceMutation) ResetIncompletionReason() {
+	m.incompletion_reason = nil
+	delete(m.clearedFields, flowinstance.FieldIncompletionReason)
+}
+
+// SetFlowID sets the flow edge to Flow by id.
+func (m *FlowInstanceMutation) SetFlowID(id int) {
+	m.flow = &id
+}
+
+// ClearFlow clears the flow edge to Flow.
+func (m *FlowInstanceMutation) ClearFlow() {
+	m.clearedflow = true
+}
+
+// FlowCleared returns if the edge flow was cleared.
+func (m *FlowInstanceMutation) FlowCleared() bool {
+	return m.clearedflow
+}
+
+// FlowID returns the flow id in the mutation.
+func (m *FlowInstanceMutation) FlowID() (id int, exists bool) {
+	if m.flow != nil {
+		return *m.flow, true
+	}
+	return
+}
+
+// FlowIDs returns the flow ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// FlowID instead. It exists only for internal usage by the builders.
+func (m *FlowInstanceMutation) FlowIDs() (ids []int) {
+	if id := m.flow; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFlow reset all changes of the "flow" edge.
+func (m *FlowInstanceMutation) ResetFlow() {
+	m.flow = nil
+	m.clearedflow = false
+}
+
+// SetTemplateID sets the template edge to FlowExecutionTemplate by id.
+func (m *FlowInstanceMutation) SetTemplateID(id int) {
+	m.template = &id
+}
+
+// ClearTemplate clears the template edge to FlowExecutionTemplate.
+func (m *FlowInstanceMutation) ClearTemplate() {
+	m.clearedtemplate = true
+}
+
+// TemplateCleared returns if the edge template was cleared.
+func (m *FlowInstanceMutation) TemplateCleared() bool {
+	return m.clearedtemplate
+}
+
+// TemplateID returns the template id in the mutation.
+func (m *FlowInstanceMutation) TemplateID() (id int, exists bool) {
+	if m.template != nil {
+		return *m.template, true
+	}
+	return
+}
+
+// TemplateIDs returns the template ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// TemplateID instead. It exists only for internal usage by the builders.
+func (m *FlowInstanceMutation) TemplateIDs() (ids []int) {
+	if id := m.template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTemplate reset all changes of the "template" edge.
+func (m *FlowInstanceMutation) ResetTemplate() {
+	m.template = nil
+	m.clearedtemplate = false
+}
+
+// AddBlockIDs adds the blocks edge to BlockInstance by ids.
+func (m *FlowInstanceMutation) AddBlockIDs(ids ...int) {
+	if m.blocks == nil {
+		m.blocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.blocks[ids[i]] = struct{}{}
+	}
+}
+
+// ClearBlocks clears the blocks edge to BlockInstance.
+func (m *FlowInstanceMutation) ClearBlocks() {
+	m.clearedblocks = true
+}
+
+// BlocksCleared returns if the edge blocks was cleared.
+func (m *FlowInstanceMutation) BlocksCleared() bool {
+	return m.clearedblocks
+}
+
+// RemoveBlockIDs removes the blocks edge to BlockInstance by ids.
+func (m *FlowInstanceMutation) RemoveBlockIDs(ids ...int) {
+	if m.removedblocks == nil {
+		m.removedblocks = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedblocks[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedBlocks returns the removed ids of blocks.
+func (m *FlowInstanceMutation) RemovedBlocksIDs() (ids []int) {
+	for id := range m.removedblocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// BlocksIDs returns the blocks ids in the mutation.
+func (m *FlowInstanceMutation) BlocksIDs() (ids []int) {
+	for id := range m.blocks {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetBlocks reset all changes of the "blocks" edge.
+func (m *FlowInstanceMutation) ResetBlocks() {
+	m.blocks = nil
+	m.clearedblocks = false
+	m.removedblocks = nil
+}
+
+// SetParentSubflowBlockID sets the parent_subflow_block edge to BlockInstance by id.
+func (m *FlowInstanceMutation) SetParentSubflowBlockID(id int) {
+	m.parent_subflow_block = &id
+}
+
+// ClearParentSubflowBlock clears the parent_subflow_block edge to BlockInstance.
+func (m *FlowInstanceMutation) ClearParentSubflowBlock() {
+	m.clearedparent_subflow_block = true
+}
+
+// ParentSubflowBlockCleared returns if the edge parent_subflow_block was cleared.
+func (m *FlowInstanceMutation) ParentSubflowBlockCleared() bool {
+	return m.clearedparent_subflow_block
+}
+
+// ParentSubflowBlockID returns the parent_subflow_block id in the mutation.
+func (m *FlowInstanceMutation) ParentSubflowBlockID() (id int, exists bool) {
+	if m.parent_subflow_block != nil {
+		return *m.parent_subflow_block, true
+	}
+	return
+}
+
+// ParentSubflowBlockIDs returns the parent_subflow_block ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// ParentSubflowBlockID instead. It exists only for internal usage by the builders.
+func (m *FlowInstanceMutation) ParentSubflowBlockIDs() (ids []int) {
+	if id := m.parent_subflow_block; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParentSubflowBlock reset all changes of the "parent_subflow_block" edge.
+func (m *FlowInstanceMutation) ResetParentSubflowBlock() {
+	m.parent_subflow_block = nil
+	m.clearedparent_subflow_block = false
+}
+
+// Op returns the operation name.
+func (m *FlowInstanceMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (FlowInstance).
+func (m *FlowInstanceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *FlowInstanceMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, flowinstance.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, flowinstance.FieldUpdateTime)
+	}
+	if m.status != nil {
+		fields = append(fields, flowinstance.FieldStatus)
+	}
+	if m.output_params != nil {
+		fields = append(fields, flowinstance.FieldOutputParams)
+	}
+	if m.incompletion_reason != nil {
+		fields = append(fields, flowinstance.FieldIncompletionReason)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *FlowInstanceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case flowinstance.FieldCreateTime:
+		return m.CreateTime()
+	case flowinstance.FieldUpdateTime:
+		return m.UpdateTime()
+	case flowinstance.FieldStatus:
+		return m.Status()
+	case flowinstance.FieldOutputParams:
+		return m.OutputParams()
+	case flowinstance.FieldIncompletionReason:
+		return m.IncompletionReason()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *FlowInstanceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case flowinstance.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case flowinstance.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case flowinstance.FieldStatus:
+		return m.OldStatus(ctx)
+	case flowinstance.FieldOutputParams:
+		return m.OldOutputParams(ctx)
+	case flowinstance.FieldIncompletionReason:
+		return m.OldIncompletionReason(ctx)
+	}
+	return nil, fmt.Errorf("unknown FlowInstance field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowInstanceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case flowinstance.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case flowinstance.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case flowinstance.FieldStatus:
+		v, ok := value.(flowinstance.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case flowinstance.FieldOutputParams:
+		v, ok := value.([]*flowschema.VariableValue)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOutputParams(v)
+		return nil
+	case flowinstance.FieldIncompletionReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIncompletionReason(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FlowInstance field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *FlowInstanceMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *FlowInstanceMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FlowInstanceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown FlowInstance numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *FlowInstanceMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(flowinstance.FieldOutputParams) {
+		fields = append(fields, flowinstance.FieldOutputParams)
+	}
+	if m.FieldCleared(flowinstance.FieldIncompletionReason) {
+		fields = append(fields, flowinstance.FieldIncompletionReason)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *FlowInstanceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FlowInstanceMutation) ClearField(name string) error {
+	switch name {
+	case flowinstance.FieldOutputParams:
+		m.ClearOutputParams()
+		return nil
+	case flowinstance.FieldIncompletionReason:
+		m.ClearIncompletionReason()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowInstance nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *FlowInstanceMutation) ResetField(name string) error {
+	switch name {
+	case flowinstance.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case flowinstance.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case flowinstance.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case flowinstance.FieldOutputParams:
+		m.ResetOutputParams()
+		return nil
+	case flowinstance.FieldIncompletionReason:
+		m.ResetIncompletionReason()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowInstance field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *FlowInstanceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.flow != nil {
+		edges = append(edges, flowinstance.EdgeFlow)
+	}
+	if m.template != nil {
+		edges = append(edges, flowinstance.EdgeTemplate)
+	}
+	if m.blocks != nil {
+		edges = append(edges, flowinstance.EdgeBlocks)
+	}
+	if m.parent_subflow_block != nil {
+		edges = append(edges, flowinstance.EdgeParentSubflowBlock)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *FlowInstanceMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case flowinstance.EdgeFlow:
+		if id := m.flow; id != nil {
+			return []ent.Value{*id}
+		}
+	case flowinstance.EdgeTemplate:
+		if id := m.template; id != nil {
+			return []ent.Value{*id}
+		}
+	case flowinstance.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.blocks))
+		for id := range m.blocks {
+			ids = append(ids, id)
+		}
+		return ids
+	case flowinstance.EdgeParentSubflowBlock:
+		if id := m.parent_subflow_block; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *FlowInstanceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.removedblocks != nil {
+		edges = append(edges, flowinstance.EdgeBlocks)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *FlowInstanceMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case flowinstance.EdgeBlocks:
+		ids := make([]ent.Value, 0, len(m.removedblocks))
+		for id := range m.removedblocks {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *FlowInstanceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 4)
+	if m.clearedflow {
+		edges = append(edges, flowinstance.EdgeFlow)
+	}
+	if m.clearedtemplate {
+		edges = append(edges, flowinstance.EdgeTemplate)
+	}
+	if m.clearedblocks {
+		edges = append(edges, flowinstance.EdgeBlocks)
+	}
+	if m.clearedparent_subflow_block {
+		edges = append(edges, flowinstance.EdgeParentSubflowBlock)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *FlowInstanceMutation) EdgeCleared(name string) bool {
+	switch name {
+	case flowinstance.EdgeFlow:
+		return m.clearedflow
+	case flowinstance.EdgeTemplate:
+		return m.clearedtemplate
+	case flowinstance.EdgeBlocks:
+		return m.clearedblocks
+	case flowinstance.EdgeParentSubflowBlock:
+		return m.clearedparent_subflow_block
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *FlowInstanceMutation) ClearEdge(name string) error {
+	switch name {
+	case flowinstance.EdgeFlow:
+		m.ClearFlow()
+		return nil
+	case flowinstance.EdgeTemplate:
+		m.ClearTemplate()
+		return nil
+	case flowinstance.EdgeParentSubflowBlock:
+		m.ClearParentSubflowBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowInstance unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *FlowInstanceMutation) ResetEdge(name string) error {
+	switch name {
+	case flowinstance.EdgeFlow:
+		m.ResetFlow()
+		return nil
+	case flowinstance.EdgeTemplate:
+		m.ResetTemplate()
+		return nil
+	case flowinstance.EdgeBlocks:
+		m.ResetBlocks()
+		return nil
+	case flowinstance.EdgeParentSubflowBlock:
+		m.ResetParentSubflowBlock()
+		return nil
+	}
+	return fmt.Errorf("unknown FlowInstance edge %s", name)
 }
 
 // HyperlinkMutation represents an operation that mutate the Hyperlinks

@@ -52,6 +52,19 @@ func (f BlockFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The BlockInstanceFunc type is an adapter to allow the use of ordinary
+// function as BlockInstance mutator.
+type BlockInstanceFunc func(context.Context, *ent.BlockInstanceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BlockInstanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.BlockInstanceMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BlockInstanceMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The CheckListCategoryFunc type is an adapter to allow the use of ordinary
 // function as CheckListCategory mutator.
 type CheckListCategoryFunc func(context.Context, *ent.CheckListCategoryMutation) (ent.Value, error)
@@ -299,6 +312,19 @@ func (f FloorPlanScaleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return f(ctx, mv)
 }
 
+// The FlowFunc type is an adapter to allow the use of ordinary
+// function as Flow mutator.
+type FlowFunc func(context.Context, *ent.FlowMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FlowFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FlowMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The FlowDraftFunc type is an adapter to allow the use of ordinary
 // function as FlowDraft mutator.
 type FlowDraftFunc func(context.Context, *ent.FlowDraftMutation) (ent.Value, error)
@@ -308,6 +334,32 @@ func (f FlowDraftFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	mv, ok := m.(*ent.FlowDraftMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowDraftMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FlowExecutionTemplateFunc type is an adapter to allow the use of ordinary
+// function as FlowExecutionTemplate mutator.
+type FlowExecutionTemplateFunc func(context.Context, *ent.FlowExecutionTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FlowExecutionTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FlowExecutionTemplateMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowExecutionTemplateMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The FlowInstanceFunc type is an adapter to allow the use of ordinary
+// function as FlowInstance mutator.
+type FlowInstanceFunc func(context.Context, *ent.FlowInstanceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FlowInstanceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.FlowInstanceMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowInstanceMutation", m)
 	}
 	return f(ctx, mv)
 }
