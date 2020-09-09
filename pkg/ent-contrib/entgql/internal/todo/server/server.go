@@ -40,8 +40,9 @@ func main() {
 	}
 
 	http.Handle("/", playground.Handler("Todo", "/query"))
-	server := handler.NewDefaultServer(todo.NewSchema(client))
-	server.SetErrorPresenter(entgql.DefaultErrorPresenter)
-	http.Handle("/query", server)
+	srv := handler.NewDefaultServer(todo.NewSchema(client))
+	srv.AroundResponses(entgql.TransactionMiddleware(client))
+	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
+	http.Handle("/query", srv)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

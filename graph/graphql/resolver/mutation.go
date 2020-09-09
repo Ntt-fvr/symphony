@@ -1483,19 +1483,19 @@ func (r mutationResolver) RemoveLocation(ctx context.Context, id int) (int, erro
 		).
 		Only(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying location: id=%q", id)
+		return id, errors.Wrapf(err, "querying location: id=%d", id)
 	}
 	props, err := client.Property.Query().Where(property.HasLocationWith(location.ID(id))).All(ctx)
 	if err != nil {
-		return id, errors.Wrapf(err, "querying location properties: id=%q", id)
+		return id, errors.Wrapf(err, "querying location properties: id=%d", id)
 	}
 	for _, prop := range props {
 		if err := client.Property.DeleteOne(prop).Exec(ctx); err != nil {
-			return id, errors.Wrapf(err, "deleting location property: id=%q", prop.ID)
+			return id, errors.Wrapf(err, "deleting location property: id=%d", prop.ID)
 		}
 	}
 	if err := client.Location.DeleteOne(l).Exec(ctx); err != nil {
-		return id, errors.Wrapf(err, "deleting location: id=%q", id)
+		return id, errors.Wrapf(err, "deleting location: id=%d", id)
 	}
 	return id, nil
 }
