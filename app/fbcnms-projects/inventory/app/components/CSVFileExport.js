@@ -9,10 +9,7 @@
  */
 
 import type {CSVFileExportKeyQuery} from './__generated__/CSVFileExportKeyQuery.graphql';
-import type {
-  CSVFileExportQuery,
-  ExportStatus,
-} from './__generated__/CSVFileExportQuery.graphql';
+import type {CSVFileExportQuery} from './__generated__/CSVFileExportQuery.graphql';
 import type {FiltersQuery} from './comparison_view/ComparisonViewTypes';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithStyles} from '@material-ui/core';
@@ -20,14 +17,12 @@ import type {WithStyles} from '@material-ui/core';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useState} from 'react';
 import RelayEnvironment from '../common/RelayEnvironment';
 import axios from 'axios';
 import classNames from 'classnames';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
-import {DownloadIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'relay-runtime';
 import {useContext} from 'react';
 import {withStyles} from '@material-ui/core/styles';
@@ -88,9 +83,7 @@ type Props = {
 const CSVFileExport = (props: Props) => {
   const {classes, title, exportPath} = props;
   const [isDownloading, setIsDownloading] = useState(false);
-  const [asyncTaskStatus, setAsyncTaskStatus] = useState<?ExportStatus>(null);
-  const [asyncStoreKey, setAsyncStoreKey] = useState(null);
-  const [asyncTaskId, setAsyncTaskId] = useState(null);
+  const [isAsyncTaskInProgress, setIsAsyncTaskInProgress] = useState(false);
   const isAsyncExportEnabled = useContext(AppContext).isFeatureEnabled(
     'async_export',
   );
@@ -110,25 +103,11 @@ const CSVFileExport = (props: Props) => {
     return `${localDate}-${localTime}.csv`;
   };
 
-  const handleAsyncDownload = async () => {
-    if (asyncStoreKey == null) {
-      props.alert('Failed to download file');
-      return;
-    }
-    const url = DocumentAPIUrls.get_url(asyncStoreKey);
-    axios.get(url, {responseType: 'blob'}).then(response => {
-      if (response == null || response.data == null) {
-        props.alert('Failed to download file');
-        return;
-      }
-      const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', getFileName());
-      link.click();
-    });
-    setAsyncTaskId(null);
-    setAsyncStoreKey(null);
+  const downloadFile = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', getFileName());
+    link.click();
   };
 
   const handleAsyncExport = (taskId: string, intervalId: IntervalID) => {
@@ -141,13 +120,12 @@ const CSVFileExport = (props: Props) => {
         response.task.status === 'FAILED'
       ) {
         clearInterval(intervalId);
-        setAsyncTaskStatus('FAILED');
+        setIsAsyncTaskInProgress(false);
         props.alert('Failed to export file');
         return;
       } else if (response.task.status === 'SUCCEEDED') {
         clearInterval(intervalId);
-        setAsyncTaskStatus('SUCCEEDED');
-        setAsyncTaskId(taskId);
+        setIsAsyncTaskInProgress(false);
         fetchQuery<CSVFileExportKeyQuery>(
           RelayEnvironment,
           csvFileExportKeyQuery,
@@ -163,7 +141,7 @@ const CSVFileExport = (props: Props) => {
             props.alert('Failed to download file');
             return;
           }
-          setAsyncStoreKey(response.task.storeKey);
+          downloadFile(DocumentAPIUrls.get_url(response.task.storeKey));
         });
       }
     });
@@ -171,7 +149,6 @@ const CSVFileExport = (props: Props) => {
 
   const onClick = async () => {
     const path = PATH_PREFIX + exportPath;
-    const fileName = exportPath.replace('/', '').replace(/\//g, '_') + '.csv';
     setIsDownloading(true);
     try {
       await axios
@@ -188,18 +165,15 @@ const CSVFileExport = (props: Props) => {
             !isAsyncExportEnabled ||
             (exportPath !== PATH_EQUIPMENTS && exportPath !== PATH_LOCATIONS)
           ) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', fileName);
-            link.click();
+            downloadFile(url);
           } else {
             response.data.text().then(text => {
               if (text == null || text === '') {
                 return;
               }
               const taskId = JSON.parse(text)['TaskID'];
-              if (asyncTaskStatus !== 'IN_PROGRESS') {
-                setAsyncTaskStatus('IN_PROGRESS');
+              if (!isAsyncTaskInProgress) {
+                setIsAsyncTaskInProgress(true);
                 const intervalId = setInterval(
                   () => handleAsyncExport(taskId, intervalId),
                   EXPORT_TASK_REFRESH_INTERVAL_MS,
@@ -220,8 +194,7 @@ const CSVFileExport = (props: Props) => {
         <div className={classes.exportButtonContent}>
           <span
             className={classNames({
-              [classes.hiddenContent]:
-                isDownloading || asyncTaskStatus === 'IN_PROGRESS',
+              [classes.hiddenContent]: isDownloading || isAsyncTaskInProgress,
             })}>
             {title}
           </span>
@@ -231,21 +204,11 @@ const CSVFileExport = (props: Props) => {
             className={classNames({
               [classes.hiddenContent]:
                 (!isDownloading && !isAsyncExportEnabled) ||
-                (asyncTaskStatus !== 'IN_PROGRESS' && isAsyncExportEnabled),
+                (!isAsyncTaskInProgress && isAsyncExportEnabled),
             })}
           />
         </div>
       </Button>
-      {isAsyncExportEnabled &&
-        asyncTaskStatus === 'SUCCEEDED' &&
-        asyncTaskId != null &&
-        asyncStoreKey != null && (
-          <IconButton
-            icon={DownloadIcon}
-            onClick={handleAsyncDownload}
-            skin="gray"
-          />
-        )}
     </div>
   );
 };
