@@ -12,6 +12,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -26,11 +27,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"gocloud.dev/server/health"
 	"google.golang.org/grpc"
-)
 
-import (
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+
 	_ "gocloud.dev/pubsub/mempubsub"
+
 	_ "gocloud.dev/pubsub/natspubsub"
 )
 

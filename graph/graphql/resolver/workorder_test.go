@@ -97,12 +97,7 @@ func workOrderPriorityPtr(priority workorder.Priority) *workorder.Priority {
 	return &priority
 }
 
-func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationResolver, workOrder ent.WorkOrder) (*models.WorkOrderExecutionResult, error) {
-	var ownerID *int
-	owner, _ := workOrder.QueryOwner().Only(ctx)
-	if owner != nil {
-		ownerID = &owner.ID
-	}
+func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationResolver, workOrder *ent.WorkOrder) (*models.WorkOrderExecutionResult, error) {
 	var assigneeID *int
 	assignee, _ := workOrder.QueryAssignee().Only(ctx)
 	if assignee != nil {
@@ -112,7 +107,6 @@ func executeWorkOrder(ctx context.Context, t *testing.T, mr generated.MutationRe
 		ID:          workOrder.ID,
 		Name:        workOrder.Name,
 		Description: workOrder.Description,
-		OwnerID:     ownerID,
 		InstallDate: workOrder.InstallDate,
 		Status:      workOrderStatusPtr(workorder.StatusClosed),
 		AssigneeID:  assigneeID,
@@ -602,7 +596,7 @@ func TestExecuteWorkOrderInstallEquipment(t *testing.T) {
 	assert.Equal(t, enum.FutureStateInstall, *workOrderEquipment.FutureState)
 	assert.Equal(t, workOrder.ID, workOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -670,7 +664,7 @@ func TestExecuteWorkOrderRemoveEquipment(t *testing.T) {
 	assert.Equal(t, enum.FutureStateRemove, *fetchedWorkOrderEquipment.FutureState)
 	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipment.QueryWorkOrder().OnlyIDX(ctx))
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -733,7 +727,7 @@ func TestExecuteWorkOrderInstallLink(t *testing.T) {
 	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -799,7 +793,7 @@ func TestExecuteWorkOrderRemoveLink(t *testing.T) {
 	assert.Equal(t, enum.FutureStateRemove, *fetchedLink.FutureState)
 	assert.Equal(t, workOrder.ID, fetchedLink.QueryWorkOrder().OnlyIDX(ctx))
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -854,7 +848,7 @@ func TestExecuteWorkOrderInstallDependantEquipmentAndLink(t *testing.T) {
 	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createdLink.QueryWorkOrder().OnlyIDX(ctx))
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -910,7 +904,7 @@ func TestExecuteWorkOrderInstallEquipmentMultilayer(t *testing.T) {
 		equipments = append(equipments, *equipment)
 	}
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -970,7 +964,7 @@ func TestExecuteWorkOrderRemoveEquipmentMultilayer(t *testing.T) {
 		assert.NoError(t, err)
 	}
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -1039,7 +1033,7 @@ func TestExecuteWorkOrderInstallChildOnUninstalledParent(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, equipmentWorkOrder.ID)
 
-	returnedWorkOrder, _ := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, _ := executeWorkOrder(ctx, t, mr, workOrder)
 	assert.Nil(t, returnedWorkOrder)
 
 	fetchedChildNode, err := qr.Node(ctx, childEquipment.ID)
@@ -1059,7 +1053,7 @@ func TestExecuteWorkOrderInstallLinkOnUninstalledEquipment(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
-	mr, qr, pr := r.Mutation(), r.Query(), r.EquipmentPort()
+	mr := r.Mutation()
 	workOrder := createWorkOrder(ctx, t, *r, "example_work_order")
 	futureWorkOrder := createWorkOrder(ctx, t, *r, "example_work_order_2")
 	location := workOrder.QueryLocation().FirstX(ctx)
@@ -1087,11 +1081,11 @@ func TestExecuteWorkOrderInstallLinkOnUninstalledEquipment(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	portDef := equipmentType.QueryPortDefinitions().OnlyX(ctx)
+	portDefID := equipmentType.QueryPortDefinitions().OnlyIDX(ctx)
 	createdLink, err := mr.AddLink(ctx, models.AddLinkInput{
 		Sides: []*models.LinkSide{
-			{Equipment: equipmentA.ID, Port: portDef.ID},
-			{Equipment: equipmentB.ID, Port: portDef.ID},
+			{Equipment: equipmentA.ID, Port: portDefID},
+			{Equipment: equipmentB.ID, Port: portDefID},
 		},
 		WorkOrder: &workOrder.ID,
 	})
@@ -1103,29 +1097,60 @@ func TestExecuteWorkOrderInstallLinkOnUninstalledEquipment(t *testing.T) {
 	assert.Equal(t, enum.FutureStateInstall, *createdLink.FutureState)
 	assert.Equal(t, workOrder.ID, createLinkWorkOrder.ID)
 
-	returnedWorkOrder, _ := executeWorkOrder(ctx, t, mr, *workOrder)
-	require.Nil(t, returnedWorkOrder)
+	c := r.GraphClient()
+	err = c.Post(`mutation($id: ID!) {
+		executeWorkOrder(id: $id) {
+			id
+		}
+	}`,
+		&struct{ ExecuteWorkOrder struct{ ID string } }{},
+		client.Var("id", workOrder.ID),
+	)
+	require.Error(t, err)
 
-	fetchedNode, err := qr.Node(ctx, equipmentA.ID)
+	var rsp struct {
+		Equipment struct {
+			WorkOrder struct {
+				ID string
+			}
+			Ports []struct {
+				Link struct {
+					ID          string
+					FutureState enum.FutureState
+					WorkOrder   struct {
+						ID string
+					}
+				}
+			}
+		}
+	}
+	err = c.Post(`query($id: ID!) {
+		equipment: node(id: $id) {
+			... on Equipment {
+				workOrder {
+					id
+				}
+				ports {
+					link {
+						id
+						futureState
+						workOrder {
+							id
+						}
+					}
+				}
+			}
+		}
+	}`, &rsp, client.Var("id", equipmentA.ID))
 	require.NoError(t, err)
-	fetchedEquipment, ok := fetchedNode.(*ent.Equipment)
-	require.True(t, ok)
 
-	fetchedPort, err := fetchedEquipment.QueryPorts().Only(ctx)
-	require.NoError(t, err)
-
-	fetchedLink, _ := pr.Link(ctx, fetchedPort)
-	assert.Equal(t, createdLink.ID, fetchedLink.ID)
-
-	fetchedLinkWorkOrder, err := fetchedLink.QueryWorkOrder().Only(ctx)
-	require.NoError(t, err)
-
+	require.Equal(t, strconv.Itoa(workOrder.ID), rsp.Equipment.WorkOrder.ID)
+	require.Len(t, rsp.Equipment.Ports, 1)
+	link := &rsp.Equipment.Ports[0].Link
+	require.Equal(t, strconv.Itoa(createdLink.ID), link.ID)
 	// the link wasn't installed because equipmentB is not installed
-	assert.Equal(t, enum.FutureStateInstall, *fetchedLink.FutureState)
-	assert.Equal(t, workOrder.ID, fetchedLinkWorkOrder.ID)
-
-	_, err = fetchedEquipment.QueryWorkOrder().Only(ctx)
-	require.NoError(t, err)
+	require.Equal(t, enum.FutureStateInstall, link.FutureState)
+	require.Equal(t, strconv.Itoa(workOrder.ID), link.WorkOrder.ID)
 }
 
 func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
@@ -1207,7 +1232,7 @@ func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, fetchedWorkOrderEquipmentWorkOrder.ID)
 
-	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, *workOrder)
+	returnedWorkOrder, err := executeWorkOrder(ctx, t, mr, workOrder)
 	require.NoError(t, err)
 	assert.Equal(t, workOrder.ID, returnedWorkOrder.ID)
 
@@ -1511,64 +1536,123 @@ func TestAddWorkOrderWithProperties(t *testing.T) {
 func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	c := r.GraphClient()
 
-	mr := r.Mutation()
-	latlongPropType := pkgmodels.PropertyTypeInput{
-		Name:               "lat_long_prop",
-		Type:               propertytype.TypeGpsLocation,
-		IsMandatory:        pointer.ToBool(true),
-		IsInstanceProperty: pointer.ToBool(true),
+	var wot struct {
+		AddWorkOrderType struct {
+			ID, Name      string
+			PropertyTypes []struct {
+				ID string
+			}
+		}
 	}
-	propTypeInputs := []*pkgmodels.PropertyTypeInput{&latlongPropType}
-	woType, err := mr.AddWorkOrderType(ctx, models.AddWorkOrderTypeInput{Name: "example_type", Properties: propTypeInputs})
+	err := c.Post(`mutation {
+		addWorkOrderType(input: {
+			name: "example_type"
+			properties: [{
+				name: "lat_long_prop"	
+				type: gps_location
+				isMandatory: true
+				isInstanceProperty: true
+			}]
+		}) {
+			id
+			name
+			propertyTypes {
+				id
+			}
+		}
+	}`, &wot)
 	require.NoError(t, err)
+	require.Len(t, wot.AddWorkOrderType.PropertyTypes, 1)
 
-	_, err = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
-		Name:            "should_fail",
-		WorkOrderTypeID: woType.ID,
-		Status:          workOrderStatusPtr(workorder.StatusClosed),
-	})
-	require.Error(t, err, "Adding work order instance with missing mandatory properties")
-	_, err = mr.EditWorkOrderType(ctx, models.EditWorkOrderTypeInput{
-		ID:   woType.ID,
-		Name: woType.Name,
-		Properties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:               "textMandatory",
-				Type:               propertytype.TypeString,
-				IsMandatory:        pointer.ToBool(true),
-				IsInstanceProperty: pointer.ToBool(true),
-			},
-		},
-	})
+	err = c.Post(`mutation($type: ID!) {
+		addWorkOrder(input: {
+			name: "should_fail"
+			workOrderTypeId: $type	
+			status: CLOSED
+		}) {
+			id
+		}
+	}`, &struct{ AddWorkOrder struct{ ID string } }{})
+	require.Error(t, err, "Adding work order with missing mandatory properties")
+
+	var ewot struct {
+		EditWorkOrderType struct{ PropertyTypes []struct{ ID, Name string } }
+	}
+	err = c.Post(`mutation($id: ID!, $name: String!) {
+		editWorkOrderType(input: {
+			id: $id
+			name: $name
+			properties: [{
+				name: "textMandatory"
+				type: string
+				isMandatory: true
+				isInstanceProperty: true
+			}]
+		}) {
+			propertyTypes {
+				id
+				name
+			}
+		}
+	}`,
+		&ewot,
+		client.Var("id", wot.AddWorkOrderType.ID),
+		client.Var("name", wot.AddWorkOrderType.Name),
+	)
 	require.NoError(t, err)
-
-	latlongProp := &models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("lat_long_prop")).OnlyIDX(ctx),
-		LatitudeValue:  pointer.ToFloat64(32.6),
-		LongitudeValue: pointer.ToFloat64(34.7),
+	require.Len(t, ewot.EditWorkOrderType.PropertyTypes, 2)
+	if ewot.EditWorkOrderType.PropertyTypes[0].Name != "lat_long_prop" {
+		ewot.EditWorkOrderType.PropertyTypes[0], ewot.EditWorkOrderType.PropertyTypes[1] =
+			ewot.EditWorkOrderType.PropertyTypes[1], ewot.EditWorkOrderType.PropertyTypes[0]
 	}
-	propInputs := []*models.PropertyInput{latlongProp}
-	_, err = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
-		Name:            "location_name_3",
-		WorkOrderTypeID: woType.ID,
-		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusClosed),
-	})
-	require.Error(t, err, "Adding work order instance with missing mandatory properties")
 
-	textProp := &models.PropertyInput{
-		PropertyTypeID: woType.QueryPropertyTypes().Where(propertytype.Name("textMandatory")).OnlyIDX(ctx),
-		StringValue:    pointer.ToString("String"),
-	}
-	propInputs = []*models.PropertyInput{latlongProp, textProp}
-	_, err = mr.AddWorkOrder(ctx, models.AddWorkOrderInput{
-		Name:            "location_name_3",
-		WorkOrderTypeID: woType.ID,
-		Properties:      propInputs,
-		Status:          workOrderStatusPtr(workorder.StatusClosed),
-	})
+	err = c.Post(`mutation($type: ID!, $ptype: ID!) {
+		addWorkOrder(input: {
+			name: "location_name_3"
+			workOrderTypeId: $type
+			status: CLOSED
+			properties: [{
+				propertyTypeID: $ptype
+				latitudeValue: 32.6	
+				longitudeValue: 34.7
+			}]
+		}) {
+			id
+		}
+	}`,
+		&struct{ AddWorkOrder struct{ ID string } }{},
+		client.Var("type", wot.AddWorkOrderType.ID),
+		client.Var("ptype", wot.AddWorkOrderType.PropertyTypes[0].ID),
+	)
+	require.Error(t, err, "Adding work order with missing mandatory properties")
+
+	err = c.Post(`mutation($type: ID!, $ptype1: ID!, $ptype2: ID!) {
+		addWorkOrder(input: {
+			name: "location_name_3"
+			workOrderTypeId: $type
+			status: CLOSED
+			properties: [
+				{
+					propertyTypeID: $ptype1
+					latitudeValue: 32.6	
+					longitudeValue: 34.7
+				},
+				{
+					propertyTypeID: $ptype2
+					stringValue: "foobar"
+				}
+			]
+		}) {
+			id
+		}
+	}`,
+		&struct{ AddWorkOrder struct{ ID string } }{},
+		client.Var("type", wot.AddWorkOrderType.ID),
+		client.Var("ptype1", ewot.EditWorkOrderType.PropertyTypes[0].ID),
+		client.Var("ptype2", ewot.EditWorkOrderType.PropertyTypes[1].ID),
+	)
 	require.NoError(t, err)
 }
 

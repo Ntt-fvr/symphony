@@ -45,6 +45,7 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(todo.NewSchema(client))
+	srv.AroundResponses(entgql.TransactionMiddleware(client))
 	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	if cli.Debug {
 		srv.Use(&debug.Tracer{})

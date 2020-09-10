@@ -35,7 +35,6 @@ func NewHandler(cfg Config) (http.Handler, error) {
 			Logger:          cfg.Logger,
 			ReceiverFactory: cfg.ReceiverFactory,
 		},
-		resolver.WithTransaction(false),
 	)
 	u := &jobs{cfg.Logger, r}
 	router := mux.NewRouter()

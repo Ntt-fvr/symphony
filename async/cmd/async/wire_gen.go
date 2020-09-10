@@ -12,6 +12,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -31,13 +32,15 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
-)
 
-import (
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
+
 	_ "github.com/go-sql-driver/mysql"
+
 	_ "gocloud.dev/blob/s3blob"
+
 	_ "gocloud.dev/pubsub/mempubsub"
+
 	_ "gocloud.dev/pubsub/natspubsub"
 )
 
