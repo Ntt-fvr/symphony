@@ -25,6 +25,7 @@ type (
 	}
 	// Config configures resolver.
 	Config struct {
+		Client          *ent.Client
 		Logger          log.Logger
 		ReceiverFactory ev.ReceiverFactory
 		Flow            FlowConfig
@@ -34,9 +35,10 @@ type (
 	Option func(*resolver)
 
 	resolver struct {
-		logger log.Logger
-		event  struct{ ev.ReceiverFactory }
-		flow   struct {
+		logger   log.Logger
+		event    struct{ ev.ReceiverFactory }
+		mutation struct{ transactional bool }
+		flow     struct {
 			triggerFactory triggers.Factory
 			actionFactory  actions.Factory
 		}
@@ -48,12 +50,20 @@ type (
 func New(cfg Config, opts ...Option) generated.ResolverRoot {
 	r := &resolver{logger: cfg.Logger}
 	r.event.ReceiverFactory = cfg.ReceiverFactory
+	r.mutation.transactional = true
 	r.flow.triggerFactory = cfg.Flow.TriggerFactory
 	r.flow.actionFactory = cfg.Flow.ActionFactory
 	for _, opt := range opts {
 		opt(r)
 	}
 	return r
+}
+
+// WithTransaction if set to true, will wraps the mutation with transaction.
+func WithTransaction(b bool) Option {
+	return func(r *resolver) {
+		r.mutation.transactional = b
+	}
 }
 
 // WithOrc8rClient is used to provide orchestrator http client.
@@ -119,8 +129,12 @@ func (resolver) FloorPlan() generated.FloorPlanResolver {
 	return floorPlanResolver{}
 }
 
-func (r resolver) Mutation() generated.MutationResolver {
-	return mutationResolver{r}
+func (r resolver) Mutation() (mr generated.MutationResolver) {
+	mr = mutationResolver{r}
+	if r.mutation.transactional {
+		mr = txResolver{mr}
+	}
+	return mr
 }
 
 func (r resolver) Query() generated.QueryResolver {

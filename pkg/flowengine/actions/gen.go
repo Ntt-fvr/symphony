@@ -5,3 +5,4 @@
 package actions
 
 //go:generate go run github.com/vektra/mockery/cmd/mockery -all -case underscore
+//go:generate go run github.com/google/addlicense -c Facebook -y 2004-present -l bsd ./

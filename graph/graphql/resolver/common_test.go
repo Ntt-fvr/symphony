@@ -113,10 +113,8 @@ func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 	emitter, err := factory.NewEmitter(ctx)
 	require.NoError(t, err)
 
-	eventer := event.Eventer{
-		Logger:  log.NewNopLogger(),
-		Emitter: emitter,
-	}
+	logger := logtest.NewTestLogger(t)
+	eventer := event.Eventer{Logger: logger, Emitter: emitter}
 	eventer.HookTo(c)
 	hooker := hooks.Flower{
 		TriggerFactory: o.flow.triggerFactory,
@@ -124,7 +122,6 @@ func newTestResolver(t *testing.T, opts ...option) *TestResolver {
 	}
 	hooker.HookTo(c)
 
-	logger := logtest.NewTestLogger(t)
 	r := resolver.New(resolver.Config{
 		Logger:          logger,
 		ReceiverFactory: factory,
@@ -168,7 +165,6 @@ func (tr *TestResolver) GraphClient(opts ...viewertest.Option) *client.Client {
 		ctx = viewertest.NewContext(ctx, tr.client, opts...)
 		return next(ctx)
 	})
-	srv.AroundResponses(entgql.TransactionMiddleware(tr.client))
 	return client.New(srv)
 }
 
