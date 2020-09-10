@@ -6,43 +6,58 @@ package main
 
 import (
 	"context"
-	"flag"
-	"log"
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/debug"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/migrate"
+	"go.uber.org/zap"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/runtime"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	addr := flag.String("address", ":8081", "Address to listen on")
-	flag.Parse()
+	var cli struct {
+		Addr  string `name:"address" default:":8081" help:"Address to listen on."`
+		Debug bool   `name:"debug" help:"Enable debugging mode."`
+	}
+	kong.Parse(&cli)
 
+	log, _ := zap.NewDevelopment()
 	client, err := ent.Open(
 		"sqlite3",
 		"file:ent?mode=memory&cache=shared&_fk=1",
 	)
 	if err != nil {
-		log.Fatal("opening ent client", err)
+		log.Fatal("opening ent client", zap.Error(err))
 	}
 	if err := client.Schema.Create(
 		context.Background(),
 		migrate.WithGlobalUniqueID(true),
 	); err != nil {
-		log.Fatalln("running schema migration", err)
+		log.Fatal("running schema migration", zap.Error(err))
 	}
 
-	http.Handle("/", playground.Handler("Todo", "/query"))
 	srv := handler.NewDefaultServer(todo.NewSchema(client))
 	srv.AroundResponses(entgql.TransactionMiddleware(client))
 	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
+	if cli.Debug {
+		srv.Use(&debug.Tracer{})
+	}
+
+	http.Handle("/",
+		playground.Handler("Todo", "/query"),
+	)
 	http.Handle("/query", srv)
-	log.Fatal(http.ListenAndServe(*addr, nil))
+
+	log.Info("listening on", zap.String("address", cli.Addr))
+	if err := http.ListenAndServe(cli.Addr, nil); err != nil {
+		log.Error("http server terminated", zap.Error(err))
+	}
 }

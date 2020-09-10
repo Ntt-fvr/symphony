@@ -41,9 +41,11 @@ type UsersGroupEdges struct {
 	Members []*User
 	// Policies holds the value of the policies edge.
 	Policies []*PermissionsPolicy
+	// Features holds the value of the features edge.
+	Features []*Feature
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // MembersOrErr returns the Members value or an error if the edge
@@ -62,6 +64,15 @@ func (e UsersGroupEdges) PoliciesOrErr() ([]*PermissionsPolicy, error) {
 		return e.Policies, nil
 	}
 	return nil, &NotLoadedError{edge: "policies"}
+}
+
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e UsersGroupEdges) FeaturesOrErr() ([]*Feature, error) {
+	if e.loadedTypes[2] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -124,6 +135,11 @@ func (ug *UsersGroup) QueryMembers() *UserQuery {
 // QueryPolicies queries the policies edge of the UsersGroup.
 func (ug *UsersGroup) QueryPolicies() *PermissionsPolicyQuery {
 	return (&UsersGroupClient{config: ug.config}).QueryPolicies(ug)
+}
+
+// QueryFeatures queries the features edge of the UsersGroup.
+func (ug *UsersGroup) QueryFeatures() *FeatureQuery {
+	return (&UsersGroupClient{config: ug.config}).QueryFeatures(ug)
 }
 
 // Update returns a builder for updating this UsersGroup.

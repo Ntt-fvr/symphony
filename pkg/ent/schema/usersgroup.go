@@ -38,6 +38,7 @@ func (UsersGroup) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("members", User.Type),
 		edge.To("policies", PermissionsPolicy.Type),
+		edge.To("features", Feature.Type),
 	}
 }
 

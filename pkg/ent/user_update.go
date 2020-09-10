@@ -13,6 +13,7 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
@@ -216,6 +217,21 @@ func (uu *UserUpdate) AddCreatedProjects(p ...*Project) *UserUpdate {
 	return uu.AddCreatedProjectIDs(ids...)
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (uu *UserUpdate) AddFeatureIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddFeatureIDs(ids...)
+	return uu
+}
+
+// AddFeatures adds the features edges to Feature.
+func (uu *UserUpdate) AddFeatures(f ...*Feature) *UserUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -309,6 +325,27 @@ func (uu *UserUpdate) RemoveCreatedProjects(p ...*Project) *UserUpdate {
 		ids[i] = p[i].ID
 	}
 	return uu.RemoveCreatedProjectIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to type Feature.
+func (uu *UserUpdate) ClearFeatures() *UserUpdate {
+	uu.mutation.ClearFeatures()
+	return uu
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (uu *UserUpdate) RemoveFeatureIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveFeatureIDs(ids...)
+	return uu
+}
+
+// RemoveFeatures removes features edges to Feature.
+func (uu *UserUpdate) RemoveFeatures(f ...*Feature) *UserUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uu.RemoveFeatureIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -733,6 +770,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !uu.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -932,6 +1023,21 @@ func (uuo *UserUpdateOne) AddCreatedProjects(p ...*Project) *UserUpdateOne {
 	return uuo.AddCreatedProjectIDs(ids...)
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (uuo *UserUpdateOne) AddFeatureIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddFeatureIDs(ids...)
+	return uuo
+}
+
+// AddFeatures adds the features edges to Feature.
+func (uuo *UserUpdateOne) AddFeatures(f ...*Feature) *UserUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.AddFeatureIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1025,6 +1131,27 @@ func (uuo *UserUpdateOne) RemoveCreatedProjects(p ...*Project) *UserUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return uuo.RemoveCreatedProjectIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to type Feature.
+func (uuo *UserUpdateOne) ClearFeatures() *UserUpdateOne {
+	uuo.mutation.ClearFeatures()
+	return uuo
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (uuo *UserUpdateOne) RemoveFeatureIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveFeatureIDs(ids...)
+	return uuo
+}
+
+// RemoveFeatures removes features edges to Feature.
+func (uuo *UserUpdateOne) RemoveFeatures(f ...*Feature) *UserUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uuo.RemoveFeatureIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1439,6 +1566,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: project.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !uuo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.FeaturesTable,
+			Columns: user.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: feature.FieldID,
 				},
 			},
 		}

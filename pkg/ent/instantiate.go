@@ -121,6 +121,12 @@ func (c *ExportTaskClient) Instantiate(et *ExportTask) *ExportTask {
 }
 
 // Instantiate entity configuration.
+func (c *FeatureClient) Instantiate(f *Feature) *Feature {
+	f.config = c.config
+	return f
+}
+
+// Instantiate entity configuration.
 func (c *FileClient) Instantiate(f *File) *File {
 	f.config = c.config
 	return f

@@ -33,6 +33,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -102,6 +103,7 @@ const (
 	TypeEquipmentPositionDefinition = "EquipmentPositionDefinition"
 	TypeEquipmentType               = "EquipmentType"
 	TypeExportTask                  = "ExportTask"
+	TypeFeature                     = "Feature"
 	TypeFile                        = "File"
 	TypeFloorPlan                   = "FloorPlan"
 	TypeFloorPlanReferencePoint     = "FloorPlanReferencePoint"
@@ -15601,6 +15603,660 @@ func (m *ExportTaskMutation) ClearEdge(name string) error {
 // defined in the schema.
 func (m *ExportTaskMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ExportTask edge %s", name)
+}
+
+// FeatureMutation represents an operation that mutate the Features
+// nodes in the graph.
+type FeatureMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	create_time   *time.Time
+	update_time   *time.Time
+	name          *string
+	global        *bool
+	clearedFields map[string]struct{}
+	users         map[int]struct{}
+	removedusers  map[int]struct{}
+	clearedusers  bool
+	groups        map[int]struct{}
+	removedgroups map[int]struct{}
+	clearedgroups bool
+	done          bool
+	oldValue      func(context.Context) (*Feature, error)
+}
+
+var _ ent.Mutation = (*FeatureMutation)(nil)
+
+// featureOption allows to manage the mutation configuration using functional options.
+type featureOption func(*FeatureMutation)
+
+// newFeatureMutation creates new mutation for $n.Name.
+func newFeatureMutation(c config, op Op, opts ...featureOption) *FeatureMutation {
+	m := &FeatureMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFeature,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFeatureID sets the id field of the mutation.
+func withFeatureID(id int) featureOption {
+	return func(m *FeatureMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Feature
+		)
+		m.oldValue = func(ctx context.Context) (*Feature, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Feature.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFeature sets the old Feature of the mutation.
+func withFeature(node *Feature) featureOption {
+	return func(m *FeatureMutation) {
+		m.oldValue = func(context.Context) (*Feature, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FeatureMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FeatureMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *FeatureMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *FeatureMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *FeatureMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *FeatureMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *FeatureMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *FeatureMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *FeatureMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the name field.
+func (m *FeatureMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *FeatureMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *FeatureMutation) ResetName() {
+	m.name = nil
+}
+
+// SetGlobal sets the global field.
+func (m *FeatureMutation) SetGlobal(b bool) {
+	m.global = &b
+}
+
+// Global returns the global value in the mutation.
+func (m *FeatureMutation) Global() (r bool, exists bool) {
+	v := m.global
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGlobal returns the old global value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldGlobal(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldGlobal is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldGlobal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGlobal: %w", err)
+	}
+	return oldValue.Global, nil
+}
+
+// ClearGlobal clears the value of global.
+func (m *FeatureMutation) ClearGlobal() {
+	m.global = nil
+	m.clearedFields[feature.FieldGlobal] = struct{}{}
+}
+
+// GlobalCleared returns if the field global was cleared in this mutation.
+func (m *FeatureMutation) GlobalCleared() bool {
+	_, ok := m.clearedFields[feature.FieldGlobal]
+	return ok
+}
+
+// ResetGlobal reset all changes of the "global" field.
+func (m *FeatureMutation) ResetGlobal() {
+	m.global = nil
+	delete(m.clearedFields, feature.FieldGlobal)
+}
+
+// AddUserIDs adds the users edge to User by ids.
+func (m *FeatureMutation) AddUserIDs(ids ...int) {
+	if m.users == nil {
+		m.users = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.users[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUsers clears the users edge to User.
+func (m *FeatureMutation) ClearUsers() {
+	m.clearedusers = true
+}
+
+// UsersCleared returns if the edge users was cleared.
+func (m *FeatureMutation) UsersCleared() bool {
+	return m.clearedusers
+}
+
+// RemoveUserIDs removes the users edge to User by ids.
+func (m *FeatureMutation) RemoveUserIDs(ids ...int) {
+	if m.removedusers == nil {
+		m.removedusers = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedusers[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUsers returns the removed ids of users.
+func (m *FeatureMutation) RemovedUsersIDs() (ids []int) {
+	for id := range m.removedusers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UsersIDs returns the users ids in the mutation.
+func (m *FeatureMutation) UsersIDs() (ids []int) {
+	for id := range m.users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUsers reset all changes of the "users" edge.
+func (m *FeatureMutation) ResetUsers() {
+	m.users = nil
+	m.clearedusers = false
+	m.removedusers = nil
+}
+
+// AddGroupIDs adds the groups edge to UsersGroup by ids.
+func (m *FeatureMutation) AddGroupIDs(ids ...int) {
+	if m.groups == nil {
+		m.groups = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.groups[ids[i]] = struct{}{}
+	}
+}
+
+// ClearGroups clears the groups edge to UsersGroup.
+func (m *FeatureMutation) ClearGroups() {
+	m.clearedgroups = true
+}
+
+// GroupsCleared returns if the edge groups was cleared.
+func (m *FeatureMutation) GroupsCleared() bool {
+	return m.clearedgroups
+}
+
+// RemoveGroupIDs removes the groups edge to UsersGroup by ids.
+func (m *FeatureMutation) RemoveGroupIDs(ids ...int) {
+	if m.removedgroups == nil {
+		m.removedgroups = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedgroups[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedGroups returns the removed ids of groups.
+func (m *FeatureMutation) RemovedGroupsIDs() (ids []int) {
+	for id := range m.removedgroups {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// GroupsIDs returns the groups ids in the mutation.
+func (m *FeatureMutation) GroupsIDs() (ids []int) {
+	for id := range m.groups {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetGroups reset all changes of the "groups" edge.
+func (m *FeatureMutation) ResetGroups() {
+	m.groups = nil
+	m.clearedgroups = false
+	m.removedgroups = nil
+}
+
+// Op returns the operation name.
+func (m *FeatureMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Feature).
+func (m *FeatureMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *FeatureMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, feature.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, feature.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, feature.FieldName)
+	}
+	if m.global != nil {
+		fields = append(fields, feature.FieldGlobal)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *FeatureMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case feature.FieldCreateTime:
+		return m.CreateTime()
+	case feature.FieldUpdateTime:
+		return m.UpdateTime()
+	case feature.FieldName:
+		return m.Name()
+	case feature.FieldGlobal:
+		return m.Global()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *FeatureMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case feature.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case feature.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case feature.FieldName:
+		return m.OldName(ctx)
+	case feature.FieldGlobal:
+		return m.OldGlobal(ctx)
+	}
+	return nil, fmt.Errorf("unknown Feature field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FeatureMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case feature.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case feature.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case feature.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case feature.FieldGlobal:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGlobal(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Feature field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *FeatureMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *FeatureMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *FeatureMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Feature numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *FeatureMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(feature.FieldGlobal) {
+		fields = append(fields, feature.FieldGlobal)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *FeatureMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FeatureMutation) ClearField(name string) error {
+	switch name {
+	case feature.FieldGlobal:
+		m.ClearGlobal()
+		return nil
+	}
+	return fmt.Errorf("unknown Feature nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *FeatureMutation) ResetField(name string) error {
+	switch name {
+	case feature.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case feature.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case feature.FieldName:
+		m.ResetName()
+		return nil
+	case feature.FieldGlobal:
+		m.ResetGlobal()
+		return nil
+	}
+	return fmt.Errorf("unknown Feature field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *FeatureMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.users != nil {
+		edges = append(edges, feature.EdgeUsers)
+	}
+	if m.groups != nil {
+		edges = append(edges, feature.EdgeGroups)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *FeatureMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case feature.EdgeUsers:
+		ids := make([]ent.Value, 0, len(m.users))
+		for id := range m.users {
+			ids = append(ids, id)
+		}
+		return ids
+	case feature.EdgeGroups:
+		ids := make([]ent.Value, 0, len(m.groups))
+		for id := range m.groups {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *FeatureMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.removedusers != nil {
+		edges = append(edges, feature.EdgeUsers)
+	}
+	if m.removedgroups != nil {
+		edges = append(edges, feature.EdgeGroups)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *FeatureMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case feature.EdgeUsers:
+		ids := make([]ent.Value, 0, len(m.removedusers))
+		for id := range m.removedusers {
+			ids = append(ids, id)
+		}
+		return ids
+	case feature.EdgeGroups:
+		ids := make([]ent.Value, 0, len(m.removedgroups))
+		for id := range m.removedgroups {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *FeatureMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedusers {
+		edges = append(edges, feature.EdgeUsers)
+	}
+	if m.clearedgroups {
+		edges = append(edges, feature.EdgeGroups)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *FeatureMutation) EdgeCleared(name string) bool {
+	switch name {
+	case feature.EdgeUsers:
+		return m.clearedusers
+	case feature.EdgeGroups:
+		return m.clearedgroups
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *FeatureMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Feature unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *FeatureMutation) ResetEdge(name string) error {
+	switch name {
+	case feature.EdgeUsers:
+		m.ResetUsers()
+		return nil
+	case feature.EdgeGroups:
+		m.ResetGroups()
+		return nil
+	}
+	return fmt.Errorf("unknown Feature edge %s", name)
 }
 
 // FileMutation represents an operation that mutate the Files
@@ -46120,6 +46776,9 @@ type UserMutation struct {
 	created_projects            map[int]struct{}
 	removedcreated_projects     map[int]struct{}
 	clearedcreated_projects     bool
+	features                    map[int]struct{}
+	removedfeatures             map[int]struct{}
+	clearedfeatures             bool
 	done                        bool
 	oldValue                    func(context.Context) (*User, error)
 }
@@ -46826,6 +47485,59 @@ func (m *UserMutation) ResetCreatedProjects() {
 	m.removedcreated_projects = nil
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (m *UserMutation) AddFeatureIDs(ids ...int) {
+	if m.features == nil {
+		m.features = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFeatures clears the features edge to Feature.
+func (m *UserMutation) ClearFeatures() {
+	m.clearedfeatures = true
+}
+
+// FeaturesCleared returns if the edge features was cleared.
+func (m *UserMutation) FeaturesCleared() bool {
+	return m.clearedfeatures
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (m *UserMutation) RemoveFeatureIDs(ids ...int) {
+	if m.removedfeatures == nil {
+		m.removedfeatures = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFeatures returns the removed ids of features.
+func (m *UserMutation) RemovedFeaturesIDs() (ids []int) {
+	for id := range m.removedfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FeaturesIDs returns the features ids in the mutation.
+func (m *UserMutation) FeaturesIDs() (ids []int) {
+	for id := range m.features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFeatures reset all changes of the "features" edge.
+func (m *UserMutation) ResetFeatures() {
+	m.features = nil
+	m.clearedfeatures = false
+	m.removedfeatures = nil
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
@@ -47098,7 +47810,7 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.profile_photo != nil {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -47113,6 +47825,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.created_projects != nil {
 		edges = append(edges, user.EdgeCreatedProjects)
+	}
+	if m.features != nil {
+		edges = append(edges, user.EdgeFeatures)
 	}
 	return edges
 }
@@ -47149,6 +47864,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.features))
+		for id := range m.features {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -47156,7 +47877,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -47168,6 +47889,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedcreated_projects != nil {
 		edges = append(edges, user.EdgeCreatedProjects)
+	}
+	if m.removedfeatures != nil {
+		edges = append(edges, user.EdgeFeatures)
 	}
 	return edges
 }
@@ -47200,6 +47924,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.removedfeatures))
+		for id := range m.removedfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -47207,7 +47937,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedprofile_photo {
 		edges = append(edges, user.EdgeProfilePhoto)
 	}
@@ -47222,6 +47952,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedcreated_projects {
 		edges = append(edges, user.EdgeCreatedProjects)
+	}
+	if m.clearedfeatures {
+		edges = append(edges, user.EdgeFeatures)
 	}
 	return edges
 }
@@ -47240,6 +47973,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedassigned_work_orders
 	case user.EdgeCreatedProjects:
 		return m.clearedcreated_projects
+	case user.EdgeFeatures:
+		return m.clearedfeatures
 	}
 	return false
 }
@@ -47275,6 +48010,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeCreatedProjects:
 		m.ResetCreatedProjects()
 		return nil
+	case user.EdgeFeatures:
+		m.ResetFeatures()
+		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
 }
@@ -47298,6 +48036,9 @@ type UsersGroupMutation struct {
 	policies        map[int]struct{}
 	removedpolicies map[int]struct{}
 	clearedpolicies bool
+	features        map[int]struct{}
+	removedfeatures map[int]struct{}
+	clearedfeatures bool
 	done            bool
 	oldValue        func(context.Context) (*UsersGroup, error)
 }
@@ -47685,6 +48426,59 @@ func (m *UsersGroupMutation) ResetPolicies() {
 	m.removedpolicies = nil
 }
 
+// AddFeatureIDs adds the features edge to Feature by ids.
+func (m *UsersGroupMutation) AddFeatureIDs(ids ...int) {
+	if m.features == nil {
+		m.features = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFeatures clears the features edge to Feature.
+func (m *UsersGroupMutation) ClearFeatures() {
+	m.clearedfeatures = true
+}
+
+// FeaturesCleared returns if the edge features was cleared.
+func (m *UsersGroupMutation) FeaturesCleared() bool {
+	return m.clearedfeatures
+}
+
+// RemoveFeatureIDs removes the features edge to Feature by ids.
+func (m *UsersGroupMutation) RemoveFeatureIDs(ids ...int) {
+	if m.removedfeatures == nil {
+		m.removedfeatures = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFeatures returns the removed ids of features.
+func (m *UsersGroupMutation) RemovedFeaturesIDs() (ids []int) {
+	for id := range m.removedfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FeaturesIDs returns the features ids in the mutation.
+func (m *UsersGroupMutation) FeaturesIDs() (ids []int) {
+	for id := range m.features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFeatures reset all changes of the "features" edge.
+func (m *UsersGroupMutation) ResetFeatures() {
+	m.features = nil
+	m.clearedfeatures = false
+	m.removedfeatures = nil
+}
+
 // Op returns the operation name.
 func (m *UsersGroupMutation) Op() Op {
 	return m.op
@@ -47877,12 +48671,15 @@ func (m *UsersGroupMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UsersGroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.members != nil {
 		edges = append(edges, usersgroup.EdgeMembers)
 	}
 	if m.policies != nil {
 		edges = append(edges, usersgroup.EdgePolicies)
+	}
+	if m.features != nil {
+		edges = append(edges, usersgroup.EdgeFeatures)
 	}
 	return edges
 }
@@ -47903,6 +48700,12 @@ func (m *UsersGroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case usersgroup.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.features))
+		for id := range m.features {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -47910,12 +48713,15 @@ func (m *UsersGroupMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UsersGroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedmembers != nil {
 		edges = append(edges, usersgroup.EdgeMembers)
 	}
 	if m.removedpolicies != nil {
 		edges = append(edges, usersgroup.EdgePolicies)
+	}
+	if m.removedfeatures != nil {
+		edges = append(edges, usersgroup.EdgeFeatures)
 	}
 	return edges
 }
@@ -47936,6 +48742,12 @@ func (m *UsersGroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case usersgroup.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.removedfeatures))
+		for id := range m.removedfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -47943,12 +48755,15 @@ func (m *UsersGroupMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UsersGroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedmembers {
 		edges = append(edges, usersgroup.EdgeMembers)
 	}
 	if m.clearedpolicies {
 		edges = append(edges, usersgroup.EdgePolicies)
+	}
+	if m.clearedfeatures {
+		edges = append(edges, usersgroup.EdgeFeatures)
 	}
 	return edges
 }
@@ -47961,6 +48776,8 @@ func (m *UsersGroupMutation) EdgeCleared(name string) bool {
 		return m.clearedmembers
 	case usersgroup.EdgePolicies:
 		return m.clearedpolicies
+	case usersgroup.EdgeFeatures:
+		return m.clearedfeatures
 	}
 	return false
 }
@@ -47983,6 +48800,9 @@ func (m *UsersGroupMutation) ResetEdge(name string) error {
 		return nil
 	case usersgroup.EdgePolicies:
 		m.ResetPolicies()
+		return nil
+	case usersgroup.EdgeFeatures:
+		m.ResetFeatures()
 		return nil
 	}
 	return fmt.Errorf("unknown UsersGroup edge %s", name)

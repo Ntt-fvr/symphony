@@ -54,6 +54,8 @@ type Tx struct {
 	EquipmentType *EquipmentTypeClient
 	// ExportTask is the client for interacting with the ExportTask builders.
 	ExportTask *ExportTaskClient
+	// Feature is the client for interacting with the Feature builders.
+	Feature *FeatureClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// FloorPlan is the client for interacting with the FloorPlan builders.
@@ -278,6 +280,7 @@ func (tx *Tx) init() {
 	tx.EquipmentPositionDefinition = NewEquipmentPositionDefinitionClient(tx.config)
 	tx.EquipmentType = NewEquipmentTypeClient(tx.config)
 	tx.ExportTask = NewExportTaskClient(tx.config)
+	tx.Feature = NewFeatureClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.FloorPlan = NewFloorPlanClient(tx.config)
 	tx.FloorPlanReferencePoint = NewFloorPlanReferencePointClient(tx.config)

@@ -35,6 +35,8 @@ const (
 	EdgeMembers = "members"
 	// EdgePolicies holds the string denoting the policies edge name in mutations.
 	EdgePolicies = "policies"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
 
 	// Table holds the table name of the usersgroup in the database.
 	Table = "users_groups"
@@ -48,6 +50,11 @@ const (
 	// PoliciesInverseTable is the table name for the PermissionsPolicy entity.
 	// It exists in this package in order to avoid circular dependency with the "permissionspolicy" package.
 	PoliciesInverseTable = "permissions_policies"
+	// FeaturesTable is the table the holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "users_group_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
 )
 
 // Columns holds all SQL columns for usersgroup fields.
@@ -67,6 +74,9 @@ var (
 	// PoliciesPrimaryKey and PoliciesColumn2 are the table columns denoting the
 	// primary key for the policies relation (M2M).
 	PoliciesPrimaryKey = []string{"users_group_id", "permissions_policy_id"}
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"users_group_id", "feature_id"}
 )
 
 // Note that the variables below are initialized by the runtime

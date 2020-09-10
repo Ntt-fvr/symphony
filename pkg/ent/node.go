@@ -35,6 +35,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
+	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplan"
 	"github.com/facebookincubator/symphony/pkg/ent/floorplanreferencepoint"
@@ -75,10 +76,9 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-// Noder wraps Node/IsNode methods.
+// Noder wraps the basic Node method.
 type Noder interface {
 	Node(context.Context) (*Node, error)
-	IsNode()
 }
 
 // Node in the graph.
@@ -161,8 +161,6 @@ func (ar *ActionsRule) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (ActionsRule) IsNode() {}
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -253,8 +251,6 @@ func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Activity) IsNode() {}
 
 func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -439,8 +435,6 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Block) IsNode() {}
-
 func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     bi.ID,
@@ -542,8 +536,6 @@ func (bi *BlockInstance) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (BlockInstance) IsNode() {}
-
 func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     clc.ID,
@@ -609,8 +601,6 @@ func (clc *CheckListCategory) Node(ctx context.Context) (node *Node, err error) 
 	}
 	return node, nil
 }
-
-func (CheckListCategory) IsNode() {}
 
 func (clcd *CheckListCategoryDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -688,8 +678,6 @@ func (clcd *CheckListCategoryDefinition) Node(ctx context.Context) (node *Node, 
 	}
 	return node, nil
 }
-
-func (CheckListCategoryDefinition) IsNode() {}
 
 func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -835,8 +823,6 @@ func (cli *CheckListItem) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (CheckListItem) IsNode() {}
-
 func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     clid.ID,
@@ -932,8 +918,6 @@ func (clid *CheckListItemDefinition) Node(ctx context.Context) (node *Node, err 
 	return node, nil
 }
 
-func (CheckListItemDefinition) IsNode() {}
-
 func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
@@ -1003,8 +987,6 @@ func (c *Comment) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Comment) IsNode() {}
-
 func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     c.ID,
@@ -1059,8 +1041,6 @@ func (c *Customer) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Customer) IsNode() {}
 
 func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1232,8 +1212,6 @@ func (e *Equipment) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Equipment) IsNode() {}
-
 func (ec *EquipmentCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ec.ID,
@@ -1280,8 +1258,6 @@ func (ec *EquipmentCategory) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (EquipmentCategory) IsNode() {}
 
 func (ep *EquipmentPort) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1377,8 +1353,6 @@ func (ep *EquipmentPort) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (EquipmentPort) IsNode() {}
-
 func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     epd.ID,
@@ -1472,8 +1446,6 @@ func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err e
 	return node, nil
 }
 
-func (EquipmentPortDefinition) IsNode() {}
-
 func (ept *EquipmentPortType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ept.ID,
@@ -1543,8 +1515,6 @@ func (ept *EquipmentPortType) Node(ctx context.Context) (node *Node, err error) 
 	return node, nil
 }
 
-func (EquipmentPortType) IsNode() {}
-
 func (ep *EquipmentPosition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ep.ID,
@@ -1605,8 +1575,6 @@ func (ep *EquipmentPosition) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (EquipmentPosition) IsNode() {}
 
 func (epd *EquipmentPositionDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1681,8 +1649,6 @@ func (epd *EquipmentPositionDefinition) Node(ctx context.Context) (node *Node, e
 	}
 	return node, nil
 }
-
-func (EquipmentPositionDefinition) IsNode() {}
 
 func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -1786,8 +1752,6 @@ func (et *EquipmentType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (EquipmentType) IsNode() {}
-
 func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     et.ID,
@@ -1839,7 +1803,71 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (ExportTask) IsNode() {}
+func (f *Feature) Node(ctx context.Context) (node *Node, err error) {
+	node = &Node{
+		ID:     f.ID,
+		Type:   "Feature",
+		Fields: make([]*Field, 4),
+		Edges:  make([]*Edge, 2),
+	}
+	var buf []byte
+	if buf, err = json.Marshal(f.CreateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
+		Type:  "string",
+		Name:  "name",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Global); err != nil {
+		return nil, err
+	}
+	node.Fields[3] = &Field{
+		Type:  "bool",
+		Name:  "global",
+		Value: string(buf),
+	}
+	var ids []int
+	ids, err = f.QueryUsers().
+		Select(user.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[0] = &Edge{
+		IDs:  ids,
+		Type: "User",
+		Name: "users",
+	}
+	ids, err = f.QueryGroups().
+		Select(usersgroup.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[1] = &Edge{
+		IDs:  ids,
+		Type: "UsersGroup",
+		Name: "groups",
+	}
+	return node, nil
+}
 
 func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2040,8 +2068,6 @@ func (f *File) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (File) IsNode() {}
-
 func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fp.ID,
@@ -2122,8 +2148,6 @@ func (fp *FloorPlan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (FloorPlan) IsNode() {}
-
 func (fprp *FloorPlanReferencePoint) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fprp.ID,
@@ -2182,8 +2206,6 @@ func (fprp *FloorPlanReferencePoint) Node(ctx context.Context) (node *Node, err 
 	}
 	return node, nil
 }
-
-func (FloorPlanReferencePoint) IsNode() {}
 
 func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2252,8 +2274,6 @@ func (fps *FloorPlanScale) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (FloorPlanScale) IsNode() {}
-
 func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
@@ -2320,8 +2340,6 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Flow) IsNode() {}
-
 func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fd.ID,
@@ -2380,8 +2398,6 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (FlowDraft) IsNode() {}
-
 func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fet.ID,
@@ -2428,8 +2444,6 @@ func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err err
 	}
 	return node, nil
 }
-
-func (FlowExecutionTemplate) IsNode() {}
 
 func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2527,8 +2541,6 @@ func (fi *FlowInstance) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (FlowInstance) IsNode() {}
-
 func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     h.ID,
@@ -2614,8 +2626,6 @@ func (h *Hyperlink) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Hyperlink) IsNode() {}
-
 func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     l.ID,
@@ -2695,8 +2705,6 @@ func (l *Link) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Link) IsNode() {}
 
 func (l *Location) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -2898,8 +2906,6 @@ func (l *Location) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Location) IsNode() {}
-
 func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     lt.ID,
@@ -3001,8 +3007,6 @@ func (lt *LocationType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (LocationType) IsNode() {}
-
 func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pp.ID,
@@ -3081,8 +3085,6 @@ func (pp *PermissionsPolicy) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (PermissionsPolicy) IsNode() {}
 
 func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3213,8 +3215,6 @@ func (pr *Project) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Project) IsNode() {}
-
 func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
@@ -3276,8 +3276,6 @@ func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (ProjectTemplate) IsNode() {}
-
 func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
@@ -3338,8 +3336,6 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (ProjectType) IsNode() {}
 
 func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3575,8 +3571,6 @@ func (pr *Property) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Property) IsNode() {}
 
 func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -3860,8 +3854,6 @@ func (pt *PropertyType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (PropertyType) IsNode() {}
-
 func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     rf.ID,
@@ -3912,8 +3904,6 @@ func (rf *ReportFilter) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (ReportFilter) IsNode() {}
 
 func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4055,8 +4045,6 @@ func (s *Service) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (Service) IsNode() {}
-
 func (se *ServiceEndpoint) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     se.ID,
@@ -4128,8 +4116,6 @@ func (se *ServiceEndpoint) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (ServiceEndpoint) IsNode() {}
 
 func (sed *ServiceEndpointDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4215,8 +4201,6 @@ func (sed *ServiceEndpointDefinition) Node(ctx context.Context) (node *Node, err
 	}
 	return node, nil
 }
-
-func (ServiceEndpointDefinition) IsNode() {}
 
 func (st *ServiceType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4311,8 +4295,6 @@ func (st *ServiceType) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (ServiceType) IsNode() {}
-
 func (s *Survey) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     s.ID,
@@ -4405,8 +4387,6 @@ func (s *Survey) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (Survey) IsNode() {}
 
 func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -4653,8 +4633,6 @@ func (scs *SurveyCellScan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (SurveyCellScan) IsNode() {}
-
 func (sq *SurveyQuestion) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     sq.ID,
@@ -4882,8 +4860,6 @@ func (sq *SurveyQuestion) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (SurveyQuestion) IsNode() {}
-
 func (stc *SurveyTemplateCategory) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     stc.ID,
@@ -4949,8 +4925,6 @@ func (stc *SurveyTemplateCategory) Node(ctx context.Context) (node *Node, err er
 	}
 	return node, nil
 }
-
-func (SurveyTemplateCategory) IsNode() {}
 
 func (stq *SurveyTemplateQuestion) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5022,8 +4996,6 @@ func (stq *SurveyTemplateQuestion) Node(ctx context.Context) (node *Node, err er
 	}
 	return node, nil
 }
-
-func (SurveyTemplateQuestion) IsNode() {}
 
 func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5198,14 +5170,12 @@ func (swfs *SurveyWiFiScan) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (SurveyWiFiScan) IsNode() {}
-
 func (u *User) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     u.ID,
 		Type:   "User",
 		Fields: make([]*Field, 9),
-		Edges:  make([]*Edge, 5),
+		Edges:  make([]*Edge, 6),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(u.CreateTime); err != nil {
@@ -5336,17 +5306,26 @@ func (u *User) Node(ctx context.Context) (node *Node, err error) {
 		Type: "Project",
 		Name: "created_projects",
 	}
+	ids, err = u.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[5] = &Edge{
+		IDs:  ids,
+		Type: "Feature",
+		Name: "features",
+	}
 	return node, nil
 }
-
-func (User) IsNode() {}
 
 func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     ug.ID,
 		Type:   "UsersGroup",
 		Fields: make([]*Field, 5),
-		Edges:  make([]*Edge, 2),
+		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(ug.CreateTime); err != nil {
@@ -5412,10 +5391,19 @@ func (ug *UsersGroup) Node(ctx context.Context) (node *Node, err error) {
 		Type: "PermissionsPolicy",
 		Name: "policies",
 	}
+	ids, err = ug.QueryFeatures().
+		Select(feature.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[2] = &Edge{
+		IDs:  ids,
+		Type: "Feature",
+		Name: "features",
+	}
 	return node, nil
 }
-
-func (UsersGroup) IsNode() {}
 
 func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5663,8 +5651,6 @@ func (wo *WorkOrder) Node(ctx context.Context) (node *Node, err error) {
 	return node, nil
 }
 
-func (WorkOrder) IsNode() {}
-
 func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wod.ID,
@@ -5734,8 +5720,6 @@ func (wod *WorkOrderDefinition) Node(ctx context.Context) (node *Node, err error
 	return node, nil
 }
 
-func (WorkOrderDefinition) IsNode() {}
-
 func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
@@ -5804,8 +5788,6 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	}
 	return node, nil
 }
-
-func (WorkOrderTemplate) IsNode() {}
 
 func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
@@ -5886,8 +5868,6 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	}
 	return node, nil
 }
-
-func (WorkOrderType) IsNode() {}
 
 func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	n, err := c.Noder(ctx, id)
@@ -6090,6 +6070,15 @@ func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 		n, err := c.ExportTask.Query().
 			Where(exporttask.ID(id)).
 			CollectFields(ctx, "ExportTask").
+			Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case feature.Table:
+		n, err := c.Feature.Query().
+			Where(feature.ID(id)).
+			CollectFields(ctx, "Feature").
 			Only(ctx)
 		if err != nil {
 			return nil, err
