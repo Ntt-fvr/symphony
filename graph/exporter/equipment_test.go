@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -226,4 +227,37 @@ func TestExportWithFilters(t *testing.T) {
 		}
 	}
 	require.Equal(t, 2, linesCount)
+}
+
+func TestEquipmentsAsyncExport(t *testing.T) {
+	r := newExporterTestResolver(t)
+	log := r.exporter.log
+
+	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
+	th := viewertest.TestHandler(t, e, r.client)
+	server := httptest.NewServer(th)
+	defer server.Close()
+
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/equipment", nil)
+	require.NoError(t, err)
+	viewertest.SetDefaultViewerHeaders(req)
+	req.Header.Set(viewer.FeaturesHeader, "async_export")
+
+	prepareData(ctx, t, *r)
+	require.NoError(t, err)
+
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	type resStruct struct {
+		TaskID string
+	}
+	var response resStruct
+	err = json.NewDecoder(res.Body).Decode(&response)
+	require.NoError(t, err)
+	taskID := response.TaskID
+	require.NotEmpty(t, taskID)
+	require.True(t, len(response.TaskID) > 1)
 }

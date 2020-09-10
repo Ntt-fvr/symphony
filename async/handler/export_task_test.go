@@ -46,7 +46,15 @@ func TestExports(t *testing.T) {
 }
 
 func (s *exportTestSuite) TestLocations() {
-	task, err := s.createExportTask(s.ctx, s.client, exporttask.TypeLocation)
+	s.testExport(exporttask.TypeLocation)
+}
+
+func (s *exportTestSuite) TestEquipments() {
+	s.testExport(exporttask.TypeEquipment)
+}
+
+func (s *exportTestSuite) testExport(t exporttask.Type) {
+	task, err := s.createExportTask(s.ctx, s.client, t)
 	s.Require().NoError(err)
 	evt := s.createLogEntry(task.ID)
 	err = s.handler.Handle(s.ctx, s.logger, evt)
@@ -62,17 +70,26 @@ func (s *exportTestSuite) TestLocations() {
 	s.Require().NotEmpty(attrs.ContentDisposition)
 }
 
-func (s *exportTestSuite) TestBadLocations() {
-	task, err := s.createExportTask(s.ctx, s.client, exporttask.TypeEquipment)
+func (s *exportTestSuite) TestBadExport() {
+	_, err := s.createExportTask(s.ctx, s.client, exporttask.TypeLocation)
 	s.Require().NoError(err)
-	evt := s.createLogEntry(task.ID)
+	evt := s.createBadLogEntry()
 	err = s.handler.Handle(s.ctx, s.logger, evt)
 	s.Require().Error(err)
 
-	task, err = s.client.ExportTask.Query().Only(s.ctx)
+	task, err := s.client.ExportTask.Query().Only(s.ctx)
 	s.Require().NoError(err)
 	s.Require().Nil(task.StoreKey)
-	s.Require().Equal(exporttask.StatusFailed, task.Status)
+}
+
+func (s *exportTestSuite) createBadLogEntry() event.LogEntry {
+	return event.LogEntry{
+		Type:      ent.TypeExportTask,
+		Operation: ent.OpCreate,
+		CurrState: &ent.Node{
+			ID: 0,
+		},
+	}
 }
 
 func (s *exportTestSuite) createLogEntry(id int) event.LogEntry {

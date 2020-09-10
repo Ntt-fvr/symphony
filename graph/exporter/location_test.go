@@ -312,15 +312,4 @@ func TestLocationsAsyncExport(t *testing.T) {
 	taskID := response.TaskID
 	require.NotEmpty(t, taskID)
 	require.True(t, len(response.TaskID) > 1)
-
-	req, err = http.NewRequest(http.MethodGet, server.URL+"/equipments", nil)
-	require.NoError(t, err)
-	viewertest.SetDefaultViewerHeaders(req)
-	req.Header.Set(viewer.FeaturesHeader, "async_export")
-	resEquip, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	if resEquip != nil {
-		require.Equal(t, http.StatusInternalServerError, resEquip.StatusCode)
-		resEquip.Body.Close()
-	}
 }

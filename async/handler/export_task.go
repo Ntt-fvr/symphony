@@ -31,6 +31,11 @@ type ExportHandler struct {
 	bucketPrefix string
 }
 
+// Interface for getting data rows.
+type rower interface {
+	Rows(ctx context.Context, filters string) ([][]string, error)
+}
+
 // NewExportHandler returns an ExportHandler object with a bucket.
 func NewExportHandler(bucket *blob.Bucket, bucketPrefix string) *ExportHandler {
 	return &ExportHandler{
@@ -60,8 +65,8 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 
 	var key string
 	switch task.Type {
-	case exporttask.TypeLocation:
-		key, err = eh.exportLocations(ctx, logger, task)
+	case exporttask.TypeLocation, exporttask.TypeEquipment:
+		key, err = eh.export(ctx, logger, task)
 	default:
 		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
 			logger.For(ctx).Error("cannot update task status", zap.Error(err))
@@ -84,13 +89,24 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 	return nil
 }
 
-// exportLocations queries and writes rows to a file, returning the key.
-func (eh *ExportHandler) exportLocations(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
-	lr := exporter.LocationsRower{
-		Log:        logger,
-		Concurrent: false,
+// export queries and writes rows to a file, returning the key.
+func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
+	var rower rower
+	switch task.Type {
+	case exporttask.TypeLocation:
+		rower = exporter.LocationsRower{
+			Log:        logger,
+			Concurrent: false,
+		}
+	case exporttask.TypeEquipment:
+		rower = exporter.EquipmentRower{
+			Log: logger,
+		}
+	default:
+		logger.For(ctx).Error("unsupported entity type for export", zap.String("type", task.Type.String()))
+		return "", fmt.Errorf("unsupported entity type %s", task.Type)
 	}
-	rows, err := lr.Rows(ctx, task.Filters)
+	rows, err := rower.Rows(ctx, task.Filters)
 	if err != nil {
 		return "", err
 	}

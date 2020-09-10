@@ -60,6 +60,8 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 	switch url.Path {
 	case "/locations":
 		etType = exporttask.TypeLocation
+	case "/equipment":
+		etType = exporttask.TypeEquipment
 	default:
 		return nil, errors.New("not supported entity for async export")
 	}
@@ -103,7 +105,8 @@ func (m *exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter,
 func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.log.For(ctx)
-	if viewer.FromContext(ctx).Features().Enabled("async_export") {
+	if viewer.FromContext(ctx).Features().Enabled("async_export") &&
+		(r.URL.Path == "/locations" || r.URL.Path == "/equipment") {
 		et, err := m.createExportTask(ctx, r.URL)
 		if err != nil {
 			log.Error("error in async export", zap.Error(err))

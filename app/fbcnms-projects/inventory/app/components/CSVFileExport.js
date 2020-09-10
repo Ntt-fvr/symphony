@@ -75,6 +75,8 @@ const csvFileExportKeyQuery = graphql`
 `;
 
 const PATH_PREFIX = '/graph/export';
+const PATH_EQUIPMENTS = '/equipment';
+const PATH_LOCATIONS = '/locations';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
 type Props = {
   exportPath: string,
@@ -182,7 +184,10 @@ const CSVFileExport = (props: Props) => {
         .then(response => {
           setIsDownloading(false);
           const url = window.URL.createObjectURL(new Blob([response.data]));
-          if (!isAsyncExportEnabled) {
+          if (
+            !isAsyncExportEnabled ||
+            (exportPath !== PATH_EQUIPMENTS && exportPath !== PATH_LOCATIONS)
+          ) {
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', fileName);
