@@ -111,11 +111,9 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 	srv.AddTransport(transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 	})
-	srv.AroundResponses(
-		entgql.TransactionMiddleware(
-			entgql.TxOpenerFunc(ent.OpenTxFromContext),
-		),
-	)
+	srv.Use(entgql.Transactioner{
+		TxOpener: entgql.TxOpenerFunc(ent.OpenTxFromContext),
+	})
 	srv.SetErrorPresenter(errorPresenter(cfg.Logger))
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
 	srv.Use(extension.FixedComplexityLimit(complexity.Infinite))

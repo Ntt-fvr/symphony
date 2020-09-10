@@ -168,7 +168,7 @@ func (tr *TestResolver) GraphClient(opts ...viewertest.Option) *client.Client {
 		ctx = viewertest.NewContext(ctx, tr.client, opts...)
 		return next(ctx)
 	})
-	srv.AroundResponses(entgql.TransactionMiddleware(tr.client))
+	srv.Use(entgql.Transactioner{TxOpener: tr.client})
 	return client.New(srv)
 }
 
