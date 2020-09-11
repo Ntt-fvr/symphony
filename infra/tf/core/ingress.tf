@@ -488,7 +488,7 @@ resource "helm_release" "intern_cert_issuer" {
   values = [yamlencode({
     anyResources = {
       InternIssuer = yamlencode({
-        apiVersion = "cert-manager.io/v1alpha2"
+        apiVersion = "cert-manager.io/v1"
         kind       = "ClusterIssuer"
         metadata = {
           name = local.cert_issuer.intern

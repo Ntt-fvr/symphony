@@ -4,7 +4,7 @@ resource helm_release jaeger_operator {
   repository = local.helm_repository.jaegertracing
   name       = "jaeger-operator"
   namespace  = "observability"
-  version    = "2.15.1"
+  version    = "2.17.0"
 
   values = [yamlencode({
     jaeger = {
@@ -26,7 +26,7 @@ resource helm_release jaeger_operator {
           }
           options = {
             es = {
-              "server-url" = "https://${aws_elasticsearch_domain.es.endpoint}:443"
+              "server-urls" = "https://${aws_elasticsearch_domain.es.endpoint}:443"
             }
           }
         }

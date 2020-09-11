@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"os"
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
@@ -48,7 +47,7 @@ type handlerSuite struct {
 func (s *handlerSuite) SetupTest() {
 	s.signer = &mockSigner{}
 	bucket, err := fileblob.OpenBucket(
-		os.TempDir(),
+		s.T().TempDir(),
 		&fileblob.Options{
 			URLSigner: s.signer,
 		},

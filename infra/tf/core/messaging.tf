@@ -24,7 +24,7 @@ resource helm_release nats {
 resource helm_release prometheus_nats_exporter {
   name       = "prometheus-nats-exporter"
   namespace  = helm_release.nats.namespace
-  repository = local.helm_repository.stable
+  repository = local.helm_repository.prometheus-community
   chart      = "prometheus-nats-exporter"
   version    = "2.5.1"
 

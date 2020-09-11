@@ -1,3 +1,4 @@
+nameOverride: prometheus-operator
 alertmanager:
   ingress:
     enabled: true
@@ -50,10 +51,7 @@ grafana:
     path: /
   dashboards:
     default:
-%{ for name, config in grafana_dashboards ~}
-      ${name}:
-        ${indent(8, yamlencode(config))}
-%{ endfor ~}
+      ${indent(6, chomp(yamlencode(grafana_dashboards)))}
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1

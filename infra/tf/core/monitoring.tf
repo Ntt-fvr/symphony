@@ -2,16 +2,15 @@
 resource helm_release prometheus_operator {
   name       = "prometheus-operator"
   namespace  = "monitoring"
-  repository = local.helm_repository.stable
-  chart      = "prometheus-operator"
-  version    = "9.3.1"
-  keyring    = ""
+  repository = local.helm_repository.prometheus-community
+  chart      = "kube-prometheus-stack"
+  version    = "9.4.0"
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
     host               = local.domains.symphony.intern_name
     env                = local.environment
-    access_token       = jsondecode(data.aws_secretsmanager_secret_version.alertmanager.secret_string)["access_token"]
+    access_token       = data.sops_file.secrets.data["alertmanager.mandoline.access_token"]
     grafana_sa_name    = module.grafana_role.service_account_name
     grafana_rolearn    = module.grafana_role.role_arn
     grafana_dashboards = local.grafana_dashboards
@@ -127,7 +126,6 @@ resource helm_release helm_exporter {
   chart      = "helm-exporter"
   version    = "0.6.0"
   namespace  = "monitoring"
-  keyring    = ""
 
   set {
     name  = "serviceMonitor.create"
@@ -141,13 +139,13 @@ resource helm_release helm_exporter {
 # over HTTP, HTTPS, DNS, TCP and ICMP.
 resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
-  repository = local.helm_repository.stable
+  repository = local.helm_repository.prometheus-community
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.3.1"
+  version    = "4.5.1"
   namespace  = "monitoring"
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {
-    circleci_token = data.sops_file.circleci.data.token
+    circleci_token = data.sops_file.secrets.data["circleci.token"]
   })]
 
   depends_on = [helm_release.prometheus_operator]

@@ -21,4 +21,6 @@ spec:
     - name: http-internal
       port: {{ .Values.front.service.internalPort }}
       targetPort: http-internal
-    {{- include "symphony.metricsPort" . | indent 4 }}
+    - name: http-metrics
+      port: 9464
+      targetPort: http-metrics

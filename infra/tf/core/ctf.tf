@@ -145,7 +145,7 @@ resource helm_release ctf_cert_issuer {
   values = [yamlencode({
     anyResources = {
       CertIssuer = yamlencode({
-        apiVersion = "cert-manager.io/v1alpha2"
+        apiVersion = "cert-manager.io/v1"
         kind       = "Issuer"
         metadata = {
           name = "letsencrypt"
