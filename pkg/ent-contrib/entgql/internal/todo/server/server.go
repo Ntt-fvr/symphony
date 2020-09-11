@@ -45,6 +45,7 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(todo.NewSchema(client))
+	srv.Use(entgql.Transactioner{TxOpener: client})
 	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	if cli.Debug {
 		srv.Use(&debug.Tracer{})

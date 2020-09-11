@@ -886,49 +886,72 @@ func TestDeleteLocation(t *testing.T) {
 func TestDeleteLocationWithEquipmentsFails(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	c := r.GraphClient()
 
-	mr, qr := r.Mutation(), r.Query()
-
-	strValue := "Foo"
-	strPType := pkgmodels.PropertyTypeInput{
-		Name:        "str_prop",
-		Type:        "string",
-		StringValue: &strValue,
-	}
-	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
-		Name:       "location_type_name_1",
-		Properties: []*pkgmodels.PropertyTypeInput{&strPType},
-	})
+	var lt struct{ AddLocationType struct{ ID string } }
+	err := c.Post(`mutation {
+		addLocationType(input: {
+			name: "City"
+			properties: [{
+				type: string
+				name: "foo"
+				stringValue: "bar"
+			}]
+		}) {
+			id
+		}
+	}`, &lt)
 	require.NoError(t, err)
 
-	location, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "location",
-		Type: locationType.ID,
-	})
-	require.NotNil(t, location)
+	var l struct{ AddLocation struct{ ID string } }
+	err = c.Post(`mutation($type: ID!) {
+		addLocation(input: {
+			name: "Tel Aviv"
+			type: $type
+		}) {
+			id
+		}
+	}`, &l, client.Var("type", lt.AddLocationType.ID))
 	require.NoError(t, err)
 
-	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name: "equipment_type",
-	})
-	require.NoError(t, err)
-	_, err = mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     "foo",
-		Type:     equipmentType.ID,
-		Location: &location.ID,
-	})
+	var et struct{ AddEquipmentType struct{ ID string } }
+	err = c.Post(`mutation {
+		addEquipmentType(input: {
+			name: "Router"
+		}) {
+			id
+		}
+	}`, &et)
 	require.NoError(t, err)
 
-	deletedLocationID, err := mr.RemoveLocation(ctx, location.ID)
-	require.Empty(t, deletedLocationID)
+	var e struct{ AddEquipment struct{ ID string } }
+	err = c.Post(`mutation($type: ID!, $location: ID!) {
+		addEquipment(input: {
+			name: "Cisco"
+			type: $type
+			location: $location
+		}) {
+			id
+		}
+	}`, &e,
+		client.Var("type", et.AddEquipmentType.ID),
+		client.Var("location", l.AddLocation.ID),
+	)
+	require.NoError(t, err)
+
+	var id string
+	err = c.Post(`mutation($id: ID!) { removeLocation(id: $id) }`,
+		&id, client.Var("id", l.AddLocation.ID))
 	require.Error(t, err, "can't remove location with equipment")
 
-	fetchedNode, err := qr.Node(ctx, location.ID)
+	var n struct{ Location struct{ ID string } }
+	err = c.Post(
+		`query($id: ID!) { location: node(id: $id) { ... on Location { id } } }`,
+		&n,
+		client.Var("id", l.AddLocation.ID),
+	)
 	require.NoError(t, err)
-	fetchedLocation, ok := fetchedNode.(*ent.Location)
-	require.True(t, ok)
-	require.NotNil(t, fetchedLocation, "location exists after deletion attempt")
+	require.Equal(t, l.AddLocation.ID, n.Location.ID)
 }
 
 func TestQueryParentLocation(t *testing.T) {
