@@ -1,5 +1,8 @@
 [ignore]
 
+; transitive dependencies can be ignored
+<PROJECT_ROOT>/node_modules/.*/node_modules/.*
+
 ; Ignore components that we dont care if they match our flow
 .*/node_modules/bcryptjs/.*
 .*/node_modules/config-chain/test/.*
