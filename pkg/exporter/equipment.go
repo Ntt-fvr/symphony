@@ -173,7 +173,12 @@ func equipToSlice(ctx context.Context, equipment *ent.Equipment, orderedLocTypes
 	if err := g.Wait(); err != nil {
 		return nil, err
 	}
-	row := []string{strconv.Itoa(equipment.ID), equipment.Name, equipment.QueryType().OnlyX(ctx).Name, equipment.ExternalID}
+	equipmentType, err := equipment.QueryType().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	row := []string{strconv.Itoa(equipment.ID), equipment.Name, equipmentType.Name, equipment.ExternalID}
 	row = append(row, lParents...)
 	row = append(row, eParents...)
 	row = append(row, properties...)

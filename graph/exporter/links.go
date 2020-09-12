@@ -136,8 +136,10 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 		return nil, errors.Wrapf(err, "link must include 2 ports (link id=%d)", link.ID)
 	}
 	for i, port := range ports {
-		portDefinition := port.QueryDefinition().OnlyX(ctx)
-
+		portDefinition, err := port.QueryDefinition().Only(ctx)
+		if err != nil {
+			return nil, err
+		}
 		portEquipment, err := port.QueryParent().Only(ctx)
 		if err != nil {
 			return nil, errors.Wrapf(err, "querying parent for port (id=%d)", port.ID)

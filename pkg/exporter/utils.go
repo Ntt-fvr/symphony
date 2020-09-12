@@ -116,7 +116,10 @@ func ParentHierarchy(ctx context.Context, equipment ent.Equipment) []string {
 		if pos == nil {
 			break
 		}
-		parentEquipment := pos.QueryParent().OnlyX(ctx)
+		parentEquipment, err := pos.QueryParent().Only(ctx)
+		if err != nil {
+			return nil
+		}
 		parents[i] = parentEquipment.Name
 		pos, _ = parentEquipment.QueryParentPosition().Only(ctx)
 	}
@@ -130,8 +133,15 @@ func ParentHierarchyWithAllPositions(ctx context.Context, equipment ent.Equipmen
 		if pos == nil {
 			break
 		}
-		parentEquipment := pos.QueryParent().OnlyX(ctx)
-		parents[i] = pos.QueryDefinition().OnlyX(ctx).Name
+		parentEquipment, err := pos.QueryParent().Only(ctx)
+		if err != nil {
+			return nil
+		}
+		position, err := pos.QueryDefinition().Only(ctx)
+		if err != nil {
+			return nil
+		}
+		parents[i] = position.Name
 		parents[i-1] = parentEquipment.Name
 		pos, _ = parentEquipment.QueryParentPosition().Only(ctx)
 	}
@@ -153,9 +163,15 @@ func LocationHierarchyForEquipment(ctx context.Context, equipment *ent.Equipment
 		if err != nil {
 			return nil, errors.Wrapf(err, "no location and equipment parent for equipment %s, ID: %d", firstEquipmentWithLocation.Name, firstEquipmentWithLocation.ID)
 		}
-		firstEquipmentWithLocation = position.QueryParent().OnlyX(ctx)
+		firstEquipmentWithLocation, err = position.QueryParent().Only(ctx)
+		if err != nil {
+			return nil, errors.Wrapf(err, "querying parent for position (id=%d)", position.ID)
+		}
 	}
-	currLoc := firstEquipmentWithLocation.QueryLocation().OnlyX(ctx)
+	currLoc, err := firstEquipmentWithLocation.QueryLocation().Only(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "querying location parent for equipment: %s, ID: %d", firstEquipmentWithLocation.Name, firstEquipmentWithLocation.ID)
+	}
 	return locationHierarchy(ctx, currLoc, orderedLocTypes)
 }
 

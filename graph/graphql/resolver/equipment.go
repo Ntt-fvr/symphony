@@ -325,7 +325,13 @@ func (r equipmentResolver) LocationHierarchy(ctx context.Context, e *ent.Equipme
 	} else {
 		query = e.QueryLocation()
 	}
-	for parent := query.WithParent().OnlyX(ctx); parent != nil; {
+	for parent, err := query.WithParent().Only(ctx); ; {
+		if err != nil {
+			return nil, err
+		}
+		if parent == nil {
+			break
+		}
 		locations = append([]*ent.Location{parent}, locations...)
 		grandparent, err := parent.Edges.ParentOrErr()
 		if ent.IsNotLoaded(err) {

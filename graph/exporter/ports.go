@@ -123,7 +123,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 	return allrows, nil
 }
 
-// nolint: ineffassign
+// nolint: ineffassign, funlen
 func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes []string, propertyTypes []string) ([]string, error) {
 	var (
 		posName              string
@@ -136,7 +136,10 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 	if err != nil {
 		return nil, errors.Wrapf(err, "querying equipment for port (id=%d)", port.ID)
 	}
-	portDefinition := port.QueryDefinition().OnlyX(ctx)
+	portDefinition, err := port.QueryDefinition().Only(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "querying definition for port (id=%d)", port.ID)
+	}
 	g := ctxgroup.WithContext(ctx)
 
 	g.Go(func(ctx context.Context) (err error) {
@@ -179,10 +182,17 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 			if err != nil {
 				return err
 			}
-			otherEquip := otherPort.QueryParent().OnlyX(ctx)
+			otherEquip, err := otherPort.QueryParent().Only(ctx)
+			if err != nil {
+				return err
+			}
+			otherDefinition, err := otherPort.QueryDefinition().Only(ctx)
+			if err != nil {
+				return err
+			}
 			linkData = []string{
 				strconv.Itoa(otherPort.ID),
-				otherPort.QueryDefinition().OnlyX(ctx).Name,
+				otherDefinition.Name,
 				strconv.Itoa(otherEquip.ID),
 				otherEquip.Name,
 			}
@@ -207,7 +217,12 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 	if err == nil {
 		portType = pt.Name
 	}
-	row := []string{strconv.Itoa(port.ID), portDefinition.Name, portType, parentEquip.Name, parentEquip.QueryType().OnlyX(ctx).Name}
+	parentType, err := parentEquip.QueryType().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	row := []string{strconv.Itoa(port.ID), portDefinition.Name, portType, parentEquip.Name, parentType.Name}
 	row = append(row, lParents...)
 	row = append(row, eParents...)
 	row = append(row, posName)
