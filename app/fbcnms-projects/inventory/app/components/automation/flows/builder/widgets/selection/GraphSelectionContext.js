@@ -9,6 +9,7 @@
  */
 
 import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
+import type {IConnector} from '../../canvas/graph/shapes/connectors/BaseConnector';
 
 import * as React from 'react';
 import useExplicitSelection from './useExplicitSelection';
@@ -19,14 +20,17 @@ import {useCallback, useContext, useEffect, useState} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
 
 type SelectedElement = $ReadOnly<IBlock>;
+type SelectedLink = $ReadOnly<IConnector>;
 
 export type Selection = $ReadOnlyArray<SelectedElement>;
 export type GraphSelectionContextType = {
   selectedElements: Selection,
+  selectedLink: ?SelectedLink,
 };
 
 const GraphSelectionContextDefaults = {
   selectedElements: [],
+  selectedLink: null,
 };
 
 const GraphSelectionContext = React.createContext<GraphSelectionContextType>(
@@ -34,6 +38,7 @@ const GraphSelectionContext = React.createContext<GraphSelectionContextType>(
 );
 
 export type ChangeSelectionFunc = (SelectedElement | Selection) => void;
+export type ChangeLinkSelectionFunc = SelectedLink => void;
 
 export type IsIgnoredElementFunc = IBlock => boolean;
 
@@ -46,6 +51,29 @@ export function GraphSelectionContextProvider(props: Props) {
   const [selectedElements, setSelectedElements] = useState<
     $ReadOnlyArray<IBlock>,
   >([]);
+  const [selectedLink, setSelectedLink] = useState<?IConnector>();
+
+  const clearSelectedElements = useCallback(() => {
+    setSelectedElements(prevSelectedElements => {
+      if (prevSelectedElements.length === 0) {
+        return prevSelectedElements;
+      }
+
+      prevSelectedElements.forEach(element => element.deselect());
+      return [];
+    });
+  }, []);
+
+  const clearSelectedLinks = useCallback(() => {
+    setSelectedLink(prevSelected => {
+      if (prevSelected == null) {
+        return;
+      }
+
+      prevSelected.deselect();
+      return null;
+    });
+  }, []);
 
   const changeSelection: ChangeSelectionFunc = useCallback(
     (newSelection: IBlock | $ReadOnlyArray<IBlock>) => {
@@ -67,10 +95,28 @@ export function GraphSelectionContextProvider(props: Props) {
           )
           .forEach(element => element.select());
 
+        clearSelectedLinks();
+
         return newSelectedElements;
       });
     },
-    [],
+    [clearSelectedLinks],
+  );
+
+  const changeLinkSelection: ChangeLinkSelectionFunc = useCallback(
+    (newSelection: IConnector) => {
+      setSelectedLink(previousSelectedLinks => {
+        if (previousSelectedLinks != null) {
+          previousSelectedLinks.deselect();
+        }
+
+        newSelection.select();
+        clearSelectedElements();
+
+        return newSelection;
+      });
+    },
+    [clearSelectedElements],
   );
 
   const {checkIfElementShouldBeIgnored} = useLassoSelection(
@@ -79,11 +125,12 @@ export function GraphSelectionContextProvider(props: Props) {
   );
 
   const onBlockRemoved = useCallback(() => {
-    setSelectedElements([]);
-  }, []);
+    clearSelectedElements();
+    clearSelectedLinks();
+  }, [clearSelectedElements, clearSelectedLinks]);
 
   useExplicitSelection(changeSelection, checkIfElementShouldBeIgnored);
-  useLinkSelection();
+  useLinkSelection(changeLinkSelection);
 
   useEffect(() => {
     flow.onGraphEvent(Events.Graph.BlockRemoved, onBlockRemoved);
@@ -93,6 +140,7 @@ export function GraphSelectionContextProvider(props: Props) {
     <GraphSelectionContext.Provider
       value={{
         selectedElements: selectedElements ?? [],
+        selectedLink: selectedLink,
       }}>
       {props.children}
     </GraphSelectionContext.Provider>

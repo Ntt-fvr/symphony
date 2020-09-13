@@ -38,6 +38,8 @@ export interface ILink {
   +addTo: Graph => void;
   +router: (string, KeyValuePair) => void;
   +getTargetElement: () => ?IVertexModel;
+  +attr: KeyValuePair => void;
+  +remove: () => void;
 }
 
 export type LinkDescriptor = $ReadOnly<{|

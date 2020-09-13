@@ -12,8 +12,11 @@ import {Events} from '../../canvas/graph/facades/Helpers';
 import {isLink} from '../../canvas/graph/facades/shapes/edges/Link';
 import {useCallback, useEffect} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
+import type {ChangeLinkSelectionFunc} from './GraphSelectionContext';
 
-export default function useLinkSelection() {
+export default function useLinkSelection(
+  changeLinkSelection: ChangeLinkSelectionFunc,
+) {
   const flow = useGraph();
 
   const onConnectorMouseDown = useCallback((connector, evt) => {
@@ -28,8 +31,9 @@ export default function useLinkSelection() {
     (connector, evt) => {
       const position = {x: evt.clientX, y: evt.clientY};
       connector.tryAttachingAtPoint(position, flow);
+      changeLinkSelection(connector);
     },
-    [flow],
+    [flow, changeLinkSelection],
   );
 
   useEffect(() => {

@@ -25,6 +25,9 @@ export interface IConnector {
   +target: ?IBlock;
   +setSource: (?IBlock) => void;
   +setTarget: (?IBlock) => void;
+  +select: () => void;
+  +deselect: () => void;
+  +isSelected: boolean;
 }
 
 export default class BaseConnector implements IConnector {
@@ -33,6 +36,7 @@ export default class BaseConnector implements IConnector {
   id: string;
   source: ?IBlock;
   target: ?IBlock;
+  isSelected: boolean;
 
   constructor(paper: Paper, source?: ?IBlock, target?: ?IBlock) {
     this.paper = paper;
@@ -74,5 +78,23 @@ export default class BaseConnector implements IConnector {
       }
     }
     this.setTarget(this.target);
+  }
+
+  select() {
+    this.isSelected = true;
+    this.model.attr({
+      line: {
+        stroke: '#feb663',
+      },
+    });
+  }
+
+  deselect() {
+    this.isSelected = false;
+    this.model.attr({
+      line: {
+        stroke: '#000000',
+      },
+    });
   }
 }

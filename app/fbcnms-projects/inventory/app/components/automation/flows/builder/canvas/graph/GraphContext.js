@@ -104,6 +104,7 @@ export type GraphContextType = {
   getMainPaper: () => ?Paper,
   addBlock: AddBlockFunctionType,
   removeBlocks: (IBlock[]) => void,
+  removeConnector: IConnector => void,
   addConnector: AddConnectorFunctionType,
   getBlock: string => ?IBlock,
   getConnector: string => ?IConnector,
@@ -127,6 +128,7 @@ const GraphContextDefaults = {
   getMainPaper: emptyFunction,
   addBlock: emptyFunction,
   removeBlocks: emptyFunction,
+  removeConnector: emptyFunction,
   addConnector: emptyFunction,
   getBlock: emptyFunction,
   getConnector: emptyFunction,
@@ -216,6 +218,16 @@ function graphRemoveBlocks(blocks: IBlock[]) {
 
   graph.removeCells(blocks.map(block => block.model));
   idsToRemove.forEach(id => blocksMap.delete(id));
+}
+
+function graphRemoveConnector(connector: IConnector) {
+  if (this.current == null) {
+    return;
+  }
+
+  const connectorsMap = this.current.connectors;
+  connectorsMap.delete(connector.id);
+  connector.model.remove();
 }
 
 function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
@@ -541,6 +553,7 @@ export function GraphContextProvider(props: Props) {
   const getMainPaper = graphGetMainPaper.bind(flowWrapper);
   const addBlock = graphAddBlock.bind(flowWrapper);
   const removeBlocks = graphRemoveBlocks.bind(flowWrapper);
+  const removeConnector = graphRemoveConnector.bind(flowWrapper);
   const addConnector = graphAddConnector.bind(flowWrapper);
   const zoomIn = paperZoomIn.bind(flowWrapper);
   const zoomOut = paperZoomOut.bind(flowWrapper);
@@ -563,6 +576,7 @@ export function GraphContextProvider(props: Props) {
     getMainPaper,
     addBlock,
     removeBlocks,
+    removeConnector,
     addConnector,
     zoomIn,
     zoomOut,

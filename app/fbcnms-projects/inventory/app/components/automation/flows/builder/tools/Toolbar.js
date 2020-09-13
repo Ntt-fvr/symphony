@@ -75,9 +75,17 @@ export default function Toolbar() {
         Reset
       </Button>
       <Button
-        onClick={() => flow.removeBlocks([...selection.selectedElements])}
+        onClick={() => {
+          if (selection.selectedLink) {
+            return flow.removeConnector(selection.selectedLink);
+          } else {
+            return flow.removeBlocks([...selection.selectedElements]);
+          }
+        }}
         className={classes.marginRight}
-        disabled={selection.selectedElements.length == 0}>
+        disabled={
+          selection.selectedElements.length == 0 && !selection.selectedLink
+        }>
         Delete
       </Button>
       <Button
