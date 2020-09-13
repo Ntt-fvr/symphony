@@ -29,10 +29,31 @@ func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.Trunc
 }
 
 func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteTenantInput) (*model.DeleteTenantPayload, error) {
-	panic(fmt.Errorf("not implemented"))
+	if input.ID.ID != 0 {
+		r.log.For(ctx).
+			Error("tenant with non zero object id",
+				zap.Object("id", input.ID),
+			)
+		err := gqlerror.Errorf(
+			"Could not resolve to a tenant with the global id of '%s'", input.ID,
+		)
+		errcode.Set(err, "NOT_FOUND")
+		return nil, err
+	}
+	if _, err := r.Tenant(ctx, input.ID.Tenant); err != nil {
+		return nil, err
+	}
+	if _, err := r.db(ctx).ExecContext(ctx,
+		fmt.Sprintf("DROP DATABASE `%s`", viewer.DBName(input.ID.Tenant)),
+	); err != nil {
+		return nil, r.err(ctx, err, "cannot drop database")
+	}
+	return &model.DeleteTenantPayload{
+		ClientMutationID: input.ClientMutationID,
+	}, nil
 }
 
-func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
+func (r *resolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
 	rows, err := r.db(ctx).QueryContext(ctx,
 		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", viewer.DBName(name),
 	)

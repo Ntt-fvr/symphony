@@ -14,6 +14,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
+	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
@@ -57,11 +58,45 @@ func (s *tenantSuite) TearDownTest() {
 	s.Require().NoError(err)
 }
 
-func (s *tenantSuite) TestQueryResolver_Tenant() {
-	sqlQuery := regexp.QuoteMeta(
-		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+func (s *tenantSuite) TestMutationResolver_DeleteTenant() {
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery(tenantSQLQuery).
+		WithArgs("tenant_foo").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"COUNT"}).
+				AddRow(1),
+		).
+		RowsWillBeClosed()
+	s.mock.ExpectExec(
+		regexp.QuoteMeta("DROP DATABASE `tenant_foo`"),
+	).
+		WillReturnResult(
+			sqlmock.NewResult(1, 1),
+		)
+	s.mock.ExpectCommit()
+
+	var rsp struct {
+		DeleteTenant struct{ ClientMutationID string }
+	}
+	err := s.client.Post(`mutation($id: ID!, $clientMutationId: String!) {
+		deleteTenant(input: {clientMutationId: $clientMutationId, id: $id}) {
+			clientMutationId
+		}
+	}`,
+		&rsp,
+		client.Var("id", model.ID{Tenant: "foo"}.String()),
+		client.Var("clientMutationId", s.T().Name()),
 	)
-	s.mock.ExpectQuery(sqlQuery).
+	s.Require().NoError(err)
+	s.Require().Equal(s.T().Name(), rsp.DeleteTenant.ClientMutationID)
+}
+
+var tenantSQLQuery = regexp.QuoteMeta(
+	"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+)
+
+func (s *tenantSuite) TestQueryResolver_Tenant() {
+	s.mock.ExpectQuery(tenantSQLQuery).
 		WithArgs("tenant_foo").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"COUNT"}).
