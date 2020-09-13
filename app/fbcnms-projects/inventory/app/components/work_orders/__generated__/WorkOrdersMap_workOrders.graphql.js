@@ -30,7 +30,8 @@ export type WorkOrdersMap_workOrders = $ReadOnlyArray<{|
   +status: WorkOrderStatus,
   +priority: WorkOrderPriority,
   +project: ?{|
-    +id: string
+    +id: string,
+    +name: string,
   |},
   +assignedTo: ?{|
     +id: string,
@@ -128,7 +129,8 @@ return {
       "name": "project",
       "plural": false,
       "selections": [
-        (v0/*: any*/)
+        (v0/*: any*/),
+        (v1/*: any*/)
       ],
       "storageKey": null
     },
@@ -182,6 +184,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '40e62c63b30e3cfbbc07e2f8c19f283d';
+(node/*: any*/).hash = '4559216120f002a9a9f9082a55567755';
 
 module.exports = node;

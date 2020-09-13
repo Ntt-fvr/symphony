@@ -37,7 +37,6 @@ type Props = {
 
 const useStyles = makeStyles(() => ({
   workOrderPopover: {
-    marginTop: '8px',
     minWidth: '410px',
     maxWidth: '50vw',
   },
@@ -231,6 +230,7 @@ export default withRouter(
         priority
         project {
           id
+          name
         }
         assignedTo {
           id

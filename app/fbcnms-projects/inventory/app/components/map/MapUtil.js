@@ -8,16 +8,13 @@
  * @format
  */
 
-import symphony from '@symphony/design-system/theme/symphony';
 import {
-  blockedStatus,
   closedStatus,
   doneStatus,
   inProgressStatus,
   pendingStatus,
-  plannedStatus,
-  submittedStatus,
 } from '../../common/FilterTypes';
+import {getStatusColor} from '../work_orders/StatusTag';
 import type {BasicLocation} from '../../common/Location';
 import type {CustomGeoJSONFeature} from './MapView';
 import type {GeoJSONFeatureCollection} from '@mapbox/geojson-types';
@@ -91,6 +88,7 @@ export type WorkOrderProperties = {
   status: WorkOrderStatus,
   priority: WorkOrderPriority,
   projectId: ?string,
+  projectName: ?string,
   owner: ShortUser,
   assignedTo: ?ShortUser,
   installDate: string,
@@ -129,6 +127,7 @@ export const workOrderToGeoFeature = <T: {}>(
       installDate: workOrder.workOrder.installDate,
       location: workOrder.workOrder.location,
       projectId: workOrder.workOrder.project?.id,
+      projectName: workOrder.workOrder.project?.name,
       iconStatus: getWorkOrderStatusIcon(workOrder.workOrder.status),
       iconTech: workOrder.workOrder.assignedTo
         ? 'icon_pin'
@@ -136,7 +135,7 @@ export const workOrderToGeoFeature = <T: {}>(
       text: workOrder.workOrder.assignedTo
         ? workOrder.workOrder.assignedTo.email.slice(0, 2)
         : '',
-      textColor: getWorkOrderIconTextColor(workOrder.workOrder.status),
+      textColor: getStatusColor(workOrder.workOrder.status),
     },
   };
 };
@@ -151,25 +150,6 @@ const getWorkOrderStatusIcon = (status: WorkOrderStatus) => {
       return 'pendingActive';
     default:
       return 'plannedActive';
-  }
-};
-
-const getWorkOrderIconTextColor = (status: WorkOrderStatus) => {
-  switch (status) {
-    case plannedStatus.value:
-      return symphony.palette.primary;
-    case pendingStatus.value:
-    case inProgressStatus.value:
-      return symphony.palette.Y600;
-    case submittedStatus.value:
-    case doneStatus.value:
-      return symphony.palette.G600;
-    case blockedStatus.value:
-      return symphony.palette.R600;
-    case closedStatus.value:
-      return symphony.palette.D200;
-    default:
-      return symphony.palette.D300;
   }
 };
 
