@@ -627,6 +627,12 @@ jobs:
           name: python formatting check
           <<: *clidir
           command: black . --exclude "(./graphql/.|.rpc_pb2.py|.rpc_pb2_grpc.py)" --check
+      - run:
+          name: To fix this test
+          command: |
+            echo "Some python files are not formatted according to black. Please run 'black . --exclude "(./graphql/.|.rpc_pb2.py|.rpc_pb2_grpc.py)"' from cli directory"
+            exit 1
+          when: on_fail
 
   flake8test:
     executor: python
