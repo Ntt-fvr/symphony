@@ -46,7 +46,6 @@ locals {
   misc_dashboards = {
     for d in [
       { name = "go-processes", id = 6671, rev = 2 },
-      { name = "helm-exporter", id = 9367, rev = 2 },
       { name = "nginx-ingress", id = 9789, rev = 5 },
       { name = "nats-server", id = 2279, rev = 1 },
     ] :
@@ -117,22 +116,6 @@ data aws_iam_policy_document grafana {
 
     resources = ["*"]
   }
-}
-
-# exports helm release stats to prometheus
-resource helm_release helm_exporter {
-  name       = "helm-exporter"
-  repository = local.helm_repository.sstarcher
-  chart      = "helm-exporter"
-  version    = "0.6.0"
-  namespace  = "monitoring"
-
-  set {
-    name  = "serviceMonitor.create"
-    value = "true"
-  }
-
-  depends_on = [helm_release.prometheus_operator]
 }
 
 # The blackbox exporter allows blackbox probing of endpoints
