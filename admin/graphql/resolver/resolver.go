@@ -4,8 +4,43 @@
 
 package resolver
 
+import (
+	"context"
+	"fmt"
+
+	"github.com/facebookincubator/symphony/admin/graphql/exec"
+	"github.com/facebookincubator/symphony/pkg/gqlutil"
+	"github.com/facebookincubator/symphony/pkg/log"
+	"go.uber.org/zap"
+)
+
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
-type resolver struct{}
+type resolver struct {
+	log log.Logger
+}
+
+type Config struct {
+	Logger log.Logger
+}
+
+func New(cfg Config) exec.ResolverRoot {
+	return &resolver{
+		log: cfg.Logger,
+	}
+}
+
+// db returns the database attached to context.
+func (resolver) db(ctx context.Context) gqlutil.ExecQueryer {
+	return gqlutil.DBFromContext(ctx)
+}
+
+// err logs the passed in err and returns it wrapped in a message.
+func (r *resolver) err(ctx context.Context, err error, msg string) error {
+	r.log.For(ctx).
+		WithOptions(zap.AddCallerSkip(1)).
+		Error(msg, zap.Error(err))
+	return fmt.Errorf(msg+": %w", err)
+}

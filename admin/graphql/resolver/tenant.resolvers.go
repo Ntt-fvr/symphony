@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 )
 
 func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateTenantInput) (*model.CreateTenantPayload, error) {
@@ -32,7 +33,30 @@ func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant,
 }
 
 func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {
-	panic(fmt.Errorf("not implemented"))
+	rows, err := r.db(ctx).QueryContext(ctx,
+		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?", viewer.DBName("%"),
+	)
+	if err != nil {
+		return nil, r.err(ctx, err, "cannot query information schema")
+	}
+	defer rows.Close()
+
+	var tenants []*model.Tenant
+	for rows.Next() {
+		var dbname string
+		if err := rows.Scan(&dbname); err != nil {
+			return nil, r.err(ctx, err, "cannot read row")
+		}
+		name := viewer.FromDBName(dbname)
+		tenants = append(tenants, &model.Tenant{
+			ID:   model.ID{Tenant: name},
+			Name: name,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, r.err(ctx, err, "cannot read rows")
+	}
+	return tenants, nil
 }
 
 // Mutation returns exec.MutationResolver implementation.
