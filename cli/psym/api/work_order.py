@@ -5,16 +5,21 @@
 
 from typing import Dict, Iterator, Optional
 
+from psym._utils import get_graphql_property_inputs
 from psym.client import SymphonyClient
 from psym.common.cache import WORK_ORDER_TYPES
 from psym.common.data_class import PropertyValue, WorkOrder, WorkOrderType
+from psym.common.data_enum import Entity
+from psym.exceptions import EntityNotFoundError
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
-
-from .._utils import get_graphql_property_inputs
-from ..graphql.input.add_work_order import AddWorkOrderInput
-from ..graphql.mutation.add_work_order import AddWorkOrderMutation
-from ..graphql.query.work_orders import WorkOrdersQuery
+from psym.graphql.input.add_work_order import AddWorkOrderInput
+from psym.graphql.input.edit_work_order import EditWorkOrderInput
+from psym.graphql.mutation.add_work_order import AddWorkOrderMutation
+from psym.graphql.mutation.edit_work_order import EditWorkOrderMutation
+from psym.graphql.mutation.remove_work_order import RemoveWorkOrderMutation
+from psym.graphql.query.work_order_details import WorkOrderDetailsQuery
+from psym.graphql.query.work_orders import WorkOrdersQuery
 
 
 def add_work_order(
@@ -119,10 +124,10 @@ def add_work_order(
         id=result.id,
         name=result.name,
         description=result.description,
-        work_order_type_id=result.workOrderType.id,
+        work_order_type_name=result.workOrderType.name,
         location_id=result.location.id if result.location else None,
         project_id=result.project.id if result.project else None,
-        properties=result.properties if result.properties else None,
+        properties=result.properties,
         owner_id=result.owner.id,
         assignee_id=result.assignedTo.id if result.assignedTo else None,
         status=result.status,
@@ -134,7 +139,7 @@ def get_work_orders(client: SymphonyClient) -> Iterator[WorkOrder]:
     """Get the iterator of work orders
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: WorkOrder Iterator
     :rtype: Iterator[ :class:`~psym.common.data_class.WorkOrder` ]
@@ -157,12 +162,183 @@ def get_work_orders(client: SymphonyClient) -> Iterator[WorkOrder]:
                 id=node.id,
                 name=node.name,
                 description=node.description,
-                work_order_type_id=node.workOrderType.id,
+                work_order_type_name=node.workOrderType.name,
                 location_id=node.location.id if node.location else None,
                 project_id=node.project.id if node.project else None,
-                properties=node.properties if node.properties else None,
+                properties=node.properties,
                 owner_id=node.owner.id,
                 assignee_id=node.assignedTo.id if node.assignedTo else None,
                 status=node.status,
                 priority=node.priority,
             )
+
+
+def get_work_order_by_id(client: SymphonyClient, id: str) -> WorkOrder:
+    """Get work order by ID
+
+    :param id: Work order ID
+    :type id: str
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order does not exist
+
+    :return: WorkOrder
+    :rtype: :class:`~psym.common.data_class.WorkOrder`
+
+    **Example**
+
+    .. code-block:: python
+
+        work_order = client.get_work_order_by_id(
+            id="12345678",
+        )
+    """
+    result = WorkOrderDetailsQuery.execute(client, id=id)
+
+    if result is None:
+        raise EntityNotFoundError(entity=Entity.WorkOrder, entity_id=id)
+
+    return WorkOrder(
+        id=result.id,
+        name=result.name,
+        description=result.description,
+        work_order_type_name=result.workOrderType.name,
+        location_id=result.location.id if result.location else None,
+        project_id=result.project.id if result.project else None,
+        properties=result.properties,
+        owner_id=result.owner.id,
+        assignee_id=result.assignedTo.id if result.assignedTo else None,
+        status=result.status,
+        priority=result.priority,
+    )
+
+
+def edit_work_order(
+    client: SymphonyClient,
+    work_order_id: str,
+    new_name: Optional[str] = None,
+    new_description: Optional[str] = None,
+    new_location_id: Optional[str] = None,
+    new_project_id: Optional[str] = None,
+    new_properties_dict: Optional[Dict[str, PropertyValue]] = None,
+    new_owner_id: Optional[str] = None,
+    new_assignee_id: Optional[str] = None,
+    new_status: Optional[WorkOrderStatus] = None,
+    new_priority: Optional[WorkOrderPriority] = None,
+) -> WorkOrder:
+    """This function edits existing work order.
+
+    :param work_order_id: Existing work order ID
+    :type work_order_id: str
+    :param new_name: Work order new name
+    :type new_name: str, optional
+    :param new_description: Work order new description
+    :type new_description: str, optional
+    :param new_location_id: Work order new existing location ID
+    :type new_location_id: str, optional
+    :param new_project_id: Work order new existing project ID
+    :type new_project_id: str, optional
+    :param new_properties_dict: Dictionary of property name to property default value
+
+        * str - property name
+        * PropertyValue - new default value of the same type for this property
+
+    :type new_properties_dict: Dict[str, PropertyValue], optional
+    :param new_owner_id: New owner ID
+    :type new_owner_id: str, optional
+    :param new_assignee_id: New assignee ID
+    :type new_assignee_id: str, optional
+    :param new_status: New work order status
+    :type new_status: :class:`~psym.common.data_enum.work_order_status.WorkOrderStatus`, optional
+    :param new_priority: New work order priority
+    :type new_priority: :class:`~psym.common.data_enum.work_order_priority.WorkOrderPriority`, optional
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order does not exist
+
+    :return: Work order
+    :rtype: :class:`~psym.common.data_class.WorkOrder`
+
+    **Example**
+
+    .. code-block:: python
+
+        edited_work_order = client.edit_work_order(
+            work_order_id="12345678,
+            new_name="New name",
+            new_description="New description",
+            new_location_id="12345678",
+            new_project_id="87654321",
+            new_properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            },
+            assignee_id="81726354",
+            priority="MEDIUM",
+        )
+    """
+    work_order = get_work_order_by_id(client=client, id=work_order_id)
+    new_name = work_order.name if new_name is None else new_name
+    new_description = (
+        work_order.description if new_description is None else new_description
+    )
+    new_properties = []
+    if new_properties_dict:
+        property_types = WORK_ORDER_TYPES[
+            work_order.work_order_type_name
+        ].property_types
+        new_properties = get_graphql_property_inputs(
+            property_types, new_properties_dict
+        )
+    edit_work_order_input = EditWorkOrderInput(
+        id=work_order_id,
+        name=new_name,
+        description=new_description,
+        locationId=new_location_id,
+        projectId=new_project_id,
+        properties=new_properties,
+        ownerId=new_owner_id,
+        assigneeId=new_assignee_id,
+        status=new_status,
+        priority=new_priority,
+        checkList=[],
+        checkListCategories=[],
+    )
+    result = EditWorkOrderMutation.execute(client, edit_work_order_input)
+    return WorkOrder(
+        id=result.id,
+        name=result.name,
+        description=result.description,
+        work_order_type_name=result.workOrderType.name,
+        location_id=result.location.id if result.location else None,
+        project_id=result.project.id if result.project else None,
+        properties=result.properties,
+        owner_id=result.owner.id,
+        assignee_id=result.assignedTo.id if result.assignedTo else None,
+        status=result.status,
+        priority=result.priority,
+    )
+
+
+def delete_work_order(client: SymphonyClient, id: str) -> None:
+    """This function deletes WorkOrder.
+
+    :param id: Work order ID
+    :type id: str
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    **Example**
+
+    .. code-block:: python
+
+        client.delete_work_order(id="12345678")
+    """
+    RemoveWorkOrderMutation.execute(client, id=id)

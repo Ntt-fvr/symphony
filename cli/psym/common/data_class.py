@@ -475,14 +475,14 @@ class WorkOrder(NamedTuple):
     :type name: str
     :param description: Description
     :type description: str, optional
-    :param work_order_type_id: Existing work order type ID
-    :type work_order_type_id: str
+    :param work_order_type_name: Existing work order type name
+    :type work_order_type_name: str
     :param location_id: Existing location ID
     :type location_id: str, optional
     :param project_id: Existing project ID
     :type project_id: str, optional
     :param properties: PropertyFragment sequence
-    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ]), optional
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ])
     :param owner_id: Existing user ID, work order owner
     :type owner_id: str, optional
     :param assignee_id: Existing user ID, assigned to work order
@@ -496,10 +496,10 @@ class WorkOrder(NamedTuple):
     id: str
     name: str
     description: Optional[str]
-    work_order_type_id: str
+    work_order_type_name: str
     location_id: Optional[str]
     project_id: Optional[str]
-    properties: Optional[Sequence[PropertyFragment]]
+    properties: Sequence[PropertyFragment]
     owner_id: Optional[str]
     assignee_id: Optional[str]
     status: Optional[WorkOrderStatus]

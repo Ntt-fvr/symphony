@@ -117,7 +117,7 @@ def get_or_create_equipment_type(
     :type position_list: List[str]
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentType object
     :rtype: :class:`~psym.common.data_class.EquipmentType`
@@ -232,7 +232,7 @@ def add_equipment_type(
     :type position_list: List[str]
 
     :raises:
-        FailedOperationException: internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentType object
     :rtype: :class:`~psym.common.data_class.EquipmentType`
@@ -314,7 +314,7 @@ def edit_equipment_type(
     :type new_port_definitions: List[ :class:`~psym.common.data_class.EquipmentPortDefinition` ]
 
     :raises:
-        FailedOperationException: internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentType object
     :rtype: :class:`~psym.common.data_class.EquipmentType`
@@ -380,7 +380,7 @@ def copy_equipment_type(
     :type new_equipment_type_name: str
 
     :raises:
-        FailedOperationException: internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentType object
     :rtype: :class:`~psym.common.data_class.EquipmentType`
@@ -519,7 +519,7 @@ def edit_equipment_type_property_type(
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: if property type name is not found
-        * FailedOperationException: internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: EquipmentType object
     :rtype: :class:`~psym.common.data_class.EquipmentType`

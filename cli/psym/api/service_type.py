@@ -82,7 +82,7 @@ def add_service_type(
     :type endpoint_definitions: List[ :class:`~psym.common.data_class.ServiceEndpointDefinition` ], optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: ServiceType object
     :rtype: :class:`~psym.common.data_class.ServiceType`

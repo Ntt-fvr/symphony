@@ -128,7 +128,7 @@ def add_location(
     :raises:
         * LocationIsNotUniqueException: There is more than one location to return
           in the chain and it is not clear where to create or what to return
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Parent location in the chain does not exist
 
     :return: Location object
@@ -233,7 +233,7 @@ def get_location(
         * LocationIsNotUniqueException: There is more than one location to return
           in the chain and it is not clear where to create or what to return
         * LocationNotFoundException: Location was not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Location in the chain does not exist
 
     :return: Location object
@@ -420,7 +420,7 @@ def edit_location(
     :type new_properties: Dict[str, PropertyValue], optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Location object
     :rtype: :class:`~psym.common.data_class.Location`
@@ -478,7 +478,7 @@ def delete_location(client: SymphonyClient, location: Location) -> None:
     :raises:
         * LocationCannotBeDeletedWithDependency: Location has dependencies in one or more
           ["files", "images", "children", "surveys", "equipment"]
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
     :rtype: None
@@ -517,7 +517,7 @@ def move_location(
     :type new_parent_id: str, optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Location object
     :rtype: :class:`~psym.common.data_class.Location`
@@ -555,7 +555,7 @@ def get_location_by_external_id(client: SymphonyClient, external_id: str) -> Loc
 
     :raises:
         * LocationNotFoundException: Location with this external ID does not exists
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
     :return: Location object
@@ -612,7 +612,7 @@ def get_location_documents(
     :type location: :class:`~psym.common.data_class.Location`
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Location does not exist
 
     :return: Documents List

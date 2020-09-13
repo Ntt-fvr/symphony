@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
+
 from psym.common.constant import __version__
 
 from .api.equipment_type import (
@@ -172,6 +173,13 @@ class PsymClient(SymphonyClient):
         get_work_order_types,
         add_work_order_type,
         delete_work_order_type,
+    )
+    from .api.work_order import (
+        add_work_order,
+        get_work_orders,
+        get_work_order_by_id,
+        edit_work_order,
+        delete_work_order,
     )
 
     def __init__(

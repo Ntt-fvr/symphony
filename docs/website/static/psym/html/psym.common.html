@@ -998,16 +998,37 @@
 
 <dl class="py class">
 <dt id="psym.common.data_class.WorkOrder">
-<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">WorkOrder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.WorkOrder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">WorkOrder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">work_order_type_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">project_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>psym.graphql.fragment.property.PropertyFragment<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">owner_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">status</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_status.WorkOrderStatus<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">priority</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_priority.WorkOrderPriority<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.WorkOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Description</p></li>
+<li><p><strong>work_order_type_name</strong> (<em>str</em>) – Existing work order type name</p></li>
+<li><p><strong>location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing location ID</p></li>
+<li><p><strong>project_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing project ID</p></li>
+<li><p><strong>properties</strong> (Sequence[ <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyFragment</span></code> ])) – PropertyFragment sequence</p></li>
+<li><p><strong>owner_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing user ID, work order owner</p></li>
+<li><p><strong>assignee_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing user ID, assigned to work order</p></li>
+<li><p><strong>status</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderStatus</span></code>, optional) – Work order status</p></li>
+<li><p><strong>priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderPriority</span></code>, optional) – Work order priority</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.assignee_id">
+<em class="property">property </em><code class="sig-name descname">assignee_id</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.assignee_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.description">
+<em class="property">property </em><code class="sig-name descname">description</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
 <dl class="py method">
 <dt id="psym.common.data_class.WorkOrder.id">
 <em class="property">property </em><code class="sig-name descname">id</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.id" title="Permalink to this definition">¶</a></dt>
@@ -1015,9 +1036,51 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.location_id">
+<em class="property">property </em><code class="sig-name descname">location_id</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.location_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.common.data_class.WorkOrder.name">
 <em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.owner_id">
+<em class="property">property </em><code class="sig-name descname">owner_id</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.owner_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.priority">
+<em class="property">property </em><code class="sig-name descname">priority</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.project_id">
+<em class="property">property </em><code class="sig-name descname">project_id</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.project_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.properties">
+<em class="property">property </em><code class="sig-name descname">properties</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.status">
+<em class="property">property </em><code class="sig-name descname">status</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrder.work_order_type_name">
+<em class="property">property </em><code class="sig-name descname">work_order_type_name</code><a class="headerlink" href="#psym.common.data_class.WorkOrder.work_order_type_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
 </dd></dl>
 
 </dd></dl>

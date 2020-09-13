@@ -42,7 +42,7 @@ def add_equipment_port_type(
     :type link_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ])
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentPortType object
     :rtype: :class:`~psym.common.data_class.EquipmentPortType`
@@ -157,7 +157,7 @@ def edit_equipment_port_type(
     :type new_link_properties: Dict[str, PropertyValue], optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: EquipmentPortType object
     :rtype: :class:`~psym.common.data_class.EquipmentPortType`

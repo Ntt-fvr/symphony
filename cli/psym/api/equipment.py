@@ -80,7 +80,7 @@ def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equi
     :raises:
         * EquipmentIsNotUniqueException: Location contains more than one equipment with the same name
         * EquipmentNotFoundException: The equipment was not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}
@@ -141,7 +141,7 @@ def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Eq
     :raises:
         * EquipmentIsNotUniqueException: Location contains more than one equipment with the same external ID
         * :class:`~psym.exceptions.EntityNotFoundError`: The equipment was not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}
@@ -313,7 +313,7 @@ def get_equipment_in_position(
     :raises:
         * AssertionException: Parent equipment has more than one position with the given name,
           or none with this name or the position is not occupied.
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: `parent_equipment` does not exist
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
@@ -376,7 +376,7 @@ def add_equipment(
     :raises:
         * AssertionException: Location contains more than one equipment with the
           same name or property value in `properties_dict` does not match the property type
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}
@@ -447,7 +447,7 @@ def edit_equipment(
     :type new_properties: Dict[str, PropertyValue], optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}
@@ -566,7 +566,7 @@ def add_equipment_to_position(
     :raises:
         * AssertionException: Parent equipment has more than one position with the given name
           or property value in `properties_dict` does not match the property type
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: `existing_equipment` does not exist
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
@@ -923,7 +923,7 @@ def get_or_create_equipment(
     :raises:
         * AssertionException: Location contains more than one equipment with the
           same name or property value in `properties_dict` does not match the property type
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}
@@ -999,7 +999,7 @@ def get_or_create_equipment_in_position(
     :raises:
         * AssertionException: Location contains more than one equipment with the
           same name or property value in `properties_dict` does not match the property type
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Equipment object, you can use the ID to access the equipment from the UI:
         https://{}.thesymphony.cloud/inventory/inventory?equipment={}

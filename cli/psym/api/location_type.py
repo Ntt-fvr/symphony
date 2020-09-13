@@ -59,7 +59,7 @@ def add_location_type(
     :type map_zoom_level: int
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: LocationType object
     :rtype: :class:`~psym.common.data_class.LocationType`

@@ -170,7 +170,7 @@ def edit_port_properties(
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: :attr:`~psym.common.data_class.EquipmentPortDefinition.port_type_name` is None,
           there are no properties or there any unknown property name in `new_properties` keys
-        * FailedOperationException: internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: EquipmentPort object
     :rtype: :class:`~psym.common.data_class.EquipmentPort`
@@ -259,7 +259,7 @@ def edit_link_properties(
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: :attr:`~psym.common.data_class.EquipmentPortDefinition.port_type_name` is None,
           there are no properties or there any unknown property name in `new_link_properties` keys
-        * FailedOperationException: internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: EquipmentPort object
     :rtype: :class:`~psym.common.data_class.EquipmentPort`

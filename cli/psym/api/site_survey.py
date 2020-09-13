@@ -780,7 +780,7 @@ def upload_site_survey(
 
     Raises:
         AssertionException: if input values in the excel are incorrect
-        FailedOperationException: internal inventory error
+        FailedOperationException: Internal symphony error
     """
 
     site_survey_id = CreateSurveyMutation.execute(

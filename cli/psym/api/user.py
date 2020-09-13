@@ -27,7 +27,7 @@ def get_user(client: SymphonyClient, email: str) -> User:
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: the user was not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: User object
     :rtype: :class:`~psym.common.data_class.User`
@@ -60,7 +60,7 @@ def add_user(client: SymphonyClient, email: str, password: str) -> User:
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: the user was not created
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * AssertionError: The user was not created
         * HTTPError: Connection error
 
@@ -97,7 +97,7 @@ def edit_user(
     :type new_role: str
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * AssertionError: The user was not edited
         * HTTPError: Connection error
 
@@ -135,7 +135,7 @@ def deactivate_user(client: SymphonyClient, user: User) -> None:
      :type user: :class:`~psym.common.data_class.User`
 
      :raises:
-         FailedOperationException: Internal inventory error
+         FailedOperationException: Internal symphony error
 
      :rtype: None
 
@@ -158,7 +158,7 @@ def activate_user(client: SymphonyClient, user: User) -> None:
     :type user: :class:`~psym.common.data_class.User`
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :rtype: None
 
@@ -178,7 +178,7 @@ def get_users(client: SymphonyClient) -> Iterator[User]:
     """Get the list of users in the system (both active and deactivate)
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Users Iterator
     :rtype: Iterator[ :class:`~psym.common.data_class.User` ]
@@ -210,7 +210,7 @@ def get_active_users(client: SymphonyClient) -> List[User]:
     """Get the list of the active users in the system
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Users List
     :rtype: List[ :class:`~psym.common.data_class.User` ]

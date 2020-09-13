@@ -4,6 +4,7 @@ fragment WorkOrderFragment on WorkOrder {
     description
     workOrderType{
         id
+        name
     }
     location{
         id

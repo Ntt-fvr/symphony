@@ -39,7 +39,7 @@ def get_all_links_and_port_names_of_equipment(
 
     :raises:
         * `psym.exceptions.EntityNotFoundError`: Link not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Iterator of Tuple[Link, str]
 
@@ -109,7 +109,7 @@ def add_link(
     :raises:
         * AssertionError: `port_name` in any of the equipments does not exist,
           or match more than one port, or is already occupied by link
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Link object
     :rtype: :class:`~psym.common.data_class.Link`
@@ -213,7 +213,7 @@ def get_link_in_port_of_equipment(
 
     :raises:
         * LinkNotFoundException: Link not found
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Link object
     :rtype: :class:`~psym.common.data_class.Link`

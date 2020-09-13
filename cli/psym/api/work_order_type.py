@@ -101,7 +101,7 @@ def get_work_order_types(client: SymphonyClient) -> Iterator[WorkOrderType]:
     """Get the iterator of work order types
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: WorkOrderType Iterator
     :rtype: Iterator[ :class:`~psym.common.data_class.WorkOrderType` ]
@@ -135,7 +135,7 @@ def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
     :type id: str
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
     :return: Work order type
@@ -167,7 +167,7 @@ def get_work_order_type_by_name(client: SymphonyClient, name: str) -> WorkOrderT
     :type name: str
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
     :return: Work order type
@@ -210,7 +210,7 @@ def edit_work_order_type(
     :type new_properties_defaults: Mapping[str, PropertyValue], optional
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
         * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
     :return: Work order type
@@ -266,7 +266,7 @@ def delete_work_order_type(client: SymphonyClient, work_order_type_id: str) -> N
     :type work_order_type_id: str
 
     :raises:
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     **Example**
 

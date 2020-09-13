@@ -25,6 +25,7 @@ fragment WorkOrderFragment on WorkOrder {
     description
     workOrderType{
         id
+        name
     }
     location{
         id
@@ -51,6 +52,7 @@ class WorkOrderFragment(DataClassJsonMixin):
     @dataclass
     class WorkOrderType(DataClassJsonMixin):
         id: str
+        name: str
 
     @dataclass
     class Location(DataClassJsonMixin):

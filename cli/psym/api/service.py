@@ -49,7 +49,7 @@ def add_service(
     :type properties_dict: Mapping[str, PropertyValue], optional
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Service object
     :rtype: :class:`~psym.common.data_class.Service`
@@ -102,7 +102,7 @@ def get_service(client: SymphonyClient, id: str) -> Service:
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: Service does not exist
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Service object
     :rtype: :class:`~psym.common.data_class.Service`
@@ -144,7 +144,7 @@ def get_service_endpoints(
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: Service does not exist
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: ServiceEndpoints List
     :rtype: List[ :class:`~psym.common.data_class.ServiceEndpoints` ]
@@ -187,7 +187,7 @@ def add_service_endpoint(
     :type endpoint_definition_id: str
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :rtype: None
 
@@ -229,7 +229,7 @@ def get_service_links(client: SymphonyClient, service_id: str) -> List[Link]:
 
     :raises:
         * :class:`~psym.exceptions.EntityNotFoundError`: Service does not exist
-        * FailedOperationException: Internal inventory error
+        * FailedOperationException: Internal symphony error
 
     :return: Links List
     :rtype: List[ :class:`~psym.common.data_class.Link` ]
@@ -264,7 +264,7 @@ def add_service_link(client: SymphonyClient, service_id: str, link_id: str) -> N
     :type link_id: str
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :rtype: None
 

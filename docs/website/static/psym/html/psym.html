@@ -293,7 +293,7 @@
 <dd class="field-odd"><p><strong>user</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a>) – User object</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
@@ -369,7 +369,7 @@ then existing equipment is returned.</p>
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionException: Location contains more than one equipment with the
 same name or property value in <cite>properties_dict</cite> does not match the property type</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -411,7 +411,7 @@ same name or property value in <cite>properties_dict</cite> does not match the p
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentPortType object</p>
@@ -479,7 +479,7 @@ If equipment with this name already exists in this position, then existing equip
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionException: Parent equipment has more than one position with the given name
 or property value in <cite>properties_dict</cite> does not match the property type</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: <cite>existing_equipment</cite> does not exist</p></li>
 </ul>
 </dd>
@@ -526,7 +526,7 @@ or property value in <cite>properties_dict</cite> does not match the property ty
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentType object</p>
@@ -654,7 +654,7 @@ or property value in <cite>properties_dict</cite> does not match the property ty
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionError: <cite>port_name</cite> in any of the equipments does not exist,
 or match more than one port, or is already occupied by link</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -706,7 +706,7 @@ If a location with its name in this place already exists, then existing location
 <dd class="field-even"><ul class="simple">
 <li><p>LocationIsNotUniqueException: There is more than one location to return
 in the chain and it is not clear where to create or what to return</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Parent location in the chain does not exist</p></li>
 </ul>
 </dd>
@@ -786,7 +786,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>LocationType object</p>
@@ -832,7 +832,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Service object</p>
@@ -866,7 +866,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
@@ -897,7 +897,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
@@ -923,7 +923,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>ServiceType object</p>
@@ -970,7 +970,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: the user was not created</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p>AssertionError: The user was not created</p></li>
 <li><p>HTTPError: Connection error</p></li>
 </ul>
@@ -984,6 +984,73 @@ in the chain and it is not clear where to create or what to return</p></li>
 </dl>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">user</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="s2">&quot;user@test.com&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;P0ssW!rd0f43&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_work_order">
+<code class="sig-name descname">add_work_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">work_order_type</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a></span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">project_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">properties_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">owner_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">assignee_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">status</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_status.WorkOrderStatus<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">priority</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_priority.WorkOrderPriority<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><a class="headerlink" href="#psym.PsymClient.add_work_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates work order of with the given name and type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Work order name</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Work order description</p></li>
+<li><p><strong>work_order_type</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderType</span></code></a>) – Work order type object</p></li>
+<li><p><strong>location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing location ID</p></li>
+<li><p><strong>project_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing project ID</p></li>
+<li><p><strong>properties_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em>) – <p>Dictionary of property name to property value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new value of the same type for this property</p></li>
+</ul>
+</p></li>
+<li><p><strong>owner_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Owner ID</p></li>
+<li><p><strong>assignee_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Assignee ID</p></li>
+<li><p><strong>status</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderStatus</span></code>, optional) – Work order status</p></li>
+<li><p><strong>priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderPriority</span></code>, optional) – Work order priority</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Work order</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_order_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_work_order_type</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Work order type&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Work order type description&quot;</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;work order type property&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="s2">&quot;string value&quot;</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">add_work_order_type</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new work order&quot;</span><span class="p">,</span>
+    <span class="n">work_order_type</span><span class="o">=</span><span class="n">work_order_type</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Work order description&quot;</span><span class="p">,</span>
+    <span class="n">location_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
+    <span class="n">properties_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Date Property&quot;</span><span class="p">:</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+        <span class="s2">&quot;Lat/Lng Property&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.23</span><span class="p">,</span><span class="mf">9.232</span><span class="p">),</span>
+        <span class="s2">&quot;E-mail Property&quot;</span><span class="p">:</span> <span class="s2">&quot;user@fb.com&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Number Property&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">&quot;String Property&quot;</span><span class="p">:</span> <span class="s2">&quot;aa&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Float Property&quot;</span><span class="p">:</span> <span class="mf">1.23</span>
+    <span class="p">},</span>
+    <span class="n">owner_id</span><span class="o">=</span><span class="s2">&quot;81726354&quot;</span><span class="p">,</span>
+    <span class="n">assignee_id</span><span class="o">=</span><span class="s2">&quot;18273645&quot;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="s2">&quot;PLANNED&quot;</span><span class="p">,</span>
+    <span class="n">priority</span><span class="o">=</span><span class="s2">&quot;MEDIUM&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1121,7 +1188,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentType object</p>
@@ -1163,7 +1230,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><p>Dictionary of source equipment to new equipment,
@@ -1194,7 +1261,7 @@ Users in symphony are never deleted. Only de-activated.</p>
 <dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a></p>
 </dd>
 <dt class="field-odd">raises</dt>
-<dd class="field-odd"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-even">rtype</dt>
 <dd class="field-even"><p>None</p>
@@ -1351,7 +1418,7 @@ It can get only the requested equipment port type ID</p>
 <dd class="field-even"><ul class="simple">
 <li><p>LocationCannotBeDeletedWithDependency: Location has dependencies in one or more
 [“files”, “images”, “children”, “surveys”, “equipment”]</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location does not exist</p></li>
 </ul>
 </dd>
@@ -1449,6 +1516,24 @@ It can get only the requested service type ID</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.delete_work_order">
+<code class="sig-name descname">delete_work_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_work_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes WorkOrder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Work order ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_work_order</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.delete_work_order_type">
 <code class="sig-name descname">delete_work_order_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">work_order_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_work_order_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function deletes WorkOrderType.</p>
@@ -1458,7 +1543,7 @@ It can get only the requested service type ID</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 </dl>
@@ -1493,7 +1578,7 @@ It can get only the requested service type ID</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Equipment object, you can use the ID to access the equipment from the UI:
@@ -1539,7 +1624,7 @@ It can get only the requested service type ID</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentPortType object</p>
@@ -1568,11 +1653,11 @@ It can get only the requested service type ID</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Equipment type name</p></li>
 <li><p><strong>new_positions_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of new positions</p></li>
-<li><p><strong>port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
+<li><p><strong>new_port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentType object</p>
@@ -1613,7 +1698,7 @@ It can get only the requested service type ID</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: if property type name is not found</p></li>
-<li><p>FailedOperationException: internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -1660,7 +1745,7 @@ It can get only the requested service type ID</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition.port_type_name" title="psym.common.data_class.EquipmentPortDefinition.port_type_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">port_type_name</span></code></a> is None,
 there are no properties or there any unknown property name in <cite>new_link_properties</cite> keys</p></li>
-<li><p>FailedOperationException: internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -1703,7 +1788,7 @@ there are no properties or there any unknown property name in <cite>new_link_pro
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Location object</p>
@@ -1748,7 +1833,7 @@ there are no properties or there any unknown property name in <cite>new_link_pro
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition.port_type_name" title="psym.common.data_class.EquipmentPortDefinition.port_type_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">port_type_name</span></code></a> is None,
 there are no properties or there any unknown property name in <cite>new_properties</cite> keys</p></li>
-<li><p>FailedOperationException: internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -1826,7 +1911,7 @@ there are no properties or there any unknown property name in <cite>new_properti
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p>AssertionError: The user was not edited</p></li>
 <li><p>HTTPError: Connection error</p></li>
 </ul>
@@ -1847,12 +1932,71 @@ there are no properties or there any unknown property name in <cite>new_properti
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.edit_work_order">
+<code class="sig-name descname">edit_work_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">work_order_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_project_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_properties_dict</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_owner_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_assignee_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_status</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_status.WorkOrderStatus<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_priority</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.work_order_priority.WorkOrderPriority<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><a class="headerlink" href="#psym.PsymClient.edit_work_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits existing work order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>work_order_id</strong> (<em>str</em>) – Existing work order ID</p></li>
+<li><p><strong>new_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Work order new name</p></li>
+<li><p><strong>new_description</strong> (<em>str</em><em>, </em><em>optional</em>) – Work order new description</p></li>
+<li><p><strong>new_location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Work order new existing location ID</p></li>
+<li><p><strong>new_project_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Work order new existing project ID</p></li>
+<li><p><strong>new_properties_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em><em>, </em><em>optional</em>) – <p>Dictionary of property name to property default value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new default value of the same type for this property</p></li>
+</ul>
+</p></li>
+<li><p><strong>new_owner_id</strong> (<em>str</em><em>, </em><em>optional</em>) – New owner ID</p></li>
+<li><p><strong>new_assignee_id</strong> (<em>str</em><em>, </em><em>optional</em>) – New assignee ID</p></li>
+<li><p><strong>new_status</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderStatus</span></code>, optional) – New work order status</p></li>
+<li><p><strong>new_priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderPriority</span></code>, optional) – New work order priority</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Work order does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Work order</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edited_work_order</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_work_order</span><span class="p">(</span>
+    <span class="n">work_order_id</span><span class="o">=</span><span class="s2">&quot;12345678,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;New name&quot;</span><span class="p">,</span>
+    <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;New description&quot;</span><span class="p">,</span>
+    <span class="n">new_location_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_project_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
+    <span class="n">new_properties_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Date Property&quot;</span><span class="p">:</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+        <span class="s2">&quot;Lat/Lng Property&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.23</span><span class="p">,</span><span class="mf">9.232</span><span class="p">),</span>
+        <span class="s2">&quot;E-mail Property&quot;</span><span class="p">:</span> <span class="s2">&quot;user@fb.com&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Number Property&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">&quot;String Property&quot;</span><span class="p">:</span> <span class="s2">&quot;aa&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Float Property&quot;</span><span class="p">:</span> <span class="mf">1.23</span>
+    <span class="p">},</span>
+    <span class="n">assignee_id</span><span class="o">=</span><span class="s2">&quot;81726354&quot;</span><span class="p">,</span>
+    <span class="n">priority</span><span class="o">=</span><span class="s2">&quot;MEDIUM&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.get_active_users">
 <code class="sig-name descname">get_active_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.User" title="psym.common.data_class.User">psym.common.data_class.User</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_active_users" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the list of the active users in the system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Users List</p>
@@ -1905,7 +2049,7 @@ there are no properties or there any unknown property name in <cite>new_properti
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><cite>psym.exceptions.EntityNotFoundError</cite>: Link not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -1969,7 +2113,7 @@ there are no properties or there any unknown property name in <cite>new_properti
 <dd class="field-even"><ul class="simple">
 <li><p>EquipmentIsNotUniqueException: Location contains more than one equipment with the same name</p></li>
 <li><p>EquipmentNotFoundException: The equipment was not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -1999,7 +2143,7 @@ there are no properties or there any unknown property name in <cite>new_properti
 <dd class="field-even"><ul class="simple">
 <li><p>EquipmentIsNotUniqueException: Location contains more than one equipment with the same external ID</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: The equipment was not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2038,7 +2182,7 @@ there are no properties or there any unknown property name in <cite>new_properti
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionException: Parent equipment has more than one position with the given name,
 or none with this name or the position is not occupied.</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: <cite>parent_equipment</cite> does not exist</p></li>
 </ul>
 </dd>
@@ -2295,7 +2439,7 @@ It can get only the requested equipment port type ID</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p>LinkNotFoundException: Link not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2348,7 +2492,7 @@ It can get only the requested location specifiers or the hirerchy leading to it<
 <li><p>LocationIsNotUniqueException: There is more than one location to return
 in the chain and it is not clear where to create or what to return</p></li>
 <li><p>LocationNotFoundException: Location was not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location in the chain does not exist</p></li>
 </ul>
 </dd>
@@ -2385,7 +2529,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p>LocationNotFoundException: Location with this external ID does not exists</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location does not exist</p></li>
 </ul>
 </dd>
@@ -2456,7 +2600,7 @@ in the chain and it is not clear where to create or what to return</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location does not exist</p></li>
 </ul>
 </dd>
@@ -2522,7 +2666,7 @@ in case it is not found by name, creates one.</p>
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionException: Location contains more than one equipment with the
 same name or property value in <cite>properties_dict</cite> does not match the property type</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2584,7 +2728,7 @@ in case it is not found by name, creates one.</p>
 <dd class="field-even"><ul class="simple">
 <li><p>AssertionException: Location contains more than one equipment with the
 same name or property value in <cite>properties_dict</cite> does not match the property type</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2632,7 +2776,7 @@ in case it is not found, creates one.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>EquipmentType object</p>
@@ -2854,7 +2998,7 @@ in case it is not found, creates one.</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Service does not exist</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2907,7 +3051,7 @@ in case it is not found, creates one.</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: the user was not found</p></li>
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns</dt>
@@ -2929,7 +3073,7 @@ in case it is not found, creates one.</p>
 <dd><p>Get the list of users in the system (both active and deactivate)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Users Iterator</p>
@@ -2947,6 +3091,35 @@ in case it is not found, creates one.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.get_work_order_by_id">
+<code class="sig-name descname">get_work_order_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><a class="headerlink" href="#psym.PsymClient.get_work_order_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get work order by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Work order ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Work order does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>WorkOrder</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_order</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_work_order_by_id</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.get_work_order_type_by_id">
 <code class="sig-name descname">get_work_order_type_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a><a class="headerlink" href="#psym.PsymClient.get_work_order_type_by_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function gets existing WorkOrderType by its ID.</p>
@@ -2956,7 +3129,7 @@ in case it is not found, creates one.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Work order type does not exist</p></li>
 </ul>
 </dd>
@@ -2983,7 +3156,7 @@ in case it is not found, creates one.</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p>FailedOperationException: Internal inventory error</p></li>
+<li><p>FailedOperationException: Internal symphony error</p></li>
 <li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Work order type does not exist</p></li>
 </ul>
 </dd>
@@ -3006,7 +3179,7 @@ in case it is not found, creates one.</p>
 <dd><p>Get the iterator of work order types</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>WorkOrderType Iterator</p>
@@ -3024,6 +3197,29 @@ in case it is not found, creates one.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.get_work_orders">
+<code class="sig-name descname">get_work_orders</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_work_orders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of work orders</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>WorkOrder Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_orders</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_work_orders</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">work_order</span> <span class="ow">in</span> <span class="n">work_orders</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">work_order</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">work_order</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.move_location">
 <code class="sig-name descname">move_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_parent_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Location" title="psym.common.data_class.Location">psym.common.data_class.Location</a><a class="headerlink" href="#psym.PsymClient.move_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function moves existing location to another existing parent location.</p>
@@ -3035,7 +3231,7 @@ in case it is not found, creates one.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p>FailedOperationException: Internal inventory error</p>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Location object</p>

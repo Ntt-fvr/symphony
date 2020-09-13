@@ -62,7 +62,7 @@ def copy_equipment_with_all_attachments(
     :type dest_location: :class:`~psym.common.data_class.Location`
 
     :raises:
-        FailedOperationException: Internal inventory error
+        FailedOperationException: Internal symphony error
 
     :return: Dictionary of source equipment to new equipment,
         includes the equipment given as parameter and also all the equipments attached to it
