@@ -846,6 +846,10 @@ workflows:
         - equal: [master, << pipeline.git.branch >>]
         - << pipeline.parameters.pypi_release >>
     jobs:
+      - validate-gql-test
+      - mypytest
+      - py_formatting
+      - flake8test
       - psym-release:
           name: psym/release
           context: symphony
