@@ -65,6 +65,7 @@ resource helm_release symphony {
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
   version             = "1.0.0"
+  timeout             = 600
   max_history         = 100
 
   values = concat([
