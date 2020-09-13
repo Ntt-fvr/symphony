@@ -9,11 +9,15 @@ package resolver
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/vektah/gqlparser/v2/gqlerror"
+	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateTenantInput) (*model.CreateTenantPayload, error) {
@@ -29,7 +33,38 @@ func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteT
 }
 
 func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
-	panic(fmt.Errorf("not implemented"))
+	rows, err := r.db(ctx).QueryContext(ctx,
+		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", viewer.DBName(name),
+	)
+	if err != nil {
+		return nil, r.err(ctx, err, "cannot query information schema")
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, r.err(ctx, sql.ErrNoRows, "cannot prepare count row")
+	}
+	var n int
+	if err := rows.Scan(&n); err != nil {
+		return nil, r.err(ctx, err, "cannot scan count row")
+	}
+	if err := rows.Err(); err != nil {
+		return nil, r.err(ctx, err, "cannot read rows")
+	}
+	if n == 0 {
+		r.log.For(ctx).Debug(
+			"tenant not found",
+			zap.String("name", name),
+		)
+		err := gqlerror.Errorf(
+			"Could not find a tenant with name '%s'", name,
+		)
+		errcode.Set(err, "NOT_FOUND")
+		return nil, err
+	}
+	return &model.Tenant{
+		ID:   model.ID{Tenant: name},
+		Name: name,
+	}, nil
 }
 
 func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {

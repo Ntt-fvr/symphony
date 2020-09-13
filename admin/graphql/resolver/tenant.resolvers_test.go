@@ -30,6 +30,8 @@ type tenantSuite struct {
 	mock   sqlmock.SqlmockCommon
 }
 
+type tenant struct{ Name string }
+
 func (s *tenantSuite) SetupTest() {
 	db, mock, err := sqlmock.New()
 	s.Require().NoError(err)
@@ -55,11 +57,40 @@ func (s *tenantSuite) TearDownTest() {
 	s.Require().NoError(err)
 }
 
+func (s *tenantSuite) TestQueryResolver_Tenant() {
+	sqlQuery := regexp.QuoteMeta(
+		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+	)
+	s.mock.ExpectQuery(sqlQuery).
+		WithArgs("tenant_foo").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"COUNT"}).
+				AddRow(1),
+		).
+		RowsWillBeClosed()
+	const gqlQuery = `query { tenant(name: "foo") { name } }`
+	var rsp struct{ Tenant tenant }
+	err := s.client.Post(gqlQuery, &rsp)
+	s.Require().NoError(err)
+	s.Require().Equal("foo", rsp.Tenant.Name)
+
+	s.mock.ExpectQuery(regexp.QuoteMeta(
+		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+	)).
+		WithArgs("tenant_foo").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"COUNT"}).
+				AddRow(0),
+		).
+		RowsWillBeClosed()
+	err = s.client.Post(gqlQuery, &rsp)
+	s.Require().Error(err)
+	s.Require().Contains(err.Error(), "NOT_FOUND")
+}
+
 var tenantsSQLQuery = regexp.QuoteMeta(
 	"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?",
 )
-
-type tenant struct{ Name string }
 
 const tenantsGQLQuery = `query { tenants { name } }`
 
