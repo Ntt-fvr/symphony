@@ -12,7 +12,7 @@ import type {Equipment, Link} from '../../common/Equipment';
 import type {PowerSearchLinkFirstEquipmentResultsTable_equipment} from './__generated__/PowerSearchLinkFirstEquipmentResultsTable_equipment.graphql';
 import type {WithStyles} from '@material-ui/core';
 
-import AvailableLinksTable from './AvailableLinksTable';
+import AvailableLinksAndPortsTable from './AvailableLinksAndPortsTable';
 import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -74,7 +74,7 @@ const styles = theme => ({
 });
 
 type Props = {
-  service: {id: string, name: string},
+  service: $ReadOnly<{|id: string, name: string|}>,
   onClose: () => void,
   onAddLink: (link: Link) => void,
 } & WithStyles<typeof styles>;
@@ -103,7 +103,7 @@ const addLinkToServiceDialogQuery = graphql`
               name
             }
           }
-          ...AvailableLinksTable_links
+          ...AvailableLinksAndPortsTable_links
         }
       }
     }
@@ -181,7 +181,7 @@ class AddLinkToServiceDialog extends React.Component<Props, State> {
             render={props => {
               const {links} = props;
               return (
-                <AvailableLinksTable
+                <AvailableLinksAndPortsTable
                   equipment={nullthrows(this.state.activeEquipement)}
                   links={links.edges.map(edge => edge.node)}
                   selectedLink={this.state.activeLink}

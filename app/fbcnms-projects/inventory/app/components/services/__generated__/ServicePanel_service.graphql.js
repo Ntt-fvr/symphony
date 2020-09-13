@@ -15,7 +15,8 @@
 /*::
 import type { ReaderFragment } from 'relay-runtime';
 type ServiceEndpointsView_endpoints$ref = any;
-type ServiceLinksView_links$ref = any;
+type ServiceLinksAndPortsView_links$ref = any;
+type ServiceLinksAndPortsView_ports$ref = any;
 export type DiscoveryMethod = "INVENTORY" | "MANUAL" | "%future added value";
 export type ServiceStatus = "DISCONNECTED" | "IN_SERVICE" | "MAINTENANCE" | "PENDING" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
@@ -44,7 +45,11 @@ export type ServicePanel_service = {|
   |},
   +links: $ReadOnlyArray<?{|
     +id: string,
-    +$fragmentRefs: ServiceLinksView_links$ref,
+    +$fragmentRefs: ServiceLinksAndPortsView_links$ref,
+  |}>,
+  +ports: $ReadOnlyArray<?{|
+    +id: string,
+    +$fragmentRefs: ServiceLinksAndPortsView_ports$ref,
   |}>,
   +endpoints: $ReadOnlyArray<?{|
     +id: string,
@@ -179,7 +184,24 @@ return {
         {
           "args": null,
           "kind": "FragmentSpread",
-          "name": "ServiceLinksView_links"
+          "name": "ServiceLinksAndPortsView_links"
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "EquipmentPort",
+      "kind": "LinkedField",
+      "name": "ports",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "ServiceLinksAndPortsView_ports"
         }
       ],
       "storageKey": null
@@ -217,6 +239,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ff14440bf865c0fada807dcbe20fc346';
+(node/*: any*/).hash = '462ddda2544779eb7db1b972279683c5';
 
 module.exports = node;

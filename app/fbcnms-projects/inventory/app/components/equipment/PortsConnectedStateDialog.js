@@ -40,7 +40,8 @@ type Props = {
   link: ?Link,
   mode: 'connect' | 'disconnect',
   open: boolean,
-  onClose: () => void,
+  onClose: (response?: Link) => void,
+  isSubFlow: ?boolean,
 } & WithSnackbarProps;
 
 class PortsConnectedStateDialog extends React.Component<Props> {
@@ -81,6 +82,8 @@ class PortsConnectedStateDialog extends React.Component<Props> {
         <PortsConnectDialog
           equipment={this.props.equipment}
           port={this.props.port}
+          onCancel={onClose}
+          isSubFlow={this.props.isSubFlow}
           onConnectPorts={this.onConnectPorts}
         />
       </Dialog>
@@ -106,7 +109,7 @@ class PortsConnectedStateDialog extends React.Component<Props> {
       },
     };
     const callbacks: MutationCallbacks<AddLinkMutationResponse> = {
-      onCompleted: (_, errors) => {
+      onCompleted: (response, errors) => {
         if (errors && errors[0]) {
           this.props.enqueueSnackbar(errors[0].message, {
             children: key => (
@@ -118,7 +121,8 @@ class PortsConnectedStateDialog extends React.Component<Props> {
             ),
           });
         }
-        this.props.onClose();
+        // $FlowFixMe[incompatible-call] $FlowFixMe T74239404 Found via relay types
+        this.props.onClose(response.addLink);
       },
       onError: () => {
         this.props.onClose();

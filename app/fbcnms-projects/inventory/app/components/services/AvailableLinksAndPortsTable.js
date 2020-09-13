@@ -7,11 +7,12 @@
  * @flow
  * @format
  */
-
-import type {AvailableLinksTable_links} from './__generated__/AvailableLinksTable_links.graphql';
+import type {AvailableLinksAndPortsTable_links} from './__generated__/AvailableLinksAndPortsTable_links.graphql';
+import type {AvailableLinksAndPortsTable_ports} from './__generated__/AvailableLinksAndPortsTable_ports.graphql';
 import type {Equipment, EquipmentPort, Link} from '../../common/Equipment';
 import type {WithStyles} from '@material-ui/core';
 
+import 'react-virtualized/styles.css';
 import EquipmentBreadcrumbs from '../equipment/EquipmentBreadcrumbs';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
@@ -22,8 +23,6 @@ import {AutoSizer, Column, Table} from 'react-virtualized';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
-
-import 'react-virtualized/styles.css';
 
 const styles = {
   noResultsRoot: {
@@ -69,23 +68,26 @@ const styles = {
   },
 };
 
-type Props = {
+type Props = $ReadOnly<{|
   equipment: Equipment,
-  links: AvailableLinksTable_links,
+  links: AvailableLinksAndPortsTable_links,
+  ports?: ?AvailableLinksAndPortsTable_ports,
   selectedLink: ?Link,
   onLinkSelected: (link: Link) => void,
-} & WithStyles<typeof styles>;
+|}> &
+  WithStyles<typeof styles>;
 
 type LinkPorts = Link & {
   srcPort: EquipmentPort,
-  dstPort: EquipmentPort,
+  dstPort: ?EquipmentPort,
 };
 
 const showLinksByOrder = (
   srcEquipment: Equipment,
-  links: AvailableLinksTable_links,
+  links: AvailableLinksAndPortsTable_links,
+  ports: AvailableLinksAndPortsTable_ports,
 ): Array<LinkPorts> => {
-  return links
+  const linksAndPorts = links
     .map(link => ({
       ...link,
       srcPort: link.ports[0],
@@ -122,10 +124,30 @@ const showLinksByOrder = (
         linkB.srcPort?.definition.name ?? '',
       ),
     );
+  ports.forEach(port => {
+    linksAndPorts.push({
+      id: `${port.id}_noLink`,
+      ports: [port, null],
+      srcPort: port,
+      dstPort: null,
+    });
+  });
+  // $FlowFixMe[incompatible-return] $FlowFixMe T74239404 Found via relay types
+  // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+  // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+  return linksAndPorts;
 };
 
-const AvailableLinksTable = (props: Props) => {
-  const {equipment, links, selectedLink, onLinkSelected, classes} = props;
+const AvailableLinksAndPortsTable = (props: Props) => {
+  const {
+    equipment,
+    links,
+    // $FlowFixMe[incompatible-use] $FlowFixMe
+    ports,
+    selectedLink,
+    onLinkSelected,
+    classes,
+  } = props;
 
   const headerRenderer = ({label}) => {
     return (
@@ -137,21 +159,22 @@ const AvailableLinksTable = (props: Props) => {
 
   const cellRenderer = ({dataKey, _, cellData}) => {
     let content = null;
-
-    if (dataKey.startsWith('equipment_')) {
-      content = (
-        <EquipmentBreadcrumbs
-          equipment={cellData}
-          size="small"
-          variant="body2"
-        />
-      );
-    } else {
-      content = (
-        <Text variant={dataKey === 'port_b' ? 'subtitle2' : 'body2'}>
-          {cellData}
-        </Text>
-      );
+    if (cellData) {
+      if (dataKey.startsWith('equipment_')) {
+        content = (
+          <EquipmentBreadcrumbs
+            equipment={cellData}
+            size="small"
+            variant="body2"
+          />
+        );
+      } else {
+        content = (
+          <Text variant={dataKey === 'port_b' ? 'subtitle2' : 'body2'}>
+            {cellData}
+          </Text>
+        );
+      }
     }
     return <div className={classes.cell}>{content}</div>;
   };
@@ -160,7 +183,7 @@ const AvailableLinksTable = (props: Props) => {
     onLinkSelected(rowData);
   };
 
-  const linksByOrder = showLinksByOrder(equipment, links);
+  const linksByOrder = showLinksByOrder(equipment, links, ports);
   if (linksByOrder.length === 0) {
     return (
       <div className={classes.noResultsRoot}>
@@ -197,7 +220,7 @@ const AvailableLinksTable = (props: Props) => {
               [classes.checked]:
                 selectedLink &&
                 index !== -1 &&
-                links[index].id === selectedLink.id,
+                linksByOrder[index].id === selectedLink.id,
             })
           }
           onRowClick={onRowClicked}>
@@ -228,7 +251,9 @@ const AvailableLinksTable = (props: Props) => {
             dataKey="equipment_b"
             width={250}
             flexGrow={1}
-            cellDataGetter={({rowData}) => rowData.dstPort.parentEquipment}
+            cellDataGetter={({rowData}) =>
+              rowData.dstPort ? rowData.dstPort.parentEquipment : null
+            }
             headerRenderer={headerRenderer}
             cellRenderer={cellRenderer}
             headerClassName={classes.column}
@@ -239,7 +264,9 @@ const AvailableLinksTable = (props: Props) => {
             dataKey="port_b"
             width={250}
             flexGrow={1}
-            cellDataGetter={({rowData}) => rowData.dstPort.definition.name}
+            cellDataGetter={({rowData}) =>
+              rowData.dstPort ? rowData.dstPort.definition.name : null
+            }
             headerRenderer={headerRenderer}
             cellRenderer={cellRenderer}
             headerClassName={classes.column}
@@ -252,9 +279,9 @@ const AvailableLinksTable = (props: Props) => {
 };
 
 export default withStyles(styles)(
-  createFragmentContainer(AvailableLinksTable, {
+  createFragmentContainer(AvailableLinksAndPortsTable, {
     links: graphql`
-      fragment AvailableLinksTable_links on Link @relay(plural: true) {
+      fragment AvailableLinksAndPortsTable_links on Link @relay(plural: true) {
         id
         ports {
           parentEquipment {
@@ -271,6 +298,26 @@ export default withStyles(styles)(
             id
             name
           }
+        }
+      }
+    `,
+    ports: graphql`
+      fragment AvailableLinksAndPortsTable_ports on EquipmentPort
+        @relay(plural: true) {
+        id
+        parentEquipment {
+          id
+          name
+          positionHierarchy {
+            parentEquipment {
+              id
+            }
+          }
+          ...EquipmentBreadcrumbs_equipment
+        }
+        definition {
+          id
+          name
         }
       }
     `,

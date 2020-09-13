@@ -84,6 +84,8 @@ type Props = {
   equipment: Equipment,
   port: EquipmentPort,
   onConnectPorts: (EquipmentPort, Array<Property>) => void,
+  onCancel: () => void,
+  isSubFlow: ?boolean,
 } & WithStyles<typeof styles>;
 
 type State = {
@@ -250,9 +252,13 @@ class PortsConnectDialog extends React.Component<Props, State> {
   };
 
   handleBack = () => {
-    this.setState(state => ({
-      activeStep: state.activeStep - 1,
-    }));
+    if (this.state.activeStep == 0 && this.props.isSubFlow) {
+      this.props.onCancel();
+    } else {
+      this.setState(state => ({
+        activeStep: state.activeStep - 1,
+      }));
+    }
   };
 
   handleReset = () => {
@@ -300,7 +306,7 @@ class PortsConnectDialog extends React.Component<Props, State> {
         </DialogContent>
         <DialogActions>
           <Button
-            disabled={activeStep === 0}
+            disabled={activeStep === 0 && !this.props.isSubFlow}
             skin="gray"
             onClick={this.handleBack}>
             Back

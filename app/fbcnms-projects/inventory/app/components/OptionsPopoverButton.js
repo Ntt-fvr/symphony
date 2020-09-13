@@ -44,6 +44,7 @@ type Props = $ReadOnly<{|
 const useStyles = makeStyles(() => ({
   menu: {
     width: 'auto',
+    whiteSpace: 'nowrap',
   },
   menuButton: {
     minWidth: 'unset',

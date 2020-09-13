@@ -15,32 +15,28 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type ServiceCard_service$ref = any;
-export type AddServiceEndpointInput = {|
+export type AddServicePortMutationVariables = {|
   id: string,
-  portId?: ?string,
-  equipmentID: string,
-  definition: string,
+  portId: string,
 |};
-export type AddServiceEndpointMutationVariables = {|
-  input: AddServiceEndpointInput
-|};
-export type AddServiceEndpointMutationResponse = {|
-  +addServiceEndpoint: {|
+export type AddServicePortMutationResponse = {|
+  +addServicePort: {|
     +$fragmentRefs: ServiceCard_service$ref
   |}
 |};
-export type AddServiceEndpointMutation = {|
-  variables: AddServiceEndpointMutationVariables,
-  response: AddServiceEndpointMutationResponse,
+export type AddServicePortMutation = {|
+  variables: AddServicePortMutationVariables,
+  response: AddServicePortMutationResponse,
 |};
 */
 
 
 /*
-mutation AddServiceEndpointMutation(
-  $input: AddServiceEndpointInput!
+mutation AddServicePortMutation(
+  $id: ID!
+  $portId: ID!
 ) {
-  addServiceEndpoint(input: $input) {
+  addServicePort(id: $id, portId: $portId) {
     ...ServiceCard_service
     id
   }
@@ -295,14 +291,24 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "input"
+    "name": "id"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "portId"
   }
 ],
 v1 = [
   {
     "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
+    "name": "id",
+    "variableName": "id"
+  },
+  {
+    "kind": "Variable",
+    "name": "portId",
+    "variableName": "portId"
   }
 ],
 v2 = {
@@ -538,14 +544,14 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddServiceEndpointMutation",
+    "name": "AddServicePortMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
         "concreteType": "Service",
         "kind": "LinkedField",
-        "name": "addServiceEndpoint",
+        "name": "addServicePort",
         "plural": false,
         "selections": [
           {
@@ -564,14 +570,14 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AddServiceEndpointMutation",
+    "name": "AddServicePortMutation",
     "selections": [
       {
         "alias": null,
         "args": (v1/*: any*/),
         "concreteType": "Service",
         "kind": "LinkedField",
-        "name": "addServiceEndpoint",
+        "name": "addServicePort",
         "plural": false,
         "selections": [
           (v2/*: any*/),
@@ -894,16 +900,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c27c224d2f22dda798d23b23feda8745",
+    "cacheID": "0e0cb97678378b956aa57816c8f2bc85",
     "id": null,
     "metadata": {},
-    "name": "AddServiceEndpointMutation",
+    "name": "AddServicePortMutation",
     "operationKind": "mutation",
-    "text": "mutation AddServiceEndpointMutation(\n  $input: AddServiceEndpointInput!\n) {\n  addServiceEndpoint(input: $input) {\n    ...ServiceCard_service\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment ForceNetworkTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    id\n  }\n  links {\n    source {\n      __typename\n      id\n    }\n    target {\n      __typename\n      id\n    }\n  }\n}\n\nfragment ServiceCard_service on Service {\n  id\n  name\n  ...ServiceDetailsPanel_service\n  ...ServicePanel_service\n  topology {\n    ...ServiceEquipmentTopology_topology\n  }\n  endpoints {\n    ...ServiceEquipmentTopology_endpoints\n    id\n  }\n}\n\nfragment ServiceDetailsPanel_service on Service {\n  id\n  name\n  externalId\n  customer {\n    name\n    id\n  }\n  serviceType {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      index\n      isInstanceProperty\n      type\n      nodeType\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isMandatory\n    }\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isInstanceProperty\n      isMandatory\n      stringValue\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n}\n\nfragment ServiceEndpointsView_endpoints on ServiceEndpoint {\n  id\n  port {\n    parentEquipment {\n      name\n      ...EquipmentBreadcrumbs_equipment\n      id\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n  equipment {\n    name\n    ...EquipmentBreadcrumbs_equipment\n    id\n  }\n  definition {\n    name\n    role\n    id\n  }\n}\n\nfragment ServiceEquipmentTopology_endpoints on ServiceEndpoint {\n  definition {\n    role\n    id\n  }\n  equipment {\n    id\n    positionHierarchy {\n      parentEquipment {\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment ServiceEquipmentTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    ... on Equipment {\n      id\n      name\n    }\n    id\n  }\n  ...ForceNetworkTopology_topology\n}\n\nfragment ServiceLinksAndPortsView_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment ServiceLinksAndPortsView_ports on EquipmentPort {\n  id\n  parentEquipment {\n    id\n    name\n  }\n  definition {\n    id\n    name\n  }\n}\n\nfragment ServicePanel_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    name\n    id\n  }\n  serviceType {\n    name\n    discoveryMethod\n    endpointDefinitions {\n      id\n      name\n      role\n      equipmentType {\n        id\n        name\n      }\n    }\n    id\n  }\n  links {\n    id\n    ...ServiceLinksAndPortsView_links\n  }\n  ports {\n    id\n    ...ServiceLinksAndPortsView_ports\n  }\n  endpoints {\n    id\n    definition {\n      id\n      name\n    }\n    ...ServiceEndpointsView_endpoints\n  }\n}\n"
+    "text": "mutation AddServicePortMutation(\n  $id: ID!\n  $portId: ID!\n) {\n  addServicePort(id: $id, portId: $portId) {\n    ...ServiceCard_service\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment ForceNetworkTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    id\n  }\n  links {\n    source {\n      __typename\n      id\n    }\n    target {\n      __typename\n      id\n    }\n  }\n}\n\nfragment ServiceCard_service on Service {\n  id\n  name\n  ...ServiceDetailsPanel_service\n  ...ServicePanel_service\n  topology {\n    ...ServiceEquipmentTopology_topology\n  }\n  endpoints {\n    ...ServiceEquipmentTopology_endpoints\n    id\n  }\n}\n\nfragment ServiceDetailsPanel_service on Service {\n  id\n  name\n  externalId\n  customer {\n    name\n    id\n  }\n  serviceType {\n    id\n    name\n    propertyTypes {\n      id\n      name\n      index\n      isInstanceProperty\n      type\n      nodeType\n      stringValue\n      intValue\n      floatValue\n      booleanValue\n      latitudeValue\n      longitudeValue\n      rangeFromValue\n      rangeToValue\n      isMandatory\n    }\n  }\n  properties {\n    id\n    propertyType {\n      id\n      name\n      type\n      nodeType\n      isEditable\n      isInstanceProperty\n      isMandatory\n      stringValue\n    }\n    stringValue\n    intValue\n    floatValue\n    booleanValue\n    latitudeValue\n    longitudeValue\n    rangeFromValue\n    rangeToValue\n    nodeValue {\n      __typename\n      id\n      name\n    }\n  }\n}\n\nfragment ServiceEndpointsView_endpoints on ServiceEndpoint {\n  id\n  port {\n    parentEquipment {\n      name\n      ...EquipmentBreadcrumbs_equipment\n      id\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n  equipment {\n    name\n    ...EquipmentBreadcrumbs_equipment\n    id\n  }\n  definition {\n    name\n    role\n    id\n  }\n}\n\nfragment ServiceEquipmentTopology_endpoints on ServiceEndpoint {\n  definition {\n    role\n    id\n  }\n  equipment {\n    id\n    positionHierarchy {\n      parentEquipment {\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment ServiceEquipmentTopology_topology on NetworkTopology {\n  nodes {\n    __typename\n    ... on Equipment {\n      id\n      name\n    }\n    id\n  }\n  ...ForceNetworkTopology_topology\n}\n\nfragment ServiceLinksAndPortsView_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment ServiceLinksAndPortsView_ports on EquipmentPort {\n  id\n  parentEquipment {\n    id\n    name\n  }\n  definition {\n    id\n    name\n  }\n}\n\nfragment ServicePanel_service on Service {\n  id\n  name\n  externalId\n  status\n  customer {\n    name\n    id\n  }\n  serviceType {\n    name\n    discoveryMethod\n    endpointDefinitions {\n      id\n      name\n      role\n      equipmentType {\n        id\n        name\n      }\n    }\n    id\n  }\n  links {\n    id\n    ...ServiceLinksAndPortsView_links\n  }\n  ports {\n    id\n    ...ServiceLinksAndPortsView_ports\n  }\n  endpoints {\n    id\n    definition {\n      id\n      name\n    }\n    ...ServiceEndpointsView_endpoints\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a50fcd57e94fa9413b67efe1f897cdf1';
+(node/*: any*/).hash = '7144394277a3d8c8ffc76afc2621be22';
 
 module.exports = node;

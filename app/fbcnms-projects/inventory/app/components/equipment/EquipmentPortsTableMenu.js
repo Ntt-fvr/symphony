@@ -97,6 +97,7 @@ const EquipmentPortsTableMenu = (props: Props) => {
           workOrderId={workOrderId}
           link={selectedPort.link}
           open={true}
+          isSubFlow={false}
           onClose={() => setSelectedPort(null)}
         />
       ) : null}

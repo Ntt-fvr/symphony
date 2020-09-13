@@ -10,28 +10,30 @@
 
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
-  RemoveServiceMutation,
-  RemoveServiceMutationResponse,
-  RemoveServiceMutationVariables,
-} from './__generated__/RemoveServiceMutation.graphql';
+  RemoveServicePortMutation,
+  RemoveServicePortMutationResponse,
+  RemoveServicePortMutationVariables,
+} from './__generated__/RemoveServicePortMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
+import RelayEnvironemnt from '../common/RelayEnvironment.js';
 import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
-  mutation RemoveServiceMutation($id: ID!) {
-    removeService(id: $id)
+  mutation RemoveServicePortMutation($id: ID!, $portId: ID!) {
+    removeServicePort(id: $id, portId: $portId) {
+      ...ServiceCard_service
+    }
   }
 `;
 
 export default (
-  variables: RemoveServiceMutationVariables,
-  callbacks?: MutationCallbacks<RemoveServiceMutationResponse>,
+  variables: RemoveServicePortMutationVariables,
+  callbacks?: MutationCallbacks<RemoveServicePortMutationResponse>,
   updater?: SelectorStoreUpdater,
 ) => {
   const {onCompleted, onError} = callbacks ? callbacks : {};
-  commitMutation<RemoveServiceMutation>(RelayEnvironment, {
+  commitMutation<RemoveServicePortMutation>(RelayEnvironemnt, {
     mutation,
     variables,
     updater,

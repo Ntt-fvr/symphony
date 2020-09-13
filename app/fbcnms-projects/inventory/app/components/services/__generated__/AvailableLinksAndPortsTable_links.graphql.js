@@ -16,9 +16,9 @@
 import type { ReaderFragment } from 'relay-runtime';
 type EquipmentBreadcrumbs_equipment$ref = any;
 import type { FragmentReference } from "relay-runtime";
-declare export opaque type AvailableLinksTable_links$ref: FragmentReference;
-declare export opaque type AvailableLinksTable_links$fragmentType: AvailableLinksTable_links$ref;
-export type AvailableLinksTable_links = $ReadOnlyArray<{|
+declare export opaque type AvailableLinksAndPortsTable_links$ref: FragmentReference;
+declare export opaque type AvailableLinksAndPortsTable_links$fragmentType: AvailableLinksAndPortsTable_links$ref;
+export type AvailableLinksAndPortsTable_links = $ReadOnlyArray<{|
   +id: string,
   +ports: $ReadOnlyArray<?{|
     +parentEquipment: {|
@@ -36,12 +36,12 @@ export type AvailableLinksTable_links = $ReadOnlyArray<{|
       +name: string,
     |},
   |}>,
-  +$refType: AvailableLinksTable_links$ref,
+  +$refType: AvailableLinksAndPortsTable_links$ref,
 |}>;
-export type AvailableLinksTable_links$data = AvailableLinksTable_links;
-export type AvailableLinksTable_links$key = $ReadOnlyArray<{
-  +$data?: AvailableLinksTable_links$data,
-  +$fragmentRefs: AvailableLinksTable_links$ref,
+export type AvailableLinksAndPortsTable_links$data = AvailableLinksAndPortsTable_links;
+export type AvailableLinksAndPortsTable_links$key = $ReadOnlyArray<{
+  +$data?: AvailableLinksAndPortsTable_links$data,
+  +$fragmentRefs: AvailableLinksAndPortsTable_links$ref,
   ...
 }>;
 */
@@ -68,7 +68,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "AvailableLinksTable_links",
+  "name": "AvailableLinksAndPortsTable_links",
   "selections": [
     (v0/*: any*/),
     {
@@ -142,6 +142,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '6868986f0fbbbb699a7152390136e645';
+(node/*: any*/).hash = 'e3f5879ccbd1a0bc982fc5c83526b90f';
 
 module.exports = node;

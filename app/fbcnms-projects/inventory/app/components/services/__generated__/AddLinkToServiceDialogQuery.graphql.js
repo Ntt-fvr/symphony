@@ -14,7 +14,7 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-type AvailableLinksTable_links$ref = any;
+type AvailableLinksAndPortsTable_links$ref = any;
 export type FilterOperator = "CONTAINS" | "DATE_GREATER_OR_EQUAL_THAN" | "DATE_GREATER_THAN" | "DATE_LESS_OR_EQUAL_THAN" | "DATE_LESS_THAN" | "IS" | "IS_NOT_ONE_OF" | "IS_ONE_OF" | "%future added value";
 export type LinkFilterType = "EQUIPMENT_INST" | "EQUIPMENT_TYPE" | "LINK_FUTURE_STATUS" | "LOCATION_INST" | "LOCATION_INST_EXTERNAL_ID" | "PROPERTY" | "SERVICE_INST" | "%future added value";
 export type PropertyKind = "bool" | "date" | "datetime_local" | "email" | "enum" | "float" | "gps_location" | "int" | "node" | "range" | "string" | "%future added value";
@@ -66,7 +66,7 @@ export type AddLinkToServiceDialogQueryResponse = {|
             +name: string,
           |},
         |}>,
-        +$fragmentRefs: AvailableLinksTable_links$ref,
+        +$fragmentRefs: AvailableLinksAndPortsTable_links$ref,
       |}
     |}>
   |}
@@ -97,13 +97,13 @@ query AddLinkToServiceDialogQuery(
           }
           id
         }
-        ...AvailableLinksTable_links
+        ...AvailableLinksAndPortsTable_links
       }
     }
   }
 }
 
-fragment AvailableLinksTable_links on Link {
+fragment AvailableLinksAndPortsTable_links on Link {
   id
   ports {
     parentEquipment {
@@ -274,7 +274,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AvailableLinksTable_links"
+                    "name": "AvailableLinksAndPortsTable_links"
                   }
                 ],
                 "storageKey": null
@@ -431,16 +431,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "23398c2f37f7428699707982cada5a1e",
+    "cacheID": "98080644bca12b00504b699b57cffb6a",
     "id": null,
     "metadata": {},
     "name": "AddLinkToServiceDialogQuery",
     "operationKind": "query",
-    "text": "query AddLinkToServiceDialogQuery(\n  $filters: [LinkFilterInput!]!\n) {\n  links(filterBy: $filters, first: 50) {\n    edges {\n      node {\n        id\n        ports {\n          parentEquipment {\n            id\n            name\n          }\n          definition {\n            id\n            name\n          }\n          id\n        }\n        ...AvailableLinksTable_links\n      }\n    }\n  }\n}\n\nfragment AvailableLinksTable_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n      positionHierarchy {\n        parentEquipment {\n          id\n        }\n        id\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query AddLinkToServiceDialogQuery(\n  $filters: [LinkFilterInput!]!\n) {\n  links(filterBy: $filters, first: 50) {\n    edges {\n      node {\n        id\n        ports {\n          parentEquipment {\n            id\n            name\n          }\n          definition {\n            id\n            name\n          }\n          id\n        }\n        ...AvailableLinksAndPortsTable_links\n      }\n    }\n  }\n}\n\nfragment AvailableLinksAndPortsTable_links on Link {\n  id\n  ports {\n    parentEquipment {\n      id\n      name\n      positionHierarchy {\n        parentEquipment {\n          id\n        }\n        id\n      }\n      ...EquipmentBreadcrumbs_equipment\n    }\n    definition {\n      id\n      name\n    }\n    id\n  }\n}\n\nfragment EquipmentBreadcrumbs_equipment on Equipment {\n  id\n  name\n  equipmentType {\n    id\n    name\n  }\n  locationHierarchy {\n    id\n    name\n    locationType {\n      name\n      id\n    }\n  }\n  positionHierarchy {\n    id\n    definition {\n      id\n      name\n      visibleLabel\n    }\n    parentEquipment {\n      id\n      name\n      equipmentType {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'fb869c69fa4c5764072912438439fdf6';
+(node/*: any*/).hash = 'c56fde153bb9b1125a9e110db5a2fc15';
 
 module.exports = node;

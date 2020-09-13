@@ -16,6 +16,10 @@ import type {
   AddServiceLinkMutationResponse,
   AddServiceLinkMutationVariables,
 } from '../../mutations/__generated__/AddServiceLinkMutation.graphql';
+import type {
+  AddServicePortMutationResponse,
+  AddServicePortMutationVariables,
+} from '../../mutations/__generated__/AddServicePortMutation.graphql';
 import type {EquipmentPort, Link} from '../../common/Equipment';
 import type {MutationCallbacks} from '../../mutations/MutationCallbacks.js';
 import type {
@@ -26,11 +30,16 @@ import type {
   RemoveServiceLinkMutationResponse,
   RemoveServiceLinkMutationVariables,
 } from '../../mutations/__generated__/RemoveServiceLinkMutation.graphql';
+import type {
+  RemoveServicePortMutationResponse,
+  RemoveServicePortMutationVariables,
+} from '../../mutations/__generated__/RemoveServicePortMutation.graphql';
 import type {ServiceEndpoint, ServiceStatus} from '../../common/Service';
 import type {ServicePanel_service} from './__generated__/ServicePanel_service.graphql';
 
 import AddServiceEndpointMutation from '../../mutations/AddServiceEndpointMutation';
 import AddServiceLinkMutation from '../../mutations/AddServiceLinkMutation';
+import AddServicePortMutation from '../../mutations/AddServicePortMutation';
 import Button from '@symphony/design-system/components/Button';
 import EditServiceMutation from '../../mutations/EditServiceMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
@@ -38,14 +47,17 @@ import FormAction from '@symphony/design-system/components/Form/FormAction';
 import React, {useState} from 'react';
 import RemoveServiceEndpointMutation from '../../mutations/RemoveServiceEndpointMutation';
 import RemoveServiceLinkMutation from '../../mutations/RemoveServiceLinkMutation';
+import RemoveServicePortMutation from '../../mutations/RemoveServicePortMutation';
 import Select from '@symphony/design-system/components/Select/Select';
 import ServiceEndpointsMenu from './ServiceEndpointsMenu';
 import ServiceEndpointsView from './ServiceEndpointsView';
+import ServiceLinksAndPortsView from './ServiceLinksAndPortsView';
 import ServiceLinksSubservicesMenu from './ServiceLinksSubservicesMenu';
-import ServiceLinksView from './ServiceLinksView';
 import Text from '@symphony/design-system/components/Text';
 import symphony from '@fbcnms/ui/theme/symphony';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {createFragmentContainer, graphql} from 'react-relay';
+import {fbt} from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {
   serviceStatusToColor,
@@ -138,6 +150,12 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
 
   const hideEditButtons = service.serviceType?.discoveryMethod != 'MANUAL';
 
+  const addPortToServiceEnabled = useFeatureFlag('add_port_to_service');
+
+  const linkHeading = addPortToServiceEnabled
+    ? fbt('Links/Ports', 'Add Link or Ports Menu Label')
+    : fbt('Links', 'Add Links Menu Label');
+
   const onAddEndpoint = (port: EquipmentPort, endpointDefinition: string) => {
     const variables: AddServiceEndpointMutationVariables = {
       input: {
@@ -156,18 +174,49 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
   };
 
   const onAddLink = (link: Link) => {
-    const variables: AddServiceLinkMutationVariables = {
+    return new Promise<void>(resolve => {
+      const variables: AddServiceLinkMutationVariables = {
+        id: service.id,
+        linkId: link.id,
+      };
+      const callbacks: MutationCallbacks<AddServiceLinkMutationResponse> = {
+        onCompleted: (_: AddServiceLinkMutationResponse) => {
+          setLinksExpanded(true);
+          resolve();
+        },
+      };
+      AddServiceLinkMutation(variables, callbacks);
+    });
+  };
+
+  const onAddPort = (port: EquipmentPort) => {
+    return new Promise<void>(resolve => {
+      const variables: AddServicePortMutationVariables = {
+        id: service.id,
+        portId: port.id,
+      };
+      const callbacks: MutationCallbacks<AddServicePortMutationResponse> = {
+        onCompleted: (_: AddServicePortMutationResponse) => {
+          setLinksExpanded(true);
+          resolve();
+        },
+      };
+      AddServicePortMutation(variables, callbacks);
+    });
+  };
+
+  const onDeletePort = (port: EquipmentPort) => {
+    const variables: RemoveServicePortMutationVariables = {
       id: service.id,
-      linkId: link.id,
+      portId: port.id,
     };
-    const callbacks: MutationCallbacks<AddServiceLinkMutationResponse> = {
+    const callbacks: MutationCallbacks<RemoveServicePortMutationResponse> = {
       onCompleted: () => {
         setLinksExpanded(true);
       },
     };
-    AddServiceLinkMutation(variables, callbacks);
+    RemoveServicePortMutation(variables, callbacks);
   };
-
   const onDeleteLink = (link: Link) => {
     const variables: RemoveServiceLinkMutationVariables = {
       id: service.id,
@@ -294,7 +343,7 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
       </>
       <div className={classes.separator} />
       <ExpandingPanel
-        title="Links"
+        title={linkHeading}
         defaultExpanded={false}
         expandedClassName={classes.expanded}
         className={classes.panel}
@@ -307,13 +356,17 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
             <ServiceLinksSubservicesMenu
               service={{id: service.id, name: service.name}}
               onAddLink={onAddLink}
+              onAddPort={onAddPort}
             />
           )
         }>
-        <ServiceLinksView
+        <ServiceLinksAndPortsView
           // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
           links={service.links}
+          // $FlowFixMe[incompatible-type] $FlowFixMe T74239404 Found via relay types
+          ports={service.ports}
           onDeleteLink={hideEditButtons ? null : onDeleteLink}
+          onDeletePort={hideEditButtons ? null : onDeletePort}
         />
       </ExpandingPanel>
       <div className={classes.separator} />
@@ -346,7 +399,11 @@ export default createFragmentContainer(ServicePanel, {
       }
       links {
         id
-        ...ServiceLinksView_links
+        ...ServiceLinksAndPortsView_links
+      }
+      ports {
+        id
+        ...ServiceLinksAndPortsView_ports
       }
       endpoints {
         id

@@ -15,9 +15,9 @@
 /*::
 import type { ReaderFragment } from 'relay-runtime';
 import type { FragmentReference } from "relay-runtime";
-declare export opaque type ServiceLinksView_links$ref: FragmentReference;
-declare export opaque type ServiceLinksView_links$fragmentType: ServiceLinksView_links$ref;
-export type ServiceLinksView_links = $ReadOnlyArray<{|
+declare export opaque type ServiceLinksAndPortsView_links$ref: FragmentReference;
+declare export opaque type ServiceLinksAndPortsView_links$fragmentType: ServiceLinksAndPortsView_links$ref;
+export type ServiceLinksAndPortsView_links = $ReadOnlyArray<{|
   +id: string,
   +ports: $ReadOnlyArray<?{|
     +parentEquipment: {|
@@ -29,12 +29,12 @@ export type ServiceLinksView_links = $ReadOnlyArray<{|
       +name: string,
     |},
   |}>,
-  +$refType: ServiceLinksView_links$ref,
+  +$refType: ServiceLinksAndPortsView_links$ref,
 |}>;
-export type ServiceLinksView_links$data = ServiceLinksView_links;
-export type ServiceLinksView_links$key = $ReadOnlyArray<{
-  +$data?: ServiceLinksView_links$data,
-  +$fragmentRefs: ServiceLinksView_links$ref,
+export type ServiceLinksAndPortsView_links$data = ServiceLinksAndPortsView_links;
+export type ServiceLinksAndPortsView_links$key = $ReadOnlyArray<{
+  +$data?: ServiceLinksAndPortsView_links$data,
+  +$fragmentRefs: ServiceLinksAndPortsView_links$ref,
   ...
 }>;
 */
@@ -64,7 +64,7 @@ return {
   "metadata": {
     "plural": true
   },
-  "name": "ServiceLinksView_links",
+  "name": "ServiceLinksAndPortsView_links",
   "selections": [
     (v0/*: any*/),
     {
@@ -104,6 +104,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '0e01ac9e52351ad401bac91867ae8714';
+(node/*: any*/).hash = 'dac279cc0466da09947a7a4de86cfa09';
 
 module.exports = node;
