@@ -23,6 +23,10 @@ func (ExportTask) Fields() []ent.Field {
 			NamedValues(
 				"Equipment", "EQUIPMENT",
 				"Location", "LOCATION",
+				"Port", "PORT",
+				"Link", "LINK",
+				"Service", "SERVICE",
+				"WorkOrder", "WORK_ORDER",
 			),
 		field.Enum("status").
 			NamedValues(

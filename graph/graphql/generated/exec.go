@@ -10151,6 +10151,10 @@ enum ExportType
   ) {
   EQUIPMENT
   LOCATION
+  PORT
+  LINK
+  SERVICE
+  WORK_ORDER
 }
 enum ExportStatus
   @goModel(

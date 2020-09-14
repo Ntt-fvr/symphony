@@ -68,6 +68,10 @@ type Type string
 const (
 	TypeEquipment Type = "EQUIPMENT"
 	TypeLocation  Type = "LOCATION"
+	TypePort      Type = "PORT"
+	TypeLink      Type = "LINK"
+	TypeService   Type = "SERVICE"
+	TypeWorkOrder Type = "WORK_ORDER"
 )
 
 func (_type Type) String() string {
@@ -77,7 +81,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeEquipment, TypeLocation:
+	case TypeEquipment, TypeLocation, TypePort, TypeLink, TypeService, TypeWorkOrder:
 		return nil
 	default:
 		return fmt.Errorf("exporttask: invalid enum value for type field: %q", _type)

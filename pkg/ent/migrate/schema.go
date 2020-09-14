@@ -592,7 +592,7 @@ var (
 	// ExportTasksColumns holds the columns for the "export_tasks" table.
 	ExportTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION", "PORT", "LINK", "SERVICE", "WORK_ORDER"}},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED"}},
 		{Name: "progress", Type: field.TypeFloat64},
 		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
