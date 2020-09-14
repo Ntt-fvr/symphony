@@ -44,3 +44,9 @@ func (r *resolver) err(ctx context.Context, err error, msg string) error {
 		Error(msg, zap.Error(err))
 	return fmt.Errorf(msg+": %w", err)
 }
+
+// errf formats the given string and calls err.
+func (r *resolver) errf(ctx context.Context, err error, format string, args ...interface{}) error {
+	msg := fmt.Sprintf(format, args...)
+	return r.err(ctx, err, msg)
+}

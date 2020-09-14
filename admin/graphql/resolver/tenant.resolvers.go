@@ -15,6 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
@@ -24,7 +25,7 @@ func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateT
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (*model.TruncateTenantPayload, error) {
+func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (_ *model.TruncateTenantPayload, err error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -34,11 +35,7 @@ func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteT
 			Error("tenant with non zero object id",
 				zap.Object("id", input.ID),
 			)
-		err := gqlerror.Errorf(
-			"Could not resolve to a tenant with the global id of '%s'", input.ID,
-		)
-		errcode.Set(err, "NOT_FOUND")
-		return nil, err
+		return nil, entgql.ErrNodeNotFound(input.ID)
 	}
 	if _, err := r.Tenant(ctx, input.ID.Tenant); err != nil {
 		return nil, err
@@ -82,10 +79,7 @@ func (r *resolver) Tenant(ctx context.Context, name string) (*model.Tenant, erro
 		errcode.Set(err, "NOT_FOUND")
 		return nil, err
 	}
-	return &model.Tenant{
-		ID:   model.ID{Tenant: name},
-		Name: name,
-	}, nil
+	return model.NewTenant(name), nil
 }
 
 func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {
@@ -104,10 +98,7 @@ func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {
 			return nil, r.err(ctx, err, "cannot read row")
 		}
 		name := viewer.FromDBName(dbname)
-		tenants = append(tenants, &model.Tenant{
-			ID:   model.ID{Tenant: name},
-			Name: name,
-		})
+		tenants = append(tenants, model.NewTenant(name))
 	}
 	if err := rows.Err(); err != nil {
 		return nil, r.err(ctx, err, "cannot read rows")

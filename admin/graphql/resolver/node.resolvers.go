@@ -9,14 +9,20 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
 func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, error) {
-	panic(fmt.Errorf("not implemented"))
+	if _, err := r.Tenant(ctx, id.Tenant); err != nil {
+		return nil, entgql.ErrNodeNotFound(id)
+	}
+	if id.ID == 0 {
+		return model.NewTenant(id.Tenant), nil
+	}
+	return nil, entgql.ErrNodeNotFound(id)
 }
 
 // Query returns exec.QueryResolver implementation.
