@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -20,11 +19,12 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 )
 
 func handleLinkFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.FilterType == models.LinkFilterTypeLinkFutureStatus {
+	if filter.FilterType == enum.LinkFilterTypeLinkFutureStatus {
 		return stateFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -55,9 +55,9 @@ func stateFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQue
 
 func handleLinkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
 	switch filter.FilterType {
-	case models.LinkFilterTypeLocationInst:
+	case enum.LinkFilterTypeLocationInst:
 		return linkLocationFilter(q, filter)
-	case models.LinkFilterTypeLocationInstExternalID:
+	case enum.LinkFilterTypeLocationInstExternalID:
 		return linkLocationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -83,9 +83,9 @@ func linkLocationFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.
 }
 
 func handleLinkEquipmentFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.FilterType == models.LinkFilterTypeEquipmentType {
+	if filter.FilterType == enum.LinkFilterTypeEquipmentType {
 		return linkEquipmentTypeFilter(q, filter)
-	} else if filter.FilterType == models.LinkFilterTypeEquipmentInst {
+	} else if filter.FilterType == enum.LinkFilterTypeEquipmentInst {
 		return linkEquipmentFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -126,7 +126,7 @@ func linkEquipmentFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent
 }
 
 func handleLinkServiceFilter(q *ent.LinkQuery, filter *models.LinkFilterInput) (*ent.LinkQuery, error) {
-	if filter.FilterType == models.LinkFilterTypeServiceInst {
+	if filter.FilterType == enum.LinkFilterTypeServiceInst {
 		return linkServiceFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)

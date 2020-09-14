@@ -17,61 +17,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func LinkFilter(query *ent.LinkQuery, filters []*models.LinkFilterInput) (*ent.LinkQuery, error) {
-	var err error
-	for _, f := range filters {
-		switch {
-		case strings.HasPrefix(f.FilterType.String(), "LINK_"):
-			if query, err = handleLinkFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
-			if query, err = handleLinkLocationFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "EQUIPMENT_"):
-			if query, err = handleLinkEquipmentFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "SERVICE_INST"):
-			if query, err = handleLinkServiceFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
-			if query, err = handleLinkPropertyFilter(query, f); err != nil {
-				return nil, err
-			}
-		}
-	}
-	return query, nil
-}
-
-func LinkSearch(ctx context.Context, client *ent.Client, filters []*models.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
-	var (
-		query = client.Link.Query()
-		err   error
-	)
-	query, err = LinkFilter(query, filters)
-	if err != nil {
-		return nil, err
-	}
-	count, err := query.Clone().Count(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Count query failed")
-	}
-	if limit != nil {
-		query.Limit(*limit)
-	}
-	links, err := query.All(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Querying links failed")
-	}
-	return &pkgmodels.LinkSearchResult{
-		Links: links,
-		Count: count,
-	}, nil
-}
-
 func ServiceFilter(query *ent.ServiceQuery, filters []*models.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	var err error
 	for _, f := range filters {

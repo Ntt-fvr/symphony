@@ -177,7 +177,7 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 		{name: "equipment", handler: exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}},
 		{name: "ports", handler: exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}},
 		{"work_orders", exporter{log, woRower{log}}},
-		{"links", exporter{log, linksRower{log}}},
+		{name: "links", handler: exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}},
 		{name: "locations", handler: exporter{log: log, rower: pkgexporter.LocationsRower{Log: log, Concurrent: true}}},
 		{"services", exporter{log, servicesRower{log}}},
 	}

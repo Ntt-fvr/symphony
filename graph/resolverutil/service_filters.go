@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
+	"github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/pkg/errors"
 )
 
@@ -180,8 +181,8 @@ func serviceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInpu
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		var ps []predicate.Service
 		for _, lid := range filter.IDSet {
-			eqPred := BuildGeneralEquipmentAncestorFilter(
-				equipment.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)),
+			eqPred := exporter.BuildGeneralEquipmentAncestorFilter(
+				equipment.HasLocationWith(exporter.BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)),
 				1,
 				*filter.MaxDepth)
 			ps = append(ps, service.HasEndpointsWith(

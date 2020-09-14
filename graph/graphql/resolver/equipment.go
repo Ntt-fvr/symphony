@@ -15,7 +15,6 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -23,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/link"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
+	"github.com/facebookincubator/symphony/pkg/exporter"
 )
 
 type equipmentPortResolver struct{}
@@ -391,7 +391,7 @@ func checkinTimeIsUp(checkinTime int64, duration time.Duration) bool {
 }
 
 func (r equipmentResolver) Services(ctx context.Context, e *ent.Equipment) ([]*ent.Service, error) {
-	eqPred := resolverutil.BuildGeneralEquipmentAncestorFilter(equipment.ID(e.ID), 1, 4)
+	eqPred := exporter.BuildGeneralEquipmentAncestorFilter(equipment.ID(e.ID), 1, 4)
 	eids, err := r.ClientFrom(ctx).ServiceEndpoint.Query().
 		Where(serviceendpoint.HasPortWith(
 			equipmentport.HasParentWith(eqPred),
@@ -416,7 +416,7 @@ func (r equipmentResolver) Services(ctx context.Context, e *ent.Equipment) ([]*e
 
 	linkServices, err := r.ClientFrom(ctx).Service.Query().Where(
 		service.HasLinksWith(link.HasPortsWith(equipmentport.HasParentWith(
-			resolverutil.BuildGeneralEquipmentAncestorFilter(equipment.ID(e.ID), 1, 3)))),
+			exporter.BuildGeneralEquipmentAncestorFilter(equipment.ID(e.ID), 1, 3)))),
 		service.Not(service.IDIn(ids...))).All(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("querying services where equipment connected to link of service: %w", err)

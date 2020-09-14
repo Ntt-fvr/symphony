@@ -26,6 +26,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	bom = "\uFEFF"
+)
+
 type woFilterInput struct {
 	Name          enum.EquipmentFilterType    `json:"name"`
 	Operator      enum.FilterOperator         `jsons:"operator"`

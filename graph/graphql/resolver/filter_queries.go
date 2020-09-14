@@ -24,8 +24,8 @@ func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*models.Wo
 	return resolverutil.WorkOrderSearch(ctx, r.ClientFrom(ctx), filters, limit, graphql.CollectAllFields(ctx))
 }
 
-func (r queryResolver) LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
-	return resolverutil.LinkSearch(ctx, r.ClientFrom(ctx), filters, limit)
+func (r queryResolver) LinkSearch(ctx context.Context, filters []*pkgmodels.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
+	return pkgexporter.LinkSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
 func (r queryResolver) PortSearch(ctx context.Context, filters []*pkgmodels.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {

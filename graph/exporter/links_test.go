@@ -21,11 +21,23 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
+
+type linksFilterInput struct {
+	Name          enum.LinkFilterType         `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                        `json:"maxDepth"`
+}
 
 const (
 	portANameTitle      = "Port A Name"
@@ -203,7 +215,7 @@ func TestEmptyLinksDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, linksRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -252,7 +264,7 @@ func TestLinksExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, linksRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -371,7 +383,7 @@ func TestLinksWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log, linksRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

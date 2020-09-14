@@ -2381,7 +2381,10 @@ enum PortFilterType
 """
 what filters should we apply on links
 """
-enum LinkFilterType {
+enum LinkFilterType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LinkFilterType"
+  ) {
   LINK_FUTURE_STATUS
   EQUIPMENT_TYPE
   LOCATION_INST
@@ -2458,7 +2461,10 @@ input PortFilterInput
   maxDepth: Int = 5
 }
 
-input LinkFilterInput {
+input LinkFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
+  ) {
   filterType: LinkFilterType!
   operator: FilterOperator!
   stringValue: String

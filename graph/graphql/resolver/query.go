@@ -214,10 +214,10 @@ func (r queryResolver) Links(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	filters []*models.LinkFilterInput,
+	filters []*pkgmodels.LinkFilterInput,
 ) (*ent.LinkConnection, error) {
 	query := r.ClientFrom(ctx).Link.Query()
-	query, err := resolverutil.LinkFilter(query, filters)
+	query, err := pkgexporter.LinkFilter(query, filters)
 	if err != nil {
 		return nil, err
 	}

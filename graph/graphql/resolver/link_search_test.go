@@ -297,18 +297,18 @@ func TestSearchLinksFutureState(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	require.Equal(t, all.Count, 2)
 	maxDepth := 2
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeLinkFutureStatus,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeLinkFutureStatus,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{enum.FutureStateRemove.String()},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 1)
 	ports := res1.Links[0].QueryPorts().AllX(ctx)
@@ -336,12 +336,12 @@ func TestSearchLinksByLocation(t *testing.T) {
 	*/
 	qr, mr := r.Query(), r.Mutation()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	maxDepth := 2
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeLocationInst,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 		MaxDepth:   &maxDepth,
@@ -354,26 +354,26 @@ func TestSearchLinksByLocation(t *testing.T) {
 		Name: "loc",
 		Type: typ.ID,
 	})
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
 
-	f1External := models.LinkFilterInput{
-		FilterType:  models.LinkFilterTypeLocationInstExternalID,
+	f1External := pkgmodels.LinkFilterInput{
+		FilterType:  enum.LinkFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("111"),
 	}
-	res1, err = qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1External}, &limit)
+	res1, err = qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1External}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeLocationInst,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{loc.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 0)
 }
@@ -395,7 +395,7 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 	*/
 	qr, mr := r.Query(), r.Mutation()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	maxDepth := 2
@@ -411,33 +411,33 @@ func TestSearchLinksByEquipmentTyp(t *testing.T) {
 	typ2 := e3.QueryType().OnlyX(ctx)
 
 	emptyTyp, _ := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{Name: "empty_typ"})
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentType,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{typ1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentType,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{typ2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 2)
 
-	f3 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeLocationInst,
+	f3 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{emptyTyp.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f3}, &limit)
+	res3, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f3}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res3.Links, 0)
 }
@@ -459,28 +459,28 @@ func TestSearchLinksByEquipment(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	maxDepth := 2
 
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentInst,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e1, data.e2},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentInst,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e2, data.e4},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 1)
 }
@@ -507,28 +507,28 @@ func TestSearchLinksByEquipmentHirerchy(t *testing.T) {
 
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 4)
 	maxDepth := 2
 
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentInst,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e1},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 4)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeEquipmentInst,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeEquipmentInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.e6},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 1)
 }
@@ -575,48 +575,48 @@ func TestSearchLinksByService(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	maxDepth := 2
 
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeServiceInst,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 1)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeServiceInst,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 2)
 
-	f3 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeServiceInst,
+	f3 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f3}, &limit)
+	res3, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f3}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res3.Links, 1)
 
-	f4 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeServiceInst,
+	f4 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res4, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f4}, &limit)
+	res4, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f4}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res4.Links, 0)
 }
@@ -639,8 +639,8 @@ func TestSearchLinksByProperty(t *testing.T) {
 	qr := r.Query()
 	limit := 100
 
-	f1 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeProperty,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "propStr",
@@ -649,13 +649,13 @@ func TestSearchLinksByProperty(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	links := res1.Links
 	require.Len(t, links, 1)
 
-	f2 := models.LinkFilterInput{
-		FilterType: models.LinkFilterTypeProperty,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType: enum.LinkFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "connected_date",
@@ -664,7 +664,7 @@ func TestSearchLinksByProperty(t *testing.T) {
 		},
 	}
 
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	links = res2.Links
 	require.Len(t, links, 1)
@@ -687,28 +687,28 @@ func TestSearchLinksByServiceName(t *testing.T) {
 	*/
 	qr := r.Query()
 	limit := 100
-	all, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{}, &limit)
+	all, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Links, 2)
 	require.Equal(t, all.Count, 2)
 	maxDepth := 2
-	f1 := models.LinkFilterInput{
-		FilterType:  models.LinkFilterTypeServiceInst,
+	f1 := pkgmodels.LinkFilterInput{
+		FilterType:  enum.LinkFilterTypeServiceInst,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("S1"),
 		MaxDepth:    &maxDepth,
 	}
-	res1, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f1}, &limit)
+	res1, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Links, 2)
 
-	f2 := models.LinkFilterInput{
-		FilterType:  models.LinkFilterTypeServiceInst,
+	f2 := pkgmodels.LinkFilterInput{
+		FilterType:  enum.LinkFilterTypeServiceInst,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("S2"),
 		MaxDepth:    &maxDepth,
 	}
-	res2, err := qr.LinkSearch(ctx, []*models.LinkFilterInput{&f2}, &limit)
+	res2, err := qr.LinkSearch(ctx, []*pkgmodels.LinkFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Links, 0)
 }

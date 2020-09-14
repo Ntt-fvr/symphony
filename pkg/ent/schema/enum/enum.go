@@ -243,6 +243,32 @@ func (p PortFilterType) String() string {
 	return string(p)
 }
 
+// LinkFilterType specifies what filters should we apply on links
+type LinkFilterType string
+
+const (
+	LinkFilterTypeLinkFutureStatus       LinkFilterType = "LINK_FUTURE_STATUS"
+	LinkFilterTypeEquipmentType          LinkFilterType = "EQUIPMENT_TYPE"
+	LinkFilterTypeLocationInst           LinkFilterType = "LOCATION_INST"
+	LinkFilterTypeLocationInstExternalID LinkFilterType = "LOCATION_INST_EXTERNAL_ID"
+	LinkFilterTypeProperty               LinkFilterType = "PROPERTY"
+	LinkFilterTypeServiceInst            LinkFilterType = "SERVICE_INST"
+	LinkFilterTypeEquipmentInst          LinkFilterType = "EQUIPMENT_INST"
+)
+
+func (l LinkFilterType) IsValid() bool {
+	switch l {
+	case LinkFilterTypeLinkFutureStatus, LinkFilterTypeEquipmentType, LinkFilterTypeLocationInst, LinkFilterTypeLocationInstExternalID, LinkFilterTypeProperty, LinkFilterTypeServiceInst, LinkFilterTypeEquipmentInst:
+		return true
+	}
+	return false
+}
+
+// String implements Getter interface.
+func (l LinkFilterType) String() string {
+	return string(l)
+}
+
 // FilterOperator is filter operator for the search
 type FilterOperator string
 

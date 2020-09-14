@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
+	"github.com/facebookincubator/symphony/pkg/exporter"
 
 	"github.com/pkg/errors"
 )
@@ -167,7 +168,7 @@ func woLocationFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput
 		}
 		var ps []predicate.WorkOrder
 		for _, lid := range filter.IDSet {
-			ps = append(ps, workorder.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
+			ps = append(ps, workorder.HasLocationWith(exporter.BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
 		}
 		return q.Where(workorder.Or(ps...)), nil
 	}

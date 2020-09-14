@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/pkg/errors"
 )
 
@@ -70,7 +71,7 @@ func projectLocationFilter(q *ent.ProjectQuery, filter *models.ProjectFilterInpu
 		}
 		var ps []predicate.Project
 		for _, lid := range filter.IDSet {
-			ps = append(ps, project.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
+			ps = append(ps, project.HasLocationWith(pkgexporter.BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
 		}
 		return q.Where(project.Or(ps...)), nil
 	}

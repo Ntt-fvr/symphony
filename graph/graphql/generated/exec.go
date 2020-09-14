@@ -951,8 +951,8 @@ type ComplexityRoot struct {
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
 		LatestPythonPackage      func(childComplexity int) int
-		LinkSearch               func(childComplexity int, filters []*models.LinkFilterInput, limit *int) int
-		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) int
+		LinkSearch               func(childComplexity int, filters []*models1.LinkFilterInput, limit *int) int
+		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
 		LocationSearch           func(childComplexity int, filters []*models1.LocationFilterInput, limit *int) int
 		LocationTypes            func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Locations                func(childComplexity int, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) int
@@ -1697,7 +1697,7 @@ type QueryResolver interface {
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
 	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
 	WorkOrderTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkOrderTypeConnection, error)
-	Links(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.LinkFilterInput) (*ent.LinkConnection, error)
+	Links(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) (*ent.LinkConnection, error)
 	Services(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ServiceFilterInput) (*ent.ServiceConnection, error)
 	Users(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) (*ent.UserConnection, error)
 	UsersGroups(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) (*ent.UsersGroupConnection, error)
@@ -1705,7 +1705,7 @@ type QueryResolver interface {
 	SearchForNode(ctx context.Context, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*models.SearchNodesConnection, error)
 	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
 	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
-	LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
+	LinkSearch(ctx context.Context, filters []*models1.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
 	PortSearch(ctx context.Context, filters []*models1.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
 	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
 	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
@@ -6139,7 +6139,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.LinkSearch(childComplexity, args["filters"].([]*models.LinkFilterInput), args["limit"].(*int)), true
+		return e.complexity.Query.LinkSearch(childComplexity, args["filters"].([]*models1.LinkFilterInput), args["limit"].(*int)), true
 
 	case "Query.links":
 		if e.complexity.Query.Links == nil {
@@ -6151,7 +6151,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Links(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.LinkFilterInput)), true
+		return e.complexity.Query.Links(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.LinkFilterInput)), true
 
 	case "Query.locationSearch":
 		if e.complexity.Query.LocationSearch == nil {
@@ -10864,7 +10864,10 @@ enum PortFilterType
 """
 what filters should we apply on links
 """
-enum LinkFilterType {
+enum LinkFilterType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.LinkFilterType"
+  ) {
   LINK_FUTURE_STATUS
   EQUIPMENT_TYPE
   LOCATION_INST
@@ -10941,7 +10944,10 @@ input PortFilterInput
   maxDepth: Int = 5
 }
 
-input LinkFilterInput {
+input LinkFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.LinkFilterInput"
+  ) {
   filterType: LinkFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -14966,10 +14972,10 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_linkSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []*models.LinkFilterInput
+	var arg0 []*models1.LinkFilterInput
 	if tmp, ok := rawArgs["filters"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filters"))
-		arg0, err = ec.unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInputᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -15083,10 +15089,10 @@ func (ec *executionContext) field_Query_links_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*models.LinkFilterInput
+	var arg4 []*models1.LinkFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterBy"))
-		arg4, err = ec.unmarshalOLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInputᚄ(ctx, tmp)
+		arg4, err = ec.unmarshalOLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -35456,7 +35462,7 @@ func (ec *executionContext) _Query_links(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Links(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.LinkFilterInput))
+		return ec.resolvers.Query().Links(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.LinkFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35775,7 +35781,7 @@ func (ec *executionContext) _Query_linkSearch(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().LinkSearch(rctx, args["filters"].([]*models.LinkFilterInput), args["limit"].(*int))
+		return ec.resolvers.Query().LinkSearch(rctx, args["filters"].([]*models1.LinkFilterInput), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -50312,8 +50318,8 @@ func (ec *executionContext) unmarshalInputInventoryPolicyInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLinkFilterInput(ctx context.Context, obj interface{}) (models.LinkFilterInput, error) {
-	var it models.LinkFilterInput
+func (ec *executionContext) unmarshalInputLinkFilterInput(ctx context.Context, obj interface{}) (models1.LinkFilterInput, error) {
+	var it models1.LinkFilterInput
 	var asMap = obj.(map[string]interface{})
 
 	if _, present := asMap["maxDepth"]; !present {
@@ -50326,7 +50332,7 @@ func (ec *executionContext) unmarshalInputLinkFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLinkFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65013,7 +65019,7 @@ func (ec *executionContext) marshalNLinkEdge2ᚖgithubᚗcomᚋfacebookincubator
 	return ec._LinkEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.LinkFilterInput, error) {
+func (ec *executionContext) unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.LinkFilterInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -65023,10 +65029,10 @@ func (ec *executionContext) unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 		}
 	}
 	var err error
-	res := make([]*models.LinkFilterInput, len(vSlice))
+	res := make([]*models1.LinkFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -65034,19 +65040,25 @@ func (ec *executionContext) unmarshalNLinkFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInput(ctx context.Context, v interface{}) (*models.LinkFilterInput, error) {
+func (ec *executionContext) unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInput(ctx context.Context, v interface{}) (*models1.LinkFilterInput, error) {
 	res, err := ec.unmarshalInputLinkFilterInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterType(ctx context.Context, v interface{}) (models.LinkFilterType, error) {
-	var res models.LinkFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLinkFilterType(ctx context.Context, v interface{}) (enum.LinkFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.LinkFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterType(ctx context.Context, sel ast.SelectionSet, v models.LinkFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNLinkFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐLinkFilterType(ctx context.Context, sel ast.SelectionSet, v enum.LinkFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNLinkSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.LinkSearchResult) graphql.Marshaler {
@@ -69326,7 +69338,7 @@ func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋfacebookincubatorᚋs
 	return ec._Link(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.LinkFilterInput, error) {
+func (ec *executionContext) unmarshalOLinkFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.LinkFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -69339,10 +69351,10 @@ func (ec *executionContext) unmarshalOLinkFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 		}
 	}
 	var err error
-	res := make([]*models.LinkFilterInput, len(vSlice))
+	res := make([]*models1.LinkFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐLinkFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNLinkFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐLinkFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}

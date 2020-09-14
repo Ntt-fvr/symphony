@@ -576,16 +576,6 @@ type LatestPythonPackageResult struct {
 	LastBreakingPythonPackage *PythonPackage `json:"lastBreakingPythonPackage"`
 }
 
-type LinkFilterInput struct {
-	FilterType    LinkFilterType            `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	StringValue   *string                   `json:"stringValue"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	MaxDepth      *int                      `json:"maxDepth"`
-}
-
 type LinkSide struct {
 	Equipment int `json:"equipment"`
 	Port      int `json:"port"`
@@ -1089,58 +1079,6 @@ func (e *ImageEntity) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ImageEntity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// what filters should we apply on links
-type LinkFilterType string
-
-const (
-	LinkFilterTypeLinkFutureStatus       LinkFilterType = "LINK_FUTURE_STATUS"
-	LinkFilterTypeEquipmentType          LinkFilterType = "EQUIPMENT_TYPE"
-	LinkFilterTypeLocationInst           LinkFilterType = "LOCATION_INST"
-	LinkFilterTypeLocationInstExternalID LinkFilterType = "LOCATION_INST_EXTERNAL_ID"
-	LinkFilterTypeProperty               LinkFilterType = "PROPERTY"
-	LinkFilterTypeServiceInst            LinkFilterType = "SERVICE_INST"
-	LinkFilterTypeEquipmentInst          LinkFilterType = "EQUIPMENT_INST"
-)
-
-var AllLinkFilterType = []LinkFilterType{
-	LinkFilterTypeLinkFutureStatus,
-	LinkFilterTypeEquipmentType,
-	LinkFilterTypeLocationInst,
-	LinkFilterTypeLocationInstExternalID,
-	LinkFilterTypeProperty,
-	LinkFilterTypeServiceInst,
-	LinkFilterTypeEquipmentInst,
-}
-
-func (e LinkFilterType) IsValid() bool {
-	switch e {
-	case LinkFilterTypeLinkFutureStatus, LinkFilterTypeEquipmentType, LinkFilterTypeLocationInst, LinkFilterTypeLocationInstExternalID, LinkFilterTypeProperty, LinkFilterTypeServiceInst, LinkFilterTypeEquipmentInst:
-		return true
-	}
-	return false
-}
-
-func (e LinkFilterType) String() string {
-	return string(e)
-}
-
-func (e *LinkFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = LinkFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid LinkFilterType", str)
-	}
-	return nil
-}
-
-func (e LinkFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

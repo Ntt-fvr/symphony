@@ -39,3 +39,13 @@ type PortFilterInput struct {
 	StringSet     []string            `json:"stringSet"`
 	MaxDepth      *int                `json:"maxDepth"`
 }
+
+type LinkFilterInput struct {
+	FilterType    enum.LinkFilterType `json:"filterType"`
+	Operator      enum.FilterOperator `json:"operator"`
+	StringValue   *string             `json:"stringValue"`
+	PropertyValue *PropertyTypeInput  `json:"propertyValue"`
+	IDSet         []int               `json:"idSet"`
+	StringSet     []string            `json:"stringSet"`
+	MaxDepth      *int                `json:"maxDepth"`
+}

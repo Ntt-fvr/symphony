@@ -11,13 +11,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
 	"github.com/AlekSi/pointer"
@@ -26,26 +23,22 @@ import (
 )
 
 type linksFilterInput struct {
-	Name          models.LinkFilterType       `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                        `json:"maxDepth"`
+	Name          enum.LinkFilterType      `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	MaxDepth      *int                     `json:"maxDepth"`
 }
 
-const (
-	bom = "\uFEFF"
-)
-
-type linksRower struct {
-	log log.Logger
+type LinksRower struct {
+	Log log.Logger
 }
 
-func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er LinksRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
-		logger          = er.log.For(ctx)
+		logger          = er.Log.For(ctx)
 		err             error
 		filterInput     []*models.LinkFilterInput
 		portADataHeader = [...]string{bom + "Link ID", "Port A Name", "Equipment A Name", "Equipment A Type"}
@@ -64,7 +57,7 @@ func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 	client := ent.FromContext(ctx)
 	var orderedLocTypes, propertyTypes []string
 
-	links, err := resolverutil.LinkSearch(ctx, client, filterInput, nil)
+	links, err := LinkSearch(ctx, client, filterInput, nil)
 	if err != nil {
 		logger.Error("cannot query links", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query links")
@@ -79,14 +72,14 @@ func (er linksRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 	}
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
 	cg.Go(func(ctx context.Context) (err error) {
-		if orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client); err != nil {
+		if orderedLocTypes, err = LocationTypeHierarchy(ctx, client); err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
 		}
 		return nil
 	})
 	cg.Go(func(ctx context.Context) (err error) {
-		if propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, linkIDs, client, enum.PropertyEntityLink); err != nil {
+		if propertyTypes, err = PropertyTypesSlice(ctx, linkIDs, client, enum.PropertyEntityLink); err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
 		}
@@ -156,7 +149,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 
 		g := ctxgroup.WithContext(ctx)
 		g.Go(func(ctx context.Context) (err error) {
-			locationData[i], err = pkgexporter.LocationHierarchyForEquipment(ctx, portEquipment, orderedLocTypes)
+			locationData[i], err = LocationHierarchyForEquipment(ctx, portEquipment, orderedLocTypes)
 			return err
 		})
 		g.Go(func(ctx context.Context) error {
@@ -164,9 +157,9 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 			if err != nil && !ent.IsNotFound(err) {
 				return err
 			}
-			positionData[i] = make([]string, pkgexporter.MaxEquipmentParents*2)
+			positionData[i] = make([]string, MaxEquipmentParents*2)
 			if pos != nil {
-				positionData[i] = pkgexporter.ParentHierarchyWithAllPositions(ctx, *portEquipment)
+				positionData[i] = ParentHierarchyWithAllPositions(ctx, *portEquipment)
 			}
 			return nil
 		})
@@ -174,7 +167,7 @@ func linkToSlice(ctx context.Context, link *ent.Link, propertyTypes, orderedLocT
 			return nil, err
 		}
 	}
-	properties, err := pkgexporter.PropertiesSlice(ctx, link, propertyTypes, enum.PropertyEntityLink)
+	properties, err := PropertiesSlice(ctx, link, propertyTypes, enum.PropertyEntityLink)
 	if err != nil {
 		return nil, errors.Wrapf(err, "cannot create property slice for link (id=%d)", link.ID)
 	}
@@ -217,12 +210,12 @@ func paramToLinkFilterInput(params string) ([]*models.LinkFilterInput, error) {
 		if f.MaxDepth != nil {
 			maxDepth = *f.MaxDepth
 		}
-		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.LinkFilterInput{
-			FilterType:    models.LinkFilterType(upperName),
+			FilterType:    enum.LinkFilterType(upperName),
 			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propVal,
@@ -233,4 +226,59 @@ func paramToLinkFilterInput(params string) ([]*models.LinkFilterInput, error) {
 		ret = append(ret, &inp)
 	}
 	return ret, nil
+}
+
+func LinkFilter(query *ent.LinkQuery, filters []*models.LinkFilterInput) (*ent.LinkQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "LINK_"):
+			if query, err = handleLinkFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handleLinkLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "EQUIPMENT_"):
+			if query, err = handleLinkEquipmentFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "SERVICE_INST"):
+			if query, err = handleLinkServiceFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handleLinkPropertyFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func LinkSearch(ctx context.Context, client *ent.Client, filters []*models.LinkFilterInput, limit *int) (*models.LinkSearchResult, error) {
+	var (
+		query = client.Link.Query()
+		err   error
+	)
+	query, err = LinkFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	count, err := query.Clone().Count(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Count query failed")
+	}
+	if limit != nil {
+		query.Limit(*limit)
+	}
+	links, err := query.All(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Querying links failed")
+	}
+	return &models.LinkSearchResult{
+		Links: links,
+		Count: count,
+	}, nil
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/stretchr/testify/require"
 )
 
@@ -82,7 +83,7 @@ func TestExportAndEditLinks(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, linksRower{log}}
+			e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 			importLinksPortsFile(t, r.client, res.Body, importer.ImportEntityLink, MethodEdit, skipLines, withVerify)
 			res.Body.Close()
@@ -121,7 +122,7 @@ func TestExportAndAddLinks(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, linksRower{log}}
+			e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 			locs := r.client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
