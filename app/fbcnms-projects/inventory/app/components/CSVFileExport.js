@@ -73,6 +73,8 @@ const PATH_PREFIX = '/graph/export';
 const PATH_EQUIPMENTS = '/equipment';
 const PATH_LOCATIONS = '/locations';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
+const EXPORT_TASK_MAX_POLLS = 5;
+
 type Props = {
   exportPath: string,
   title: string,
@@ -100,7 +102,7 @@ const CSVFileExport = (props: Props) => {
     const date = new Date();
     const localDate = date.toLocaleDateString();
     const localTime = new Date().toLocaleTimeString();
-    return `${localDate}-${localTime}.csv`;
+    return `export-${localDate}-${localTime}.csv`;
   };
 
   const downloadFile = (url: string) => {
@@ -110,14 +112,17 @@ const CSVFileExport = (props: Props) => {
     link.click();
   };
 
+  let polls = 0;
   const handleAsyncExport = (taskId: string, intervalId: IntervalID) => {
+    polls++;
     fetchQuery<CSVFileExportQuery>(RelayEnvironment, csvFileExportQuery, {
       taskId,
     }).then(response => {
       if (
         response == null ||
         response.task == null ||
-        response.task.status === 'FAILED'
+        response.task.status === 'FAILED' ||
+        polls === EXPORT_TASK_MAX_POLLS
       ) {
         clearInterval(intervalId);
         setIsAsyncTaskInProgress(false);
