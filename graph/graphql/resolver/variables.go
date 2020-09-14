@@ -18,7 +18,7 @@ import (
 type variableDefinitionResolver struct{}
 
 func (variableDefinitionResolver) NestedVariables(ctx context.Context, obj *flowschema.VariableDefinition, value string) ([]*flowschema.VariableDefinition, error) {
-	parsedValues, err := flowengine.ParseVariableDefinitionValue(ctx, obj, value)
+	parsedValues, err := flowengine.ParseVariableValue(ctx, obj, value)
 	if err != nil {
 		return nil, fmt.Errorf("value cannot be parsed: %w", err)
 	}

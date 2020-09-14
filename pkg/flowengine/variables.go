@@ -109,17 +109,16 @@ func parseMultiVariable(ctx context.Context, value string, variableType enum.Var
 	return
 }
 
-// ParseVariableDefinitionValue parses an a value by the definition
-func ParseVariableDefinitionValue(ctx context.Context, v *flowschema.VariableDefinition, value string) ([]interface{}, error) {
+// ParseVariableValue parses an a value by the definition
+func ParseVariableValue(ctx context.Context, v *flowschema.VariableDefinition, value string) ([]interface{}, error) {
 	if v.MultipleValues {
 		return parseMultiVariable(ctx, value, v.Type)
 	}
 	return parseSingleVariable(ctx, value, v.Type)
 }
 
-// ValidateVariableDefinitionValueNotEmpty validates if variable that the value of variable definition is not empty
-func ValidateVariableDefinitionValueNotEmpty(ctx context.Context, v *flowschema.VariableDefinition, value string) error {
-	vars, err := ParseVariableDefinitionValue(ctx, v, value)
+func validateVariableValueNotEmpty(ctx context.Context, v *flowschema.VariableDefinition, value string) error {
+	vars, err := ParseVariableValue(ctx, v, value)
 	if err != nil {
 		return err
 	}
@@ -151,7 +150,7 @@ func verifyVariableDefinition(ctx context.Context, v *flowschema.VariableDefinit
 		}
 	}
 	if v.DefaultValue != nil {
-		if _, err := ParseVariableDefinitionValue(ctx, v, *v.DefaultValue); err != nil {
+		if _, err := ParseVariableValue(ctx, v, *v.DefaultValue); err != nil {
 			return fmt.Errorf("failed to parse default variable value by type: %w", err)
 		}
 	}
@@ -178,11 +177,8 @@ func VerifyVariableDefinitions(ctx context.Context, variableDefinitions []*flows
 	return nil
 }
 
-func verifyVariableExpression(ctx context.Context, definition *flowschema.VariableDefinition, param *flowschema.VariableExpression) error {
-	if len(param.BlockVariables) != 0 {
-		return nil
-	}
-	values, err := ParseVariableDefinitionValue(ctx, definition, param.Expression)
+func verifyVariableValue(ctx context.Context, definition *flowschema.VariableDefinition, param string) error {
+	values, err := ParseVariableValue(ctx, definition, param)
 	if err != nil {
 		return fmt.Errorf("failed to validate variable type: %w", err)
 	}
@@ -233,11 +229,18 @@ func verifyVariableExpression(ctx context.Context, definition *flowschema.Variab
 		}
 		for _, value := range values {
 			if !checkInChoices(value) {
-				return fmt.Errorf("value not found in choices, key=%s", param.VariableDefinitionKey)
+				return fmt.Errorf("value not found in choices, key=%s", definition.Key)
 			}
 		}
 	}
 	return nil
+}
+
+func verifyVariableExpression(ctx context.Context, definition *flowschema.VariableDefinition, param *flowschema.VariableExpression) error {
+	if len(param.BlockVariables) != 0 {
+		return nil
+	}
+	return verifyVariableValue(ctx, definition, param.Expression)
 }
 
 // VerifyVariableExpressions verifies if variable expressions of block are according to their definition
@@ -257,6 +260,71 @@ func VerifyVariableExpressions(ctx context.Context, params []*flowschema.Variabl
 		}
 	}
 	return nil
+}
+
+func verifyMandatoryVariables(ctx context.Context, findValue func(*flowschema.VariableDefinition) (*string, bool), definitions []*flowschema.VariableDefinition) error {
+	for _, definition := range definitions {
+		if !definition.Mandatory {
+			continue
+		}
+		variable, ok := findValue(definition)
+		if !ok {
+			return fmt.Errorf("mandatory variable %s not found", definition.Key)
+		}
+		if variable != nil {
+			if err := validateVariableValueNotEmpty(ctx, definition, *variable); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// VerifyMandatoryVariableExpressions verifies if variable expressions of block exist if there are defined as mandatory
+func VerifyMandatoryVariableExpressions(ctx context.Context, params []*flowschema.VariableExpression, definitions []*flowschema.VariableDefinition) error {
+	return verifyMandatoryVariables(ctx, func(definition *flowschema.VariableDefinition) (*string, bool) {
+		for _, param := range params {
+			if definition.Key == param.VariableDefinitionKey {
+				if len(param.BlockVariables) == 0 {
+					return &param.Expression, true
+				}
+				return nil, true
+			}
+		}
+		return nil, false
+	}, definitions)
+}
+
+func verifyMandatoryVariableValues(ctx context.Context, params []*flowschema.VariableValue, definitions []*flowschema.VariableDefinition) error {
+	return verifyMandatoryVariables(ctx, func(definition *flowschema.VariableDefinition) (*string, bool) {
+		for _, param := range params {
+			if definition.Key == param.VariableDefinitionKey {
+				if definition.Key == param.VariableDefinitionKey {
+					return &param.Value, true
+				}
+			}
+		}
+		return nil, false
+	}, definitions)
+}
+
+// VerifyVariableValues verifies if variable value of block instance are according to their definition
+func VerifyVariableValues(ctx context.Context, params []*flowschema.VariableValue, definitions []*flowschema.VariableDefinition) error {
+	keys := make(map[string]struct{}, len(params))
+	for _, param := range params {
+		definition, ok := findDefinition(definitions, param.VariableDefinitionKey)
+		if !ok {
+			return fmt.Errorf("key is not valid: %s", param.VariableDefinitionKey)
+		}
+		if _, ok := keys[param.VariableDefinitionKey]; ok {
+			return fmt.Errorf("duplicate variable for same key: %s", param.VariableDefinitionKey)
+		}
+		keys[param.VariableDefinitionKey] = struct{}{}
+		if err := verifyVariableValue(ctx, definition, param.Value); err != nil {
+			return err
+		}
+	}
+	return verifyMandatoryVariableValues(ctx, params, definitions)
 }
 
 func findDefinition(definitions []*flowschema.VariableDefinition, key string) (*flowschema.VariableDefinition, bool) {
@@ -284,7 +352,7 @@ func FindAllNestedVariables(
 		}
 		for _, param := range params {
 			if param.VariableDefinitionKey == definition.Key && len(param.BlockVariables) == 0 {
-				values, err := ParseVariableDefinitionValue(ctx, definition, param.Expression)
+				values, err := ParseVariableValue(ctx, definition, param.Expression)
 				if err != nil {
 					return nil, err
 				}

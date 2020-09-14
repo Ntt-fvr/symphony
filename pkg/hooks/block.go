@@ -11,6 +11,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
@@ -64,6 +65,20 @@ func getBlockType(ctx context.Context, mutation *ent.BlockMutation) (*block.Type
 		return nil, fmt.Errorf("failed to fetch block: %w", err)
 	}
 	return &b.Type, nil
+}
+
+func getBlock(ctx context.Context, mutation *ent.BlockInstanceMutation) (*ent.Block, error) {
+	blockID, exists := mutation.BlockID()
+	if exists {
+		return mutation.Client().Block.Get(ctx, blockID)
+	}
+	blockInstanceID, exists := mutation.ID()
+	if !exists {
+		return nil, fmt.Errorf("block instance id is missing")
+	}
+	return mutation.Client().Block.Query().
+		Where(block.HasInstancesWith(blockinstance.ID(blockInstanceID))).
+		Only(ctx)
 }
 
 func getFlowEndParamDefinitions(ctx context.Context, mutation *ent.BlockMutation) ([]*flowschema.VariableDefinition, error) {
@@ -182,6 +197,40 @@ func (h Flower) getActionType(ctx context.Context, mutation *ent.BlockMutation) 
 		return nil, fmt.Errorf("action type is missing. id=%q", blockID)
 	}
 	return h.ActionFactory.GetType(*actionBlock.ActionType)
+}
+
+func (h Flower) getBlockInstanceInputs(ctx context.Context, mutation *ent.BlockInstanceMutation) ([]*flowschema.VariableValue, error) {
+	client := mutation.Client()
+	inputs, exists := mutation.Inputs()
+	if exists || mutation.Op().Is(ent.OpCreate) {
+		return inputs, nil
+	}
+	blockInstanceID, exists := mutation.ID()
+	if !exists {
+		return nil, fmt.Errorf("block instance id is missing")
+	}
+	blockInstance, err := client.BlockInstance.Get(ctx, blockInstanceID)
+	if err != nil {
+		return nil, err
+	}
+	return blockInstance.Inputs, nil
+}
+
+func (h Flower) getBlockInstanceOutputs(ctx context.Context, mutation *ent.BlockInstanceMutation) ([]*flowschema.VariableValue, error) {
+	client := mutation.Client()
+	outputs, exists := mutation.Outputs()
+	if exists {
+		return outputs, nil
+	}
+	blockInstanceID, exists := mutation.ID()
+	if !exists {
+		return nil, fmt.Errorf("block instance id is missing")
+	}
+	blockInstance, err := client.BlockInstance.Get(ctx, blockInstanceID)
+	if err != nil {
+		return nil, err
+	}
+	return blockInstance.Outputs, nil
 }
 
 // VerifyInputParamsHook verifies input params of block are correct.
@@ -306,4 +355,62 @@ func (h Flower) ActionBlockHook() ent.Hook {
 		})
 	}
 	return hook.On(hk, ent.OpCreate)
+}
+
+// VerifyBlockInstanceInputsHook verifies inputs of block instance are correct.
+func (h Flower) VerifyBlockInstanceInputsHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.BlockInstanceFunc(func(ctx context.Context, mutation *ent.BlockInstanceMutation) (ent.Value, error) {
+			variables, err := h.getBlockInstanceInputs(ctx, mutation)
+			if err != nil {
+				return nil, fmt.Errorf("failed to query instance inputs: %w", err)
+			}
+			b, err := getBlock(ctx, mutation)
+			if err != nil {
+				return nil, fmt.Errorf("failed to query block: %w", err)
+			}
+			definitions, err := flowengine.GetInputVariableDefinitions(ctx, b, h.TriggerFactory, h.ActionFactory)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get input variable definitions: %w", err)
+			}
+			if err := flowengine.VerifyVariableValues(ctx, variables, definitions); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
+}
+
+// VerifyBlockInstanceOutputsHook verifies outputs of block instance are correct.
+func (h Flower) VerifyBlockInstanceOutputsHook() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.BlockInstanceFunc(func(ctx context.Context, mutation *ent.BlockInstanceMutation) (ent.Value, error) {
+			if status, _ := mutation.Status(); status != blockinstance.StatusCompleted {
+				return next.Mutate(ctx, mutation)
+			}
+			variables, err := h.getBlockInstanceOutputs(ctx, mutation)
+			if err != nil {
+				return nil, fmt.Errorf("failed to query instance outputs: %w", err)
+			}
+			b, err := getBlock(ctx, mutation)
+			if err != nil {
+				return nil, fmt.Errorf("failed to query block: %w", err)
+			}
+			definitions, err := flowengine.GetOutputVariableDefinitions(ctx, b, h.TriggerFactory, h.ActionFactory)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get input variable definitions: %w", err)
+			}
+			if err := flowengine.VerifyVariableValues(ctx, variables, definitions); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.If(
+		hk,
+		hook.And(
+			hook.HasOp(ent.OpUpdateOne),
+			hook.HasFields(blockinstance.FieldStatus),
+		))
 }

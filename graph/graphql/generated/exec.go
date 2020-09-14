@@ -939,7 +939,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ActionType               func(childComplexity int, typeArg flowschema.ActionTypeID) int
+		ActionType               func(childComplexity int, id flowschema.ActionTypeID) int
 		ActionsRules             func(childComplexity int) int
 		ActionsTriggers          func(childComplexity int) int
 		CustomerSearch           func(childComplexity int, limit *int) int
@@ -1685,7 +1685,7 @@ type QueryResolver interface {
 	Me(ctx context.Context) (viewer.Viewer, error)
 	Node(ctx context.Context, id int) (ent.Noder, error)
 	User(ctx context.Context, authID string) (*ent.User, error)
-	ActionType(ctx context.Context, typeArg flowschema.ActionTypeID) (actions.ActionType, error)
+	ActionType(ctx context.Context, id flowschema.ActionTypeID) (actions.ActionType, error)
 	TriggerType(ctx context.Context, id flowschema.TriggerTypeID) (triggers.TriggerType, error)
 	LocationTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.LocationTypeConnection, error)
 	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) (*ent.LocationConnection, error)
@@ -6010,7 +6010,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ActionType(childComplexity, args["type"].(flowschema.ActionTypeID)), true
+		return e.complexity.Query.ActionType(childComplexity, args["id"].(flowschema.ActionTypeID)), true
 
 	case "Query.actionsRules":
 		if e.complexity.Query.ActionsRules == nil {
@@ -11889,7 +11889,7 @@ type Query {
     id: ID!
   ): Node
   user(authID: String!): User
-  actionType(type: ActionTypeId!): ActionType
+  actionType(id: ActionTypeId!): ActionType
   triggerType(id: TriggerTypeId!): TriggerType
   locationTypes(
     after: Cursor
@@ -14362,14 +14362,14 @@ func (ec *executionContext) field_Query_actionType_args(ctx context.Context, raw
 	var err error
 	args := map[string]interface{}{}
 	var arg0 flowschema.ActionTypeID
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("type"))
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("id"))
 		arg0, err = ec.unmarshalNActionTypeId2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐActionTypeID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["type"] = arg0
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -34973,7 +34973,7 @@ func (ec *executionContext) _Query_actionType(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ActionType(rctx, args["type"].(flowschema.ActionTypeID))
+		return ec.resolvers.Query().ActionType(rctx, args["id"].(flowschema.ActionTypeID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

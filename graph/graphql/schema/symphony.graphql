@@ -3406,7 +3406,7 @@ type Query {
     id: ID!
   ): Node
   user(authID: String!): User
-  actionType(type: ActionTypeId!): ActionType
+  actionType(id: ActionTypeId!): ActionType
   triggerType(id: TriggerTypeId!): TriggerType
   locationTypes(
     after: Cursor

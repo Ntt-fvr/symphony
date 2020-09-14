@@ -34,6 +34,10 @@ func (h *Flower) HookTo(client *ent.Client) {
 		h.TriggerBlockHook(),
 		h.ActionBlockHook(),
 	)
+	client.BlockInstance.Use(
+		h.VerifyBlockInstanceInputsHook(),
+		h.VerifyBlockInstanceOutputsHook(),
+	)
 }
 
 func (h Flower) mandatoryVariablesOnBlocks(ctx context.Context, client *ent.Client, flowID int) error {
@@ -49,26 +53,8 @@ func (h Flower) mandatoryVariablesOnBlocks(ctx context.Context, client *ent.Clie
 		if err != nil {
 			return err
 		}
-		for _, def := range varDefinitions {
-			if !def.Mandatory {
-				continue
-			}
-			variable, err := func() (*flowschema.VariableExpression, error) {
-				for _, param := range blk.InputParams {
-					if def.Key == param.VariableDefinitionKey {
-						return param, nil
-					}
-				}
-				return nil, fmt.Errorf("mandatory property %s not found", def.Key)
-			}()
-			if err != nil {
-				return err
-			}
-			if len(variable.BlockVariables) == 0 {
-				if err := flowengine.ValidateVariableDefinitionValueNotEmpty(ctx, def, variable.Expression); err != nil {
-					return err
-				}
-			}
+		if err := flowengine.VerifyMandatoryVariableExpressions(ctx, blk.InputParams, varDefinitions); err != nil {
+			return err
 		}
 	}
 	return nil

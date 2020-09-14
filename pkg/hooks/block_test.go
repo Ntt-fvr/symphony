@@ -13,6 +13,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -232,6 +233,22 @@ func TestEndParamsVerifications(t *testing.T) {
 	}
 }
 
+func createFlowWithStartBlock(ctx context.Context, t *testing.T, definitions []*flowschema.VariableDefinition) *ent.Flow {
+	client := ent.FromContext(ctx)
+	flow, err := client.Flow.Create().
+		SetName("Name").
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = client.Block.Create().
+		SetType(block.TypeStart).
+		SetName("Start").
+		SetFlow(flow).
+		SetStartParamDefinitions(definitions).
+		Save(ctx)
+	require.NoError(t, err)
+	return flow
+}
+
 func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 	c := viewertest.NewTestClient(t)
 	ctx := viewertest.NewContext(context.Background(), c)
@@ -241,23 +258,12 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 		ActionFactory:  actions.NewFactory(),
 	}
 	flowHooker.HookTo(client)
-
-	subFlow, err := client.Flow.Create().
-		SetName("Name").
-		Save(ctx)
-	require.NoError(t, err)
-	_, err = client.Block.Create().
-		SetType(block.TypeStart).
-		SetName("Start").
-		SetFlow(subFlow).
-		SetStartParamDefinitions([]*flowschema.VariableDefinition{
-			{
-				Key:  "start1",
-				Type: enum.VariableTypeString,
-			},
-		}).
-		Save(ctx)
-	require.NoError(t, err)
+	subFlow := createFlowWithStartBlock(ctx, t, []*flowschema.VariableDefinition{
+		{
+			Key:  "start1",
+			Type: enum.VariableTypeString,
+		},
+	})
 
 	flowDraft, err := client.FlowDraft.Create().
 		SetName("Name").
@@ -315,4 +321,114 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInstanceParamsVerifications(t *testing.T) {
+	c := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(context.Background(), c)
+	client := ent.FromContext(ctx)
+	flowHooker := hooks.Flower{
+		TriggerFactory: triggers.NewFactory(),
+		ActionFactory:  actions.NewFactory(),
+	}
+	flowHooker.HookTo(client)
+	flow := createFlowWithStartBlock(ctx, t, []*flowschema.VariableDefinition{
+		{
+			Key:       "start1",
+			Type:      enum.VariableTypeString,
+			Mandatory: true,
+		},
+		{
+			Key:            "start2",
+			Type:           enum.VariableTypeInt,
+			MultipleValues: true,
+		},
+		{
+			Key:     "start3",
+			Type:    enum.VariableTypeString,
+			Choices: []string{"\"A\"", "\"B\"", "\"C\""},
+		},
+	})
+	flowInstance, err := client.FlowInstance.Create().
+		SetFlow(flow).
+		Save(ctx)
+	require.NoError(t, err)
+	blockStart, err := flowInstance.QueryTemplate().
+		QueryBlocks().
+		Where(block.TypeEQ(block.TypeStart)).
+		Only(ctx)
+	require.NoError(t, err)
+	_, err = client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		Save(ctx)
+	require.Error(t, err)
+	mandatoryProp := &flowschema.VariableValue{
+		VariableDefinitionKey: "start1",
+		Value:                 "\"value\"",
+	}
+	_, err = client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		SetInputs([]*flowschema.VariableValue{mandatoryProp}).
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		SetInputs([]*flowschema.VariableValue{
+			mandatoryProp,
+			{
+				VariableDefinitionKey: "Start2",
+				Value:                 "[1, 2, 3]",
+			},
+		}).
+		Save(ctx)
+	require.Error(t, err)
+	_, err = client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		SetInputs([]*flowschema.VariableValue{
+			mandatoryProp,
+			{
+				VariableDefinitionKey: "start2",
+				Value:                 "[1, 2, 3]",
+			},
+		}).
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		SetInputs([]*flowschema.VariableValue{
+			mandatoryProp,
+			{
+				VariableDefinitionKey: "start3",
+				Value:                 "\"D\"",
+			},
+		}).
+		Save(ctx)
+	require.Error(t, err)
+	bInstance, err := client.BlockInstance.Create().
+		SetBlock(blockStart).
+		SetFlowInstance(flowInstance).
+		SetInputs([]*flowschema.VariableValue{
+			mandatoryProp,
+			{
+				VariableDefinitionKey: "start3",
+				Value:                 "\"C\"",
+			},
+		}).
+		Save(ctx)
+	require.NoError(t, err)
+
+	err = bInstance.Update().
+		SetStatus(blockinstance.StatusCompleted).
+		Exec(ctx)
+	require.Error(t, err)
+	err = bInstance.Update().
+		SetStatus(blockinstance.StatusCompleted).
+		SetOutputs([]*flowschema.VariableValue{mandatoryProp}).
+		Exec(ctx)
+	require.NoError(t, err)
 }
