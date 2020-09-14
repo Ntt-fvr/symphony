@@ -24,7 +24,7 @@ import withInventoryErrorBoundary from '../../common/withInventoryErrorBoundary'
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'relay-runtime';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withRouter} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 

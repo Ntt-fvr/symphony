@@ -33,7 +33,7 @@ import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import update from 'immutability-helper';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';

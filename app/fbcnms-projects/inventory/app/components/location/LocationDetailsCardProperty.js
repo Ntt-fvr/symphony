@@ -11,7 +11,7 @@
 import * as React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

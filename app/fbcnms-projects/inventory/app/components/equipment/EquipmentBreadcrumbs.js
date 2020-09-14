@@ -9,7 +9,7 @@
  */
 
 import type {Equipment} from '../../common/Equipment';
-import type {TextVariant} from '@fbcnms/ui/theme/symphony';
+import type {TextVariant} from '@symphony/design-system/theme/symphony';
 import type {WithStyles} from '@material-ui/core';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';

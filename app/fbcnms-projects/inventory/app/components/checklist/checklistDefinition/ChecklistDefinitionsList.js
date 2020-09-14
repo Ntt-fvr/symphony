@@ -14,7 +14,7 @@ import CheckListItemDefinition from './CheckListItemDefinition';
 import ChecklistItemsDialogMutateDispatchContext from '../checkListCategory/ChecklistItemsDialogMutateDispatchContext';
 import React, {useContext} from 'react';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {DragDropContext, Droppable} from 'react-beautiful-dnd';
 import {Draggable} from 'react-beautiful-dnd';
 import {ReorderIcon} from '@symphony/design-system/icons';

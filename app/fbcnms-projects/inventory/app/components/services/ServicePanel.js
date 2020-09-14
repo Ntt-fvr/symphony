@@ -54,7 +54,7 @@ import ServiceEndpointsView from './ServiceEndpointsView';
 import ServiceLinksAndPortsView from './ServiceLinksAndPortsView';
 import ServiceLinksSubservicesMenu from './ServiceLinksSubservicesMenu';
 import Text from '@symphony/design-system/components/Text';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {fbt} from 'fbt';

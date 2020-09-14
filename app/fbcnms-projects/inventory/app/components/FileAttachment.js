@@ -23,10 +23,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import nullthrows from 'nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {DocumentAPIUrls} from '../common/DocumentAPI';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {formatFileSize} from '@fbcnms/ui/utils/displayUtils';
+import {formatFileSize} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = () => ({

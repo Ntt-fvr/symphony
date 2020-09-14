@@ -38,7 +38,7 @@ import {fetchQuery, graphql} from 'react-relay';
 import {generateTempId, isTempId} from '../../common/EntUtils';
 import {removeItem, updateItem} from '@fbcnms/util/arrays';
 import {reorder} from '../draggable/DraggableUtils';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = _theme => ({

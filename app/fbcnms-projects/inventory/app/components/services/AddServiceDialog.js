@@ -14,7 +14,7 @@ import Dialog from '@material-ui/core/Dialog';
 import React, {Suspense, useState} from 'react';
 import ServiceTypesList from './ServiceTypesList';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(_ => ({

@@ -16,7 +16,7 @@ import * as d3 from 'd3';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import classNames from 'classnames';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {withStyles} from '@material-ui/core/styles';

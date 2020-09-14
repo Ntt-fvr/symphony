@@ -17,7 +17,7 @@ import MemberListItem from './MemberListItem';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {GROUP_STATUSES} from './UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useEffect, useState} from 'react';

@@ -20,7 +20,7 @@ import Text from '@symphony/design-system/components/Text';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {GroupIcon} from '@symphony/design-system/icons';
 import {GroupSearchContextProvider} from '../utils/search/GroupSearchContext';
 import {makeStyles} from '@material-ui/styles';

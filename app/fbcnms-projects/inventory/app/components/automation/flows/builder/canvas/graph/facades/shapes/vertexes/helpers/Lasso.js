@@ -12,7 +12,7 @@
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 
 export const TYPE = 'helpers.Lasso';
 

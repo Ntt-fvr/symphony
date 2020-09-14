@@ -21,7 +21,7 @@ import Text from '@symphony/design-system/components/Text';
 import Tooltip from '@material-ui/core/Tooltip';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {DeleteIcon, EditIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 

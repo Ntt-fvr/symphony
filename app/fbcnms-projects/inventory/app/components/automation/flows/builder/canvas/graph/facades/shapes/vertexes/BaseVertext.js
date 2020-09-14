@@ -20,7 +20,7 @@ import type {Graph} from '../../Graph';
 import type {IBaseShapeAttributes, IShape} from '../../shapes/BaseShape';
 import type {Paper} from '../../Paper';
 
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 
 export type VertexDescriptor = $ReadOnly<{|
   id: string,

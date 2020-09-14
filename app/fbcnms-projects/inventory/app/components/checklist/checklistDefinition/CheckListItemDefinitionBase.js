@@ -22,7 +22,7 @@ import Select from '@symphony/design-system/components/Select/Select';
 import Text from '@symphony/design-system/components/Text';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../../common/FormContext';

@@ -16,7 +16,7 @@ import OptionsPopoverButton from '../OptionsPopoverButton';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {makeStyles} from '@material-ui/styles';
 

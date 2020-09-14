@@ -20,7 +20,7 @@ import React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = _theme => ({

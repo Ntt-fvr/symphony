@@ -15,7 +15,7 @@ import React, {useContext} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {CheckListItemConfigs} from '../checkListCategory/CheckListItemConsts';
 import {makeStyles} from '@material-ui/styles';
 

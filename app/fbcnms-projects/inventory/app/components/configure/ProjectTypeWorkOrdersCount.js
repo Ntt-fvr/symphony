@@ -14,7 +14,7 @@ import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import WorkIcon from '@material-ui/icons/Work';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = theme => ({

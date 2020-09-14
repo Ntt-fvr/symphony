@@ -10,7 +10,7 @@
 
 import * as React from 'react';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

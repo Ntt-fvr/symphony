@@ -18,7 +18,7 @@ import React from 'react';
 import RouterIcon from '@material-ui/icons/Router';
 
 import {graphql} from 'react-relay';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {useState} from 'react';
 
 type Props = {

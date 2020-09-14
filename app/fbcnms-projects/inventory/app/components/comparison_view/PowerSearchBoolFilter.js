@@ -14,7 +14,7 @@ import * as React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import PowerSearchFilter from '../comparison_view/PowerSearchFilter';
 import Select from '@material-ui/core/Select';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(_theme => ({

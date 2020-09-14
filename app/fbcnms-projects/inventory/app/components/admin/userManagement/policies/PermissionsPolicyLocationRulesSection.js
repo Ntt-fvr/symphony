@@ -17,7 +17,7 @@ import type {PermissionsPolicyRulesSectionDisplayProps} from './PermissionsPolic
 import * as React from 'react';
 import PermissionsPolicyLocationRulesSpecification from './PermissionsPolicyLocationRulesSpecification';
 import PermissionsPolicyRulesSection from './PermissionsPolicyRulesSection';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo} from 'react';
 

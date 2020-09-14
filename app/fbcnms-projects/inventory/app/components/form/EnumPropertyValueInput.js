@@ -13,7 +13,7 @@ import type {PropertyType} from '../../common/PropertyType';
 import React, {useState} from 'react';
 import Tokenizer from '@fbcnms/ui/components/Tokenizer';
 import update from 'immutability-helper';
-import {isJSON} from '@fbcnms/ui/utils/displayUtils';
+import {isJSON} from '@symphony/design-system/utils/displayUtils';
 
 type Props<T: Property | PropertyType> = {|
   property: T,

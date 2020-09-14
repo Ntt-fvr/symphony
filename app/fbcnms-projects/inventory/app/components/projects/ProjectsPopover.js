@@ -17,7 +17,7 @@ import Text from '@symphony/design-system/components/Text';
 import WorkOrderPopover from '../work_orders/WorkOrderPopover';
 import emptyFunction from '@fbcnms/util/emptyFunction';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'relay-runtime';

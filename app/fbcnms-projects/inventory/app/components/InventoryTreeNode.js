@@ -20,7 +20,7 @@ import {Suspense, useEffect, useState} from 'react';
 import {extractEntityIdFromUrl} from '../common/RouterUtils';
 import {graphql, useLazyLoadQuery} from 'react-relay/hooks';
 import {makeStyles} from '@material-ui/styles';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {useHistory} from 'react-router';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';

@@ -13,7 +13,7 @@ import type {User, UserBase} from '../utils/UserManagementUtils';
 import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {USER_ROLES, userFullName} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
 

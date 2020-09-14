@@ -20,7 +20,7 @@ import React from 'react';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 

@@ -15,7 +15,7 @@ import Button from '@symphony/design-system/components/Button';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import React from 'react';
 import ServiceDeleteButton from './ServiceDeleteButton';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {useFormContext} from '../../common/FormContext';
 

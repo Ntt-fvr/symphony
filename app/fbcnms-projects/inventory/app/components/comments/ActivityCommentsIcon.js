@@ -12,7 +12,7 @@ import type {ActivityField} from './__generated__/ActivityPost_activity.graphql'
 import type {SvgIconStyleProps} from '@symphony/design-system/icons/SvgIcon';
 
 import * as React from 'react';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {
   EditIcon,
   MessageIcon,

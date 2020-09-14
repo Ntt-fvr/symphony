@@ -22,7 +22,7 @@ import ServiceDetailsPanel from './ServiceDetailsPanel';
 import ServiceEquipmentTopology from './ServiceEquipmentTopology';
 import ServiceHeader from './ServiceHeader';
 import ServicePanel from './ServicePanel';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {createFragmentContainer, graphql} from 'react-relay';

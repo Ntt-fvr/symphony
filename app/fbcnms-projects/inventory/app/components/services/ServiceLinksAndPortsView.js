@@ -14,7 +14,7 @@ import type {ServiceLinksAndPortsView_ports} from './__generated__/ServiceLinksA
 import * as React from 'react';
 import ServiceLinkDetails from './ServiceLinkDetails';
 import ServicePortDetails from './ServicePortDetails';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

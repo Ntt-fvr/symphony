@@ -21,7 +21,7 @@ import PermissionsPoliciesTable from '../policies/PermissionsPoliciesTable';
 import Strings from '@fbcnms/strings/Strings';
 import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {ROW_SEPARATOR_TYPES} from '@symphony/design-system/components/Table/TableContent';
 import {TABLE_VARIANT_TYPES} from '@symphony/design-system/components/Table/Table';
 import {makeStyles} from '@material-ui/styles';

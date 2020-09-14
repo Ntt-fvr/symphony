@@ -22,7 +22,7 @@ import Grid from '@material-ui/core/Grid';
 import Text from '@symphony/design-system/components/Text';
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {DocumentAPIUrls} from '../../../../common/DocumentAPI';
 import {FormContextProvider} from '../../../../common/FormContext';
 import {GROUP_STATUSES, USER_ROLES} from '../utils/UserManagementUtils';

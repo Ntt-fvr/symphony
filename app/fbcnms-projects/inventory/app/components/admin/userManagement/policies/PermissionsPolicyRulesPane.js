@@ -19,7 +19,7 @@ import PermissionsPolicyWorkforceDataRulesTab from './PermissionsPolicyWorkforce
 import PermissionsPolicyWorkforceTemplatesRulesTab from './PermissionsPolicyWorkforceTemplatesRulesTab';
 import TabsBar from '@symphony/design-system/components/Tabs/TabsBar';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {POLICY_TYPES} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo, useState} from 'react';

@@ -8,7 +8,7 @@
  * @format
  */
 
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {
   blockedStatus,
   closedStatus,

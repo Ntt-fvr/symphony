@@ -15,7 +15,7 @@ import InventorySuspense from '../../common/InventorySuspense';
 import UserAccountPane from '../admin/userManagement/users/UserAccountPane';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {graphql, useLazyLoadQuery} from 'react-relay/hooks';
 import {makeStyles} from '@material-ui/styles';
 import {useMainContext} from '../MainContext';

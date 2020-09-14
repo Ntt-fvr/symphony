@@ -18,7 +18,7 @@ import Text from '@symphony/design-system/components/Text';
 import WorkOrderTemplatesTokenizer from '../../../../common/WorkOrderTemplatesTokenizer';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {PERMISSION_RULE_VALUES} from '../data/PermissionsPolicies';
 import {makeStyles} from '@material-ui/styles';
 import {permissionRuleValue2Bool} from '../data/PermissionsPolicies';

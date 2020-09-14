@@ -24,7 +24,7 @@ import {FormContextProvider} from '../../common/FormContext';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(theme => ({

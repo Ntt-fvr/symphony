@@ -50,7 +50,7 @@ import UserTypeahead from '../typeahead/UserTypeahead';
 import WorkOrderDetailsPane from './WorkOrderDetailsPane';
 import WorkOrderHeader from './WorkOrderHeader';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {NAVIGATION_OPTIONS} from '../location/LocationBreadcrumbsTitle';
 import {createFragmentContainer, graphql} from 'react-relay';

@@ -17,7 +17,7 @@ import PowerSearchFilterSubjectDropDown from '../power_search/PowerSearchFilterS
 import React, {useState} from 'react';
 import ViewHeader from '@symphony/design-system/components/View/ViewHeader';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {EntityTypeMap} from './ComparisonViewTypes';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../common/LoggingUtils';

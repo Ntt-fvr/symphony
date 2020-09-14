@@ -21,7 +21,7 @@ import Table from '@symphony/design-system/components/Table/Table';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {POLICY_TYPES} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';

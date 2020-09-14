@@ -40,7 +40,7 @@ import {
   getPropertyValue,
 } from '../../common/Property';
 import {lowerCase} from 'lodash';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = (_theme: Theme) => ({

@@ -17,7 +17,7 @@ import RadioGroup from '@symphony/design-system/components/RadioGroup/RadioGroup
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {USER_ROLES, USER_STATUSES} from '../utils/UserManagementUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useMemo} from 'react';

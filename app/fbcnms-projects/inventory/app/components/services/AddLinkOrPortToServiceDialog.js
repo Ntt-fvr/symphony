@@ -23,7 +23,7 @@ import React, {useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import Text from '@fbcnms/ui/components/design-system/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

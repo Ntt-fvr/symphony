@@ -33,7 +33,7 @@ import update from 'immutability-helper';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'react-relay';
 import {reorder} from '../draggable/DraggableUtils';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = _theme => ({

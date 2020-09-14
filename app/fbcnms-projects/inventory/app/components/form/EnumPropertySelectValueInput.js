@@ -15,7 +15,7 @@ import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import classNames from 'classnames';
 import update from 'immutability-helper';
-import {isJSON} from '@fbcnms/ui/utils/displayUtils';
+import {isJSON} from '@symphony/design-system/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({

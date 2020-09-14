@@ -12,7 +12,7 @@ import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Text from '@symphony/design-system/components/Text';
 
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({

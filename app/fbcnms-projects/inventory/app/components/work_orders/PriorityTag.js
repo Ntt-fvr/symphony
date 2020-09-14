@@ -11,7 +11,7 @@
 import type {PriorityType} from '../../common/FilterTypes';
 
 import React from 'react';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 import {priorityValues} from '../../common/FilterTypes';
 

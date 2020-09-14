@@ -25,7 +25,7 @@ import Text from '@symphony/design-system/components/Text';
 import WorkIcon from '@material-ui/icons/Work';
 
 import {makeStyles} from '@material-ui/styles';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 
 const useStyles = makeStyles(theme => ({
   root: {

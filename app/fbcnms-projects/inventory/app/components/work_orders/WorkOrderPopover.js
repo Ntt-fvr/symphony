@@ -25,7 +25,7 @@ import Text from '@symphony/design-system/components/Text';
 import UserTypeahead from '../typeahead/UserTypeahead';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {Link} from 'react-router-dom';
 import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';

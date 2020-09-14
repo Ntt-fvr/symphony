@@ -20,7 +20,7 @@ import fbt from 'fbt';
 import withInventoryErrorBoundary from '../common/withInventoryErrorBoundary';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
-import {sortLexicographically} from '@fbcnms/ui/utils/displayUtils';
+import {sortLexicographically} from '@symphony/design-system/utils/displayUtils';
 
 const useStyles = makeStyles(() => ({
   root: {

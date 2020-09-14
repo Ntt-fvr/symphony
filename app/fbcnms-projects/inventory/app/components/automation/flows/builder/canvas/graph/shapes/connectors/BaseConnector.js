@@ -17,7 +17,7 @@ import type {IShape} from '../../facades/shapes/BaseShape';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 
 export const STROKE = {
   COLOR: {

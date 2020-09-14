@@ -20,7 +20,7 @@ import Text from '@symphony/design-system/components/Text';
 import UserDetailsCard from './UserDetailsCard';
 import UserViewer from './UserViewer';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import withSuspense from '../../../../common/withSuspense';
 import {
   USER_ROLES,

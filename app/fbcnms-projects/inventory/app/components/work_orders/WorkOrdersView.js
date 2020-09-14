@@ -22,7 +22,7 @@ import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {TABLE_SORT_ORDER} from '@symphony/design-system/components/Table/TableContext';
-import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
+import {formatMultiSelectValue} from '@symphony/design-system/utils/displayUtils';
 import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory} from 'react-router';

@@ -26,7 +26,7 @@ import Strings from '@fbcnms/strings/Strings';
 import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {OperatorMap} from '../comparison_view/ComparisonViewTypes';
 import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {generateTempId} from '../../common/EntUtils';

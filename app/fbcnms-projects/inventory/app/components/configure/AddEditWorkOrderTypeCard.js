@@ -30,7 +30,7 @@ import PropertyTypesTableDispatcher from '../form/context/property_types/Propert
 import React, {useCallback, useReducer, useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {FormContextProvider} from '../../common/FormContext';
 import {addWorkOrderType} from '../../mutations/AddWorkOrderTypeMutation';

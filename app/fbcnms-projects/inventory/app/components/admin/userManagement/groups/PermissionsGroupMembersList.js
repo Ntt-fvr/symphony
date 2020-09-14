@@ -15,7 +15,7 @@ import Button from '@symphony/design-system/components/Button';
 import GroupMembersList from '../utils/GroupMembersList';
 import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {TOGGLE_BUTTON_DISPLAY} from '../utils/ListItem';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';

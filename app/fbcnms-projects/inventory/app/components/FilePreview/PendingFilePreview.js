@@ -11,7 +11,7 @@
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {
   WIDE_DIMENSION_HEIGHT_PX,
   WIDE_DIMENSION_WIDTH_PX,

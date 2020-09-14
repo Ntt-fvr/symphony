@@ -11,7 +11,7 @@
 import type {WithStyles} from '@material-ui/core';
 
 import React from 'react';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {withStyles} from '@material-ui/core/styles';
 
 const TEXT_FONT_SIZE = 12;

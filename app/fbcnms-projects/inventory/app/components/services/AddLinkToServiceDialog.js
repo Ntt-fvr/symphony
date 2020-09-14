@@ -23,7 +23,7 @@ import PowerSearchLinkFirstEquipmentResultsTable from './PowerSearchLinkFirstEqu
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
 import {graphql} from 'react-relay';
 import {withRouter} from 'react-router-dom';

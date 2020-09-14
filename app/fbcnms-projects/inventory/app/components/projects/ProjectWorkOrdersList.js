@@ -21,7 +21,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
+import {formatMultiSelectValue} from '@symphony/design-system/utils/displayUtils';
 import {makeStyles} from '@material-ui/styles';
 import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 

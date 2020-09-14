@@ -27,7 +27,7 @@ import UserAccountDetailsPane, {
 } from './UserAccountDetailsPane';
 import UserRoleAndStatusPane from './UserRoleAndStatusPane';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {USER_ROLES, USER_STATUSES} from '../utils/UserManagementUtils';
 import {addUser} from '../data/Users';
 import {generateTempId} from '../../../../common/EntUtils';

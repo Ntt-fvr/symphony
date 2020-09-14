@@ -24,7 +24,7 @@ import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useRef, useState} from 'react';
 import SideBar from '@fbcnms/ui/components/layout/SideBar';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import update from 'immutability-helper';
 import useStateWithCallback from 'use-state-with-callback';
 import useVerticalScrollingEffect from '@symphony/design-system/hooks/useVerticalScrollingEffect';

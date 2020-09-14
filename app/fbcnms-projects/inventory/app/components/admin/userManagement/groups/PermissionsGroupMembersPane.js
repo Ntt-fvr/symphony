@@ -18,7 +18,7 @@ import UserSearchBox from '../utils/search/UserSearchBox';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import classNames from 'classnames';
 import fbt from 'fbt';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {ProfileIcon} from '@symphony/design-system/icons';
 import {
   UserSearchContextProvider,

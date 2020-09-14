@@ -17,7 +17,7 @@ import DateTimeFormat from '../../common/DateTimeFormat.js';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import withAlert from '@fbcnms/ui/components/Alert/withAlert';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';

@@ -14,7 +14,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Dialog from '@material-ui/core/Dialog';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import OptionsPopoverButton from '../OptionsPopoverButton';
-import symphony from '@fbcnms/ui/theme/symphony';
+import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
 type Props = {
