@@ -13,9 +13,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -72,7 +72,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 	"github.com/hashicorp/go-multierror"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -5877,18 +5876,12 @@ func (c *Client) Node(ctx context.Context, id int) (*Node, error) {
 	return n.Node(ctx)
 }
 
-func errNodeNotFound(id int) *gqlerror.Error {
-	err := gqlerror.Errorf("Could not resolve to a node with the global id of '%v'", id)
-	errcode.Set(err, "NOT_FOUND")
-	return err
-}
-
 var errNodeInvalidID = &NotFoundError{"node"}
 
 func (c *Client) Noder(ctx context.Context, id int) (_ Noder, err error) {
 	defer func() {
 		if IsNotFound(err) {
-			err = multierror.Append(err, errNodeNotFound(id))
+			err = multierror.Append(err, entgql.ErrNodeNotFound(id))
 		}
 	}()
 	tables, err := c.tables.Load(ctx, c.driver)

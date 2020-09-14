@@ -72,8 +72,11 @@ func spanNameFromOperation(oc *graphql.OperationContext) string {
 	if oc.OperationName != "" {
 		return oc.OperationName
 	}
-	if oc.Operation != nil {
-		return string(oc.Operation.Operation)
+	if op := oc.Operation; op != nil {
+		if op.Name != "" {
+			return op.Name
+		}
+		return string(op.Operation)
 	}
 	return "operation"
 }

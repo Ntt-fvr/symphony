@@ -120,15 +120,12 @@ func (s *tracerTestSuite) TestWithoutSampling() {
 }
 
 func (s *tracerTestSuite) TestNamedOperation() {
-	const op = "test"
-	err := s.post("query { name }",
-		client.Operation(op),
-	)
-	s.Require().Error(err)
+	err := s.post("query foobar { name }")
+	s.Require().NoError(err)
 
-	span := s.GetSpan(op)
+	span := s.GetSpan("foobar")
 	s.Require().NotNil(span)
-	s.Require().EqualValues(trace.StatusCodeUnknown, span.Code)
+	s.Require().EqualValues(trace.StatusCodeOK, span.Code)
 }
 
 func (s *tracerTestSuite) TestSubscription() {
