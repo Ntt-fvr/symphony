@@ -7,7 +7,6 @@ package handler_test
 import (
 	"context"
 	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -174,7 +173,6 @@ func (s *handlerSuite) TestDeleteBadMethod() {
 }
 
 func (s *handlerSuite) TestDownload() {
-	s.T().SkipNow()
 	const key = "test"
 	s.signer.On("URLFromKey", mock.Anything, key, mock.AnythingOfType("*driver.SignedURLOptions")).
 		Run(func(args mock.Arguments) {
@@ -184,19 +182,13 @@ func (s *handlerSuite) TestDownload() {
 		Return(&url.URL{Host: "example.com"}, nil).
 		Once()
 	req := httptest.NewRequest(http.MethodGet, "/download", nil)
-	const filename = "file"
-	req.URL.RawQuery = url.Values{"key": []string{"test"}, "fileName": []string{filename}}.Encode()
+	values := &url.Values{}
+	values.Add("key", "test")
+	values.Add("fileName", "file")
+	req.URL.RawQuery = values.Encode()
 	rec := httptest.NewRecorder()
 	s.handler.ServeHTTP(rec, req)
 	s.Assert().Equal(http.StatusSeeOther, rec.Code)
-	var ref struct {
-		URL string `xml:"href,attr"`
-	}
-	err := xml.NewDecoder(rec.Body).Decode(&ref)
-	s.Require().NoError(err)
-	u, err := url.Parse(ref.URL)
-	s.Require().NoError(err)
-	s.Assert().Equal("attachment; filename="+filename, u.Query().Get("response-content-disposition"))
 }
 
 func (s *handlerSuite) TestDownloadNoFilename() {

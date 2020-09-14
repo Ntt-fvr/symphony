@@ -34,10 +34,14 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	handlerConfig, cleanup2, err := newHandlerConfig(ctx, logger, flags)
+	bucket, cleanup2, err := providerBucket(ctx, flags)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
+	}
+	handlerConfig := handler.Config{
+		Logger: logger,
+		Bucket: bucket,
 	}
 	handlerHandler := handler.New(handlerConfig)
 	xserverZapLogger := xserver.NewRequestLogger(logger)
@@ -93,14 +97,10 @@ var (
 
 // wire.go:
 
-func newHandlerConfig(ctx context.Context, logger log.Logger, flags *cliFlags) (handler.Config, func(), error) {
+func providerBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
-		return handler.Config{}, nil, fmt.Errorf("cannot open blob bucket: %w", err)
+		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
 	}
-	return handler.Config{
-		Logger:     logger,
-		Bucket:     bucket,
-		BucketName: flags.BucketURL.Host,
-	}, func() { _ = bucket.Close() }, nil
+	return bucket, func() { _ = bucket.Close() }, nil
 }

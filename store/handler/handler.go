@@ -27,24 +27,19 @@ var Provider = wire.NewSet(New, wire.Bind(new(http.Handler), new(*Handler)))
 type Handler struct {
 	http.Handler
 	logger log.Logger
-	bucket struct {
-		*blob.Bucket
-		name string
-	}
+	bucket *blob.Bucket
 }
 
 // Config is the set of handler parameters.
 type Config struct {
-	Logger     log.Logger
-	Bucket     *blob.Bucket
-	BucketName string
+	Logger log.Logger
+	Bucket *blob.Bucket
 }
 
 // New creates a new sign handler from config.
 func New(cfg Config) *Handler {
 	h := &Handler{logger: cfg.Logger}
-	h.bucket.Bucket = cfg.Bucket
-	h.bucket.name = cfg.BucketName
+	h.bucket = cfg.Bucket
 
 	router := mux.NewRouter()
 	router.Path("/get").
@@ -173,21 +168,17 @@ func (h *Handler) download(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	var client *s3.S3
-	if !h.bucket.As(&client) {
-		logger.Error("signing download url requires s3 bucket")
-		http.Error(w, "", http.StatusServiceUnavailable)
-		return
-	}
-	in := &s3.GetObjectInput{
-		Bucket:                     aws.String(h.bucket.name),
-		Key:                        aws.String(key),
-		ResponseContentDisposition: aws.String("attachment; filename=" + filename),
-	}
-	req, _ := client.GetObjectRequest(in)
-	u, err := req.Presign(blob.DefaultSignedURLExpiry)
+	u, err := h.bucket.SignedURL(ctx, key, &blob.SignedURLOptions{
+		BeforeSign: func(asFunc func(interface{}) bool) error {
+			var in *s3.GetObjectInput
+			if asFunc(&in) {
+				in.ResponseContentDisposition = aws.String("attachment; filename=" + filename)
+			}
+			return nil
+		},
+	})
 	if err != nil {
-		logger.Error("cannot sign get object url", zap.Error(err))
+		logger.Error("cannot sign download url", zap.Error(err))
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}

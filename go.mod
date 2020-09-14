@@ -46,7 +46,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
 	go.opencensus.io v0.22.4
 	go.uber.org/zap v1.16.0
-	gocloud.dev v0.20.0
+	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
 	gocloud.dev/pubsub/natspubsub v0.20.0
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/net v0.0.0-20200822124328-c89045814202
