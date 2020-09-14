@@ -16,7 +16,9 @@ import (
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
+	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/hashicorp/go-multierror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
@@ -26,7 +28,29 @@ func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateT
 }
 
 func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (_ *model.TruncateTenantPayload, err error) {
-	panic(fmt.Errorf("not implemented"))
+	if _, err := r.Tenant(ctx, input.Name); err != nil {
+		return nil, err
+	}
+	db := r.db(ctx)
+	if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=0"); err != nil {
+		return nil, r.err(ctx, err, "cannot clear foreign key check")
+	}
+	defer func() {
+		if _, e := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=1"); e != nil {
+			err = multierror.Append(err, r.err(ctx, e, "cannot set foreign key check"))
+		}
+	}()
+	dbName := viewer.DBName(input.Name)
+	for _, table := range migrate.Tables {
+		query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbName, table.Name)
+		if _, err := db.ExecContext(ctx, query); err != nil {
+			return nil, r.errf(ctx, err, "cannot drop data from %q table", table.Name)
+		}
+	}
+	return &model.TruncateTenantPayload{
+		ClientMutationID: input.ClientMutationID,
+		Tenant:           model.NewTenant(input.Name),
+	}, nil
 }
 
 func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteTenantInput) (*model.DeleteTenantPayload, error) {
@@ -69,10 +93,6 @@ func (r *resolver) Tenant(ctx context.Context, name string) (*model.Tenant, erro
 		return nil, r.err(ctx, err, "cannot read rows")
 	}
 	if n == 0 {
-		r.log.For(ctx).Debug(
-			"tenant not found",
-			zap.String("name", name),
-		)
 		err := gqlerror.Errorf(
 			"Could not find a tenant with name '%s'", name,
 		)
