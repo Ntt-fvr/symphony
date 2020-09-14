@@ -9,39 +9,39 @@
  */
 'use strict';
 
-export type Primitive = string | number | Boolean;
+export type Primitive = string | number | boolean;
 export type KeyValuePair = {
-  [key: string]: Primitive | Array<Primitive> | KeyValuePair,
+  [key: string]:
+    | Primitive
+    | Array<Primitive>
+    | KeyValuePair
+    | Array<KeyValuePair>,
 };
 
-export type Position = {|
+export type Position = $ReadOnly<{|
   x: number,
   y: number,
-|};
+|}>;
 
-export type Size = {|
+export type Size = $ReadOnly<{|
   height: number,
   width: number,
-|};
+|}>;
 
-export type Rect = {|
+export type Rect = $ReadOnly<{|
   ...Position,
   ...Size,
-|};
+|}>;
+
+export type ExtendedMouseEvent = $ReadOnly<{|
+  target: HTMLElement,
+|}> &
+  MouseEvent;
 
 export const Events = {
-  Connector: {
-    MouseHover: 'link:mouseover',
-    MouseDown: 'link:pointerdown',
-    MouseUp: 'link:pointerup',
-  },
   Graph: {
-    BlockAdded: 'add',
-    BlockRemoved: 'remove',
-  },
-  Block: {
-    MouseUp: 'element:pointerup',
-    MouseDown: 'element:pointerdown',
+    OnAdd: 'add',
+    OnRemove: 'remove',
   },
   Paper: {
     BackdropClick: 'blank:pointerclick',
@@ -49,9 +49,18 @@ export const Events = {
     BackdropMouseDrag: 'blank:pointermove',
     BackdropMouseUp: 'blank:pointerup',
   },
+  Block: {
+    MouseOver: 'element:mouseover',
+    MouseOut: 'element:mouseout',
+    MouseUp: 'element:pointerup',
+    MouseDown: 'element:pointerdown',
+  },
+  Port: {
+    MouseClick: 'element:magnet:pointerclick',
+  },
+  Connector: {
+    MouseHover: 'link:mouseover',
+    MouseDown: 'link:pointerdown',
+    MouseUp: 'link:pointerup',
+  },
 };
-
-export type GeneralEventArgs = $ReadOnly<{|
-  clientX: number,
-  clientY: number,
-|}>;

@@ -13,8 +13,55 @@ import Link from '../../facades/shapes/edges/Link';
 import type {GraphContextType} from '../../GraphContext';
 import type {IBlock} from '../blocks/BaseBlock';
 import type {ILink} from '../../facades/shapes/edges/Link';
+import type {IShape} from '../../facades/shapes/BaseShape';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
+
+import symphony from '@fbcnms/ui/theme/symphony';
+
+export const STROKE = {
+  COLOR: {
+    DEFAULT: symphony.palette.secondary,
+    SELECTED: symphony.palette.primary,
+  },
+  WIDTH: '2px',
+};
+
+export const DEFAULT_LINK_SETTINGS = {
+  linkPinning: false,
+  snapLinks: true,
+  defaultLink: new window.joint.shapes.standard.Link({
+    z: 2,
+    attrs: {
+      line: {
+        stroke: STROKE.COLOR.DEFAULT,
+        strokeWidth: STROKE.WIDTH,
+        strokeLinejoin: 'round',
+        strokeLinecap: 'round',
+        targetMarker: {
+          type: 'path',
+          d: '',
+        },
+      },
+    },
+  }),
+  defaultConnector: {name: 'jumpover'},
+  defaultRouter: {name: 'manhattan'},
+  defaultConnectionPoint: {
+    name: 'anchor',
+  },
+  magnetThreshold: 'onleave',
+  validateConnection: (
+    _cellViewS: IShape,
+    magnetS: IShape,
+    _cellViewT: IShape,
+    magnetT: IShape,
+  ) => {
+    return magnetT != null && magnetT != magnetS;
+  },
+  markAvailable: true,
+  interactive: true,
+};
 
 export interface IConnector {
   +id: string;
@@ -38,18 +85,29 @@ export default class BaseConnector implements IConnector {
   target: ?IBlock;
   isSelected: boolean;
 
-  constructor(paper: Paper, source?: ?IBlock, target?: ?IBlock) {
+  constructor(
+    paper: Paper,
+    source?: ?IBlock,
+    target?: ?IBlock,
+    model?: ?ILink,
+  ) {
     this.paper = paper;
-    this.model = new Link();
+
+    if (model) {
+      this.model = model;
+    } else {
+      this.model = new Link();
+      this.setSource(source);
+      this.setTarget(target);
+      this.model.addTo(this.paper.model);
+      this.model.router('jumpover', {
+        padding: 16,
+        maximumLoops: 200,
+        maxAllowedDirectionChange: 3,
+      });
+    }
+
     this.id = this.model.id;
-    this.setSource(source);
-    this.setTarget(target);
-    this.model.addTo(this.paper.model);
-    this.model.router('manhattan', {
-      padding: 16,
-      maximumLoops: 200,
-      maxAllowedDirectionChange: 3,
-    });
   }
 
   setSource(source: ?IBlock) {
@@ -84,7 +142,7 @@ export default class BaseConnector implements IConnector {
     this.isSelected = true;
     this.model.attr({
       line: {
-        stroke: '#feb663',
+        stroke: STROKE.COLOR.SELECTED,
       },
     });
   }
@@ -93,7 +151,7 @@ export default class BaseConnector implements IConnector {
     this.isSelected = false;
     this.model.attr({
       line: {
-        stroke: '#000000',
+        stroke: STROKE.COLOR.DEFAULT,
       },
     });
   }

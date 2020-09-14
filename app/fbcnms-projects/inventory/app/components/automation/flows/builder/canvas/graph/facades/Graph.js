@@ -9,14 +9,16 @@
  */
 'use strict';
 
-import type {BaseVertexAttributes} from './shapes/vertexes/BaseVertext';
+import type {ILinkAttributes} from './shapes/edges/Link';
 import type {IShape} from './shapes/BaseShape';
-import type {IVertexModel} from './shapes/vertexes/BaseVertext';
+import type {
+  IVertexModel,
+  IVertexModelAttributes,
+} from './shapes/vertexes/BaseVertext';
 import type {KeyValuePair, Rect} from './Helpers';
-import type {LinkAttributes} from './shapes/edges/Link';
 
 export type GraphExporter = $ReadOnly<{|
-  cells: $ReadOnlyArray<BaseVertexAttributes | LinkAttributes>,
+  cells: $ReadOnlyArray<IVertexModelAttributes | ILinkAttributes>,
 |}>;
 
 export type Graph = $ReadOnly<{|

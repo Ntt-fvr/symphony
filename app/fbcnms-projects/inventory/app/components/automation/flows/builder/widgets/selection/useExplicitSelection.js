@@ -50,7 +50,7 @@ const useExplicitSelection = (
 
   useEffect(() => {
     flow.onBlockEvent(Events.Block.MouseUp, onBlockClicked);
-    flow.onGraphEvent(Events.Graph.BlockAdded, onBlockAdded);
+    flow.onGraphBlockEvent(Events.Graph.OnAdd, onBlockAdded);
   }, [flow, onBlockClicked, onBlockAdded]);
 };
 

@@ -21,13 +21,13 @@ type Props = $ReadOnly<{|
   className?: ?string,
 |}>;
 
-export default function ManualStepPresentation(props: Props) {
+export default function EndPresentation(props: Props) {
   const {className} = props;
   const classes = useStyles();
 
   return (
     <div className={classNames(classes.root, className)}>
-      <fbt desc="">Manual Step</fbt>
+      <fbt desc="">End</fbt>
     </div>
   );
 }

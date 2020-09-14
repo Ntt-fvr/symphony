@@ -11,13 +11,12 @@
 
 import type {IBlockType} from '../BaseBlockType';
 
-import ManualStepPresentation from './ManualStepPresentation';
+import EndPresentation from './EndPresentation';
 import {BaseBlockType} from '../BaseBlockType';
-import {TYPE} from '../../../../facades/shapes/vertexes/actions/GeneralStep';
+import {TYPE} from '../../../../facades/shapes/vertexes/administrative/End';
 
-export default class ManualStepBlockType extends BaseBlockType
-  implements IBlockType {
+export default class EndBlockType extends BaseBlockType implements IBlockType {
   type = TYPE;
-  presentationComponent = ManualStepPresentation;
+  presentationComponent = EndPresentation;
   explanationComponent = null;
 }

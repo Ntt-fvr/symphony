@@ -10,8 +10,8 @@
 
 import BlocksCategory from './BlocksCategory';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
+import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
-import ManualStepBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStep/ManualStepBlockType';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import {makeStyles} from '@material-ui/styles';
@@ -35,13 +35,13 @@ export default function BlocksBar() {
 
   const flow = useGraph();
 
-  const administrativeTypes = useMemo(() => [new ManualStartBlockType(flow)], [
-    flow,
-  ]);
-  const actionTypes = useMemo(
-    () => [new ManualStepBlockType(flow), new CreateWorkorderBlockType(flow)],
+  const administrativeTypes = useMemo(
+    () => [new ManualStartBlockType(flow), new EndBlockType(flow)],
     [flow],
   );
+  const actionTypes = useMemo(() => [new CreateWorkorderBlockType(flow)], [
+    flow,
+  ]);
 
   return (
     <div className={classes.root}>

@@ -8,8 +8,11 @@
  * @format
  */
 
+import type {
+  ExtendedMouseEvent,
+  Position,
+} from '../canvas/graph/facades/Helpers';
 import type {IBlock} from '../canvas/graph/shapes/blocks/BaseBlock';
-import type {Position} from '../canvas/graph/facades/Helpers';
 
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback, useEffect, useState} from 'react';
@@ -87,7 +90,7 @@ export default function FloatingBar() {
       snapToPointer(args);
       window.addEventListener('mousemove', snapToPointer);
 
-      const trySettingSource = (mouseEventArgs: MouseEvent) => {
+      const trySettingSource = (mouseEventArgs: ExtendedMouseEvent) => {
         connector.tryAttachingAtPoint(
           mouseEventArgsToPosition(mouseEventArgs),
           flow,

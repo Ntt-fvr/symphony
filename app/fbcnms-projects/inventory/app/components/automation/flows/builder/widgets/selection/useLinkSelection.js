@@ -9,7 +9,6 @@
  */
 
 import {Events} from '../../canvas/graph/facades/Helpers';
-import {isLink} from '../../canvas/graph/facades/shapes/edges/Link';
 import {useCallback, useEffect} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
 import type {ChangeLinkSelectionFunc} from './GraphSelectionContext';
@@ -19,25 +18,28 @@ export default function useLinkSelection(
 ) {
   const flow = useGraph();
 
-  const onConnectorMouseDown = useCallback((connector, evt) => {
-    if (!isLink(connector.model)) {
-      return;
-    }
-    const position = {x: evt.clientX, y: evt.clientY};
-    connector.snapTargetToPointer(position);
-  }, []);
-
-  const onConnectorMouseUp = useCallback(
-    (connector, evt) => {
-      const position = {x: evt.clientX, y: evt.clientY};
-      connector.tryAttachingAtPoint(position, flow);
+  const onConnectorMouseDown = useCallback(
+    (connector, _evt) => {
+      if (!connector.model.isLink()) {
+        return;
+      }
       changeLinkSelection(connector);
+      // const position = {x: evt.clientX, y: evt.clientY};
+      // connector.snapTargetToPointer(position);
     },
-    [flow, changeLinkSelection],
+    [changeLinkSelection],
   );
+
+  // const onConnectorMouseUp = useCallback(
+  //   (connector, evt) => {
+  //     const position = {x: evt.clientX, y: evt.clientY};
+  //     connector.tryAttachingAtPoint(position, flow);
+  //   },
+  //   [flow],
+  // );
 
   useEffect(() => {
     flow.onConnectorEvent(Events.Connector.MouseDown, onConnectorMouseDown);
-    flow.onConnectorEvent(Events.Connector.MouseUp, onConnectorMouseUp);
-  }, [onConnectorMouseDown, flow, onConnectorMouseUp]);
+    // flow.onConnectorEvent(Events.Connector.MouseUp, onConnectorMouseUp);
+  }, [onConnectorMouseDown, flow]);
 }

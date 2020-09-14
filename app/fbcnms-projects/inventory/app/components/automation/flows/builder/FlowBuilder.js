@@ -11,7 +11,6 @@
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import Canvas from './canvas/Canvas';
 import DetailsPane from './tools/DetailsPane';
-import FloatingBar from './tools/FloatingBar';
 import JsonViewer from './tools/JsonViewer';
 import React from 'react';
 import Toolbar from './tools/Toolbar';
@@ -82,7 +81,6 @@ export default function FlowBuilder() {
               <BlocksBar />
             </div>
             <div className={classes.canvasContainer}>
-              <FloatingBar />
               <Canvas />
             </div>
             <div className={classes.rightPane}>

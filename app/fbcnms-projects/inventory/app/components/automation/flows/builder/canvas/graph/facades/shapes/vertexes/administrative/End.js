@@ -14,17 +14,17 @@ import type {IVertexModel} from '../BaseVertext';
 import * as jointJS from 'jointjs';
 import {DISPLAY_SETTINGS, getInitObject} from '../BaseVertext';
 
-export const TYPE = 'actions.CreateWorkorder';
+export const TYPE = 'administrative.End';
 
-const FILL_COLOR = '#4856b0';
+const FILL_COLOR = '#d03346';
 
 const TOTAL_SIZE = 72;
 const PADDING = 5;
 const BORDER = 6;
-const BORDER_RADIUS = 16;
 
 const INNER_SIZE = TOTAL_SIZE - 2 * PADDING;
-const INNER_CENTER = PADDING + INNER_SIZE / 2;
+const RADIUS = INNER_SIZE / 2;
+const INNER_CENTER = PADDING + RADIUS;
 
 const IMAGE_SIZE = 34;
 const IMAGE_CENTER = IMAGE_SIZE / 2;
@@ -36,19 +36,18 @@ const defaultProperties = {
       strokeWidth: BORDER,
       stroke: DISPLAY_SETTINGS.body.stroke.default,
       fill: FILL_COLOR,
-      rx: BORDER_RADIUS,
-      ry: BORDER_RADIUS,
-      width: INNER_SIZE,
-      height: INNER_SIZE,
-      refX2: 9,
+      r: RADIUS,
+      cx: INNER_CENTER,
+      cy: INNER_CENTER,
+      refX2: PADDING,
     },
     image: {
-      xlinkHref: '/inventory/static/svg/BlockActionWorkOrder.svg',
+      xlinkHref: '/inventory/static/svg/BlockEnd.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
       x: IMAGE_PADDING,
-      y: IMAGE_PADDING - PADDING,
-      refX2: 4,
+      y: IMAGE_PADDING,
+      refX2: PADDING,
     },
     // label: {
     //   text: 'manual action',
@@ -65,7 +64,7 @@ const defaultProperties = {
 const markup = {
   markup: [
     {
-      tagName: 'rect',
+      tagName: 'circle',
       selector: 'body',
     },
     {
@@ -79,22 +78,21 @@ const markup = {
   ],
 };
 
-const CreateWorkorderBaseClass = jointJS.dia.Element.define(
+const EndBaseClass = jointJS.dia.Element.define(
   TYPE,
   defaultProperties,
   markup,
 );
 
-export default class CreateWorkorder extends CreateWorkorderBaseClass
-  implements IVertexModel {
+export default class End extends EndBaseClass implements IVertexModel {
   constructor() {
-    super(getInitObject(FILL_COLOR));
+    super(getInitObject(FILL_COLOR, {output: {count: 0}}));
     // super();
-    this.resize(TOTAL_SIZE, TOTAL_SIZE - 2 * PADDING);
+    this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
 }
 
-export function isCreateWorkorder(element: ?IVertexModel): boolean {
+export function isEnd(element: ?IVertexModel): boolean {
   if (element == null) {
     return false;
   }

@@ -9,7 +9,7 @@
  */
 'use strict';
 
-import type {GeneralEventArgs, Position, Rect} from './facades/Helpers';
+import type {ExtendedMouseEvent, Position, Rect} from './facades/Helpers';
 import type {Graph, GraphEventCallback} from './facades/Graph';
 import type {IBlock} from './shapes/blocks/BaseBlock';
 import type {IConnector} from './shapes/connectors/BaseConnector';
@@ -20,6 +20,7 @@ import type {
   IVertexView,
   VertexDescriptor,
   VertexEventCallback,
+  VertexPortEventCallback,
 } from './facades/shapes/vertexes/BaseVertext';
 import type {
   LinkDescriptor,
@@ -33,8 +34,11 @@ import GraphFactory from './GraphFactory';
 import Lasso from './facades/shapes/vertexes/helpers/Lasso';
 import ShapesFactory from './shapes/ShapesFactory';
 import emptyFunction from '@fbcnms/util/emptyFunction';
+import symphony from '@symphony/design-system/theme/symphony';
+import {DEFAULT_LINK_SETTINGS} from './shapes/connectors/BaseConnector';
 import {Events} from './facades/Helpers';
 import {getRectCenter, getRectDiff} from '../../../utils/helpers';
+import {handleMagnetPorts, handleNewConnections} from './paper/helpers';
 import {useCallback, useContext, useRef} from 'react';
 
 export type BlockDescriptor = $ReadOnly<{|
@@ -71,18 +75,21 @@ type AddConnectorFunctionType = (
   },
 ) => ?IConnector;
 
-export type BlockEventCallback = (
+export type BlockEventCallback = (IBlock, MouseEvent, number, number) => void;
+export type BlockPortEventCallback = (
   IBlock,
-  GeneralEventArgs,
+  HTMLElement,
+  ExtendedMouseEvent,
   number,
   number,
 ) => void;
 
 export type GraphBlockEventCallback = IBlock => void;
+export type GraphConnectorEventCallback = IConnector => void;
 
 export type ConnectorEventCallback = (
   IConnector,
-  GeneralEventArgs,
+  ExtendedMouseEvent,
   number,
   number,
 ) => void;
@@ -93,7 +100,11 @@ export type PaperEvent =
   | 'blank:pointerdown'
   | 'blank:pointermove'
   | 'blank:pointerup';
-export type BlockEvent = 'element:pointerup' | 'element:pointerdown';
+export type BlockEvent =
+  | 'element:pointerup'
+  | 'element:pointerdown'
+  | 'element:magnet:pointerclick';
+export type BlockPortEvent = 'element:magnet:pointerclick';
 export type ConnectorEvent =
   | 'link:mouseover'
   | 'link:pointerdown'
@@ -113,9 +124,11 @@ export type GraphContextType = {
   zoomFit: () => void,
   move: Position => void,
   reset: () => void,
-  onGraphEvent: (GraphEvent, GraphBlockEventCallback) => void,
+  onGraphBlockEvent: (GraphEvent, GraphBlockEventCallback) => void,
+  onGraphConnectorEvent: (GraphEvent, GraphConnectorEventCallback) => void,
   onPaperEvent: (PaperEvent, PaperEventCallback) => void,
   onBlockEvent: (BlockEvent, BlockEventCallback) => void,
+  onBlockPortEvent: (BlockEvent, BlockPortEventCallback) => void,
   onConnectorEvent: (ConnectorEvent, ConnectorEventCallback) => void,
   serialize: () => ?GraphDescriptor,
   deserialize: string => void,
@@ -138,9 +151,11 @@ const GraphContextDefaults = {
   move: emptyFunction,
   reset: emptyFunction,
   onBlockEvent: emptyFunction,
+  onBlockPortEvent: emptyFunction,
   onConnectorEvent: emptyFunction,
   onPaperEvent: emptyFunction,
-  onGraphEvent: emptyFunction,
+  onGraphBlockEvent: emptyFunction,
+  onGraphConnectorEvent: emptyFunction,
   serialize: () => emptySerialization,
   deserialize: emptyFunction,
   drawLasso: emptyFunction,
@@ -238,7 +253,7 @@ function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
   const shapesFactory = this.current.shapesFactory;
   const connectorsMap = this.current.connectors;
 
-  const connector = shapesFactory.createConnector(
+  const connector = shapesFactory.createNewConnector(
     options?.source,
     options?.target,
   );
@@ -311,11 +326,15 @@ function paperMove(translation: Position | 0) {
   }
 
   if (translation === 0) {
-    this.current.paperTranslation.x = 0;
-    this.current.paperTranslation.y = 0;
+    this.current.paperTranslation = {
+      x: 0,
+      y: 0,
+    };
   } else {
-    this.current.paperTranslation.x += translation.x;
-    this.current.paperTranslation.y += translation.y;
+    this.current.paperTranslation = {
+      x: this.current.paperTranslation.x + translation.x,
+      y: this.current.paperTranslation.y + translation.y,
+    };
   }
   this.current.paper.translate(
     this.current.paperTranslation.x,
@@ -334,7 +353,7 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
   }
   const wrappedHandler: VertexEventCallback = (
     vertexView: IVertexView,
-    generalEventArgs: GeneralEventArgs,
+    generalEventArgs: ExtendedMouseEvent,
     positionX: number,
     positionY: number,
   ) => {
@@ -343,6 +362,29 @@ function paperOnBlockEvent(event: BlockEvent, handler: BlockEventCallback) {
       return;
     }
     handler(block, generalEventArgs, positionX, positionY);
+  };
+  this.current.paper.on(event, wrappedHandler);
+}
+
+function paperOnBlockPortEvent(
+  event: BlockEvent,
+  handler: BlockPortEventCallback,
+) {
+  if (this.current == null) {
+    return;
+  }
+  const wrappedHandler: VertexPortEventCallback = (
+    vertexView: IVertexView,
+    generalEventArgs: ExtendedMouseEvent,
+    portElement: HTMLElement,
+    positionX: number,
+    positionY: number,
+  ) => {
+    const block = this.current?.blocks.get(vertexView.model.id);
+    if (block == null) {
+      return;
+    }
+    handler(block, portElement, generalEventArgs, positionX, positionY);
   };
   this.current.paper.on(event, wrappedHandler);
 }
@@ -363,7 +405,7 @@ function paperOnConnectorEvent(
   }
   const wrappedHandler: LinkEventCallback = (
     linkEventArgs: LinkEventArgs,
-    generalEventArgs: GeneralEventArgs,
+    generalEventArgs: ExtendedMouseEvent,
     positionX: number,
     positionY: number,
   ) => {
@@ -376,28 +418,50 @@ function paperOnConnectorEvent(
   this.current.paper.on(event, wrappedHandler);
 }
 
-function graphOnGraphEvent(
+function graphOnGraphBlockEvent(event: GraphEvent, handler: IBlock => void) {
+  callGraphEventHandler.call<IBlock>(
+    this,
+    event,
+    this.current?.blocks,
+    handler,
+  );
+}
+
+function graphOnGraphConnectorEvent(
   event: GraphEvent,
-  handler: GraphBlockEventCallback,
+  handler: IConnector => void,
 ) {
-  if (this.current == null) {
+  callGraphEventHandler.call<IConnector>(
+    this,
+    event,
+    this.current?.connectors,
+    handler,
+  );
+}
+
+function callGraphEventHandler<T: IBlock | IConnector>(
+  eventName: string,
+  elementsMap: ?Map<string, T>,
+  handler: T => void,
+) {
+  if (this.current == null || elementsMap == null) {
     return;
   }
   const wrappedHandler: GraphEventCallback = (shape: IShape) => {
-    const getBlockAndCallHandler = () => {
-      const block = this.current?.blocks.get(shape.id);
-      if (block == null) {
+    const getElementAndCallHandler = () => {
+      const element = elementsMap?.get(shape.id);
+      if (element == null) {
         return;
       }
-      handler(block);
+      handler(element);
     };
-    if (event === Events.Graph.BlockAdded) {
-      setTimeout(getBlockAndCallHandler);
+    if (eventName === Events.Graph.OnAdd) {
+      setTimeout(getElementAndCallHandler);
     } else {
-      getBlockAndCallHandler();
+      getElementAndCallHandler();
     }
   };
-  this.current.graph.on(event, wrappedHandler);
+  this.current.graph.on(eventName, wrappedHandler);
 }
 
 function graphSerialize(): ?GraphDescriptor {
@@ -531,16 +595,25 @@ export function GraphContextProvider(props: Props) {
       height: 'calc(100% - 1px)',
       gridSize: 1,
       background: {
-        color: 'white',
+        color: symphony.palette.D100,
       },
+      ...DEFAULT_LINK_SETTINGS,
     });
+
     const shapesFactory = new ShapesFactory(paper);
+    const connectors = new Map();
+
+    handleNewConnections(graph, newLink => {
+      const connector = shapesFactory.createConnectorForLink(newLink);
+      connectors.set(connector.id, connector);
+    });
+    handleMagnetPorts(paper);
 
     flowWrapper.current = {
       graph,
       paper,
       blocks: new Map(),
-      connectors: new Map(),
+      connectors,
       shapesFactory,
       paperScale: 1,
       paperTranslation: {
@@ -561,9 +634,11 @@ export function GraphContextProvider(props: Props) {
   const move = paperMove.bind(flowWrapper);
   const reset = paperReset.bind(flowWrapper);
   const onBlockEvent = paperOnBlockEvent.bind(flowWrapper);
+  const onBlockPortEvent = paperOnBlockPortEvent.bind(flowWrapper);
   const onConnectorEvent = paperOnConnectorEvent.bind(flowWrapper);
   const onPaperEvent = paperOnPaperEvent.bind(flowWrapper);
-  const onGraphEvent = graphOnGraphEvent.bind(flowWrapper);
+  const onGraphBlockEvent = graphOnGraphBlockEvent.bind(flowWrapper);
+  const onGraphConnectorEvent = graphOnGraphConnectorEvent.bind(flowWrapper);
   const serialize = graphSerialize.bind(flowWrapper);
   const deserialize = graphDeserialize.bind(flowWrapper);
   const getConnector = graphGetConnector.bind(flowWrapper);
@@ -584,9 +659,11 @@ export function GraphContextProvider(props: Props) {
     move,
     reset,
     onBlockEvent,
+    onBlockPortEvent,
     onConnectorEvent,
     onPaperEvent,
-    onGraphEvent,
+    onGraphBlockEvent,
+    onGraphConnectorEvent,
     serialize,
     deserialize,
     getConnector,

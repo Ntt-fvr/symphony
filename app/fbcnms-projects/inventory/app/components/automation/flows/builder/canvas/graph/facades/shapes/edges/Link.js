@@ -9,30 +9,27 @@
  */
 'use strict';
 
-import type {GeneralEventArgs, Position} from '../../Helpers';
+import type {ExtendedMouseEvent, KeyValuePair} from '../../Helpers';
 import type {Graph} from '../../Graph';
 import type {IBaseShapeAttributes, IShape} from '../../shapes/BaseShape';
 import type {IVertexModel} from '../../shapes/vertexes/BaseVertext';
-import type {KeyValuePair} from '../../Helpers';
+import type {Position} from '../../Helpers';
 
 import type {Paper} from '../../Paper';
 
 import * as jointJS from 'jointjs';
-import {getCellType} from '../BaseShape';
 
 export const TYPE = 'standard.Link';
 
-export type LinkAttributes = $ReadOnly<{|
-  id: string,
-  source: IVertexModel,
-  target: IVertexModel,
-  type: 'standard.Link',
-  z: number,
-|}>;
+export interface ILinkAttributes extends IBaseShapeAttributes {
+  +source: IVertexModel;
+  +target: IVertexModel;
+  +type: 'standard.Link';
+  +z: number;
+}
 
-export interface ILink {
-  +id: string;
-  +attributes: LinkAttributes;
+export interface ILink extends IShape {
+  +attributes: ILinkAttributes;
   +source: (?IVertexModel) => void;
   +target: (?IVertexModel | ?Position) => void;
   +addTo: Graph => void;
@@ -51,10 +48,6 @@ export type LinkDescriptor = $ReadOnly<{|
 const Link = jointJS.shapes.standard.Link;
 export default Link;
 
-export function isLink(cell: ?IShape | IBaseShapeAttributes): boolean {
-  return getCellType(cell) === TYPE;
-}
-
 export type LinkEventArgs = $ReadOnly<{|
   model: Link,
   paper: Paper,
@@ -62,7 +55,7 @@ export type LinkEventArgs = $ReadOnly<{|
 
 export type LinkEventCallback = (
   LinkEventArgs,
-  GeneralEventArgs,
+  ExtendedMouseEvent,
   number,
   number,
 ) => void;

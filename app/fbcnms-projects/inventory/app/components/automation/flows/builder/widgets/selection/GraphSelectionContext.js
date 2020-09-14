@@ -133,7 +133,7 @@ export function GraphSelectionContextProvider(props: Props) {
   useLinkSelection(changeLinkSelection);
 
   useEffect(() => {
-    flow.onGraphEvent(Events.Graph.BlockRemoved, onBlockRemoved);
+    flow.onGraphBlockEvent(Events.Graph.OnRemove, onBlockRemoved);
   }, [flow, onBlockRemoved]);
 
   return (

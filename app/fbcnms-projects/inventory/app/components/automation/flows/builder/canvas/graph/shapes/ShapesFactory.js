@@ -12,6 +12,7 @@
 import type {IBaseShapeAttributes, IShape} from '../facades/shapes/BaseShape';
 import type {IBlock} from './blocks/BaseBlock';
 import type {IConnector} from './connectors/BaseConnector';
+import type {ILink} from '../facades/shapes/edges/Link';
 import type {Paper} from '../facades/Paper';
 
 import BaseConnector from './connectors/BaseConnector';
@@ -19,9 +20,9 @@ import Block from './blocks/BaseBlock';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
 } from '../facades/shapes/vertexes/actions/CreateWorkorder';
-import GeneralStep, {
-  TYPE as GeneralStepType,
-} from '../facades/shapes/vertexes/actions/GeneralStep';
+import End, {
+  TYPE as EndType,
+} from '../facades/shapes/vertexes/administrative/End';
 import ManualStart, {
   TYPE as ManualStartType,
 } from '../facades/shapes/vertexes/administrative/ManualStart';
@@ -30,7 +31,7 @@ import {getCellType} from '../facades/shapes/BaseShape';
 
 const VERTEXES = {
   [ManualStartType]: ManualStart,
-  [GeneralStepType]: GeneralStep,
+  [EndType]: End,
   [CreateWorkorderType]: CreateWorkorder,
 };
 const VERTEX_TYPES = Object.keys(VERTEXES);
@@ -41,7 +42,8 @@ export function isVertex(cell: ?IShape | IBaseShapeAttributes) {
 
 export interface IShapesFactory {
   +createBlock: string => Block;
-  +createConnector: (source?: ?IBlock, target?: ?IBlock) => IConnector;
+  +createNewConnector: (source?: ?IBlock, target?: ?IBlock) => IConnector;
+  +createConnectorForLink: (model: ILink) => IConnector;
 }
 
 export default class ShapesFactory {
@@ -57,7 +59,10 @@ export default class ShapesFactory {
 
     return new Block(vertexModel, this.paper);
   }
-  createConnector(source?: ?IBlock, target?: ?IBlock) {
+  createNewConnector(source?: ?IBlock, target?: ?IBlock) {
     return new BaseConnector(this.paper, source, target);
+  }
+  createConnectorForLink(model: ILink) {
+    return new BaseConnector(this.paper, null, null, model);
   }
 }

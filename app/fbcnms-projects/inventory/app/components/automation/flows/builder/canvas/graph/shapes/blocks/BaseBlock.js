@@ -15,6 +15,8 @@ import type {
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
+import {DISPLAY_SETTINGS} from '../../facades/shapes/vertexes/BaseVertext';
+
 export interface IBlock {
   +id: string;
   +select: () => void;
@@ -37,6 +39,13 @@ export default class BaseBlock implements IBlock {
     this.paper = paper;
     this.model = model;
 
+    // this.model.addPort({
+    //   group: 'input',
+    // });
+    // this.model.addPort({
+    //   group: 'output',
+    // });
+
     const graph = this.paper.model;
     this.model.addTo(graph);
 
@@ -48,11 +57,19 @@ export default class BaseBlock implements IBlock {
 
   select() {
     this.isSelected = true;
-    this.view.highlight();
+    this.model.attr({
+      body: {
+        stroke: DISPLAY_SETTINGS.body.stroke.selected,
+      },
+    });
   }
 
   deselect() {
     this.isSelected = false;
-    this.view.unhighlight();
+    this.model.attr({
+      body: {
+        stroke: DISPLAY_SETTINGS.body.stroke.default,
+      },
+    });
   }
 }

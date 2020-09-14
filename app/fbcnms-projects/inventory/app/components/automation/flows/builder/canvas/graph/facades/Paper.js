@@ -9,12 +9,13 @@
  */
 'use strict';
 
-import type {GeneralEventArgs, Position, Rect} from './Helpers';
+import type {ExtendedMouseEvent, Position, Rect} from './Helpers';
 import type {Graph} from './Graph';
 import type {
   IVertexModel,
   IVertexView,
   VertexEventCallback,
+  VertexPortEventCallback,
 } from './shapes/vertexes/BaseVertext';
 import type {LinkEventCallback} from './shapes/edges/Link';
 
@@ -42,17 +43,21 @@ export type Paper = $ReadOnly<{|
   translate: (tx?: number, ty?: number) => void | {tx: number, ty: number},
   on: (
     string,
-    PaperEventCallback | VertexEventCallback | LinkEventCallback,
+    | PaperEventCallback
+    | VertexEventCallback
+    | VertexPortEventCallback
+    | LinkEventCallback,
   ) => void,
   options: {
     origin: Position,
+    validateMagnet: (IVertexView, HTMLElement, ExtendedMouseEvent) => boolean,
   },
   clientToLocalPoint: Position => Position,
   findViewsFromPoint: Position => Array<{model: IVertexModel}>,
   findViewByModel: IVertexModel => IVertexView,
 |}>;
 
-export type PaperEventCallback = (GeneralEventArgs, number, number) => void;
+export type PaperEventCallback = (ExtendedMouseEvent, number, number) => void;
 
 export type PaperCtorType = ({
   el: HTMLElement,

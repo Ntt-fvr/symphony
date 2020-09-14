@@ -17,6 +17,7 @@ export interface IBaseShapeAttributes {
 export interface IShape {
   +id: string;
   +attributes: IBaseShapeAttributes;
+  +isLink: () => boolean;
 }
 
 export function getCellType(cell: ?IShape | IBaseShapeAttributes): ?string {
