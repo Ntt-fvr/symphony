@@ -3208,7 +3208,7 @@ func validateFilterTypeEntity(input models.ReportFilterInput) error {
 		case models.FilterEntityLocation:
 			validator = enum.LocationFilterType(f.FilterType)
 		case models.FilterEntityPort:
-			validator = models.PortFilterType(f.FilterType)
+			validator = enum.PortFilterType(f.FilterType)
 		case models.FilterEntityService:
 			validator = models.ServiceFilterType(f.FilterType)
 		case models.FilterEntityWorkOrder:

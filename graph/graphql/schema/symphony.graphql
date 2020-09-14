@@ -2365,7 +2365,10 @@ type UsersGroupSearchResult {
 """
 what filters should we apply on ports
 """
-enum PortFilterType {
+enum PortFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
+  ) {
   PORT_DEF
   PORT_INST_HAS_LINK
   PORT_INST_EQUIPMENT
@@ -2441,7 +2444,10 @@ enum UsersGroupFilterType {
   GROUP_NAME
 }
 
-input PortFilterInput {
+input PortFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
+  ) {
   filterType: PortFilterType!
   operator: FilterOperator!
   boolValue: Boolean

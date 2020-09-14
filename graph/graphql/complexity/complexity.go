@@ -27,7 +27,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.Customers = PaginationComplexity
 	complexity.Query.EquipmentPortDefinitions = PaginationComplexity
 	complexity.Query.EquipmentPortTypes = PaginationComplexity
-	complexity.Query.EquipmentPorts = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.PortFilterInput) int {
+	complexity.Query.EquipmentPorts = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*pkgmodels.PortFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.EquipmentSearch = func(childComplexity int, _ []*pkgmodels.EquipmentFilterInput, limit *int) int {
@@ -56,7 +56,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.PermissionsPolicySearch = func(childComplexity int, _ []*models.PermissionsPolicyFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
-	complexity.Query.PortSearch = func(childComplexity int, _ []*models.PortFilterInput, limit *int) int {
+	complexity.Query.PortSearch = func(childComplexity int, _ []*pkgmodels.PortFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.ProjectSearch = func(childComplexity int, _ []*models.ProjectFilterInput, limit *int) int {

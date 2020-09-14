@@ -28,8 +28,8 @@ func (r queryResolver) LinkSearch(ctx context.Context, filters []*models.LinkFil
 	return resolverutil.LinkSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {
-	return resolverutil.PortSearch(ctx, r.ClientFrom(ctx), filters, limit)
+func (r queryResolver) PortSearch(ctx context.Context, filters []*pkgmodels.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {
+	return pkgexporter.PortSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
 func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.LocationFilterInput, limit *int) (*pkgmodels.LocationSearchResult, error) {

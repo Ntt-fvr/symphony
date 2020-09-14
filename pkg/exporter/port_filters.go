@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentporttype"
@@ -12,8 +12,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -23,10 +23,10 @@ import (
 )
 
 func handlePortFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.FilterType == models.PortFilterTypePortInstEquipment {
+	if filter.FilterType == enum.PortFilterTypePortInstEquipment {
 		return portEquipmentFilter(q, filter)
 	}
-	if filter.FilterType == models.PortFilterTypePortInstHasLink {
+	if filter.FilterType == enum.PortFilterTypePortInstHasLink {
 		return portHasLinkFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -57,9 +57,9 @@ func portHasLinkFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput
 
 func handlePortLocationFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
 	switch filter.FilterType {
-	case models.PortFilterTypeLocationInst:
+	case enum.PortFilterTypeLocationInst:
 		return portLocationFilter(q, filter)
-	case models.PortFilterTypeLocationInstExternalID:
+	case enum.PortFilterTypeLocationInstExternalID:
 		return portLocationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -85,7 +85,7 @@ func portLocationExternalIDFilter(q *ent.EquipmentPortQuery, filter *models.Port
 }
 
 func handlePortDefinitionFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.FilterType == models.PortFilterTypePortDef {
+	if filter.FilterType == enum.PortFilterTypePortDef {
 		return portDefFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
@@ -173,7 +173,7 @@ func handlePortPropertyFilter(q *ent.EquipmentPortQuery, filter *models.PortFilt
 }
 
 func handlePortServiceFilter(q *ent.EquipmentPortQuery, filter *models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	if filter.FilterType == models.PortFilterTypeServiceInst {
+	if filter.FilterType == enum.PortFilterTypeServiceInst {
 		return portServiceFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)

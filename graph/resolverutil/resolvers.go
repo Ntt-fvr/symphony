@@ -17,61 +17,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func PortFilter(query *ent.EquipmentPortQuery, filters []*models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
-	var err error
-	for _, f := range filters {
-		switch {
-		case strings.HasPrefix(f.FilterType.String(), "PORT_INST"):
-			if query, err = handlePortFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
-			if query, err = handlePortLocationFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "PORT_DEF"):
-			if query, err = handlePortDefinitionFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
-			if query, err = handlePortPropertyFilter(query, f); err != nil {
-				return nil, err
-			}
-		case strings.HasPrefix(f.FilterType.String(), "SERVICE_INST"):
-			if query, err = handlePortServiceFilter(query, f); err != nil {
-				return nil, err
-			}
-		}
-	}
-	return query, nil
-}
-
-func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortFilterInput, limit *int) (*pkgmodels.PortSearchResult, error) {
-	var (
-		query = client.EquipmentPort.Query()
-		err   error
-	)
-	query, err = PortFilter(query, filters)
-	if err != nil {
-		return nil, err
-	}
-	count, err := query.Clone().Count(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Count query failed")
-	}
-	if limit != nil {
-		query.Limit(*limit)
-	}
-	ports, err := query.All(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Querying links failed")
-	}
-	return &pkgmodels.PortSearchResult{
-		Ports: ports,
-		Count: count,
-	}, nil
-}
-
 func LinkFilter(query *ent.LinkQuery, filters []*models.LinkFilterInput) (*ent.LinkQuery, error) {
 	var err error
 	for _, f := range filters {

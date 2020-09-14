@@ -35,6 +35,10 @@ type linksFilterInput struct {
 	MaxDepth      *int                        `json:"maxDepth"`
 }
 
+const (
+	bom = "\uFEFF"
+)
+
 type linksRower struct {
 	log log.Logger
 }

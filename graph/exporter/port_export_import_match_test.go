@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/stretchr/testify/require"
 )
 
@@ -76,7 +77,7 @@ func TestImportAndEditPorts(t *testing.T) {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
 			log := r.exporter.log
-			e := &exporter{log, portsRower{log}}
+			e := &exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
 			importLinksPortsFile(t, r.client, res.Body, importer.ImportEntityPort, MethodEdit, skipLines, withVerify)

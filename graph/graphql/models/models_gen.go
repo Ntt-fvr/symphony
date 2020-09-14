@@ -613,17 +613,6 @@ type PermissionsPolicySearchResult struct {
 	Count               int                      `json:"count"`
 }
 
-type PortFilterInput struct {
-	FilterType    PortFilterType            `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	BoolValue     *bool                     `json:"boolValue"`
-	StringValue   *string                   `json:"stringValue"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	MaxDepth      *int                      `json:"maxDepth"`
-}
-
 type ProjectFilterInput struct {
 	FilterType  ProjectFilterType   `json:"filterType"`
 	Operator    enum.FilterOperator `json:"operator"`
@@ -1192,58 +1181,6 @@ func (e *PermissionsPolicyFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PermissionsPolicyFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// what filters should we apply on ports
-type PortFilterType string
-
-const (
-	PortFilterTypePortDef                PortFilterType = "PORT_DEF"
-	PortFilterTypePortInstHasLink        PortFilterType = "PORT_INST_HAS_LINK"
-	PortFilterTypePortInstEquipment      PortFilterType = "PORT_INST_EQUIPMENT"
-	PortFilterTypeLocationInst           PortFilterType = "LOCATION_INST"
-	PortFilterTypeLocationInstExternalID PortFilterType = "LOCATION_INST_EXTERNAL_ID"
-	PortFilterTypeProperty               PortFilterType = "PROPERTY"
-	PortFilterTypeServiceInst            PortFilterType = "SERVICE_INST"
-)
-
-var AllPortFilterType = []PortFilterType{
-	PortFilterTypePortDef,
-	PortFilterTypePortInstHasLink,
-	PortFilterTypePortInstEquipment,
-	PortFilterTypeLocationInst,
-	PortFilterTypeLocationInstExternalID,
-	PortFilterTypeProperty,
-	PortFilterTypeServiceInst,
-}
-
-func (e PortFilterType) IsValid() bool {
-	switch e {
-	case PortFilterTypePortDef, PortFilterTypePortInstHasLink, PortFilterTypePortInstEquipment, PortFilterTypeLocationInst, PortFilterTypeLocationInstExternalID, PortFilterTypeProperty, PortFilterTypeServiceInst:
-		return true
-	}
-	return false
-}
-
-func (e PortFilterType) String() string {
-	return string(e)
-}
-
-func (e *PortFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PortFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PortFilterType", str)
-	}
-	return nil
-}
-
-func (e PortFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

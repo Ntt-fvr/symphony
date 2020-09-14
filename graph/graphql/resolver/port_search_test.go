@@ -171,18 +171,18 @@ func TestSearchPortEquipmentName(t *testing.T) {
 	data := preparePortData(ctx, r)
 	qr := r.Query()
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*models.PortFilterInput{}, &limit)
+	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Ports, 8)
 	require.Equal(t, all.Count, 8)
 	maxDepth := 2
-	f1 := models.PortFilterInput{
-		FilterType:  models.PortFilterTypePortInstEquipment,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType:  enum.PortFilterTypePortInstEquipment,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString(data.e1.Name),
 		MaxDepth:    &maxDepth,
 	}
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 2)
@@ -196,16 +196,16 @@ func TestSearchPortHasLink(t *testing.T) {
 	preparePortData(ctx, r)
 	qr := r.Query()
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*models.PortFilterInput{}, &limit)
+	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Ports, 8)
 	require.Equal(t, all.Count, 8)
-	f1 := models.PortFilterInput{
-		FilterType: models.PortFilterTypePortInstHasLink,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypePortInstHasLink,
 		Operator:   enum.FilterOperatorIs,
 		BoolValue:  pointer.ToBool(false),
 	}
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 6)
@@ -222,12 +222,12 @@ func TestSearchPortDefinition(t *testing.T) {
 	limit := 100
 	defs := d.typ1.QueryPortDefinitions().AllX(ctx)
 
-	f1 := models.PortFilterInput{
-		FilterType: models.PortFilterTypePortDef,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypePortDef,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{defs[0].ID, defs[1].ID},
 	}
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 4)
@@ -242,23 +242,23 @@ func TestSearchPortLocation(t *testing.T) {
 	qr := r.Query()
 	limit := 100
 
-	f1 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeLocationInst,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{d.loc1},
 		MaxDepth:   pointer.ToInt(2),
 	}
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 4)
 
-	fExternal := models.PortFilterInput{
-		FilterType:  models.PortFilterTypeLocationInstExternalID,
+	fExternal := pkgmodels.PortFilterInput{
+		FilterType:  enum.PortFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("1"),
 	}
-	res1, err = qr.PortSearch(ctx, []*models.PortFilterInput{&fExternal}, &limit)
+	res1, err = qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&fExternal}, &limit)
 	require.NoError(t, err)
 	ports = res1.Ports
 	require.Len(t, ports, 4)
@@ -274,8 +274,8 @@ func TestSearchPortProperties(t *testing.T) {
 	qr := r.Query()
 	limit := 100
 
-	f1 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeProperty,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "propStr",
@@ -284,13 +284,13 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	ports := res1.Ports
 	require.Len(t, ports, 1)
 
-	f2 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeProperty,
+	f2 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "propStr",
@@ -299,13 +299,13 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res2, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f2}, &limit)
+	res2, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	ports = res2.Ports
 	require.Len(t, ports, 1)
 
-	f3 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeProperty,
+	f3 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:         "propBool",
@@ -314,13 +314,13 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res3, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f3}, &limit)
+	res3, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f3}, &limit)
 	require.NoError(t, err)
 	ports = res3.Ports
 	require.Len(t, ports, 1)
 
-	f4 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeProperty,
+	f4 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorIs,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:         "propBool",
@@ -329,13 +329,13 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res4, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f4}, &limit)
+	res4, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f4}, &limit)
 	require.NoError(t, err)
 	ports = res4.Ports
 	require.Len(t, ports, 0)
 
-	f5 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeProperty,
+	f5 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeProperty,
 		Operator:   enum.FilterOperatorDateLessThan,
 		PropertyValue: &pkgmodels.PropertyTypeInput{
 			Name:        "connected_date",
@@ -344,7 +344,7 @@ func TestSearchPortProperties(t *testing.T) {
 		},
 	}
 
-	res5, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f5}, &limit)
+	res5, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f5}, &limit)
 	require.NoError(t, err)
 	ports = res5.Ports
 	require.Len(t, ports, 1)
@@ -434,49 +434,49 @@ func TestSearchPortsByService(t *testing.T) {
 	require.NoError(t, err)
 
 	limit := 100
-	all, err := qr.PortSearch(ctx, []*models.PortFilterInput{}, &limit)
+	all, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{}, &limit)
 	require.NoError(t, err)
 	require.Len(t, all.Ports, 8)
 	maxDepth := 2
 
-	f1 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeServiceInst,
+	f1 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res1, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f1}, &limit)
+	res1, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f1}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res1.Ports, 1)
 	require.Equal(t, res1.Ports[0].ID, port1.ID)
 
-	f2 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeServiceInst,
+	f2 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res2, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f2}, &limit)
+	res2, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f2}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res2.Ports, 3)
 
-	f3 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeServiceInst,
+	f3 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s1.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res3, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f3}, &limit)
+	res3, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f3}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res3.Ports, 7)
 
-	f4 := models.PortFilterInput{
-		FilterType: models.PortFilterTypeServiceInst,
+	f4 := pkgmodels.PortFilterInput{
+		FilterType: enum.PortFilterTypeServiceInst,
 		Operator:   enum.FilterOperatorIsNotOneOf,
 		IDSet:      []int{s2.ID},
 		MaxDepth:   &maxDepth,
 	}
-	res4, err := qr.PortSearch(ctx, []*models.PortFilterInput{&f4}, &limit)
+	res4, err := qr.PortSearch(ctx, []*pkgmodels.PortFilterInput{&f4}, &limit)
 	require.NoError(t, err)
 	require.Len(t, res4.Ports, 5)
 }

@@ -11,41 +11,35 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
+
+	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type portFilterInput struct {
-	Name          enum.EquipmentFilterType    `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-	BoolValue     bool                        `json:"boolValue"`
+	Name          enum.EquipmentFilterType `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	BoolValue     bool                     `json:"boolValue"`
 }
 
-type portsRower struct {
-	log log.Logger
+type PortsRower struct {
+	Log log.Logger
 }
 
-const (
-	bom = "\uFEFF"
-)
-
-func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er PortsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
-		logger         = er.log.For(ctx)
+		logger         = er.Log.For(ctx)
 		err            error
 		filterInput    []*models.PortFilterInput
 		portDataHeader = [...]string{bom + "Port ID", "Port Name", "Port Type", "Equipment Name", "Equipment Type"}
@@ -62,7 +56,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 	}
 	client := ent.FromContext(ctx)
 
-	ports, err := resolverutil.PortSearch(ctx, client, filterInput, nil)
+	ports, err := PortSearch(ctx, client, filterInput, nil)
 	if err != nil {
 		logger.Error("cannot query ports", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query ports")
@@ -74,7 +68,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 
 	var orderedLocTypes, propertyTypes []string
 	cg.Go(func(ctx context.Context) (err error) {
-		orderedLocTypes, err = pkgexporter.LocationTypeHierarchy(ctx, client)
+		orderedLocTypes, err = LocationTypeHierarchy(ctx, client)
 		if err != nil {
 			logger.Error("cannot query location types", zap.Error(err))
 			return errors.Wrap(err, "cannot query location types")
@@ -86,7 +80,7 @@ func (er portsRower) Rows(ctx context.Context, filtersParam string) ([][]string,
 		for i, p := range portsList {
 			portIDs[i] = p.ID
 		}
-		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, portIDs, client, enum.PropertyEntityPort)
+		propertyTypes, err = PropertyTypesSlice(ctx, portIDs, client, enum.PropertyEntityPort)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -129,7 +123,7 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 		posName              string
 		lParents, properties []string
 		linkData             = make([]string, 4)
-		eParents             = make([]string, pkgexporter.MaxEquipmentParents)
+		eParents             = make([]string, MaxEquipmentParents)
 		serviceData          = make([]string, 2)
 	)
 	parentEquip, err := port.QueryParent().Only(ctx)
@@ -143,11 +137,11 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 	g := ctxgroup.WithContext(ctx)
 
 	g.Go(func(ctx context.Context) (err error) {
-		lParents, err = pkgexporter.LocationHierarchyForEquipment(ctx, parentEquip, orderedLocTypes)
+		lParents, err = LocationHierarchyForEquipment(ctx, parentEquip, orderedLocTypes)
 		return err
 	})
 	g.Go(func(ctx context.Context) (err error) {
-		properties, err = pkgexporter.PropertiesSlice(ctx, port, propertyTypes, enum.PropertyEntityPort)
+		properties, err = PropertiesSlice(ctx, port, propertyTypes, enum.PropertyEntityPort)
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
@@ -162,7 +156,7 @@ func portToSlice(ctx context.Context, port *ent.EquipmentPort, orderedLocTypes [
 				return err
 			}
 			posName = def.Name
-			eParents = pkgexporter.ParentHierarchy(ctx, *parentEquip)
+			eParents = ParentHierarchy(ctx, *parentEquip)
 		}
 		return nil
 	})
@@ -260,12 +254,12 @@ func paramToPortFilterInput(params string) ([]*models.PortFilterInput, error) {
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.PortFilterInput{
-			FilterType:    models.PortFilterType(upperName),
+			FilterType:    enum.PortFilterType(upperName),
 			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
@@ -277,4 +271,59 @@ func paramToPortFilterInput(params string) ([]*models.PortFilterInput, error) {
 		ret = append(ret, &inp)
 	}
 	return ret, nil
+}
+
+func PortFilter(query *ent.EquipmentPortQuery, filters []*models.PortFilterInput) (*ent.EquipmentPortQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "PORT_INST"):
+			if query, err = handlePortFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handlePortLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "PORT_DEF"):
+			if query, err = handlePortDefinitionFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handlePortPropertyFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "SERVICE_INST"):
+			if query, err = handlePortServiceFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func PortSearch(ctx context.Context, client *ent.Client, filters []*models.PortFilterInput, limit *int) (*models.PortSearchResult, error) {
+	var (
+		query = client.EquipmentPort.Query()
+		err   error
+	)
+	query, err = PortFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	count, err := query.Clone().Count(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Count query failed")
+	}
+	if limit != nil {
+		query.Limit(*limit)
+	}
+	ports, err := query.All(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Querying links failed")
+	}
+	return &models.PortSearchResult{
+		Ports: ports,
+		Count: count,
+	}, nil
 }

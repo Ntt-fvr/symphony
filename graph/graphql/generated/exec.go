@@ -946,7 +946,7 @@ type ComplexityRoot struct {
 		Customers                func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortDefinitions func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		EquipmentPortTypes       func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) int
+		EquipmentPorts           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) int
 		EquipmentSearch          func(childComplexity int, filters []*models1.EquipmentFilterInput, limit *int) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
@@ -961,7 +961,7 @@ type ComplexityRoot struct {
 		Node                     func(childComplexity int, id int) int
 		PermissionsPolicies      func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) int
 		PermissionsPolicySearch  func(childComplexity int, filters []*models.PermissionsPolicyFilterInput, limit *int) int
-		PortSearch               func(childComplexity int, filters []*models.PortFilterInput, limit *int) int
+		PortSearch               func(childComplexity int, filters []*models1.PortFilterInput, limit *int) int
 		PossibleProperties       func(childComplexity int, entityType enum.PropertyEntity) int
 		ProjectSearch            func(childComplexity int, filters []*models.ProjectFilterInput, limit *int) int
 		ProjectTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
@@ -1691,7 +1691,7 @@ type QueryResolver interface {
 	Locations(ctx context.Context, onlyTopLevel *bool, types []int, name *string, needsSiteSurvey *bool, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.LocationOrder, filterBy []*models1.LocationFilterInput) (*ent.LocationConnection, error)
 	EquipmentPortTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortTypeConnection, error)
 	EquipmentPortDefinitions(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentPortDefinitionConnection, error)
-	EquipmentPorts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PortFilterInput) (*ent.EquipmentPortConnection, error)
+	EquipmentPorts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.PortFilterInput) (*ent.EquipmentPortConnection, error)
 	EquipmentTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentTypeConnection, error)
 	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) (*ent.EquipmentConnection, error)
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
@@ -1706,7 +1706,7 @@ type QueryResolver interface {
 	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
 	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
 	LinkSearch(ctx context.Context, filters []*models.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
-	PortSearch(ctx context.Context, filters []*models.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
+	PortSearch(ctx context.Context, filters []*models1.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
 	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
 	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
 	CustomerSearch(ctx context.Context, limit *int) ([]*ent.Customer, error)
@@ -6084,7 +6084,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.EquipmentPorts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.PortFilterInput)), true
+		return e.complexity.Query.EquipmentPorts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.PortFilterInput)), true
 
 	case "Query.equipmentSearch":
 		if e.complexity.Query.EquipmentSearch == nil {
@@ -6254,7 +6254,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.PortSearch(childComplexity, args["filters"].([]*models.PortFilterInput), args["limit"].(*int)), true
+		return e.complexity.Query.PortSearch(childComplexity, args["filters"].([]*models1.PortFilterInput), args["limit"].(*int)), true
 
 	case "Query.possibleProperties":
 		if e.complexity.Query.PossibleProperties == nil {
@@ -10848,7 +10848,10 @@ type UsersGroupSearchResult {
 """
 what filters should we apply on ports
 """
-enum PortFilterType {
+enum PortFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.PortFilterType"
+  ) {
   PORT_DEF
   PORT_INST_HAS_LINK
   PORT_INST_EQUIPMENT
@@ -10924,7 +10927,10 @@ enum UsersGroupFilterType {
   GROUP_NAME
 }
 
-input PortFilterInput {
+input PortFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.PortFilterInput"
+  ) {
   filterType: PortFilterType!
   operator: FilterOperator!
   boolValue: Boolean
@@ -14724,10 +14730,10 @@ func (ec *executionContext) field_Query_equipmentPorts_args(ctx context.Context,
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*models.PortFilterInput
+	var arg4 []*models1.PortFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterBy"))
-		arg4, err = ec.unmarshalOPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInputᚄ(ctx, tmp)
+		arg4, err = ec.unmarshalOPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -15588,10 +15594,10 @@ func (ec *executionContext) field_Query_permissionsPolicySearch_args(ctx context
 func (ec *executionContext) field_Query_portSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []*models.PortFilterInput
+	var arg0 []*models1.PortFilterInput
 	if tmp, ok := rawArgs["filters"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filters"))
-		arg0, err = ec.unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInputᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -35207,7 +35213,7 @@ func (ec *executionContext) _Query_equipmentPorts(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().EquipmentPorts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.PortFilterInput))
+		return ec.resolvers.Query().EquipmentPorts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.PortFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35810,7 +35816,7 @@ func (ec *executionContext) _Query_portSearch(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PortSearch(rctx, args["filters"].([]*models.PortFilterInput), args["limit"].(*int))
+		return ec.resolvers.Query().PortSearch(rctx, args["filters"].([]*models1.PortFilterInput), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -50654,8 +50660,8 @@ func (ec *executionContext) unmarshalInputPermissionsPolicyFilterInput(ctx conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPortFilterInput(ctx context.Context, obj interface{}) (models.PortFilterInput, error) {
-	var it models.PortFilterInput
+func (ec *executionContext) unmarshalInputPortFilterInput(ctx context.Context, obj interface{}) (models1.PortFilterInput, error) {
+	var it models1.PortFilterInput
 	var asMap = obj.(map[string]interface{})
 
 	if _, present := asMap["maxDepth"]; !present {
@@ -50668,7 +50674,7 @@ func (ec *executionContext) unmarshalInputPortFilterInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐPortFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65676,7 +65682,7 @@ func (ec *executionContext) marshalNPermissionsPolicySearchResult2ᚖgithubᚗco
 	return ec._PermissionsPolicySearchResult(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.PortFilterInput, error) {
+func (ec *executionContext) unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.PortFilterInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -65686,10 +65692,10 @@ func (ec *executionContext) unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 		}
 	}
 	var err error
-	res := make([]*models.PortFilterInput, len(vSlice))
+	res := make([]*models1.PortFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -65697,19 +65703,25 @@ func (ec *executionContext) unmarshalNPortFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInput(ctx context.Context, v interface{}) (*models.PortFilterInput, error) {
+func (ec *executionContext) unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInput(ctx context.Context, v interface{}) (*models1.PortFilterInput, error) {
 	res, err := ec.unmarshalInputPortFilterInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterType(ctx context.Context, v interface{}) (models.PortFilterType, error) {
-	var res models.PortFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐPortFilterType(ctx context.Context, v interface{}) (enum.PortFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.PortFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterType(ctx context.Context, sel ast.SelectionSet, v models.PortFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNPortFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐPortFilterType(ctx context.Context, sel ast.SelectionSet, v enum.PortFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNPortSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.PortSearchResult) graphql.Marshaler {
@@ -69530,7 +69542,7 @@ func (ec *executionContext) unmarshalOPermissionsPolicyFilterInput2ᚕᚖgithub�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.PortFilterInput, error) {
+func (ec *executionContext) unmarshalOPortFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.PortFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -69543,10 +69555,10 @@ func (ec *executionContext) unmarshalOPortFilterInput2ᚕᚖgithubᚗcomᚋfaceb
 		}
 	}
 	var err error
-	res := make([]*models.PortFilterInput, len(vSlice))
+	res := make([]*models1.PortFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐPortFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNPortFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐPortFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}

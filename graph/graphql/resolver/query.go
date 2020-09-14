@@ -153,10 +153,10 @@ func (r queryResolver) EquipmentPorts(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	filters []*models.PortFilterInput,
+	filters []*pkgmodels.PortFilterInput,
 ) (*ent.EquipmentPortConnection, error) {
 	query := r.ClientFrom(ctx).EquipmentPort.Query()
-	query, err := resolverutil.PortFilter(query, filters)
+	query, err := pkgexporter.PortFilter(query, filters)
 	if err != nil {
 		return nil, err
 	}

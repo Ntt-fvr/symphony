@@ -217,6 +217,32 @@ func (e EquipmentFilterType) String() string {
 	return string(e)
 }
 
+// PortFilterType specifies what filters should we apply on ports
+type PortFilterType string
+
+const (
+	PortFilterTypePortDef                PortFilterType = "PORT_DEF"
+	PortFilterTypePortInstHasLink        PortFilterType = "PORT_INST_HAS_LINK"
+	PortFilterTypePortInstEquipment      PortFilterType = "PORT_INST_EQUIPMENT"
+	PortFilterTypeLocationInst           PortFilterType = "LOCATION_INST"
+	PortFilterTypeLocationInstExternalID PortFilterType = "LOCATION_INST_EXTERNAL_ID"
+	PortFilterTypeProperty               PortFilterType = "PROPERTY"
+	PortFilterTypeServiceInst            PortFilterType = "SERVICE_INST"
+)
+
+func (p PortFilterType) IsValid() bool {
+	switch p {
+	case PortFilterTypePortDef, PortFilterTypePortInstHasLink, PortFilterTypePortInstEquipment, PortFilterTypeLocationInst, PortFilterTypeLocationInstExternalID, PortFilterTypeProperty, PortFilterTypeServiceInst:
+		return true
+	}
+	return false
+}
+
+// String implements Getter interface.
+func (p PortFilterType) String() string {
+	return string(p)
+}
+
 // FilterOperator is filter operator for the search
 type FilterOperator string
 

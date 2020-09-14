@@ -7,6 +7,8 @@ package exporter
 import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
+	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -71,4 +73,19 @@ func LocationFilterPredicate(q *ent.LocationQuery, filter *models.LocationFilter
 		return q.Where(location.Or(ps...)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
+}
+
+// GetPortLocationPredicate returns a predicate for location ancestors for port
+func GetPortLocationPredicate(locationID int, maxDepth *int) predicate.EquipmentPort {
+	pred := equipment.HasLocationWith(
+		BuildLocationAncestorFilter(locationID, 1, *maxDepth),
+	)
+	return equipmentport.HasParentWith(
+		equipment.Or(
+			pred,
+			equipment.HasParentPositionWith(
+				equipmentposition.HasParentWith(pred),
+			),
+		),
+	)
 }
