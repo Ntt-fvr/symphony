@@ -67,6 +67,7 @@ mutation AddProjectMutation(
 
 fragment ProjectsTableView_projects on Project {
   id
+  createTime
   name
   createdBy {
     email
@@ -160,6 +161,13 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "createTime",
+            "storageKey": null
+          },
           (v3/*: any*/),
           {
             "alias": null,
@@ -220,12 +228,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6faabab486f9c550a089638257c49c8c",
+    "cacheID": "5cff189f19ce9ed3b92603462979a851",
     "id": null,
     "metadata": {},
     "name": "AddProjectMutation",
     "operationKind": "mutation",
-    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n"
+    "text": "mutation AddProjectMutation(\n  $input: AddProjectInput!\n) {\n  createProject(input: $input) {\n    ...ProjectsTableView_projects\n    id\n  }\n}\n\nfragment ProjectsTableView_projects on Project {\n  id\n  createTime\n  name\n  createdBy {\n    email\n    id\n  }\n  location {\n    id\n    name\n  }\n  type {\n    id\n    name\n  }\n  priority\n  numberOfWorkOrders\n}\n"
   }
 };
 })();

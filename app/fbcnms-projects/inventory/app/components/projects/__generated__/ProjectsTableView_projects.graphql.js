@@ -20,6 +20,7 @@ declare export opaque type ProjectsTableView_projects$ref: FragmentReference;
 declare export opaque type ProjectsTableView_projects$fragmentType: ProjectsTableView_projects$ref;
 export type ProjectsTableView_projects = $ReadOnlyArray<{|
   +id: string,
+  +createTime: any,
   +name: string,
   +createdBy: ?{|
     +email: string
@@ -73,6 +74,13 @@ return {
   "name": "ProjectsTableView_projects",
   "selections": [
     (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "createTime",
+      "storageKey": null
+    },
     (v1/*: any*/),
     {
       "alias": null,
@@ -132,6 +140,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3c5cdac7da5dcdb9c638764e19361524';
+(node/*: any*/).hash = '89828d78d82ec9897d1711dc5595c8a9';
 
 module.exports = node;

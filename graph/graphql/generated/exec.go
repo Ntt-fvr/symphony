@@ -841,6 +841,7 @@ type ComplexityRoot struct {
 
 	Project struct {
 		Comments           func(childComplexity int) int
+		CreateTime         func(childComplexity int) int
 		CreatedBy          func(childComplexity int) int
 		Description        func(childComplexity int) int
 		ID                 func(childComplexity int) int
@@ -1654,6 +1655,7 @@ type PermissionsPolicyResolver interface {
 }
 type ProjectResolver interface {
 	CreatedBy(ctx context.Context, obj *ent.Project) (*ent.User, error)
+
 	Type(ctx context.Context, obj *ent.Project) (*ent.ProjectType, error)
 	Template(ctx context.Context, obj *ent.Project) (*ent.ProjectTemplate, error)
 	Location(ctx context.Context, obj *ent.Project) (*ent.Location, error)
@@ -5523,6 +5525,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.Comments(childComplexity), true
+
+	case "Project.createTime":
+		if e.complexity.Project.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.Project.CreateTime(childComplexity), true
 
 	case "Project.createdBy":
 		if e.complexity.Project.CreatedBy == nil {
@@ -10719,6 +10728,7 @@ type Project implements Node {
   description: String
   priority: ProjectPriority!
   createdBy: User
+  createTime: Time!
   type: ProjectType!
   template: ProjectTemplate
   location: Location
@@ -32767,6 +32777,40 @@ func (ec *executionContext) _Project_createdBy(ctx context.Context, field graphq
 	res := resTmp.(*ent.User)
 	fc.Result = res
 	return ec.marshalOUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Project_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Project",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Project_type(ctx context.Context, field graphql.CollectedField, obj *ent.Project) (ret graphql.Marshaler) {
@@ -58165,6 +58209,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 				res = ec._Project_createdBy(ctx, field, obj)
 				return res
 			})
+		case "createTime":
+			out.Values[i] = ec._Project_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "type":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {

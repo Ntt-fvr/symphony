@@ -11,6 +11,7 @@
 import type {ProjectsTableView_projects} from './__generated__/ProjectsTableView_projects.graphql';
 
 import Button from '@symphony/design-system/components/Button';
+import DateTimeFormat from '../../common/DateTimeFormat';
 import LocationLink from '../location/LocationLink';
 import PriorityTag from '../work_orders/PriorityTag';
 import React, {useMemo} from 'react';
@@ -101,6 +102,11 @@ const ProjectsTableView = (props: Props) => {
           getSortingValue: row => prioritySortingValues[row.priority],
           render: row => <PriorityTag priority={row.priority} />,
         },
+        {
+          key: 'createTime',
+          title: 'Creation Time',
+          render: row => DateTimeFormat.dateTime(row.createTime),
+        },
       ]}
     />
   );
@@ -110,6 +116,7 @@ export default createFragmentContainer(ProjectsTableView, {
   projects: graphql`
     fragment ProjectsTableView_projects on Project @relay(plural: true) {
       id
+      createTime
       name
       createdBy {
         email

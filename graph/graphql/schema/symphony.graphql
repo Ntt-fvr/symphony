@@ -2236,6 +2236,7 @@ type Project implements Node {
   description: String
   priority: ProjectPriority!
   createdBy: User
+  createTime: Time!
   type: ProjectType!
   template: ProjectTemplate
   location: Location
