@@ -70,8 +70,9 @@ const csvFileExportKeyQuery = graphql`
 `;
 
 const PATH_PREFIX = '/graph/export';
-const PATH_EQUIPMENTS = '/equipment';
-const PATH_LOCATIONS = '/locations';
+const PATH_SERVICES = '/services';
+const PATH_WORK_ORDERS = '/work_orders';
+const PATH_SINGLE_WORK_ORDER = '/single_work_order';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
 const EXPORT_TASK_MAX_POLLS = 5;
 
@@ -168,7 +169,9 @@ const CSVFileExport = (props: Props) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           if (
             !isAsyncExportEnabled ||
-            (exportPath !== PATH_EQUIPMENTS && exportPath !== PATH_LOCATIONS)
+            exportPath === PATH_SERVICES ||
+            exportPath === PATH_WORK_ORDERS ||
+            exportPath === PATH_SINGLE_WORK_ORDER
           ) {
             downloadFile(url);
           } else {

@@ -65,7 +65,7 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 
 	var key string
 	switch task.Type {
-	case exporttask.TypeLocation, exporttask.TypeEquipment:
+	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink:
 		key, err = eh.export(ctx, logger, task)
 	default:
 		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
@@ -100,6 +100,14 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 		}
 	case exporttask.TypeEquipment:
 		rower = exporter.EquipmentRower{
+			Log: logger,
+		}
+	case exporttask.TypePort:
+		rower = exporter.PortsRower{
+			Log: logger,
+		}
+	case exporttask.TypeLink:
+		rower = exporter.LinksRower{
 			Log: logger,
 		}
 	default:

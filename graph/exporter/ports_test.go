@@ -16,6 +16,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -331,4 +332,8 @@ func TestPortWithFilters(t *testing.T) {
 		err = res.Body.Close()
 		require.NoError(t, err)
 	}
+}
+
+func TestPortsAsyncExport(t *testing.T) {
+	testAsyncExport(t, exporttask.TypePort)
 }

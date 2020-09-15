@@ -19,6 +19,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -493,4 +494,8 @@ func TestLinksWithFilters(t *testing.T) {
 		err = res.Body.Close()
 		require.NoError(t, err)
 	}
+}
+
+func TestLinksAsyncExport(t *testing.T) {
+	testAsyncExport(t, exporttask.TypeLink)
 }

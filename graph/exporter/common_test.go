@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -27,6 +28,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -36,6 +38,7 @@ import (
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/testdb"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
@@ -436,4 +439,56 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 	require.Equal(t, resp.StatusCode, http.StatusOK)
 	err = resp.Body.Close()
 	require.NoError(t, err)
+}
+
+func testAsyncExport(t *testing.T, typ exporttask.Type) {
+	r := newExporterTestResolver(t)
+	logger := r.exporter.log
+	var e exporter
+	switch typ {
+	case exporttask.TypeLocation:
+		e = exporter{logger, pkgexporter.LocationsRower{
+			Log:        logger,
+			Concurrent: false,
+		}}
+	case exporttask.TypeEquipment:
+		e = exporter{logger, pkgexporter.EquipmentRower{
+			Log: logger,
+		}}
+	case exporttask.TypePort:
+		e = exporter{logger, pkgexporter.PortsRower{
+			Log: logger,
+		}}
+	case exporttask.TypeLink:
+		e = exporter{logger, pkgexporter.LinksRower{
+			Log: logger,
+		}}
+	}
+
+	th := viewertest.TestHandler(t, &e, r.client)
+	server := httptest.NewServer(th)
+	defer server.Close()
+
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/links", nil)
+	require.NoError(t, err)
+	viewertest.SetDefaultViewerHeaders(req)
+	req.Header.Set(viewer.FeaturesHeader, "async_export")
+
+	prepareData(ctx, t, *r)
+	require.NoError(t, err)
+
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	type resStruct struct {
+		TaskID string
+	}
+	var response resStruct
+	err = json.NewDecoder(res.Body).Decode(&response)
+	require.NoError(t, err)
+	taskID := response.TaskID
+	require.NotEmpty(t, taskID)
+	require.True(t, len(response.TaskID) > 1)
 }

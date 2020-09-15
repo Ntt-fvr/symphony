@@ -53,6 +53,14 @@ func (s *exportTestSuite) TestEquipments() {
 	s.testExport(exporttask.TypeEquipment)
 }
 
+func (s *exportTestSuite) TestLinks() {
+	s.testExport(exporttask.TypeLink)
+}
+
+func (s *exportTestSuite) TestPorts() {
+	s.testExport(exporttask.TypePort)
+}
+
 func (s *exportTestSuite) testExport(t exporttask.Type) {
 	task, err := s.createExportTask(s.ctx, s.client, t)
 	s.Require().NoError(err)
