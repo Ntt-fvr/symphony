@@ -69,10 +69,10 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.SearchForNode = func(childComplexity int, _ string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.Services = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*models.ServiceFilterInput) int {
+	complexity.Query.Services = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ []*pkgmodels.ServiceFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
-	complexity.Query.ServiceSearch = func(childComplexity int, _ []*models.ServiceFilterInput, limit *int) int {
+	complexity.Query.ServiceSearch = func(childComplexity int, _ []*pkgmodels.ServiceFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.ServiceTypes = PaginationComplexity
@@ -88,11 +88,11 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.UsersGroupSearch = func(childComplexity int, _ []*models.UsersGroupFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
-	complexity.Query.WorkOrderSearch = func(childComplexity int, _ []*models.WorkOrderFilterInput, limit *int) int {
+	complexity.Query.WorkOrderSearch = func(childComplexity int, _ []*pkgmodels.WorkOrderFilterInput, limit *int) int {
 		return SearchComplexity(childComplexity, limit)
 	}
 	complexity.Query.WorkOrderTypes = PaginationComplexity
-	complexity.Query.WorkOrders = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.WorkOrderOrder, _ []*models.WorkOrderFilterInput) int {
+	complexity.Query.WorkOrders = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.WorkOrderOrder, _ []*pkgmodels.WorkOrderFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	return complexity

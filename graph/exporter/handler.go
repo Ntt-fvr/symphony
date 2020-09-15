@@ -180,10 +180,10 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 	}{
 		{name: "equipment", handler: exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}},
 		{name: "ports", handler: exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}},
-		{"work_orders", exporter{log, woRower{log}}},
+		{name: "work_orders", handler: exporter{log: log, rower: pkgexporter.WoRower{Log: log}}},
 		{name: "links", handler: exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}},
 		{name: "locations", handler: exporter{log: log, rower: pkgexporter.LocationsRower{Log: log, Concurrent: true}}},
-		{"services", exporter{log, servicesRower{log}}},
+		{name: "services", handler: exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}},
 	}
 
 	router.Path("/single_work_order").

@@ -2416,7 +2416,10 @@ enum LocationFilterType
 """
 what filters should we apply on services
 """
-enum ServiceFilterType {
+enum ServiceFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
+  ) {
   SERVICE_INST_NAME
   SERVICE_STATUS
   SERVICE_DISCOVERY_METHOD
@@ -2492,7 +2495,10 @@ input LocationFilterInput
   maxDepth: Int = 5
 }
 
-input ServiceFilterInput {
+input ServiceFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
+  ) {
   filterType: ServiceFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -2530,7 +2536,10 @@ input UsersGroupFilterInput {
 """
 what type of work order we filter about
 """
-enum WorkOrderFilterType {
+enum WorkOrderFilterType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.WorkOrderFilterType"
+  ) {
   WORK_ORDER_NAME
   WORK_ORDER_STATUS
   WORK_ORDER_OWNED_BY
@@ -2544,7 +2553,10 @@ enum WorkOrderFilterType {
   LOCATION_INST_EXTERNAL_ID
 }
 
-input WorkOrderFilterInput {
+input WorkOrderFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
+  ) {
   filterType: WorkOrderFilterType!
   operator: FilterOperator!
   stringValue: String

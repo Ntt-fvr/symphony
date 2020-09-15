@@ -969,9 +969,9 @@ type ComplexityRoot struct {
 		PythonPackages           func(childComplexity int) int
 		ReportFilters            func(childComplexity int, entity models.FilterEntity) int
 		SearchForNode            func(childComplexity int, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		ServiceSearch            func(childComplexity int, filters []*models.ServiceFilterInput, limit *int) int
+		ServiceSearch            func(childComplexity int, filters []*models1.ServiceFilterInput, limit *int) int
 		ServiceTypes             func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ServiceFilterInput) int
+		Services                 func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) int
 		Surveys                  func(childComplexity int) int
 		TriggerType              func(childComplexity int, id flowschema.TriggerTypeID) int
 		User                     func(childComplexity int, authID string) int
@@ -980,9 +980,9 @@ type ComplexityRoot struct {
 		UsersGroupSearch         func(childComplexity int, filters []*models.UsersGroupFilterInput, limit *int) int
 		UsersGroups              func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) int
 		Vertex                   func(childComplexity int, id int) int
-		WorkOrderSearch          func(childComplexity int, filters []*models.WorkOrderFilterInput, limit *int) int
+		WorkOrderSearch          func(childComplexity int, filters []*models1.WorkOrderFilterInput, limit *int) int
 		WorkOrderTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
-		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) int
+		WorkOrders               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) int
 	}
 
 	ReportFilter struct {
@@ -1695,22 +1695,22 @@ type QueryResolver interface {
 	EquipmentTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.EquipmentTypeConnection, error)
 	Equipments(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) (*ent.EquipmentConnection, error)
 	ServiceTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.ServiceTypeConnection, error)
-	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
+	WorkOrders(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.WorkOrderOrder, filterBy []*models1.WorkOrderFilterInput) (*ent.WorkOrderConnection, error)
 	WorkOrderTypes(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.WorkOrderTypeConnection, error)
 	Links(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) (*ent.LinkConnection, error)
-	Services(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.ServiceFilterInput) (*ent.ServiceConnection, error)
+	Services(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.ServiceFilterInput) (*ent.ServiceConnection, error)
 	Users(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UserFilterInput) (*ent.UserConnection, error)
 	UsersGroups(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.UsersGroupFilterInput) (*ent.UsersGroupConnection, error)
 	PermissionsPolicies(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models.PermissionsPolicyFilterInput) (*ent.PermissionsPolicyConnection, error)
 	SearchForNode(ctx context.Context, name string, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*models.SearchNodesConnection, error)
 	EquipmentSearch(ctx context.Context, filters []*models1.EquipmentFilterInput, limit *int) (*models1.EquipmentSearchResult, error)
-	WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
+	WorkOrderSearch(ctx context.Context, filters []*models1.WorkOrderFilterInput, limit *int) (*models1.WorkOrderSearchResult, error)
 	LinkSearch(ctx context.Context, filters []*models1.LinkFilterInput, limit *int) (*models1.LinkSearchResult, error)
 	PortSearch(ctx context.Context, filters []*models1.PortFilterInput, limit *int) (*models1.PortSearchResult, error)
 	LocationSearch(ctx context.Context, filters []*models1.LocationFilterInput, limit *int) (*models1.LocationSearchResult, error)
 	ProjectSearch(ctx context.Context, filters []*models.ProjectFilterInput, limit *int) ([]*ent.Project, error)
 	CustomerSearch(ctx context.Context, limit *int) ([]*ent.Customer, error)
-	ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*models1.ServiceSearchResult, error)
+	ServiceSearch(ctx context.Context, filters []*models1.ServiceFilterInput, limit *int) (*models1.ServiceSearchResult, error)
 	UserSearch(ctx context.Context, filters []*models.UserFilterInput, limit *int) (*models.UserSearchResult, error)
 	PermissionsPolicySearch(ctx context.Context, filters []*models.PermissionsPolicyFilterInput, limit *int) (*models.PermissionsPolicySearchResult, error)
 	UsersGroupSearch(ctx context.Context, filters []*models.UsersGroupFilterInput, limit *int) (*models.UsersGroupSearchResult, error)
@@ -6345,7 +6345,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.ServiceSearch(childComplexity, args["filters"].([]*models.ServiceFilterInput), args["limit"].(*int)), true
+		return e.complexity.Query.ServiceSearch(childComplexity, args["filters"].([]*models1.ServiceFilterInput), args["limit"].(*int)), true
 
 	case "Query.serviceTypes":
 		if e.complexity.Query.ServiceTypes == nil {
@@ -6369,7 +6369,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Services(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.ServiceFilterInput)), true
+		return e.complexity.Query.Services(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.ServiceFilterInput)), true
 
 	case "Query.surveys":
 		if e.complexity.Query.Surveys == nil {
@@ -6472,7 +6472,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.WorkOrderSearch(childComplexity, args["filters"].([]*models.WorkOrderFilterInput), args["limit"].(*int)), true
+		return e.complexity.Query.WorkOrderSearch(childComplexity, args["filters"].([]*models1.WorkOrderFilterInput), args["limit"].(*int)), true
 
 	case "Query.workOrderTypes":
 		if e.complexity.Query.WorkOrderTypes == nil {
@@ -6496,7 +6496,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.WorkOrders(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput)), true
+		return e.complexity.Query.WorkOrders(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models1.WorkOrderFilterInput)), true
 
 	case "ReportFilter.entity":
 		if e.complexity.ReportFilter.Entity == nil {
@@ -10899,7 +10899,10 @@ enum LocationFilterType
 """
 what filters should we apply on services
 """
-enum ServiceFilterType {
+enum ServiceFilterType
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.ServiceFilterType"
+  ) {
   SERVICE_INST_NAME
   SERVICE_STATUS
   SERVICE_DISCOVERY_METHOD
@@ -10975,7 +10978,10 @@ input LocationFilterInput
   maxDepth: Int = 5
 }
 
-input ServiceFilterInput {
+input ServiceFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.ServiceFilterInput"
+  ) {
   filterType: ServiceFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -11013,7 +11019,10 @@ input UsersGroupFilterInput {
 """
 what type of work order we filter about
 """
-enum WorkOrderFilterType {
+enum WorkOrderFilterType
+  @goModel(
+    model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.WorkOrderFilterType"
+  ) {
   WORK_ORDER_NAME
   WORK_ORDER_STATUS
   WORK_ORDER_OWNED_BY
@@ -11027,7 +11036,10 @@ enum WorkOrderFilterType {
   LOCATION_INST_EXTERNAL_ID
 }
 
-input WorkOrderFilterInput {
+input WorkOrderFilterInput
+  @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/exporter/models.WorkOrderFilterInput"
+  ) {
   filterType: WorkOrderFilterType!
   operator: FilterOperator!
   stringValue: String
@@ -15987,10 +15999,10 @@ func (ec *executionContext) field_Query_searchForNode_args(ctx context.Context, 
 func (ec *executionContext) field_Query_serviceSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []*models.ServiceFilterInput
+	var arg0 []*models1.ServiceFilterInput
 	if tmp, ok := rawArgs["filters"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filters"))
-		arg0, err = ec.unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInputᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -16184,10 +16196,10 @@ func (ec *executionContext) field_Query_services_args(ctx context.Context, rawAr
 		}
 	}
 	args["last"] = arg3
-	var arg4 []*models.ServiceFilterInput
+	var arg4 []*models1.ServiceFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterBy"))
-		arg4, err = ec.unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInputᚄ(ctx, tmp)
+		arg4, err = ec.unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -16508,10 +16520,10 @@ func (ec *executionContext) field_Query_vertex_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_workOrderSearch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []*models.WorkOrderFilterInput
+	var arg0 []*models1.WorkOrderFilterInput
 	if tmp, ok := rawArgs["filters"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filters"))
-		arg0, err = ec.unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInputᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -16714,10 +16726,10 @@ func (ec *executionContext) field_Query_workOrders_args(ctx context.Context, raw
 		}
 	}
 	args["orderBy"] = arg4
-	var arg5 []*models.WorkOrderFilterInput
+	var arg5 []*models1.WorkOrderFilterInput
 	if tmp, ok := rawArgs["filterBy"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterBy"))
-		arg5, err = ec.unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInputᚄ(ctx, tmp)
+		arg5, err = ec.unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -35384,7 +35396,7 @@ func (ec *executionContext) _Query_workOrders(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().WorkOrders(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models.WorkOrderFilterInput))
+		return ec.resolvers.Query().WorkOrders(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.WorkOrderOrder), args["filterBy"].([]*models1.WorkOrderFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35507,7 +35519,7 @@ func (ec *executionContext) _Query_services(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Services(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models.ServiceFilterInput))
+		return ec.resolvers.Query().Services(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["filterBy"].([]*models1.ServiceFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35744,7 +35756,7 @@ func (ec *executionContext) _Query_workOrderSearch(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().WorkOrderSearch(rctx, args["filters"].([]*models.WorkOrderFilterInput), args["limit"].(*int))
+		return ec.resolvers.Query().WorkOrderSearch(rctx, args["filters"].([]*models1.WorkOrderFilterInput), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35990,7 +36002,7 @@ func (ec *executionContext) _Query_serviceSearch(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ServiceSearch(rctx, args["filters"].([]*models.ServiceFilterInput), args["limit"].(*int))
+		return ec.resolvers.Query().ServiceSearch(rctx, args["filters"].([]*models1.ServiceFilterInput), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -51370,8 +51382,8 @@ func (ec *executionContext) unmarshalInputServiceEndpointDefinitionInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputServiceFilterInput(ctx context.Context, obj interface{}) (models.ServiceFilterInput, error) {
-	var it models.ServiceFilterInput
+func (ec *executionContext) unmarshalInputServiceFilterInput(ctx context.Context, obj interface{}) (models1.ServiceFilterInput, error) {
+	var it models1.ServiceFilterInput
 	var asMap = obj.(map[string]interface{})
 
 	if _, present := asMap["maxDepth"]; !present {
@@ -51384,7 +51396,7 @@ func (ec *executionContext) unmarshalInputServiceFilterInput(ctx context.Context
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐServiceFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52825,8 +52837,8 @@ func (ec *executionContext) unmarshalInputWorkOrderDefinitionInput(ctx context.C
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Context, obj interface{}) (models.WorkOrderFilterInput, error) {
-	var it models.WorkOrderFilterInput
+func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Context, obj interface{}) (models1.WorkOrderFilterInput, error) {
+	var it models1.WorkOrderFilterInput
 	var asMap = obj.(map[string]interface{})
 
 	if _, present := asMap["maxDepth"]; !present {
@@ -52839,7 +52851,7 @@ func (ec *executionContext) unmarshalInputWorkOrderFilterInput(ctx context.Conte
 			var err error
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filterType"))
-			it.FilterType, err = ec.unmarshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterType(ctx, v)
+			it.FilterType, err = ec.unmarshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐWorkOrderFilterType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -66593,7 +66605,7 @@ func (ec *executionContext) marshalNServiceEndpointDefinition2ᚖgithubᚗcomᚋ
 	return ec._ServiceEndpointDefinition(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ServiceFilterInput, error) {
+func (ec *executionContext) unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.ServiceFilterInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -66603,10 +66615,10 @@ func (ec *executionContext) unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfa
 		}
 	}
 	var err error
-	res := make([]*models.ServiceFilterInput, len(vSlice))
+	res := make([]*models1.ServiceFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -66614,19 +66626,25 @@ func (ec *executionContext) unmarshalNServiceFilterInput2ᚕᚖgithubᚗcomᚋfa
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInput(ctx context.Context, v interface{}) (*models.ServiceFilterInput, error) {
+func (ec *executionContext) unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInput(ctx context.Context, v interface{}) (*models1.ServiceFilterInput, error) {
 	res, err := ec.unmarshalInputServiceFilterInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterType(ctx context.Context, v interface{}) (models.ServiceFilterType, error) {
-	var res models.ServiceFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐServiceFilterType(ctx context.Context, v interface{}) (enum.ServiceFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.ServiceFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterType(ctx context.Context, sel ast.SelectionSet, v models.ServiceFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNServiceFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐServiceFilterType(ctx context.Context, sel ast.SelectionSet, v enum.ServiceFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNServiceSearchResult2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceSearchResult(ctx context.Context, sel ast.SelectionSet, v models1.ServiceSearchResult) graphql.Marshaler {
@@ -68037,7 +68055,7 @@ func (ec *executionContext) marshalNWorkOrderExecutionResult2ᚖgithubᚗcomᚋf
 	return ec._WorkOrderExecutionResult(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.WorkOrderFilterInput, error) {
+func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.WorkOrderFilterInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -68047,10 +68065,10 @@ func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋ
 		}
 	}
 	var err error
-	res := make([]*models.WorkOrderFilterInput, len(vSlice))
+	res := make([]*models1.WorkOrderFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -68058,19 +68076,25 @@ func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋ
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInput(ctx context.Context, v interface{}) (*models.WorkOrderFilterInput, error) {
+func (ec *executionContext) unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInput(ctx context.Context, v interface{}) (*models1.WorkOrderFilterInput, error) {
 	res, err := ec.unmarshalInputWorkOrderFilterInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterType(ctx context.Context, v interface{}) (models.WorkOrderFilterType, error) {
-	var res models.WorkOrderFilterType
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐWorkOrderFilterType(ctx context.Context, v interface{}) (enum.WorkOrderFilterType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := enum.WorkOrderFilterType(tmp)
 	return res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterType(ctx context.Context, sel ast.SelectionSet, v models.WorkOrderFilterType) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNWorkOrderFilterType2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐWorkOrderFilterType(ctx context.Context, sel ast.SelectionSet, v enum.WorkOrderFilterType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNWorkOrderPriority2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋworkorderᚐPriority(ctx context.Context, v interface{}) (workorder.Priority, error) {
@@ -69900,7 +69924,7 @@ func (ec *executionContext) unmarshalOServiceEndpointDefinitionInput2ᚖgithub�
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.ServiceFilterInput, error) {
+func (ec *executionContext) unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.ServiceFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -69913,10 +69937,10 @@ func (ec *executionContext) unmarshalOServiceFilterInput2ᚕᚖgithubᚗcomᚋfa
 		}
 	}
 	var err error
-	res := make([]*models.ServiceFilterInput, len(vSlice))
+	res := make([]*models1.ServiceFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐServiceFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNServiceFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐServiceFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}
@@ -70735,7 +70759,7 @@ func (ec *executionContext) unmarshalOWorkOrderDefinitionInput2ᚕᚖgithubᚗco
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInputᚄ(ctx context.Context, v interface{}) ([]*models.WorkOrderFilterInput, error) {
+func (ec *executionContext) unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInputᚄ(ctx context.Context, v interface{}) ([]*models1.WorkOrderFilterInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -70748,10 +70772,10 @@ func (ec *executionContext) unmarshalOWorkOrderFilterInput2ᚕᚖgithubᚗcomᚋ
 		}
 	}
 	var err error
-	res := make([]*models.WorkOrderFilterInput, len(vSlice))
+	res := make([]*models1.WorkOrderFilterInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
-		res[i], err = ec.unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐWorkOrderFilterInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNWorkOrderFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋexporterᚋmodelsᚐWorkOrderFilterInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, graphql.WrapErrorWithInputPath(ctx, err)
 		}

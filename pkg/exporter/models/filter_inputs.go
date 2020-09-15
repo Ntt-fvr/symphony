@@ -5,6 +5,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
@@ -48,4 +50,25 @@ type LinkFilterInput struct {
 	IDSet         []int               `json:"idSet"`
 	StringSet     []string            `json:"stringSet"`
 	MaxDepth      *int                `json:"maxDepth"`
+}
+
+type ServiceFilterInput struct {
+	FilterType    enum.ServiceFilterType `json:"filterType"`
+	Operator      enum.FilterOperator    `json:"operator"`
+	StringValue   *string                `json:"stringValue"`
+	PropertyValue *PropertyTypeInput     `json:"propertyValue"`
+	IDSet         []int                  `json:"idSet"`
+	StringSet     []string               `json:"stringSet"`
+	MaxDepth      *int                   `json:"maxDepth"`
+}
+
+type WorkOrderFilterInput struct {
+	FilterType    enum.WorkOrderFilterType `json:"filterType"`
+	Operator      enum.FilterOperator      `json:"operator"`
+	StringValue   *string                  `json:"stringValue"`
+	IDSet         []int                    `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue *PropertyTypeInput       `json:"propertyValue"`
+	TimeValue     *time.Time               `json:"timeValue"`
+	MaxDepth      *int                     `json:"maxDepth"`
 }

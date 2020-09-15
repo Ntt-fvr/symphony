@@ -186,7 +186,7 @@ func (r queryResolver) WorkOrders(
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
 	orderBy *ent.WorkOrderOrder,
-	filterBy []*models.WorkOrderFilterInput,
+	filterBy []*pkgmodels.WorkOrderFilterInput,
 ) (*ent.WorkOrderConnection, error) {
 	return r.ClientFrom(ctx).
 		WorkOrder.
@@ -195,7 +195,7 @@ func (r queryResolver) WorkOrders(
 			ent.WithWorkOrderOrder(orderBy),
 			ent.WithWorkOrderFilter(
 				func(query *ent.WorkOrderQuery) (*ent.WorkOrderQuery, error) {
-					return resolverutil.WorkOrderFilter(query, filterBy)
+					return pkgexporter.WorkOrderFilter(query, filterBy)
 				},
 			),
 		)
@@ -248,9 +248,9 @@ func (r queryResolver) Services(
 	ctx context.Context,
 	after *ent.Cursor, first *int,
 	before *ent.Cursor, last *int,
-	filters []*models.ServiceFilterInput) (*ent.ServiceConnection, error) {
+	filters []*pkgmodels.ServiceFilterInput) (*ent.ServiceConnection, error) {
 	query := r.ClientFrom(ctx).Service.Query().Where(service.HasTypeWith(servicetype.IsDeleted(false)))
-	query, err := resolverutil.ServiceFilter(query, filters)
+	query, err := pkgexporter.ServiceFilter(query, filters)
 	if err != nil {
 		return nil, err
 	}

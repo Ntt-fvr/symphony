@@ -42,6 +42,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/survey"
 	"github.com/facebookincubator/symphony/pkg/ent/surveyquestion"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	"github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
@@ -1902,12 +1903,12 @@ func (r mutationResolver) MarkSiteSurveyNeeded(ctx context.Context, locationID i
 
 func (r mutationResolver) AddService(ctx context.Context, data models.ServiceCreateData) (*ent.Service, error) {
 	client := r.ClientFrom(ctx)
-	err := resolverutil.CheckServiceNameNotExist(ctx, client, data.Name)
+	err := exporter.CheckServiceNameNotExist(ctx, client, data.Name)
 	if err != nil {
 		return nil, err
 	}
 	if data.ExternalID != nil {
-		err := resolverutil.CheckServiceExternalIDNotExist(ctx, client, *data.ExternalID)
+		err := exporter.CheckServiceExternalIDNotExist(ctx, client, *data.ExternalID)
 		if err != nil {
 			return nil, err
 		}
@@ -1950,7 +1951,7 @@ func (r mutationResolver) EditService(ctx context.Context, data models.ServiceEd
 	query := client.Service.UpdateOne(s)
 
 	if data.ExternalID != nil && (s.ExternalID == nil || *s.ExternalID != *data.ExternalID) {
-		err := resolverutil.CheckServiceExternalIDNotExist(ctx, client, *data.ExternalID)
+		err := exporter.CheckServiceExternalIDNotExist(ctx, client, *data.ExternalID)
 		if err != nil {
 			return nil, err
 		}
@@ -1958,7 +1959,7 @@ func (r mutationResolver) EditService(ctx context.Context, data models.ServiceEd
 	}
 
 	if data.Name != nil && s.Name != *data.Name {
-		err := resolverutil.CheckServiceNameNotExist(ctx, client, *data.Name)
+		err := exporter.CheckServiceNameNotExist(ctx, client, *data.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -3210,9 +3211,9 @@ func validateFilterTypeEntity(input models.ReportFilterInput) error {
 		case models.FilterEntityPort:
 			validator = enum.PortFilterType(f.FilterType)
 		case models.FilterEntityService:
-			validator = models.ServiceFilterType(f.FilterType)
+			validator = enum.ServiceFilterType(f.FilterType)
 		case models.FilterEntityWorkOrder:
-			validator = models.WorkOrderFilterType(f.FilterType)
+			validator = enum.WorkOrderFilterType(f.FilterType)
 		}
 		if validator == nil || !validator.IsValid() {
 			return fmt.Errorf("entity %q and filter type %q does not match", input.Entity, f.FilterType)

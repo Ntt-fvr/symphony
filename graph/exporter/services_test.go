@@ -19,10 +19,20 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
+
+type servicesFilterInput struct {
+	Name          enum.ServiceFilterType      `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+}
 
 const (
 	serviceNameTitle        = "Service Name"
@@ -216,7 +226,7 @@ func TestEmptyServicesDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, servicesRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -254,7 +264,7 @@ func TestServicesExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, servicesRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -373,7 +383,7 @@ func TestServiceWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, servicesRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -391,7 +401,7 @@ func TestServiceWithFilters(t *testing.T) {
 
 	f1, err := json.Marshal([]servicesFilterInput{
 		{
-			Name:        models.ServiceFilterTypeServiceInstCustomerName,
+			Name:        enum.ServiceFilterTypeServiceInstCustomerName,
 			Operator:    enum.FilterOperatorContains,
 			StringValue: "Customer 1",
 		},
@@ -399,7 +409,7 @@ func TestServiceWithFilters(t *testing.T) {
 	require.NoError(t, err)
 	f2, err := json.Marshal([]servicesFilterInput{
 		{
-			Name:        models.ServiceFilterTypeServiceInstExternalID,
+			Name:        enum.ServiceFilterTypeServiceInstExternalID,
 			Operator:    enum.FilterOperatorIs,
 			StringValue: "XS542",
 		},

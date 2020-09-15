@@ -12,38 +12,37 @@ import (
 	"strings"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/jobs"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
+	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
 type servicesFilterInput struct {
-	Name          models.ServiceFilterType    `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+	Name          enum.ServiceFilterType   `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
 }
 
-type servicesRower struct {
-	log log.Logger
+const MaxEndpoints = 5
+
+type ServicesRower struct {
+	Log log.Logger
 }
 
-func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er ServicesRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
-		logger      = er.log.For(ctx)
+		logger      = er.Log.For(ctx)
 		err         error
 		filterInput []*models.ServiceFilterInput
 		dataHeader  = [...]string{bom + "Service ID", "Service Name", "Service Type", "Discovery Method", "Service External ID", "Customer Name", "Customer External ID", "Status"}
@@ -57,7 +56,7 @@ func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]stri
 	}
 	client := ent.FromContext(ctx)
 
-	services, err := resolverutil.ServiceSearch(ctx, client, filterInput, nil)
+	services, err := ServiceSearch(ctx, client, filterInput, nil)
 	if err != nil {
 		logger.Error("cannot query services", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query services")
@@ -73,7 +72,7 @@ func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]stri
 		for i, l := range servicesList {
 			serviceIDs[i] = l.ID
 		}
-		propertyTypes, err = pkgexporter.PropertyTypesSlice(ctx, serviceIDs, client, enum.PropertyEntityService)
+		propertyTypes, err = PropertyTypesSlice(ctx, serviceIDs, client, enum.PropertyEntityService)
 		if err != nil {
 			logger.Error("cannot query property types", zap.Error(err))
 			return errors.Wrap(err, "cannot query property types")
@@ -84,7 +83,7 @@ func (er servicesRower) Rows(ctx context.Context, filtersParam string) ([][]stri
 		return nil, err
 	}
 
-	endpointHeader := make([]string, jobs.MaxEndpoints*3)
+	endpointHeader := make([]string, MaxEndpoints*3)
 	iter := 0
 	for i := 0; i < len(endpointHeader); i += 3 {
 		iter++
@@ -140,7 +139,7 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 		discoveryMethod = servicetype.DiscoveryMethodManual
 	}
 
-	properties, err := pkgexporter.PropertiesSlice(ctx, service, propertyTypes, enum.PropertyEntityService)
+	properties, err := PropertiesSlice(ctx, service, propertyTypes, enum.PropertyEntityService)
 	if err != nil {
 		return nil, err
 	}
@@ -157,14 +156,14 @@ func serviceToSlice(ctx context.Context, service *ent.Service, propertyTypes []s
 }
 
 func endpointsToSlice(ctx context.Context, service *ent.Service, st *ent.ServiceType) ([]string, error) {
-	endpointsData := make([]string, jobs.MaxEndpoints*3)
+	endpointsData := make([]string, MaxEndpoints*3)
 	endpointDefs, err := st.QueryEndpointDefinitions().
 		Order(ent.Asc(serviceendpointdefinition.FieldIndex)).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if (len(endpointDefs) < 2 && len(endpointDefs) != 0) || len(endpointDefs) > jobs.MaxEndpoints {
+	if (len(endpointDefs) < 2 && len(endpointDefs) != 0) || len(endpointDefs) > MaxEndpoints {
 		return nil, errors.New("[SKIPPING SERVICE TYPE] either too many or not enough endpoint types ")
 	}
 	for i, endpointDef := range endpointDefs {
@@ -179,7 +178,7 @@ func endpointsToSlice(ctx context.Context, service *ent.Service, st *ent.Service
 			continue
 		}
 
-		loc, err := pkgexporter.GetLastLocations(ctx, e, 3)
+		loc, err := GetLastLocations(ctx, e, 3)
 		if err != nil || loc == nil {
 			return nil, errors.Wrap(err, "error while getting first location of equipment")
 		}
@@ -200,12 +199,12 @@ func paramToServiceFilterInput(params string) ([]*models.ServiceFilterInput, err
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.ServiceFilterInput{
-			FilterType:    models.ServiceFilterType(upperName),
+			FilterType:    enum.ServiceFilterType(upperName),
 			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			PropertyValue: &propertyValue,
@@ -216,4 +215,55 @@ func paramToServiceFilterInput(params string) ([]*models.ServiceFilterInput, err
 		ret = append(ret, &inp)
 	}
 	return ret, nil
+}
+
+func ServiceFilter(query *ent.ServiceQuery, filters []*models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "SERVICE_"):
+			if query, err = handleServiceFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "PROPERTY"):
+			if query, err = handleServicePropertyFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handleServiceLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "EQUIPMENT_IN_SERVICE"):
+			if query, err = handleEquipmentInServiceFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func ServiceSearch(ctx context.Context, client *ent.Client, filters []*models.ServiceFilterInput, limit *int) (*models.ServiceSearchResult, error) {
+	var (
+		query = client.Service.Query().Where(service.HasTypeWith(servicetype.IsDeleted(false)))
+		err   error
+	)
+	query, err = ServiceFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	count, err := query.Clone().Count(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Count query failed")
+	}
+	if limit != nil {
+		query.Limit(*limit)
+	}
+	services, err := query.All(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Querying services failed")
+	}
+	return &models.ServiceSearchResult{
+		Services: services,
+		Count:    count,
+	}, nil
 }

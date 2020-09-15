@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
@@ -19,37 +18,37 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/servicetype"
-	"github.com/facebookincubator/symphony/pkg/exporter"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/pkg/errors"
 )
 
-func handleServiceFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func handleServiceFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	switch filter.FilterType {
-	case models.ServiceFilterTypeServiceInstName:
+	case enum.ServiceFilterTypeServiceInstName:
 		return serviceNameFilter(q, filter)
-	case models.ServiceFilterTypeServiceStatus:
+	case enum.ServiceFilterTypeServiceStatus:
 		return serviceStatusFilter(q, filter)
-	case models.ServiceFilterTypeServiceDiscoveryMethod:
+	case enum.ServiceFilterTypeServiceDiscoveryMethod:
 		return serviceDiscoveryMethodFilter(q, filter)
-	case models.ServiceFilterTypeServiceType:
+	case enum.ServiceFilterTypeServiceType:
 		return serviceTypeFilter(q, filter)
-	case models.ServiceFilterTypeServiceInstExternalID:
+	case enum.ServiceFilterTypeServiceInstExternalID:
 		return externalIDFilter(q, filter)
-	case models.ServiceFilterTypeServiceInstCustomerName:
+	case enum.ServiceFilterTypeServiceInstCustomerName:
 		return customerNameFilter(q, filter)
 	default:
 		return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 	}
 }
 
-func serviceNameFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceNameFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
-func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceStatusFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
@@ -68,7 +67,7 @@ func serviceStatusFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput)
 	return q.Where(service.StatusIn(statuses...)), nil
 }
 
-func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 	}
@@ -89,35 +88,35 @@ func serviceDiscoveryMethodFilter(q *ent.ServiceQuery, filter *models.ServiceFil
 	return q.Where(service.HasTypeWith(servicetype.DiscoveryMethodIn(methods...))), nil
 }
 
-func serviceTypeFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceTypeFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(service.HasTypeWith(servicetype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func externalIDFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func externalIDFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorIs {
 		return q.Where(service.ExternalID(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
-func customerNameFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func customerNameFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.HasCustomerWith(customer.NameContainsFold(*filter.StringValue))), nil
 	}
 	return nil, errors.Errorf("operation %q not supported", filter.Operator)
 }
 
-func handleServicePropertyFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.FilterType == models.ServiceFilterTypeProperty {
+func handleServicePropertyFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
+	if filter.FilterType == enum.ServiceFilterTypeProperty {
 		return servicePropertyFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func servicePropertyFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func servicePropertyFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	p := filter.PropertyValue
 	switch filter.Operator {
 	case enum.FilterOperatorIs:
@@ -159,17 +158,17 @@ func servicePropertyFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInpu
 	}
 }
 
-func handleServiceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func handleServiceLocationFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	switch filter.FilterType {
-	case models.ServiceFilterTypeLocationInst:
+	case enum.ServiceFilterTypeLocationInst:
 		return serviceLocationFilter(q, filter)
-	case models.ServiceFilterTypeLocationInstExternalID:
+	case enum.ServiceFilterTypeLocationInstExternalID:
 		return serviceLocationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func serviceLocationExternalIDFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceLocationExternalIDFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(service.HasEndpointsWith(serviceendpoint.HasEquipmentWith(
 			equipment.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))))), nil
@@ -177,12 +176,12 @@ func serviceLocationExternalIDFilter(q *ent.ServiceQuery, filter *models.Service
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func serviceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func serviceLocationFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		var ps []predicate.Service
 		for _, lid := range filter.IDSet {
-			eqPred := exporter.BuildGeneralEquipmentAncestorFilter(
-				equipment.HasLocationWith(exporter.BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)),
+			eqPred := BuildGeneralEquipmentAncestorFilter(
+				equipment.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)),
 				1,
 				*filter.MaxDepth)
 			ps = append(ps, service.HasEndpointsWith(
@@ -194,14 +193,14 @@ func serviceLocationFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInpu
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func handleEquipmentInServiceFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
-	if filter.FilterType == models.ServiceFilterTypeEquipmentInService {
+func handleEquipmentInServiceFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
+	if filter.FilterType == enum.ServiceFilterTypeEquipmentInService {
 		return equipmentInServiceTypeFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func equipmentInServiceTypeFilter(q *ent.ServiceQuery, filter *models.ServiceFilterInput) (*ent.ServiceQuery, error) {
+func equipmentInServiceTypeFilter(q *ent.ServiceQuery, filter *pkgmodels.ServiceFilterInput) (*ent.ServiceQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains {
 		equipmentNameQuery := equipment.NameContainsFold(*filter.StringValue)
 		return q.Where(

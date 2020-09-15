@@ -22,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -150,7 +151,7 @@ func TestEmptyDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, woRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -170,7 +171,7 @@ func TestEmptyDataExport(t *testing.T) {
 			break
 		}
 		require.NoError(t, err, "error reading row")
-		require.EqualValues(t, woDataHeader, ln)
+		require.EqualValues(t, pkgexporter.WoDataHeader, ln)
 	}
 }
 
@@ -178,7 +179,7 @@ func TestWOExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 
-	e := &exporter{log, woRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -204,7 +205,7 @@ func TestWOExport(t *testing.T) {
 		var wo ent.WorkOrder
 		switch {
 		case ln[1] == "Work Order Name":
-			require.EqualValues(t, append(woDataHeader, []string{propNameBool, propNameInt, propStr, propStr2}...), ln)
+			require.EqualValues(t, append(pkgexporter.WoDataHeader, []string{propNameBool, propNameInt, propStr, propStr2}...), ln)
 		case ln[0] == strconv.Itoa(data.wo1.ID):
 			wo = data.wo1
 			require.EqualValues(t, ln[1:], []string{
@@ -214,7 +215,7 @@ func TestWOExport(t *testing.T) {
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
-				getStringDate(pointer.ToTime(time.Now())),
+				pkgexporter.GetStringDate(pointer.ToTime(time.Now())),
 				"",
 				grandParentLocation + "; " + parentLocation,
 				"",
@@ -231,7 +232,7 @@ func TestWOExport(t *testing.T) {
 				"tester2@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityMedium.String(),
-				getStringDate(pointer.ToTime(time.Now())),
+				pkgexporter.GetStringDate(pointer.ToTime(time.Now())),
 				"",
 				parentLocation + "; " + childLocation,
 				"true",
@@ -249,7 +250,7 @@ func TestExportWOWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log, woRower{log}}
+	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -300,7 +301,7 @@ func TestExportWOWithFilters(t *testing.T) {
 				"tester@example.com",
 				viewertest.DefaultUser,
 				workorder.PriorityHigh.String(),
-				getStringDate(pointer.ToTime(time.Now())),
+				pkgexporter.GetStringDate(pointer.ToTime(time.Now())),
 				"",
 				grandParentLocation + "; " + parentLocation,
 				"string1",

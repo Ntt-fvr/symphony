@@ -2,12 +2,11 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package resolverutil
+package exporter
 
 import (
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/predicate"
@@ -15,50 +14,50 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
-	"github.com/facebookincubator/symphony/pkg/exporter"
+	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 
 	"github.com/pkg/errors"
 )
 
-func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderName {
+func handleWorkOrderFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderName {
 		return nameFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderStatus {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderStatus {
 		return statusFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderOwnedBy {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderOwnedBy {
 		return ownedByFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderType {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderType {
 		return typeFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderAssignedTo {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderAssignedTo {
 		return assignedToFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderCreationDate {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderCreationDate {
 		return creationDateFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderCloseDate {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderCloseDate {
 		return closeDateFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderLocationInst {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderLocationInst {
 		return locationInstFilter(q, filter)
 	}
-	if filter.FilterType == models.WorkOrderFilterTypeWorkOrderPriority {
+	if filter.FilterType == enum.WorkOrderFilterTypeWorkOrderPriority {
 		return priorityFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func nameFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func nameFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains && filter.StringValue != nil {
 		return q.Where(workorder.NameContainsFold(*filter.StringValue)), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func statusFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func statusFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, errors.Errorf("operation %q is not supported", filter.Operator)
 	}
@@ -73,28 +72,28 @@ func statusFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*
 	return q.Where(workorder.StatusIn(statuses...)), nil
 }
 
-func ownedByFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func ownedByFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasOwnerWith(user.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func typeFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func typeFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasTypeWith(workordertype.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func assignedToFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func assignedToFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasAssigneeWith(user.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func creationDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func creationDateFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	switch filter.Operator {
 	case enum.FilterOperatorDateLessThan:
 		return q.Where(workorder.CreationDateLT(*filter.TimeValue)), nil
@@ -108,7 +107,7 @@ func creationDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInp
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func closeDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func closeDateFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	switch filter.Operator {
 	case enum.FilterOperatorDateLessThan:
 		return q.Where(workorder.CloseDateLT(*filter.TimeValue)), nil
@@ -122,14 +121,14 @@ func closeDateFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput)
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func locationInstFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func locationInstFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		return q.Where(workorder.HasLocationWith(location.IDIn(filter.IDSet...))), nil
 	}
 	return nil, errors.Errorf("operation is not supported: %s", filter.Operator)
 }
 
-func priorityFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func priorityFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator != enum.FilterOperatorIsOneOf {
 		return nil, fmt.Errorf("operation %q is not supported", filter.Operator)
 	}
@@ -144,31 +143,31 @@ func priorityFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) 
 	return q.Where(workorder.PriorityIn(priorities...)), nil
 }
 
-func handleWOLocationFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func handleWOLocationFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	switch filter.FilterType {
-	case models.WorkOrderFilterTypeLocationInst:
+	case enum.WorkOrderFilterTypeLocationInst:
 		return woLocationFilter(q, filter)
-	case models.WorkOrderFilterTypeLocationInstExternalID:
+	case enum.WorkOrderFilterTypeLocationInstExternalID:
 		return woLocationExternalIDFilter(q, filter)
 	}
 	return nil, errors.Errorf("filter type is not supported: %s", filter.FilterType)
 }
 
-func woLocationExternalIDFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func woLocationExternalIDFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorContains {
 		return q.Where(workorder.HasLocationWith(location.ExternalIDContainsFold(*filter.StringValue))), nil
 	}
 	return nil, errors.Errorf("operation %s is not supported", filter.Operator)
 }
 
-func woLocationFilter(q *ent.WorkOrderQuery, filter *models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+func woLocationFilter(q *ent.WorkOrderQuery, filter *pkgmodels.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
 	if filter.Operator == enum.FilterOperatorIsOneOf {
 		if filter.MaxDepth == nil {
 			return nil, errors.New("max depth not supplied to location filter")
 		}
 		var ps []predicate.WorkOrder
 		for _, lid := range filter.IDSet {
-			ps = append(ps, workorder.HasLocationWith(exporter.BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
+			ps = append(ps, workorder.HasLocationWith(BuildLocationAncestorFilter(lid, 1, *filter.MaxDepth)))
 		}
 		return q.Where(workorder.Or(ps...)), nil
 	}

@@ -20,8 +20,8 @@ func (r queryResolver) EquipmentSearch(ctx context.Context, filters []*pkgmodels
 	return pkgexporter.EquipmentSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*models.WorkOrderFilterInput, limit *int) (*pkgmodels.WorkOrderSearchResult, error) {
-	return resolverutil.WorkOrderSearch(ctx, r.ClientFrom(ctx), filters, limit, graphql.CollectAllFields(ctx))
+func (r queryResolver) WorkOrderSearch(ctx context.Context, filters []*pkgmodels.WorkOrderFilterInput, limit *int) (*pkgmodels.WorkOrderSearchResult, error) {
+	return pkgexporter.WorkOrderSearch(ctx, r.ClientFrom(ctx), filters, limit, graphql.CollectAllFields(ctx))
 }
 
 func (r queryResolver) LinkSearch(ctx context.Context, filters []*pkgmodels.LinkFilterInput, limit *int) (*pkgmodels.LinkSearchResult, error) {
@@ -36,8 +36,8 @@ func (r queryResolver) LocationSearch(ctx context.Context, filters []*pkgmodels.
 	return pkgexporter.LocationSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
-func (r queryResolver) ServiceSearch(ctx context.Context, filters []*models.ServiceFilterInput, limit *int) (*pkgmodels.ServiceSearchResult, error) {
-	return resolverutil.ServiceSearch(ctx, r.ClientFrom(ctx), filters, limit)
+func (r queryResolver) ServiceSearch(ctx context.Context, filters []*pkgmodels.ServiceFilterInput, limit *int) (*pkgmodels.ServiceSearchResult, error) {
+	return pkgexporter.ServiceSearch(ctx, r.ClientFrom(ctx), filters, limit)
 }
 
 func (r queryResolver) UserSearch(ctx context.Context, filters []*models.UserFilterInput, limit *int) (*models.UserSearchResult, error) {

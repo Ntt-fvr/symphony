@@ -12,43 +12,36 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/resolverutil"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 
+	"github.com/AlekSi/pointer"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
-const (
-	bom = "\uFEFF"
-)
-
 type woFilterInput struct {
-	Name          enum.EquipmentFilterType    `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-	BoolValue     bool                        `json:"boolValue"`
+	Name          enum.EquipmentFilterType `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+	BoolValue     bool                     `json:"boolValue"`
 }
 
-type woRower struct {
-	log log.Logger
+type WoRower struct {
+	Log log.Logger
 }
 
-var woDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
+var WoDataHeader = []string{bom + "Work Order ID", "Work Order Name", "Project Name", "Status", "Assignee", "Owner", "Priority", "Created date", "Target date", "Location"}
 
-func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
+func (er WoRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
-		logger      = er.log.For(ctx)
+		logger      = er.Log.For(ctx)
 		err         error
 		filterInput []*models.WorkOrderFilterInput
 	)
@@ -60,8 +53,8 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 		}
 	}
 	client := ent.FromContext(ctx)
-	fields := pkgexporter.GetQueryFields(pkgexporter.ExportEntityWorkOrders)
-	searchResult, err := resolverutil.WorkOrderSearch(ctx, client, filterInput, nil, fields)
+	fields := GetQueryFields(ExportEntityWorkOrders)
+	searchResult, err := WorkOrderSearch(ctx, client, filterInput, nil, fields)
 	if err != nil {
 		logger.Error("cannot query work orders", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query work orders")
@@ -74,13 +67,13 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 	for i, w := range wosList {
 		woIDs[i] = w.ID
 	}
-	propertyTypes, err := pkgexporter.PropertyTypesSlice(ctx, woIDs, client, enum.PropertyEntityWorkOrder)
+	propertyTypes, err := PropertyTypesSlice(ctx, woIDs, client, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		logger.Error("cannot query property types", zap.Error(err))
 		return nil, errors.Wrap(err, "cannot query property types")
 	}
 
-	title := append(woDataHeader, propertyTypes...)
+	title := append(WoDataHeader, propertyTypes...)
 
 	allrows[0] = title
 	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
@@ -104,7 +97,7 @@ func (er woRower) Rows(ctx context.Context, filtersParam string) ([][]string, er
 }
 
 func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) ([]string, error) {
-	properties, err := pkgexporter.PropertiesSlice(ctx, wo, propertyTypes, enum.PropertyEntityWorkOrder)
+	properties, err := PropertiesSlice(ctx, wo, propertyTypes, enum.PropertyEntityWorkOrder)
 	if err != nil {
 		return nil, err
 	}
@@ -150,15 +143,15 @@ func woToSlice(ctx context.Context, wo *ent.WorkOrder, propertyTypes []string) (
 
 	row := []string{
 		strconv.Itoa(wo.ID), wo.Name, projName, wo.Status.String(), assigneeName,
-		ownerName, wo.Priority.String(), getStringDate(&wo.CreationDate),
-		getStringDate(wo.InstallDate), locName,
+		ownerName, wo.Priority.String(), GetStringDate(&wo.CreationDate),
+		GetStringDate(wo.InstallDate), locName,
 	}
 	row = append(row, properties...)
 
 	return row, nil
 }
 
-func getStringDate(t *time.Time) string {
+func GetStringDate(t *time.Time) string {
 	if t == nil {
 		return ""
 	}
@@ -181,12 +174,12 @@ func paramToWOFilterInput(params string) ([]*models.WorkOrderFilterInput, error)
 		upperName := strings.ToUpper(f.Name.String())
 		upperOp := strings.ToUpper(f.Operator.String())
 		propertyValue := f.PropertyValue
-		intIDSet, err := pkgexporter.ToIntSlice(f.IDSet)
+		intIDSet, err := ToIntSlice(f.IDSet)
 		if err != nil {
 			return nil, fmt.Errorf("wrong id set %v: %w", f.IDSet, err)
 		}
 		inp := models.WorkOrderFilterInput{
-			FilterType:    models.WorkOrderFilterType(upperName),
+			FilterType:    enum.WorkOrderFilterType(upperName),
 			Operator:      enum.FilterOperator(upperOp),
 			StringValue:   pointer.ToString(f.StringValue),
 			IDSet:         intIDSet,
@@ -197,4 +190,51 @@ func paramToWOFilterInput(params string) ([]*models.WorkOrderFilterInput, error)
 		ret = append(ret, &inp)
 	}
 	return ret, nil
+}
+
+func WorkOrderFilter(query *ent.WorkOrderQuery, filters []*models.WorkOrderFilterInput) (*ent.WorkOrderQuery, error) {
+	var err error
+	for _, f := range filters {
+		switch {
+		case strings.HasPrefix(f.FilterType.String(), "WORK_ORDER_"):
+			if query, err = handleWorkOrderFilter(query, f); err != nil {
+				return nil, err
+			}
+		case strings.HasPrefix(f.FilterType.String(), "LOCATION_INST"):
+			if query, err = handleWOLocationFilter(query, f); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return query, nil
+}
+
+func WorkOrderSearch(ctx context.Context, client *ent.Client, filters []*models.WorkOrderFilterInput, limit *int, fields []string) (*models.WorkOrderSearchResult, error) {
+	var (
+		query = client.WorkOrder.Query()
+		err   error
+	)
+	query, err = WorkOrderFilter(query, filters)
+	if err != nil {
+		return nil, err
+	}
+	var woResult models.WorkOrderSearchResult
+	for _, field := range fields {
+		switch field {
+		case "count":
+			woResult.Count, err = query.Clone().Count(ctx)
+			if err != nil {
+				return nil, errors.Wrapf(err, "Count query failed")
+			}
+		case "workOrders":
+			if limit != nil {
+				query.Limit(*limit)
+			}
+			woResult.WorkOrders, err = query.All(ctx)
+			if err != nil {
+				return nil, errors.Wrapf(err, "Querying work orders failed")
+			}
+		}
+	}
+	return &woResult, nil
 }

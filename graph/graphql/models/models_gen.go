@@ -699,16 +699,6 @@ type ServiceEndpointDefinitionInput struct {
 	EquipmentTypeID int     `json:"equipmentTypeID"`
 }
 
-type ServiceFilterInput struct {
-	FilterType    ServiceFilterType         `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	StringValue   *string                   `json:"stringValue"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	MaxDepth      *int                      `json:"maxDepth"`
-}
-
 type ServiceTypeCreateData struct {
 	Name            string                            `json:"name"`
 	HasCustomer     bool                              `json:"hasCustomer"`
@@ -930,17 +920,6 @@ type WorkOrderExecutionResult struct {
 	EquipmentRemoved []int            `json:"equipmentRemoved"`
 	LinkAdded        []*ent.Link      `json:"linkAdded"`
 	LinkRemoved      []int            `json:"linkRemoved"`
-}
-
-type WorkOrderFilterInput struct {
-	FilterType    WorkOrderFilterType       `json:"filterType"`
-	Operator      enum.FilterOperator       `json:"operator"`
-	StringValue   *string                   `json:"stringValue"`
-	IDSet         []int                     `json:"idSet"`
-	StringSet     []string                  `json:"stringSet"`
-	PropertyValue *models.PropertyTypeInput `json:"propertyValue"`
-	TimeValue     *time.Time                `json:"timeValue"`
-	MaxDepth      *int                      `json:"maxDepth"`
 }
 
 type CommentEntity string
@@ -1169,64 +1148,6 @@ func (e ProjectFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-// what filters should we apply on services
-type ServiceFilterType string
-
-const (
-	ServiceFilterTypeServiceInstName         ServiceFilterType = "SERVICE_INST_NAME"
-	ServiceFilterTypeServiceStatus           ServiceFilterType = "SERVICE_STATUS"
-	ServiceFilterTypeServiceDiscoveryMethod  ServiceFilterType = "SERVICE_DISCOVERY_METHOD"
-	ServiceFilterTypeServiceType             ServiceFilterType = "SERVICE_TYPE"
-	ServiceFilterTypeServiceInstExternalID   ServiceFilterType = "SERVICE_INST_EXTERNAL_ID"
-	ServiceFilterTypeServiceInstCustomerName ServiceFilterType = "SERVICE_INST_CUSTOMER_NAME"
-	ServiceFilterTypeProperty                ServiceFilterType = "PROPERTY"
-	ServiceFilterTypeLocationInst            ServiceFilterType = "LOCATION_INST"
-	ServiceFilterTypeLocationInstExternalID  ServiceFilterType = "LOCATION_INST_EXTERNAL_ID"
-	ServiceFilterTypeEquipmentInService      ServiceFilterType = "EQUIPMENT_IN_SERVICE"
-)
-
-var AllServiceFilterType = []ServiceFilterType{
-	ServiceFilterTypeServiceInstName,
-	ServiceFilterTypeServiceStatus,
-	ServiceFilterTypeServiceDiscoveryMethod,
-	ServiceFilterTypeServiceType,
-	ServiceFilterTypeServiceInstExternalID,
-	ServiceFilterTypeServiceInstCustomerName,
-	ServiceFilterTypeProperty,
-	ServiceFilterTypeLocationInst,
-	ServiceFilterTypeLocationInstExternalID,
-	ServiceFilterTypeEquipmentInService,
-}
-
-func (e ServiceFilterType) IsValid() bool {
-	switch e {
-	case ServiceFilterTypeServiceInstName, ServiceFilterTypeServiceStatus, ServiceFilterTypeServiceDiscoveryMethod, ServiceFilterTypeServiceType, ServiceFilterTypeServiceInstExternalID, ServiceFilterTypeServiceInstCustomerName, ServiceFilterTypeProperty, ServiceFilterTypeLocationInst, ServiceFilterTypeLocationInstExternalID, ServiceFilterTypeEquipmentInService:
-		return true
-	}
-	return false
-}
-
-func (e ServiceFilterType) String() string {
-	return string(e)
-}
-
-func (e *ServiceFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ServiceFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ServiceFilterType", str)
-	}
-	return nil
-}
-
-func (e ServiceFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type SurveyQuestionType string
 
 const (
@@ -1449,65 +1370,5 @@ func (e *UsersGroupFilterType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e UsersGroupFilterType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-// what type of work order we filter about
-type WorkOrderFilterType string
-
-const (
-	WorkOrderFilterTypeWorkOrderName          WorkOrderFilterType = "WORK_ORDER_NAME"
-	WorkOrderFilterTypeWorkOrderStatus        WorkOrderFilterType = "WORK_ORDER_STATUS"
-	WorkOrderFilterTypeWorkOrderOwnedBy       WorkOrderFilterType = "WORK_ORDER_OWNED_BY"
-	WorkOrderFilterTypeWorkOrderType          WorkOrderFilterType = "WORK_ORDER_TYPE"
-	WorkOrderFilterTypeWorkOrderCreationDate  WorkOrderFilterType = "WORK_ORDER_CREATION_DATE"
-	WorkOrderFilterTypeWorkOrderCloseDate     WorkOrderFilterType = "WORK_ORDER_CLOSE_DATE"
-	WorkOrderFilterTypeWorkOrderAssignedTo    WorkOrderFilterType = "WORK_ORDER_ASSIGNED_TO"
-	WorkOrderFilterTypeWorkOrderLocationInst  WorkOrderFilterType = "WORK_ORDER_LOCATION_INST"
-	WorkOrderFilterTypeWorkOrderPriority      WorkOrderFilterType = "WORK_ORDER_PRIORITY"
-	WorkOrderFilterTypeLocationInst           WorkOrderFilterType = "LOCATION_INST"
-	WorkOrderFilterTypeLocationInstExternalID WorkOrderFilterType = "LOCATION_INST_EXTERNAL_ID"
-)
-
-var AllWorkOrderFilterType = []WorkOrderFilterType{
-	WorkOrderFilterTypeWorkOrderName,
-	WorkOrderFilterTypeWorkOrderStatus,
-	WorkOrderFilterTypeWorkOrderOwnedBy,
-	WorkOrderFilterTypeWorkOrderType,
-	WorkOrderFilterTypeWorkOrderCreationDate,
-	WorkOrderFilterTypeWorkOrderCloseDate,
-	WorkOrderFilterTypeWorkOrderAssignedTo,
-	WorkOrderFilterTypeWorkOrderLocationInst,
-	WorkOrderFilterTypeWorkOrderPriority,
-	WorkOrderFilterTypeLocationInst,
-	WorkOrderFilterTypeLocationInstExternalID,
-}
-
-func (e WorkOrderFilterType) IsValid() bool {
-	switch e {
-	case WorkOrderFilterTypeWorkOrderName, WorkOrderFilterTypeWorkOrderStatus, WorkOrderFilterTypeWorkOrderOwnedBy, WorkOrderFilterTypeWorkOrderType, WorkOrderFilterTypeWorkOrderCreationDate, WorkOrderFilterTypeWorkOrderCloseDate, WorkOrderFilterTypeWorkOrderAssignedTo, WorkOrderFilterTypeWorkOrderLocationInst, WorkOrderFilterTypeWorkOrderPriority, WorkOrderFilterTypeLocationInst, WorkOrderFilterTypeLocationInstExternalID:
-		return true
-	}
-	return false
-}
-
-func (e WorkOrderFilterType) String() string {
-	return string(e)
-}
-
-func (e *WorkOrderFilterType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = WorkOrderFilterType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid WorkOrderFilterType", str)
-	}
-	return nil
-}
-
-func (e WorkOrderFilterType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

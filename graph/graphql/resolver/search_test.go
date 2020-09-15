@@ -605,138 +605,138 @@ func TestSearchWO(t *testing.T) {
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
 	require.Equal(t, 4, result.WorkOrderSearch.Count)
 	require.Empty(t, result.WorkOrderSearch.WorkOrders)
 
 	name := "_1"
-	f1 := models.WorkOrderFilterInput{
-		FilterType:  models.WorkOrderFilterTypeWorkOrderName,
+	f1 := pkgmodels.WorkOrderFilterInput{
+		FilterType:  enum.WorkOrderFilterTypeWorkOrderName,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: &name,
 	}
 	c.MustPost(
 		woAllQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f1}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f1}),
 	)
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
 
 	status := workorder.StatusPlanned.String()
-	f2 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderStatus,
+	f2 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderStatus,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{status},
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f2}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f2}),
 	)
 	require.Equal(t, 3, result.WorkOrderSearch.Count)
 
-	f3 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderType,
+	f3 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderType,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.woType1},
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f3}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f3}),
 	)
 	require.Equal(t, 2, result.WorkOrderSearch.Count)
 
-	f4 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderAssignedTo,
+	f4 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderAssignedTo,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.assignee1},
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f4}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f4}),
 	)
 	require.Equal(t, 2, result.WorkOrderSearch.Count)
 
-	f5 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderLocationInst,
+	f5 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f5}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f5}),
 	)
 	require.Equal(t, 2, result.WorkOrderSearch.Count)
 
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f4, f5}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f4, f5}),
 	)
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 
-	f7 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderOwnedBy,
+	f7 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderOwnedBy,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.owner},
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f7}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f7}),
 	)
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 
-	f8 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderCreationDate,
+	f8 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderCreationDate,
 		Operator:   enum.FilterOperatorDateLessOrEqualThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f8}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f8}),
 	)
 	require.Equal(t, 4, result.WorkOrderSearch.Count)
 
-	f9 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderCreationDate,
+	f9 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderCreationDate,
 		Operator:   enum.FilterOperatorDateGreaterThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f9}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f9}),
 	)
 	require.Zero(t, result.WorkOrderSearch.Count)
 
-	f10 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderCloseDate,
+	f10 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderCloseDate,
 		Operator:   enum.FilterOperatorDateLessOrEqualThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f10}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f10}),
 	)
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 
-	f11 := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderCloseDate,
+	f11 := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderCloseDate,
 		Operator:   enum.FilterOperatorDateGreaterThan,
 		TimeValue:  pointer.ToTime(time.Now()),
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f11}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f11}),
 	)
 	require.Zero(t, result.WorkOrderSearch.Count)
 }
@@ -752,19 +752,19 @@ func TestSearchWOByPriority(t *testing.T) {
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
 	require.Equal(t, 4, result.WorkOrderSearch.Count)
 
-	f := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderPriority,
+	f := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderPriority,
 		Operator:   enum.FilterOperatorIsOneOf,
 		StringSet:  []string{workorder.PriorityHigh.String()},
 	}
 	c.MustPost(
 		woAllQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
 	require.Equal(t, 1, result.WorkOrderSearch.Count)
 	require.Equal(t, strconv.Itoa(data.wo1), result.WorkOrderSearch.WorkOrders[0].ID)
@@ -773,7 +773,7 @@ func TestSearchWOByPriority(t *testing.T) {
 	c.MustPost(
 		woAllQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
 	require.Zero(t, result.WorkOrderSearch.Count)
 }
@@ -798,11 +798,11 @@ func TestSearchWOByLocation(t *testing.T) {
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{}),
 	)
 	require.Equal(t, 4, result.WorkOrderSearch.Count)
-	f := models.WorkOrderFilterInput{
-		FilterType: models.WorkOrderFilterTypeWorkOrderLocationInst,
+	f := pkgmodels.WorkOrderFilterInput{
+		FilterType: enum.WorkOrderFilterTypeWorkOrderLocationInst,
 		Operator:   enum.FilterOperatorIsOneOf,
 		IDSet:      []int{data.loc1},
 		MaxDepth:   pointer.ToInt(2),
@@ -810,7 +810,7 @@ func TestSearchWOByLocation(t *testing.T) {
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
 	require.Equal(t, 2, result.WorkOrderSearch.Count)
 
@@ -818,19 +818,19 @@ func TestSearchWOByLocation(t *testing.T) {
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f}),
 	)
 	require.Zero(t, result.WorkOrderSearch.Count)
 
-	f2 := models.WorkOrderFilterInput{
-		FilterType:  models.WorkOrderFilterTypeLocationInstExternalID,
+	f2 := pkgmodels.WorkOrderFilterInput{
+		FilterType:  enum.WorkOrderFilterTypeLocationInstExternalID,
 		Operator:    enum.FilterOperatorContains,
 		StringValue: pointer.ToString("111"),
 	}
 	c.MustPost(
 		woCountQuery,
 		&result,
-		client.Var("filters", []models.WorkOrderFilterInput{f2}),
+		client.Var("filters", []pkgmodels.WorkOrderFilterInput{f2}),
 	)
 	require.Equal(t, 2, result.WorkOrderSearch.Count)
 }
