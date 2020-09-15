@@ -24,7 +24,7 @@ import PriorityTag from './PriorityTag';
 import StatusTag from './StatusTag';
 import Strings from '@fbcnms/strings/Strings';
 import Text from '@symphony/design-system/components/Text';
-import TextInfoSection from '../TextInfoSection';
+import TextField from '../TextField';
 import UserTypeahead from '../typeahead/UserTypeahead';
 import fbt from 'fbt';
 import nullthrows from 'nullthrows';
@@ -149,7 +149,7 @@ const WorkOrderPopover = (props: Props) => {
             </Text>
           </Link>
           <div className={classes.divider} />
-          <TextInfoSection
+          <TextField
             className={classes.infoSection}
             title={fbt('Assignee', '')}
             content={
@@ -167,7 +167,7 @@ const WorkOrderPopover = (props: Props) => {
             }
           />
           {workOrder.projectName != null && (
-            <TextInfoSection
+            <TextField
               className={classes.infoSection}
               title={fbt('Project', '')}
               content={nullthrows(workOrder.projectName)}
@@ -175,20 +175,20 @@ const WorkOrderPopover = (props: Props) => {
           )}
           {workOrder.description != null &&
             workOrder.description !== 'null' && (
-              <TextInfoSection
+              <TextField
                 className={classes.infoSection}
                 title={fbt('Description', '')}
                 content={workOrder.description}
               />
             )}
           {workOrder.location != null && (
-            <TextInfoSection
+            <TextField
               className={classes.infoSection}
               title={fbt('Location', '')}
               content={nameAndCoordinates(workOrder.location)}
             />
           )}
-          <TextInfoSection
+          <TextField
             title={fbt('Due Date', '')}
             content={DateTimeFormat.dateTime(
               workOrder.installDate,

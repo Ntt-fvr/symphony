@@ -65,7 +65,7 @@ const StatusTag = (props: Props) => {
     ?.label;
   const classes = useStyles();
 
-  return label != null && status !== 'NONE' ? (
+  return label != null ? (
     <div
       className={classNames(classes.root, className)}
       style={{backgroundColor: getStatusColor(status)}}>

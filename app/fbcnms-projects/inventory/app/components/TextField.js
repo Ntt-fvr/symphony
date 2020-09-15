@@ -17,7 +17,7 @@ type Props = $ReadOnly<{|
   className?: string,
 |}>;
 
-const TextInfoSection = (props: Props) => {
+const TextField = (props: Props) => {
   const {title, content, className} = props;
   return (
     <div className={className}>
@@ -35,4 +35,4 @@ const TextInfoSection = (props: Props) => {
   );
 };
 
-export default TextInfoSection;
+export default TextField;
