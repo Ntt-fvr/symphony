@@ -184,6 +184,7 @@ class AddLinkToServiceDialog extends React.Component<Props, State> {
                 <AvailableLinksAndPortsTable
                   equipment={nullthrows(this.state.activeEquipement)}
                   links={links.edges.map(edge => edge.node)}
+                  ports={[]}
                   selectedLink={this.state.activeLink}
                   onLinkSelected={this.handleLinkSelected}
                 />
