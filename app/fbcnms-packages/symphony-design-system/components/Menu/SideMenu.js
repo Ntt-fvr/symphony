@@ -9,41 +9,13 @@
  */
 
 import * as React from 'react';
+import SideBar from '@symphony/design-system/components/View/SideBar';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import symphony from '@symphony/design-system/theme/symphony';
 import {makeStyles} from '@material-ui/styles';
 
-const MAJOR_SIZE = '240px';
-
 const useStyles = makeStyles(() => ({
-  root: {
-    flexBasis: MAJOR_SIZE,
-    flexGrow: 0,
-    flexShrink: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    flexBasis: MAJOR_SIZE,
-    width: MAJOR_SIZE,
-    minWidth: MAJOR_SIZE,
-    maxWidth: MAJOR_SIZE,
-  },
-  menuHeader: {
-    flexGrow: 0,
-    padding: '24px 16px 0 16px',
-    backgroundColor: symphony.palette.white,
-  },
-  menuItemsContainer: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '16px',
-    paddingBottom: '8px',
-    backgroundColor: symphony.palette.white,
-    overflowX: 'hidden',
-    overflowY: 'auto',
-  },
   menuItem: {
     flexShrink: 0,
     padding: '8px 16px',
@@ -79,31 +51,26 @@ export default function SideMenu(props: Props) {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <Text className={classes.menuHeader} variant="body1" weight="medium">
-        {header}
-      </Text>
-      <div className={classes.menuItemsContainer}>
-        {items.map((item, itemIndex) => (
-          <div
-            key={`sideMenuItem_${itemIndex}`}
-            title={item.tooltip}
-            onClick={() =>
-              onActiveItemChanged &&
-              onActiveItemChanged(items[itemIndex], itemIndex)
-            }
-            className={classNames(classes.menuItem, {
-              [classes.activeItem]: activeItemIndex === itemIndex,
-            })}>
-            <Text
-              variant="body1"
-              useEllipsis={true}
-              color={activeItemIndex === itemIndex ? 'primary' : 'gray'}>
-              {item.label}
-            </Text>
-          </div>
-        ))}
-      </div>
-    </div>
+    <SideBar header={header}>
+      {items.map((item, itemIndex) => (
+        <div
+          key={`sideMenuItem_${itemIndex}`}
+          title={item.tooltip}
+          onClick={() =>
+            onActiveItemChanged &&
+            onActiveItemChanged(items[itemIndex], itemIndex)
+          }
+          className={classNames(classes.menuItem, {
+            [classes.activeItem]: activeItemIndex === itemIndex,
+          })}>
+          <Text
+            variant="body1"
+            useEllipsis={true}
+            color={activeItemIndex === itemIndex ? 'primary' : 'gray'}>
+            {item.label}
+          </Text>
+        </div>
+      ))}
+    </SideBar>
   );
 }
