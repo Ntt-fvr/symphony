@@ -12,8 +12,11 @@ import (
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/VividCortex/mysqlerr"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
+	"github.com/go-sql-driver/mysql"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,6 +24,36 @@ type tenantSuite struct{ testSuite }
 
 func TestTenant(t *testing.T) {
 	suite.Run(t, &tenantSuite{})
+}
+
+func (s *tenantSuite) TestCreateTenant() {
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(
+		regexp.QuoteMeta("CREATE DATABASE `tenant_foo`"),
+	).
+		WillReturnResult(
+			sqlmock.NewResult(1, 1),
+		)
+	s.migrator.On("Migrate", mock.Anything, "foo").
+		Return(nil).
+		Once()
+	s.mock.ExpectCommit()
+
+	var rsp struct {
+		CreateTenant struct {
+			ClientMutationID string
+			Tenant           struct{ Name string }
+		}
+	}
+	err := s.client.Post(`mutation($clientMutationId: String!) {
+		createTenant(input: {clientMutationId: $clientMutationId, name: "foo"}) {
+			clientMutationId
+			tenant { name }
+		}
+	}`, &rsp, client.Var("clientMutationId", s.T().Name()))
+	s.Require().NoError(err)
+	s.Require().Equal(s.T().Name(), rsp.CreateTenant.ClientMutationID)
+	s.Require().Equal("foo", rsp.CreateTenant.Tenant.Name)
 }
 
 func (s *tenantSuite) TestTruncateTenant() {
@@ -50,7 +83,6 @@ func (s *tenantSuite) TestTruncateTenant() {
 
 func (s *tenantSuite) TestDeleteTenant() {
 	s.mock.ExpectBegin()
-	s.expectTenant("foo")
 	s.mock.ExpectExec(
 		regexp.QuoteMeta("DROP DATABASE `tenant_foo`"),
 	).
@@ -73,6 +105,31 @@ func (s *tenantSuite) TestDeleteTenant() {
 	)
 	s.Require().NoError(err)
 	s.Require().Equal(s.T().Name(), rsp.DeleteTenant.ClientMutationID)
+}
+
+func (s *tenantSuite) TestDeleteBadTenant() {
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec(
+		regexp.QuoteMeta("DROP DATABASE `tenant_baz`"),
+	).
+		WillReturnError(&mysql.MySQLError{Number: mysqlerr.ER_DB_DROP_EXISTS})
+	s.mock.ExpectRollback()
+
+	id := model.ID{Tenant: "baz"}.String()
+	var rsp struct {
+		DeleteTenant struct{ ClientMutationID string }
+	}
+	err := s.client.Post(`mutation($id: ID!, $clientMutationId: String!) {
+		deleteTenant(input: {clientMutationId: $clientMutationId, id: $id}) {
+			clientMutationId
+		}
+	}`,
+		&rsp,
+		client.Var("id", id),
+		client.Var("clientMutationId", s.T().Name()),
+	)
+	s.Require().Error(err)
+	s.Require().Contains(err.Error(), "Could not resolve to a node with the global id of '"+id+"'")
 }
 
 func (s *tenantSuite) TestQueryTenant() {

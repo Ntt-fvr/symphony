@@ -13,6 +13,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
+	"github.com/facebookincubator/symphony/admin/graphql/resolver/mocks"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/stretchr/testify/suite"
@@ -20,19 +21,22 @@ import (
 
 type testSuite struct {
 	suite.Suite
-	client *client.Client
-	mock   sqlmock.SqlmockCommon
+	client   *client.Client
+	mock     sqlmock.SqlmockCommon
+	migrator *mocks.Migrator
 }
 
 func (s *testSuite) SetupTest() {
 	db, mock, err := sqlmock.New()
 	s.Require().NoError(err)
+	s.migrator = &mocks.Migrator{}
 	server := handler.New(
 		exec.NewExecutableSchema(
 			exec.Config{
 				Resolvers: resolver.New(
 					resolver.Config{
-						Logger: logtest.NewTestLogger(s.T()),
+						Logger:   logtest.NewTestLogger(s.T()),
+						Migrator: s.migrator,
 					},
 				),
 			},
@@ -47,6 +51,7 @@ func (s *testSuite) SetupTest() {
 func (s *testSuite) TearDownTest() {
 	err := s.mock.ExpectationsWereMet()
 	s.Require().NoError(err)
+	s.migrator.AssertExpectations(s.T())
 }
 
 func (s *testSuite) expectTenantCount(name string, count int) {

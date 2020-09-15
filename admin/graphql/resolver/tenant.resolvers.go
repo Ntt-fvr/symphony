@@ -9,43 +9,70 @@ package resolver
 
 import (
 	"context"
-	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/VividCortex/mysqlerr"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/go-sql-driver/mysql"
 	"github.com/hashicorp/go-multierror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateTenantInput) (*model.CreateTenantPayload, error) {
-	panic(fmt.Errorf("not implemented"))
+	if _, err := r.db(ctx).ExecContext(ctx,
+		fmt.Sprintf(
+			"CREATE DATABASE `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_bin",
+			viewer.DBName(input.Name),
+		),
+	); err != nil {
+		var e *mysql.MySQLError
+		if errors.As(err, &e) && e.Number == mysqlerr.ER_DB_CREATE_EXISTS {
+			err := gqlerror.Errorf("Tenant '%s' exists", input.Name)
+			errcode.Set(err, "EXIST")
+			return nil, err
+		}
+		return nil, r.err(ctx, err, "cannot create database")
+	}
+	if err := r.migrator.Migrate(ctx, input.Name); err != nil {
+		return nil, r.err(ctx, err, "cannot run migration")
+	}
+	return &model.CreateTenantPayload{
+		ClientMutationID: input.ClientMutationID,
+		Tenant:           model.NewTenant(input.Name),
+	}, nil
 }
 
-func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (_ *model.TruncateTenantPayload, err error) {
-	if _, err := r.Tenant(ctx, input.Name); err != nil {
+func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (*model.TruncateTenantPayload, error) {
+	if _, err := r.tenant(ctx, input.Name); err != nil {
 		return nil, err
 	}
-	db := r.db(ctx)
-	if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=0"); err != nil {
-		return nil, r.err(ctx, err, "cannot clear foreign key check")
-	}
-	defer func() {
-		if _, e := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=1"); e != nil {
-			err = multierror.Append(err, r.err(ctx, e, "cannot set foreign key check"))
+	if err := func() (err error) {
+		db := r.db(ctx)
+		if _, err := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=0"); err != nil {
+			return r.err(ctx, err, "cannot clear foreign key check")
 		}
-	}()
-	dbName := viewer.DBName(input.Name)
-	for _, table := range migrate.Tables {
-		query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbName, table.Name)
-		if _, err := db.ExecContext(ctx, query); err != nil {
-			return nil, r.errf(ctx, err, "cannot drop data from %q table", table.Name)
+		defer func() {
+			if _, e := db.ExecContext(ctx, "SET FOREIGN_KEY_CHECKS=1"); e != nil {
+				err = multierror.Append(err, r.err(ctx, e, "cannot set foreign key check"))
+			}
+		}()
+		dbName := viewer.DBName(input.Name)
+		for _, table := range migrate.Tables {
+			query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbName, table.Name)
+			if _, err := db.ExecContext(ctx, query); err != nil {
+				return r.errf(ctx, err, "cannot drop data from %q table", table.Name)
+			}
 		}
+		return nil
+	}(); err != nil {
+		return nil, err
 	}
 	return &model.TruncateTenantPayload{
 		ClientMutationID: input.ClientMutationID,
@@ -61,12 +88,13 @@ func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteT
 			)
 		return nil, entgql.ErrNodeNotFound(input.ID)
 	}
-	if _, err := r.Tenant(ctx, input.ID.Tenant); err != nil {
-		return nil, err
-	}
 	if _, err := r.db(ctx).ExecContext(ctx,
 		fmt.Sprintf("DROP DATABASE `%s`", viewer.DBName(input.ID.Tenant)),
 	); err != nil {
+		var e *mysql.MySQLError
+		if errors.As(err, &e) && e.Number == mysqlerr.ER_DB_DROP_EXISTS {
+			return nil, entgql.ErrNodeNotFound(input.ID)
+		}
 		return nil, r.err(ctx, err, "cannot drop database")
 	}
 	return &model.DeleteTenantPayload{
@@ -74,32 +102,8 @@ func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteT
 	}, nil
 }
 
-func (r *resolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
-	rows, err := r.db(ctx).QueryContext(ctx,
-		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", viewer.DBName(name),
-	)
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot query information schema")
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, r.err(ctx, sql.ErrNoRows, "cannot prepare count row")
-	}
-	var n int
-	if err := rows.Scan(&n); err != nil {
-		return nil, r.err(ctx, err, "cannot scan count row")
-	}
-	if err := rows.Err(); err != nil {
-		return nil, r.err(ctx, err, "cannot read rows")
-	}
-	if n == 0 {
-		err := gqlerror.Errorf(
-			"Could not find a tenant with name '%s'", name,
-		)
-		errcode.Set(err, "NOT_FOUND")
-		return nil, err
-	}
-	return model.NewTenant(name), nil
+func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
+	return r.tenant(ctx, name)
 }
 
 func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {

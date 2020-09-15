@@ -14,6 +14,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/alecthomas/kong v0.2.11
 	github.com/aws/aws-sdk-go v1.34.22
