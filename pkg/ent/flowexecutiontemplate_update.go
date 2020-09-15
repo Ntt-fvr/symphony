@@ -114,6 +114,10 @@ func (fetu *FlowExecutionTemplateUpdate) RemoveBlocks(b ...*Block) *FlowExecutio
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fetu *FlowExecutionTemplateUpdate) Save(ctx context.Context) (int, error) {
+	if _, ok := fetu.mutation.UpdateTime(); !ok {
+		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
+		fetu.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fetu.mutation.Name(); ok {
 		if err := flowexecutiontemplate.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -186,6 +190,13 @@ func (fetu *FlowExecutionTemplateUpdate) sqlSave(ctx context.Context) (n int, er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := fetu.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowexecutiontemplate.FieldUpdateTime,
+		})
 	}
 	if value, ok := fetu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -373,6 +384,10 @@ func (fetuo *FlowExecutionTemplateUpdateOne) RemoveBlocks(b ...*Block) *FlowExec
 
 // Save executes the query and returns the updated entity.
 func (fetuo *FlowExecutionTemplateUpdateOne) Save(ctx context.Context) (*FlowExecutionTemplate, error) {
+	if _, ok := fetuo.mutation.UpdateTime(); !ok {
+		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
+		fetuo.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fetuo.mutation.Name(); ok {
 		if err := flowexecutiontemplate.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -444,6 +459,13 @@ func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (fet *
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing FlowExecutionTemplate.ID for update")}
 	}
 	_spec.Node.ID.Value = id
+	if value, ok := fetuo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowexecutiontemplate.FieldUpdateTime,
+		})
+	}
 	if value, ok := fetuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

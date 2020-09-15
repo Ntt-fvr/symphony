@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
@@ -23,6 +24,34 @@ type FlowExecutionTemplateCreate struct {
 	config
 	mutation *FlowExecutionTemplateMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the create_time field.
+func (fetc *FlowExecutionTemplateCreate) SetCreateTime(t time.Time) *FlowExecutionTemplateCreate {
+	fetc.mutation.SetCreateTime(t)
+	return fetc
+}
+
+// SetNillableCreateTime sets the create_time field if the given value is not nil.
+func (fetc *FlowExecutionTemplateCreate) SetNillableCreateTime(t *time.Time) *FlowExecutionTemplateCreate {
+	if t != nil {
+		fetc.SetCreateTime(*t)
+	}
+	return fetc
+}
+
+// SetUpdateTime sets the update_time field.
+func (fetc *FlowExecutionTemplateCreate) SetUpdateTime(t time.Time) *FlowExecutionTemplateCreate {
+	fetc.mutation.SetUpdateTime(t)
+	return fetc
+}
+
+// SetNillableUpdateTime sets the update_time field if the given value is not nil.
+func (fetc *FlowExecutionTemplateCreate) SetNillableUpdateTime(t *time.Time) *FlowExecutionTemplateCreate {
+	if t != nil {
+		fetc.SetUpdateTime(*t)
+	}
+	return fetc
 }
 
 // SetName sets the name field.
@@ -113,6 +142,14 @@ func (fetc *FlowExecutionTemplateCreate) SaveX(ctx context.Context) *FlowExecuti
 }
 
 func (fetc *FlowExecutionTemplateCreate) preSave() error {
+	if _, ok := fetc.mutation.CreateTime(); !ok {
+		v := flowexecutiontemplate.DefaultCreateTime()
+		fetc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fetc.mutation.UpdateTime(); !ok {
+		v := flowexecutiontemplate.DefaultUpdateTime()
+		fetc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := fetc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -148,6 +185,22 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			},
 		}
 	)
+	if value, ok := fetc.mutation.CreateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowexecutiontemplate.FieldCreateTime,
+		})
+		fet.CreateTime = value
+	}
+	if value, ok := fetc.mutation.UpdateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowexecutiontemplate.FieldUpdateTime,
+		})
+		fet.UpdateTime = value
+	}
 	if value, ok := fetc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

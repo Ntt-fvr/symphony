@@ -7,6 +7,8 @@
 package flowexecutiontemplate
 
 import (
+	"time"
+
 	"github.com/facebook/ent"
 )
 
@@ -15,6 +17,10 @@ const (
 	Label = "flow_execution_template"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreateTime holds the string denoting the create_time field in the database.
+	FieldCreateTime = "create_time"
+	// FieldUpdateTime holds the string denoting the update_time field in the database.
+	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
@@ -39,6 +45,8 @@ const (
 // Columns holds all SQL columns for flowexecutiontemplate fields.
 var Columns = []string{
 	FieldID,
+	FieldCreateTime,
+	FieldUpdateTime,
 	FieldName,
 	FieldDescription,
 	FieldEndParamDefinitions,
@@ -53,6 +61,12 @@ var Columns = []string{
 var (
 	Hooks  [2]ent.Hook
 	Policy ent.Policy
+	// DefaultCreateTime holds the default value on creation for the create_time field.
+	DefaultCreateTime func() time.Time
+	// DefaultUpdateTime holds the default value on creation for the update_time field.
+	DefaultUpdateTime func() time.Time
+	// UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
 )

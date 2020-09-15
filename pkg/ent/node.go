@@ -2277,14 +2277,30 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Flow",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(f.Name); err != nil {
+	if buf, err = json.Marshal(f.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -2292,7 +2308,7 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(f.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -2300,7 +2316,7 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(f.EndParamDefinitions); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "end_param_definitions",
 		Value: string(buf),
@@ -2308,7 +2324,7 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(f.Status); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "flow.Status",
 		Name:  "status",
 		Value: string(buf),
@@ -2343,14 +2359,30 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fd.ID,
 		Type:   "FlowDraft",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(fd.Name); err != nil {
+	if buf, err = json.Marshal(fd.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fd.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fd.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -2358,7 +2390,7 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fd.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -2366,7 +2398,7 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(fd.EndParamDefinitions); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "end_param_definitions",
 		Value: string(buf),
@@ -2401,14 +2433,30 @@ func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err err
 	node = &Node{
 		ID:     fet.ID,
 		Type:   "FlowExecutionTemplate",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 1),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(fet.Name); err != nil {
+	if buf, err = json.Marshal(fet.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fet.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fet.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -2416,7 +2464,7 @@ func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err err
 	if buf, err = json.Marshal(fet.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -2424,7 +2472,7 @@ func (fet *FlowExecutionTemplate) Node(ctx context.Context) (node *Node, err err
 	if buf, err = json.Marshal(fet.EndParamDefinitions); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "end_param_definitions",
 		Value: string(buf),
@@ -3218,14 +3266,30 @@ func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
 		Type:   "ProjectTemplate",
-		Fields: make([]*Field, 2),
+		Fields: make([]*Field, 4),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(pt.Name); err != nil {
+	if buf, err = json.Marshal(pt.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -3233,7 +3297,7 @@ func (pt *ProjectTemplate) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pt.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -3279,14 +3343,30 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     pt.ID,
 		Type:   "ProjectType",
-		Fields: make([]*Field, 2),
+		Fields: make([]*Field, 4),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(pt.Name); err != nil {
+	if buf, err = json.Marshal(pt.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(pt.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -3294,7 +3374,7 @@ func (pt *ProjectType) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(pt.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -5723,14 +5803,30 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderTemplate",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 3),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(wot.Name); err != nil {
+	if buf, err = json.Marshal(wot.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -5738,7 +5834,7 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	if buf, err = json.Marshal(wot.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -5746,7 +5842,7 @@ func (wot *WorkOrderTemplate) Node(ctx context.Context) (node *Node, err error) 
 	if buf, err = json.Marshal(wot.AssigneeCanCompleteWorkOrder); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),
@@ -5792,14 +5888,30 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     wot.ID,
 		Type:   "WorkOrderType",
-		Fields: make([]*Field, 3),
+		Fields: make([]*Field, 5),
 		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
-	if buf, err = json.Marshal(wot.Name); err != nil {
+	if buf, err = json.Marshal(wot.CreateTime); err != nil {
 		return nil, err
 	}
 	node.Fields[0] = &Field{
+		Type:  "time.Time",
+		Name:  "create_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.UpdateTime); err != nil {
+		return nil, err
+	}
+	node.Fields[1] = &Field{
+		Type:  "time.Time",
+		Name:  "update_time",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(wot.Name); err != nil {
+		return nil, err
+	}
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "name",
 		Value: string(buf),
@@ -5807,7 +5919,7 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(wot.Description); err != nil {
 		return nil, err
 	}
-	node.Fields[1] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "string",
 		Name:  "description",
 		Value: string(buf),
@@ -5815,7 +5927,7 @@ func (wot *WorkOrderType) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(wot.AssigneeCanCompleteWorkOrder); err != nil {
 		return nil, err
 	}
-	node.Fields[2] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "bool",
 		Name:  "assignee_can_complete_work_order",
 		Value: string(buf),

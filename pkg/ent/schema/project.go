@@ -48,10 +48,8 @@ type ProjectTemplate struct {
 }
 
 // Mixin returns project template mixins.
-func (ProjectTemplate) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		ProjectTemplateMixin{},
-	}
+func (p ProjectTemplate) Mixin() []ent.Mixin {
+	return append(p.schema.Mixin(), ProjectTemplateMixin{})
 }
 
 // Edges returns project template edges.
@@ -77,10 +75,8 @@ type ProjectType struct {
 }
 
 // Mixin returns work project type mixins.
-func (ProjectType) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		ProjectTemplateMixin{},
-	}
+func (p ProjectType) Mixin() []ent.Mixin {
+	return append(p.schema.Mixin(), ProjectTemplateMixin{})
 }
 
 // Edges return project type edges.

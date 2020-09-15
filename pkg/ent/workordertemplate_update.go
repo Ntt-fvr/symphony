@@ -184,6 +184,10 @@ func (wotu *WorkOrderTemplateUpdate) ClearType() *WorkOrderTemplateUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (wotu *WorkOrderTemplateUpdate) Save(ctx context.Context) (int, error) {
+	if _, ok := wotu.mutation.UpdateTime(); !ok {
+		v := workordertemplate.UpdateDefaultUpdateTime()
+		wotu.mutation.SetUpdateTime(v)
+	}
 
 	var (
 		err      error
@@ -251,6 +255,13 @@ func (wotu *WorkOrderTemplateUpdate) sqlSave(ctx context.Context) (n int, err er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := wotu.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertemplate.FieldUpdateTime,
+		})
 	}
 	if value, ok := wotu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -596,6 +607,10 @@ func (wotuo *WorkOrderTemplateUpdateOne) ClearType() *WorkOrderTemplateUpdateOne
 
 // Save executes the query and returns the updated entity.
 func (wotuo *WorkOrderTemplateUpdateOne) Save(ctx context.Context) (*WorkOrderTemplate, error) {
+	if _, ok := wotuo.mutation.UpdateTime(); !ok {
+		v := workordertemplate.UpdateDefaultUpdateTime()
+		wotuo.mutation.SetUpdateTime(v)
+	}
 
 	var (
 		err  error
@@ -662,6 +677,13 @@ func (wotuo *WorkOrderTemplateUpdateOne) sqlSave(ctx context.Context) (wot *Work
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing WorkOrderTemplate.ID for update")}
 	}
 	_spec.Node.ID.Value = id
+	if value, ok := wotuo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertemplate.FieldUpdateTime,
+		})
+	}
 	if value, ok := wotuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

@@ -659,14 +659,25 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
-	flowMixinHooks0 := flowMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+	flowMixinHooks1 := flowMixin[1].(interface{ Hooks() []ent.Hook }).Hooks()
 
-	flow.Hooks[1] = flowMixinHooks0[0]
+	flow.Hooks[1] = flowMixinHooks1[0]
 	flowMixinFields0 := flowMixin[0].Fields()
+	flowMixinFields1 := flowMixin[1].Fields()
 	flowFields := schema.Flow{}.Fields()
 	_ = flowFields
+	// flowDescCreateTime is the schema descriptor for create_time field.
+	flowDescCreateTime := flowMixinFields0[0].Descriptor()
+	// flow.DefaultCreateTime holds the default value on creation for the create_time field.
+	flow.DefaultCreateTime = flowDescCreateTime.Default.(func() time.Time)
+	// flowDescUpdateTime is the schema descriptor for update_time field.
+	flowDescUpdateTime := flowMixinFields0[1].Descriptor()
+	// flow.DefaultUpdateTime holds the default value on creation for the update_time field.
+	flow.DefaultUpdateTime = flowDescUpdateTime.Default.(func() time.Time)
+	// flow.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	flow.UpdateDefaultUpdateTime = flowDescUpdateTime.UpdateDefault.(func() time.Time)
 	// flowDescName is the schema descriptor for name field.
-	flowDescName := flowMixinFields0[0].Descriptor()
+	flowDescName := flowMixinFields1[0].Descriptor()
 	// flow.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flow.NameValidator = flowDescName.Validators[0].(func(string) error)
 	flowdraftMixin := schema.FlowDraft{}.Mixin()
@@ -679,14 +690,25 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
-	flowdraftMixinHooks0 := flowdraftMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+	flowdraftMixinHooks1 := flowdraftMixin[1].(interface{ Hooks() []ent.Hook }).Hooks()
 
-	flowdraft.Hooks[1] = flowdraftMixinHooks0[0]
+	flowdraft.Hooks[1] = flowdraftMixinHooks1[0]
 	flowdraftMixinFields0 := flowdraftMixin[0].Fields()
+	flowdraftMixinFields1 := flowdraftMixin[1].Fields()
 	flowdraftFields := schema.FlowDraft{}.Fields()
 	_ = flowdraftFields
+	// flowdraftDescCreateTime is the schema descriptor for create_time field.
+	flowdraftDescCreateTime := flowdraftMixinFields0[0].Descriptor()
+	// flowdraft.DefaultCreateTime holds the default value on creation for the create_time field.
+	flowdraft.DefaultCreateTime = flowdraftDescCreateTime.Default.(func() time.Time)
+	// flowdraftDescUpdateTime is the schema descriptor for update_time field.
+	flowdraftDescUpdateTime := flowdraftMixinFields0[1].Descriptor()
+	// flowdraft.DefaultUpdateTime holds the default value on creation for the update_time field.
+	flowdraft.DefaultUpdateTime = flowdraftDescUpdateTime.Default.(func() time.Time)
+	// flowdraft.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	flowdraft.UpdateDefaultUpdateTime = flowdraftDescUpdateTime.UpdateDefault.(func() time.Time)
 	// flowdraftDescName is the schema descriptor for name field.
-	flowdraftDescName := flowdraftMixinFields0[0].Descriptor()
+	flowdraftDescName := flowdraftMixinFields1[0].Descriptor()
 	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
 	flowexecutiontemplateMixin := schema.FlowExecutionTemplate{}.Mixin()
@@ -699,14 +721,25 @@ func init() {
 			return next.Mutate(ctx, m)
 		})
 	}
-	flowexecutiontemplateMixinHooks0 := flowexecutiontemplateMixin[0].(interface{ Hooks() []ent.Hook }).Hooks()
+	flowexecutiontemplateMixinHooks1 := flowexecutiontemplateMixin[1].(interface{ Hooks() []ent.Hook }).Hooks()
 
-	flowexecutiontemplate.Hooks[1] = flowexecutiontemplateMixinHooks0[0]
+	flowexecutiontemplate.Hooks[1] = flowexecutiontemplateMixinHooks1[0]
 	flowexecutiontemplateMixinFields0 := flowexecutiontemplateMixin[0].Fields()
+	flowexecutiontemplateMixinFields1 := flowexecutiontemplateMixin[1].Fields()
 	flowexecutiontemplateFields := schema.FlowExecutionTemplate{}.Fields()
 	_ = flowexecutiontemplateFields
+	// flowexecutiontemplateDescCreateTime is the schema descriptor for create_time field.
+	flowexecutiontemplateDescCreateTime := flowexecutiontemplateMixinFields0[0].Descriptor()
+	// flowexecutiontemplate.DefaultCreateTime holds the default value on creation for the create_time field.
+	flowexecutiontemplate.DefaultCreateTime = flowexecutiontemplateDescCreateTime.Default.(func() time.Time)
+	// flowexecutiontemplateDescUpdateTime is the schema descriptor for update_time field.
+	flowexecutiontemplateDescUpdateTime := flowexecutiontemplateMixinFields0[1].Descriptor()
+	// flowexecutiontemplate.DefaultUpdateTime holds the default value on creation for the update_time field.
+	flowexecutiontemplate.DefaultUpdateTime = flowexecutiontemplateDescUpdateTime.Default.(func() time.Time)
+	// flowexecutiontemplate.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	flowexecutiontemplate.UpdateDefaultUpdateTime = flowexecutiontemplateDescUpdateTime.UpdateDefault.(func() time.Time)
 	// flowexecutiontemplateDescName is the schema descriptor for name field.
-	flowexecutiontemplateDescName := flowexecutiontemplateMixinFields0[0].Descriptor()
+	flowexecutiontemplateDescName := flowexecutiontemplateMixinFields1[0].Descriptor()
 	// flowexecutiontemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowexecutiontemplate.NameValidator = flowexecutiontemplateDescName.Validators[0].(func(string) error)
 	flowinstanceMixin := schema.FlowInstance{}.Mixin()
@@ -934,10 +967,21 @@ func init() {
 		})
 	}
 	projecttemplateMixinFields0 := projecttemplateMixin[0].Fields()
+	projecttemplateMixinFields1 := projecttemplateMixin[1].Fields()
 	projecttemplateFields := schema.ProjectTemplate{}.Fields()
 	_ = projecttemplateFields
+	// projecttemplateDescCreateTime is the schema descriptor for create_time field.
+	projecttemplateDescCreateTime := projecttemplateMixinFields0[0].Descriptor()
+	// projecttemplate.DefaultCreateTime holds the default value on creation for the create_time field.
+	projecttemplate.DefaultCreateTime = projecttemplateDescCreateTime.Default.(func() time.Time)
+	// projecttemplateDescUpdateTime is the schema descriptor for update_time field.
+	projecttemplateDescUpdateTime := projecttemplateMixinFields0[1].Descriptor()
+	// projecttemplate.DefaultUpdateTime holds the default value on creation for the update_time field.
+	projecttemplate.DefaultUpdateTime = projecttemplateDescUpdateTime.Default.(func() time.Time)
+	// projecttemplate.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	projecttemplate.UpdateDefaultUpdateTime = projecttemplateDescUpdateTime.UpdateDefault.(func() time.Time)
 	// projecttemplateDescName is the schema descriptor for name field.
-	projecttemplateDescName := projecttemplateMixinFields0[0].Descriptor()
+	projecttemplateDescName := projecttemplateMixinFields1[0].Descriptor()
 	// projecttemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	projecttemplate.NameValidator = projecttemplateDescName.Validators[0].(func(string) error)
 	projecttypeMixin := schema.ProjectType{}.Mixin()
@@ -951,10 +995,21 @@ func init() {
 		})
 	}
 	projecttypeMixinFields0 := projecttypeMixin[0].Fields()
+	projecttypeMixinFields1 := projecttypeMixin[1].Fields()
 	projecttypeFields := schema.ProjectType{}.Fields()
 	_ = projecttypeFields
+	// projecttypeDescCreateTime is the schema descriptor for create_time field.
+	projecttypeDescCreateTime := projecttypeMixinFields0[0].Descriptor()
+	// projecttype.DefaultCreateTime holds the default value on creation for the create_time field.
+	projecttype.DefaultCreateTime = projecttypeDescCreateTime.Default.(func() time.Time)
+	// projecttypeDescUpdateTime is the schema descriptor for update_time field.
+	projecttypeDescUpdateTime := projecttypeMixinFields0[1].Descriptor()
+	// projecttype.DefaultUpdateTime holds the default value on creation for the update_time field.
+	projecttype.DefaultUpdateTime = projecttypeDescUpdateTime.Default.(func() time.Time)
+	// projecttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	projecttype.UpdateDefaultUpdateTime = projecttypeDescUpdateTime.UpdateDefault.(func() time.Time)
 	// projecttypeDescName is the schema descriptor for name field.
-	projecttypeDescName := projecttypeMixinFields0[0].Descriptor()
+	projecttypeDescName := projecttypeMixinFields1[0].Descriptor()
 	// projecttype.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	projecttype.NameValidator = projecttypeDescName.Validators[0].(func(string) error)
 	propertyMixin := schema.Property{}.Mixin()
@@ -1440,10 +1495,21 @@ func init() {
 		})
 	}
 	workordertemplateMixinFields0 := workordertemplateMixin[0].Fields()
+	workordertemplateMixinFields1 := workordertemplateMixin[1].Fields()
 	workordertemplateFields := schema.WorkOrderTemplate{}.Fields()
 	_ = workordertemplateFields
+	// workordertemplateDescCreateTime is the schema descriptor for create_time field.
+	workordertemplateDescCreateTime := workordertemplateMixinFields0[0].Descriptor()
+	// workordertemplate.DefaultCreateTime holds the default value on creation for the create_time field.
+	workordertemplate.DefaultCreateTime = workordertemplateDescCreateTime.Default.(func() time.Time)
+	// workordertemplateDescUpdateTime is the schema descriptor for update_time field.
+	workordertemplateDescUpdateTime := workordertemplateMixinFields0[1].Descriptor()
+	// workordertemplate.DefaultUpdateTime holds the default value on creation for the update_time field.
+	workordertemplate.DefaultUpdateTime = workordertemplateDescUpdateTime.Default.(func() time.Time)
+	// workordertemplate.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	workordertemplate.UpdateDefaultUpdateTime = workordertemplateDescUpdateTime.UpdateDefault.(func() time.Time)
 	// workordertemplateDescAssigneeCanCompleteWorkOrder is the schema descriptor for assignee_can_complete_work_order field.
-	workordertemplateDescAssigneeCanCompleteWorkOrder := workordertemplateMixinFields0[2].Descriptor()
+	workordertemplateDescAssigneeCanCompleteWorkOrder := workordertemplateMixinFields1[2].Descriptor()
 	// workordertemplate.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
 	workordertemplate.DefaultAssigneeCanCompleteWorkOrder = workordertemplateDescAssigneeCanCompleteWorkOrder.Default.(bool)
 	workordertypeMixin := schema.WorkOrderType{}.Mixin()
@@ -1457,10 +1523,21 @@ func init() {
 		})
 	}
 	workordertypeMixinFields0 := workordertypeMixin[0].Fields()
+	workordertypeMixinFields1 := workordertypeMixin[1].Fields()
 	workordertypeFields := schema.WorkOrderType{}.Fields()
 	_ = workordertypeFields
+	// workordertypeDescCreateTime is the schema descriptor for create_time field.
+	workordertypeDescCreateTime := workordertypeMixinFields0[0].Descriptor()
+	// workordertype.DefaultCreateTime holds the default value on creation for the create_time field.
+	workordertype.DefaultCreateTime = workordertypeDescCreateTime.Default.(func() time.Time)
+	// workordertypeDescUpdateTime is the schema descriptor for update_time field.
+	workordertypeDescUpdateTime := workordertypeMixinFields0[1].Descriptor()
+	// workordertype.DefaultUpdateTime holds the default value on creation for the update_time field.
+	workordertype.DefaultUpdateTime = workordertypeDescUpdateTime.Default.(func() time.Time)
+	// workordertype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	workordertype.UpdateDefaultUpdateTime = workordertypeDescUpdateTime.UpdateDefault.(func() time.Time)
 	// workordertypeDescAssigneeCanCompleteWorkOrder is the schema descriptor for assignee_can_complete_work_order field.
-	workordertypeDescAssigneeCanCompleteWorkOrder := workordertypeMixinFields0[2].Descriptor()
+	workordertypeDescAssigneeCanCompleteWorkOrder := workordertypeMixinFields1[2].Descriptor()
 	// workordertype.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
 	workordertype.DefaultAssigneeCanCompleteWorkOrder = workordertypeDescAssigneeCanCompleteWorkOrder.Default.(bool)
 }

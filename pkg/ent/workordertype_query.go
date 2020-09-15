@@ -367,12 +367,12 @@ func (wotq *WorkOrderTypeQuery) WithDefinitions(opts ...func(*WorkOrderDefinitio
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.WorkOrderType.Query().
-//		GroupBy(workordertype.FieldName).
+//		GroupBy(workordertype.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -393,11 +393,11 @@ func (wotq *WorkOrderTypeQuery) GroupBy(field string, fields ...string) *WorkOrd
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.WorkOrderType.Query().
-//		Select(workordertype.FieldName).
+//		Select(workordertype.FieldCreateTime).
 //		Scan(ctx, &v)
 //
 func (wotq *WorkOrderTypeQuery) Select(field string, fields ...string) *WorkOrderTypeSelect {

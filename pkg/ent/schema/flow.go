@@ -56,10 +56,8 @@ type Flow struct {
 }
 
 // Mixin returns flow mixins.
-func (Flow) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		FlowMixin{},
-	}
+func (f Flow) Mixin() []ent.Mixin {
+	return append(f.schema.Mixin(), FlowMixin{})
 }
 
 // Fields returns flow fields.
@@ -103,10 +101,8 @@ type FlowExecutionTemplate struct {
 }
 
 // Mixin returns flow execution template mixins.
-func (FlowExecutionTemplate) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		FlowMixin{},
-	}
+func (f FlowExecutionTemplate) Mixin() []ent.Mixin {
+	return append(f.schema.Mixin(), FlowMixin{})
 }
 
 // Policy returns flow execution template policy.
@@ -124,10 +120,8 @@ type FlowDraft struct {
 }
 
 // Mixin returns flow draft mixins.
-func (FlowDraft) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		FlowMixin{},
-	}
+func (f FlowDraft) Mixin() []ent.Mixin {
+	return append(f.schema.Mixin(), FlowMixin{})
 }
 
 // Edges returns flow draft edges.

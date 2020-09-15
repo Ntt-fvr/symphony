@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
@@ -24,6 +25,34 @@ type WorkOrderTemplateCreate struct {
 	config
 	mutation *WorkOrderTemplateMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the create_time field.
+func (wotc *WorkOrderTemplateCreate) SetCreateTime(t time.Time) *WorkOrderTemplateCreate {
+	wotc.mutation.SetCreateTime(t)
+	return wotc
+}
+
+// SetNillableCreateTime sets the create_time field if the given value is not nil.
+func (wotc *WorkOrderTemplateCreate) SetNillableCreateTime(t *time.Time) *WorkOrderTemplateCreate {
+	if t != nil {
+		wotc.SetCreateTime(*t)
+	}
+	return wotc
+}
+
+// SetUpdateTime sets the update_time field.
+func (wotc *WorkOrderTemplateCreate) SetUpdateTime(t time.Time) *WorkOrderTemplateCreate {
+	wotc.mutation.SetUpdateTime(t)
+	return wotc
+}
+
+// SetNillableUpdateTime sets the update_time field if the given value is not nil.
+func (wotc *WorkOrderTemplateCreate) SetNillableUpdateTime(t *time.Time) *WorkOrderTemplateCreate {
+	if t != nil {
+		wotc.SetUpdateTime(*t)
+	}
+	return wotc
 }
 
 // SetName sets the name field.
@@ -156,6 +185,14 @@ func (wotc *WorkOrderTemplateCreate) SaveX(ctx context.Context) *WorkOrderTempla
 }
 
 func (wotc *WorkOrderTemplateCreate) preSave() error {
+	if _, ok := wotc.mutation.CreateTime(); !ok {
+		v := workordertemplate.DefaultCreateTime()
+		wotc.mutation.SetCreateTime(v)
+	}
+	if _, ok := wotc.mutation.UpdateTime(); !ok {
+		v := workordertemplate.DefaultUpdateTime()
+		wotc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := wotc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -190,6 +227,22 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			},
 		}
 	)
+	if value, ok := wotc.mutation.CreateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertemplate.FieldCreateTime,
+		})
+		wot.CreateTime = value
+	}
+	if value, ok := wotc.mutation.UpdateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertemplate.FieldUpdateTime,
+		})
+		wot.UpdateTime = value
+	}
 	if value, ok := wotc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

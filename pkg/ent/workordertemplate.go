@@ -9,6 +9,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/workordertemplate"
@@ -20,6 +21,10 @@ type WorkOrderTemplate struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -81,6 +86,8 @@ func (e WorkOrderTemplateEdges) TypeOrErr() (*WorkOrderType, error) {
 func (*WorkOrderTemplate) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
+		&sql.NullTime{},   // create_time
+		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
 		&sql.NullBool{},   // assignee_can_complete_work_order
@@ -106,23 +113,33 @@ func (wot *WorkOrderTemplate) assignValues(values ...interface{}) error {
 	}
 	wot.ID = int(value.Int64)
 	values = values[1:]
-	if value, ok := values[0].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field name", values[0])
+	if value, ok := values[0].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field create_time", values[0])
+	} else if value.Valid {
+		wot.CreateTime = value.Time
+	}
+	if value, ok := values[1].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field update_time", values[1])
+	} else if value.Valid {
+		wot.UpdateTime = value.Time
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field name", values[2])
 	} else if value.Valid {
 		wot.Name = value.String
 	}
-	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field description", values[1])
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field description", values[3])
 	} else if value.Valid {
 		wot.Description = new(string)
 		*wot.Description = value.String
 	}
-	if value, ok := values[2].(*sql.NullBool); !ok {
-		return fmt.Errorf("unexpected type %T for field assignee_can_complete_work_order", values[2])
+	if value, ok := values[4].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field assignee_can_complete_work_order", values[4])
 	} else if value.Valid {
 		wot.AssigneeCanCompleteWorkOrder = value.Bool
 	}
-	values = values[3:]
+	values = values[5:]
 	if len(values) == len(workordertemplate.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field work_order_template_type", value)
@@ -172,6 +189,10 @@ func (wot *WorkOrderTemplate) String() string {
 	var builder strings.Builder
 	builder.WriteString("WorkOrderTemplate(")
 	builder.WriteString(fmt.Sprintf("id=%v", wot.ID))
+	builder.WriteString(", create_time=")
+	builder.WriteString(wot.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", update_time=")
+	builder.WriteString(wot.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(wot.Name)
 	if v := wot.Description; v != nil {

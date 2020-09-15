@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
@@ -25,6 +26,34 @@ type WorkOrderTypeCreate struct {
 	config
 	mutation *WorkOrderTypeMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the create_time field.
+func (wotc *WorkOrderTypeCreate) SetCreateTime(t time.Time) *WorkOrderTypeCreate {
+	wotc.mutation.SetCreateTime(t)
+	return wotc
+}
+
+// SetNillableCreateTime sets the create_time field if the given value is not nil.
+func (wotc *WorkOrderTypeCreate) SetNillableCreateTime(t *time.Time) *WorkOrderTypeCreate {
+	if t != nil {
+		wotc.SetCreateTime(*t)
+	}
+	return wotc
+}
+
+// SetUpdateTime sets the update_time field.
+func (wotc *WorkOrderTypeCreate) SetUpdateTime(t time.Time) *WorkOrderTypeCreate {
+	wotc.mutation.SetUpdateTime(t)
+	return wotc
+}
+
+// SetNillableUpdateTime sets the update_time field if the given value is not nil.
+func (wotc *WorkOrderTypeCreate) SetNillableUpdateTime(t *time.Time) *WorkOrderTypeCreate {
+	if t != nil {
+		wotc.SetUpdateTime(*t)
+	}
+	return wotc
 }
 
 // SetName sets the name field.
@@ -168,6 +197,14 @@ func (wotc *WorkOrderTypeCreate) SaveX(ctx context.Context) *WorkOrderType {
 }
 
 func (wotc *WorkOrderTypeCreate) preSave() error {
+	if _, ok := wotc.mutation.CreateTime(); !ok {
+		v := workordertype.DefaultCreateTime()
+		wotc.mutation.SetCreateTime(v)
+	}
+	if _, ok := wotc.mutation.UpdateTime(); !ok {
+		v := workordertype.DefaultUpdateTime()
+		wotc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := wotc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -202,6 +239,22 @@ func (wotc *WorkOrderTypeCreate) createSpec() (*WorkOrderType, *sqlgraph.CreateS
 			},
 		}
 	)
+	if value, ok := wotc.mutation.CreateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertype.FieldCreateTime,
+		})
+		wot.CreateTime = value
+	}
+	if value, ok := wotc.mutation.UpdateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: workordertype.FieldUpdateTime,
+		})
+		wot.UpdateTime = value
+	}
 	if value, ok := wotc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

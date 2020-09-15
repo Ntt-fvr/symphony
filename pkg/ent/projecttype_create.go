@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
@@ -24,6 +25,34 @@ type ProjectTypeCreate struct {
 	config
 	mutation *ProjectTypeMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the create_time field.
+func (ptc *ProjectTypeCreate) SetCreateTime(t time.Time) *ProjectTypeCreate {
+	ptc.mutation.SetCreateTime(t)
+	return ptc
+}
+
+// SetNillableCreateTime sets the create_time field if the given value is not nil.
+func (ptc *ProjectTypeCreate) SetNillableCreateTime(t *time.Time) *ProjectTypeCreate {
+	if t != nil {
+		ptc.SetCreateTime(*t)
+	}
+	return ptc
+}
+
+// SetUpdateTime sets the update_time field.
+func (ptc *ProjectTypeCreate) SetUpdateTime(t time.Time) *ProjectTypeCreate {
+	ptc.mutation.SetUpdateTime(t)
+	return ptc
+}
+
+// SetNillableUpdateTime sets the update_time field if the given value is not nil.
+func (ptc *ProjectTypeCreate) SetNillableUpdateTime(t *time.Time) *ProjectTypeCreate {
+	if t != nil {
+		ptc.SetUpdateTime(*t)
+	}
+	return ptc
 }
 
 // SetName sets the name field.
@@ -138,6 +167,14 @@ func (ptc *ProjectTypeCreate) SaveX(ctx context.Context) *ProjectType {
 }
 
 func (ptc *ProjectTypeCreate) preSave() error {
+	if _, ok := ptc.mutation.CreateTime(); !ok {
+		v := projecttype.DefaultCreateTime()
+		ptc.mutation.SetCreateTime(v)
+	}
+	if _, ok := ptc.mutation.UpdateTime(); !ok {
+		v := projecttype.DefaultUpdateTime()
+		ptc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := ptc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -173,6 +210,22 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 			},
 		}
 	)
+	if value, ok := ptc.mutation.CreateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: projecttype.FieldCreateTime,
+		})
+		pt.CreateTime = value
+	}
+	if value, ok := ptc.mutation.UpdateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: projecttype.FieldUpdateTime,
+		})
+		pt.UpdateTime = value
+	}
 	if value, ok := ptc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

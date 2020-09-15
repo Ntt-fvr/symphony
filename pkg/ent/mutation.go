@@ -19928,6 +19928,8 @@ type FlowMutation struct {
 	op                    Op
 	typ                   string
 	id                    *int
+	create_time           *time.Time
+	update_time           *time.Time
 	name                  *string
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
@@ -20020,6 +20022,80 @@ func (m *FlowMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *FlowMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *FlowMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *FlowMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *FlowMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *FlowMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *FlowMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -20316,7 +20392,13 @@ func (m *FlowMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
+	if m.create_time != nil {
+		fields = append(fields, flow.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, flow.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, flow.FieldName)
 	}
@@ -20337,6 +20419,10 @@ func (m *FlowMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case flow.FieldCreateTime:
+		return m.CreateTime()
+	case flow.FieldUpdateTime:
+		return m.UpdateTime()
 	case flow.FieldName:
 		return m.Name()
 	case flow.FieldDescription:
@@ -20354,6 +20440,10 @@ func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case flow.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case flow.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case flow.FieldName:
 		return m.OldName(ctx)
 	case flow.FieldDescription:
@@ -20371,6 +20461,20 @@ func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type mismatch the field type.
 func (m *FlowMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case flow.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case flow.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case flow.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -20464,6 +20568,12 @@ func (m *FlowMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *FlowMutation) ResetField(name string) error {
 	switch name {
+	case flow.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case flow.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case flow.FieldName:
 		m.ResetName()
 		return nil
@@ -20601,6 +20711,8 @@ type FlowDraftMutation struct {
 	op                    Op
 	typ                   string
 	id                    *int
+	create_time           *time.Time
+	update_time           *time.Time
 	name                  *string
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
@@ -20691,6 +20803,80 @@ func (m *FlowDraftMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *FlowDraftMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *FlowDraftMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the FlowDraft.
+// If the FlowDraft object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowDraftMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *FlowDraftMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *FlowDraftMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *FlowDraftMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the FlowDraft.
+// If the FlowDraft object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowDraftMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *FlowDraftMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -20936,7 +21122,13 @@ func (m *FlowDraftMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowDraftMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, flowdraft.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, flowdraft.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, flowdraft.FieldName)
 	}
@@ -20954,6 +21146,10 @@ func (m *FlowDraftMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *FlowDraftMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case flowdraft.FieldCreateTime:
+		return m.CreateTime()
+	case flowdraft.FieldUpdateTime:
+		return m.UpdateTime()
 	case flowdraft.FieldName:
 		return m.Name()
 	case flowdraft.FieldDescription:
@@ -20969,6 +21165,10 @@ func (m *FlowDraftMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *FlowDraftMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case flowdraft.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case flowdraft.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case flowdraft.FieldName:
 		return m.OldName(ctx)
 	case flowdraft.FieldDescription:
@@ -20984,6 +21184,20 @@ func (m *FlowDraftMutation) OldField(ctx context.Context, name string) (ent.Valu
 // type mismatch the field type.
 func (m *FlowDraftMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case flowdraft.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case flowdraft.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case flowdraft.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -21070,6 +21284,12 @@ func (m *FlowDraftMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *FlowDraftMutation) ResetField(name string) error {
 	switch name {
+	case flowdraft.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case flowdraft.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case flowdraft.FieldName:
 		m.ResetName()
 		return nil
@@ -21196,6 +21416,8 @@ type FlowExecutionTemplateMutation struct {
 	op                    Op
 	typ                   string
 	id                    *int
+	create_time           *time.Time
+	update_time           *time.Time
 	name                  *string
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
@@ -21284,6 +21506,80 @@ func (m *FlowExecutionTemplateMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *FlowExecutionTemplateMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *FlowExecutionTemplateMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the FlowExecutionTemplate.
+// If the FlowExecutionTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowExecutionTemplateMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *FlowExecutionTemplateMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *FlowExecutionTemplateMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *FlowExecutionTemplateMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the FlowExecutionTemplate.
+// If the FlowExecutionTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowExecutionTemplateMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *FlowExecutionTemplateMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -21490,7 +21786,13 @@ func (m *FlowExecutionTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowExecutionTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, flowexecutiontemplate.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, flowexecutiontemplate.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, flowexecutiontemplate.FieldName)
 	}
@@ -21508,6 +21810,10 @@ func (m *FlowExecutionTemplateMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *FlowExecutionTemplateMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case flowexecutiontemplate.FieldCreateTime:
+		return m.CreateTime()
+	case flowexecutiontemplate.FieldUpdateTime:
+		return m.UpdateTime()
 	case flowexecutiontemplate.FieldName:
 		return m.Name()
 	case flowexecutiontemplate.FieldDescription:
@@ -21523,6 +21829,10 @@ func (m *FlowExecutionTemplateMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *FlowExecutionTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case flowexecutiontemplate.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case flowexecutiontemplate.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case flowexecutiontemplate.FieldName:
 		return m.OldName(ctx)
 	case flowexecutiontemplate.FieldDescription:
@@ -21538,6 +21848,20 @@ func (m *FlowExecutionTemplateMutation) OldField(ctx context.Context, name strin
 // type mismatch the field type.
 func (m *FlowExecutionTemplateMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case flowexecutiontemplate.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case flowexecutiontemplate.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case flowexecutiontemplate.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -21624,6 +21948,12 @@ func (m *FlowExecutionTemplateMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *FlowExecutionTemplateMutation) ResetField(name string) error {
 	switch name {
+	case flowexecutiontemplate.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case flowexecutiontemplate.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case flowexecutiontemplate.FieldName:
 		m.ResetName()
 		return nil
@@ -28528,6 +28858,8 @@ type ProjectTemplateMutation struct {
 	op                 Op
 	typ                string
 	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
 	name               *string
 	description        *string
 	clearedFields      map[string]struct{}
@@ -28620,6 +28952,80 @@ func (m *ProjectTemplateMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ProjectTemplateMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ProjectTemplateMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ProjectTemplate.
+// If the ProjectTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTemplateMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ProjectTemplateMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ProjectTemplateMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ProjectTemplateMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ProjectTemplate.
+// If the ProjectTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTemplateMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ProjectTemplateMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -28868,7 +29274,13 @@ func (m *ProjectTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProjectTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, projecttemplate.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, projecttemplate.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, projecttemplate.FieldName)
 	}
@@ -28883,6 +29295,10 @@ func (m *ProjectTemplateMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *ProjectTemplateMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case projecttemplate.FieldCreateTime:
+		return m.CreateTime()
+	case projecttemplate.FieldUpdateTime:
+		return m.UpdateTime()
 	case projecttemplate.FieldName:
 		return m.Name()
 	case projecttemplate.FieldDescription:
@@ -28896,6 +29312,10 @@ func (m *ProjectTemplateMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *ProjectTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case projecttemplate.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case projecttemplate.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case projecttemplate.FieldName:
 		return m.OldName(ctx)
 	case projecttemplate.FieldDescription:
@@ -28909,6 +29329,20 @@ func (m *ProjectTemplateMutation) OldField(ctx context.Context, name string) (en
 // type mismatch the field type.
 func (m *ProjectTemplateMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case projecttemplate.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case projecttemplate.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case projecttemplate.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -28982,6 +29416,12 @@ func (m *ProjectTemplateMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *ProjectTemplateMutation) ResetField(name string) error {
 	switch name {
+	case projecttemplate.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case projecttemplate.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case projecttemplate.FieldName:
 		m.ResetName()
 		return nil
@@ -29131,6 +29571,8 @@ type ProjectTypeMutation struct {
 	op                 Op
 	typ                string
 	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
 	name               *string
 	description        *string
 	clearedFields      map[string]struct{}
@@ -29224,6 +29666,80 @@ func (m *ProjectTypeMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *ProjectTypeMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *ProjectTypeMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the ProjectType.
+// If the ProjectType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *ProjectTypeMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *ProjectTypeMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *ProjectTypeMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the ProjectType.
+// If the ProjectType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ProjectTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *ProjectTypeMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -29486,7 +30002,13 @@ func (m *ProjectTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ProjectTypeMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
+	if m.create_time != nil {
+		fields = append(fields, projecttype.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, projecttype.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, projecttype.FieldName)
 	}
@@ -29501,6 +30023,10 @@ func (m *ProjectTypeMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *ProjectTypeMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case projecttype.FieldCreateTime:
+		return m.CreateTime()
+	case projecttype.FieldUpdateTime:
+		return m.UpdateTime()
 	case projecttype.FieldName:
 		return m.Name()
 	case projecttype.FieldDescription:
@@ -29514,6 +30040,10 @@ func (m *ProjectTypeMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *ProjectTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case projecttype.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case projecttype.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case projecttype.FieldName:
 		return m.OldName(ctx)
 	case projecttype.FieldDescription:
@@ -29527,6 +30057,20 @@ func (m *ProjectTypeMutation) OldField(ctx context.Context, name string) (ent.Va
 // type mismatch the field type.
 func (m *ProjectTypeMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case projecttype.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case projecttype.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case projecttype.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -29600,6 +30144,12 @@ func (m *ProjectTypeMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *ProjectTypeMutation) ResetField(name string) error {
 	switch name {
+	case projecttype.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case projecttype.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case projecttype.FieldName:
 		m.ResetName()
 		return nil
@@ -51388,6 +51938,8 @@ type WorkOrderTemplateMutation struct {
 	op                                     Op
 	typ                                    string
 	id                                     *int
+	create_time                            *time.Time
+	update_time                            *time.Time
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
@@ -51481,6 +52033,80 @@ func (m *WorkOrderTemplateMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *WorkOrderTemplateMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *WorkOrderTemplateMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the WorkOrderTemplate.
+// If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTemplateMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *WorkOrderTemplateMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *WorkOrderTemplateMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *WorkOrderTemplateMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the WorkOrderTemplate.
+// If the WorkOrderTemplate object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTemplateMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *WorkOrderTemplateMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -51779,7 +52405,13 @@ func (m *WorkOrderTemplateMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, workordertemplate.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, workordertemplate.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, workordertemplate.FieldName)
 	}
@@ -51797,6 +52429,10 @@ func (m *WorkOrderTemplateMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *WorkOrderTemplateMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case workordertemplate.FieldCreateTime:
+		return m.CreateTime()
+	case workordertemplate.FieldUpdateTime:
+		return m.UpdateTime()
 	case workordertemplate.FieldName:
 		return m.Name()
 	case workordertemplate.FieldDescription:
@@ -51812,6 +52448,10 @@ func (m *WorkOrderTemplateMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *WorkOrderTemplateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case workordertemplate.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case workordertemplate.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case workordertemplate.FieldName:
 		return m.OldName(ctx)
 	case workordertemplate.FieldDescription:
@@ -51827,6 +52467,20 @@ func (m *WorkOrderTemplateMutation) OldField(ctx context.Context, name string) (
 // type mismatch the field type.
 func (m *WorkOrderTemplateMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case workordertemplate.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case workordertemplate.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case workordertemplate.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -51913,6 +52567,12 @@ func (m *WorkOrderTemplateMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *WorkOrderTemplateMutation) ResetField(name string) error {
 	switch name {
+	case workordertemplate.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case workordertemplate.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case workordertemplate.FieldName:
 		m.ResetName()
 		return nil
@@ -52065,6 +52725,8 @@ type WorkOrderTypeMutation struct {
 	op                                     Op
 	typ                                    string
 	id                                     *int
+	create_time                            *time.Time
+	update_time                            *time.Time
 	name                                   *string
 	description                            *string
 	assignee_can_complete_work_order       *bool
@@ -52162,6 +52824,80 @@ func (m *WorkOrderTypeMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetCreateTime sets the create_time field.
+func (m *WorkOrderTypeMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the create_time value in the mutation.
+func (m *WorkOrderTypeMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old create_time value of the WorkOrderType.
+// If the WorkOrderType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTypeMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime reset all changes of the "create_time" field.
+func (m *WorkOrderTypeMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the update_time field.
+func (m *WorkOrderTypeMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the update_time value in the mutation.
+func (m *WorkOrderTypeMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old update_time value of the WorkOrderType.
+// If the WorkOrderType object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *WorkOrderTypeMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime reset all changes of the "update_time" field.
+func (m *WorkOrderTypeMutation) ResetUpdateTime() {
+	m.update_time = nil
 }
 
 // SetName sets the name field.
@@ -52527,7 +53263,13 @@ func (m *WorkOrderTypeMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *WorkOrderTypeMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, workordertype.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, workordertype.FieldUpdateTime)
+	}
 	if m.name != nil {
 		fields = append(fields, workordertype.FieldName)
 	}
@@ -52545,6 +53287,10 @@ func (m *WorkOrderTypeMutation) Fields() []string {
 // not set, or was not define in the schema.
 func (m *WorkOrderTypeMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case workordertype.FieldCreateTime:
+		return m.CreateTime()
+	case workordertype.FieldUpdateTime:
+		return m.UpdateTime()
 	case workordertype.FieldName:
 		return m.Name()
 	case workordertype.FieldDescription:
@@ -52560,6 +53306,10 @@ func (m *WorkOrderTypeMutation) Field(name string) (ent.Value, bool) {
 // or the query to the database was failed.
 func (m *WorkOrderTypeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case workordertype.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case workordertype.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
 	case workordertype.FieldName:
 		return m.OldName(ctx)
 	case workordertype.FieldDescription:
@@ -52575,6 +53325,20 @@ func (m *WorkOrderTypeMutation) OldField(ctx context.Context, name string) (ent.
 // type mismatch the field type.
 func (m *WorkOrderTypeMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case workordertype.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case workordertype.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
 	case workordertype.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -52661,6 +53425,12 @@ func (m *WorkOrderTypeMutation) ClearField(name string) error {
 // defined in the schema.
 func (m *WorkOrderTypeMutation) ResetField(name string) error {
 	switch name {
+	case workordertype.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case workordertype.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
 	case workordertype.FieldName:
 		m.ResetName()
 		return nil

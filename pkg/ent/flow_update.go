@@ -165,6 +165,10 @@ func (fu *FlowUpdate) RemoveDraft(f ...*FlowDraft) *FlowUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fu *FlowUpdate) Save(ctx context.Context) (int, error) {
+	if _, ok := fu.mutation.UpdateTime(); !ok {
+		v := flow.UpdateDefaultUpdateTime()
+		fu.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fu.mutation.Name(); ok {
 		if err := flow.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -242,6 +246,13 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := fu.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flow.FieldUpdateTime,
+		})
 	}
 	if value, ok := fu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -540,6 +551,10 @@ func (fuo *FlowUpdateOne) RemoveDraft(f ...*FlowDraft) *FlowUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fuo *FlowUpdateOne) Save(ctx context.Context) (*Flow, error) {
+	if _, ok := fuo.mutation.UpdateTime(); !ok {
+		v := flow.UpdateDefaultUpdateTime()
+		fuo.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fuo.mutation.Name(); ok {
 		if err := flow.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -616,6 +631,13 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (f *Flow, err error) {
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Flow.ID for update")}
 	}
 	_spec.Node.ID.Value = id
+	if value, ok := fuo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flow.FieldUpdateTime,
+		})
+	}
 	if value, ok := fuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

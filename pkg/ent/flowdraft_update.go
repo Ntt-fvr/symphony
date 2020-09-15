@@ -140,6 +140,10 @@ func (fdu *FlowDraftUpdate) ClearFlow() *FlowDraftUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fdu *FlowDraftUpdate) Save(ctx context.Context) (int, error) {
+	if _, ok := fdu.mutation.UpdateTime(); !ok {
+		v := flowdraft.UpdateDefaultUpdateTime()
+		fdu.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fdu.mutation.Name(); ok {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -212,6 +216,13 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := fdu.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowdraft.FieldUpdateTime,
+		})
 	}
 	if value, ok := fdu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -459,6 +470,10 @@ func (fduo *FlowDraftUpdateOne) ClearFlow() *FlowDraftUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fduo *FlowDraftUpdateOne) Save(ctx context.Context) (*FlowDraft, error) {
+	if _, ok := fduo.mutation.UpdateTime(); !ok {
+		v := flowdraft.UpdateDefaultUpdateTime()
+		fduo.mutation.SetUpdateTime(v)
+	}
 	if v, ok := fduo.mutation.Name(); ok {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -530,6 +545,13 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing FlowDraft.ID for update")}
 	}
 	_spec.Node.ID.Value = id
+	if value, ok := fduo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowdraft.FieldUpdateTime,
+		})
+	}
 	if value, ok := fduo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

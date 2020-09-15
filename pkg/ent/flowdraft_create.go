@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql/sqlgraph"
 	"github.com/facebook/ent/schema/field"
@@ -24,6 +25,34 @@ type FlowDraftCreate struct {
 	config
 	mutation *FlowDraftMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the create_time field.
+func (fdc *FlowDraftCreate) SetCreateTime(t time.Time) *FlowDraftCreate {
+	fdc.mutation.SetCreateTime(t)
+	return fdc
+}
+
+// SetNillableCreateTime sets the create_time field if the given value is not nil.
+func (fdc *FlowDraftCreate) SetNillableCreateTime(t *time.Time) *FlowDraftCreate {
+	if t != nil {
+		fdc.SetCreateTime(*t)
+	}
+	return fdc
+}
+
+// SetUpdateTime sets the update_time field.
+func (fdc *FlowDraftCreate) SetUpdateTime(t time.Time) *FlowDraftCreate {
+	fdc.mutation.SetUpdateTime(t)
+	return fdc
+}
+
+// SetNillableUpdateTime sets the update_time field if the given value is not nil.
+func (fdc *FlowDraftCreate) SetNillableUpdateTime(t *time.Time) *FlowDraftCreate {
+	if t != nil {
+		fdc.SetUpdateTime(*t)
+	}
+	return fdc
 }
 
 // SetName sets the name field.
@@ -133,6 +162,14 @@ func (fdc *FlowDraftCreate) SaveX(ctx context.Context) *FlowDraft {
 }
 
 func (fdc *FlowDraftCreate) preSave() error {
+	if _, ok := fdc.mutation.CreateTime(); !ok {
+		v := flowdraft.DefaultCreateTime()
+		fdc.mutation.SetCreateTime(v)
+	}
+	if _, ok := fdc.mutation.UpdateTime(); !ok {
+		v := flowdraft.DefaultUpdateTime()
+		fdc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := fdc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -168,6 +205,22 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
+	if value, ok := fdc.mutation.CreateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowdraft.FieldCreateTime,
+		})
+		fd.CreateTime = value
+	}
+	if value, ok := fdc.mutation.UpdateTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: flowdraft.FieldUpdateTime,
+		})
+		fd.UpdateTime = value
+	}
 	if value, ok := fdc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

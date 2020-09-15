@@ -50,10 +50,8 @@ type WorkOrderType struct {
 }
 
 // Mixin returns work order type mixins.
-func (WorkOrderType) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		WorkOrderTemplateMixin{},
-	}
+func (w WorkOrderType) Mixin() []ent.Mixin {
+	return append(w.schema.Mixin(), WorkOrderTemplateMixin{})
 }
 
 // Indexes returns work order type indexes.
@@ -88,10 +86,8 @@ type WorkOrderTemplate struct {
 }
 
 // Mixin returns work order template mixins.
-func (WorkOrderTemplate) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		WorkOrderTemplateMixin{},
-	}
+func (w WorkOrderTemplate) Mixin() []ent.Mixin {
+	return append(w.schema.Mixin(), WorkOrderTemplateMixin{})
 }
 
 // Edges returns work order template edges.

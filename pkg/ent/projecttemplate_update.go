@@ -164,6 +164,10 @@ func (ptu *ProjectTemplateUpdate) ClearType() *ProjectTemplateUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ptu *ProjectTemplateUpdate) Save(ctx context.Context) (int, error) {
+	if _, ok := ptu.mutation.UpdateTime(); !ok {
+		v := projecttemplate.UpdateDefaultUpdateTime()
+		ptu.mutation.SetUpdateTime(v)
+	}
 	if v, ok := ptu.mutation.Name(); ok {
 		if err := projecttemplate.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -236,6 +240,13 @@ func (ptu *ProjectTemplateUpdate) sqlSave(ctx context.Context) (n int, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ptu.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: projecttemplate.FieldUpdateTime,
+		})
 	}
 	if value, ok := ptu.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
@@ -548,6 +559,10 @@ func (ptuo *ProjectTemplateUpdateOne) ClearType() *ProjectTemplateUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (ptuo *ProjectTemplateUpdateOne) Save(ctx context.Context) (*ProjectTemplate, error) {
+	if _, ok := ptuo.mutation.UpdateTime(); !ok {
+		v := projecttemplate.UpdateDefaultUpdateTime()
+		ptuo.mutation.SetUpdateTime(v)
+	}
 	if v, ok := ptuo.mutation.Name(); ok {
 		if err := projecttemplate.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
@@ -619,6 +634,13 @@ func (ptuo *ProjectTemplateUpdateOne) sqlSave(ctx context.Context) (pt *ProjectT
 		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing ProjectTemplate.ID for update")}
 	}
 	_spec.Node.ID.Value = id
+	if value, ok := ptuo.mutation.UpdateTime(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: projecttemplate.FieldUpdateTime,
+		})
+	}
 	if value, ok := ptuo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

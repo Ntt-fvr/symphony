@@ -336,12 +336,12 @@ func (ptq *ProjectTypeQuery) WithProjects(opts ...func(*ProjectQuery)) *ProjectT
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ProjectType.Query().
-//		GroupBy(projecttype.FieldName).
+//		GroupBy(projecttype.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -362,11 +362,11 @@ func (ptq *ProjectTypeQuery) GroupBy(field string, fields ...string) *ProjectTyp
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.ProjectType.Query().
-//		Select(projecttype.FieldName).
+//		Select(projecttype.FieldCreateTime).
 //		Scan(ctx, &v)
 //
 func (ptq *ProjectTypeQuery) Select(field string, fields ...string) *ProjectTypeSelect {

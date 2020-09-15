@@ -792,6 +792,8 @@ var (
 	// FlowsColumns holds the columns for the "flows" table.
 	FlowsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
@@ -807,13 +809,15 @@ var (
 			{
 				Name:    "flow_name",
 				Unique:  true,
-				Columns: []*schema.Column{FlowsColumns[1]},
+				Columns: []*schema.Column{FlowsColumns[3]},
 			},
 		},
 	}
 	// FlowDraftsColumns holds the columns for the "flow_drafts" table.
 	FlowDraftsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
@@ -827,7 +831,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "flow_drafts_flows_draft",
-				Columns: []*schema.Column{FlowDraftsColumns[4]},
+				Columns: []*schema.Column{FlowDraftsColumns[6]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -837,6 +841,8 @@ var (
 	// FlowExecutionTemplatesColumns holds the columns for the "flow_execution_templates" table.
 	FlowExecutionTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
@@ -1095,6 +1101,8 @@ var (
 	// ProjectTemplatesColumns holds the columns for the "project_templates" table.
 	ProjectTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "project_template_type", Type: field.TypeInt, Nullable: true},
@@ -1107,7 +1115,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "project_templates_project_types_type",
-				Columns: []*schema.Column{ProjectTemplatesColumns[3]},
+				Columns: []*schema.Column{ProjectTemplatesColumns[5]},
 
 				RefColumns: []*schema.Column{ProjectTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -1117,6 +1125,8 @@ var (
 	// ProjectTypesColumns holds the columns for the "project_types" table.
 	ProjectTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
@@ -1130,7 +1140,7 @@ var (
 			{
 				Name:    "projecttype_name",
 				Unique:  true,
-				Columns: []*schema.Column{ProjectTypesColumns[1]},
+				Columns: []*schema.Column{ProjectTypesColumns[3]},
 			},
 		},
 	}
@@ -1990,6 +2000,8 @@ var (
 	// WorkOrderTemplatesColumns holds the columns for the "work_order_templates" table.
 	WorkOrderTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
@@ -2003,7 +2015,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "work_order_templates_work_order_types_type",
-				Columns: []*schema.Column{WorkOrderTemplatesColumns[4]},
+				Columns: []*schema.Column{WorkOrderTemplatesColumns[6]},
 
 				RefColumns: []*schema.Column{WorkOrderTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -2013,6 +2025,8 @@ var (
 	// WorkOrderTypesColumns holds the columns for the "work_order_types" table.
 	WorkOrderTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "assignee_can_complete_work_order", Type: field.TypeBool, Nullable: true, Default: true},
@@ -2027,7 +2041,7 @@ var (
 			{
 				Name:    "workordertype_name",
 				Unique:  true,
-				Columns: []*schema.Column{WorkOrderTypesColumns[1]},
+				Columns: []*schema.Column{WorkOrderTypesColumns[3]},
 			},
 		},
 	}

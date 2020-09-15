@@ -306,12 +306,12 @@ func (fdq *FlowDraftQuery) WithFlow(opts ...func(*FlowQuery)) *FlowDraftQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.FlowDraft.Query().
-//		GroupBy(flowdraft.FieldName).
+//		GroupBy(flowdraft.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -332,11 +332,11 @@ func (fdq *FlowDraftQuery) GroupBy(field string, fields ...string) *FlowDraftGro
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.FlowDraft.Query().
-//		Select(flowdraft.FieldName).
+//		Select(flowdraft.FieldCreateTime).
 //		Scan(ctx, &v)
 //
 func (fdq *FlowDraftQuery) Select(field string, fields ...string) *FlowDraftSelect {

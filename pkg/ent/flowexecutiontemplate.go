@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -21,6 +22,10 @@ type FlowExecutionTemplate struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -54,6 +59,8 @@ func (e FlowExecutionTemplateEdges) BlocksOrErr() ([]*Block, error) {
 func (*FlowExecutionTemplate) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
+		&sql.NullTime{},   // create_time
+		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
 		&[]byte{},         // end_param_definitions
@@ -72,20 +79,30 @@ func (fet *FlowExecutionTemplate) assignValues(values ...interface{}) error {
 	}
 	fet.ID = int(value.Int64)
 	values = values[1:]
-	if value, ok := values[0].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field name", values[0])
+	if value, ok := values[0].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field create_time", values[0])
+	} else if value.Valid {
+		fet.CreateTime = value.Time
+	}
+	if value, ok := values[1].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field update_time", values[1])
+	} else if value.Valid {
+		fet.UpdateTime = value.Time
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field name", values[2])
 	} else if value.Valid {
 		fet.Name = value.String
 	}
-	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field description", values[1])
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field description", values[3])
 	} else if value.Valid {
 		fet.Description = new(string)
 		*fet.Description = value.String
 	}
 
-	if value, ok := values[2].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field end_param_definitions", values[2])
+	if value, ok := values[4].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field end_param_definitions", values[4])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &fet.EndParamDefinitions); err != nil {
 			return fmt.Errorf("unmarshal field end_param_definitions: %v", err)
@@ -122,6 +139,10 @@ func (fet *FlowExecutionTemplate) String() string {
 	var builder strings.Builder
 	builder.WriteString("FlowExecutionTemplate(")
 	builder.WriteString(fmt.Sprintf("id=%v", fet.ID))
+	builder.WriteString(", create_time=")
+	builder.WriteString(fet.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", update_time=")
+	builder.WriteString(fet.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(fet.Name)
 	if v := fet.Description; v != nil {
