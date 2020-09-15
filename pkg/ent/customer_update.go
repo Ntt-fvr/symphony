@@ -101,32 +101,24 @@ func (cu *CustomerUpdate) RemoveServices(s ...*Service) *CustomerUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (cu *CustomerUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := cu.mutation.UpdateTime(); !ok {
-		v := customer.UpdateDefaultUpdateTime()
-		cu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := cu.mutation.Name(); ok {
-		if err := customer.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := cu.mutation.ExternalID(); ok {
-		if err := customer.ExternalIDValidator(v); err != nil {
-			return 0, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	cu.defaults()
 	if len(cu.hooks) == 0 {
+		if err = cu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CustomerMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cu.check(); err != nil {
+				return 0, err
 			}
 			cu.mutation = mutation
 			affected, err = cu.sqlSave(ctx)
@@ -163,6 +155,29 @@ func (cu *CustomerUpdate) ExecX(ctx context.Context) {
 	if err := cu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (cu *CustomerUpdate) defaults() {
+	if _, ok := cu.mutation.UpdateTime(); !ok {
+		v := customer.UpdateDefaultUpdateTime()
+		cu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cu *CustomerUpdate) check() error {
+	if v, ok := cu.mutation.Name(); ok {
+		if err := customer.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := cu.mutation.ExternalID(); ok {
+		if err := customer.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cu *CustomerUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -351,32 +366,24 @@ func (cuo *CustomerUpdateOne) RemoveServices(s ...*Service) *CustomerUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (cuo *CustomerUpdateOne) Save(ctx context.Context) (*Customer, error) {
-	if _, ok := cuo.mutation.UpdateTime(); !ok {
-		v := customer.UpdateDefaultUpdateTime()
-		cuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := cuo.mutation.Name(); ok {
-		if err := customer.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := cuo.mutation.ExternalID(); ok {
-		if err := customer.ExternalIDValidator(v); err != nil {
-			return nil, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Customer
 	)
+	cuo.defaults()
 	if len(cuo.hooks) == 0 {
+		if err = cuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CustomerMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cuo.check(); err != nil {
+				return nil, err
 			}
 			cuo.mutation = mutation
 			node, err = cuo.sqlSave(ctx)
@@ -413,6 +420,29 @@ func (cuo *CustomerUpdateOne) ExecX(ctx context.Context) {
 	if err := cuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (cuo *CustomerUpdateOne) defaults() {
+	if _, ok := cuo.mutation.UpdateTime(); !ok {
+		v := customer.UpdateDefaultUpdateTime()
+		cuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cuo *CustomerUpdateOne) check() error {
+	if v, ok := cuo.mutation.Name(); ok {
+		if err := customer.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := cuo.mutation.ExternalID(); ok {
+		if err := customer.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (cuo *CustomerUpdateOne) sqlSave(ctx context.Context) (c *Customer, err error) {

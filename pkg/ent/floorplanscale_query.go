@@ -369,7 +369,7 @@ func (fpsq *FloorPlanScaleQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fpsq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, floorplanscale.ValidColumn)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (fpsq *FloorPlanScaleQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fpsq.order {
-		p(selector)
+		p(selector, floorplanscale.ValidColumn)
 	}
 	if offset := fpsq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -623,8 +623,17 @@ func (fpsgb *FloorPlanScaleGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fpsgb *FloorPlanScaleGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fpsgb.fields {
+		if !floorplanscale.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fpsgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fpsgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fpsgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -637,7 +646,7 @@ func (fpsgb *FloorPlanScaleGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fpsgb.fields)+len(fpsgb.fns))
 	columns = append(columns, fpsgb.fields...)
 	for _, fn := range fpsgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, floorplanscale.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fpsgb.fields...)
 }
@@ -857,6 +866,11 @@ func (fpss *FloorPlanScaleSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fpss *FloorPlanScaleSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fpss.fields {
+		if !floorplanscale.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fpss.sqlQuery().Query()
 	if err := fpss.driver.Query(ctx, query, args, rows); err != nil {

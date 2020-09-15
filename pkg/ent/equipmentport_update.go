@@ -220,26 +220,24 @@ func (epu *EquipmentPortUpdate) RemoveService(s ...*Service) *EquipmentPortUpdat
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (epu *EquipmentPortUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := epu.mutation.UpdateTime(); !ok {
-		v := equipmentport.UpdateDefaultUpdateTime()
-		epu.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := epu.mutation.DefinitionID(); epu.mutation.DefinitionCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"definition\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	epu.defaults()
 	if len(epu.hooks) == 0 {
+		if err = epu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = epu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentPortMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = epu.check(); err != nil {
+				return 0, err
 			}
 			epu.mutation = mutation
 			affected, err = epu.sqlSave(ctx)
@@ -276,6 +274,22 @@ func (epu *EquipmentPortUpdate) ExecX(ctx context.Context) {
 	if err := epu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epu *EquipmentPortUpdate) defaults() {
+	if _, ok := epu.mutation.UpdateTime(); !ok {
+		v := equipmentport.UpdateDefaultUpdateTime()
+		epu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (epu *EquipmentPortUpdate) check() error {
+	if _, ok := epu.mutation.DefinitionID(); epu.mutation.DefinitionCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"definition\"")
+	}
+	return nil
 }
 
 func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -770,26 +784,24 @@ func (epuo *EquipmentPortUpdateOne) RemoveService(s ...*Service) *EquipmentPortU
 
 // Save executes the query and returns the updated entity.
 func (epuo *EquipmentPortUpdateOne) Save(ctx context.Context) (*EquipmentPort, error) {
-	if _, ok := epuo.mutation.UpdateTime(); !ok {
-		v := equipmentport.UpdateDefaultUpdateTime()
-		epuo.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := epuo.mutation.DefinitionID(); epuo.mutation.DefinitionCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"definition\"")
-	}
-
 	var (
 		err  error
 		node *EquipmentPort
 	)
+	epuo.defaults()
 	if len(epuo.hooks) == 0 {
+		if err = epuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = epuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentPortMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = epuo.check(); err != nil {
+				return nil, err
 			}
 			epuo.mutation = mutation
 			node, err = epuo.sqlSave(ctx)
@@ -826,6 +838,22 @@ func (epuo *EquipmentPortUpdateOne) ExecX(ctx context.Context) {
 	if err := epuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epuo *EquipmentPortUpdateOne) defaults() {
+	if _, ok := epuo.mutation.UpdateTime(); !ok {
+		v := equipmentport.UpdateDefaultUpdateTime()
+		epuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (epuo *EquipmentPortUpdateOne) check() error {
+	if _, ok := epuo.mutation.DefinitionID(); epuo.mutation.DefinitionCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"definition\"")
+	}
+	return nil
 }
 
 func (epuo *EquipmentPortUpdateOne) sqlSave(ctx context.Context) (ep *EquipmentPort, err error) {

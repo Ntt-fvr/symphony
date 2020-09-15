@@ -229,20 +229,23 @@ func (clic *CheckListItemCreate) Mutation() *CheckListItemMutation {
 
 // Save creates the CheckListItem in the database.
 func (clic *CheckListItemCreate) Save(ctx context.Context) (*CheckListItem, error) {
-	if err := clic.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *CheckListItem
 	)
 	if len(clic.hooks) == 0 {
+		if err = clic.check(); err != nil {
+			return nil, err
+		}
 		node, err = clic.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clic.check(); err != nil {
+				return nil, err
 			}
 			clic.mutation = mutation
 			node, err = clic.sqlSave(ctx)
@@ -268,7 +271,8 @@ func (clic *CheckListItemCreate) SaveX(ctx context.Context) *CheckListItem {
 	return v
 }
 
-func (clic *CheckListItemCreate) preSave() error {
+// check runs all checks and user-defined validators on the builder.
+func (clic *CheckListItemCreate) check() error {
 	if _, ok := clic.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
 	}
@@ -502,12 +506,12 @@ func (clicb *CheckListItemCreateBulk) Save(ctx context.Context) ([]*CheckListIte
 		func(i int, root context.Context) {
 			builder := clicb.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*CheckListItemMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

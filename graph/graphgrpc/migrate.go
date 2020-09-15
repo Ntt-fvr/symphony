@@ -60,7 +60,6 @@ func (s *MigrateService) migrate(ctx context.Context, tenant *schema.Tenant, cli
 	)
 
 	return client.Schema.Create(ctx,
-		migrate.WithFixture(false),
 		migrate.WithGlobalUniqueID(true),
 	)
 }

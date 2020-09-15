@@ -161,20 +161,24 @@ func (ac *ActivityCreate) Mutation() *ActivityMutation {
 
 // Save creates the Activity in the database.
 func (ac *ActivityCreate) Save(ctx context.Context) (*Activity, error) {
-	if err := ac.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Activity
 	)
+	ac.defaults()
 	if len(ac.hooks) == 0 {
+		if err = ac.check(); err != nil {
+			return nil, err
+		}
 		node, err = ac.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ActivityMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ac.check(); err != nil {
+				return nil, err
 			}
 			ac.mutation = mutation
 			node, err = ac.sqlSave(ctx)
@@ -200,7 +204,8 @@ func (ac *ActivityCreate) SaveX(ctx context.Context) *Activity {
 	return v
 }
 
-func (ac *ActivityCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (ac *ActivityCreate) defaults() {
 	if _, ok := ac.mutation.CreateTime(); !ok {
 		v := activity.DefaultCreateTime()
 		ac.mutation.SetCreateTime(v)
@@ -208,6 +213,20 @@ func (ac *ActivityCreate) preSave() error {
 	if _, ok := ac.mutation.UpdateTime(); !ok {
 		v := activity.DefaultUpdateTime()
 		ac.mutation.SetUpdateTime(v)
+	}
+	if _, ok := ac.mutation.IsCreate(); !ok {
+		v := activity.DefaultIsCreate
+		ac.mutation.SetIsCreate(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ac *ActivityCreate) check() error {
+	if _, ok := ac.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := ac.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := ac.mutation.ActivityType(); !ok {
 		return &ValidationError{Name: "activity_type", err: errors.New("ent: missing required field \"activity_type\"")}
@@ -218,8 +237,7 @@ func (ac *ActivityCreate) preSave() error {
 		}
 	}
 	if _, ok := ac.mutation.IsCreate(); !ok {
-		v := activity.DefaultIsCreate
-		ac.mutation.SetIsCreate(v)
+		return &ValidationError{Name: "is_create", err: errors.New("ent: missing required field \"is_create\"")}
 	}
 	return nil
 }
@@ -359,13 +377,14 @@ func (acb *ActivityCreateBulk) Save(ctx context.Context) ([]*Activity, error) {
 	for i := range acb.builders {
 		func(i int, root context.Context) {
 			builder := acb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ActivityMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

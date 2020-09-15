@@ -425,20 +425,24 @@ func (scsc *SurveyCellScanCreate) Mutation() *SurveyCellScanMutation {
 
 // Save creates the SurveyCellScan in the database.
 func (scsc *SurveyCellScanCreate) Save(ctx context.Context) (*SurveyCellScan, error) {
-	if err := scsc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *SurveyCellScan
 	)
+	scsc.defaults()
 	if len(scsc.hooks) == 0 {
+		if err = scsc.check(); err != nil {
+			return nil, err
+		}
 		node, err = scsc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyCellScanMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = scsc.check(); err != nil {
+				return nil, err
 			}
 			scsc.mutation = mutation
 			node, err = scsc.sqlSave(ctx)
@@ -464,7 +468,8 @@ func (scsc *SurveyCellScanCreate) SaveX(ctx context.Context) *SurveyCellScan {
 	return v
 }
 
-func (scsc *SurveyCellScanCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (scsc *SurveyCellScanCreate) defaults() {
 	if _, ok := scsc.mutation.CreateTime(); !ok {
 		v := surveycellscan.DefaultCreateTime()
 		scsc.mutation.SetCreateTime(v)
@@ -472,6 +477,16 @@ func (scsc *SurveyCellScanCreate) preSave() error {
 	if _, ok := scsc.mutation.UpdateTime(); !ok {
 		v := surveycellscan.DefaultUpdateTime()
 		scsc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (scsc *SurveyCellScanCreate) check() error {
+	if _, ok := scsc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := scsc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := scsc.mutation.NetworkType(); !ok {
 		return &ValidationError{Name: "network_type", err: errors.New("ent: missing required field \"network_type\"")}
@@ -785,13 +800,14 @@ func (scscb *SurveyCellScanCreateBulk) Save(ctx context.Context) ([]*SurveyCellS
 	for i := range scscb.builders {
 		func(i int, root context.Context) {
 			builder := scscb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyCellScanMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

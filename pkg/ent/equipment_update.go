@@ -423,41 +423,24 @@ func (eu *EquipmentUpdate) RemoveEndpoints(s ...*ServiceEndpoint) *EquipmentUpda
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (eu *EquipmentUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := eu.mutation.UpdateTime(); !ok {
-		v := equipment.UpdateDefaultUpdateTime()
-		eu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := eu.mutation.Name(); ok {
-		if err := equipment.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := eu.mutation.FutureState(); ok {
-		if err := equipment.FutureStateValidator(v); err != nil {
-			return 0, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
-		}
-	}
-	if v, ok := eu.mutation.DeviceID(); ok {
-		if err := equipment.DeviceIDValidator(v); err != nil {
-			return 0, &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
-		}
-	}
-
-	if _, ok := eu.mutation.TypeID(); eu.mutation.TypeCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	eu.defaults()
 	if len(eu.hooks) == 0 {
+		if err = eu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = eu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = eu.check(); err != nil {
+				return 0, err
 			}
 			eu.mutation = mutation
 			affected, err = eu.sqlSave(ctx)
@@ -494,6 +477,37 @@ func (eu *EquipmentUpdate) ExecX(ctx context.Context) {
 	if err := eu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (eu *EquipmentUpdate) defaults() {
+	if _, ok := eu.mutation.UpdateTime(); !ok {
+		v := equipment.UpdateDefaultUpdateTime()
+		eu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (eu *EquipmentUpdate) check() error {
+	if v, ok := eu.mutation.Name(); ok {
+		if err := equipment.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := eu.mutation.FutureState(); ok {
+		if err := equipment.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
+	if v, ok := eu.mutation.DeviceID(); ok {
+		if err := equipment.DeviceIDValidator(v); err != nil {
+			return &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
+		}
+	}
+	if _, ok := eu.mutation.TypeID(); eu.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1430,41 +1444,24 @@ func (euo *EquipmentUpdateOne) RemoveEndpoints(s ...*ServiceEndpoint) *Equipment
 
 // Save executes the query and returns the updated entity.
 func (euo *EquipmentUpdateOne) Save(ctx context.Context) (*Equipment, error) {
-	if _, ok := euo.mutation.UpdateTime(); !ok {
-		v := equipment.UpdateDefaultUpdateTime()
-		euo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := euo.mutation.Name(); ok {
-		if err := equipment.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := euo.mutation.FutureState(); ok {
-		if err := equipment.FutureStateValidator(v); err != nil {
-			return nil, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
-		}
-	}
-	if v, ok := euo.mutation.DeviceID(); ok {
-		if err := equipment.DeviceIDValidator(v); err != nil {
-			return nil, &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
-		}
-	}
-
-	if _, ok := euo.mutation.TypeID(); euo.mutation.TypeCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err  error
 		node *Equipment
 	)
+	euo.defaults()
 	if len(euo.hooks) == 0 {
+		if err = euo.check(); err != nil {
+			return nil, err
+		}
 		node, err = euo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = euo.check(); err != nil {
+				return nil, err
 			}
 			euo.mutation = mutation
 			node, err = euo.sqlSave(ctx)
@@ -1501,6 +1498,37 @@ func (euo *EquipmentUpdateOne) ExecX(ctx context.Context) {
 	if err := euo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (euo *EquipmentUpdateOne) defaults() {
+	if _, ok := euo.mutation.UpdateTime(); !ok {
+		v := equipment.UpdateDefaultUpdateTime()
+		euo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (euo *EquipmentUpdateOne) check() error {
+	if v, ok := euo.mutation.Name(); ok {
+		if err := equipment.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := euo.mutation.FutureState(); ok {
+		if err := equipment.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
+	if v, ok := euo.mutation.DeviceID(); ok {
+		if err := equipment.DeviceIDValidator(v); err != nil {
+			return &ValidationError{Name: "device_id", err: fmt.Errorf("ent: validator failed for field \"device_id\": %w", err)}
+		}
+	}
+	if _, ok := euo.mutation.TypeID(); euo.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err error) {

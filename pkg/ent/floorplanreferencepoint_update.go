@@ -90,14 +90,11 @@ func (fprpu *FloorPlanReferencePointUpdate) Mutation() *FloorPlanReferencePointM
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fprpu *FloorPlanReferencePointUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fprpu.mutation.UpdateTime(); !ok {
-		v := floorplanreferencepoint.UpdateDefaultUpdateTime()
-		fprpu.mutation.SetUpdateTime(v)
-	}
 	var (
 		err      error
 		affected int
 	)
+	fprpu.defaults()
 	if len(fprpu.hooks) == 0 {
 		affected, err = fprpu.sqlSave(ctx)
 	} else {
@@ -140,6 +137,14 @@ func (fprpu *FloorPlanReferencePointUpdate) Exec(ctx context.Context) error {
 func (fprpu *FloorPlanReferencePointUpdate) ExecX(ctx context.Context) {
 	if err := fprpu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fprpu *FloorPlanReferencePointUpdate) defaults() {
+	if _, ok := fprpu.mutation.UpdateTime(); !ok {
+		v := floorplanreferencepoint.UpdateDefaultUpdateTime()
+		fprpu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -301,14 +306,11 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) Mutation() *FloorPlanReferencePo
 
 // Save executes the query and returns the updated entity.
 func (fprpuo *FloorPlanReferencePointUpdateOne) Save(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	if _, ok := fprpuo.mutation.UpdateTime(); !ok {
-		v := floorplanreferencepoint.UpdateDefaultUpdateTime()
-		fprpuo.mutation.SetUpdateTime(v)
-	}
 	var (
 		err  error
 		node *FloorPlanReferencePoint
 	)
+	fprpuo.defaults()
 	if len(fprpuo.hooks) == 0 {
 		node, err = fprpuo.sqlSave(ctx)
 	} else {
@@ -351,6 +353,14 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) Exec(ctx context.Context) error 
 func (fprpuo *FloorPlanReferencePointUpdateOne) ExecX(ctx context.Context) {
 	if err := fprpuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fprpuo *FloorPlanReferencePointUpdateOne) defaults() {
+	if _, ok := fprpuo.mutation.UpdateTime(); !ok {
+		v := floorplanreferencepoint.UpdateDefaultUpdateTime()
+		fprpuo.mutation.SetUpdateTime(v)
 	}
 }
 

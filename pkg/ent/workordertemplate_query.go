@@ -72,8 +72,12 @@ func (wotq *WorkOrderTemplateQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workordertemplate.PropertyTypesTable, workordertemplate.PropertyTypesColumn),
 		)
@@ -90,8 +94,12 @@ func (wotq *WorkOrderTemplateQuery) QueryCheckListCategoryDefinitions() *CheckLi
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, selector),
 			sqlgraph.To(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workordertemplate.CheckListCategoryDefinitionsTable, workordertemplate.CheckListCategoryDefinitionsColumn),
 		)
@@ -108,8 +116,12 @@ func (wotq *WorkOrderTemplateQuery) QueryType() *WorkOrderTypeQuery {
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertemplate.Table, workordertemplate.FieldID, selector),
 			sqlgraph.To(workordertype.Table, workordertype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workordertemplate.TypeTable, workordertemplate.TypeColumn),
 		)
@@ -563,7 +575,7 @@ func (wotq *WorkOrderTemplateQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := wotq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, workordertemplate.ValidColumn)
 			}
 		}
 	}
@@ -582,7 +594,7 @@ func (wotq *WorkOrderTemplateQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range wotq.order {
-		p(selector)
+		p(selector, workordertemplate.ValidColumn)
 	}
 	if offset := wotq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -817,8 +829,17 @@ func (wotgb *WorkOrderTemplateGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (wotgb *WorkOrderTemplateGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wotgb.fields {
+		if !workordertemplate.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := wotgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := wotgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := wotgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -831,7 +852,7 @@ func (wotgb *WorkOrderTemplateGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(wotgb.fields)+len(wotgb.fns))
 	columns = append(columns, wotgb.fields...)
 	for _, fn := range wotgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, workordertemplate.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(wotgb.fields...)
 }
@@ -1051,6 +1072,11 @@ func (wots *WorkOrderTemplateSelect) BoolX(ctx context.Context) bool {
 }
 
 func (wots *WorkOrderTemplateSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wots.fields {
+		if !workordertemplate.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := wots.sqlQuery().Query()
 	if err := wots.driver.Query(ctx, query, args, rows); err != nil {

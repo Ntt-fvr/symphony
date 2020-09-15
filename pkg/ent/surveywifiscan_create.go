@@ -275,20 +275,24 @@ func (swfsc *SurveyWiFiScanCreate) Mutation() *SurveyWiFiScanMutation {
 
 // Save creates the SurveyWiFiScan in the database.
 func (swfsc *SurveyWiFiScanCreate) Save(ctx context.Context) (*SurveyWiFiScan, error) {
-	if err := swfsc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *SurveyWiFiScan
 	)
+	swfsc.defaults()
 	if len(swfsc.hooks) == 0 {
+		if err = swfsc.check(); err != nil {
+			return nil, err
+		}
 		node, err = swfsc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyWiFiScanMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = swfsc.check(); err != nil {
+				return nil, err
 			}
 			swfsc.mutation = mutation
 			node, err = swfsc.sqlSave(ctx)
@@ -314,7 +318,8 @@ func (swfsc *SurveyWiFiScanCreate) SaveX(ctx context.Context) *SurveyWiFiScan {
 	return v
 }
 
-func (swfsc *SurveyWiFiScanCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (swfsc *SurveyWiFiScanCreate) defaults() {
 	if _, ok := swfsc.mutation.CreateTime(); !ok {
 		v := surveywifiscan.DefaultCreateTime()
 		swfsc.mutation.SetCreateTime(v)
@@ -322,6 +327,16 @@ func (swfsc *SurveyWiFiScanCreate) preSave() error {
 	if _, ok := swfsc.mutation.UpdateTime(); !ok {
 		v := surveywifiscan.DefaultUpdateTime()
 		swfsc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (swfsc *SurveyWiFiScanCreate) check() error {
+	if _, ok := swfsc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := swfsc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := swfsc.mutation.Bssid(); !ok {
 		return &ValidationError{Name: "bssid", err: errors.New("ent: missing required field \"bssid\"")}
@@ -567,13 +582,14 @@ func (swfscb *SurveyWiFiScanCreateBulk) Save(ctx context.Context) ([]*SurveyWiFi
 	for i := range swfscb.builders {
 		func(i int, root context.Context) {
 			builder := swfscb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyWiFiScanMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

@@ -370,20 +370,24 @@ func (sqc *SurveyQuestionCreate) Mutation() *SurveyQuestionMutation {
 
 // Save creates the SurveyQuestion in the database.
 func (sqc *SurveyQuestionCreate) Save(ctx context.Context) (*SurveyQuestion, error) {
-	if err := sqc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *SurveyQuestion
 	)
+	sqc.defaults()
 	if len(sqc.hooks) == 0 {
+		if err = sqc.check(); err != nil {
+			return nil, err
+		}
 		node, err = sqc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyQuestionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = sqc.check(); err != nil {
+				return nil, err
 			}
 			sqc.mutation = mutation
 			node, err = sqc.sqlSave(ctx)
@@ -409,7 +413,8 @@ func (sqc *SurveyQuestionCreate) SaveX(ctx context.Context) *SurveyQuestion {
 	return v
 }
 
-func (sqc *SurveyQuestionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (sqc *SurveyQuestionCreate) defaults() {
 	if _, ok := sqc.mutation.CreateTime(); !ok {
 		v := surveyquestion.DefaultCreateTime()
 		sqc.mutation.SetCreateTime(v)
@@ -417,6 +422,16 @@ func (sqc *SurveyQuestionCreate) preSave() error {
 	if _, ok := sqc.mutation.UpdateTime(); !ok {
 		v := surveyquestion.DefaultUpdateTime()
 		sqc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (sqc *SurveyQuestionCreate) check() error {
+	if _, ok := sqc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := sqc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := sqc.mutation.FormIndex(); !ok {
 		return &ValidationError{Name: "form_index", err: errors.New("ent: missing required field \"form_index\"")}
@@ -726,13 +741,14 @@ func (sqcb *SurveyQuestionCreateBulk) Save(ctx context.Context) ([]*SurveyQuesti
 	for i := range sqcb.builders {
 		func(i int, root context.Context) {
 			builder := sqcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyQuestionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

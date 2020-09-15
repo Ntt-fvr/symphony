@@ -82,8 +82,12 @@ func (fq *FileQuery) QueryLocation() *LocationQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.LocationTable, file.LocationColumn),
 		)
@@ -100,8 +104,12 @@ func (fq *FileQuery) QueryEquipment() *EquipmentQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.EquipmentTable, file.EquipmentColumn),
 		)
@@ -118,8 +126,12 @@ func (fq *FileQuery) QueryUser() *UserQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, file.UserTable, file.UserColumn),
 		)
@@ -136,8 +148,12 @@ func (fq *FileQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.WorkOrderTable, file.WorkOrderColumn),
 		)
@@ -154,8 +170,12 @@ func (fq *FileQuery) QueryChecklistItem() *CheckListItemQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(checklistitem.Table, checklistitem.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.ChecklistItemTable, file.ChecklistItemColumn),
 		)
@@ -172,8 +192,12 @@ func (fq *FileQuery) QuerySurvey() *SurveyQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(survey.Table, survey.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, file.SurveyTable, file.SurveyColumn),
 		)
@@ -190,8 +214,12 @@ func (fq *FileQuery) QueryFloorPlan() *FloorPlanQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(floorplan.Table, floorplan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, file.FloorPlanTable, file.FloorPlanColumn),
 		)
@@ -208,8 +236,12 @@ func (fq *FileQuery) QueryPhotoSurveyQuestion() *SurveyQuestionQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.PhotoSurveyQuestionTable, file.PhotoSurveyQuestionColumn),
 		)
@@ -226,8 +258,12 @@ func (fq *FileQuery) QuerySurveyQuestion() *SurveyQuestionQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(file.Table, file.FieldID, fq.sqlQuery()),
+			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, file.SurveyQuestionTable, file.SurveyQuestionColumn),
 		)
@@ -897,7 +933,7 @@ func (fq *FileQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, file.ValidColumn)
 			}
 		}
 	}
@@ -916,7 +952,7 @@ func (fq *FileQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fq.order {
-		p(selector)
+		p(selector, file.ValidColumn)
 	}
 	if offset := fq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1151,8 +1187,17 @@ func (fgb *FileGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fgb *FileGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fgb.fields {
+		if !file.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1165,7 +1210,7 @@ func (fgb *FileGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fgb.fields)+len(fgb.fns))
 	columns = append(columns, fgb.fields...)
 	for _, fn := range fgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, file.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fgb.fields...)
 }
@@ -1385,6 +1430,11 @@ func (fs *FileSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fs *FileSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fs.fields {
+		if !file.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fs.sqlQuery().Query()
 	if err := fs.driver.Query(ctx, query, args, rows); err != nil {

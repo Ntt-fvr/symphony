@@ -74,8 +74,12 @@ func (cliq *CheckListItemQuery) QueryFiles() *FileQuery {
 		if err := cliq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cliq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, cliq.sqlQuery()),
+			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, checklistitem.FilesTable, checklistitem.FilesColumn),
 		)
@@ -92,8 +96,12 @@ func (cliq *CheckListItemQuery) QueryWifiScan() *SurveyWiFiScanQuery {
 		if err := cliq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cliq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, cliq.sqlQuery()),
+			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, selector),
 			sqlgraph.To(surveywifiscan.Table, surveywifiscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, checklistitem.WifiScanTable, checklistitem.WifiScanColumn),
 		)
@@ -110,8 +118,12 @@ func (cliq *CheckListItemQuery) QueryCellScan() *SurveyCellScanQuery {
 		if err := cliq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cliq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, cliq.sqlQuery()),
+			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, selector),
 			sqlgraph.To(surveycellscan.Table, surveycellscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, checklistitem.CellScanTable, checklistitem.CellScanColumn),
 		)
@@ -128,8 +140,12 @@ func (cliq *CheckListItemQuery) QueryCheckListCategory() *CheckListCategoryQuery
 		if err := cliq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cliq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, cliq.sqlQuery()),
+			sqlgraph.From(checklistitem.Table, checklistitem.FieldID, selector),
 			sqlgraph.To(checklistcategory.Table, checklistcategory.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checklistitem.CheckListCategoryTable, checklistitem.CheckListCategoryColumn),
 		)
@@ -623,7 +639,7 @@ func (cliq *CheckListItemQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := cliq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, checklistitem.ValidColumn)
 			}
 		}
 	}
@@ -642,7 +658,7 @@ func (cliq *CheckListItemQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range cliq.order {
-		p(selector)
+		p(selector, checklistitem.ValidColumn)
 	}
 	if offset := cliq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -877,8 +893,17 @@ func (cligb *CheckListItemGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (cligb *CheckListItemGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range cligb.fields {
+		if !checklistitem.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := cligb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := cligb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := cligb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -891,7 +916,7 @@ func (cligb *CheckListItemGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(cligb.fields)+len(cligb.fns))
 	columns = append(columns, cligb.fields...)
 	for _, fn := range cligb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, checklistitem.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(cligb.fields...)
 }
@@ -1111,6 +1136,11 @@ func (clis *CheckListItemSelect) BoolX(ctx context.Context) bool {
 }
 
 func (clis *CheckListItemSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clis.fields {
+		if !checklistitem.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := clis.sqlQuery().Query()
 	if err := clis.driver.Query(ctx, query, args, rows); err != nil {

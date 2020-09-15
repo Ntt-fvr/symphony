@@ -184,15 +184,11 @@ func (wotu *WorkOrderTemplateUpdate) ClearType() *WorkOrderTemplateUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (wotu *WorkOrderTemplateUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := wotu.mutation.UpdateTime(); !ok {
-		v := workordertemplate.UpdateDefaultUpdateTime()
-		wotu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	wotu.defaults()
 	if len(wotu.hooks) == 0 {
 		affected, err = wotu.sqlSave(ctx)
 	} else {
@@ -235,6 +231,14 @@ func (wotu *WorkOrderTemplateUpdate) Exec(ctx context.Context) error {
 func (wotu *WorkOrderTemplateUpdate) ExecX(ctx context.Context) {
 	if err := wotu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wotu *WorkOrderTemplateUpdate) defaults() {
+	if _, ok := wotu.mutation.UpdateTime(); !ok {
+		v := workordertemplate.UpdateDefaultUpdateTime()
+		wotu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -607,15 +611,11 @@ func (wotuo *WorkOrderTemplateUpdateOne) ClearType() *WorkOrderTemplateUpdateOne
 
 // Save executes the query and returns the updated entity.
 func (wotuo *WorkOrderTemplateUpdateOne) Save(ctx context.Context) (*WorkOrderTemplate, error) {
-	if _, ok := wotuo.mutation.UpdateTime(); !ok {
-		v := workordertemplate.UpdateDefaultUpdateTime()
-		wotuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *WorkOrderTemplate
 	)
+	wotuo.defaults()
 	if len(wotuo.hooks) == 0 {
 		node, err = wotuo.sqlSave(ctx)
 	} else {
@@ -658,6 +658,14 @@ func (wotuo *WorkOrderTemplateUpdateOne) Exec(ctx context.Context) error {
 func (wotuo *WorkOrderTemplateUpdateOne) ExecX(ctx context.Context) {
 	if err := wotuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wotuo *WorkOrderTemplateUpdateOne) defaults() {
+	if _, ok := wotuo.mutation.UpdateTime(); !ok {
+		v := workordertemplate.UpdateDefaultUpdateTime()
+		wotuo.mutation.SetUpdateTime(v)
 	}
 }
 

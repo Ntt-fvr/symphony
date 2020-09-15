@@ -80,8 +80,12 @@ func (sq *ServiceQuery) QueryType() *ServiceTypeQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(servicetype.Table, servicetype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, service.TypeTable, service.TypeColumn),
 		)
@@ -98,8 +102,12 @@ func (sq *ServiceQuery) QueryDownstream() *ServiceQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, service.DownstreamTable, service.DownstreamPrimaryKey...),
 		)
@@ -116,8 +124,12 @@ func (sq *ServiceQuery) QueryUpstream() *ServiceQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, service.UpstreamTable, service.UpstreamPrimaryKey...),
 		)
@@ -134,8 +146,12 @@ func (sq *ServiceQuery) QueryProperties() *PropertyQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, service.PropertiesTable, service.PropertiesColumn),
 		)
@@ -152,8 +168,12 @@ func (sq *ServiceQuery) QueryLinks() *LinkQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, service.LinksTable, service.LinksPrimaryKey...),
 		)
@@ -170,8 +190,12 @@ func (sq *ServiceQuery) QueryPorts() *EquipmentPortQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, service.PortsTable, service.PortsPrimaryKey...),
 		)
@@ -188,8 +212,12 @@ func (sq *ServiceQuery) QueryCustomer() *CustomerQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(customer.Table, customer.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, service.CustomerTable, service.CustomerPrimaryKey...),
 		)
@@ -206,8 +234,12 @@ func (sq *ServiceQuery) QueryEndpoints() *ServiceEndpointQuery {
 		if err := sq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(service.Table, service.FieldID, sq.sqlQuery()),
+			sqlgraph.From(service.Table, service.FieldID, selector),
 			sqlgraph.To(serviceendpoint.Table, serviceendpoint.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, service.EndpointsTable, service.EndpointsColumn),
 		)
@@ -1036,7 +1068,7 @@ func (sq *ServiceQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := sq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, service.ValidColumn)
 			}
 		}
 	}
@@ -1055,7 +1087,7 @@ func (sq *ServiceQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range sq.order {
-		p(selector)
+		p(selector, service.ValidColumn)
 	}
 	if offset := sq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1290,8 +1322,17 @@ func (sgb *ServiceGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (sgb *ServiceGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range sgb.fields {
+		if !service.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := sgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := sgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := sgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1304,7 +1345,7 @@ func (sgb *ServiceGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(sgb.fields)+len(sgb.fns))
 	columns = append(columns, sgb.fields...)
 	for _, fn := range sgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, service.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(sgb.fields...)
 }
@@ -1524,6 +1565,11 @@ func (ss *ServiceSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ss *ServiceSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ss.fields {
+		if !service.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ss.sqlQuery().Query()
 	if err := ss.driver.Query(ctx, query, args, rows); err != nil {

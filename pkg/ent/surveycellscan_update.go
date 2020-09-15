@@ -619,27 +619,24 @@ func (scsu *SurveyCellScanUpdate) ClearLocation() *SurveyCellScanUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (scsu *SurveyCellScanUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := scsu.mutation.UpdateTime(); !ok {
-		v := surveycellscan.UpdateDefaultUpdateTime()
-		scsu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := scsu.mutation.NetworkType(); ok {
-		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	scsu.defaults()
 	if len(scsu.hooks) == 0 {
+		if err = scsu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = scsu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyCellScanMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = scsu.check(); err != nil {
+				return 0, err
 			}
 			scsu.mutation = mutation
 			affected, err = scsu.sqlSave(ctx)
@@ -676,6 +673,24 @@ func (scsu *SurveyCellScanUpdate) ExecX(ctx context.Context) {
 	if err := scsu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (scsu *SurveyCellScanUpdate) defaults() {
+	if _, ok := scsu.mutation.UpdateTime(); !ok {
+		v := surveycellscan.UpdateDefaultUpdateTime()
+		scsu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (scsu *SurveyCellScanUpdate) check() error {
+	if v, ok := scsu.mutation.NetworkType(); ok {
+		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
+			return &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (scsu *SurveyCellScanUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1767,27 +1782,24 @@ func (scsuo *SurveyCellScanUpdateOne) ClearLocation() *SurveyCellScanUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (scsuo *SurveyCellScanUpdateOne) Save(ctx context.Context) (*SurveyCellScan, error) {
-	if _, ok := scsuo.mutation.UpdateTime(); !ok {
-		v := surveycellscan.UpdateDefaultUpdateTime()
-		scsuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := scsuo.mutation.NetworkType(); ok {
-		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *SurveyCellScan
 	)
+	scsuo.defaults()
 	if len(scsuo.hooks) == 0 {
+		if err = scsuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = scsuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyCellScanMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = scsuo.check(); err != nil {
+				return nil, err
 			}
 			scsuo.mutation = mutation
 			node, err = scsuo.sqlSave(ctx)
@@ -1824,6 +1836,24 @@ func (scsuo *SurveyCellScanUpdateOne) ExecX(ctx context.Context) {
 	if err := scsuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (scsuo *SurveyCellScanUpdateOne) defaults() {
+	if _, ok := scsuo.mutation.UpdateTime(); !ok {
+		v := surveycellscan.UpdateDefaultUpdateTime()
+		scsuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (scsuo *SurveyCellScanUpdateOne) check() error {
+	if v, ok := scsuo.mutation.NetworkType(); ok {
+		if err := surveycellscan.NetworkTypeValidator(v); err != nil {
+			return &ValidationError{Name: "network_type", err: fmt.Errorf("ent: validator failed for field \"network_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyCellScan, err error) {

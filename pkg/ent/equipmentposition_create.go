@@ -110,20 +110,24 @@ func (epc *EquipmentPositionCreate) Mutation() *EquipmentPositionMutation {
 
 // Save creates the EquipmentPosition in the database.
 func (epc *EquipmentPositionCreate) Save(ctx context.Context) (*EquipmentPosition, error) {
-	if err := epc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *EquipmentPosition
 	)
+	epc.defaults()
 	if len(epc.hooks) == 0 {
+		if err = epc.check(); err != nil {
+			return nil, err
+		}
 		node, err = epc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentPositionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = epc.check(); err != nil {
+				return nil, err
 			}
 			epc.mutation = mutation
 			node, err = epc.sqlSave(ctx)
@@ -149,7 +153,8 @@ func (epc *EquipmentPositionCreate) SaveX(ctx context.Context) *EquipmentPositio
 	return v
 }
 
-func (epc *EquipmentPositionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (epc *EquipmentPositionCreate) defaults() {
 	if _, ok := epc.mutation.CreateTime(); !ok {
 		v := equipmentposition.DefaultCreateTime()
 		epc.mutation.SetCreateTime(v)
@@ -157,6 +162,16 @@ func (epc *EquipmentPositionCreate) preSave() error {
 	if _, ok := epc.mutation.UpdateTime(); !ok {
 		v := equipmentposition.DefaultUpdateTime()
 		epc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (epc *EquipmentPositionCreate) check() error {
+	if _, ok := epc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := epc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := epc.mutation.DefinitionID(); !ok {
 		return &ValidationError{Name: "definition", err: errors.New("ent: missing required edge \"definition\"")}
@@ -278,13 +293,14 @@ func (epcb *EquipmentPositionCreateBulk) Save(ctx context.Context) ([]*Equipment
 	for i := range epcb.builders {
 		func(i int, root context.Context) {
 			builder := epcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*EquipmentPositionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

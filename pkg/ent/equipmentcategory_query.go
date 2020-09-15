@@ -67,8 +67,12 @@ func (ecq *EquipmentCategoryQuery) QueryTypes() *EquipmentTypeQuery {
 		if err := ecq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ecq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentcategory.Table, equipmentcategory.FieldID, ecq.sqlQuery()),
+			sqlgraph.From(equipmentcategory.Table, equipmentcategory.FieldID, selector),
 			sqlgraph.To(equipmenttype.Table, equipmenttype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmentcategory.TypesTable, equipmentcategory.TypesColumn),
 		)
@@ -435,7 +439,7 @@ func (ecq *EquipmentCategoryQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ecq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmentcategory.ValidColumn)
 			}
 		}
 	}
@@ -454,7 +458,7 @@ func (ecq *EquipmentCategoryQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range ecq.order {
-		p(selector)
+		p(selector, equipmentcategory.ValidColumn)
 	}
 	if offset := ecq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -689,8 +693,17 @@ func (ecgb *EquipmentCategoryGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (ecgb *EquipmentCategoryGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ecgb.fields {
+		if !equipmentcategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := ecgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := ecgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := ecgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -703,7 +716,7 @@ func (ecgb *EquipmentCategoryGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(ecgb.fields)+len(ecgb.fns))
 	columns = append(columns, ecgb.fields...)
 	for _, fn := range ecgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmentcategory.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(ecgb.fields...)
 }
@@ -923,6 +936,11 @@ func (ecs *EquipmentCategorySelect) BoolX(ctx context.Context) bool {
 }
 
 func (ecs *EquipmentCategorySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ecs.fields {
+		if !equipmentcategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ecs.sqlQuery().Query()
 	if err := ecs.driver.Query(ctx, query, args, rows); err != nil {

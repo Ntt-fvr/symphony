@@ -71,8 +71,12 @@ func (hq *HyperlinkQuery) QueryEquipment() *EquipmentQuery {
 		if err := hq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := hq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, hq.sqlQuery()),
+			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.EquipmentTable, hyperlink.EquipmentColumn),
 		)
@@ -89,8 +93,12 @@ func (hq *HyperlinkQuery) QueryLocation() *LocationQuery {
 		if err := hq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := hq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, hq.sqlQuery()),
+			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.LocationTable, hyperlink.LocationColumn),
 		)
@@ -107,8 +115,12 @@ func (hq *HyperlinkQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := hq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := hq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, hq.sqlQuery()),
+			sqlgraph.From(hyperlink.Table, hyperlink.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, hyperlink.WorkOrderTable, hyperlink.WorkOrderColumn),
 		)
@@ -556,7 +568,7 @@ func (hq *HyperlinkQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := hq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, hyperlink.ValidColumn)
 			}
 		}
 	}
@@ -575,7 +587,7 @@ func (hq *HyperlinkQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range hq.order {
-		p(selector)
+		p(selector, hyperlink.ValidColumn)
 	}
 	if offset := hq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -810,8 +822,17 @@ func (hgb *HyperlinkGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (hgb *HyperlinkGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range hgb.fields {
+		if !hyperlink.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := hgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := hgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := hgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -824,7 +845,7 @@ func (hgb *HyperlinkGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(hgb.fields)+len(hgb.fns))
 	columns = append(columns, hgb.fields...)
 	for _, fn := range hgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, hyperlink.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(hgb.fields...)
 }
@@ -1044,6 +1065,11 @@ func (hs *HyperlinkSelect) BoolX(ctx context.Context) bool {
 }
 
 func (hs *HyperlinkSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range hs.fields {
+		if !hyperlink.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := hs.sqlQuery().Query()
 	if err := hs.driver.Query(ctx, query, args, rows); err != nil {

@@ -180,15 +180,11 @@ func (su *SurveyUpdate) RemoveQuestions(s ...*SurveyQuestion) *SurveyUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (su *SurveyUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := su.mutation.UpdateTime(); !ok {
-		v := survey.UpdateDefaultUpdateTime()
-		su.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	su.defaults()
 	if len(su.hooks) == 0 {
 		affected, err = su.sqlSave(ctx)
 	} else {
@@ -231,6 +227,14 @@ func (su *SurveyUpdate) Exec(ctx context.Context) error {
 func (su *SurveyUpdate) ExecX(ctx context.Context) {
 	if err := su.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (su *SurveyUpdate) defaults() {
+	if _, ok := su.mutation.UpdateTime(); !ok {
+		v := survey.UpdateDefaultUpdateTime()
+		su.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -586,15 +590,11 @@ func (suo *SurveyUpdateOne) RemoveQuestions(s ...*SurveyQuestion) *SurveyUpdateO
 
 // Save executes the query and returns the updated entity.
 func (suo *SurveyUpdateOne) Save(ctx context.Context) (*Survey, error) {
-	if _, ok := suo.mutation.UpdateTime(); !ok {
-		v := survey.UpdateDefaultUpdateTime()
-		suo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *Survey
 	)
+	suo.defaults()
 	if len(suo.hooks) == 0 {
 		node, err = suo.sqlSave(ctx)
 	} else {
@@ -637,6 +637,14 @@ func (suo *SurveyUpdateOne) Exec(ctx context.Context) error {
 func (suo *SurveyUpdateOne) ExecX(ctx context.Context) {
 	if err := suo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (suo *SurveyUpdateOne) defaults() {
+	if _, ok := suo.mutation.UpdateTime(); !ok {
+		v := survey.UpdateDefaultUpdateTime()
+		suo.mutation.SetUpdateTime(v)
 	}
 }
 

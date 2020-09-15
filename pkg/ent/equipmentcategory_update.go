@@ -81,15 +81,11 @@ func (ecu *EquipmentCategoryUpdate) RemoveTypes(e ...*EquipmentType) *EquipmentC
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ecu *EquipmentCategoryUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := ecu.mutation.UpdateTime(); !ok {
-		v := equipmentcategory.UpdateDefaultUpdateTime()
-		ecu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	ecu.defaults()
 	if len(ecu.hooks) == 0 {
 		affected, err = ecu.sqlSave(ctx)
 	} else {
@@ -132,6 +128,14 @@ func (ecu *EquipmentCategoryUpdate) Exec(ctx context.Context) error {
 func (ecu *EquipmentCategoryUpdate) ExecX(ctx context.Context) {
 	if err := ecu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ecu *EquipmentCategoryUpdate) defaults() {
+	if _, ok := ecu.mutation.UpdateTime(); !ok {
+		v := equipmentcategory.UpdateDefaultUpdateTime()
+		ecu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -288,15 +292,11 @@ func (ecuo *EquipmentCategoryUpdateOne) RemoveTypes(e ...*EquipmentType) *Equipm
 
 // Save executes the query and returns the updated entity.
 func (ecuo *EquipmentCategoryUpdateOne) Save(ctx context.Context) (*EquipmentCategory, error) {
-	if _, ok := ecuo.mutation.UpdateTime(); !ok {
-		v := equipmentcategory.UpdateDefaultUpdateTime()
-		ecuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *EquipmentCategory
 	)
+	ecuo.defaults()
 	if len(ecuo.hooks) == 0 {
 		node, err = ecuo.sqlSave(ctx)
 	} else {
@@ -339,6 +339,14 @@ func (ecuo *EquipmentCategoryUpdateOne) Exec(ctx context.Context) error {
 func (ecuo *EquipmentCategoryUpdateOne) ExecX(ctx context.Context) {
 	if err := ecuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ecuo *EquipmentCategoryUpdateOne) defaults() {
+	if _, ok := ecuo.mutation.UpdateTime(); !ok {
+		v := equipmentcategory.UpdateDefaultUpdateTime()
+		ecuo.mutation.SetUpdateTime(v)
 	}
 }
 

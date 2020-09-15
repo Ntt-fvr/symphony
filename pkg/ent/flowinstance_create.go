@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -168,20 +169,24 @@ func (fic *FlowInstanceCreate) Mutation() *FlowInstanceMutation {
 
 // Save creates the FlowInstance in the database.
 func (fic *FlowInstanceCreate) Save(ctx context.Context) (*FlowInstance, error) {
-	if err := fic.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *FlowInstance
 	)
+	fic.defaults()
 	if len(fic.hooks) == 0 {
+		if err = fic.check(); err != nil {
+			return nil, err
+		}
 		node, err = fic.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowInstanceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fic.check(); err != nil {
+				return nil, err
 			}
 			fic.mutation = mutation
 			node, err = fic.sqlSave(ctx)
@@ -207,7 +212,8 @@ func (fic *FlowInstanceCreate) SaveX(ctx context.Context) *FlowInstance {
 	return v
 }
 
-func (fic *FlowInstanceCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fic *FlowInstanceCreate) defaults() {
 	if _, ok := fic.mutation.CreateTime(); !ok {
 		v := flowinstance.DefaultCreateTime()
 		fic.mutation.SetCreateTime(v)
@@ -219,6 +225,19 @@ func (fic *FlowInstanceCreate) preSave() error {
 	if _, ok := fic.mutation.Status(); !ok {
 		v := flowinstance.DefaultStatus
 		fic.mutation.SetStatus(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fic *FlowInstanceCreate) check() error {
+	if _, ok := fic.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fic.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
+	if _, ok := fic.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	if v, ok := fic.mutation.Status(); ok {
 		if err := flowinstance.StatusValidator(v); err != nil {
@@ -385,13 +404,14 @@ func (ficb *FlowInstanceCreateBulk) Save(ctx context.Context) ([]*FlowInstance, 
 	for i := range ficb.builders {
 		func(i int, root context.Context) {
 			builder := ficb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FlowInstanceMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

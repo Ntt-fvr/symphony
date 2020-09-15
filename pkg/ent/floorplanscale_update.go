@@ -103,14 +103,11 @@ func (fpsu *FloorPlanScaleUpdate) Mutation() *FloorPlanScaleMutation {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fpsu *FloorPlanScaleUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fpsu.mutation.UpdateTime(); !ok {
-		v := floorplanscale.UpdateDefaultUpdateTime()
-		fpsu.mutation.SetUpdateTime(v)
-	}
 	var (
 		err      error
 		affected int
 	)
+	fpsu.defaults()
 	if len(fpsu.hooks) == 0 {
 		affected, err = fpsu.sqlSave(ctx)
 	} else {
@@ -153,6 +150,14 @@ func (fpsu *FloorPlanScaleUpdate) Exec(ctx context.Context) error {
 func (fpsu *FloorPlanScaleUpdate) ExecX(ctx context.Context) {
 	if err := fpsu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fpsu *FloorPlanScaleUpdate) defaults() {
+	if _, ok := fpsu.mutation.UpdateTime(); !ok {
+		v := floorplanscale.UpdateDefaultUpdateTime()
+		fpsu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -341,14 +346,11 @@ func (fpsuo *FloorPlanScaleUpdateOne) Mutation() *FloorPlanScaleMutation {
 
 // Save executes the query and returns the updated entity.
 func (fpsuo *FloorPlanScaleUpdateOne) Save(ctx context.Context) (*FloorPlanScale, error) {
-	if _, ok := fpsuo.mutation.UpdateTime(); !ok {
-		v := floorplanscale.UpdateDefaultUpdateTime()
-		fpsuo.mutation.SetUpdateTime(v)
-	}
 	var (
 		err  error
 		node *FloorPlanScale
 	)
+	fpsuo.defaults()
 	if len(fpsuo.hooks) == 0 {
 		node, err = fpsuo.sqlSave(ctx)
 	} else {
@@ -391,6 +393,14 @@ func (fpsuo *FloorPlanScaleUpdateOne) Exec(ctx context.Context) error {
 func (fpsuo *FloorPlanScaleUpdateOne) ExecX(ctx context.Context) {
 	if err := fpsuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fpsuo *FloorPlanScaleUpdateOne) defaults() {
+	if _, ok := fpsuo.mutation.UpdateTime(); !ok {
+		v := floorplanscale.UpdateDefaultUpdateTime()
+		fpsuo.mutation.SetUpdateTime(v)
 	}
 }
 

@@ -113,15 +113,11 @@ func (stcu *SurveyTemplateCategoryUpdate) ClearLocationType() *SurveyTemplateCat
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (stcu *SurveyTemplateCategoryUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := stcu.mutation.UpdateTime(); !ok {
-		v := surveytemplatecategory.UpdateDefaultUpdateTime()
-		stcu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	stcu.defaults()
 	if len(stcu.hooks) == 0 {
 		affected, err = stcu.sqlSave(ctx)
 	} else {
@@ -164,6 +160,14 @@ func (stcu *SurveyTemplateCategoryUpdate) Exec(ctx context.Context) error {
 func (stcu *SurveyTemplateCategoryUpdate) ExecX(ctx context.Context) {
 	if err := stcu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stcu *SurveyTemplateCategoryUpdate) defaults() {
+	if _, ok := stcu.mutation.UpdateTime(); !ok {
+		v := surveytemplatecategory.UpdateDefaultUpdateTime()
+		stcu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -393,15 +397,11 @@ func (stcuo *SurveyTemplateCategoryUpdateOne) ClearLocationType() *SurveyTemplat
 
 // Save executes the query and returns the updated entity.
 func (stcuo *SurveyTemplateCategoryUpdateOne) Save(ctx context.Context) (*SurveyTemplateCategory, error) {
-	if _, ok := stcuo.mutation.UpdateTime(); !ok {
-		v := surveytemplatecategory.UpdateDefaultUpdateTime()
-		stcuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *SurveyTemplateCategory
 	)
+	stcuo.defaults()
 	if len(stcuo.hooks) == 0 {
 		node, err = stcuo.sqlSave(ctx)
 	} else {
@@ -444,6 +444,14 @@ func (stcuo *SurveyTemplateCategoryUpdateOne) Exec(ctx context.Context) error {
 func (stcuo *SurveyTemplateCategoryUpdateOne) ExecX(ctx context.Context) {
 	if err := stcuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stcuo *SurveyTemplateCategoryUpdateOne) defaults() {
+	if _, ok := stcuo.mutation.UpdateTime(); !ok {
+		v := surveytemplatecategory.UpdateDefaultUpdateTime()
+		stcuo.mutation.SetUpdateTime(v)
 	}
 }
 

@@ -67,8 +67,12 @@ func (stqq *SurveyTemplateQuestionQuery) QueryCategory() *SurveyTemplateCategory
 		if err := stqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveytemplatequestion.Table, surveytemplatequestion.FieldID, stqq.sqlQuery()),
+			sqlgraph.From(surveytemplatequestion.Table, surveytemplatequestion.FieldID, selector),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, surveytemplatequestion.CategoryTable, surveytemplatequestion.CategoryColumn),
 		)
@@ -442,7 +446,7 @@ func (stqq *SurveyTemplateQuestionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := stqq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, surveytemplatequestion.ValidColumn)
 			}
 		}
 	}
@@ -461,7 +465,7 @@ func (stqq *SurveyTemplateQuestionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range stqq.order {
-		p(selector)
+		p(selector, surveytemplatequestion.ValidColumn)
 	}
 	if offset := stqq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -696,8 +700,17 @@ func (stqgb *SurveyTemplateQuestionGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (stqgb *SurveyTemplateQuestionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range stqgb.fields {
+		if !surveytemplatequestion.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := stqgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := stqgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := stqgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -710,7 +723,7 @@ func (stqgb *SurveyTemplateQuestionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(stqgb.fields)+len(stqgb.fns))
 	columns = append(columns, stqgb.fields...)
 	for _, fn := range stqgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, surveytemplatequestion.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(stqgb.fields...)
 }
@@ -930,6 +943,11 @@ func (stqs *SurveyTemplateQuestionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (stqs *SurveyTemplateQuestionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range stqs.fields {
+		if !surveytemplatequestion.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := stqs.sqlQuery().Query()
 	if err := stqs.driver.Query(ctx, query, args, rows); err != nil {

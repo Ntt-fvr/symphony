@@ -154,15 +154,11 @@ func (eptu *EquipmentPortTypeUpdate) RemovePortDefinitions(e ...*EquipmentPortDe
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (eptu *EquipmentPortTypeUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := eptu.mutation.UpdateTime(); !ok {
-		v := equipmentporttype.UpdateDefaultUpdateTime()
-		eptu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	eptu.defaults()
 	if len(eptu.hooks) == 0 {
 		affected, err = eptu.sqlSave(ctx)
 	} else {
@@ -205,6 +201,14 @@ func (eptu *EquipmentPortTypeUpdate) Exec(ctx context.Context) error {
 func (eptu *EquipmentPortTypeUpdate) ExecX(ctx context.Context) {
 	if err := eptu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (eptu *EquipmentPortTypeUpdate) defaults() {
+	if _, ok := eptu.mutation.UpdateTime(); !ok {
+		v := equipmentporttype.UpdateDefaultUpdateTime()
+		eptu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -541,15 +545,11 @@ func (eptuo *EquipmentPortTypeUpdateOne) RemovePortDefinitions(e ...*EquipmentPo
 
 // Save executes the query and returns the updated entity.
 func (eptuo *EquipmentPortTypeUpdateOne) Save(ctx context.Context) (*EquipmentPortType, error) {
-	if _, ok := eptuo.mutation.UpdateTime(); !ok {
-		v := equipmentporttype.UpdateDefaultUpdateTime()
-		eptuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *EquipmentPortType
 	)
+	eptuo.defaults()
 	if len(eptuo.hooks) == 0 {
 		node, err = eptuo.sqlSave(ctx)
 	} else {
@@ -592,6 +592,14 @@ func (eptuo *EquipmentPortTypeUpdateOne) Exec(ctx context.Context) error {
 func (eptuo *EquipmentPortTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := eptuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (eptuo *EquipmentPortTypeUpdateOne) defaults() {
+	if _, ok := eptuo.mutation.UpdateTime(); !ok {
+		v := equipmentporttype.UpdateDefaultUpdateTime()
+		eptuo.mutation.SetUpdateTime(v)
 	}
 }
 

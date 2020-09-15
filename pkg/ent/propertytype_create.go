@@ -490,20 +490,24 @@ func (ptc *PropertyTypeCreate) Mutation() *PropertyTypeMutation {
 
 // Save creates the PropertyType in the database.
 func (ptc *PropertyTypeCreate) Save(ctx context.Context) (*PropertyType, error) {
-	if err := ptc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *PropertyType
 	)
+	ptc.defaults()
 	if len(ptc.hooks) == 0 {
+		if err = ptc.check(); err != nil {
+			return nil, err
+		}
 		node, err = ptc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PropertyTypeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ptc.check(); err != nil {
+				return nil, err
 			}
 			ptc.mutation = mutation
 			node, err = ptc.sqlSave(ctx)
@@ -529,7 +533,8 @@ func (ptc *PropertyTypeCreate) SaveX(ctx context.Context) *PropertyType {
 	return v
 }
 
-func (ptc *PropertyTypeCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (ptc *PropertyTypeCreate) defaults() {
 	if _, ok := ptc.mutation.CreateTime(); !ok {
 		v := propertytype.DefaultCreateTime()
 		ptc.mutation.SetCreateTime(v)
@@ -537,17 +542,6 @@ func (ptc *PropertyTypeCreate) preSave() error {
 	if _, ok := ptc.mutation.UpdateTime(); !ok {
 		v := propertytype.DefaultUpdateTime()
 		ptc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := ptc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
-	}
-	if v, ok := ptc.mutation.GetType(); ok {
-		if err := propertytype.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if _, ok := ptc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
 	if _, ok := ptc.mutation.IsInstanceProperty(); !ok {
 		v := propertytype.DefaultIsInstanceProperty
@@ -564,6 +558,39 @@ func (ptc *PropertyTypeCreate) preSave() error {
 	if _, ok := ptc.mutation.Deleted(); !ok {
 		v := propertytype.DefaultDeleted
 		ptc.mutation.SetDeleted(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ptc *PropertyTypeCreate) check() error {
+	if _, ok := ptc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := ptc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
+	if _, ok := ptc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
+	}
+	if v, ok := ptc.mutation.GetType(); ok {
+		if err := propertytype.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if _, ok := ptc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := ptc.mutation.IsInstanceProperty(); !ok {
+		return &ValidationError{Name: "is_instance_property", err: errors.New("ent: missing required field \"is_instance_property\"")}
+	}
+	if _, ok := ptc.mutation.Editable(); !ok {
+		return &ValidationError{Name: "editable", err: errors.New("ent: missing required field \"editable\"")}
+	}
+	if _, ok := ptc.mutation.Mandatory(); !ok {
+		return &ValidationError{Name: "mandatory", err: errors.New("ent: missing required field \"mandatory\"")}
+	}
+	if _, ok := ptc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New("ent: missing required field \"deleted\"")}
 	}
 	return nil
 }
@@ -959,13 +986,14 @@ func (ptcb *PropertyTypeCreateBulk) Save(ctx context.Context) ([]*PropertyType, 
 	for i := range ptcb.builders {
 		func(i int, root context.Context) {
 			builder := ptcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*PropertyTypeMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

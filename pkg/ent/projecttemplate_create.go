@@ -131,20 +131,24 @@ func (ptc *ProjectTemplateCreate) Mutation() *ProjectTemplateMutation {
 
 // Save creates the ProjectTemplate in the database.
 func (ptc *ProjectTemplateCreate) Save(ctx context.Context) (*ProjectTemplate, error) {
-	if err := ptc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *ProjectTemplate
 	)
+	ptc.defaults()
 	if len(ptc.hooks) == 0 {
+		if err = ptc.check(); err != nil {
+			return nil, err
+		}
 		node, err = ptc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ptc.check(); err != nil {
+				return nil, err
 			}
 			ptc.mutation = mutation
 			node, err = ptc.sqlSave(ctx)
@@ -170,7 +174,8 @@ func (ptc *ProjectTemplateCreate) SaveX(ctx context.Context) *ProjectTemplate {
 	return v
 }
 
-func (ptc *ProjectTemplateCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (ptc *ProjectTemplateCreate) defaults() {
 	if _, ok := ptc.mutation.CreateTime(); !ok {
 		v := projecttemplate.DefaultCreateTime()
 		ptc.mutation.SetCreateTime(v)
@@ -178,6 +183,16 @@ func (ptc *ProjectTemplateCreate) preSave() error {
 	if _, ok := ptc.mutation.UpdateTime(); !ok {
 		v := projecttemplate.DefaultUpdateTime()
 		ptc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ptc *ProjectTemplateCreate) check() error {
+	if _, ok := ptc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := ptc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := ptc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -320,13 +335,14 @@ func (ptcb *ProjectTemplateCreateBulk) Save(ctx context.Context) ([]*ProjectTemp
 	for i := range ptcb.builders {
 		func(i int, root context.Context) {
 			builder := ptcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ProjectTemplateMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

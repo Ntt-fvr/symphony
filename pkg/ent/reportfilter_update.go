@@ -64,31 +64,24 @@ func (rfu *ReportFilterUpdate) Mutation() *ReportFilterMutation {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (rfu *ReportFilterUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := rfu.mutation.UpdateTime(); !ok {
-		v := reportfilter.UpdateDefaultUpdateTime()
-		rfu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := rfu.mutation.Name(); ok {
-		if err := reportfilter.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := rfu.mutation.Entity(); ok {
-		if err := reportfilter.EntityValidator(v); err != nil {
-			return 0, &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
-		}
-	}
 	var (
 		err      error
 		affected int
 	)
+	rfu.defaults()
 	if len(rfu.hooks) == 0 {
+		if err = rfu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = rfu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ReportFilterMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = rfu.check(); err != nil {
+				return 0, err
 			}
 			rfu.mutation = mutation
 			affected, err = rfu.sqlSave(ctx)
@@ -125,6 +118,29 @@ func (rfu *ReportFilterUpdate) ExecX(ctx context.Context) {
 	if err := rfu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (rfu *ReportFilterUpdate) defaults() {
+	if _, ok := rfu.mutation.UpdateTime(); !ok {
+		v := reportfilter.UpdateDefaultUpdateTime()
+		rfu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (rfu *ReportFilterUpdate) check() error {
+	if v, ok := rfu.mutation.Name(); ok {
+		if err := reportfilter.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := rfu.mutation.Entity(); ok {
+		if err := reportfilter.EntityValidator(v); err != nil {
+			return &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (rfu *ReportFilterUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -224,31 +240,24 @@ func (rfuo *ReportFilterUpdateOne) Mutation() *ReportFilterMutation {
 
 // Save executes the query and returns the updated entity.
 func (rfuo *ReportFilterUpdateOne) Save(ctx context.Context) (*ReportFilter, error) {
-	if _, ok := rfuo.mutation.UpdateTime(); !ok {
-		v := reportfilter.UpdateDefaultUpdateTime()
-		rfuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := rfuo.mutation.Name(); ok {
-		if err := reportfilter.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := rfuo.mutation.Entity(); ok {
-		if err := reportfilter.EntityValidator(v); err != nil {
-			return nil, &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
-		}
-	}
 	var (
 		err  error
 		node *ReportFilter
 	)
+	rfuo.defaults()
 	if len(rfuo.hooks) == 0 {
+		if err = rfuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = rfuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ReportFilterMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = rfuo.check(); err != nil {
+				return nil, err
 			}
 			rfuo.mutation = mutation
 			node, err = rfuo.sqlSave(ctx)
@@ -285,6 +294,29 @@ func (rfuo *ReportFilterUpdateOne) ExecX(ctx context.Context) {
 	if err := rfuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (rfuo *ReportFilterUpdateOne) defaults() {
+	if _, ok := rfuo.mutation.UpdateTime(); !ok {
+		v := reportfilter.UpdateDefaultUpdateTime()
+		rfuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (rfuo *ReportFilterUpdateOne) check() error {
+	if v, ok := rfuo.mutation.Name(); ok {
+		if err := reportfilter.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := rfuo.mutation.Entity(); ok {
+		if err := reportfilter.EntityValidator(v); err != nil {
+			return &ValidationError{Name: "entity", err: fmt.Errorf("ent: validator failed for field \"entity\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (rfuo *ReportFilterUpdateOne) sqlSave(ctx context.Context) (rf *ReportFilter, err error) {

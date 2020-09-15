@@ -68,8 +68,12 @@ func (tq *TodoQuery) QueryParent() *TodoQuery {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := tq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(todo.Table, todo.FieldID, tq.sqlQuery()),
+			sqlgraph.From(todo.Table, todo.FieldID, selector),
 			sqlgraph.To(todo.Table, todo.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, todo.ParentTable, todo.ParentColumn),
 		)
@@ -86,8 +90,12 @@ func (tq *TodoQuery) QueryChildren() *TodoQuery {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := tq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(todo.Table, todo.FieldID, tq.sqlQuery()),
+			sqlgraph.From(todo.Table, todo.FieldID, selector),
 			sqlgraph.To(todo.Table, todo.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, todo.ChildrenTable, todo.ChildrenColumn),
 		)
@@ -498,7 +506,7 @@ func (tq *TodoQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := tq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, todo.ValidColumn)
 			}
 		}
 	}
@@ -517,7 +525,7 @@ func (tq *TodoQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range tq.order {
-		p(selector)
+		p(selector, todo.ValidColumn)
 	}
 	if offset := tq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -752,8 +760,17 @@ func (tgb *TodoGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (tgb *TodoGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range tgb.fields {
+		if !todo.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := tgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := tgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := tgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -766,7 +783,7 @@ func (tgb *TodoGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(tgb.fields)+len(tgb.fns))
 	columns = append(columns, tgb.fields...)
 	for _, fn := range tgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, todo.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(tgb.fields...)
 }
@@ -986,6 +1003,11 @@ func (ts *TodoSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ts *TodoSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ts.fields {
+		if !todo.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ts.sqlQuery().Query()
 	if err := ts.driver.Query(ctx, query, args, rows); err != nil {

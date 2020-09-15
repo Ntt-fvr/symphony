@@ -107,20 +107,24 @@ func (stcc *SurveyTemplateCategoryCreate) Mutation() *SurveyTemplateCategoryMuta
 
 // Save creates the SurveyTemplateCategory in the database.
 func (stcc *SurveyTemplateCategoryCreate) Save(ctx context.Context) (*SurveyTemplateCategory, error) {
-	if err := stcc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *SurveyTemplateCategory
 	)
+	stcc.defaults()
 	if len(stcc.hooks) == 0 {
+		if err = stcc.check(); err != nil {
+			return nil, err
+		}
 		node, err = stcc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyTemplateCategoryMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = stcc.check(); err != nil {
+				return nil, err
 			}
 			stcc.mutation = mutation
 			node, err = stcc.sqlSave(ctx)
@@ -146,7 +150,8 @@ func (stcc *SurveyTemplateCategoryCreate) SaveX(ctx context.Context) *SurveyTemp
 	return v
 }
 
-func (stcc *SurveyTemplateCategoryCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (stcc *SurveyTemplateCategoryCreate) defaults() {
 	if _, ok := stcc.mutation.CreateTime(); !ok {
 		v := surveytemplatecategory.DefaultCreateTime()
 		stcc.mutation.SetCreateTime(v)
@@ -154,6 +159,16 @@ func (stcc *SurveyTemplateCategoryCreate) preSave() error {
 	if _, ok := stcc.mutation.UpdateTime(); !ok {
 		v := surveytemplatecategory.DefaultUpdateTime()
 		stcc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (stcc *SurveyTemplateCategoryCreate) check() error {
+	if _, ok := stcc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := stcc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := stcc.mutation.CategoryTitle(); !ok {
 		return &ValidationError{Name: "category_title", err: errors.New("ent: missing required field \"category_title\"")}
@@ -275,13 +290,14 @@ func (stccb *SurveyTemplateCategoryCreateBulk) Save(ctx context.Context) ([]*Sur
 	for i := range stccb.builders {
 		func(i int, root context.Context) {
 			builder := stccb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyTemplateCategoryMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

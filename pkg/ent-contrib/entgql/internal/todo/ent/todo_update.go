@@ -132,28 +132,23 @@ func (tu *TodoUpdate) RemoveChildren(t ...*Todo) *TodoUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (tu *TodoUpdate) Save(ctx context.Context) (int, error) {
-	if v, ok := tu.mutation.Status(); ok {
-		if err := todo.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := tu.mutation.Text(); ok {
-		if err := todo.TextValidator(v); err != nil {
-			return 0, &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
 	if len(tu.hooks) == 0 {
+		if err = tu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TodoMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tu.check(); err != nil {
+				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -190,6 +185,21 @@ func (tu *TodoUpdate) ExecX(ctx context.Context) {
 	if err := tu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tu *TodoUpdate) check() error {
+	if v, ok := tu.mutation.Status(); ok {
+		if err := todo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := tu.mutation.Text(); ok {
+		if err := todo.TextValidator(v); err != nil {
+			return &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -446,28 +456,23 @@ func (tuo *TodoUpdateOne) RemoveChildren(t ...*Todo) *TodoUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (tuo *TodoUpdateOne) Save(ctx context.Context) (*Todo, error) {
-	if v, ok := tuo.mutation.Status(); ok {
-		if err := todo.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := tuo.mutation.Text(); ok {
-		if err := todo.TextValidator(v); err != nil {
-			return nil, &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Todo
 	)
 	if len(tuo.hooks) == 0 {
+		if err = tuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TodoMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tuo.check(); err != nil {
+				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -504,6 +509,21 @@ func (tuo *TodoUpdateOne) ExecX(ctx context.Context) {
 	if err := tuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TodoUpdateOne) check() error {
+	if v, ok := tuo.mutation.Status(); ok {
+		if err := todo.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := tuo.mutation.Text(); ok {
+		if err := todo.TextValidator(v); err != nil {
+			return &ValidationError{Name: "text", err: fmt.Errorf("ent: validator failed for field \"text\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (t *Todo, err error) {

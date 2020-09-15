@@ -73,8 +73,12 @@ func (wotq *WorkOrderTypeQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertype.Table, workordertype.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertype.Table, workordertype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workordertype.PropertyTypesTable, workordertype.PropertyTypesColumn),
 		)
@@ -91,8 +95,12 @@ func (wotq *WorkOrderTypeQuery) QueryCheckListCategoryDefinitions() *CheckListCa
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertype.Table, workordertype.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertype.Table, workordertype.FieldID, selector),
 			sqlgraph.To(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workordertype.CheckListCategoryDefinitionsTable, workordertype.CheckListCategoryDefinitionsColumn),
 		)
@@ -109,8 +117,12 @@ func (wotq *WorkOrderTypeQuery) QueryWorkOrders() *WorkOrderQuery {
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertype.Table, workordertype.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertype.Table, workordertype.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workordertype.WorkOrdersTable, workordertype.WorkOrdersColumn),
 		)
@@ -127,8 +139,12 @@ func (wotq *WorkOrderTypeQuery) QueryDefinitions() *WorkOrderDefinitionQuery {
 		if err := wotq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := wotq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workordertype.Table, workordertype.FieldID, wotq.sqlQuery()),
+			sqlgraph.From(workordertype.Table, workordertype.FieldID, selector),
 			sqlgraph.To(workorderdefinition.Table, workorderdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workordertype.DefinitionsTable, workordertype.DefinitionsColumn),
 		)
@@ -615,7 +631,7 @@ func (wotq *WorkOrderTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := wotq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, workordertype.ValidColumn)
 			}
 		}
 	}
@@ -634,7 +650,7 @@ func (wotq *WorkOrderTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range wotq.order {
-		p(selector)
+		p(selector, workordertype.ValidColumn)
 	}
 	if offset := wotq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -869,8 +885,17 @@ func (wotgb *WorkOrderTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (wotgb *WorkOrderTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wotgb.fields {
+		if !workordertype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := wotgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := wotgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := wotgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -883,7 +908,7 @@ func (wotgb *WorkOrderTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(wotgb.fields)+len(wotgb.fns))
 	columns = append(columns, wotgb.fields...)
 	for _, fn := range wotgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, workordertype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(wotgb.fields...)
 }
@@ -1103,6 +1128,11 @@ func (wots *WorkOrderTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (wots *WorkOrderTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wots.fields {
+		if !workordertype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := wots.sqlQuery().Query()
 	if err := wots.driver.Query(ctx, query, args, rows); err != nil {

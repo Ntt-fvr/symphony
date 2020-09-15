@@ -95,15 +95,11 @@ func (stqu *SurveyTemplateQuestionUpdate) ClearCategory() *SurveyTemplateQuestio
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (stqu *SurveyTemplateQuestionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := stqu.mutation.UpdateTime(); !ok {
-		v := surveytemplatequestion.UpdateDefaultUpdateTime()
-		stqu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	stqu.defaults()
 	if len(stqu.hooks) == 0 {
 		affected, err = stqu.sqlSave(ctx)
 	} else {
@@ -146,6 +142,14 @@ func (stqu *SurveyTemplateQuestionUpdate) Exec(ctx context.Context) error {
 func (stqu *SurveyTemplateQuestionUpdate) ExecX(ctx context.Context) {
 	if err := stqu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stqu *SurveyTemplateQuestionUpdate) defaults() {
+	if _, ok := stqu.mutation.UpdateTime(); !ok {
+		v := surveytemplatequestion.UpdateDefaultUpdateTime()
+		stqu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -325,15 +329,11 @@ func (stquo *SurveyTemplateQuestionUpdateOne) ClearCategory() *SurveyTemplateQue
 
 // Save executes the query and returns the updated entity.
 func (stquo *SurveyTemplateQuestionUpdateOne) Save(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	if _, ok := stquo.mutation.UpdateTime(); !ok {
-		v := surveytemplatequestion.UpdateDefaultUpdateTime()
-		stquo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *SurveyTemplateQuestion
 	)
+	stquo.defaults()
 	if len(stquo.hooks) == 0 {
 		node, err = stquo.sqlSave(ctx)
 	} else {
@@ -376,6 +376,14 @@ func (stquo *SurveyTemplateQuestionUpdateOne) Exec(ctx context.Context) error {
 func (stquo *SurveyTemplateQuestionUpdateOne) ExecX(ctx context.Context) {
 	if err := stquo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stquo *SurveyTemplateQuestionUpdateOne) defaults() {
+	if _, ok := stquo.mutation.UpdateTime(); !ok {
+		v := surveytemplatequestion.UpdateDefaultUpdateTime()
+		stquo.mutation.SetUpdateTime(v)
 	}
 }
 

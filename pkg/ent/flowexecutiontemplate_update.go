@@ -114,27 +114,24 @@ func (fetu *FlowExecutionTemplateUpdate) RemoveBlocks(b ...*Block) *FlowExecutio
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fetu *FlowExecutionTemplateUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fetu.mutation.UpdateTime(); !ok {
-		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
-		fetu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fetu.mutation.Name(); ok {
-		if err := flowexecutiontemplate.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fetu.defaults()
 	if len(fetu.hooks) == 0 {
+		if err = fetu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = fetu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowExecutionTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fetu.check(); err != nil {
+				return 0, err
 			}
 			fetu.mutation = mutation
 			affected, err = fetu.sqlSave(ctx)
@@ -171,6 +168,24 @@ func (fetu *FlowExecutionTemplateUpdate) ExecX(ctx context.Context) {
 	if err := fetu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fetu *FlowExecutionTemplateUpdate) defaults() {
+	if _, ok := fetu.mutation.UpdateTime(); !ok {
+		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
+		fetu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fetu *FlowExecutionTemplateUpdate) check() error {
+	if v, ok := fetu.mutation.Name(); ok {
+		if err := flowexecutiontemplate.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fetu *FlowExecutionTemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -384,27 +399,24 @@ func (fetuo *FlowExecutionTemplateUpdateOne) RemoveBlocks(b ...*Block) *FlowExec
 
 // Save executes the query and returns the updated entity.
 func (fetuo *FlowExecutionTemplateUpdateOne) Save(ctx context.Context) (*FlowExecutionTemplate, error) {
-	if _, ok := fetuo.mutation.UpdateTime(); !ok {
-		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
-		fetuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fetuo.mutation.Name(); ok {
-		if err := flowexecutiontemplate.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *FlowExecutionTemplate
 	)
+	fetuo.defaults()
 	if len(fetuo.hooks) == 0 {
+		if err = fetuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = fetuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowExecutionTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fetuo.check(); err != nil {
+				return nil, err
 			}
 			fetuo.mutation = mutation
 			node, err = fetuo.sqlSave(ctx)
@@ -441,6 +453,24 @@ func (fetuo *FlowExecutionTemplateUpdateOne) ExecX(ctx context.Context) {
 	if err := fetuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fetuo *FlowExecutionTemplateUpdateOne) defaults() {
+	if _, ok := fetuo.mutation.UpdateTime(); !ok {
+		v := flowexecutiontemplate.UpdateDefaultUpdateTime()
+		fetuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fetuo *FlowExecutionTemplateUpdateOne) check() error {
+	if v, ok := fetuo.mutation.Name(); ok {
+		if err := flowexecutiontemplate.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (fet *FlowExecutionTemplate, err error) {

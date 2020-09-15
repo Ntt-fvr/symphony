@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -141,20 +142,24 @@ func (lc *LinkCreate) Mutation() *LinkMutation {
 
 // Save creates the Link in the database.
 func (lc *LinkCreate) Save(ctx context.Context) (*Link, error) {
-	if err := lc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Link
 	)
+	lc.defaults()
 	if len(lc.hooks) == 0 {
+		if err = lc.check(); err != nil {
+			return nil, err
+		}
 		node, err = lc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LinkMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = lc.check(); err != nil {
+				return nil, err
 			}
 			lc.mutation = mutation
 			node, err = lc.sqlSave(ctx)
@@ -180,7 +185,8 @@ func (lc *LinkCreate) SaveX(ctx context.Context) *Link {
 	return v
 }
 
-func (lc *LinkCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (lc *LinkCreate) defaults() {
 	if _, ok := lc.mutation.CreateTime(); !ok {
 		v := link.DefaultCreateTime()
 		lc.mutation.SetCreateTime(v)
@@ -188,6 +194,16 @@ func (lc *LinkCreate) preSave() error {
 	if _, ok := lc.mutation.UpdateTime(); !ok {
 		v := link.DefaultUpdateTime()
 		lc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (lc *LinkCreate) check() error {
+	if _, ok := lc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := lc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if v, ok := lc.mutation.FutureState(); ok {
 		if err := link.FutureStateValidator(v); err != nil {
@@ -338,13 +354,14 @@ func (lcb *LinkCreateBulk) Save(ctx context.Context) ([]*Link, error) {
 	for i := range lcb.builders {
 		func(i int, root context.Context) {
 			builder := lcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*LinkMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

@@ -155,20 +155,24 @@ func (sc *SurveyCreate) Mutation() *SurveyMutation {
 
 // Save creates the Survey in the database.
 func (sc *SurveyCreate) Save(ctx context.Context) (*Survey, error) {
-	if err := sc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Survey
 	)
+	sc.defaults()
 	if len(sc.hooks) == 0 {
+		if err = sc.check(); err != nil {
+			return nil, err
+		}
 		node, err = sc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = sc.check(); err != nil {
+				return nil, err
 			}
 			sc.mutation = mutation
 			node, err = sc.sqlSave(ctx)
@@ -194,7 +198,8 @@ func (sc *SurveyCreate) SaveX(ctx context.Context) *Survey {
 	return v
 }
 
-func (sc *SurveyCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (sc *SurveyCreate) defaults() {
 	if _, ok := sc.mutation.CreateTime(); !ok {
 		v := survey.DefaultCreateTime()
 		sc.mutation.SetCreateTime(v)
@@ -202,6 +207,16 @@ func (sc *SurveyCreate) preSave() error {
 	if _, ok := sc.mutation.UpdateTime(); !ok {
 		v := survey.DefaultUpdateTime()
 		sc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (sc *SurveyCreate) check() error {
+	if _, ok := sc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := sc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -358,13 +373,14 @@ func (scb *SurveyCreateBulk) Save(ctx context.Context) ([]*Survey, error) {
 	for i := range scb.builders {
 		func(i int, root context.Context) {
 			builder := scb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

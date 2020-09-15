@@ -255,15 +255,11 @@ func (etu *EquipmentTypeUpdate) RemoveServiceEndpointDefinitions(s ...*ServiceEn
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (etu *EquipmentTypeUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := etu.mutation.UpdateTime(); !ok {
-		v := equipmenttype.UpdateDefaultUpdateTime()
-		etu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	etu.defaults()
 	if len(etu.hooks) == 0 {
 		affected, err = etu.sqlSave(ctx)
 	} else {
@@ -306,6 +302,14 @@ func (etu *EquipmentTypeUpdate) Exec(ctx context.Context) error {
 func (etu *EquipmentTypeUpdate) ExecX(ctx context.Context) {
 	if err := etu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (etu *EquipmentTypeUpdate) defaults() {
+	if _, ok := etu.mutation.UpdateTime(); !ok {
+		v := equipmenttype.UpdateDefaultUpdateTime()
+		etu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -882,15 +886,11 @@ func (etuo *EquipmentTypeUpdateOne) RemoveServiceEndpointDefinitions(s ...*Servi
 
 // Save executes the query and returns the updated entity.
 func (etuo *EquipmentTypeUpdateOne) Save(ctx context.Context) (*EquipmentType, error) {
-	if _, ok := etuo.mutation.UpdateTime(); !ok {
-		v := equipmenttype.UpdateDefaultUpdateTime()
-		etuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *EquipmentType
 	)
+	etuo.defaults()
 	if len(etuo.hooks) == 0 {
 		node, err = etuo.sqlSave(ctx)
 	} else {
@@ -933,6 +933,14 @@ func (etuo *EquipmentTypeUpdateOne) Exec(ctx context.Context) error {
 func (etuo *EquipmentTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := etuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (etuo *EquipmentTypeUpdateOne) defaults() {
+	if _, ok := etuo.mutation.UpdateTime(); !ok {
+		v := equipmenttype.UpdateDefaultUpdateTime()
+		etuo.mutation.SetUpdateTime(v)
 	}
 }
 

@@ -85,8 +85,12 @@ func (eq *EquipmentQuery) QueryType() *EquipmentTypeQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(equipmenttype.Table, equipmenttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipment.TypeTable, equipment.TypeColumn),
 		)
@@ -103,8 +107,12 @@ func (eq *EquipmentQuery) QueryLocation() *LocationQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, equipment.LocationTable, equipment.LocationColumn),
 		)
@@ -121,8 +129,12 @@ func (eq *EquipmentQuery) QueryParentPosition() *EquipmentPositionQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(equipmentposition.Table, equipmentposition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, equipment.ParentPositionTable, equipment.ParentPositionColumn),
 		)
@@ -139,8 +151,12 @@ func (eq *EquipmentQuery) QueryPositions() *EquipmentPositionQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(equipmentposition.Table, equipmentposition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipment.PositionsTable, equipment.PositionsColumn),
 		)
@@ -157,8 +173,12 @@ func (eq *EquipmentQuery) QueryPorts() *EquipmentPortQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipment.PortsTable, equipment.PortsColumn),
 		)
@@ -175,8 +195,12 @@ func (eq *EquipmentQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipment.WorkOrderTable, equipment.WorkOrderColumn),
 		)
@@ -193,8 +217,12 @@ func (eq *EquipmentQuery) QueryProperties() *PropertyQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipment.PropertiesTable, equipment.PropertiesColumn),
 		)
@@ -211,8 +239,12 @@ func (eq *EquipmentQuery) QueryFiles() *FileQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipment.FilesTable, equipment.FilesColumn),
 		)
@@ -229,8 +261,12 @@ func (eq *EquipmentQuery) QueryHyperlinks() *HyperlinkQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(hyperlink.Table, hyperlink.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipment.HyperlinksTable, equipment.HyperlinksColumn),
 		)
@@ -247,8 +283,12 @@ func (eq *EquipmentQuery) QueryEndpoints() *ServiceEndpointQuery {
 		if err := eq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipment.Table, equipment.FieldID, eq.sqlQuery()),
+			sqlgraph.From(equipment.Table, equipment.FieldID, selector),
 			sqlgraph.To(serviceendpoint.Table, serviceendpoint.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipment.EndpointsTable, equipment.EndpointsColumn),
 		)
@@ -973,7 +1013,7 @@ func (eq *EquipmentQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := eq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipment.ValidColumn)
 			}
 		}
 	}
@@ -992,7 +1032,7 @@ func (eq *EquipmentQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range eq.order {
-		p(selector)
+		p(selector, equipment.ValidColumn)
 	}
 	if offset := eq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1227,8 +1267,17 @@ func (egb *EquipmentGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (egb *EquipmentGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range egb.fields {
+		if !equipment.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := egb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := egb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := egb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1241,7 +1290,7 @@ func (egb *EquipmentGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(egb.fields)+len(egb.fns))
 	columns = append(columns, egb.fields...)
 	for _, fn := range egb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipment.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(egb.fields...)
 }
@@ -1461,6 +1510,11 @@ func (es *EquipmentSelect) BoolX(ctx context.Context) bool {
 }
 
 func (es *EquipmentSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range es.fields {
+		if !equipment.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := es.sqlQuery().Query()
 	if err := es.driver.Query(ctx, query, args, rows); err != nil {

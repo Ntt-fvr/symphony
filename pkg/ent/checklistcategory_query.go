@@ -70,8 +70,12 @@ func (clcq *CheckListCategoryQuery) QueryCheckListItems() *CheckListItemQuery {
 		if err := clcq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistcategory.Table, checklistcategory.FieldID, clcq.sqlQuery()),
+			sqlgraph.From(checklistcategory.Table, checklistcategory.FieldID, selector),
 			sqlgraph.To(checklistitem.Table, checklistitem.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, checklistcategory.CheckListItemsTable, checklistcategory.CheckListItemsColumn),
 		)
@@ -88,8 +92,12 @@ func (clcq *CheckListCategoryQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := clcq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistcategory.Table, checklistcategory.FieldID, clcq.sqlQuery()),
+			sqlgraph.From(checklistcategory.Table, checklistcategory.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checklistcategory.WorkOrderTable, checklistcategory.WorkOrderColumn),
 		)
@@ -503,7 +511,7 @@ func (clcq *CheckListCategoryQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := clcq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, checklistcategory.ValidColumn)
 			}
 		}
 	}
@@ -522,7 +530,7 @@ func (clcq *CheckListCategoryQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range clcq.order {
-		p(selector)
+		p(selector, checklistcategory.ValidColumn)
 	}
 	if offset := clcq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -757,8 +765,17 @@ func (clcgb *CheckListCategoryGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (clcgb *CheckListCategoryGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clcgb.fields {
+		if !checklistcategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := clcgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := clcgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := clcgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -771,7 +788,7 @@ func (clcgb *CheckListCategoryGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(clcgb.fields)+len(clcgb.fns))
 	columns = append(columns, clcgb.fields...)
 	for _, fn := range clcgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, checklistcategory.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(clcgb.fields...)
 }
@@ -991,6 +1008,11 @@ func (clcs *CheckListCategorySelect) BoolX(ctx context.Context) bool {
 }
 
 func (clcs *CheckListCategorySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clcs.fields {
+		if !checklistcategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := clcs.sqlQuery().Query()
 	if err := clcs.driver.Query(ctx, query, args, rows); err != nil {

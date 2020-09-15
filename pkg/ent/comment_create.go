@@ -117,20 +117,24 @@ func (cc *CommentCreate) Mutation() *CommentMutation {
 
 // Save creates the Comment in the database.
 func (cc *CommentCreate) Save(ctx context.Context) (*Comment, error) {
-	if err := cc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Comment
 	)
+	cc.defaults()
 	if len(cc.hooks) == 0 {
+		if err = cc.check(); err != nil {
+			return nil, err
+		}
 		node, err = cc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CommentMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cc.check(); err != nil {
+				return nil, err
 			}
 			cc.mutation = mutation
 			node, err = cc.sqlSave(ctx)
@@ -156,7 +160,8 @@ func (cc *CommentCreate) SaveX(ctx context.Context) *Comment {
 	return v
 }
 
-func (cc *CommentCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (cc *CommentCreate) defaults() {
 	if _, ok := cc.mutation.CreateTime(); !ok {
 		v := comment.DefaultCreateTime()
 		cc.mutation.SetCreateTime(v)
@@ -164,6 +169,16 @@ func (cc *CommentCreate) preSave() error {
 	if _, ok := cc.mutation.UpdateTime(); !ok {
 		v := comment.DefaultUpdateTime()
 		cc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cc *CommentCreate) check() error {
+	if _, ok := cc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := cc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := cc.mutation.Text(); !ok {
 		return &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
@@ -296,13 +311,14 @@ func (ccb *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 	for i := range ccb.builders {
 		func(i int, root context.Context) {
 			builder := ccb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*CommentMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

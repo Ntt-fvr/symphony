@@ -84,20 +84,24 @@ func (etc *ExportTaskCreate) Mutation() *ExportTaskMutation {
 
 // Save creates the ExportTask in the database.
 func (etc *ExportTaskCreate) Save(ctx context.Context) (*ExportTask, error) {
-	if err := etc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *ExportTask
 	)
+	etc.defaults()
 	if len(etc.hooks) == 0 {
+		if err = etc.check(); err != nil {
+			return nil, err
+		}
 		node, err = etc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ExportTaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = etc.check(); err != nil {
+				return nil, err
 			}
 			etc.mutation = mutation
 			node, err = etc.sqlSave(ctx)
@@ -123,7 +127,20 @@ func (etc *ExportTaskCreate) SaveX(ctx context.Context) *ExportTask {
 	return v
 }
 
-func (etc *ExportTaskCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (etc *ExportTaskCreate) defaults() {
+	if _, ok := etc.mutation.Progress(); !ok {
+		v := exporttask.DefaultProgress
+		etc.mutation.SetProgress(v)
+	}
+	if _, ok := etc.mutation.Filters(); !ok {
+		v := exporttask.DefaultFilters
+		etc.mutation.SetFilters(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (etc *ExportTaskCreate) check() error {
 	if _, ok := etc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
 	}
@@ -141,8 +158,7 @@ func (etc *ExportTaskCreate) preSave() error {
 		}
 	}
 	if _, ok := etc.mutation.Progress(); !ok {
-		v := exporttask.DefaultProgress
-		etc.mutation.SetProgress(v)
+		return &ValidationError{Name: "progress", err: errors.New("ent: missing required field \"progress\"")}
 	}
 	if v, ok := etc.mutation.Progress(); ok {
 		if err := exporttask.ProgressValidator(v); err != nil {
@@ -150,8 +166,7 @@ func (etc *ExportTaskCreate) preSave() error {
 		}
 	}
 	if _, ok := etc.mutation.Filters(); !ok {
-		v := exporttask.DefaultFilters
-		etc.mutation.SetFilters(v)
+		return &ValidationError{Name: "filters", err: errors.New("ent: missing required field \"filters\"")}
 	}
 	return nil
 }
@@ -237,13 +252,14 @@ func (etcb *ExportTaskCreateBulk) Save(ctx context.Context) ([]*ExportTask, erro
 	for i := range etcb.builders {
 		func(i int, root context.Context) {
 			builder := etcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ExportTaskMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

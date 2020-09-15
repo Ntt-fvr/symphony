@@ -141,20 +141,24 @@ func (sedc *ServiceEndpointDefinitionCreate) Mutation() *ServiceEndpointDefiniti
 
 // Save creates the ServiceEndpointDefinition in the database.
 func (sedc *ServiceEndpointDefinitionCreate) Save(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	if err := sedc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *ServiceEndpointDefinition
 	)
+	sedc.defaults()
 	if len(sedc.hooks) == 0 {
+		if err = sedc.check(); err != nil {
+			return nil, err
+		}
 		node, err = sedc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = sedc.check(); err != nil {
+				return nil, err
 			}
 			sedc.mutation = mutation
 			node, err = sedc.sqlSave(ctx)
@@ -180,7 +184,8 @@ func (sedc *ServiceEndpointDefinitionCreate) SaveX(ctx context.Context) *Service
 	return v
 }
 
-func (sedc *ServiceEndpointDefinitionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (sedc *ServiceEndpointDefinitionCreate) defaults() {
 	if _, ok := sedc.mutation.CreateTime(); !ok {
 		v := serviceendpointdefinition.DefaultCreateTime()
 		sedc.mutation.SetCreateTime(v)
@@ -188,6 +193,16 @@ func (sedc *ServiceEndpointDefinitionCreate) preSave() error {
 	if _, ok := sedc.mutation.UpdateTime(); !ok {
 		v := serviceendpointdefinition.DefaultUpdateTime()
 		sedc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (sedc *ServiceEndpointDefinitionCreate) check() error {
+	if _, ok := sedc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := sedc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := sedc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -341,13 +356,14 @@ func (sedcb *ServiceEndpointDefinitionCreateBulk) Save(ctx context.Context) ([]*
 	for i := range sedcb.builders {
 		func(i int, root context.Context) {
 			builder := sedcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ServiceEndpointDefinitionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

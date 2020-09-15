@@ -143,15 +143,11 @@ func (wodu *WorkOrderDefinitionUpdate) ClearProjectTemplate() *WorkOrderDefiniti
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (wodu *WorkOrderDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := wodu.mutation.UpdateTime(); !ok {
-		v := workorderdefinition.UpdateDefaultUpdateTime()
-		wodu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	wodu.defaults()
 	if len(wodu.hooks) == 0 {
 		affected, err = wodu.sqlSave(ctx)
 	} else {
@@ -194,6 +190,14 @@ func (wodu *WorkOrderDefinitionUpdate) Exec(ctx context.Context) error {
 func (wodu *WorkOrderDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := wodu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wodu *WorkOrderDefinitionUpdate) defaults() {
+	if _, ok := wodu.mutation.UpdateTime(); !ok {
+		v := workorderdefinition.UpdateDefaultUpdateTime()
+		wodu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -474,15 +478,11 @@ func (woduo *WorkOrderDefinitionUpdateOne) ClearProjectTemplate() *WorkOrderDefi
 
 // Save executes the query and returns the updated entity.
 func (woduo *WorkOrderDefinitionUpdateOne) Save(ctx context.Context) (*WorkOrderDefinition, error) {
-	if _, ok := woduo.mutation.UpdateTime(); !ok {
-		v := workorderdefinition.UpdateDefaultUpdateTime()
-		woduo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *WorkOrderDefinition
 	)
+	woduo.defaults()
 	if len(woduo.hooks) == 0 {
 		node, err = woduo.sqlSave(ctx)
 	} else {
@@ -525,6 +525,14 @@ func (woduo *WorkOrderDefinitionUpdateOne) Exec(ctx context.Context) error {
 func (woduo *WorkOrderDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := woduo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (woduo *WorkOrderDefinitionUpdateOne) defaults() {
+	if _, ok := woduo.mutation.UpdateTime(); !ok {
+		v := workorderdefinition.UpdateDefaultUpdateTime()
+		woduo.mutation.SetUpdateTime(v)
 	}
 }
 

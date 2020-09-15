@@ -69,8 +69,12 @@ func (fq *FeatureQuery) QueryUsers() *UserQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(feature.Table, feature.FieldID, fq.sqlQuery()),
+			sqlgraph.From(feature.Table, feature.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, feature.UsersTable, feature.UsersPrimaryKey...),
 		)
@@ -87,8 +91,12 @@ func (fq *FeatureQuery) QueryGroups() *UsersGroupQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(feature.Table, feature.FieldID, fq.sqlQuery()),
+			sqlgraph.From(feature.Table, feature.FieldID, selector),
 			sqlgraph.To(usersgroup.Table, usersgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, feature.GroupsTable, feature.GroupsPrimaryKey...),
 		)
@@ -565,7 +573,7 @@ func (fq *FeatureQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, feature.ValidColumn)
 			}
 		}
 	}
@@ -584,7 +592,7 @@ func (fq *FeatureQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fq.order {
-		p(selector)
+		p(selector, feature.ValidColumn)
 	}
 	if offset := fq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -819,8 +827,17 @@ func (fgb *FeatureGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fgb *FeatureGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fgb.fields {
+		if !feature.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -833,7 +850,7 @@ func (fgb *FeatureGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fgb.fields)+len(fgb.fns))
 	columns = append(columns, fgb.fields...)
 	for _, fn := range fgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, feature.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fgb.fields...)
 }
@@ -1053,6 +1070,11 @@ func (fs *FeatureSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fs *FeatureSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fs.fields {
+		if !feature.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fs.sqlQuery().Query()
 	if err := fs.driver.Query(ctx, query, args, rows); err != nil {

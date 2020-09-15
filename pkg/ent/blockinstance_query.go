@@ -71,8 +71,12 @@ func (biq *BlockInstanceQuery) QueryFlowInstance() *FlowInstanceQuery {
 		if err := biq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := biq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, biq.sqlQuery()),
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, selector),
 			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, blockinstance.FlowInstanceTable, blockinstance.FlowInstanceColumn),
 		)
@@ -89,8 +93,12 @@ func (biq *BlockInstanceQuery) QueryBlock() *BlockQuery {
 		if err := biq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := biq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, biq.sqlQuery()),
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, blockinstance.BlockTable, blockinstance.BlockColumn),
 		)
@@ -107,8 +115,12 @@ func (biq *BlockInstanceQuery) QuerySubflowInstance() *FlowInstanceQuery {
 		if err := biq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := biq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, biq.sqlQuery()),
+			sqlgraph.From(blockinstance.Table, blockinstance.FieldID, selector),
 			sqlgraph.To(flowinstance.Table, flowinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, blockinstance.SubflowInstanceTable, blockinstance.SubflowInstanceColumn),
 		)
@@ -559,7 +571,7 @@ func (biq *BlockInstanceQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := biq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, blockinstance.ValidColumn)
 			}
 		}
 	}
@@ -578,7 +590,7 @@ func (biq *BlockInstanceQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range biq.order {
-		p(selector)
+		p(selector, blockinstance.ValidColumn)
 	}
 	if offset := biq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -813,8 +825,17 @@ func (bigb *BlockInstanceGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (bigb *BlockInstanceGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range bigb.fields {
+		if !blockinstance.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := bigb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := bigb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := bigb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -827,7 +848,7 @@ func (bigb *BlockInstanceGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(bigb.fields)+len(bigb.fns))
 	columns = append(columns, bigb.fields...)
 	for _, fn := range bigb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, blockinstance.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(bigb.fields...)
 }
@@ -1047,6 +1068,11 @@ func (bis *BlockInstanceSelect) BoolX(ctx context.Context) bool {
 }
 
 func (bis *BlockInstanceSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range bis.fields {
+		if !blockinstance.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := bis.sqlQuery().Query()
 	if err := bis.driver.Query(ctx, query, args, rows); err != nil {

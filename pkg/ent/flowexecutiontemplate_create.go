@@ -102,20 +102,24 @@ func (fetc *FlowExecutionTemplateCreate) Mutation() *FlowExecutionTemplateMutati
 
 // Save creates the FlowExecutionTemplate in the database.
 func (fetc *FlowExecutionTemplateCreate) Save(ctx context.Context) (*FlowExecutionTemplate, error) {
-	if err := fetc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *FlowExecutionTemplate
 	)
+	fetc.defaults()
 	if len(fetc.hooks) == 0 {
+		if err = fetc.check(); err != nil {
+			return nil, err
+		}
 		node, err = fetc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowExecutionTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fetc.check(); err != nil {
+				return nil, err
 			}
 			fetc.mutation = mutation
 			node, err = fetc.sqlSave(ctx)
@@ -141,7 +145,8 @@ func (fetc *FlowExecutionTemplateCreate) SaveX(ctx context.Context) *FlowExecuti
 	return v
 }
 
-func (fetc *FlowExecutionTemplateCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fetc *FlowExecutionTemplateCreate) defaults() {
 	if _, ok := fetc.mutation.CreateTime(); !ok {
 		v := flowexecutiontemplate.DefaultCreateTime()
 		fetc.mutation.SetCreateTime(v)
@@ -149,6 +154,16 @@ func (fetc *FlowExecutionTemplateCreate) preSave() error {
 	if _, ok := fetc.mutation.UpdateTime(); !ok {
 		v := flowexecutiontemplate.DefaultUpdateTime()
 		fetc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fetc *FlowExecutionTemplateCreate) check() error {
+	if _, ok := fetc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fetc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := fetc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -261,13 +276,14 @@ func (fetcb *FlowExecutionTemplateCreateBulk) Save(ctx context.Context) ([]*Flow
 	for i := range fetcb.builders {
 		func(i int, root context.Context) {
 			builder := fetcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FlowExecutionTemplateMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

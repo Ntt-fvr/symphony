@@ -578,11 +578,11 @@ func (c *ActionsRuleClient) Get(ctx context.Context, id int) (*ActionsRule, erro
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ActionsRuleClient) GetX(ctx context.Context, id int) *ActionsRule {
-	ar, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ar
+	return obj
 }
 
 // Hooks returns the client hooks.
@@ -667,11 +667,11 @@ func (c *ActivityClient) Get(ctx context.Context, id int) (*Activity, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ActivityClient) GetX(ctx context.Context, id int) *Activity {
-	a, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return a
+	return obj
 }
 
 // QueryAuthor queries the author edge of a Activity.
@@ -788,11 +788,11 @@ func (c *BlockClient) Get(ctx context.Context, id int) (*Block, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *BlockClient) GetX(ctx context.Context, id int) *Block {
-	b, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return b
+	return obj
 }
 
 // QueryPrevBlocks queries the prev_blocks edge of a Block.
@@ -1021,11 +1021,11 @@ func (c *BlockInstanceClient) Get(ctx context.Context, id int) (*BlockInstance, 
 
 // GetX is like Get, but panics if an error occurs.
 func (c *BlockInstanceClient) GetX(ctx context.Context, id int) *BlockInstance {
-	bi, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return bi
+	return obj
 }
 
 // QueryFlowInstance queries the flow_instance edge of a BlockInstance.
@@ -1158,11 +1158,11 @@ func (c *CheckListCategoryClient) Get(ctx context.Context, id int) (*CheckListCa
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CheckListCategoryClient) GetX(ctx context.Context, id int) *CheckListCategory {
-	clc, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return clc
+	return obj
 }
 
 // QueryCheckListItems queries the check_list_items edge of a CheckListCategory.
@@ -1279,11 +1279,11 @@ func (c *CheckListCategoryDefinitionClient) Get(ctx context.Context, id int) (*C
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CheckListCategoryDefinitionClient) GetX(ctx context.Context, id int) *CheckListCategoryDefinition {
-	clcd, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return clcd
+	return obj
 }
 
 // QueryCheckListItemDefinitions queries the check_list_item_definitions edge of a CheckListCategoryDefinition.
@@ -1416,11 +1416,11 @@ func (c *CheckListItemClient) Get(ctx context.Context, id int) (*CheckListItem, 
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CheckListItemClient) GetX(ctx context.Context, id int) *CheckListItem {
-	cli, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return cli
+	return obj
 }
 
 // QueryFiles queries the files edge of a CheckListItem.
@@ -1569,11 +1569,11 @@ func (c *CheckListItemDefinitionClient) Get(ctx context.Context, id int) (*Check
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CheckListItemDefinitionClient) GetX(ctx context.Context, id int) *CheckListItemDefinition {
-	clid, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return clid
+	return obj
 }
 
 // QueryCheckListCategoryDefinition queries the check_list_category_definition edge of a CheckListItemDefinition.
@@ -1674,11 +1674,11 @@ func (c *CommentClient) Get(ctx context.Context, id int) (*Comment, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CommentClient) GetX(ctx context.Context, id int) *Comment {
-	co, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return co
+	return obj
 }
 
 // QueryAuthor queries the author edge of a Comment.
@@ -1811,11 +1811,11 @@ func (c *CustomerClient) Get(ctx context.Context, id int) (*Customer, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *CustomerClient) GetX(ctx context.Context, id int) *Customer {
-	cu, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return cu
+	return obj
 }
 
 // QueryServices queries the services edge of a Customer.
@@ -1916,11 +1916,11 @@ func (c *EquipmentClient) Get(ctx context.Context, id int) (*Equipment, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentClient) GetX(ctx context.Context, id int) *Equipment {
-	e, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return e
+	return obj
 }
 
 // QueryType queries the type edge of a Equipment.
@@ -2165,11 +2165,11 @@ func (c *EquipmentCategoryClient) Get(ctx context.Context, id int) (*EquipmentCa
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentCategoryClient) GetX(ctx context.Context, id int) *EquipmentCategory {
-	ec, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ec
+	return obj
 }
 
 // QueryTypes queries the types edge of a EquipmentCategory.
@@ -2270,11 +2270,11 @@ func (c *EquipmentPortClient) Get(ctx context.Context, id int) (*EquipmentPort, 
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentPortClient) GetX(ctx context.Context, id int) *EquipmentPort {
-	ep, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ep
+	return obj
 }
 
 // QueryDefinition queries the definition edge of a EquipmentPort.
@@ -2455,11 +2455,11 @@ func (c *EquipmentPortDefinitionClient) Get(ctx context.Context, id int) (*Equip
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentPortDefinitionClient) GetX(ctx context.Context, id int) *EquipmentPortDefinition {
-	epd, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return epd
+	return obj
 }
 
 // QueryEquipmentPortType queries the equipment_port_type edge of a EquipmentPortDefinition.
@@ -2592,11 +2592,11 @@ func (c *EquipmentPortTypeClient) Get(ctx context.Context, id int) (*EquipmentPo
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentPortTypeClient) GetX(ctx context.Context, id int) *EquipmentPortType {
-	ept, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ept
+	return obj
 }
 
 // QueryPropertyTypes queries the property_types edge of a EquipmentPortType.
@@ -2729,11 +2729,11 @@ func (c *EquipmentPositionClient) Get(ctx context.Context, id int) (*EquipmentPo
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentPositionClient) GetX(ctx context.Context, id int) *EquipmentPosition {
-	ep, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ep
+	return obj
 }
 
 // QueryDefinition queries the definition edge of a EquipmentPosition.
@@ -2866,11 +2866,11 @@ func (c *EquipmentPositionDefinitionClient) Get(ctx context.Context, id int) (*E
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentPositionDefinitionClient) GetX(ctx context.Context, id int) *EquipmentPositionDefinition {
-	epd, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return epd
+	return obj
 }
 
 // QueryPositions queries the positions edge of a EquipmentPositionDefinition.
@@ -2987,11 +2987,11 @@ func (c *EquipmentTypeClient) Get(ctx context.Context, id int) (*EquipmentType, 
 
 // GetX is like Get, but panics if an error occurs.
 func (c *EquipmentTypeClient) GetX(ctx context.Context, id int) *EquipmentType {
-	et, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return et
+	return obj
 }
 
 // QueryPortDefinitions queries the port_definitions edge of a EquipmentType.
@@ -3172,11 +3172,11 @@ func (c *ExportTaskClient) Get(ctx context.Context, id int) (*ExportTask, error)
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ExportTaskClient) GetX(ctx context.Context, id int) *ExportTask {
-	et, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return et
+	return obj
 }
 
 // Hooks returns the client hooks.
@@ -3261,11 +3261,11 @@ func (c *FeatureClient) Get(ctx context.Context, id int) (*Feature, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FeatureClient) GetX(ctx context.Context, id int) *Feature {
-	f, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return obj
 }
 
 // QueryUsers queries the users edge of a Feature.
@@ -3382,11 +3382,11 @@ func (c *FileClient) Get(ctx context.Context, id int) (*File, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FileClient) GetX(ctx context.Context, id int) *File {
-	f, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return obj
 }
 
 // QueryLocation queries the location edge of a File.
@@ -3615,11 +3615,11 @@ func (c *FloorPlanClient) Get(ctx context.Context, id int) (*FloorPlan, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FloorPlanClient) GetX(ctx context.Context, id int) *FloorPlan {
-	fp, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fp
+	return obj
 }
 
 // QueryLocation queries the location edge of a FloorPlan.
@@ -3768,11 +3768,11 @@ func (c *FloorPlanReferencePointClient) Get(ctx context.Context, id int) (*Floor
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FloorPlanReferencePointClient) GetX(ctx context.Context, id int) *FloorPlanReferencePoint {
-	fprp, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fprp
+	return obj
 }
 
 // Hooks returns the client hooks.
@@ -3857,11 +3857,11 @@ func (c *FloorPlanScaleClient) Get(ctx context.Context, id int) (*FloorPlanScale
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FloorPlanScaleClient) GetX(ctx context.Context, id int) *FloorPlanScale {
-	fps, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fps
+	return obj
 }
 
 // Hooks returns the client hooks.
@@ -3946,11 +3946,11 @@ func (c *FlowClient) Get(ctx context.Context, id int) (*Flow, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FlowClient) GetX(ctx context.Context, id int) *Flow {
-	f, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return obj
 }
 
 // QueryBlocks queries the blocks edge of a Flow.
@@ -4067,11 +4067,11 @@ func (c *FlowDraftClient) Get(ctx context.Context, id int) (*FlowDraft, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FlowDraftClient) GetX(ctx context.Context, id int) *FlowDraft {
-	fd, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fd
+	return obj
 }
 
 // QueryBlocks queries the blocks edge of a FlowDraft.
@@ -4188,11 +4188,11 @@ func (c *FlowExecutionTemplateClient) Get(ctx context.Context, id int) (*FlowExe
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FlowExecutionTemplateClient) GetX(ctx context.Context, id int) *FlowExecutionTemplate {
-	fet, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fet
+	return obj
 }
 
 // QueryBlocks queries the blocks edge of a FlowExecutionTemplate.
@@ -4293,11 +4293,11 @@ func (c *FlowInstanceClient) Get(ctx context.Context, id int) (*FlowInstance, er
 
 // GetX is like Get, but panics if an error occurs.
 func (c *FlowInstanceClient) GetX(ctx context.Context, id int) *FlowInstance {
-	fi, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return fi
+	return obj
 }
 
 // QueryFlow queries the flow edge of a FlowInstance.
@@ -4446,11 +4446,11 @@ func (c *HyperlinkClient) Get(ctx context.Context, id int) (*Hyperlink, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *HyperlinkClient) GetX(ctx context.Context, id int) *Hyperlink {
-	h, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return h
+	return obj
 }
 
 // QueryEquipment queries the equipment edge of a Hyperlink.
@@ -4583,11 +4583,11 @@ func (c *LinkClient) Get(ctx context.Context, id int) (*Link, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *LinkClient) GetX(ctx context.Context, id int) *Link {
-	l, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return obj
 }
 
 // QueryPorts queries the ports edge of a Link.
@@ -4736,11 +4736,11 @@ func (c *LocationClient) Get(ctx context.Context, id int) (*Location, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *LocationClient) GetX(ctx context.Context, id int) *Location {
-	l, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return obj
 }
 
 // QueryType queries the type edge of a Location.
@@ -5017,11 +5017,11 @@ func (c *LocationTypeClient) Get(ctx context.Context, id int) (*LocationType, er
 
 // GetX is like Get, but panics if an error occurs.
 func (c *LocationTypeClient) GetX(ctx context.Context, id int) *LocationType {
-	lt, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return lt
+	return obj
 }
 
 // QueryLocations queries the locations edge of a LocationType.
@@ -5154,11 +5154,11 @@ func (c *PermissionsPolicyClient) Get(ctx context.Context, id int) (*Permissions
 
 // GetX is like Get, but panics if an error occurs.
 func (c *PermissionsPolicyClient) GetX(ctx context.Context, id int) *PermissionsPolicy {
-	pp, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pp
+	return obj
 }
 
 // QueryGroups queries the groups edge of a PermissionsPolicy.
@@ -5259,11 +5259,11 @@ func (c *ProjectClient) Get(ctx context.Context, id int) (*Project, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ProjectClient) GetX(ctx context.Context, id int) *Project {
-	pr, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pr
+	return obj
 }
 
 // QueryType queries the type edge of a Project.
@@ -5460,11 +5460,11 @@ func (c *ProjectTemplateClient) Get(ctx context.Context, id int) (*ProjectTempla
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ProjectTemplateClient) GetX(ctx context.Context, id int) *ProjectTemplate {
-	pt, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return obj
 }
 
 // QueryProperties queries the properties edge of a ProjectTemplate.
@@ -5597,11 +5597,11 @@ func (c *ProjectTypeClient) Get(ctx context.Context, id int) (*ProjectType, erro
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ProjectTypeClient) GetX(ctx context.Context, id int) *ProjectType {
-	pt, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return obj
 }
 
 // QueryProperties queries the properties edge of a ProjectType.
@@ -5734,11 +5734,11 @@ func (c *PropertyClient) Get(ctx context.Context, id int) (*Property, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *PropertyClient) GetX(ctx context.Context, id int) *Property {
-	pr, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pr
+	return obj
 }
 
 // QueryType queries the type edge of a Property.
@@ -6031,11 +6031,11 @@ func (c *PropertyTypeClient) Get(ctx context.Context, id int) (*PropertyType, er
 
 // GetX is like Get, but panics if an error occurs.
 func (c *PropertyTypeClient) GetX(ctx context.Context, id int) *PropertyType {
-	pt, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return obj
 }
 
 // QueryProperties queries the properties edge of a PropertyType.
@@ -6280,11 +6280,11 @@ func (c *ReportFilterClient) Get(ctx context.Context, id int) (*ReportFilter, er
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ReportFilterClient) GetX(ctx context.Context, id int) *ReportFilter {
-	rf, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return rf
+	return obj
 }
 
 // Hooks returns the client hooks.
@@ -6369,11 +6369,11 @@ func (c *ServiceClient) Get(ctx context.Context, id int) (*Service, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ServiceClient) GetX(ctx context.Context, id int) *Service {
-	s, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return s
+	return obj
 }
 
 // QueryType queries the type edge of a Service.
@@ -6586,11 +6586,11 @@ func (c *ServiceEndpointClient) Get(ctx context.Context, id int) (*ServiceEndpoi
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ServiceEndpointClient) GetX(ctx context.Context, id int) *ServiceEndpoint {
-	se, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return se
+	return obj
 }
 
 // QueryPort queries the port edge of a ServiceEndpoint.
@@ -6739,11 +6739,11 @@ func (c *ServiceEndpointDefinitionClient) Get(ctx context.Context, id int) (*Ser
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ServiceEndpointDefinitionClient) GetX(ctx context.Context, id int) *ServiceEndpointDefinition {
-	sed, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return sed
+	return obj
 }
 
 // QueryEndpoints queries the endpoints edge of a ServiceEndpointDefinition.
@@ -6876,11 +6876,11 @@ func (c *ServiceTypeClient) Get(ctx context.Context, id int) (*ServiceType, erro
 
 // GetX is like Get, but panics if an error occurs.
 func (c *ServiceTypeClient) GetX(ctx context.Context, id int) *ServiceType {
-	st, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return st
+	return obj
 }
 
 // QueryServices queries the services edge of a ServiceType.
@@ -7013,11 +7013,11 @@ func (c *SurveyClient) Get(ctx context.Context, id int) (*Survey, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyClient) GetX(ctx context.Context, id int) *Survey {
-	s, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return s
+	return obj
 }
 
 // QueryLocation queries the location edge of a Survey.
@@ -7150,11 +7150,11 @@ func (c *SurveyCellScanClient) Get(ctx context.Context, id int) (*SurveyCellScan
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyCellScanClient) GetX(ctx context.Context, id int) *SurveyCellScan {
-	scs, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return scs
+	return obj
 }
 
 // QueryChecklistItem queries the checklist_item edge of a SurveyCellScan.
@@ -7287,11 +7287,11 @@ func (c *SurveyQuestionClient) Get(ctx context.Context, id int) (*SurveyQuestion
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyQuestionClient) GetX(ctx context.Context, id int) *SurveyQuestion {
-	sq, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return sq
+	return obj
 }
 
 // QuerySurvey queries the survey edge of a SurveyQuestion.
@@ -7456,11 +7456,11 @@ func (c *SurveyTemplateCategoryClient) Get(ctx context.Context, id int) (*Survey
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyTemplateCategoryClient) GetX(ctx context.Context, id int) *SurveyTemplateCategory {
-	stc, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return stc
+	return obj
 }
 
 // QuerySurveyTemplateQuestions queries the survey_template_questions edge of a SurveyTemplateCategory.
@@ -7577,11 +7577,11 @@ func (c *SurveyTemplateQuestionClient) Get(ctx context.Context, id int) (*Survey
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyTemplateQuestionClient) GetX(ctx context.Context, id int) *SurveyTemplateQuestion {
-	stq, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return stq
+	return obj
 }
 
 // QueryCategory queries the category edge of a SurveyTemplateQuestion.
@@ -7682,11 +7682,11 @@ func (c *SurveyWiFiScanClient) Get(ctx context.Context, id int) (*SurveyWiFiScan
 
 // GetX is like Get, but panics if an error occurs.
 func (c *SurveyWiFiScanClient) GetX(ctx context.Context, id int) *SurveyWiFiScan {
-	swfs, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return swfs
+	return obj
 }
 
 // QueryChecklistItem queries the checklist_item edge of a SurveyWiFiScan.
@@ -7819,11 +7819,11 @@ func (c *UserClient) Get(ctx context.Context, id int) (*User, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *UserClient) GetX(ctx context.Context, id int) *User {
-	u, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return u
+	return obj
 }
 
 // QueryProfilePhoto queries the profile_photo edge of a User.
@@ -8004,11 +8004,11 @@ func (c *UsersGroupClient) Get(ctx context.Context, id int) (*UsersGroup, error)
 
 // GetX is like Get, but panics if an error occurs.
 func (c *UsersGroupClient) GetX(ctx context.Context, id int) *UsersGroup {
-	ug, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return ug
+	return obj
 }
 
 // QueryMembers queries the members edge of a UsersGroup.
@@ -8141,11 +8141,11 @@ func (c *WorkOrderClient) Get(ctx context.Context, id int) (*WorkOrder, error) {
 
 // GetX is like Get, but panics if an error occurs.
 func (c *WorkOrderClient) GetX(ctx context.Context, id int) *WorkOrder {
-	wo, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return wo
+	return obj
 }
 
 // QueryType queries the type edge of a WorkOrder.
@@ -8454,11 +8454,11 @@ func (c *WorkOrderDefinitionClient) Get(ctx context.Context, id int) (*WorkOrder
 
 // GetX is like Get, but panics if an error occurs.
 func (c *WorkOrderDefinitionClient) GetX(ctx context.Context, id int) *WorkOrderDefinition {
-	wod, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return wod
+	return obj
 }
 
 // QueryType queries the type edge of a WorkOrderDefinition.
@@ -8591,11 +8591,11 @@ func (c *WorkOrderTemplateClient) Get(ctx context.Context, id int) (*WorkOrderTe
 
 // GetX is like Get, but panics if an error occurs.
 func (c *WorkOrderTemplateClient) GetX(ctx context.Context, id int) *WorkOrderTemplate {
-	wot, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return wot
+	return obj
 }
 
 // QueryPropertyTypes queries the property_types edge of a WorkOrderTemplate.
@@ -8728,11 +8728,11 @@ func (c *WorkOrderTypeClient) Get(ctx context.Context, id int) (*WorkOrderType, 
 
 // GetX is like Get, but panics if an error occurs.
 func (c *WorkOrderTypeClient) GetX(ctx context.Context, id int) *WorkOrderType {
-	wot, err := c.Get(ctx, id)
+	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
-	return wot
+	return obj
 }
 
 // QueryPropertyTypes queries the property_types edge of a WorkOrderType.

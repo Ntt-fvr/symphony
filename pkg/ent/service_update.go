@@ -346,41 +346,24 @@ func (su *ServiceUpdate) RemoveEndpoints(s ...*ServiceEndpoint) *ServiceUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (su *ServiceUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := su.mutation.UpdateTime(); !ok {
-		v := service.UpdateDefaultUpdateTime()
-		su.mutation.SetUpdateTime(v)
-	}
-	if v, ok := su.mutation.Name(); ok {
-		if err := service.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := su.mutation.ExternalID(); ok {
-		if err := service.ExternalIDValidator(v); err != nil {
-			return 0, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
-		}
-	}
-	if v, ok := su.mutation.Status(); ok {
-		if err := service.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
-	if _, ok := su.mutation.TypeID(); su.mutation.TypeCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	su.defaults()
 	if len(su.hooks) == 0 {
+		if err = su.check(); err != nil {
+			return 0, err
+		}
 		affected, err = su.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = su.check(); err != nil {
+				return 0, err
 			}
 			su.mutation = mutation
 			affected, err = su.sqlSave(ctx)
@@ -417,6 +400,37 @@ func (su *ServiceUpdate) ExecX(ctx context.Context) {
 	if err := su.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (su *ServiceUpdate) defaults() {
+	if _, ok := su.mutation.UpdateTime(); !ok {
+		v := service.UpdateDefaultUpdateTime()
+		su.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (su *ServiceUpdate) check() error {
+	if v, ok := su.mutation.Name(); ok {
+		if err := service.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := su.mutation.ExternalID(); ok {
+		if err := service.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
+		}
+	}
+	if v, ok := su.mutation.Status(); ok {
+		if err := service.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := su.mutation.TypeID(); su.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (su *ServiceUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1210,41 +1224,24 @@ func (suo *ServiceUpdateOne) RemoveEndpoints(s ...*ServiceEndpoint) *ServiceUpda
 
 // Save executes the query and returns the updated entity.
 func (suo *ServiceUpdateOne) Save(ctx context.Context) (*Service, error) {
-	if _, ok := suo.mutation.UpdateTime(); !ok {
-		v := service.UpdateDefaultUpdateTime()
-		suo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := suo.mutation.Name(); ok {
-		if err := service.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := suo.mutation.ExternalID(); ok {
-		if err := service.ExternalIDValidator(v); err != nil {
-			return nil, &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
-		}
-	}
-	if v, ok := suo.mutation.Status(); ok {
-		if err := service.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
-	if _, ok := suo.mutation.TypeID(); suo.mutation.TypeCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err  error
 		node *Service
 	)
+	suo.defaults()
 	if len(suo.hooks) == 0 {
+		if err = suo.check(); err != nil {
+			return nil, err
+		}
 		node, err = suo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = suo.check(); err != nil {
+				return nil, err
 			}
 			suo.mutation = mutation
 			node, err = suo.sqlSave(ctx)
@@ -1281,6 +1278,37 @@ func (suo *ServiceUpdateOne) ExecX(ctx context.Context) {
 	if err := suo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (suo *ServiceUpdateOne) defaults() {
+	if _, ok := suo.mutation.UpdateTime(); !ok {
+		v := service.UpdateDefaultUpdateTime()
+		suo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (suo *ServiceUpdateOne) check() error {
+	if v, ok := suo.mutation.Name(); ok {
+		if err := service.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := suo.mutation.ExternalID(); ok {
+		if err := service.ExternalIDValidator(v); err != nil {
+			return &ValidationError{Name: "external_id", err: fmt.Errorf("ent: validator failed for field \"external_id\": %w", err)}
+		}
+	}
+	if v, ok := suo.mutation.Status(); ok {
+		if err := service.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := suo.mutation.TypeID(); suo.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (suo *ServiceUpdateOne) sqlSave(ctx context.Context) (s *Service, err error) {

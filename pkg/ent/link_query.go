@@ -74,8 +74,12 @@ func (lq *LinkQuery) QueryPorts() *EquipmentPortQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(link.Table, link.FieldID, lq.sqlQuery()),
+			sqlgraph.From(link.Table, link.FieldID, selector),
 			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, link.PortsTable, link.PortsColumn),
 		)
@@ -92,8 +96,12 @@ func (lq *LinkQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(link.Table, link.FieldID, lq.sqlQuery()),
+			sqlgraph.From(link.Table, link.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, link.WorkOrderTable, link.WorkOrderColumn),
 		)
@@ -110,8 +118,12 @@ func (lq *LinkQuery) QueryProperties() *PropertyQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(link.Table, link.FieldID, lq.sqlQuery()),
+			sqlgraph.From(link.Table, link.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, link.PropertiesTable, link.PropertiesColumn),
 		)
@@ -128,8 +140,12 @@ func (lq *LinkQuery) QueryService() *ServiceQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(link.Table, link.FieldID, lq.sqlQuery()),
+			sqlgraph.From(link.Table, link.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, link.ServiceTable, link.ServicePrimaryKey...),
 		)
@@ -658,7 +674,7 @@ func (lq *LinkQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := lq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, link.ValidColumn)
 			}
 		}
 	}
@@ -677,7 +693,7 @@ func (lq *LinkQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range lq.order {
-		p(selector)
+		p(selector, link.ValidColumn)
 	}
 	if offset := lq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -912,8 +928,17 @@ func (lgb *LinkGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (lgb *LinkGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range lgb.fields {
+		if !link.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := lgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := lgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := lgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -926,7 +951,7 @@ func (lgb *LinkGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(lgb.fields)+len(lgb.fns))
 	columns = append(columns, lgb.fields...)
 	for _, fn := range lgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, link.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(lgb.fields...)
 }
@@ -1146,6 +1171,11 @@ func (ls *LinkSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ls *LinkSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ls.fields {
+		if !link.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ls.sqlQuery().Query()
 	if err := ls.driver.Query(ctx, query, args, rows); err != nil {

@@ -369,7 +369,7 @@ func (arq *ActionsRuleQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := arq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, actionsrule.ValidColumn)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (arq *ActionsRuleQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range arq.order {
-		p(selector)
+		p(selector, actionsrule.ValidColumn)
 	}
 	if offset := arq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -623,8 +623,17 @@ func (argb *ActionsRuleGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (argb *ActionsRuleGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range argb.fields {
+		if !actionsrule.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := argb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := argb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := argb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -637,7 +646,7 @@ func (argb *ActionsRuleGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(argb.fields)+len(argb.fns))
 	columns = append(columns, argb.fields...)
 	for _, fn := range argb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, actionsrule.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(argb.fields...)
 }
@@ -857,6 +866,11 @@ func (ars *ActionsRuleSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ars *ActionsRuleSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ars.fields {
+		if !actionsrule.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ars.sqlQuery().Query()
 	if err := ars.driver.Query(ctx, query, args, rows); err != nil {

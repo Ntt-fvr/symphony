@@ -71,8 +71,12 @@ func (stq *ServiceTypeQuery) QueryServices() *ServiceQuery {
 		if err := stq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(servicetype.Table, servicetype.FieldID, stq.sqlQuery()),
+			sqlgraph.From(servicetype.Table, servicetype.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, servicetype.ServicesTable, servicetype.ServicesColumn),
 		)
@@ -89,8 +93,12 @@ func (stq *ServiceTypeQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := stq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(servicetype.Table, servicetype.FieldID, stq.sqlQuery()),
+			sqlgraph.From(servicetype.Table, servicetype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, servicetype.PropertyTypesTable, servicetype.PropertyTypesColumn),
 		)
@@ -107,8 +115,12 @@ func (stq *ServiceTypeQuery) QueryEndpointDefinitions() *ServiceEndpointDefiniti
 		if err := stq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(servicetype.Table, servicetype.FieldID, stq.sqlQuery()),
+			sqlgraph.From(servicetype.Table, servicetype.FieldID, selector),
 			sqlgraph.To(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, servicetype.EndpointDefinitionsTable, servicetype.EndpointDefinitionsColumn),
 		)
@@ -555,7 +567,7 @@ func (stq *ServiceTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := stq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, servicetype.ValidColumn)
 			}
 		}
 	}
@@ -574,7 +586,7 @@ func (stq *ServiceTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range stq.order {
-		p(selector)
+		p(selector, servicetype.ValidColumn)
 	}
 	if offset := stq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -809,8 +821,17 @@ func (stgb *ServiceTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (stgb *ServiceTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range stgb.fields {
+		if !servicetype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := stgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := stgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := stgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -823,7 +844,7 @@ func (stgb *ServiceTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(stgb.fields)+len(stgb.fns))
 	columns = append(columns, stgb.fields...)
 	for _, fn := range stgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, servicetype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(stgb.fields...)
 }
@@ -1043,6 +1064,11 @@ func (sts *ServiceTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (sts *ServiceTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range sts.fields {
+		if !servicetype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := sts.sqlQuery().Query()
 	if err := sts.driver.Query(ctx, query, args, rows); err != nil {

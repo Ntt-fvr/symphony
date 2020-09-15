@@ -162,15 +162,11 @@ func (hu *HyperlinkUpdate) ClearWorkOrder() *HyperlinkUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (hu *HyperlinkUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := hu.mutation.UpdateTime(); !ok {
-		v := hyperlink.UpdateDefaultUpdateTime()
-		hu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	hu.defaults()
 	if len(hu.hooks) == 0 {
 		affected, err = hu.sqlSave(ctx)
 	} else {
@@ -213,6 +209,14 @@ func (hu *HyperlinkUpdate) Exec(ctx context.Context) error {
 func (hu *HyperlinkUpdate) ExecX(ctx context.Context) {
 	if err := hu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (hu *HyperlinkUpdate) defaults() {
+	if _, ok := hu.mutation.UpdateTime(); !ok {
+		v := hyperlink.UpdateDefaultUpdateTime()
+		hu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -525,15 +529,11 @@ func (huo *HyperlinkUpdateOne) ClearWorkOrder() *HyperlinkUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (huo *HyperlinkUpdateOne) Save(ctx context.Context) (*Hyperlink, error) {
-	if _, ok := huo.mutation.UpdateTime(); !ok {
-		v := hyperlink.UpdateDefaultUpdateTime()
-		huo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *Hyperlink
 	)
+	huo.defaults()
 	if len(huo.hooks) == 0 {
 		node, err = huo.sqlSave(ctx)
 	} else {
@@ -576,6 +576,14 @@ func (huo *HyperlinkUpdateOne) Exec(ctx context.Context) error {
 func (huo *HyperlinkUpdateOne) ExecX(ctx context.Context) {
 	if err := huo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (huo *HyperlinkUpdateOne) defaults() {
+	if _, ok := huo.mutation.UpdateTime(); !ok {
+		v := hyperlink.UpdateDefaultUpdateTime()
+		huo.mutation.SetUpdateTime(v)
 	}
 }
 

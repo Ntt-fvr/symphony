@@ -154,15 +154,11 @@ func (epdu *EquipmentPositionDefinitionUpdate) ClearEquipmentType() *EquipmentPo
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (epdu *EquipmentPositionDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := epdu.mutation.UpdateTime(); !ok {
-		v := equipmentpositiondefinition.UpdateDefaultUpdateTime()
-		epdu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	epdu.defaults()
 	if len(epdu.hooks) == 0 {
 		affected, err = epdu.sqlSave(ctx)
 	} else {
@@ -205,6 +201,14 @@ func (epdu *EquipmentPositionDefinitionUpdate) Exec(ctx context.Context) error {
 func (epdu *EquipmentPositionDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := epdu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epdu *EquipmentPositionDefinitionUpdate) defaults() {
+	if _, ok := epdu.mutation.UpdateTime(); !ok {
+		v := equipmentpositiondefinition.UpdateDefaultUpdateTime()
+		epdu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -501,15 +505,11 @@ func (epduo *EquipmentPositionDefinitionUpdateOne) ClearEquipmentType() *Equipme
 
 // Save executes the query and returns the updated entity.
 func (epduo *EquipmentPositionDefinitionUpdateOne) Save(ctx context.Context) (*EquipmentPositionDefinition, error) {
-	if _, ok := epduo.mutation.UpdateTime(); !ok {
-		v := equipmentpositiondefinition.UpdateDefaultUpdateTime()
-		epduo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *EquipmentPositionDefinition
 	)
+	epduo.defaults()
 	if len(epduo.hooks) == 0 {
 		node, err = epduo.sqlSave(ctx)
 	} else {
@@ -552,6 +552,14 @@ func (epduo *EquipmentPositionDefinitionUpdateOne) Exec(ctx context.Context) err
 func (epduo *EquipmentPositionDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := epduo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epduo *EquipmentPositionDefinitionUpdateOne) defaults() {
+	if _, ok := epduo.mutation.UpdateTime(); !ok {
+		v := equipmentpositiondefinition.UpdateDefaultUpdateTime()
+		epduo.mutation.SetUpdateTime(v)
 	}
 }
 

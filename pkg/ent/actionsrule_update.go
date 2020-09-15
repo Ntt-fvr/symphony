@@ -63,14 +63,11 @@ func (aru *ActionsRuleUpdate) Mutation() *ActionsRuleMutation {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (aru *ActionsRuleUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := aru.mutation.UpdateTime(); !ok {
-		v := actionsrule.UpdateDefaultUpdateTime()
-		aru.mutation.SetUpdateTime(v)
-	}
 	var (
 		err      error
 		affected int
 	)
+	aru.defaults()
 	if len(aru.hooks) == 0 {
 		affected, err = aru.sqlSave(ctx)
 	} else {
@@ -113,6 +110,14 @@ func (aru *ActionsRuleUpdate) Exec(ctx context.Context) error {
 func (aru *ActionsRuleUpdate) ExecX(ctx context.Context) {
 	if err := aru.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (aru *ActionsRuleUpdate) defaults() {
+	if _, ok := aru.mutation.UpdateTime(); !ok {
+		v := actionsrule.UpdateDefaultUpdateTime()
+		aru.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -218,14 +223,11 @@ func (aruo *ActionsRuleUpdateOne) Mutation() *ActionsRuleMutation {
 
 // Save executes the query and returns the updated entity.
 func (aruo *ActionsRuleUpdateOne) Save(ctx context.Context) (*ActionsRule, error) {
-	if _, ok := aruo.mutation.UpdateTime(); !ok {
-		v := actionsrule.UpdateDefaultUpdateTime()
-		aruo.mutation.SetUpdateTime(v)
-	}
 	var (
 		err  error
 		node *ActionsRule
 	)
+	aruo.defaults()
 	if len(aruo.hooks) == 0 {
 		node, err = aruo.sqlSave(ctx)
 	} else {
@@ -268,6 +270,14 @@ func (aruo *ActionsRuleUpdateOne) Exec(ctx context.Context) error {
 func (aruo *ActionsRuleUpdateOne) ExecX(ctx context.Context) {
 	if err := aruo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (aruo *ActionsRuleUpdateOne) defaults() {
+	if _, ok := aruo.mutation.UpdateTime(); !ok {
+		v := actionsrule.UpdateDefaultUpdateTime()
+		aruo.mutation.SetUpdateTime(v)
 	}
 }
 

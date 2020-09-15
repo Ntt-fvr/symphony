@@ -89,20 +89,24 @@ func (fpsc *FloorPlanScaleCreate) Mutation() *FloorPlanScaleMutation {
 
 // Save creates the FloorPlanScale in the database.
 func (fpsc *FloorPlanScaleCreate) Save(ctx context.Context) (*FloorPlanScale, error) {
-	if err := fpsc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *FloorPlanScale
 	)
+	fpsc.defaults()
 	if len(fpsc.hooks) == 0 {
+		if err = fpsc.check(); err != nil {
+			return nil, err
+		}
 		node, err = fpsc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FloorPlanScaleMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fpsc.check(); err != nil {
+				return nil, err
 			}
 			fpsc.mutation = mutation
 			node, err = fpsc.sqlSave(ctx)
@@ -128,7 +132,8 @@ func (fpsc *FloorPlanScaleCreate) SaveX(ctx context.Context) *FloorPlanScale {
 	return v
 }
 
-func (fpsc *FloorPlanScaleCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fpsc *FloorPlanScaleCreate) defaults() {
 	if _, ok := fpsc.mutation.CreateTime(); !ok {
 		v := floorplanscale.DefaultCreateTime()
 		fpsc.mutation.SetCreateTime(v)
@@ -136,6 +141,16 @@ func (fpsc *FloorPlanScaleCreate) preSave() error {
 	if _, ok := fpsc.mutation.UpdateTime(); !ok {
 		v := floorplanscale.DefaultUpdateTime()
 		fpsc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fpsc *FloorPlanScaleCreate) check() error {
+	if _, ok := fpsc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fpsc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := fpsc.mutation.ReferencePoint1X(); !ok {
 		return &ValidationError{Name: "reference_point1_x", err: errors.New("ent: missing required field \"reference_point1_x\"")}
@@ -252,13 +267,14 @@ func (fpscb *FloorPlanScaleCreateBulk) Save(ctx context.Context) ([]*FloorPlanSc
 	for i := range fpscb.builders {
 		func(i int, root context.Context) {
 			builder := fpscb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FloorPlanScaleMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

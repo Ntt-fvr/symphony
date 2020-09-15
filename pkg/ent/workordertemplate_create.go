@@ -145,20 +145,24 @@ func (wotc *WorkOrderTemplateCreate) Mutation() *WorkOrderTemplateMutation {
 
 // Save creates the WorkOrderTemplate in the database.
 func (wotc *WorkOrderTemplateCreate) Save(ctx context.Context) (*WorkOrderTemplate, error) {
-	if err := wotc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *WorkOrderTemplate
 	)
+	wotc.defaults()
 	if len(wotc.hooks) == 0 {
+		if err = wotc.check(); err != nil {
+			return nil, err
+		}
 		node, err = wotc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*WorkOrderTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = wotc.check(); err != nil {
+				return nil, err
 			}
 			wotc.mutation = mutation
 			node, err = wotc.sqlSave(ctx)
@@ -184,7 +188,8 @@ func (wotc *WorkOrderTemplateCreate) SaveX(ctx context.Context) *WorkOrderTempla
 	return v
 }
 
-func (wotc *WorkOrderTemplateCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (wotc *WorkOrderTemplateCreate) defaults() {
 	if _, ok := wotc.mutation.CreateTime(); !ok {
 		v := workordertemplate.DefaultCreateTime()
 		wotc.mutation.SetCreateTime(v)
@@ -193,12 +198,22 @@ func (wotc *WorkOrderTemplateCreate) preSave() error {
 		v := workordertemplate.DefaultUpdateTime()
 		wotc.mutation.SetUpdateTime(v)
 	}
-	if _, ok := wotc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
 	if _, ok := wotc.mutation.AssigneeCanCompleteWorkOrder(); !ok {
 		v := workordertemplate.DefaultAssigneeCanCompleteWorkOrder
 		wotc.mutation.SetAssigneeCanCompleteWorkOrder(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (wotc *WorkOrderTemplateCreate) check() error {
+	if _, ok := wotc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := wotc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
+	if _, ok := wotc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
 	return nil
 }
@@ -341,13 +356,14 @@ func (wotcb *WorkOrderTemplateCreateBulk) Save(ctx context.Context) ([]*WorkOrde
 	for i := range wotcb.builders {
 		func(i int, root context.Context) {
 			builder := wotcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*WorkOrderTemplateMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

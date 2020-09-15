@@ -390,15 +390,11 @@ func (swfsu *SurveyWiFiScanUpdate) ClearLocation() *SurveyWiFiScanUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (swfsu *SurveyWiFiScanUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := swfsu.mutation.UpdateTime(); !ok {
-		v := surveywifiscan.UpdateDefaultUpdateTime()
-		swfsu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	swfsu.defaults()
 	if len(swfsu.hooks) == 0 {
 		affected, err = swfsu.sqlSave(ctx)
 	} else {
@@ -441,6 +437,14 @@ func (swfsu *SurveyWiFiScanUpdate) Exec(ctx context.Context) error {
 func (swfsu *SurveyWiFiScanUpdate) ExecX(ctx context.Context) {
 	if err := swfsu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (swfsu *SurveyWiFiScanUpdate) defaults() {
+	if _, ok := swfsu.mutation.UpdateTime(); !ok {
+		v := surveywifiscan.UpdateDefaultUpdateTime()
+		swfsu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -1162,15 +1166,11 @@ func (swfsuo *SurveyWiFiScanUpdateOne) ClearLocation() *SurveyWiFiScanUpdateOne 
 
 // Save executes the query and returns the updated entity.
 func (swfsuo *SurveyWiFiScanUpdateOne) Save(ctx context.Context) (*SurveyWiFiScan, error) {
-	if _, ok := swfsuo.mutation.UpdateTime(); !ok {
-		v := surveywifiscan.UpdateDefaultUpdateTime()
-		swfsuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *SurveyWiFiScan
 	)
+	swfsuo.defaults()
 	if len(swfsuo.hooks) == 0 {
 		node, err = swfsuo.sqlSave(ctx)
 	} else {
@@ -1213,6 +1213,14 @@ func (swfsuo *SurveyWiFiScanUpdateOne) Exec(ctx context.Context) error {
 func (swfsuo *SurveyWiFiScanUpdateOne) ExecX(ctx context.Context) {
 	if err := swfsuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (swfsuo *SurveyWiFiScanUpdateOne) defaults() {
+	if _, ok := swfsuo.mutation.UpdateTime(); !ok {
+		v := surveywifiscan.UpdateDefaultUpdateTime()
+		swfsuo.mutation.SetUpdateTime(v)
 	}
 }
 

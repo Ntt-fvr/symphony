@@ -369,7 +369,7 @@ func (rfq *ReportFilterQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := rfq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, reportfilter.ValidColumn)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (rfq *ReportFilterQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range rfq.order {
-		p(selector)
+		p(selector, reportfilter.ValidColumn)
 	}
 	if offset := rfq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -623,8 +623,17 @@ func (rfgb *ReportFilterGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (rfgb *ReportFilterGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range rfgb.fields {
+		if !reportfilter.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := rfgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := rfgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := rfgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -637,7 +646,7 @@ func (rfgb *ReportFilterGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(rfgb.fields)+len(rfgb.fns))
 	columns = append(columns, rfgb.fields...)
 	for _, fn := range rfgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, reportfilter.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(rfgb.fields...)
 }
@@ -857,6 +866,11 @@ func (rfs *ReportFilterSelect) BoolX(ctx context.Context) bool {
 }
 
 func (rfs *ReportFilterSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range rfs.fields {
+		if !reportfilter.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := rfs.sqlQuery().Query()
 	if err := rfs.driver.Query(ctx, query, args, rows); err != nil {

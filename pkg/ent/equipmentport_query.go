@@ -78,8 +78,12 @@ func (epq *EquipmentPortQuery) QueryDefinition() *EquipmentPortDefinitionQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(equipmentportdefinition.Table, equipmentportdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipmentport.DefinitionTable, equipmentport.DefinitionColumn),
 		)
@@ -96,8 +100,12 @@ func (epq *EquipmentPortQuery) QueryParent() *EquipmentQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, equipmentport.ParentTable, equipmentport.ParentColumn),
 		)
@@ -114,8 +122,12 @@ func (epq *EquipmentPortQuery) QueryLink() *LinkQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipmentport.LinkTable, equipmentport.LinkColumn),
 		)
@@ -132,8 +144,12 @@ func (epq *EquipmentPortQuery) QueryProperties() *PropertyQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmentport.PropertiesTable, equipmentport.PropertiesColumn),
 		)
@@ -150,8 +166,12 @@ func (epq *EquipmentPortQuery) QueryEndpoints() *ServiceEndpointQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(serviceendpoint.Table, serviceendpoint.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmentport.EndpointsTable, equipmentport.EndpointsColumn),
 		)
@@ -168,8 +188,12 @@ func (epq *EquipmentPortQuery) QueryService() *ServiceQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentport.Table, equipmentport.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, equipmentport.ServiceTable, equipmentport.ServicePrimaryKey...),
 		)
@@ -772,7 +796,7 @@ func (epq *EquipmentPortQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := epq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmentport.ValidColumn)
 			}
 		}
 	}
@@ -791,7 +815,7 @@ func (epq *EquipmentPortQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range epq.order {
-		p(selector)
+		p(selector, equipmentport.ValidColumn)
 	}
 	if offset := epq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1026,8 +1050,17 @@ func (epgb *EquipmentPortGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (epgb *EquipmentPortGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range epgb.fields {
+		if !equipmentport.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := epgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := epgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := epgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1040,7 +1073,7 @@ func (epgb *EquipmentPortGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(epgb.fields)+len(epgb.fns))
 	columns = append(columns, epgb.fields...)
 	for _, fn := range epgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmentport.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(epgb.fields...)
 }
@@ -1260,6 +1293,11 @@ func (eps *EquipmentPortSelect) BoolX(ctx context.Context) bool {
 }
 
 func (eps *EquipmentPortSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range eps.fields {
+		if !equipmentport.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := eps.sqlQuery().Query()
 	if err := eps.driver.Query(ctx, query, args, rows); err != nil {

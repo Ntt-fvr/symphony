@@ -610,41 +610,24 @@ func (wou *WorkOrderUpdate) ClearAssignee() *WorkOrderUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (wou *WorkOrderUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := wou.mutation.UpdateTime(); !ok {
-		v := workorder.UpdateDefaultUpdateTime()
-		wou.mutation.SetUpdateTime(v)
-	}
-	if v, ok := wou.mutation.Name(); ok {
-		if err := workorder.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := wou.mutation.Status(); ok {
-		if err := workorder.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := wou.mutation.Priority(); ok {
-		if err := workorder.PriorityValidator(v); err != nil {
-			return 0, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
-		}
-	}
-
-	if _, ok := wou.mutation.OwnerID(); wou.mutation.OwnerCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"owner\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	wou.defaults()
 	if len(wou.hooks) == 0 {
+		if err = wou.check(); err != nil {
+			return 0, err
+		}
 		affected, err = wou.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*WorkOrderMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = wou.check(); err != nil {
+				return 0, err
 			}
 			wou.mutation = mutation
 			affected, err = wou.sqlSave(ctx)
@@ -681,6 +664,37 @@ func (wou *WorkOrderUpdate) ExecX(ctx context.Context) {
 	if err := wou.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wou *WorkOrderUpdate) defaults() {
+	if _, ok := wou.mutation.UpdateTime(); !ok {
+		v := workorder.UpdateDefaultUpdateTime()
+		wou.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (wou *WorkOrderUpdate) check() error {
+	if v, ok := wou.mutation.Name(); ok {
+		if err := workorder.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := wou.mutation.Status(); ok {
+		if err := workorder.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := wou.mutation.Priority(); ok {
+		if err := workorder.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := wou.mutation.OwnerID(); wou.mutation.OwnerCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"owner\"")
+	}
+	return nil
 }
 
 func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -2019,41 +2033,24 @@ func (wouo *WorkOrderUpdateOne) ClearAssignee() *WorkOrderUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (wouo *WorkOrderUpdateOne) Save(ctx context.Context) (*WorkOrder, error) {
-	if _, ok := wouo.mutation.UpdateTime(); !ok {
-		v := workorder.UpdateDefaultUpdateTime()
-		wouo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := wouo.mutation.Name(); ok {
-		if err := workorder.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := wouo.mutation.Status(); ok {
-		if err := workorder.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := wouo.mutation.Priority(); ok {
-		if err := workorder.PriorityValidator(v); err != nil {
-			return nil, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
-		}
-	}
-
-	if _, ok := wouo.mutation.OwnerID(); wouo.mutation.OwnerCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"owner\"")
-	}
-
 	var (
 		err  error
 		node *WorkOrder
 	)
+	wouo.defaults()
 	if len(wouo.hooks) == 0 {
+		if err = wouo.check(); err != nil {
+			return nil, err
+		}
 		node, err = wouo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*WorkOrderMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = wouo.check(); err != nil {
+				return nil, err
 			}
 			wouo.mutation = mutation
 			node, err = wouo.sqlSave(ctx)
@@ -2090,6 +2087,37 @@ func (wouo *WorkOrderUpdateOne) ExecX(ctx context.Context) {
 	if err := wouo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wouo *WorkOrderUpdateOne) defaults() {
+	if _, ok := wouo.mutation.UpdateTime(); !ok {
+		v := workorder.UpdateDefaultUpdateTime()
+		wouo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (wouo *WorkOrderUpdateOne) check() error {
+	if v, ok := wouo.mutation.Name(); ok {
+		if err := workorder.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := wouo.mutation.Status(); ok {
+		if err := workorder.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := wouo.mutation.Priority(); ok {
+		if err := workorder.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := wouo.mutation.OwnerID(); wouo.mutation.OwnerCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"owner\"")
+	}
+	return nil
 }
 
 func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err error) {

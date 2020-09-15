@@ -165,20 +165,24 @@ func (etc *EquipmentTypeCreate) Mutation() *EquipmentTypeMutation {
 
 // Save creates the EquipmentType in the database.
 func (etc *EquipmentTypeCreate) Save(ctx context.Context) (*EquipmentType, error) {
-	if err := etc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *EquipmentType
 	)
+	etc.defaults()
 	if len(etc.hooks) == 0 {
+		if err = etc.check(); err != nil {
+			return nil, err
+		}
 		node, err = etc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentTypeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = etc.check(); err != nil {
+				return nil, err
 			}
 			etc.mutation = mutation
 			node, err = etc.sqlSave(ctx)
@@ -204,7 +208,8 @@ func (etc *EquipmentTypeCreate) SaveX(ctx context.Context) *EquipmentType {
 	return v
 }
 
-func (etc *EquipmentTypeCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (etc *EquipmentTypeCreate) defaults() {
 	if _, ok := etc.mutation.CreateTime(); !ok {
 		v := equipmenttype.DefaultCreateTime()
 		etc.mutation.SetCreateTime(v)
@@ -212,6 +217,16 @@ func (etc *EquipmentTypeCreate) preSave() error {
 	if _, ok := etc.mutation.UpdateTime(); !ok {
 		v := equipmenttype.DefaultUpdateTime()
 		etc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (etc *EquipmentTypeCreate) check() error {
+	if _, ok := etc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := etc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := etc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -398,13 +413,14 @@ func (etcb *EquipmentTypeCreateBulk) Save(ctx context.Context) ([]*EquipmentType
 	for i := range etcb.builders {
 		func(i int, root context.Context) {
 			builder := etcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*EquipmentTypeMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

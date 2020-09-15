@@ -79,8 +79,12 @@ func (bq *BlockQuery) QueryPrevBlocks() *BlockQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, block.PrevBlocksTable, block.PrevBlocksPrimaryKey...),
 		)
@@ -97,8 +101,12 @@ func (bq *BlockQuery) QueryNextBlocks() *BlockQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, block.NextBlocksTable, block.NextBlocksPrimaryKey...),
 		)
@@ -115,8 +123,12 @@ func (bq *BlockQuery) QueryFlow() *FlowQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(flow.Table, flow.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTable, block.FlowColumn),
 		)
@@ -133,8 +145,12 @@ func (bq *BlockQuery) QueryFlowTemplate() *FlowExecutionTemplateQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowTemplateTable, block.FlowTemplateColumn),
 		)
@@ -151,8 +167,12 @@ func (bq *BlockQuery) QueryFlowDraft() *FlowDraftQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, block.FlowDraftTable, block.FlowDraftColumn),
 		)
@@ -169,8 +189,12 @@ func (bq *BlockQuery) QuerySubFlow() *FlowQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(flow.Table, flow.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, block.SubFlowTable, block.SubFlowColumn),
 		)
@@ -187,8 +211,12 @@ func (bq *BlockQuery) QuerySourceBlock() *BlockQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, block.SourceBlockTable, block.SourceBlockColumn),
 		)
@@ -205,8 +233,12 @@ func (bq *BlockQuery) QueryGotoBlock() *BlockQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, block.GotoBlockTable, block.GotoBlockColumn),
 		)
@@ -223,8 +255,12 @@ func (bq *BlockQuery) QueryInstances() *BlockInstanceQuery {
 		if err := bq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, bq.sqlQuery()),
+			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, block.InstancesTable, block.InstancesColumn),
 		)
@@ -976,7 +1012,7 @@ func (bq *BlockQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := bq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, block.ValidColumn)
 			}
 		}
 	}
@@ -995,7 +1031,7 @@ func (bq *BlockQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range bq.order {
-		p(selector)
+		p(selector, block.ValidColumn)
 	}
 	if offset := bq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1230,8 +1266,17 @@ func (bgb *BlockGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (bgb *BlockGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range bgb.fields {
+		if !block.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := bgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := bgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := bgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1244,7 +1289,7 @@ func (bgb *BlockGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(bgb.fields)+len(bgb.fns))
 	columns = append(columns, bgb.fields...)
 	for _, fn := range bgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, block.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(bgb.fields...)
 }
@@ -1464,6 +1509,11 @@ func (bs *BlockSelect) BoolX(ctx context.Context) bool {
 }
 
 func (bs *BlockSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range bs.fields {
+		if !block.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := bs.sqlQuery().Query()
 	if err := bs.driver.Query(ctx, query, args, rows); err != nil {

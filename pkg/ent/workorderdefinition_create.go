@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -132,20 +133,24 @@ func (wodc *WorkOrderDefinitionCreate) Mutation() *WorkOrderDefinitionMutation {
 
 // Save creates the WorkOrderDefinition in the database.
 func (wodc *WorkOrderDefinitionCreate) Save(ctx context.Context) (*WorkOrderDefinition, error) {
-	if err := wodc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *WorkOrderDefinition
 	)
+	wodc.defaults()
 	if len(wodc.hooks) == 0 {
+		if err = wodc.check(); err != nil {
+			return nil, err
+		}
 		node, err = wodc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*WorkOrderDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = wodc.check(); err != nil {
+				return nil, err
 			}
 			wodc.mutation = mutation
 			node, err = wodc.sqlSave(ctx)
@@ -171,7 +176,8 @@ func (wodc *WorkOrderDefinitionCreate) SaveX(ctx context.Context) *WorkOrderDefi
 	return v
 }
 
-func (wodc *WorkOrderDefinitionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (wodc *WorkOrderDefinitionCreate) defaults() {
 	if _, ok := wodc.mutation.CreateTime(); !ok {
 		v := workorderdefinition.DefaultCreateTime()
 		wodc.mutation.SetCreateTime(v)
@@ -179,6 +185,16 @@ func (wodc *WorkOrderDefinitionCreate) preSave() error {
 	if _, ok := wodc.mutation.UpdateTime(); !ok {
 		v := workorderdefinition.DefaultUpdateTime()
 		wodc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (wodc *WorkOrderDefinitionCreate) check() error {
+	if _, ok := wodc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := wodc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	return nil
 }
@@ -305,13 +321,14 @@ func (wodcb *WorkOrderDefinitionCreateBulk) Save(ctx context.Context) ([]*WorkOr
 	for i := range wodcb.builders {
 		func(i int, root context.Context) {
 			builder := wodcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*WorkOrderDefinitionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

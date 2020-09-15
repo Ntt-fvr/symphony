@@ -73,8 +73,12 @@ func (fiq *FlowInstanceQuery) QueryFlow() *FlowQuery {
 		if err := fiq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fiq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, fiq.sqlQuery()),
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
 			sqlgraph.To(flow.Table, flow.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, flowinstance.FlowTable, flowinstance.FlowColumn),
 		)
@@ -91,8 +95,12 @@ func (fiq *FlowInstanceQuery) QueryTemplate() *FlowExecutionTemplateQuery {
 		if err := fiq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fiq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, fiq.sqlQuery()),
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
 			sqlgraph.To(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, flowinstance.TemplateTable, flowinstance.TemplateColumn),
 		)
@@ -109,8 +117,12 @@ func (fiq *FlowInstanceQuery) QueryBlocks() *BlockInstanceQuery {
 		if err := fiq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fiq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, fiq.sqlQuery()),
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, flowinstance.BlocksTable, flowinstance.BlocksColumn),
 		)
@@ -127,8 +139,12 @@ func (fiq *FlowInstanceQuery) QueryParentSubflowBlock() *BlockInstanceQuery {
 		if err := fiq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fiq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, fiq.sqlQuery()),
+			sqlgraph.From(flowinstance.Table, flowinstance.FieldID, selector),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, flowinstance.ParentSubflowBlockTable, flowinstance.ParentSubflowBlockColumn),
 		)
@@ -616,7 +632,7 @@ func (fiq *FlowInstanceQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fiq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, flowinstance.ValidColumn)
 			}
 		}
 	}
@@ -635,7 +651,7 @@ func (fiq *FlowInstanceQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fiq.order {
-		p(selector)
+		p(selector, flowinstance.ValidColumn)
 	}
 	if offset := fiq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -870,8 +886,17 @@ func (figb *FlowInstanceGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (figb *FlowInstanceGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range figb.fields {
+		if !flowinstance.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := figb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := figb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := figb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -884,7 +909,7 @@ func (figb *FlowInstanceGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(figb.fields)+len(figb.fns))
 	columns = append(columns, figb.fields...)
 	for _, fn := range figb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, flowinstance.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(figb.fields...)
 }
@@ -1104,6 +1129,11 @@ func (fis *FlowInstanceSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fis *FlowInstanceSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fis.fields {
+		if !flowinstance.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fis.sqlQuery().Query()
 	if err := fis.driver.Query(ctx, query, args, rows); err != nil {

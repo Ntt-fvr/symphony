@@ -164,27 +164,24 @@ func (ptu *ProjectTemplateUpdate) ClearType() *ProjectTemplateUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ptu *ProjectTemplateUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := ptu.mutation.UpdateTime(); !ok {
-		v := projecttemplate.UpdateDefaultUpdateTime()
-		ptu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := ptu.mutation.Name(); ok {
-		if err := projecttemplate.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	ptu.defaults()
 	if len(ptu.hooks) == 0 {
+		if err = ptu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ptu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ptu.check(); err != nil {
+				return 0, err
 			}
 			ptu.mutation = mutation
 			affected, err = ptu.sqlSave(ctx)
@@ -221,6 +218,24 @@ func (ptu *ProjectTemplateUpdate) ExecX(ctx context.Context) {
 	if err := ptu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ptu *ProjectTemplateUpdate) defaults() {
+	if _, ok := ptu.mutation.UpdateTime(); !ok {
+		v := projecttemplate.UpdateDefaultUpdateTime()
+		ptu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ptu *ProjectTemplateUpdate) check() error {
+	if v, ok := ptu.mutation.Name(); ok {
+		if err := projecttemplate.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ptu *ProjectTemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -559,27 +574,24 @@ func (ptuo *ProjectTemplateUpdateOne) ClearType() *ProjectTemplateUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (ptuo *ProjectTemplateUpdateOne) Save(ctx context.Context) (*ProjectTemplate, error) {
-	if _, ok := ptuo.mutation.UpdateTime(); !ok {
-		v := projecttemplate.UpdateDefaultUpdateTime()
-		ptuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := ptuo.mutation.Name(); ok {
-		if err := projecttemplate.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *ProjectTemplate
 	)
+	ptuo.defaults()
 	if len(ptuo.hooks) == 0 {
+		if err = ptuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ptuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectTemplateMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ptuo.check(); err != nil {
+				return nil, err
 			}
 			ptuo.mutation = mutation
 			node, err = ptuo.sqlSave(ctx)
@@ -616,6 +628,24 @@ func (ptuo *ProjectTemplateUpdateOne) ExecX(ctx context.Context) {
 	if err := ptuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ptuo *ProjectTemplateUpdateOne) defaults() {
+	if _, ok := ptuo.mutation.UpdateTime(); !ok {
+		v := projecttemplate.UpdateDefaultUpdateTime()
+		ptuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ptuo *ProjectTemplateUpdateOne) check() error {
+	if v, ok := ptuo.mutation.Name(); ok {
+		if err := projecttemplate.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ptuo *ProjectTemplateUpdateOne) sqlSave(ctx context.Context) (pt *ProjectTemplate, err error) {

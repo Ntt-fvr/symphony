@@ -71,8 +71,12 @@ func (scsq *SurveyCellScanQuery) QueryChecklistItem() *CheckListItemQuery {
 		if err := scsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := scsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, scsq.sqlQuery()),
+			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, selector),
 			sqlgraph.To(checklistitem.Table, checklistitem.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveycellscan.ChecklistItemTable, surveycellscan.ChecklistItemColumn),
 		)
@@ -89,8 +93,12 @@ func (scsq *SurveyCellScanQuery) QuerySurveyQuestion() *SurveyQuestionQuery {
 		if err := scsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := scsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, scsq.sqlQuery()),
+			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, selector),
 			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveycellscan.SurveyQuestionTable, surveycellscan.SurveyQuestionColumn),
 		)
@@ -107,8 +115,12 @@ func (scsq *SurveyCellScanQuery) QueryLocation() *LocationQuery {
 		if err := scsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := scsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, scsq.sqlQuery()),
+			sqlgraph.From(surveycellscan.Table, surveycellscan.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveycellscan.LocationTable, surveycellscan.LocationColumn),
 		)
@@ -556,7 +568,7 @@ func (scsq *SurveyCellScanQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := scsq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, surveycellscan.ValidColumn)
 			}
 		}
 	}
@@ -575,7 +587,7 @@ func (scsq *SurveyCellScanQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range scsq.order {
-		p(selector)
+		p(selector, surveycellscan.ValidColumn)
 	}
 	if offset := scsq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -810,8 +822,17 @@ func (scsgb *SurveyCellScanGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (scsgb *SurveyCellScanGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range scsgb.fields {
+		if !surveycellscan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := scsgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := scsgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := scsgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -824,7 +845,7 @@ func (scsgb *SurveyCellScanGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(scsgb.fields)+len(scsgb.fns))
 	columns = append(columns, scsgb.fields...)
 	for _, fn := range scsgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, surveycellscan.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(scsgb.fields...)
 }
@@ -1044,6 +1065,11 @@ func (scss *SurveyCellScanSelect) BoolX(ctx context.Context) bool {
 }
 
 func (scss *SurveyCellScanSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range scss.fields {
+		if !surveycellscan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := scss.sqlQuery().Query()
 	if err := scss.driver.Query(ctx, query, args, rows); err != nil {

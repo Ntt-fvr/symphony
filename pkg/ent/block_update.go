@@ -408,42 +408,24 @@ func (bu *BlockUpdate) RemoveInstances(b ...*BlockInstance) *BlockUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (bu *BlockUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := bu.mutation.UpdateTime(); !ok {
-		v := block.UpdateDefaultUpdateTime()
-		bu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := bu.mutation.Name(); ok {
-		if err := block.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := bu.mutation.GetType(); ok {
-		if err := block.TypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := bu.mutation.ActionType(); ok {
-		if err := block.ActionTypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
-		}
-	}
-	if v, ok := bu.mutation.TriggerType(); ok {
-		if err := block.TriggerTypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	bu.defaults()
 	if len(bu.hooks) == 0 {
+		if err = bu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = bu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*BlockMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = bu.check(); err != nil {
+				return 0, err
 			}
 			bu.mutation = mutation
 			affected, err = bu.sqlSave(ctx)
@@ -480,6 +462,39 @@ func (bu *BlockUpdate) ExecX(ctx context.Context) {
 	if err := bu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (bu *BlockUpdate) defaults() {
+	if _, ok := bu.mutation.UpdateTime(); !ok {
+		v := block.UpdateDefaultUpdateTime()
+		bu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (bu *BlockUpdate) check() error {
+	if v, ok := bu.mutation.Name(); ok {
+		if err := block.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.GetType(); ok {
+		if err := block.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.ActionType(); ok {
+		if err := block.ActionTypeValidator(v); err != nil {
+			return &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
+		}
+	}
+	if v, ok := bu.mutation.TriggerType(); ok {
+		if err := block.TriggerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1367,42 +1382,24 @@ func (buo *BlockUpdateOne) RemoveInstances(b ...*BlockInstance) *BlockUpdateOne 
 
 // Save executes the query and returns the updated entity.
 func (buo *BlockUpdateOne) Save(ctx context.Context) (*Block, error) {
-	if _, ok := buo.mutation.UpdateTime(); !ok {
-		v := block.UpdateDefaultUpdateTime()
-		buo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := buo.mutation.Name(); ok {
-		if err := block.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := buo.mutation.GetType(); ok {
-		if err := block.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := buo.mutation.ActionType(); ok {
-		if err := block.ActionTypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
-		}
-	}
-	if v, ok := buo.mutation.TriggerType(); ok {
-		if err := block.TriggerTypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Block
 	)
+	buo.defaults()
 	if len(buo.hooks) == 0 {
+		if err = buo.check(); err != nil {
+			return nil, err
+		}
 		node, err = buo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*BlockMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = buo.check(); err != nil {
+				return nil, err
 			}
 			buo.mutation = mutation
 			node, err = buo.sqlSave(ctx)
@@ -1439,6 +1436,39 @@ func (buo *BlockUpdateOne) ExecX(ctx context.Context) {
 	if err := buo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (buo *BlockUpdateOne) defaults() {
+	if _, ok := buo.mutation.UpdateTime(); !ok {
+		v := block.UpdateDefaultUpdateTime()
+		buo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (buo *BlockUpdateOne) check() error {
+	if v, ok := buo.mutation.Name(); ok {
+		if err := block.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.GetType(); ok {
+		if err := block.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.ActionType(); ok {
+		if err := block.ActionTypeValidator(v); err != nil {
+			return &ValidationError{Name: "action_type", err: fmt.Errorf("ent: validator failed for field \"action_type\": %w", err)}
+		}
+	}
+	if v, ok := buo.mutation.TriggerType(); ok {
+		if err := block.TriggerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_type", err: fmt.Errorf("ent: validator failed for field \"trigger_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {

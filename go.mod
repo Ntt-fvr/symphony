@@ -13,11 +13,12 @@ require (
 	github.com/Azure/azure-amqp-common-go/v2 v2.1.0 // indirect
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/NYTimes/gziphandler v1.1.1
+	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/alecthomas/kong v0.2.11
 	github.com/aws/aws-sdk-go v1.34.22
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.3-0.20200907090222-545048151374
+	github.com/facebook/ent v0.4.3-0.20200915131743-bd4d2a553cce
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2

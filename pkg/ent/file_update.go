@@ -403,32 +403,24 @@ func (fu *FileUpdate) ClearSurveyQuestion() *FileUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fu *FileUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fu.mutation.UpdateTime(); !ok {
-		v := file.UpdateDefaultUpdateTime()
-		fu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fu.mutation.GetType(); ok {
-		if err := file.TypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := fu.mutation.Size(); ok {
-		if err := file.SizeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "size", err: fmt.Errorf("ent: validator failed for field \"size\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fu.defaults()
 	if len(fu.hooks) == 0 {
+		if err = fu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = fu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FileMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fu.check(); err != nil {
+				return 0, err
 			}
 			fu.mutation = mutation
 			affected, err = fu.sqlSave(ctx)
@@ -465,6 +457,29 @@ func (fu *FileUpdate) ExecX(ctx context.Context) {
 	if err := fu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fu *FileUpdate) defaults() {
+	if _, ok := fu.mutation.UpdateTime(); !ok {
+		v := file.UpdateDefaultUpdateTime()
+		fu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fu *FileUpdate) check() error {
+	if v, ok := fu.mutation.GetType(); ok {
+		if err := file.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := fu.mutation.Size(); ok {
+		if err := file.SizeValidator(v); err != nil {
+			return &ValidationError{Name: "size", err: fmt.Errorf("ent: validator failed for field \"size\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1288,32 +1303,24 @@ func (fuo *FileUpdateOne) ClearSurveyQuestion() *FileUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fuo *FileUpdateOne) Save(ctx context.Context) (*File, error) {
-	if _, ok := fuo.mutation.UpdateTime(); !ok {
-		v := file.UpdateDefaultUpdateTime()
-		fuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fuo.mutation.GetType(); ok {
-		if err := file.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := fuo.mutation.Size(); ok {
-		if err := file.SizeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "size", err: fmt.Errorf("ent: validator failed for field \"size\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *File
 	)
+	fuo.defaults()
 	if len(fuo.hooks) == 0 {
+		if err = fuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = fuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FileMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fuo.check(); err != nil {
+				return nil, err
 			}
 			fuo.mutation = mutation
 			node, err = fuo.sqlSave(ctx)
@@ -1350,6 +1357,29 @@ func (fuo *FileUpdateOne) ExecX(ctx context.Context) {
 	if err := fuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fuo *FileUpdateOne) defaults() {
+	if _, ok := fuo.mutation.UpdateTime(); !ok {
+		v := file.UpdateDefaultUpdateTime()
+		fuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fuo *FileUpdateOne) check() error {
+	if v, ok := fuo.mutation.GetType(); ok {
+		if err := file.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := fuo.mutation.Size(); ok {
+		if err := file.SizeValidator(v); err != nil {
+			return &ValidationError{Name: "size", err: fmt.Errorf("ent: validator failed for field \"size\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (f *File, err error) {

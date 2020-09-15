@@ -368,36 +368,23 @@ func (cliu *CheckListItemUpdate) ClearCheckListCategory() *CheckListItemUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (cliu *CheckListItemUpdate) Save(ctx context.Context) (int, error) {
-	if v, ok := cliu.mutation.GetType(); ok {
-		if err := checklistitem.TypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := cliu.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
-			return 0, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-	if v, ok := cliu.mutation.YesNoVal(); ok {
-		if err := checklistitem.YesNoValValidator(v); err != nil {
-			return 0, &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
-		}
-	}
-
-	if _, ok := cliu.mutation.CheckListCategoryID(); cliu.mutation.CheckListCategoryCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"check_list_category\"")
-	}
 	var (
 		err      error
 		affected int
 	)
 	if len(cliu.hooks) == 0 {
+		if err = cliu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = cliu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cliu.check(); err != nil {
+				return 0, err
 			}
 			cliu.mutation = mutation
 			affected, err = cliu.sqlSave(ctx)
@@ -434,6 +421,29 @@ func (cliu *CheckListItemUpdate) ExecX(ctx context.Context) {
 	if err := cliu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cliu *CheckListItemUpdate) check() error {
+	if v, ok := cliu.mutation.GetType(); ok {
+		if err := checklistitem.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := cliu.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if v, ok := cliu.mutation.YesNoVal(); ok {
+		if err := checklistitem.YesNoValValidator(v); err != nil {
+			return &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
+		}
+	}
+	if _, ok := cliu.mutation.CheckListCategoryID(); cliu.mutation.CheckListCategoryCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"check_list_category\"")
+	}
+	return nil
 }
 
 func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1138,36 +1148,23 @@ func (cliuo *CheckListItemUpdateOne) ClearCheckListCategory() *CheckListItemUpda
 
 // Save executes the query and returns the updated entity.
 func (cliuo *CheckListItemUpdateOne) Save(ctx context.Context) (*CheckListItem, error) {
-	if v, ok := cliuo.mutation.GetType(); ok {
-		if err := checklistitem.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := cliuo.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
-			return nil, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-	if v, ok := cliuo.mutation.YesNoVal(); ok {
-		if err := checklistitem.YesNoValValidator(v); err != nil {
-			return nil, &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
-		}
-	}
-
-	if _, ok := cliuo.mutation.CheckListCategoryID(); cliuo.mutation.CheckListCategoryCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"check_list_category\"")
-	}
 	var (
 		err  error
 		node *CheckListItem
 	)
 	if len(cliuo.hooks) == 0 {
+		if err = cliuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cliuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cliuo.check(); err != nil {
+				return nil, err
 			}
 			cliuo.mutation = mutation
 			node, err = cliuo.sqlSave(ctx)
@@ -1204,6 +1201,29 @@ func (cliuo *CheckListItemUpdateOne) ExecX(ctx context.Context) {
 	if err := cliuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cliuo *CheckListItemUpdateOne) check() error {
+	if v, ok := cliuo.mutation.GetType(); ok {
+		if err := checklistitem.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := cliuo.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitem.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if v, ok := cliuo.mutation.YesNoVal(); ok {
+		if err := checklistitem.YesNoValValidator(v); err != nil {
+			return &ValidationError{Name: "yes_no_val", err: fmt.Errorf("ent: validator failed for field \"yes_no_val\": %w", err)}
+		}
+	}
+	if _, ok := cliuo.mutation.CheckListCategoryID(); cliuo.mutation.CheckListCategoryCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"check_list_category\"")
+	}
+	return nil
 }
 
 func (cliuo *CheckListItemUpdateOne) sqlSave(ctx context.Context) (cli *CheckListItem, err error) {

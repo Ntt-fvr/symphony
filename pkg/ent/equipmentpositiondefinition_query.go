@@ -70,8 +70,12 @@ func (epdq *EquipmentPositionDefinitionQuery) QueryPositions() *EquipmentPositio
 		if err := epdq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID, epdq.sqlQuery()),
+			sqlgraph.From(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID, selector),
 			sqlgraph.To(equipmentposition.Table, equipmentposition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmentpositiondefinition.PositionsTable, equipmentpositiondefinition.PositionsColumn),
 		)
@@ -88,8 +92,12 @@ func (epdq *EquipmentPositionDefinitionQuery) QueryEquipmentType() *EquipmentTyp
 		if err := epdq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID, epdq.sqlQuery()),
+			sqlgraph.From(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID, selector),
 			sqlgraph.To(equipmenttype.Table, equipmenttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, equipmentpositiondefinition.EquipmentTypeTable, equipmentpositiondefinition.EquipmentTypeColumn),
 		)
@@ -503,7 +511,7 @@ func (epdq *EquipmentPositionDefinitionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := epdq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmentpositiondefinition.ValidColumn)
 			}
 		}
 	}
@@ -522,7 +530,7 @@ func (epdq *EquipmentPositionDefinitionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range epdq.order {
-		p(selector)
+		p(selector, equipmentpositiondefinition.ValidColumn)
 	}
 	if offset := epdq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -757,8 +765,17 @@ func (epdgb *EquipmentPositionDefinitionGroupBy) BoolX(ctx context.Context) bool
 }
 
 func (epdgb *EquipmentPositionDefinitionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range epdgb.fields {
+		if !equipmentpositiondefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := epdgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := epdgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := epdgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -771,7 +788,7 @@ func (epdgb *EquipmentPositionDefinitionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(epdgb.fields)+len(epdgb.fns))
 	columns = append(columns, epdgb.fields...)
 	for _, fn := range epdgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmentpositiondefinition.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(epdgb.fields...)
 }
@@ -991,6 +1008,11 @@ func (epds *EquipmentPositionDefinitionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (epds *EquipmentPositionDefinitionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range epds.fields {
+		if !equipmentpositiondefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := epds.sqlQuery().Query()
 	if err := epds.driver.Query(ctx, query, args, rows); err != nil {

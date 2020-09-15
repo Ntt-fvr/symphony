@@ -71,8 +71,12 @@ func (ltq *LocationTypeQuery) QueryLocations() *LocationQuery {
 		if err := ltq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ltq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, ltq.sqlQuery()),
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, locationtype.LocationsTable, locationtype.LocationsColumn),
 		)
@@ -89,8 +93,12 @@ func (ltq *LocationTypeQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := ltq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ltq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, ltq.sqlQuery()),
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.PropertyTypesTable, locationtype.PropertyTypesColumn),
 		)
@@ -107,8 +115,12 @@ func (ltq *LocationTypeQuery) QuerySurveyTemplateCategories() *SurveyTemplateCat
 		if err := ltq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ltq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(locationtype.Table, locationtype.FieldID, ltq.sqlQuery()),
+			sqlgraph.From(locationtype.Table, locationtype.FieldID, selector),
 			sqlgraph.To(surveytemplatecategory.Table, surveytemplatecategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, locationtype.SurveyTemplateCategoriesTable, locationtype.SurveyTemplateCategoriesColumn),
 		)
@@ -555,7 +567,7 @@ func (ltq *LocationTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ltq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, locationtype.ValidColumn)
 			}
 		}
 	}
@@ -574,7 +586,7 @@ func (ltq *LocationTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range ltq.order {
-		p(selector)
+		p(selector, locationtype.ValidColumn)
 	}
 	if offset := ltq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -809,8 +821,17 @@ func (ltgb *LocationTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (ltgb *LocationTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ltgb.fields {
+		if !locationtype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := ltgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := ltgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := ltgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -823,7 +844,7 @@ func (ltgb *LocationTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(ltgb.fields)+len(ltgb.fns))
 	columns = append(columns, ltgb.fields...)
 	for _, fn := range ltgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, locationtype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(ltgb.fields...)
 }
@@ -1043,6 +1064,11 @@ func (lts *LocationTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (lts *LocationTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range lts.fields {
+		if !locationtype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := lts.sqlQuery().Query()
 	if err := lts.driver.Query(ctx, query, args, rows); err != nil {

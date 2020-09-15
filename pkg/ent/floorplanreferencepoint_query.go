@@ -369,7 +369,7 @@ func (fprpq *FloorPlanReferencePointQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fprpq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, floorplanreferencepoint.ValidColumn)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (fprpq *FloorPlanReferencePointQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fprpq.order {
-		p(selector)
+		p(selector, floorplanreferencepoint.ValidColumn)
 	}
 	if offset := fprpq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -623,8 +623,17 @@ func (fprpgb *FloorPlanReferencePointGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fprpgb *FloorPlanReferencePointGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fprpgb.fields {
+		if !floorplanreferencepoint.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fprpgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fprpgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fprpgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -637,7 +646,7 @@ func (fprpgb *FloorPlanReferencePointGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fprpgb.fields)+len(fprpgb.fns))
 	columns = append(columns, fprpgb.fields...)
 	for _, fn := range fprpgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, floorplanreferencepoint.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fprpgb.fields...)
 }
@@ -857,6 +866,11 @@ func (fprps *FloorPlanReferencePointSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fprps *FloorPlanReferencePointSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fprps.fields {
+		if !floorplanreferencepoint.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fprps.sqlQuery().Query()
 	if err := fprps.driver.Query(ctx, query, args, rows); err != nil {

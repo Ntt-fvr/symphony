@@ -70,8 +70,12 @@ func (stcq *SurveyTemplateCategoryQuery) QuerySurveyTemplateQuestions() *SurveyT
 		if err := stcq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveytemplatecategory.Table, surveytemplatecategory.FieldID, stcq.sqlQuery()),
+			sqlgraph.From(surveytemplatecategory.Table, surveytemplatecategory.FieldID, selector),
 			sqlgraph.To(surveytemplatequestion.Table, surveytemplatequestion.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, surveytemplatecategory.SurveyTemplateQuestionsTable, surveytemplatecategory.SurveyTemplateQuestionsColumn),
 		)
@@ -88,8 +92,12 @@ func (stcq *SurveyTemplateCategoryQuery) QueryLocationType() *LocationTypeQuery 
 		if err := stcq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := stcq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveytemplatecategory.Table, surveytemplatecategory.FieldID, stcq.sqlQuery()),
+			sqlgraph.From(surveytemplatecategory.Table, surveytemplatecategory.FieldID, selector),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, surveytemplatecategory.LocationTypeTable, surveytemplatecategory.LocationTypeColumn),
 		)
@@ -503,7 +511,7 @@ func (stcq *SurveyTemplateCategoryQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := stcq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, surveytemplatecategory.ValidColumn)
 			}
 		}
 	}
@@ -522,7 +530,7 @@ func (stcq *SurveyTemplateCategoryQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range stcq.order {
-		p(selector)
+		p(selector, surveytemplatecategory.ValidColumn)
 	}
 	if offset := stcq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -757,8 +765,17 @@ func (stcgb *SurveyTemplateCategoryGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (stcgb *SurveyTemplateCategoryGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range stcgb.fields {
+		if !surveytemplatecategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := stcgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := stcgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := stcgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -771,7 +788,7 @@ func (stcgb *SurveyTemplateCategoryGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(stcgb.fields)+len(stcgb.fns))
 	columns = append(columns, stcgb.fields...)
 	for _, fn := range stcgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, surveytemplatecategory.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(stcgb.fields...)
 }
@@ -991,6 +1008,11 @@ func (stcs *SurveyTemplateCategorySelect) BoolX(ctx context.Context) bool {
 }
 
 func (stcs *SurveyTemplateCategorySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range stcs.fields {
+		if !surveytemplatecategory.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := stcs.sqlQuery().Query()
 	if err := stcs.driver.Query(ctx, query, args, rows); err != nil {

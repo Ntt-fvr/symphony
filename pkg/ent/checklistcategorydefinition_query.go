@@ -72,8 +72,12 @@ func (clcdq *CheckListCategoryDefinitionQuery) QueryCheckListItemDefinitions() *
 		if err := clcdq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clcdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, clcdq.sqlQuery()),
+			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, selector),
 			sqlgraph.To(checklistitemdefinition.Table, checklistitemdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, checklistcategorydefinition.CheckListItemDefinitionsTable, checklistcategorydefinition.CheckListItemDefinitionsColumn),
 		)
@@ -90,8 +94,12 @@ func (clcdq *CheckListCategoryDefinitionQuery) QueryWorkOrderType() *WorkOrderTy
 		if err := clcdq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clcdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, clcdq.sqlQuery()),
+			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, selector),
 			sqlgraph.To(workordertype.Table, workordertype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checklistcategorydefinition.WorkOrderTypeTable, checklistcategorydefinition.WorkOrderTypeColumn),
 		)
@@ -108,8 +116,12 @@ func (clcdq *CheckListCategoryDefinitionQuery) QueryWorkOrderTemplate() *WorkOrd
 		if err := clcdq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clcdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, clcdq.sqlQuery()),
+			sqlgraph.From(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID, selector),
 			sqlgraph.To(workordertemplate.Table, workordertemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checklistcategorydefinition.WorkOrderTemplateTable, checklistcategorydefinition.WorkOrderTemplateColumn),
 		)
@@ -560,7 +572,7 @@ func (clcdq *CheckListCategoryDefinitionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := clcdq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, checklistcategorydefinition.ValidColumn)
 			}
 		}
 	}
@@ -579,7 +591,7 @@ func (clcdq *CheckListCategoryDefinitionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range clcdq.order {
-		p(selector)
+		p(selector, checklistcategorydefinition.ValidColumn)
 	}
 	if offset := clcdq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -814,8 +826,17 @@ func (clcdgb *CheckListCategoryDefinitionGroupBy) BoolX(ctx context.Context) boo
 }
 
 func (clcdgb *CheckListCategoryDefinitionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clcdgb.fields {
+		if !checklistcategorydefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := clcdgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := clcdgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := clcdgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -828,7 +849,7 @@ func (clcdgb *CheckListCategoryDefinitionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(clcdgb.fields)+len(clcdgb.fns))
 	columns = append(columns, clcdgb.fields...)
 	for _, fn := range clcdgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, checklistcategorydefinition.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(clcdgb.fields...)
 }
@@ -1048,6 +1069,11 @@ func (clcds *CheckListCategoryDefinitionSelect) BoolX(ctx context.Context) bool 
 }
 
 func (clcds *CheckListCategoryDefinitionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clcds.fields {
+		if !checklistcategorydefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := clcds.sqlQuery().Query()
 	if err := clcds.driver.Query(ctx, query, args, rows); err != nil {

@@ -419,20 +419,24 @@ func (pc *PropertyCreate) Mutation() *PropertyMutation {
 
 // Save creates the Property in the database.
 func (pc *PropertyCreate) Save(ctx context.Context) (*Property, error) {
-	if err := pc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Property
 	)
+	pc.defaults()
 	if len(pc.hooks) == 0 {
+		if err = pc.check(); err != nil {
+			return nil, err
+		}
 		node, err = pc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PropertyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pc.check(); err != nil {
+				return nil, err
 			}
 			pc.mutation = mutation
 			node, err = pc.sqlSave(ctx)
@@ -458,7 +462,8 @@ func (pc *PropertyCreate) SaveX(ctx context.Context) *Property {
 	return v
 }
 
-func (pc *PropertyCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (pc *PropertyCreate) defaults() {
 	if _, ok := pc.mutation.CreateTime(); !ok {
 		v := property.DefaultCreateTime()
 		pc.mutation.SetCreateTime(v)
@@ -466,6 +471,16 @@ func (pc *PropertyCreate) preSave() error {
 	if _, ok := pc.mutation.UpdateTime(); !ok {
 		v := property.DefaultUpdateTime()
 		pc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (pc *PropertyCreate) check() error {
+	if _, ok := pc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := pc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := pc.mutation.TypeID(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required edge \"type\"")}
@@ -841,13 +856,14 @@ func (pcb *PropertyCreateBulk) Save(ctx context.Context) ([]*Property, error) {
 	for i := range pcb.builders {
 		func(i int, root context.Context) {
 			builder := pcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*PropertyMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

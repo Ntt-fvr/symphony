@@ -166,27 +166,24 @@ func (sedu *ServiceEndpointDefinitionUpdate) ClearEquipmentType() *ServiceEndpoi
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (sedu *ServiceEndpointDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := sedu.mutation.UpdateTime(); !ok {
-		v := serviceendpointdefinition.UpdateDefaultUpdateTime()
-		sedu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := sedu.mutation.Name(); ok {
-		if err := serviceendpointdefinition.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	sedu.defaults()
 	if len(sedu.hooks) == 0 {
+		if err = sedu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = sedu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = sedu.check(); err != nil {
+				return 0, err
 			}
 			sedu.mutation = mutation
 			affected, err = sedu.sqlSave(ctx)
@@ -223,6 +220,24 @@ func (sedu *ServiceEndpointDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := sedu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (sedu *ServiceEndpointDefinitionUpdate) defaults() {
+	if _, ok := sedu.mutation.UpdateTime(); !ok {
+		v := serviceendpointdefinition.UpdateDefaultUpdateTime()
+		sedu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (sedu *ServiceEndpointDefinitionUpdate) check() error {
+	if v, ok := sedu.mutation.Name(); ok {
+		if err := serviceendpointdefinition.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (sedu *ServiceEndpointDefinitionUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -558,27 +573,24 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) ClearEquipmentType() *ServiceEn
 
 // Save executes the query and returns the updated entity.
 func (seduo *ServiceEndpointDefinitionUpdateOne) Save(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	if _, ok := seduo.mutation.UpdateTime(); !ok {
-		v := serviceendpointdefinition.UpdateDefaultUpdateTime()
-		seduo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := seduo.mutation.Name(); ok {
-		if err := serviceendpointdefinition.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *ServiceEndpointDefinition
 	)
+	seduo.defaults()
 	if len(seduo.hooks) == 0 {
+		if err = seduo.check(); err != nil {
+			return nil, err
+		}
 		node, err = seduo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = seduo.check(); err != nil {
+				return nil, err
 			}
 			seduo.mutation = mutation
 			node, err = seduo.sqlSave(ctx)
@@ -615,6 +627,24 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := seduo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (seduo *ServiceEndpointDefinitionUpdateOne) defaults() {
+	if _, ok := seduo.mutation.UpdateTime(); !ok {
+		v := serviceendpointdefinition.UpdateDefaultUpdateTime()
+		seduo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (seduo *ServiceEndpointDefinitionUpdateOne) check() error {
+	if v, ok := seduo.mutation.Name(); ok {
+		if err := serviceendpointdefinition.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (sed *ServiceEndpointDefinition, err error) {

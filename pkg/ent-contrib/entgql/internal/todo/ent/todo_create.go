@@ -105,20 +105,24 @@ func (tc *TodoCreate) Mutation() *TodoMutation {
 
 // Save creates the Todo in the database.
 func (tc *TodoCreate) Save(ctx context.Context) (*Todo, error) {
-	if err := tc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Todo
 	)
+	tc.defaults()
 	if len(tc.hooks) == 0 {
+		if err = tc.check(); err != nil {
+			return nil, err
+		}
 		node, err = tc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TodoMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = tc.check(); err != nil {
+				return nil, err
 			}
 			tc.mutation = mutation
 			node, err = tc.sqlSave(ctx)
@@ -144,10 +148,22 @@ func (tc *TodoCreate) SaveX(ctx context.Context) *Todo {
 	return v
 }
 
-func (tc *TodoCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (tc *TodoCreate) defaults() {
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		v := todo.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := tc.mutation.Priority(); !ok {
+		v := todo.DefaultPriority
+		tc.mutation.SetPriority(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (tc *TodoCreate) check() error {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New("ent: missing required field \"created_at\"")}
 	}
 	if _, ok := tc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
@@ -158,8 +174,7 @@ func (tc *TodoCreate) preSave() error {
 		}
 	}
 	if _, ok := tc.mutation.Priority(); !ok {
-		v := todo.DefaultPriority
-		tc.mutation.SetPriority(v)
+		return &ValidationError{Name: "priority", err: errors.New("ent: missing required field \"priority\"")}
 	}
 	if _, ok := tc.mutation.Text(); !ok {
 		return &ValidationError{Name: "text", err: errors.New("ent: missing required field \"text\"")}
@@ -283,13 +298,14 @@ func (tcb *TodoCreateBulk) Save(ctx context.Context) ([]*Todo, error) {
 	for i := range tcb.builders {
 		func(i int, root context.Context) {
 			builder := tcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*TodoMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

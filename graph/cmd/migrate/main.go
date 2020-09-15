@@ -31,7 +31,6 @@ func main() {
 		WaitForDB  bool       `name:"wait-for-db" help:"Wait for database to be ready."`
 		DropColumn bool       `help:"Enable column drop."`
 		DropIndex  bool       `help:"Enable index drop."`
-		Fixture    bool       `help:"Run ent@v0.1.0 migrate fixture."`
 		DryRun     bool       `help:"Run in dry run mode."`
 		Tenant     string     `placeholder:"<tenant>" help:"Target specific tenant."`
 		LogConfig  log.Config `embed:""`
@@ -88,7 +87,6 @@ func main() {
 			logger.For(ctx).Sugar().Info,
 		),
 		Options: []schema.MigrateOption{
-			schema.WithFixture(cli.Fixture),
 			schema.WithDropColumn(cli.DropColumn),
 			schema.WithDropIndex(cli.DropIndex),
 		},

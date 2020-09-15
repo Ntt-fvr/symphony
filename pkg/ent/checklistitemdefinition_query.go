@@ -67,8 +67,12 @@ func (clidq *CheckListItemDefinitionQuery) QueryCheckListCategoryDefinition() *C
 		if err := clidq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := clidq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(checklistitemdefinition.Table, checklistitemdefinition.FieldID, clidq.sqlQuery()),
+			sqlgraph.From(checklistitemdefinition.Table, checklistitemdefinition.FieldID, selector),
 			sqlgraph.To(checklistcategorydefinition.Table, checklistcategorydefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checklistitemdefinition.CheckListCategoryDefinitionTable, checklistitemdefinition.CheckListCategoryDefinitionColumn),
 		)
@@ -442,7 +446,7 @@ func (clidq *CheckListItemDefinitionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := clidq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, checklistitemdefinition.ValidColumn)
 			}
 		}
 	}
@@ -461,7 +465,7 @@ func (clidq *CheckListItemDefinitionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range clidq.order {
-		p(selector)
+		p(selector, checklistitemdefinition.ValidColumn)
 	}
 	if offset := clidq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -696,8 +700,17 @@ func (clidgb *CheckListItemDefinitionGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (clidgb *CheckListItemDefinitionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clidgb.fields {
+		if !checklistitemdefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := clidgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := clidgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := clidgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -710,7 +723,7 @@ func (clidgb *CheckListItemDefinitionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(clidgb.fields)+len(clidgb.fns))
 	columns = append(columns, clidgb.fields...)
 	for _, fn := range clidgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, checklistitemdefinition.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(clidgb.fields...)
 }
@@ -930,6 +943,11 @@ func (clids *CheckListItemDefinitionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (clids *CheckListItemDefinitionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range clids.fields {
+		if !checklistitemdefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := clids.sqlQuery().Query()
 	if err := clids.driver.Query(ctx, query, args, rows); err != nil {

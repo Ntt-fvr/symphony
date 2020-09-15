@@ -69,8 +69,12 @@ func (aq *ActivityQuery) QueryAuthor() *UserQuery {
 		if err := aq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := aq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(activity.Table, activity.FieldID, aq.sqlQuery()),
+			sqlgraph.From(activity.Table, activity.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, activity.AuthorTable, activity.AuthorColumn),
 		)
@@ -87,8 +91,12 @@ func (aq *ActivityQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := aq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := aq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(activity.Table, activity.FieldID, aq.sqlQuery()),
+			sqlgraph.From(activity.Table, activity.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, activity.WorkOrderTable, activity.WorkOrderColumn),
 		)
@@ -499,7 +507,7 @@ func (aq *ActivityQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := aq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, activity.ValidColumn)
 			}
 		}
 	}
@@ -518,7 +526,7 @@ func (aq *ActivityQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range aq.order {
-		p(selector)
+		p(selector, activity.ValidColumn)
 	}
 	if offset := aq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -753,8 +761,17 @@ func (agb *ActivityGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (agb *ActivityGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range agb.fields {
+		if !activity.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := agb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := agb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := agb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -767,7 +784,7 @@ func (agb *ActivityGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(agb.fields)+len(agb.fns))
 	columns = append(columns, agb.fields...)
 	for _, fn := range agb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, activity.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(agb.fields...)
 }
@@ -987,6 +1004,11 @@ func (as *ActivitySelect) BoolX(ctx context.Context) bool {
 }
 
 func (as *ActivitySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range as.fields {
+		if !activity.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := as.sqlQuery().Query()
 	if err := as.driver.Query(ctx, query, args, rows); err != nil {

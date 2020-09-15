@@ -199,27 +199,24 @@ func (fiu *FlowInstanceUpdate) ClearParentSubflowBlock() *FlowInstanceUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fiu *FlowInstanceUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fiu.mutation.UpdateTime(); !ok {
-		v := flowinstance.UpdateDefaultUpdateTime()
-		fiu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fiu.mutation.Status(); ok {
-		if err := flowinstance.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fiu.defaults()
 	if len(fiu.hooks) == 0 {
+		if err = fiu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = fiu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowInstanceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fiu.check(); err != nil {
+				return 0, err
 			}
 			fiu.mutation = mutation
 			affected, err = fiu.sqlSave(ctx)
@@ -256,6 +253,24 @@ func (fiu *FlowInstanceUpdate) ExecX(ctx context.Context) {
 	if err := fiu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fiu *FlowInstanceUpdate) defaults() {
+	if _, ok := fiu.mutation.UpdateTime(); !ok {
+		v := flowinstance.UpdateDefaultUpdateTime()
+		fiu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fiu *FlowInstanceUpdate) check() error {
+	if v, ok := fiu.mutation.Status(); ok {
+		if err := flowinstance.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fiu *FlowInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -657,27 +672,24 @@ func (fiuo *FlowInstanceUpdateOne) ClearParentSubflowBlock() *FlowInstanceUpdate
 
 // Save executes the query and returns the updated entity.
 func (fiuo *FlowInstanceUpdateOne) Save(ctx context.Context) (*FlowInstance, error) {
-	if _, ok := fiuo.mutation.UpdateTime(); !ok {
-		v := flowinstance.UpdateDefaultUpdateTime()
-		fiuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fiuo.mutation.Status(); ok {
-		if err := flowinstance.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *FlowInstance
 	)
+	fiuo.defaults()
 	if len(fiuo.hooks) == 0 {
+		if err = fiuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = fiuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowInstanceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fiuo.check(); err != nil {
+				return nil, err
 			}
 			fiuo.mutation = mutation
 			node, err = fiuo.sqlSave(ctx)
@@ -714,6 +726,24 @@ func (fiuo *FlowInstanceUpdateOne) ExecX(ctx context.Context) {
 	if err := fiuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fiuo *FlowInstanceUpdateOne) defaults() {
+	if _, ok := fiuo.mutation.UpdateTime(); !ok {
+		v := flowinstance.UpdateDefaultUpdateTime()
+		fiuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fiuo *FlowInstanceUpdateOne) check() error {
+	if v, ok := fiuo.mutation.Status(); ok {
+		if err := flowinstance.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (fi *FlowInstance, err error) {

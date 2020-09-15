@@ -196,27 +196,24 @@ func (lu *LinkUpdate) RemoveService(s ...*Service) *LinkUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (lu *LinkUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := lu.mutation.UpdateTime(); !ok {
-		v := link.UpdateDefaultUpdateTime()
-		lu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := lu.mutation.FutureState(); ok {
-		if err := link.FutureStateValidator(v); err != nil {
-			return 0, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	lu.defaults()
 	if len(lu.hooks) == 0 {
+		if err = lu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = lu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LinkMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = lu.check(); err != nil {
+				return 0, err
 			}
 			lu.mutation = mutation
 			affected, err = lu.sqlSave(ctx)
@@ -253,6 +250,24 @@ func (lu *LinkUpdate) ExecX(ctx context.Context) {
 	if err := lu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (lu *LinkUpdate) defaults() {
+	if _, ok := lu.mutation.UpdateTime(); !ok {
+		v := link.UpdateDefaultUpdateTime()
+		lu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (lu *LinkUpdate) check() error {
+	if v, ok := lu.mutation.FutureState(); ok {
+		if err := link.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (lu *LinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -668,27 +683,24 @@ func (luo *LinkUpdateOne) RemoveService(s ...*Service) *LinkUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (luo *LinkUpdateOne) Save(ctx context.Context) (*Link, error) {
-	if _, ok := luo.mutation.UpdateTime(); !ok {
-		v := link.UpdateDefaultUpdateTime()
-		luo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := luo.mutation.FutureState(); ok {
-		if err := link.FutureStateValidator(v); err != nil {
-			return nil, &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Link
 	)
+	luo.defaults()
 	if len(luo.hooks) == 0 {
+		if err = luo.check(); err != nil {
+			return nil, err
+		}
 		node, err = luo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LinkMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = luo.check(); err != nil {
+				return nil, err
 			}
 			luo.mutation = mutation
 			node, err = luo.sqlSave(ctx)
@@ -725,6 +737,24 @@ func (luo *LinkUpdateOne) ExecX(ctx context.Context) {
 	if err := luo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (luo *LinkUpdateOne) defaults() {
+	if _, ok := luo.mutation.UpdateTime(); !ok {
+		v := link.UpdateDefaultUpdateTime()
+		luo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (luo *LinkUpdateOne) check() error {
+	if v, ok := luo.mutation.FutureState(); ok {
+		if err := link.FutureStateValidator(v); err != nil {
+			return &ValidationError{Name: "future_state", err: fmt.Errorf("ent: validator failed for field \"future_state\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {

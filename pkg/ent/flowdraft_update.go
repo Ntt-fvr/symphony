@@ -140,27 +140,24 @@ func (fdu *FlowDraftUpdate) ClearFlow() *FlowDraftUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fdu *FlowDraftUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fdu.mutation.UpdateTime(); !ok {
-		v := flowdraft.UpdateDefaultUpdateTime()
-		fdu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fdu.mutation.Name(); ok {
-		if err := flowdraft.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fdu.defaults()
 	if len(fdu.hooks) == 0 {
+		if err = fdu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = fdu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowDraftMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fdu.check(); err != nil {
+				return 0, err
 			}
 			fdu.mutation = mutation
 			affected, err = fdu.sqlSave(ctx)
@@ -197,6 +194,24 @@ func (fdu *FlowDraftUpdate) ExecX(ctx context.Context) {
 	if err := fdu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fdu *FlowDraftUpdate) defaults() {
+	if _, ok := fdu.mutation.UpdateTime(); !ok {
+		v := flowdraft.UpdateDefaultUpdateTime()
+		fdu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fdu *FlowDraftUpdate) check() error {
+	if v, ok := fdu.mutation.Name(); ok {
+		if err := flowdraft.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -470,27 +485,24 @@ func (fduo *FlowDraftUpdateOne) ClearFlow() *FlowDraftUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fduo *FlowDraftUpdateOne) Save(ctx context.Context) (*FlowDraft, error) {
-	if _, ok := fduo.mutation.UpdateTime(); !ok {
-		v := flowdraft.UpdateDefaultUpdateTime()
-		fduo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fduo.mutation.Name(); ok {
-		if err := flowdraft.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *FlowDraft
 	)
+	fduo.defaults()
 	if len(fduo.hooks) == 0 {
+		if err = fduo.check(); err != nil {
+			return nil, err
+		}
 		node, err = fduo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowDraftMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fduo.check(); err != nil {
+				return nil, err
 			}
 			fduo.mutation = mutation
 			node, err = fduo.sqlSave(ctx)
@@ -527,6 +539,24 @@ func (fduo *FlowDraftUpdateOne) ExecX(ctx context.Context) {
 	if err := fduo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fduo *FlowDraftUpdateOne) defaults() {
+	if _, ok := fduo.mutation.UpdateTime(); !ok {
+		v := flowdraft.UpdateDefaultUpdateTime()
+		fduo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fduo *FlowDraftUpdateOne) check() error {
+	if v, ok := fduo.mutation.Name(); ok {
+		if err := flowdraft.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err error) {

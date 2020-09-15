@@ -67,8 +67,12 @@ func (fetq *FlowExecutionTemplateQuery) QueryBlocks() *BlockQuery {
 		if err := fetq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fetq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID, fetq.sqlQuery()),
+			sqlgraph.From(flowexecutiontemplate.Table, flowexecutiontemplate.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, flowexecutiontemplate.BlocksTable, flowexecutiontemplate.BlocksColumn),
 		)
@@ -435,7 +439,7 @@ func (fetq *FlowExecutionTemplateQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fetq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, flowexecutiontemplate.ValidColumn)
 			}
 		}
 	}
@@ -454,7 +458,7 @@ func (fetq *FlowExecutionTemplateQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fetq.order {
-		p(selector)
+		p(selector, flowexecutiontemplate.ValidColumn)
 	}
 	if offset := fetq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -689,8 +693,17 @@ func (fetgb *FlowExecutionTemplateGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fetgb *FlowExecutionTemplateGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fetgb.fields {
+		if !flowexecutiontemplate.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fetgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fetgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fetgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -703,7 +716,7 @@ func (fetgb *FlowExecutionTemplateGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fetgb.fields)+len(fetgb.fns))
 	columns = append(columns, fetgb.fields...)
 	for _, fn := range fetgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, flowexecutiontemplate.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fetgb.fields...)
 }
@@ -923,6 +936,11 @@ func (fets *FlowExecutionTemplateSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fets *FlowExecutionTemplateSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fets.fields {
+		if !flowexecutiontemplate.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fets.sqlQuery().Query()
 	if err := fets.driver.Query(ctx, query, args, rows); err != nil {

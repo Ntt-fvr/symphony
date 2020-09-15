@@ -369,7 +369,7 @@ func (etq *ExportTaskQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := etq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, exporttask.ValidColumn)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (etq *ExportTaskQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range etq.order {
-		p(selector)
+		p(selector, exporttask.ValidColumn)
 	}
 	if offset := etq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -623,8 +623,17 @@ func (etgb *ExportTaskGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (etgb *ExportTaskGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range etgb.fields {
+		if !exporttask.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := etgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := etgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := etgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -637,7 +646,7 @@ func (etgb *ExportTaskGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(etgb.fields)+len(etgb.fns))
 	columns = append(columns, etgb.fields...)
 	for _, fn := range etgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, exporttask.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(etgb.fields...)
 }
@@ -857,6 +866,11 @@ func (ets *ExportTaskSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ets *ExportTaskSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ets.fields {
+		if !exporttask.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ets.sqlQuery().Query()
 	if err := ets.driver.Query(ctx, query, args, rows); err != nil {

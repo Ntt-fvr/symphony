@@ -170,27 +170,24 @@ func (au *ActivityUpdate) ClearWorkOrder() *ActivityUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (au *ActivityUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := au.mutation.UpdateTime(); !ok {
-		v := activity.UpdateDefaultUpdateTime()
-		au.mutation.SetUpdateTime(v)
-	}
-	if v, ok := au.mutation.ActivityType(); ok {
-		if err := activity.ActivityTypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	au.defaults()
 	if len(au.hooks) == 0 {
+		if err = au.check(); err != nil {
+			return 0, err
+		}
 		affected, err = au.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ActivityMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = au.check(); err != nil {
+				return 0, err
 			}
 			au.mutation = mutation
 			affected, err = au.sqlSave(ctx)
@@ -227,6 +224,24 @@ func (au *ActivityUpdate) ExecX(ctx context.Context) {
 	if err := au.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (au *ActivityUpdate) defaults() {
+	if _, ok := au.mutation.UpdateTime(); !ok {
+		v := activity.UpdateDefaultUpdateTime()
+		au.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (au *ActivityUpdate) check() error {
+	if v, ok := au.mutation.ActivityType(); ok {
+		if err := activity.ActivityTypeValidator(v); err != nil {
+			return &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (au *ActivityUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -532,27 +547,24 @@ func (auo *ActivityUpdateOne) ClearWorkOrder() *ActivityUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (auo *ActivityUpdateOne) Save(ctx context.Context) (*Activity, error) {
-	if _, ok := auo.mutation.UpdateTime(); !ok {
-		v := activity.UpdateDefaultUpdateTime()
-		auo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := auo.mutation.ActivityType(); ok {
-		if err := activity.ActivityTypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Activity
 	)
+	auo.defaults()
 	if len(auo.hooks) == 0 {
+		if err = auo.check(); err != nil {
+			return nil, err
+		}
 		node, err = auo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ActivityMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = auo.check(); err != nil {
+				return nil, err
 			}
 			auo.mutation = mutation
 			node, err = auo.sqlSave(ctx)
@@ -589,6 +601,24 @@ func (auo *ActivityUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (auo *ActivityUpdateOne) defaults() {
+	if _, ok := auo.mutation.UpdateTime(); !ok {
+		v := activity.UpdateDefaultUpdateTime()
+		auo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (auo *ActivityUpdateOne) check() error {
+	if v, ok := auo.mutation.ActivityType(); ok {
+		if err := activity.ActivityTypeValidator(v); err != nil {
+			return &ValidationError{Name: "activity_type", err: fmt.Errorf("ent: validator failed for field \"activity_type\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err error) {

@@ -123,20 +123,24 @@ func (sec *ServiceEndpointCreate) Mutation() *ServiceEndpointMutation {
 
 // Save creates the ServiceEndpoint in the database.
 func (sec *ServiceEndpointCreate) Save(ctx context.Context) (*ServiceEndpoint, error) {
-	if err := sec.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *ServiceEndpoint
 	)
+	sec.defaults()
 	if len(sec.hooks) == 0 {
+		if err = sec.check(); err != nil {
+			return nil, err
+		}
 		node, err = sec.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = sec.check(); err != nil {
+				return nil, err
 			}
 			sec.mutation = mutation
 			node, err = sec.sqlSave(ctx)
@@ -162,7 +166,8 @@ func (sec *ServiceEndpointCreate) SaveX(ctx context.Context) *ServiceEndpoint {
 	return v
 }
 
-func (sec *ServiceEndpointCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (sec *ServiceEndpointCreate) defaults() {
 	if _, ok := sec.mutation.CreateTime(); !ok {
 		v := serviceendpoint.DefaultCreateTime()
 		sec.mutation.SetCreateTime(v)
@@ -170,6 +175,16 @@ func (sec *ServiceEndpointCreate) preSave() error {
 	if _, ok := sec.mutation.UpdateTime(); !ok {
 		v := serviceendpoint.DefaultUpdateTime()
 		sec.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (sec *ServiceEndpointCreate) check() error {
+	if _, ok := sec.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := sec.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := sec.mutation.EquipmentID(); !ok {
 		return &ValidationError{Name: "equipment", err: errors.New("ent: missing required edge \"equipment\"")}
@@ -313,13 +328,14 @@ func (secb *ServiceEndpointCreateBulk) Save(ctx context.Context) ([]*ServiceEndp
 	for i := range secb.builders {
 		func(i int, root context.Context) {
 			builder := secb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ServiceEndpointMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

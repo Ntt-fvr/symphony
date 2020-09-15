@@ -593,26 +593,24 @@ func (squ *SurveyQuestionUpdate) RemoveImages(f ...*File) *SurveyQuestionUpdate 
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (squ *SurveyQuestionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := squ.mutation.UpdateTime(); !ok {
-		v := surveyquestion.UpdateDefaultUpdateTime()
-		squ.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := squ.mutation.SurveyID(); squ.mutation.SurveyCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"survey\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	squ.defaults()
 	if len(squ.hooks) == 0 {
+		if err = squ.check(); err != nil {
+			return 0, err
+		}
 		affected, err = squ.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyQuestionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = squ.check(); err != nil {
+				return 0, err
 			}
 			squ.mutation = mutation
 			affected, err = squ.sqlSave(ctx)
@@ -649,6 +647,22 @@ func (squ *SurveyQuestionUpdate) ExecX(ctx context.Context) {
 	if err := squ.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (squ *SurveyQuestionUpdate) defaults() {
+	if _, ok := squ.mutation.UpdateTime(); !ok {
+		v := surveyquestion.UpdateDefaultUpdateTime()
+		squ.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (squ *SurveyQuestionUpdate) check() error {
+	if _, ok := squ.mutation.SurveyID(); squ.mutation.SurveyCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"survey\"")
+	}
+	return nil
 }
 
 func (squ *SurveyQuestionUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1779,26 +1793,24 @@ func (squo *SurveyQuestionUpdateOne) RemoveImages(f ...*File) *SurveyQuestionUpd
 
 // Save executes the query and returns the updated entity.
 func (squo *SurveyQuestionUpdateOne) Save(ctx context.Context) (*SurveyQuestion, error) {
-	if _, ok := squo.mutation.UpdateTime(); !ok {
-		v := surveyquestion.UpdateDefaultUpdateTime()
-		squo.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := squo.mutation.SurveyID(); squo.mutation.SurveyCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"survey\"")
-	}
-
 	var (
 		err  error
 		node *SurveyQuestion
 	)
+	squo.defaults()
 	if len(squo.hooks) == 0 {
+		if err = squo.check(); err != nil {
+			return nil, err
+		}
 		node, err = squo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyQuestionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = squo.check(); err != nil {
+				return nil, err
 			}
 			squo.mutation = mutation
 			node, err = squo.sqlSave(ctx)
@@ -1835,6 +1847,22 @@ func (squo *SurveyQuestionUpdateOne) ExecX(ctx context.Context) {
 	if err := squo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (squo *SurveyQuestionUpdateOne) defaults() {
+	if _, ok := squo.mutation.UpdateTime(); !ok {
+		v := surveyquestion.UpdateDefaultUpdateTime()
+		squo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (squo *SurveyQuestionUpdateOne) check() error {
+	if _, ok := squo.mutation.SurveyID(); squo.mutation.SurveyCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"survey\"")
+	}
+	return nil
 }
 
 func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQuestion, err error) {

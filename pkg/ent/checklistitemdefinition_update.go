@@ -177,35 +177,24 @@ func (clidu *CheckListItemDefinitionUpdate) ClearCheckListCategoryDefinition() *
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (clidu *CheckListItemDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := clidu.mutation.UpdateTime(); !ok {
-		v := checklistitemdefinition.UpdateDefaultUpdateTime()
-		clidu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := clidu.mutation.GetType(); ok {
-		if err := checklistitemdefinition.TypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := clidu.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
-			return 0, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-
-	if _, ok := clidu.mutation.CheckListCategoryDefinitionID(); clidu.mutation.CheckListCategoryDefinitionCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"check_list_category_definition\"")
-	}
 	var (
 		err      error
 		affected int
 	)
+	clidu.defaults()
 	if len(clidu.hooks) == 0 {
+		if err = clidu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = clidu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clidu.check(); err != nil {
+				return 0, err
 			}
 			clidu.mutation = mutation
 			affected, err = clidu.sqlSave(ctx)
@@ -242,6 +231,32 @@ func (clidu *CheckListItemDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := clidu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (clidu *CheckListItemDefinitionUpdate) defaults() {
+	if _, ok := clidu.mutation.UpdateTime(); !ok {
+		v := checklistitemdefinition.UpdateDefaultUpdateTime()
+		clidu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clidu *CheckListItemDefinitionUpdate) check() error {
+	if v, ok := clidu.mutation.GetType(); ok {
+		if err := checklistitemdefinition.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := clidu.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if _, ok := clidu.mutation.CheckListCategoryDefinitionID(); clidu.mutation.CheckListCategoryDefinitionCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"check_list_category_definition\"")
+	}
+	return nil
 }
 
 func (clidu *CheckListItemDefinitionUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -551,35 +566,24 @@ func (cliduo *CheckListItemDefinitionUpdateOne) ClearCheckListCategoryDefinition
 
 // Save executes the query and returns the updated entity.
 func (cliduo *CheckListItemDefinitionUpdateOne) Save(ctx context.Context) (*CheckListItemDefinition, error) {
-	if _, ok := cliduo.mutation.UpdateTime(); !ok {
-		v := checklistitemdefinition.UpdateDefaultUpdateTime()
-		cliduo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := cliduo.mutation.GetType(); ok {
-		if err := checklistitemdefinition.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := cliduo.mutation.EnumSelectionModeValue(); ok {
-		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
-			return nil, &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
-		}
-	}
-
-	if _, ok := cliduo.mutation.CheckListCategoryDefinitionID(); cliduo.mutation.CheckListCategoryDefinitionCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"check_list_category_definition\"")
-	}
 	var (
 		err  error
 		node *CheckListItemDefinition
 	)
+	cliduo.defaults()
 	if len(cliduo.hooks) == 0 {
+		if err = cliduo.check(); err != nil {
+			return nil, err
+		}
 		node, err = cliduo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = cliduo.check(); err != nil {
+				return nil, err
 			}
 			cliduo.mutation = mutation
 			node, err = cliduo.sqlSave(ctx)
@@ -616,6 +620,32 @@ func (cliduo *CheckListItemDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := cliduo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (cliduo *CheckListItemDefinitionUpdateOne) defaults() {
+	if _, ok := cliduo.mutation.UpdateTime(); !ok {
+		v := checklistitemdefinition.UpdateDefaultUpdateTime()
+		cliduo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (cliduo *CheckListItemDefinitionUpdateOne) check() error {
+	if v, ok := cliduo.mutation.GetType(); ok {
+		if err := checklistitemdefinition.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := cliduo.mutation.EnumSelectionModeValue(); ok {
+		if err := checklistitemdefinition.EnumSelectionModeValueValidator(v); err != nil {
+			return &ValidationError{Name: "enum_selection_mode_value", err: fmt.Errorf("ent: validator failed for field \"enum_selection_mode_value\": %w", err)}
+		}
+	}
+	if _, ok := cliduo.mutation.CheckListCategoryDefinitionID(); cliduo.mutation.CheckListCategoryDefinitionCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"check_list_category_definition\"")
+	}
+	return nil
 }
 
 func (cliduo *CheckListItemDefinitionUpdateOne) sqlSave(ctx context.Context) (clid *CheckListItemDefinition, err error) {

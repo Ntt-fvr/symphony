@@ -122,20 +122,24 @@ func (ppc *PermissionsPolicyCreate) Mutation() *PermissionsPolicyMutation {
 
 // Save creates the PermissionsPolicy in the database.
 func (ppc *PermissionsPolicyCreate) Save(ctx context.Context) (*PermissionsPolicy, error) {
-	if err := ppc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *PermissionsPolicy
 	)
+	ppc.defaults()
 	if len(ppc.hooks) == 0 {
+		if err = ppc.check(); err != nil {
+			return nil, err
+		}
 		node, err = ppc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PermissionsPolicyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ppc.check(); err != nil {
+				return nil, err
 			}
 			ppc.mutation = mutation
 			node, err = ppc.sqlSave(ctx)
@@ -161,7 +165,8 @@ func (ppc *PermissionsPolicyCreate) SaveX(ctx context.Context) *PermissionsPolic
 	return v
 }
 
-func (ppc *PermissionsPolicyCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (ppc *PermissionsPolicyCreate) defaults() {
 	if _, ok := ppc.mutation.CreateTime(); !ok {
 		v := permissionspolicy.DefaultCreateTime()
 		ppc.mutation.SetCreateTime(v)
@@ -170,6 +175,20 @@ func (ppc *PermissionsPolicyCreate) preSave() error {
 		v := permissionspolicy.DefaultUpdateTime()
 		ppc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := ppc.mutation.IsGlobal(); !ok {
+		v := permissionspolicy.DefaultIsGlobal
+		ppc.mutation.SetIsGlobal(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ppc *PermissionsPolicyCreate) check() error {
+	if _, ok := ppc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := ppc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
 	if _, ok := ppc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
 	}
@@ -177,10 +196,6 @@ func (ppc *PermissionsPolicyCreate) preSave() error {
 		if err := permissionspolicy.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
-	}
-	if _, ok := ppc.mutation.IsGlobal(); !ok {
-		v := permissionspolicy.DefaultIsGlobal
-		ppc.mutation.SetIsGlobal(v)
 	}
 	return nil
 }
@@ -301,13 +316,14 @@ func (ppcb *PermissionsPolicyCreateBulk) Save(ctx context.Context) ([]*Permissio
 	for i := range ppcb.builders {
 		func(i int, root context.Context) {
 			builder := ppcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*PermissionsPolicyMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

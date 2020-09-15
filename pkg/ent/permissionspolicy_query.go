@@ -67,8 +67,12 @@ func (ppq *PermissionsPolicyQuery) QueryGroups() *UsersGroupQuery {
 		if err := ppq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ppq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(permissionspolicy.Table, permissionspolicy.FieldID, ppq.sqlQuery()),
+			sqlgraph.From(permissionspolicy.Table, permissionspolicy.FieldID, selector),
 			sqlgraph.To(usersgroup.Table, usersgroup.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, permissionspolicy.GroupsTable, permissionspolicy.GroupsPrimaryKey...),
 		)
@@ -470,7 +474,7 @@ func (ppq *PermissionsPolicyQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ppq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, permissionspolicy.ValidColumn)
 			}
 		}
 	}
@@ -489,7 +493,7 @@ func (ppq *PermissionsPolicyQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range ppq.order {
-		p(selector)
+		p(selector, permissionspolicy.ValidColumn)
 	}
 	if offset := ppq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -724,8 +728,17 @@ func (ppgb *PermissionsPolicyGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (ppgb *PermissionsPolicyGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ppgb.fields {
+		if !permissionspolicy.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := ppgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := ppgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := ppgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -738,7 +751,7 @@ func (ppgb *PermissionsPolicyGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(ppgb.fields)+len(ppgb.fns))
 	columns = append(columns, ppgb.fields...)
 	for _, fn := range ppgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, permissionspolicy.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(ppgb.fields...)
 }
@@ -958,6 +971,11 @@ func (pps *PermissionsPolicySelect) BoolX(ctx context.Context) bool {
 }
 
 func (pps *PermissionsPolicySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range pps.fields {
+		if !permissionspolicy.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := pps.sqlQuery().Query()
 	if err := pps.driver.Query(ctx, query, args, rows); err != nil {

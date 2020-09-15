@@ -73,8 +73,12 @@ func (seq *ServiceEndpointQuery) QueryPort() *EquipmentPortQuery {
 		if err := seq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := seq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, seq.sqlQuery()),
+			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, selector),
 			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, serviceendpoint.PortTable, serviceendpoint.PortColumn),
 		)
@@ -91,8 +95,12 @@ func (seq *ServiceEndpointQuery) QueryEquipment() *EquipmentQuery {
 		if err := seq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := seq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, seq.sqlQuery()),
+			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, serviceendpoint.EquipmentTable, serviceendpoint.EquipmentColumn),
 		)
@@ -109,8 +117,12 @@ func (seq *ServiceEndpointQuery) QueryService() *ServiceQuery {
 		if err := seq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := seq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, seq.sqlQuery()),
+			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, serviceendpoint.ServiceTable, serviceendpoint.ServiceColumn),
 		)
@@ -127,8 +139,12 @@ func (seq *ServiceEndpointQuery) QueryDefinition() *ServiceEndpointDefinitionQue
 		if err := seq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := seq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, seq.sqlQuery()),
+			sqlgraph.From(serviceendpoint.Table, serviceendpoint.FieldID, selector),
 			sqlgraph.To(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, serviceendpoint.DefinitionTable, serviceendpoint.DefinitionColumn),
 		)
@@ -613,7 +629,7 @@ func (seq *ServiceEndpointQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := seq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, serviceendpoint.ValidColumn)
 			}
 		}
 	}
@@ -632,7 +648,7 @@ func (seq *ServiceEndpointQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range seq.order {
-		p(selector)
+		p(selector, serviceendpoint.ValidColumn)
 	}
 	if offset := seq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -867,8 +883,17 @@ func (segb *ServiceEndpointGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (segb *ServiceEndpointGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range segb.fields {
+		if !serviceendpoint.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := segb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := segb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := segb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -881,7 +906,7 @@ func (segb *ServiceEndpointGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(segb.fields)+len(segb.fns))
 	columns = append(columns, segb.fields...)
 	for _, fn := range segb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, serviceendpoint.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(segb.fields...)
 }
@@ -1101,6 +1126,11 @@ func (ses *ServiceEndpointSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ses *ServiceEndpointSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ses.fields {
+		if !serviceendpoint.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ses.sqlQuery().Query()
 	if err := ses.driver.Query(ctx, query, args, rows); err != nil {

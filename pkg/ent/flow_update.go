@@ -165,32 +165,24 @@ func (fu *FlowUpdate) RemoveDraft(f ...*FlowDraft) *FlowUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fu *FlowUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fu.mutation.UpdateTime(); !ok {
-		v := flow.UpdateDefaultUpdateTime()
-		fu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fu.mutation.Name(); ok {
-		if err := flow.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := fu.mutation.Status(); ok {
-		if err := flow.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fu.defaults()
 	if len(fu.hooks) == 0 {
+		if err = fu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = fu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fu.check(); err != nil {
+				return 0, err
 			}
 			fu.mutation = mutation
 			affected, err = fu.sqlSave(ctx)
@@ -227,6 +219,29 @@ func (fu *FlowUpdate) ExecX(ctx context.Context) {
 	if err := fu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fu *FlowUpdate) defaults() {
+	if _, ok := fu.mutation.UpdateTime(); !ok {
+		v := flow.UpdateDefaultUpdateTime()
+		fu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fu *FlowUpdate) check() error {
+	if v, ok := fu.mutation.Name(); ok {
+		if err := flow.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := fu.mutation.Status(); ok {
+		if err := flow.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -551,32 +566,24 @@ func (fuo *FlowUpdateOne) RemoveDraft(f ...*FlowDraft) *FlowUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fuo *FlowUpdateOne) Save(ctx context.Context) (*Flow, error) {
-	if _, ok := fuo.mutation.UpdateTime(); !ok {
-		v := flow.UpdateDefaultUpdateTime()
-		fuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := fuo.mutation.Name(); ok {
-		if err := flow.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := fuo.mutation.Status(); ok {
-		if err := flow.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *Flow
 	)
+	fuo.defaults()
 	if len(fuo.hooks) == 0 {
+		if err = fuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = fuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fuo.check(); err != nil {
+				return nil, err
 			}
 			fuo.mutation = mutation
 			node, err = fuo.sqlSave(ctx)
@@ -613,6 +620,29 @@ func (fuo *FlowUpdateOne) ExecX(ctx context.Context) {
 	if err := fuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fuo *FlowUpdateOne) defaults() {
+	if _, ok := fuo.mutation.UpdateTime(); !ok {
+		v := flow.UpdateDefaultUpdateTime()
+		fuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fuo *FlowUpdateOne) check() error {
+	if v, ok := fuo.mutation.Name(); ok {
+		if err := flow.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := fuo.mutation.Status(); ok {
+		if err := flow.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (f *Flow, err error) {

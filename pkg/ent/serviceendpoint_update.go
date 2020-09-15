@@ -127,30 +127,24 @@ func (seu *ServiceEndpointUpdate) ClearDefinition() *ServiceEndpointUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (seu *ServiceEndpointUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := seu.mutation.UpdateTime(); !ok {
-		v := serviceendpoint.UpdateDefaultUpdateTime()
-		seu.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := seu.mutation.EquipmentID(); seu.mutation.EquipmentCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"equipment\"")
-	}
-
-	if _, ok := seu.mutation.ServiceID(); seu.mutation.ServiceCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"service\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	seu.defaults()
 	if len(seu.hooks) == 0 {
+		if err = seu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = seu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = seu.check(); err != nil {
+				return 0, err
 			}
 			seu.mutation = mutation
 			affected, err = seu.sqlSave(ctx)
@@ -187,6 +181,25 @@ func (seu *ServiceEndpointUpdate) ExecX(ctx context.Context) {
 	if err := seu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (seu *ServiceEndpointUpdate) defaults() {
+	if _, ok := seu.mutation.UpdateTime(); !ok {
+		v := serviceendpoint.UpdateDefaultUpdateTime()
+		seu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (seu *ServiceEndpointUpdate) check() error {
+	if _, ok := seu.mutation.EquipmentID(); seu.mutation.EquipmentCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"equipment\"")
+	}
+	if _, ok := seu.mutation.ServiceID(); seu.mutation.ServiceCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"service\"")
+	}
+	return nil
 }
 
 func (seu *ServiceEndpointUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -463,30 +476,24 @@ func (seuo *ServiceEndpointUpdateOne) ClearDefinition() *ServiceEndpointUpdateOn
 
 // Save executes the query and returns the updated entity.
 func (seuo *ServiceEndpointUpdateOne) Save(ctx context.Context) (*ServiceEndpoint, error) {
-	if _, ok := seuo.mutation.UpdateTime(); !ok {
-		v := serviceendpoint.UpdateDefaultUpdateTime()
-		seuo.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := seuo.mutation.EquipmentID(); seuo.mutation.EquipmentCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"equipment\"")
-	}
-
-	if _, ok := seuo.mutation.ServiceID(); seuo.mutation.ServiceCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"service\"")
-	}
-
 	var (
 		err  error
 		node *ServiceEndpoint
 	)
+	seuo.defaults()
 	if len(seuo.hooks) == 0 {
+		if err = seuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = seuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceEndpointMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = seuo.check(); err != nil {
+				return nil, err
 			}
 			seuo.mutation = mutation
 			node, err = seuo.sqlSave(ctx)
@@ -523,6 +530,25 @@ func (seuo *ServiceEndpointUpdateOne) ExecX(ctx context.Context) {
 	if err := seuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (seuo *ServiceEndpointUpdateOne) defaults() {
+	if _, ok := seuo.mutation.UpdateTime(); !ok {
+		v := serviceendpoint.UpdateDefaultUpdateTime()
+		seuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (seuo *ServiceEndpointUpdateOne) check() error {
+	if _, ok := seuo.mutation.EquipmentID(); seuo.mutation.EquipmentCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"equipment\"")
+	}
+	if _, ok := seuo.mutation.ServiceID(); seuo.mutation.ServiceCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"service\"")
+	}
+	return nil
 }
 
 func (seuo *ServiceEndpointUpdateOne) sqlSave(ctx context.Context) (se *ServiceEndpoint, err error) {

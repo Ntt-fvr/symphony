@@ -163,20 +163,24 @@ func (epdc *EquipmentPortDefinitionCreate) Mutation() *EquipmentPortDefinitionMu
 
 // Save creates the EquipmentPortDefinition in the database.
 func (epdc *EquipmentPortDefinitionCreate) Save(ctx context.Context) (*EquipmentPortDefinition, error) {
-	if err := epdc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *EquipmentPortDefinition
 	)
+	epdc.defaults()
 	if len(epdc.hooks) == 0 {
+		if err = epdc.check(); err != nil {
+			return nil, err
+		}
 		node, err = epdc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*EquipmentPortDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = epdc.check(); err != nil {
+				return nil, err
 			}
 			epdc.mutation = mutation
 			node, err = epdc.sqlSave(ctx)
@@ -202,7 +206,8 @@ func (epdc *EquipmentPortDefinitionCreate) SaveX(ctx context.Context) *Equipment
 	return v
 }
 
-func (epdc *EquipmentPortDefinitionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (epdc *EquipmentPortDefinitionCreate) defaults() {
 	if _, ok := epdc.mutation.CreateTime(); !ok {
 		v := equipmentportdefinition.DefaultCreateTime()
 		epdc.mutation.SetCreateTime(v)
@@ -210,6 +215,16 @@ func (epdc *EquipmentPortDefinitionCreate) preSave() error {
 	if _, ok := epdc.mutation.UpdateTime(); !ok {
 		v := equipmentportdefinition.DefaultUpdateTime()
 		epdc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (epdc *EquipmentPortDefinitionCreate) check() error {
+	if _, ok := epdc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := epdc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := epdc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -363,13 +378,14 @@ func (epdcb *EquipmentPortDefinitionCreateBulk) Save(ctx context.Context) ([]*Eq
 	for i := range epdcb.builders {
 		func(i int, root context.Context) {
 			builder := epdcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*EquipmentPortDefinitionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

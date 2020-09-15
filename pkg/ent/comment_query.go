@@ -71,8 +71,12 @@ func (cq *CommentQuery) QueryAuthor() *UserQuery {
 		if err := cq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(comment.Table, comment.FieldID, cq.sqlQuery()),
+			sqlgraph.From(comment.Table, comment.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, comment.AuthorTable, comment.AuthorColumn),
 		)
@@ -89,8 +93,12 @@ func (cq *CommentQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := cq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(comment.Table, comment.FieldID, cq.sqlQuery()),
+			sqlgraph.From(comment.Table, comment.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, comment.WorkOrderTable, comment.WorkOrderColumn),
 		)
@@ -107,8 +115,12 @@ func (cq *CommentQuery) QueryProject() *ProjectQuery {
 		if err := cq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := cq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(comment.Table, comment.FieldID, cq.sqlQuery()),
+			sqlgraph.From(comment.Table, comment.FieldID, selector),
 			sqlgraph.To(project.Table, project.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, comment.ProjectTable, comment.ProjectColumn),
 		)
@@ -556,7 +568,7 @@ func (cq *CommentQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := cq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, comment.ValidColumn)
 			}
 		}
 	}
@@ -575,7 +587,7 @@ func (cq *CommentQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range cq.order {
-		p(selector)
+		p(selector, comment.ValidColumn)
 	}
 	if offset := cq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -810,8 +822,17 @@ func (cgb *CommentGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (cgb *CommentGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range cgb.fields {
+		if !comment.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := cgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := cgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := cgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -824,7 +845,7 @@ func (cgb *CommentGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(cgb.fields)+len(cgb.fns))
 	columns = append(columns, cgb.fields...)
 	for _, fn := range cgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, comment.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(cgb.fields...)
 }
@@ -1044,6 +1065,11 @@ func (cs *CommentSelect) BoolX(ctx context.Context) bool {
 }
 
 func (cs *CommentSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range cs.fields {
+		if !comment.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := cs.sqlQuery().Query()
 	if err := cs.driver.Query(ctx, query, args, rows); err != nil {

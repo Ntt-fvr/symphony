@@ -120,25 +120,24 @@ func (clcu *CheckListCategoryUpdate) ClearWorkOrder() *CheckListCategoryUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (clcu *CheckListCategoryUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := clcu.mutation.UpdateTime(); !ok {
-		v := checklistcategory.UpdateDefaultUpdateTime()
-		clcu.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := clcu.mutation.WorkOrderID(); clcu.mutation.WorkOrderCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"work_order\"")
-	}
 	var (
 		err      error
 		affected int
 	)
+	clcu.defaults()
 	if len(clcu.hooks) == 0 {
+		if err = clcu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = clcu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListCategoryMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clcu.check(); err != nil {
+				return 0, err
 			}
 			clcu.mutation = mutation
 			affected, err = clcu.sqlSave(ctx)
@@ -175,6 +174,22 @@ func (clcu *CheckListCategoryUpdate) ExecX(ctx context.Context) {
 	if err := clcu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (clcu *CheckListCategoryUpdate) defaults() {
+	if _, ok := clcu.mutation.UpdateTime(); !ok {
+		v := checklistcategory.UpdateDefaultUpdateTime()
+		clcu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clcu *CheckListCategoryUpdate) check() error {
+	if _, ok := clcu.mutation.WorkOrderID(); clcu.mutation.WorkOrderCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"work_order\"")
+	}
+	return nil
 }
 
 func (clcu *CheckListCategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -415,25 +430,24 @@ func (clcuo *CheckListCategoryUpdateOne) ClearWorkOrder() *CheckListCategoryUpda
 
 // Save executes the query and returns the updated entity.
 func (clcuo *CheckListCategoryUpdateOne) Save(ctx context.Context) (*CheckListCategory, error) {
-	if _, ok := clcuo.mutation.UpdateTime(); !ok {
-		v := checklistcategory.UpdateDefaultUpdateTime()
-		clcuo.mutation.SetUpdateTime(v)
-	}
-
-	if _, ok := clcuo.mutation.WorkOrderID(); clcuo.mutation.WorkOrderCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"work_order\"")
-	}
 	var (
 		err  error
 		node *CheckListCategory
 	)
+	clcuo.defaults()
 	if len(clcuo.hooks) == 0 {
+		if err = clcuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = clcuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListCategoryMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clcuo.check(); err != nil {
+				return nil, err
 			}
 			clcuo.mutation = mutation
 			node, err = clcuo.sqlSave(ctx)
@@ -470,6 +484,22 @@ func (clcuo *CheckListCategoryUpdateOne) ExecX(ctx context.Context) {
 	if err := clcuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (clcuo *CheckListCategoryUpdateOne) defaults() {
+	if _, ok := clcuo.mutation.UpdateTime(); !ok {
+		v := checklistcategory.UpdateDefaultUpdateTime()
+		clcuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clcuo *CheckListCategoryUpdateOne) check() error {
+	if _, ok := clcuo.mutation.WorkOrderID(); clcuo.mutation.WorkOrderCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"work_order\"")
+	}
+	return nil
 }
 
 func (clcuo *CheckListCategoryUpdateOne) sqlSave(ctx context.Context) (clc *CheckListCategory, err error) {

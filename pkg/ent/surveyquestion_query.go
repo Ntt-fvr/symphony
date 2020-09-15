@@ -75,8 +75,12 @@ func (sqq *SurveyQuestionQuery) QuerySurvey() *SurveyQuery {
 		if err := sqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, sqq.sqlQuery()),
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, selector),
 			sqlgraph.To(survey.Table, survey.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveyquestion.SurveyTable, surveyquestion.SurveyColumn),
 		)
@@ -93,8 +97,12 @@ func (sqq *SurveyQuestionQuery) QueryWifiScan() *SurveyWiFiScanQuery {
 		if err := sqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, sqq.sqlQuery()),
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, selector),
 			sqlgraph.To(surveywifiscan.Table, surveywifiscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, surveyquestion.WifiScanTable, surveyquestion.WifiScanColumn),
 		)
@@ -111,8 +119,12 @@ func (sqq *SurveyQuestionQuery) QueryCellScan() *SurveyCellScanQuery {
 		if err := sqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, sqq.sqlQuery()),
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, selector),
 			sqlgraph.To(surveycellscan.Table, surveycellscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, surveyquestion.CellScanTable, surveyquestion.CellScanColumn),
 		)
@@ -129,8 +141,12 @@ func (sqq *SurveyQuestionQuery) QueryPhotoData() *FileQuery {
 		if err := sqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, sqq.sqlQuery()),
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, surveyquestion.PhotoDataTable, surveyquestion.PhotoDataColumn),
 		)
@@ -147,8 +163,12 @@ func (sqq *SurveyQuestionQuery) QueryImages() *FileQuery {
 		if err := sqq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sqq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, sqq.sqlQuery()),
+			sqlgraph.From(surveyquestion.Table, surveyquestion.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, surveyquestion.ImagesTable, surveyquestion.ImagesColumn),
 		)
@@ -682,7 +702,7 @@ func (sqq *SurveyQuestionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := sqq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, surveyquestion.ValidColumn)
 			}
 		}
 	}
@@ -701,7 +721,7 @@ func (sqq *SurveyQuestionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range sqq.order {
-		p(selector)
+		p(selector, surveyquestion.ValidColumn)
 	}
 	if offset := sqq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -936,8 +956,17 @@ func (sqgb *SurveyQuestionGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (sqgb *SurveyQuestionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range sqgb.fields {
+		if !surveyquestion.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := sqgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := sqgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := sqgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -950,7 +979,7 @@ func (sqgb *SurveyQuestionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(sqgb.fields)+len(sqgb.fns))
 	columns = append(columns, sqgb.fields...)
 	for _, fn := range sqgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, surveyquestion.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(sqgb.fields...)
 }
@@ -1170,6 +1199,11 @@ func (sqs *SurveyQuestionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (sqs *SurveyQuestionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range sqs.fields {
+		if !surveyquestion.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := sqs.sqlQuery().Query()
 	if err := sqs.driver.Query(ctx, query, args, rows); err != nil {

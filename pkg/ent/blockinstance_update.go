@@ -186,35 +186,24 @@ func (biu *BlockInstanceUpdate) ClearSubflowInstance() *BlockInstanceUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (biu *BlockInstanceUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := biu.mutation.UpdateTime(); !ok {
-		v := blockinstance.UpdateDefaultUpdateTime()
-		biu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := biu.mutation.Status(); ok {
-		if err := blockinstance.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
-	if _, ok := biu.mutation.FlowInstanceID(); biu.mutation.FlowInstanceCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"flow_instance\"")
-	}
-
-	if _, ok := biu.mutation.BlockID(); biu.mutation.BlockCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"block\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	biu.defaults()
 	if len(biu.hooks) == 0 {
+		if err = biu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = biu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*BlockInstanceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = biu.check(); err != nil {
+				return 0, err
 			}
 			biu.mutation = mutation
 			affected, err = biu.sqlSave(ctx)
@@ -251,6 +240,30 @@ func (biu *BlockInstanceUpdate) ExecX(ctx context.Context) {
 	if err := biu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (biu *BlockInstanceUpdate) defaults() {
+	if _, ok := biu.mutation.UpdateTime(); !ok {
+		v := blockinstance.UpdateDefaultUpdateTime()
+		biu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (biu *BlockInstanceUpdate) check() error {
+	if v, ok := biu.mutation.Status(); ok {
+		if err := blockinstance.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := biu.mutation.FlowInstanceID(); biu.mutation.FlowInstanceCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"flow_instance\"")
+	}
+	if _, ok := biu.mutation.BlockID(); biu.mutation.BlockCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"block\"")
+	}
+	return nil
 }
 
 func (biu *BlockInstanceUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -618,35 +631,24 @@ func (biuo *BlockInstanceUpdateOne) ClearSubflowInstance() *BlockInstanceUpdateO
 
 // Save executes the query and returns the updated entity.
 func (biuo *BlockInstanceUpdateOne) Save(ctx context.Context) (*BlockInstance, error) {
-	if _, ok := biuo.mutation.UpdateTime(); !ok {
-		v := blockinstance.UpdateDefaultUpdateTime()
-		biuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := biuo.mutation.Status(); ok {
-		if err := blockinstance.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
-	if _, ok := biuo.mutation.FlowInstanceID(); biuo.mutation.FlowInstanceCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"flow_instance\"")
-	}
-
-	if _, ok := biuo.mutation.BlockID(); biuo.mutation.BlockCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"block\"")
-	}
-
 	var (
 		err  error
 		node *BlockInstance
 	)
+	biuo.defaults()
 	if len(biuo.hooks) == 0 {
+		if err = biuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = biuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*BlockInstanceMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = biuo.check(); err != nil {
+				return nil, err
 			}
 			biuo.mutation = mutation
 			node, err = biuo.sqlSave(ctx)
@@ -683,6 +685,30 @@ func (biuo *BlockInstanceUpdateOne) ExecX(ctx context.Context) {
 	if err := biuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (biuo *BlockInstanceUpdateOne) defaults() {
+	if _, ok := biuo.mutation.UpdateTime(); !ok {
+		v := blockinstance.UpdateDefaultUpdateTime()
+		biuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (biuo *BlockInstanceUpdateOne) check() error {
+	if v, ok := biuo.mutation.Status(); ok {
+		if err := blockinstance.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := biuo.mutation.FlowInstanceID(); biuo.mutation.FlowInstanceCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"flow_instance\"")
+	}
+	if _, ok := biuo.mutation.BlockID(); biuo.mutation.BlockCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"block\"")
+	}
+	return nil
 }
 
 func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (bi *BlockInstance, err error) {

@@ -213,20 +213,24 @@ func (pc *ProjectCreate) Mutation() *ProjectMutation {
 
 // Save creates the Project in the database.
 func (pc *ProjectCreate) Save(ctx context.Context) (*Project, error) {
-	if err := pc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Project
 	)
+	pc.defaults()
 	if len(pc.hooks) == 0 {
+		if err = pc.check(); err != nil {
+			return nil, err
+		}
 		node, err = pc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pc.check(); err != nil {
+				return nil, err
 			}
 			pc.mutation = mutation
 			node, err = pc.sqlSave(ctx)
@@ -252,7 +256,8 @@ func (pc *ProjectCreate) SaveX(ctx context.Context) *Project {
 	return v
 }
 
-func (pc *ProjectCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (pc *ProjectCreate) defaults() {
 	if _, ok := pc.mutation.CreateTime(); !ok {
 		v := project.DefaultCreateTime()
 		pc.mutation.SetCreateTime(v)
@@ -260,6 +265,20 @@ func (pc *ProjectCreate) preSave() error {
 	if _, ok := pc.mutation.UpdateTime(); !ok {
 		v := project.DefaultUpdateTime()
 		pc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := pc.mutation.Priority(); !ok {
+		v := project.DefaultPriority
+		pc.mutation.SetPriority(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (pc *ProjectCreate) check() error {
+	if _, ok := pc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := pc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := pc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -270,8 +289,7 @@ func (pc *ProjectCreate) preSave() error {
 		}
 	}
 	if _, ok := pc.mutation.Priority(); !ok {
-		v := project.DefaultPriority
-		pc.mutation.SetPriority(v)
+		return &ValidationError{Name: "priority", err: errors.New("ent: missing required field \"priority\"")}
 	}
 	if v, ok := pc.mutation.Priority(); ok {
 		if err := project.PriorityValidator(v); err != nil {
@@ -498,13 +516,14 @@ func (pcb *ProjectCreateBulk) Save(ctx context.Context) ([]*Project, error) {
 	for i := range pcb.builders {
 		func(i int, root context.Context) {
 			builder := pcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ProjectMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

@@ -71,8 +71,12 @@ func (epq *EquipmentPositionQuery) QueryDefinition() *EquipmentPositionDefinitio
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, selector),
 			sqlgraph.To(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipmentposition.DefinitionTable, equipmentposition.DefinitionColumn),
 		)
@@ -89,8 +93,12 @@ func (epq *EquipmentPositionQuery) QueryParent() *EquipmentQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, equipmentposition.ParentTable, equipmentposition.ParentColumn),
 		)
@@ -107,8 +115,12 @@ func (epq *EquipmentPositionQuery) QueryAttachment() *EquipmentQuery {
 		if err := epq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := epq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, epq.sqlQuery()),
+			sqlgraph.From(equipmentposition.Table, equipmentposition.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, equipmentposition.AttachmentTable, equipmentposition.AttachmentColumn),
 		)
@@ -559,7 +571,7 @@ func (epq *EquipmentPositionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := epq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmentposition.ValidColumn)
 			}
 		}
 	}
@@ -578,7 +590,7 @@ func (epq *EquipmentPositionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range epq.order {
-		p(selector)
+		p(selector, equipmentposition.ValidColumn)
 	}
 	if offset := epq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -813,8 +825,17 @@ func (epgb *EquipmentPositionGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (epgb *EquipmentPositionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range epgb.fields {
+		if !equipmentposition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := epgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := epgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := epgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -827,7 +848,7 @@ func (epgb *EquipmentPositionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(epgb.fields)+len(epgb.fns))
 	columns = append(columns, epgb.fields...)
 	for _, fn := range epgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmentposition.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(epgb.fields...)
 }
@@ -1047,6 +1068,11 @@ func (eps *EquipmentPositionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (eps *EquipmentPositionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range eps.fields {
+		if !equipmentposition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := eps.sqlQuery().Query()
 	if err := eps.driver.Query(ctx, query, args, rows); err != nil {

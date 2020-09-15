@@ -197,27 +197,24 @@ func (stu *ServiceTypeUpdate) RemoveEndpointDefinitions(s ...*ServiceEndpointDef
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (stu *ServiceTypeUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := stu.mutation.UpdateTime(); !ok {
-		v := servicetype.UpdateDefaultUpdateTime()
-		stu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := stu.mutation.DiscoveryMethod(); ok {
-		if err := servicetype.DiscoveryMethodValidator(v); err != nil {
-			return 0, &ValidationError{Name: "discovery_method", err: fmt.Errorf("ent: validator failed for field \"discovery_method\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	stu.defaults()
 	if len(stu.hooks) == 0 {
+		if err = stu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = stu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceTypeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = stu.check(); err != nil {
+				return 0, err
 			}
 			stu.mutation = mutation
 			affected, err = stu.sqlSave(ctx)
@@ -254,6 +251,24 @@ func (stu *ServiceTypeUpdate) ExecX(ctx context.Context) {
 	if err := stu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stu *ServiceTypeUpdate) defaults() {
+	if _, ok := stu.mutation.UpdateTime(); !ok {
+		v := servicetype.UpdateDefaultUpdateTime()
+		stu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (stu *ServiceTypeUpdate) check() error {
+	if v, ok := stu.mutation.DiscoveryMethod(); ok {
+		if err := servicetype.DiscoveryMethodValidator(v); err != nil {
+			return &ValidationError{Name: "discovery_method", err: fmt.Errorf("ent: validator failed for field \"discovery_method\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (stu *ServiceTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -652,27 +667,24 @@ func (stuo *ServiceTypeUpdateOne) RemoveEndpointDefinitions(s ...*ServiceEndpoin
 
 // Save executes the query and returns the updated entity.
 func (stuo *ServiceTypeUpdateOne) Save(ctx context.Context) (*ServiceType, error) {
-	if _, ok := stuo.mutation.UpdateTime(); !ok {
-		v := servicetype.UpdateDefaultUpdateTime()
-		stuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := stuo.mutation.DiscoveryMethod(); ok {
-		if err := servicetype.DiscoveryMethodValidator(v); err != nil {
-			return nil, &ValidationError{Name: "discovery_method", err: fmt.Errorf("ent: validator failed for field \"discovery_method\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *ServiceType
 	)
+	stuo.defaults()
 	if len(stuo.hooks) == 0 {
+		if err = stuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = stuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ServiceTypeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = stuo.check(); err != nil {
+				return nil, err
 			}
 			stuo.mutation = mutation
 			node, err = stuo.sqlSave(ctx)
@@ -709,6 +721,24 @@ func (stuo *ServiceTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := stuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (stuo *ServiceTypeUpdateOne) defaults() {
+	if _, ok := stuo.mutation.UpdateTime(); !ok {
+		v := servicetype.UpdateDefaultUpdateTime()
+		stuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (stuo *ServiceTypeUpdateOne) check() error {
+	if v, ok := stuo.mutation.DiscoveryMethod(); ok {
+		if err := servicetype.DiscoveryMethodValidator(v); err != nil {
+			return &ValidationError{Name: "discovery_method", err: fmt.Errorf("ent: validator failed for field \"discovery_method\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType, err error) {

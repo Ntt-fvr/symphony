@@ -70,8 +70,12 @@ func (eptq *EquipmentPortTypeQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := eptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, eptq.sqlQuery()),
+			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmentporttype.PropertyTypesTable, equipmentporttype.PropertyTypesColumn),
 		)
@@ -88,8 +92,12 @@ func (eptq *EquipmentPortTypeQuery) QueryLinkPropertyTypes() *PropertyTypeQuery 
 		if err := eptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, eptq.sqlQuery()),
+			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmentporttype.LinkPropertyTypesTable, equipmentporttype.LinkPropertyTypesColumn),
 		)
@@ -106,8 +114,12 @@ func (eptq *EquipmentPortTypeQuery) QueryPortDefinitions() *EquipmentPortDefinit
 		if err := eptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := eptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, eptq.sqlQuery()),
+			sqlgraph.From(equipmentporttype.Table, equipmentporttype.FieldID, selector),
 			sqlgraph.To(equipmentportdefinition.Table, equipmentportdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmentporttype.PortDefinitionsTable, equipmentporttype.PortDefinitionsColumn),
 		)
@@ -554,7 +566,7 @@ func (eptq *EquipmentPortTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := eptq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmentporttype.ValidColumn)
 			}
 		}
 	}
@@ -573,7 +585,7 @@ func (eptq *EquipmentPortTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range eptq.order {
-		p(selector)
+		p(selector, equipmentporttype.ValidColumn)
 	}
 	if offset := eptq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -808,8 +820,17 @@ func (eptgb *EquipmentPortTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (eptgb *EquipmentPortTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range eptgb.fields {
+		if !equipmentporttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := eptgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := eptgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := eptgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -822,7 +843,7 @@ func (eptgb *EquipmentPortTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(eptgb.fields)+len(eptgb.fns))
 	columns = append(columns, eptgb.fields...)
 	for _, fn := range eptgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmentporttype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(eptgb.fields...)
 }
@@ -1042,6 +1063,11 @@ func (epts *EquipmentPortTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (epts *EquipmentPortTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range epts.fields {
+		if !equipmentporttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := epts.sqlQuery().Query()
 	if err := epts.driver.Query(ctx, query, args, rows); err != nil {

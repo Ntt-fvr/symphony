@@ -83,20 +83,24 @@ func (fprpc *FloorPlanReferencePointCreate) Mutation() *FloorPlanReferencePointM
 
 // Save creates the FloorPlanReferencePoint in the database.
 func (fprpc *FloorPlanReferencePointCreate) Save(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	if err := fprpc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *FloorPlanReferencePoint
 	)
+	fprpc.defaults()
 	if len(fprpc.hooks) == 0 {
+		if err = fprpc.check(); err != nil {
+			return nil, err
+		}
 		node, err = fprpc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FloorPlanReferencePointMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fprpc.check(); err != nil {
+				return nil, err
 			}
 			fprpc.mutation = mutation
 			node, err = fprpc.sqlSave(ctx)
@@ -122,7 +126,8 @@ func (fprpc *FloorPlanReferencePointCreate) SaveX(ctx context.Context) *FloorPla
 	return v
 }
 
-func (fprpc *FloorPlanReferencePointCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fprpc *FloorPlanReferencePointCreate) defaults() {
 	if _, ok := fprpc.mutation.CreateTime(); !ok {
 		v := floorplanreferencepoint.DefaultCreateTime()
 		fprpc.mutation.SetCreateTime(v)
@@ -130,6 +135,16 @@ func (fprpc *FloorPlanReferencePointCreate) preSave() error {
 	if _, ok := fprpc.mutation.UpdateTime(); !ok {
 		v := floorplanreferencepoint.DefaultUpdateTime()
 		fprpc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fprpc *FloorPlanReferencePointCreate) check() error {
+	if _, ok := fprpc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fprpc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := fprpc.mutation.X(); !ok {
 		return &ValidationError{Name: "x", err: errors.New("ent: missing required field \"x\"")}
@@ -235,13 +250,14 @@ func (fprpcb *FloorPlanReferencePointCreateBulk) Save(ctx context.Context) ([]*F
 	for i := range fprpcb.builders {
 		func(i int, root context.Context) {
 			builder := fprpcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FloorPlanReferencePointMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

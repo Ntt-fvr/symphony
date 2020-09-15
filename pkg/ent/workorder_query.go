@@ -93,8 +93,12 @@ func (woq *WorkOrderQuery) QueryType() *WorkOrderTypeQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(workordertype.Table, workordertype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.TypeTable, workorder.TypeColumn),
 		)
@@ -111,8 +115,12 @@ func (woq *WorkOrderQuery) QueryTemplate() *WorkOrderTemplateQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(workordertemplate.Table, workordertemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.TemplateTable, workorder.TemplateColumn),
 		)
@@ -129,8 +137,12 @@ func (woq *WorkOrderQuery) QueryEquipment() *EquipmentQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workorder.EquipmentTable, workorder.EquipmentColumn),
 		)
@@ -147,8 +159,12 @@ func (woq *WorkOrderQuery) QueryLinks() *LinkQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, workorder.LinksTable, workorder.LinksColumn),
 		)
@@ -165,8 +181,12 @@ func (woq *WorkOrderQuery) QueryFiles() *FileQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.FilesTable, workorder.FilesColumn),
 		)
@@ -183,8 +203,12 @@ func (woq *WorkOrderQuery) QueryHyperlinks() *HyperlinkQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(hyperlink.Table, hyperlink.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.HyperlinksTable, workorder.HyperlinksColumn),
 		)
@@ -201,8 +225,12 @@ func (woq *WorkOrderQuery) QueryLocation() *LocationQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.LocationTable, workorder.LocationColumn),
 		)
@@ -219,8 +247,12 @@ func (woq *WorkOrderQuery) QueryComments() *CommentQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(comment.Table, comment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.CommentsTable, workorder.CommentsColumn),
 		)
@@ -237,8 +269,12 @@ func (woq *WorkOrderQuery) QueryActivities() *ActivityQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(activity.Table, activity.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.ActivitiesTable, workorder.ActivitiesColumn),
 		)
@@ -255,8 +291,12 @@ func (woq *WorkOrderQuery) QueryProperties() *PropertyQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.PropertiesTable, workorder.PropertiesColumn),
 		)
@@ -273,8 +313,12 @@ func (woq *WorkOrderQuery) QueryCheckListCategories() *CheckListCategoryQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(checklistcategory.Table, checklistcategory.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, workorder.CheckListCategoriesTable, workorder.CheckListCategoriesColumn),
 		)
@@ -291,8 +335,12 @@ func (woq *WorkOrderQuery) QueryProject() *ProjectQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(project.Table, project.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, workorder.ProjectTable, workorder.ProjectColumn),
 		)
@@ -309,8 +357,12 @@ func (woq *WorkOrderQuery) QueryOwner() *UserQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.OwnerTable, workorder.OwnerColumn),
 		)
@@ -327,8 +379,12 @@ func (woq *WorkOrderQuery) QueryAssignee() *UserQuery {
 		if err := woq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := woq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(workorder.Table, workorder.FieldID, woq.sqlQuery()),
+			sqlgraph.From(workorder.Table, workorder.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, workorder.AssigneeTable, workorder.AssigneeColumn),
 		)
@@ -1207,7 +1263,7 @@ func (woq *WorkOrderQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := woq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, workorder.ValidColumn)
 			}
 		}
 	}
@@ -1226,7 +1282,7 @@ func (woq *WorkOrderQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range woq.order {
-		p(selector)
+		p(selector, workorder.ValidColumn)
 	}
 	if offset := woq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1461,8 +1517,17 @@ func (wogb *WorkOrderGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (wogb *WorkOrderGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wogb.fields {
+		if !workorder.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := wogb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := wogb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := wogb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1475,7 +1540,7 @@ func (wogb *WorkOrderGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(wogb.fields)+len(wogb.fns))
 	columns = append(columns, wogb.fields...)
 	for _, fn := range wogb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, workorder.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(wogb.fields...)
 }
@@ -1695,6 +1760,11 @@ func (wos *WorkOrderSelect) BoolX(ctx context.Context) bool {
 }
 
 func (wos *WorkOrderSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range wos.fields {
+		if !workorder.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := wos.sqlQuery().Query()
 	if err := wos.driver.Query(ctx, query, args, rows); err != nil {

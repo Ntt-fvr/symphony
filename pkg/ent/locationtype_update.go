@@ -237,15 +237,11 @@ func (ltu *LocationTypeUpdate) RemoveSurveyTemplateCategories(s ...*SurveyTempla
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ltu *LocationTypeUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := ltu.mutation.UpdateTime(); !ok {
-		v := locationtype.UpdateDefaultUpdateTime()
-		ltu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	ltu.defaults()
 	if len(ltu.hooks) == 0 {
 		affected, err = ltu.sqlSave(ctx)
 	} else {
@@ -288,6 +284,14 @@ func (ltu *LocationTypeUpdate) Exec(ctx context.Context) error {
 func (ltu *LocationTypeUpdate) ExecX(ctx context.Context) {
 	if err := ltu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ltu *LocationTypeUpdate) defaults() {
+	if _, ok := ltu.mutation.UpdateTime(); !ok {
+		v := locationtype.UpdateDefaultUpdateTime()
+		ltu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -760,15 +764,11 @@ func (ltuo *LocationTypeUpdateOne) RemoveSurveyTemplateCategories(s ...*SurveyTe
 
 // Save executes the query and returns the updated entity.
 func (ltuo *LocationTypeUpdateOne) Save(ctx context.Context) (*LocationType, error) {
-	if _, ok := ltuo.mutation.UpdateTime(); !ok {
-		v := locationtype.UpdateDefaultUpdateTime()
-		ltuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *LocationType
 	)
+	ltuo.defaults()
 	if len(ltuo.hooks) == 0 {
 		node, err = ltuo.sqlSave(ctx)
 	} else {
@@ -811,6 +811,14 @@ func (ltuo *LocationTypeUpdateOne) Exec(ctx context.Context) error {
 func (ltuo *LocationTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := ltuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ltuo *LocationTypeUpdateOne) defaults() {
+	if _, ok := ltuo.mutation.UpdateTime(); !ok {
+		v := locationtype.UpdateDefaultUpdateTime()
+		ltuo.mutation.SetUpdateTime(v)
 	}
 }
 

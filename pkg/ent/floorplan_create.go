@@ -145,20 +145,24 @@ func (fpc *FloorPlanCreate) Mutation() *FloorPlanMutation {
 
 // Save creates the FloorPlan in the database.
 func (fpc *FloorPlanCreate) Save(ctx context.Context) (*FloorPlan, error) {
-	if err := fpc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *FloorPlan
 	)
+	fpc.defaults()
 	if len(fpc.hooks) == 0 {
+		if err = fpc.check(); err != nil {
+			return nil, err
+		}
 		node, err = fpc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FloorPlanMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fpc.check(); err != nil {
+				return nil, err
 			}
 			fpc.mutation = mutation
 			node, err = fpc.sqlSave(ctx)
@@ -184,7 +188,8 @@ func (fpc *FloorPlanCreate) SaveX(ctx context.Context) *FloorPlan {
 	return v
 }
 
-func (fpc *FloorPlanCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fpc *FloorPlanCreate) defaults() {
 	if _, ok := fpc.mutation.CreateTime(); !ok {
 		v := floorplan.DefaultCreateTime()
 		fpc.mutation.SetCreateTime(v)
@@ -192,6 +197,16 @@ func (fpc *FloorPlanCreate) preSave() error {
 	if _, ok := fpc.mutation.UpdateTime(); !ok {
 		v := floorplan.DefaultUpdateTime()
 		fpc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fpc *FloorPlanCreate) check() error {
+	if _, ok := fpc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fpc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := fpc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -340,13 +355,14 @@ func (fpcb *FloorPlanCreateBulk) Save(ctx context.Context) ([]*FloorPlan, error)
 	for i := range fpcb.builders {
 		func(i int, root context.Context) {
 			builder := fpcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FloorPlanMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

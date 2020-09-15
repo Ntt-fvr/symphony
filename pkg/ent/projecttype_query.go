@@ -71,8 +71,12 @@ func (ptq *ProjectTypeQuery) QueryProperties() *PropertyTypeQuery {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
+			sqlgraph.From(projecttype.Table, projecttype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.PropertiesTable, projecttype.PropertiesColumn),
 		)
@@ -89,8 +93,12 @@ func (ptq *ProjectTypeQuery) QueryWorkOrders() *WorkOrderDefinitionQuery {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
+			sqlgraph.From(projecttype.Table, projecttype.FieldID, selector),
 			sqlgraph.To(workorderdefinition.Table, workorderdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.WorkOrdersTable, projecttype.WorkOrdersColumn),
 		)
@@ -107,8 +115,12 @@ func (ptq *ProjectTypeQuery) QueryProjects() *ProjectQuery {
 		if err := ptq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ptq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(projecttype.Table, projecttype.FieldID, ptq.sqlQuery()),
+			sqlgraph.From(projecttype.Table, projecttype.FieldID, selector),
 			sqlgraph.To(project.Table, project.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, projecttype.ProjectsTable, projecttype.ProjectsColumn),
 		)
@@ -555,7 +567,7 @@ func (ptq *ProjectTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ptq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, projecttype.ValidColumn)
 			}
 		}
 	}
@@ -574,7 +586,7 @@ func (ptq *ProjectTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range ptq.order {
-		p(selector)
+		p(selector, projecttype.ValidColumn)
 	}
 	if offset := ptq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -809,8 +821,17 @@ func (ptgb *ProjectTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (ptgb *ProjectTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ptgb.fields {
+		if !projecttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := ptgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := ptgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := ptgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -823,7 +844,7 @@ func (ptgb *ProjectTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(ptgb.fields)+len(ptgb.fns))
 	columns = append(columns, ptgb.fields...)
 	for _, fn := range ptgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, projecttype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(ptgb.fields...)
 }
@@ -1043,6 +1064,11 @@ func (pts *ProjectTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (pts *ProjectTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range pts.fields {
+		if !projecttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := pts.sqlQuery().Query()
 	if err := pts.driver.Query(ctx, query, args, rows); err != nil {

@@ -153,27 +153,24 @@ func (clcdu *CheckListCategoryDefinitionUpdate) ClearWorkOrderTemplate() *CheckL
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (clcdu *CheckListCategoryDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := clcdu.mutation.UpdateTime(); !ok {
-		v := checklistcategorydefinition.UpdateDefaultUpdateTime()
-		clcdu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := clcdu.mutation.Title(); ok {
-		if err := checklistcategorydefinition.TitleValidator(v); err != nil {
-			return 0, &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	clcdu.defaults()
 	if len(clcdu.hooks) == 0 {
+		if err = clcdu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = clcdu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListCategoryDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clcdu.check(); err != nil {
+				return 0, err
 			}
 			clcdu.mutation = mutation
 			affected, err = clcdu.sqlSave(ctx)
@@ -210,6 +207,24 @@ func (clcdu *CheckListCategoryDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := clcdu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (clcdu *CheckListCategoryDefinitionUpdate) defaults() {
+	if _, ok := clcdu.mutation.UpdateTime(); !ok {
+		v := checklistcategorydefinition.UpdateDefaultUpdateTime()
+		clcdu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clcdu *CheckListCategoryDefinitionUpdate) check() error {
+	if v, ok := clcdu.mutation.Title(); ok {
+		if err := checklistcategorydefinition.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (clcdu *CheckListCategoryDefinitionUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -518,27 +533,24 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) ClearWorkOrderTemplate() *Ch
 
 // Save executes the query and returns the updated entity.
 func (clcduo *CheckListCategoryDefinitionUpdateOne) Save(ctx context.Context) (*CheckListCategoryDefinition, error) {
-	if _, ok := clcduo.mutation.UpdateTime(); !ok {
-		v := checklistcategorydefinition.UpdateDefaultUpdateTime()
-		clcduo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := clcduo.mutation.Title(); ok {
-		if err := checklistcategorydefinition.TitleValidator(v); err != nil {
-			return nil, &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *CheckListCategoryDefinition
 	)
+	clcduo.defaults()
 	if len(clcduo.hooks) == 0 {
+		if err = clcduo.check(); err != nil {
+			return nil, err
+		}
 		node, err = clcduo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListCategoryDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clcduo.check(); err != nil {
+				return nil, err
 			}
 			clcduo.mutation = mutation
 			node, err = clcduo.sqlSave(ctx)
@@ -575,6 +587,24 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := clcduo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (clcduo *CheckListCategoryDefinitionUpdateOne) defaults() {
+	if _, ok := clcduo.mutation.UpdateTime(); !ok {
+		v := checklistcategorydefinition.UpdateDefaultUpdateTime()
+		clcduo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clcduo *CheckListCategoryDefinitionUpdateOne) check() error {
+	if v, ok := clcduo.mutation.Title(); ok {
+		if err := checklistcategorydefinition.TitleValidator(v); err != nil {
+			return &ValidationError{Name: "title", err: fmt.Errorf("ent: validator failed for field \"title\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context) (clcd *CheckListCategoryDefinition, err error) {

@@ -189,32 +189,24 @@ func (ugu *UsersGroupUpdate) RemoveFeatures(f ...*Feature) *UsersGroupUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ugu *UsersGroupUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := ugu.mutation.UpdateTime(); !ok {
-		v := usersgroup.UpdateDefaultUpdateTime()
-		ugu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := ugu.mutation.Name(); ok {
-		if err := usersgroup.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := ugu.mutation.Status(); ok {
-		if err := usersgroup.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	ugu.defaults()
 	if len(ugu.hooks) == 0 {
+		if err = ugu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ugu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UsersGroupMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ugu.check(); err != nil {
+				return 0, err
 			}
 			ugu.mutation = mutation
 			affected, err = ugu.sqlSave(ctx)
@@ -251,6 +243,29 @@ func (ugu *UsersGroupUpdate) ExecX(ctx context.Context) {
 	if err := ugu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ugu *UsersGroupUpdate) defaults() {
+	if _, ok := ugu.mutation.UpdateTime(); !ok {
+		v := usersgroup.UpdateDefaultUpdateTime()
+		ugu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ugu *UsersGroupUpdate) check() error {
+	if v, ok := ugu.mutation.Name(); ok {
+		if err := usersgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := ugu.mutation.Status(); ok {
+		if err := usersgroup.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ugu *UsersGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -640,32 +655,24 @@ func (uguo *UsersGroupUpdateOne) RemoveFeatures(f ...*Feature) *UsersGroupUpdate
 
 // Save executes the query and returns the updated entity.
 func (uguo *UsersGroupUpdateOne) Save(ctx context.Context) (*UsersGroup, error) {
-	if _, ok := uguo.mutation.UpdateTime(); !ok {
-		v := usersgroup.UpdateDefaultUpdateTime()
-		uguo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := uguo.mutation.Name(); ok {
-		if err := usersgroup.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := uguo.mutation.Status(); ok {
-		if err := usersgroup.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *UsersGroup
 	)
+	uguo.defaults()
 	if len(uguo.hooks) == 0 {
+		if err = uguo.check(); err != nil {
+			return nil, err
+		}
 		node, err = uguo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UsersGroupMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uguo.check(); err != nil {
+				return nil, err
 			}
 			uguo.mutation = mutation
 			node, err = uguo.sqlSave(ctx)
@@ -702,6 +709,29 @@ func (uguo *UsersGroupUpdateOne) ExecX(ctx context.Context) {
 	if err := uguo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (uguo *UsersGroupUpdateOne) defaults() {
+	if _, ok := uguo.mutation.UpdateTime(); !ok {
+		v := usersgroup.UpdateDefaultUpdateTime()
+		uguo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uguo *UsersGroupUpdateOne) check() error {
+	if v, ok := uguo.mutation.Name(); ok {
+		if err := usersgroup.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := uguo.mutation.Status(); ok {
+		if err := usersgroup.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, err error) {

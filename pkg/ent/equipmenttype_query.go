@@ -78,8 +78,12 @@ func (etq *EquipmentTypeQuery) QueryPortDefinitions() *EquipmentPortDefinitionQu
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(equipmentportdefinition.Table, equipmentportdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmenttype.PortDefinitionsTable, equipmenttype.PortDefinitionsColumn),
 		)
@@ -96,8 +100,12 @@ func (etq *EquipmentTypeQuery) QueryPositionDefinitions() *EquipmentPositionDefi
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(equipmentpositiondefinition.Table, equipmentpositiondefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmenttype.PositionDefinitionsTable, equipmenttype.PositionDefinitionsColumn),
 		)
@@ -114,8 +122,12 @@ func (etq *EquipmentTypeQuery) QueryPropertyTypes() *PropertyTypeQuery {
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmenttype.PropertyTypesTable, equipmenttype.PropertyTypesColumn),
 		)
@@ -132,8 +144,12 @@ func (etq *EquipmentTypeQuery) QueryEquipment() *EquipmentQuery {
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, equipmenttype.EquipmentTable, equipmenttype.EquipmentColumn),
 		)
@@ -150,8 +166,12 @@ func (etq *EquipmentTypeQuery) QueryCategory() *EquipmentCategoryQuery {
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(equipmentcategory.Table, equipmentcategory.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, equipmenttype.CategoryTable, equipmenttype.CategoryColumn),
 		)
@@ -168,8 +188,12 @@ func (etq *EquipmentTypeQuery) QueryServiceEndpointDefinitions() *ServiceEndpoin
 		if err := etq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := etq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, etq.sqlQuery()),
+			sqlgraph.From(equipmenttype.Table, equipmenttype.FieldID, selector),
 			sqlgraph.To(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, equipmenttype.ServiceEndpointDefinitionsTable, equipmenttype.ServiceEndpointDefinitionsColumn),
 		)
@@ -743,7 +767,7 @@ func (etq *EquipmentTypeQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := etq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, equipmenttype.ValidColumn)
 			}
 		}
 	}
@@ -762,7 +786,7 @@ func (etq *EquipmentTypeQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range etq.order {
-		p(selector)
+		p(selector, equipmenttype.ValidColumn)
 	}
 	if offset := etq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -997,8 +1021,17 @@ func (etgb *EquipmentTypeGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (etgb *EquipmentTypeGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range etgb.fields {
+		if !equipmenttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := etgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := etgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := etgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1011,7 +1044,7 @@ func (etgb *EquipmentTypeGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(etgb.fields)+len(etgb.fns))
 	columns = append(columns, etgb.fields...)
 	for _, fn := range etgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, equipmenttype.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(etgb.fields...)
 }
@@ -1231,6 +1264,11 @@ func (ets *EquipmentTypeSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ets *EquipmentTypeSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ets.fields {
+		if !equipmenttype.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ets.sqlQuery().Query()
 	if err := ets.driver.Query(ctx, query, args, rows); err != nil {

@@ -200,15 +200,11 @@ func (epdu *EquipmentPortDefinitionUpdate) ClearEquipmentType() *EquipmentPortDe
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (epdu *EquipmentPortDefinitionUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := epdu.mutation.UpdateTime(); !ok {
-		v := equipmentportdefinition.UpdateDefaultUpdateTime()
-		epdu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	epdu.defaults()
 	if len(epdu.hooks) == 0 {
 		affected, err = epdu.sqlSave(ctx)
 	} else {
@@ -251,6 +247,14 @@ func (epdu *EquipmentPortDefinitionUpdate) Exec(ctx context.Context) error {
 func (epdu *EquipmentPortDefinitionUpdate) ExecX(ctx context.Context) {
 	if err := epdu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epdu *EquipmentPortDefinitionUpdate) defaults() {
+	if _, ok := epdu.mutation.UpdateTime(); !ok {
+		v := equipmentportdefinition.UpdateDefaultUpdateTime()
+		epdu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -640,15 +644,11 @@ func (epduo *EquipmentPortDefinitionUpdateOne) ClearEquipmentType() *EquipmentPo
 
 // Save executes the query and returns the updated entity.
 func (epduo *EquipmentPortDefinitionUpdateOne) Save(ctx context.Context) (*EquipmentPortDefinition, error) {
-	if _, ok := epduo.mutation.UpdateTime(); !ok {
-		v := equipmentportdefinition.UpdateDefaultUpdateTime()
-		epduo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *EquipmentPortDefinition
 	)
+	epduo.defaults()
 	if len(epduo.hooks) == 0 {
 		node, err = epduo.sqlSave(ctx)
 	} else {
@@ -691,6 +691,14 @@ func (epduo *EquipmentPortDefinitionUpdateOne) Exec(ctx context.Context) error {
 func (epduo *EquipmentPortDefinitionUpdateOne) ExecX(ctx context.Context) {
 	if err := epduo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (epduo *EquipmentPortDefinitionUpdateOne) defaults() {
+	if _, ok := epduo.mutation.UpdateTime(); !ok {
+		v := equipmentportdefinition.UpdateDefaultUpdateTime()
+		epduo.mutation.SetUpdateTime(v)
 	}
 }
 

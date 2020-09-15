@@ -72,8 +72,12 @@ func (sedq *ServiceEndpointDefinitionQuery) QueryEndpoints() *ServiceEndpointQue
 		if err := sedq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sedq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, sedq.sqlQuery()),
+			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, selector),
 			sqlgraph.To(serviceendpoint.Table, serviceendpoint.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, serviceendpointdefinition.EndpointsTable, serviceendpointdefinition.EndpointsColumn),
 		)
@@ -90,8 +94,12 @@ func (sedq *ServiceEndpointDefinitionQuery) QueryServiceType() *ServiceTypeQuery
 		if err := sedq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sedq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, sedq.sqlQuery()),
+			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, selector),
 			sqlgraph.To(servicetype.Table, servicetype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, serviceendpointdefinition.ServiceTypeTable, serviceendpointdefinition.ServiceTypeColumn),
 		)
@@ -108,8 +116,12 @@ func (sedq *ServiceEndpointDefinitionQuery) QueryEquipmentType() *EquipmentTypeQ
 		if err := sedq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := sedq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, sedq.sqlQuery()),
+			sqlgraph.From(serviceendpointdefinition.Table, serviceendpointdefinition.FieldID, selector),
 			sqlgraph.To(equipmenttype.Table, equipmenttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, serviceendpointdefinition.EquipmentTypeTable, serviceendpointdefinition.EquipmentTypeColumn),
 		)
@@ -560,7 +572,7 @@ func (sedq *ServiceEndpointDefinitionQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := sedq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, serviceendpointdefinition.ValidColumn)
 			}
 		}
 	}
@@ -579,7 +591,7 @@ func (sedq *ServiceEndpointDefinitionQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range sedq.order {
-		p(selector)
+		p(selector, serviceendpointdefinition.ValidColumn)
 	}
 	if offset := sedq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -814,8 +826,17 @@ func (sedgb *ServiceEndpointDefinitionGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (sedgb *ServiceEndpointDefinitionGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range sedgb.fields {
+		if !serviceendpointdefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := sedgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := sedgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := sedgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -828,7 +849,7 @@ func (sedgb *ServiceEndpointDefinitionGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(sedgb.fields)+len(sedgb.fns))
 	columns = append(columns, sedgb.fields...)
 	for _, fn := range sedgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, serviceendpointdefinition.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(sedgb.fields...)
 }
@@ -1048,6 +1069,11 @@ func (seds *ServiceEndpointDefinitionSelect) BoolX(ctx context.Context) bool {
 }
 
 func (seds *ServiceEndpointDefinitionSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range seds.fields {
+		if !serviceendpointdefinition.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := seds.sqlQuery().Query()
 	if err := seds.driver.Query(ctx, query, args, rows); err != nil {

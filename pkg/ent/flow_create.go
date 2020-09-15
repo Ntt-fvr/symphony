@@ -132,20 +132,24 @@ func (fc *FlowCreate) Mutation() *FlowMutation {
 
 // Save creates the Flow in the database.
 func (fc *FlowCreate) Save(ctx context.Context) (*Flow, error) {
-	if err := fc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Flow
 	)
+	fc.defaults()
 	if len(fc.hooks) == 0 {
+		if err = fc.check(); err != nil {
+			return nil, err
+		}
 		node, err = fc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*FlowMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = fc.check(); err != nil {
+				return nil, err
 			}
 			fc.mutation = mutation
 			node, err = fc.sqlSave(ctx)
@@ -171,7 +175,8 @@ func (fc *FlowCreate) SaveX(ctx context.Context) *Flow {
 	return v
 }
 
-func (fc *FlowCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (fc *FlowCreate) defaults() {
 	if _, ok := fc.mutation.CreateTime(); !ok {
 		v := flow.DefaultCreateTime()
 		fc.mutation.SetCreateTime(v)
@@ -179,6 +184,20 @@ func (fc *FlowCreate) preSave() error {
 	if _, ok := fc.mutation.UpdateTime(); !ok {
 		v := flow.DefaultUpdateTime()
 		fc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := fc.mutation.Status(); !ok {
+		v := flow.DefaultStatus
+		fc.mutation.SetStatus(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (fc *FlowCreate) check() error {
+	if _, ok := fc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := fc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := fc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -189,8 +208,7 @@ func (fc *FlowCreate) preSave() error {
 		}
 	}
 	if _, ok := fc.mutation.Status(); !ok {
-		v := flow.DefaultStatus
-		fc.mutation.SetStatus(v)
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	if v, ok := fc.mutation.Status(); ok {
 		if err := flow.StatusValidator(v); err != nil {
@@ -327,13 +345,14 @@ func (fcb *FlowCreateBulk) Save(ctx context.Context) ([]*Flow, error) {
 	for i := range fcb.builders {
 		func(i int, root context.Context) {
 			builder := fcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*FlowMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

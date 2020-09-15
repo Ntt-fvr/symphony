@@ -88,8 +88,12 @@ func (lq *LocationQuery) QueryType() *LocationTypeQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(locationtype.Table, locationtype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, location.TypeTable, location.TypeColumn),
 		)
@@ -106,8 +110,12 @@ func (lq *LocationQuery) QueryParent() *LocationQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, location.ParentTable, location.ParentColumn),
 		)
@@ -124,8 +132,12 @@ func (lq *LocationQuery) QueryChildren() *LocationQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, location.ChildrenTable, location.ChildrenColumn),
 		)
@@ -142,8 +154,12 @@ func (lq *LocationQuery) QueryFiles() *FileQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, location.FilesTable, location.FilesColumn),
 		)
@@ -160,8 +176,12 @@ func (lq *LocationQuery) QueryHyperlinks() *HyperlinkQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(hyperlink.Table, hyperlink.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, location.HyperlinksTable, location.HyperlinksColumn),
 		)
@@ -178,8 +198,12 @@ func (lq *LocationQuery) QueryEquipment() *EquipmentQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, location.EquipmentTable, location.EquipmentColumn),
 		)
@@ -196,8 +220,12 @@ func (lq *LocationQuery) QueryProperties() *PropertyQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(property.Table, property.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, location.PropertiesTable, location.PropertiesColumn),
 		)
@@ -214,8 +242,12 @@ func (lq *LocationQuery) QuerySurvey() *SurveyQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(survey.Table, survey.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, location.SurveyTable, location.SurveyColumn),
 		)
@@ -232,8 +264,12 @@ func (lq *LocationQuery) QueryWifiScan() *SurveyWiFiScanQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(surveywifiscan.Table, surveywifiscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, location.WifiScanTable, location.WifiScanColumn),
 		)
@@ -250,8 +286,12 @@ func (lq *LocationQuery) QueryCellScan() *SurveyCellScanQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(surveycellscan.Table, surveycellscan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, location.CellScanTable, location.CellScanColumn),
 		)
@@ -268,8 +308,12 @@ func (lq *LocationQuery) QueryWorkOrders() *WorkOrderQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, location.WorkOrdersTable, location.WorkOrdersColumn),
 		)
@@ -286,8 +330,12 @@ func (lq *LocationQuery) QueryFloorPlans() *FloorPlanQuery {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := lq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(location.Table, location.FieldID, lq.sqlQuery()),
+			sqlgraph.From(location.Table, location.FieldID, selector),
 			sqlgraph.To(floorplan.Table, floorplan.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, location.FloorPlansTable, location.FloorPlansColumn),
 		)
@@ -1098,7 +1146,7 @@ func (lq *LocationQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := lq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, location.ValidColumn)
 			}
 		}
 	}
@@ -1117,7 +1165,7 @@ func (lq *LocationQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range lq.order {
-		p(selector)
+		p(selector, location.ValidColumn)
 	}
 	if offset := lq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1352,8 +1400,17 @@ func (lgb *LocationGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (lgb *LocationGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range lgb.fields {
+		if !location.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := lgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := lgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := lgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1366,7 +1423,7 @@ func (lgb *LocationGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(lgb.fields)+len(lgb.fns))
 	columns = append(columns, lgb.fields...)
 	for _, fn := range lgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, location.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(lgb.fields...)
 }
@@ -1586,6 +1643,11 @@ func (ls *LocationSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ls *LocationSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ls.fields {
+		if !location.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ls.sqlQuery().Query()
 	if err := ls.driver.Query(ctx, query, args, rows); err != nil {

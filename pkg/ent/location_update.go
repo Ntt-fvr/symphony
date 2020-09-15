@@ -539,41 +539,24 @@ func (lu *LocationUpdate) RemoveFloorPlans(f ...*FloorPlan) *LocationUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (lu *LocationUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := lu.mutation.UpdateTime(); !ok {
-		v := location.UpdateDefaultUpdateTime()
-		lu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := lu.mutation.Name(); ok {
-		if err := location.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := lu.mutation.Latitude(); ok {
-		if err := location.LatitudeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
-		}
-	}
-	if v, ok := lu.mutation.Longitude(); ok {
-		if err := location.LongitudeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
-		}
-	}
-
-	if _, ok := lu.mutation.TypeID(); lu.mutation.TypeCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	lu.defaults()
 	if len(lu.hooks) == 0 {
+		if err = lu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = lu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LocationMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = lu.check(); err != nil {
+				return 0, err
 			}
 			lu.mutation = mutation
 			affected, err = lu.sqlSave(ctx)
@@ -610,6 +593,37 @@ func (lu *LocationUpdate) ExecX(ctx context.Context) {
 	if err := lu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (lu *LocationUpdate) defaults() {
+	if _, ok := lu.mutation.UpdateTime(); !ok {
+		v := location.UpdateDefaultUpdateTime()
+		lu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (lu *LocationUpdate) check() error {
+	if v, ok := lu.mutation.Name(); ok {
+		if err := location.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := lu.mutation.Latitude(); ok {
+		if err := location.LatitudeValidator(v); err != nil {
+			return &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
+		}
+	}
+	if v, ok := lu.mutation.Longitude(); ok {
+		if err := location.LongitudeValidator(v); err != nil {
+			return &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
+		}
+	}
+	if _, ok := lu.mutation.TypeID(); lu.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -1823,41 +1837,24 @@ func (luo *LocationUpdateOne) RemoveFloorPlans(f ...*FloorPlan) *LocationUpdateO
 
 // Save executes the query and returns the updated entity.
 func (luo *LocationUpdateOne) Save(ctx context.Context) (*Location, error) {
-	if _, ok := luo.mutation.UpdateTime(); !ok {
-		v := location.UpdateDefaultUpdateTime()
-		luo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := luo.mutation.Name(); ok {
-		if err := location.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := luo.mutation.Latitude(); ok {
-		if err := location.LatitudeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
-		}
-	}
-	if v, ok := luo.mutation.Longitude(); ok {
-		if err := location.LongitudeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
-		}
-	}
-
-	if _, ok := luo.mutation.TypeID(); luo.mutation.TypeCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err  error
 		node *Location
 	)
+	luo.defaults()
 	if len(luo.hooks) == 0 {
+		if err = luo.check(); err != nil {
+			return nil, err
+		}
 		node, err = luo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LocationMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = luo.check(); err != nil {
+				return nil, err
 			}
 			luo.mutation = mutation
 			node, err = luo.sqlSave(ctx)
@@ -1894,6 +1891,37 @@ func (luo *LocationUpdateOne) ExecX(ctx context.Context) {
 	if err := luo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (luo *LocationUpdateOne) defaults() {
+	if _, ok := luo.mutation.UpdateTime(); !ok {
+		v := location.UpdateDefaultUpdateTime()
+		luo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (luo *LocationUpdateOne) check() error {
+	if v, ok := luo.mutation.Name(); ok {
+		if err := location.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := luo.mutation.Latitude(); ok {
+		if err := location.LatitudeValidator(v); err != nil {
+			return &ValidationError{Name: "latitude", err: fmt.Errorf("ent: validator failed for field \"latitude\": %w", err)}
+		}
+	}
+	if v, ok := luo.mutation.Longitude(); ok {
+		if err := location.LongitudeValidator(v); err != nil {
+			return &ValidationError{Name: "longitude", err: fmt.Errorf("ent: validator failed for field \"longitude\": %w", err)}
+		}
+	}
+	if _, ok := luo.mutation.TypeID(); luo.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err error) {

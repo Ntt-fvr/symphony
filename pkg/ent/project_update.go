@@ -286,36 +286,24 @@ func (pu *ProjectUpdate) ClearCreator() *ProjectUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (pu *ProjectUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := pu.mutation.UpdateTime(); !ok {
-		v := project.UpdateDefaultUpdateTime()
-		pu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := pu.mutation.Name(); ok {
-		if err := project.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := pu.mutation.Priority(); ok {
-		if err := project.PriorityValidator(v); err != nil {
-			return 0, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
-		}
-	}
-
-	if _, ok := pu.mutation.TypeID(); pu.mutation.TypeCleared() && !ok {
-		return 0, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	pu.defaults()
 	if len(pu.hooks) == 0 {
+		if err = pu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = pu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pu.check(); err != nil {
+				return 0, err
 			}
 			pu.mutation = mutation
 			affected, err = pu.sqlSave(ctx)
@@ -352,6 +340,32 @@ func (pu *ProjectUpdate) ExecX(ctx context.Context) {
 	if err := pu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (pu *ProjectUpdate) defaults() {
+	if _, ok := pu.mutation.UpdateTime(); !ok {
+		v := project.UpdateDefaultUpdateTime()
+		pu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (pu *ProjectUpdate) check() error {
+	if v, ok := pu.mutation.Name(); ok {
+		if err := project.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := pu.mutation.Priority(); ok {
+		if err := project.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := pu.mutation.TypeID(); pu.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (pu *ProjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -973,36 +987,24 @@ func (puo *ProjectUpdateOne) ClearCreator() *ProjectUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (puo *ProjectUpdateOne) Save(ctx context.Context) (*Project, error) {
-	if _, ok := puo.mutation.UpdateTime(); !ok {
-		v := project.UpdateDefaultUpdateTime()
-		puo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := puo.mutation.Name(); ok {
-		if err := project.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-	if v, ok := puo.mutation.Priority(); ok {
-		if err := project.PriorityValidator(v); err != nil {
-			return nil, &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
-		}
-	}
-
-	if _, ok := puo.mutation.TypeID(); puo.mutation.TypeCleared() && !ok {
-		return nil, errors.New("ent: clearing a unique edge \"type\"")
-	}
-
 	var (
 		err  error
 		node *Project
 	)
+	puo.defaults()
 	if len(puo.hooks) == 0 {
+		if err = puo.check(); err != nil {
+			return nil, err
+		}
 		node, err = puo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ProjectMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = puo.check(); err != nil {
+				return nil, err
 			}
 			puo.mutation = mutation
 			node, err = puo.sqlSave(ctx)
@@ -1039,6 +1041,32 @@ func (puo *ProjectUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (puo *ProjectUpdateOne) defaults() {
+	if _, ok := puo.mutation.UpdateTime(); !ok {
+		v := project.UpdateDefaultUpdateTime()
+		puo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (puo *ProjectUpdateOne) check() error {
+	if v, ok := puo.mutation.Name(); ok {
+		if err := project.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := puo.mutation.Priority(); ok {
+		if err := project.PriorityValidator(v); err != nil {
+			return &ValidationError{Name: "priority", err: fmt.Errorf("ent: validator failed for field \"priority\": %w", err)}
+		}
+	}
+	if _, ok := puo.mutation.TypeID(); puo.mutation.TypeCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"type\"")
+	}
+	return nil
 }
 
 func (puo *ProjectUpdateOne) sqlSave(ctx context.Context) (pr *Project, err error) {

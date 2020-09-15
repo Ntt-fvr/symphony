@@ -85,20 +85,24 @@ func (rfc *ReportFilterCreate) Mutation() *ReportFilterMutation {
 
 // Save creates the ReportFilter in the database.
 func (rfc *ReportFilterCreate) Save(ctx context.Context) (*ReportFilter, error) {
-	if err := rfc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *ReportFilter
 	)
+	rfc.defaults()
 	if len(rfc.hooks) == 0 {
+		if err = rfc.check(); err != nil {
+			return nil, err
+		}
 		node, err = rfc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ReportFilterMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = rfc.check(); err != nil {
+				return nil, err
 			}
 			rfc.mutation = mutation
 			node, err = rfc.sqlSave(ctx)
@@ -124,7 +128,8 @@ func (rfc *ReportFilterCreate) SaveX(ctx context.Context) *ReportFilter {
 	return v
 }
 
-func (rfc *ReportFilterCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (rfc *ReportFilterCreate) defaults() {
 	if _, ok := rfc.mutation.CreateTime(); !ok {
 		v := reportfilter.DefaultCreateTime()
 		rfc.mutation.SetCreateTime(v)
@@ -132,6 +137,20 @@ func (rfc *ReportFilterCreate) preSave() error {
 	if _, ok := rfc.mutation.UpdateTime(); !ok {
 		v := reportfilter.DefaultUpdateTime()
 		rfc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := rfc.mutation.Filters(); !ok {
+		v := reportfilter.DefaultFilters
+		rfc.mutation.SetFilters(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (rfc *ReportFilterCreate) check() error {
+	if _, ok := rfc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := rfc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := rfc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -150,8 +169,7 @@ func (rfc *ReportFilterCreate) preSave() error {
 		}
 	}
 	if _, ok := rfc.mutation.Filters(); !ok {
-		v := reportfilter.DefaultFilters
-		rfc.mutation.SetFilters(v)
+		return &ValidationError{Name: "filters", err: errors.New("ent: missing required field \"filters\"")}
 	}
 	return nil
 }
@@ -237,13 +255,14 @@ func (rfcb *ReportFilterCreateBulk) Save(ctx context.Context) ([]*ReportFilter, 
 	for i := range rfcb.builders {
 		func(i int, root context.Context) {
 			builder := rfcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*ReportFilterMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

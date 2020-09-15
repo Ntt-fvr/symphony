@@ -394,20 +394,24 @@ func (woc *WorkOrderCreate) Mutation() *WorkOrderMutation {
 
 // Save creates the WorkOrder in the database.
 func (woc *WorkOrderCreate) Save(ctx context.Context) (*WorkOrder, error) {
-	if err := woc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *WorkOrder
 	)
+	woc.defaults()
 	if len(woc.hooks) == 0 {
+		if err = woc.check(); err != nil {
+			return nil, err
+		}
 		node, err = woc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*WorkOrderMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = woc.check(); err != nil {
+				return nil, err
 			}
 			woc.mutation = mutation
 			node, err = woc.sqlSave(ctx)
@@ -433,7 +437,8 @@ func (woc *WorkOrderCreate) SaveX(ctx context.Context) *WorkOrder {
 	return v
 }
 
-func (woc *WorkOrderCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (woc *WorkOrderCreate) defaults() {
 	if _, ok := woc.mutation.CreateTime(); !ok {
 		v := workorder.DefaultCreateTime()
 		woc.mutation.SetCreateTime(v)
@@ -441,6 +446,24 @@ func (woc *WorkOrderCreate) preSave() error {
 	if _, ok := woc.mutation.UpdateTime(); !ok {
 		v := workorder.DefaultUpdateTime()
 		woc.mutation.SetUpdateTime(v)
+	}
+	if _, ok := woc.mutation.Status(); !ok {
+		v := workorder.DefaultStatus
+		woc.mutation.SetStatus(v)
+	}
+	if _, ok := woc.mutation.Priority(); !ok {
+		v := workorder.DefaultPriority
+		woc.mutation.SetPriority(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (woc *WorkOrderCreate) check() error {
+	if _, ok := woc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := woc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := woc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
@@ -451,8 +474,7 @@ func (woc *WorkOrderCreate) preSave() error {
 		}
 	}
 	if _, ok := woc.mutation.Status(); !ok {
-		v := workorder.DefaultStatus
-		woc.mutation.SetStatus(v)
+		return &ValidationError{Name: "status", err: errors.New("ent: missing required field \"status\"")}
 	}
 	if v, ok := woc.mutation.Status(); ok {
 		if err := workorder.StatusValidator(v); err != nil {
@@ -460,8 +482,7 @@ func (woc *WorkOrderCreate) preSave() error {
 		}
 	}
 	if _, ok := woc.mutation.Priority(); !ok {
-		v := workorder.DefaultPriority
-		woc.mutation.SetPriority(v)
+		return &ValidationError{Name: "priority", err: errors.New("ent: missing required field \"priority\"")}
 	}
 	if v, ok := woc.mutation.Priority(); ok {
 		if err := workorder.PriorityValidator(v); err != nil {
@@ -864,13 +885,14 @@ func (wocb *WorkOrderCreateBulk) Save(ctx context.Context) ([]*WorkOrder, error)
 	for i := range wocb.builders {
 		func(i int, root context.Context) {
 			builder := wocb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*WorkOrderMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

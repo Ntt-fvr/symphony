@@ -87,8 +87,12 @@ func (pq *PropertyQuery) QueryType() *PropertyTypeQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(propertytype.Table, propertytype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.TypeTable, property.TypeColumn),
 		)
@@ -105,8 +109,12 @@ func (pq *PropertyQuery) QueryLocation() *LocationQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.LocationTable, property.LocationColumn),
 		)
@@ -123,8 +131,12 @@ func (pq *PropertyQuery) QueryEquipment() *EquipmentQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.EquipmentTable, property.EquipmentColumn),
 		)
@@ -141,8 +153,12 @@ func (pq *PropertyQuery) QueryService() *ServiceQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.ServiceTable, property.ServiceColumn),
 		)
@@ -159,8 +175,12 @@ func (pq *PropertyQuery) QueryEquipmentPort() *EquipmentPortQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(equipmentport.Table, equipmentport.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.EquipmentPortTable, property.EquipmentPortColumn),
 		)
@@ -177,8 +197,12 @@ func (pq *PropertyQuery) QueryLink() *LinkQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(link.Table, link.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.LinkTable, property.LinkColumn),
 		)
@@ -195,8 +219,12 @@ func (pq *PropertyQuery) QueryWorkOrder() *WorkOrderQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.WorkOrderTable, property.WorkOrderColumn),
 		)
@@ -213,8 +241,12 @@ func (pq *PropertyQuery) QueryProject() *ProjectQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(project.Table, project.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, property.ProjectTable, property.ProjectColumn),
 		)
@@ -231,8 +263,12 @@ func (pq *PropertyQuery) QueryEquipmentValue() *EquipmentQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(equipment.Table, equipment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.EquipmentValueTable, property.EquipmentValueColumn),
 		)
@@ -249,8 +285,12 @@ func (pq *PropertyQuery) QueryLocationValue() *LocationQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.LocationValueTable, property.LocationValueColumn),
 		)
@@ -267,8 +307,12 @@ func (pq *PropertyQuery) QueryServiceValue() *ServiceQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(service.Table, service.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.ServiceValueTable, property.ServiceValueColumn),
 		)
@@ -285,8 +329,12 @@ func (pq *PropertyQuery) QueryWorkOrderValue() *WorkOrderQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(workorder.Table, workorder.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.WorkOrderValueTable, property.WorkOrderValueColumn),
 		)
@@ -303,8 +351,12 @@ func (pq *PropertyQuery) QueryUserValue() *UserQuery {
 		if err := pq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := pq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(property.Table, property.FieldID, pq.sqlQuery()),
+			sqlgraph.From(property.Table, property.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, property.UserValueTable, property.UserValueColumn),
 		)
@@ -1122,7 +1174,7 @@ func (pq *PropertyQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := pq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, property.ValidColumn)
 			}
 		}
 	}
@@ -1141,7 +1193,7 @@ func (pq *PropertyQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range pq.order {
-		p(selector)
+		p(selector, property.ValidColumn)
 	}
 	if offset := pq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -1376,8 +1428,17 @@ func (pgb *PropertyGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (pgb *PropertyGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range pgb.fields {
+		if !property.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := pgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := pgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := pgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -1390,7 +1451,7 @@ func (pgb *PropertyGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(pgb.fields)+len(pgb.fns))
 	columns = append(columns, pgb.fields...)
 	for _, fn := range pgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, property.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(pgb.fields...)
 }
@@ -1610,6 +1671,11 @@ func (ps *PropertySelect) BoolX(ctx context.Context) bool {
 }
 
 func (ps *PropertySelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ps.fields {
+		if !property.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ps.sqlQuery().Query()
 	if err := ps.driver.Query(ctx, query, args, rows); err != nil {

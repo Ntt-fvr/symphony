@@ -74,8 +74,12 @@ func (fpq *FloorPlanQuery) QueryLocation() *LocationQuery {
 		if err := fpq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fpq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(floorplan.Table, floorplan.FieldID, fpq.sqlQuery()),
+			sqlgraph.From(floorplan.Table, floorplan.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, floorplan.LocationTable, floorplan.LocationColumn),
 		)
@@ -92,8 +96,12 @@ func (fpq *FloorPlanQuery) QueryReferencePoint() *FloorPlanReferencePointQuery {
 		if err := fpq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fpq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(floorplan.Table, floorplan.FieldID, fpq.sqlQuery()),
+			sqlgraph.From(floorplan.Table, floorplan.FieldID, selector),
 			sqlgraph.To(floorplanreferencepoint.Table, floorplanreferencepoint.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, floorplan.ReferencePointTable, floorplan.ReferencePointColumn),
 		)
@@ -110,8 +118,12 @@ func (fpq *FloorPlanQuery) QueryScale() *FloorPlanScaleQuery {
 		if err := fpq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fpq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(floorplan.Table, floorplan.FieldID, fpq.sqlQuery()),
+			sqlgraph.From(floorplan.Table, floorplan.FieldID, selector),
 			sqlgraph.To(floorplanscale.Table, floorplanscale.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, floorplan.ScaleTable, floorplan.ScaleColumn),
 		)
@@ -128,8 +140,12 @@ func (fpq *FloorPlanQuery) QueryImage() *FileQuery {
 		if err := fpq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fpq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(floorplan.Table, floorplan.FieldID, fpq.sqlQuery()),
+			sqlgraph.From(floorplan.Table, floorplan.FieldID, selector),
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, floorplan.ImageTable, floorplan.ImageColumn),
 		)
@@ -617,7 +633,7 @@ func (fpq *FloorPlanQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fpq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, floorplan.ValidColumn)
 			}
 		}
 	}
@@ -636,7 +652,7 @@ func (fpq *FloorPlanQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fpq.order {
-		p(selector)
+		p(selector, floorplan.ValidColumn)
 	}
 	if offset := fpq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -871,8 +887,17 @@ func (fpgb *FloorPlanGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fpgb *FloorPlanGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fpgb.fields {
+		if !floorplan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fpgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fpgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fpgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -885,7 +910,7 @@ func (fpgb *FloorPlanGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fpgb.fields)+len(fpgb.fns))
 	columns = append(columns, fpgb.fields...)
 	for _, fn := range fpgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, floorplan.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fpgb.fields...)
 }
@@ -1105,6 +1130,11 @@ func (fps *FloorPlanSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fps *FloorPlanSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fps.fields {
+		if !floorplan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fps.sqlQuery().Query()
 	if err := fps.driver.Query(ctx, query, args, rows); err != nil {

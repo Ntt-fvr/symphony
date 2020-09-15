@@ -103,20 +103,24 @@ func (stqc *SurveyTemplateQuestionCreate) Mutation() *SurveyTemplateQuestionMuta
 
 // Save creates the SurveyTemplateQuestion in the database.
 func (stqc *SurveyTemplateQuestionCreate) Save(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	if err := stqc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *SurveyTemplateQuestion
 	)
+	stqc.defaults()
 	if len(stqc.hooks) == 0 {
+		if err = stqc.check(); err != nil {
+			return nil, err
+		}
 		node, err = stqc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*SurveyTemplateQuestionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = stqc.check(); err != nil {
+				return nil, err
 			}
 			stqc.mutation = mutation
 			node, err = stqc.sqlSave(ctx)
@@ -142,7 +146,8 @@ func (stqc *SurveyTemplateQuestionCreate) SaveX(ctx context.Context) *SurveyTemp
 	return v
 }
 
-func (stqc *SurveyTemplateQuestionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (stqc *SurveyTemplateQuestionCreate) defaults() {
 	if _, ok := stqc.mutation.CreateTime(); !ok {
 		v := surveytemplatequestion.DefaultCreateTime()
 		stqc.mutation.SetCreateTime(v)
@@ -150,6 +155,16 @@ func (stqc *SurveyTemplateQuestionCreate) preSave() error {
 	if _, ok := stqc.mutation.UpdateTime(); !ok {
 		v := surveytemplatequestion.DefaultUpdateTime()
 		stqc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (stqc *SurveyTemplateQuestionCreate) check() error {
+	if _, ok := stqc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := stqc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := stqc.mutation.QuestionTitle(); !ok {
 		return &ValidationError{Name: "question_title", err: errors.New("ent: missing required field \"question_title\"")}
@@ -274,13 +289,14 @@ func (stqcb *SurveyTemplateQuestionCreateBulk) Save(ctx context.Context) ([]*Sur
 	for i := range stqcb.builders {
 		func(i int, root context.Context) {
 			builder := stqcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*SurveyTemplateQuestionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

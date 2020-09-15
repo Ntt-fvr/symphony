@@ -154,20 +154,24 @@ func (clidc *CheckListItemDefinitionCreate) Mutation() *CheckListItemDefinitionM
 
 // Save creates the CheckListItemDefinition in the database.
 func (clidc *CheckListItemDefinitionCreate) Save(ctx context.Context) (*CheckListItemDefinition, error) {
-	if err := clidc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *CheckListItemDefinition
 	)
+	clidc.defaults()
 	if len(clidc.hooks) == 0 {
+		if err = clidc.check(); err != nil {
+			return nil, err
+		}
 		node, err = clidc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*CheckListItemDefinitionMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = clidc.check(); err != nil {
+				return nil, err
 			}
 			clidc.mutation = mutation
 			node, err = clidc.sqlSave(ctx)
@@ -193,7 +197,8 @@ func (clidc *CheckListItemDefinitionCreate) SaveX(ctx context.Context) *CheckLis
 	return v
 }
 
-func (clidc *CheckListItemDefinitionCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (clidc *CheckListItemDefinitionCreate) defaults() {
 	if _, ok := clidc.mutation.CreateTime(); !ok {
 		v := checklistitemdefinition.DefaultCreateTime()
 		clidc.mutation.SetCreateTime(v)
@@ -201,6 +206,16 @@ func (clidc *CheckListItemDefinitionCreate) preSave() error {
 	if _, ok := clidc.mutation.UpdateTime(); !ok {
 		v := checklistitemdefinition.DefaultUpdateTime()
 		clidc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (clidc *CheckListItemDefinitionCreate) check() error {
+	if _, ok := clidc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := clidc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := clidc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New("ent: missing required field \"title\"")}
@@ -356,13 +371,14 @@ func (clidcb *CheckListItemDefinitionCreateBulk) Save(ctx context.Context) ([]*C
 	for i := range clidcb.builders {
 		func(i int, root context.Context) {
 			builder := clidcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*CheckListItemDefinitionMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

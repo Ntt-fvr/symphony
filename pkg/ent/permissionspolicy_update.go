@@ -146,27 +146,24 @@ func (ppu *PermissionsPolicyUpdate) RemoveGroups(u ...*UsersGroup) *PermissionsP
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ppu *PermissionsPolicyUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := ppu.mutation.UpdateTime(); !ok {
-		v := permissionspolicy.UpdateDefaultUpdateTime()
-		ppu.mutation.SetUpdateTime(v)
-	}
-	if v, ok := ppu.mutation.Name(); ok {
-		if err := permissionspolicy.NameValidator(v); err != nil {
-			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	ppu.defaults()
 	if len(ppu.hooks) == 0 {
+		if err = ppu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ppu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PermissionsPolicyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ppu.check(); err != nil {
+				return 0, err
 			}
 			ppu.mutation = mutation
 			affected, err = ppu.sqlSave(ctx)
@@ -203,6 +200,24 @@ func (ppu *PermissionsPolicyUpdate) ExecX(ctx context.Context) {
 	if err := ppu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ppu *PermissionsPolicyUpdate) defaults() {
+	if _, ok := ppu.mutation.UpdateTime(); !ok {
+		v := permissionspolicy.UpdateDefaultUpdateTime()
+		ppu.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ppu *PermissionsPolicyUpdate) check() error {
+	if v, ok := ppu.mutation.Name(); ok {
+		if err := permissionspolicy.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ppu *PermissionsPolicyUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -474,27 +489,24 @@ func (ppuo *PermissionsPolicyUpdateOne) RemoveGroups(u ...*UsersGroup) *Permissi
 
 // Save executes the query and returns the updated entity.
 func (ppuo *PermissionsPolicyUpdateOne) Save(ctx context.Context) (*PermissionsPolicy, error) {
-	if _, ok := ppuo.mutation.UpdateTime(); !ok {
-		v := permissionspolicy.UpdateDefaultUpdateTime()
-		ppuo.mutation.SetUpdateTime(v)
-	}
-	if v, ok := ppuo.mutation.Name(); ok {
-		if err := permissionspolicy.NameValidator(v); err != nil {
-			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
-
 	var (
 		err  error
 		node *PermissionsPolicy
 	)
+	ppuo.defaults()
 	if len(ppuo.hooks) == 0 {
+		if err = ppuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ppuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PermissionsPolicyMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ppuo.check(); err != nil {
+				return nil, err
 			}
 			ppuo.mutation = mutation
 			node, err = ppuo.sqlSave(ctx)
@@ -531,6 +543,24 @@ func (ppuo *PermissionsPolicyUpdateOne) ExecX(ctx context.Context) {
 	if err := ppuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ppuo *PermissionsPolicyUpdateOne) defaults() {
+	if _, ok := ppuo.mutation.UpdateTime(); !ok {
+		v := permissionspolicy.UpdateDefaultUpdateTime()
+		ppuo.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ppuo *PermissionsPolicyUpdateOne) check() error {
+	if v, ok := ppuo.mutation.Name(); ok {
+		if err := permissionspolicy.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (pp *PermissionsPolicy, err error) {

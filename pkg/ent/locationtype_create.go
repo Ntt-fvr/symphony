@@ -169,20 +169,24 @@ func (ltc *LocationTypeCreate) Mutation() *LocationTypeMutation {
 
 // Save creates the LocationType in the database.
 func (ltc *LocationTypeCreate) Save(ctx context.Context) (*LocationType, error) {
-	if err := ltc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *LocationType
 	)
+	ltc.defaults()
 	if len(ltc.hooks) == 0 {
+		if err = ltc.check(); err != nil {
+			return nil, err
+		}
 		node, err = ltc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*LocationTypeMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ltc.check(); err != nil {
+				return nil, err
 			}
 			ltc.mutation = mutation
 			node, err = ltc.sqlSave(ctx)
@@ -208,7 +212,8 @@ func (ltc *LocationTypeCreate) SaveX(ctx context.Context) *LocationType {
 	return v
 }
 
-func (ltc *LocationTypeCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (ltc *LocationTypeCreate) defaults() {
 	if _, ok := ltc.mutation.CreateTime(); !ok {
 		v := locationtype.DefaultCreateTime()
 		ltc.mutation.SetCreateTime(v)
@@ -221,9 +226,6 @@ func (ltc *LocationTypeCreate) preSave() error {
 		v := locationtype.DefaultSite
 		ltc.mutation.SetSite(v)
 	}
-	if _, ok := ltc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
 	if _, ok := ltc.mutation.MapZoomLevel(); !ok {
 		v := locationtype.DefaultMapZoomLevel
 		ltc.mutation.SetMapZoomLevel(v)
@@ -231,6 +233,25 @@ func (ltc *LocationTypeCreate) preSave() error {
 	if _, ok := ltc.mutation.Index(); !ok {
 		v := locationtype.DefaultIndex
 		ltc.mutation.SetIndex(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ltc *LocationTypeCreate) check() error {
+	if _, ok := ltc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := ltc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
+	}
+	if _, ok := ltc.mutation.Site(); !ok {
+		return &ValidationError{Name: "site", err: errors.New("ent: missing required field \"site\"")}
+	}
+	if _, ok := ltc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
+	}
+	if _, ok := ltc.mutation.Index(); !ok {
+		return &ValidationError{Name: "index", err: errors.New("ent: missing required field \"index\"")}
 	}
 	return nil
 }
@@ -389,13 +410,14 @@ func (ltcb *LocationTypeCreateBulk) Save(ctx context.Context) ([]*LocationType, 
 	for i := range ltcb.builders {
 		func(i int, root context.Context) {
 			builder := ltcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*LocationTypeMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

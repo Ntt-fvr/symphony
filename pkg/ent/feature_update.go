@@ -132,15 +132,11 @@ func (fu *FeatureUpdate) RemoveGroups(u ...*UsersGroup) *FeatureUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fu *FeatureUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := fu.mutation.UpdateTime(); !ok {
-		v := feature.UpdateDefaultUpdateTime()
-		fu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	fu.defaults()
 	if len(fu.hooks) == 0 {
 		affected, err = fu.sqlSave(ctx)
 	} else {
@@ -183,6 +179,14 @@ func (fu *FeatureUpdate) Exec(ctx context.Context) error {
 func (fu *FeatureUpdate) ExecX(ctx context.Context) {
 	if err := fu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fu *FeatureUpdate) defaults() {
+	if _, ok := fu.mutation.UpdateTime(); !ok {
+		v := feature.UpdateDefaultUpdateTime()
+		fu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -449,15 +453,11 @@ func (fuo *FeatureUpdateOne) RemoveGroups(u ...*UsersGroup) *FeatureUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fuo *FeatureUpdateOne) Save(ctx context.Context) (*Feature, error) {
-	if _, ok := fuo.mutation.UpdateTime(); !ok {
-		v := feature.UpdateDefaultUpdateTime()
-		fuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *Feature
 	)
+	fuo.defaults()
 	if len(fuo.hooks) == 0 {
 		node, err = fuo.sqlSave(ctx)
 	} else {
@@ -500,6 +500,14 @@ func (fuo *FeatureUpdateOne) Exec(ctx context.Context) error {
 func (fuo *FeatureUpdateOne) ExecX(ctx context.Context) {
 	if err := fuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (fuo *FeatureUpdateOne) defaults() {
+	if _, ok := fuo.mutation.UpdateTime(); !ok {
+		v := feature.UpdateDefaultUpdateTime()
+		fuo.mutation.SetUpdateTime(v)
 	}
 }
 

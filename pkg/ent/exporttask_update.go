@@ -105,32 +105,23 @@ func (etu *ExportTaskUpdate) Mutation() *ExportTaskMutation {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (etu *ExportTaskUpdate) Save(ctx context.Context) (int, error) {
-	if v, ok := etu.mutation.GetType(); ok {
-		if err := exporttask.TypeValidator(v); err != nil {
-			return 0, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := etu.mutation.Status(); ok {
-		if err := exporttask.StatusValidator(v); err != nil {
-			return 0, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := etu.mutation.Progress(); ok {
-		if err := exporttask.ProgressValidator(v); err != nil {
-			return 0, &ValidationError{Name: "progress", err: fmt.Errorf("ent: validator failed for field \"progress\": %w", err)}
-		}
-	}
 	var (
 		err      error
 		affected int
 	)
 	if len(etu.hooks) == 0 {
+		if err = etu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = etu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ExportTaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = etu.check(); err != nil {
+				return 0, err
 			}
 			etu.mutation = mutation
 			affected, err = etu.sqlSave(ctx)
@@ -167,6 +158,26 @@ func (etu *ExportTaskUpdate) ExecX(ctx context.Context) {
 	if err := etu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (etu *ExportTaskUpdate) check() error {
+	if v, ok := etu.mutation.GetType(); ok {
+		if err := exporttask.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := etu.mutation.Status(); ok {
+		if err := exporttask.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := etu.mutation.Progress(); ok {
+		if err := exporttask.ProgressValidator(v); err != nil {
+			return &ValidationError{Name: "progress", err: fmt.Errorf("ent: validator failed for field \"progress\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (etu *ExportTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -327,32 +338,23 @@ func (etuo *ExportTaskUpdateOne) Mutation() *ExportTaskMutation {
 
 // Save executes the query and returns the updated entity.
 func (etuo *ExportTaskUpdateOne) Save(ctx context.Context) (*ExportTask, error) {
-	if v, ok := etuo.mutation.GetType(); ok {
-		if err := exporttask.TypeValidator(v); err != nil {
-			return nil, &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
-		}
-	}
-	if v, ok := etuo.mutation.Status(); ok {
-		if err := exporttask.StatusValidator(v); err != nil {
-			return nil, &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
-		}
-	}
-	if v, ok := etuo.mutation.Progress(); ok {
-		if err := exporttask.ProgressValidator(v); err != nil {
-			return nil, &ValidationError{Name: "progress", err: fmt.Errorf("ent: validator failed for field \"progress\": %w", err)}
-		}
-	}
 	var (
 		err  error
 		node *ExportTask
 	)
 	if len(etuo.hooks) == 0 {
+		if err = etuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = etuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*ExportTaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = etuo.check(); err != nil {
+				return nil, err
 			}
 			etuo.mutation = mutation
 			node, err = etuo.sqlSave(ctx)
@@ -389,6 +391,26 @@ func (etuo *ExportTaskUpdateOne) ExecX(ctx context.Context) {
 	if err := etuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (etuo *ExportTaskUpdateOne) check() error {
+	if v, ok := etuo.mutation.GetType(); ok {
+		if err := exporttask.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	if v, ok := etuo.mutation.Status(); ok {
+		if err := exporttask.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if v, ok := etuo.mutation.Progress(); ok {
+		if err := exporttask.ProgressValidator(v); err != nil {
+			return &ValidationError{Name: "progress", err: fmt.Errorf("ent: validator failed for field \"progress\": %w", err)}
+		}
+	}
+	return nil
 }
 
 func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (et *ExportTask, err error) {

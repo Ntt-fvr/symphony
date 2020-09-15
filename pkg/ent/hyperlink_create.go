@@ -153,20 +153,24 @@ func (hc *HyperlinkCreate) Mutation() *HyperlinkMutation {
 
 // Save creates the Hyperlink in the database.
 func (hc *HyperlinkCreate) Save(ctx context.Context) (*Hyperlink, error) {
-	if err := hc.preSave(); err != nil {
-		return nil, err
-	}
 	var (
 		err  error
 		node *Hyperlink
 	)
+	hc.defaults()
 	if len(hc.hooks) == 0 {
+		if err = hc.check(); err != nil {
+			return nil, err
+		}
 		node, err = hc.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*HyperlinkMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = hc.check(); err != nil {
+				return nil, err
 			}
 			hc.mutation = mutation
 			node, err = hc.sqlSave(ctx)
@@ -192,7 +196,8 @@ func (hc *HyperlinkCreate) SaveX(ctx context.Context) *Hyperlink {
 	return v
 }
 
-func (hc *HyperlinkCreate) preSave() error {
+// defaults sets the default values of the builder before save.
+func (hc *HyperlinkCreate) defaults() {
 	if _, ok := hc.mutation.CreateTime(); !ok {
 		v := hyperlink.DefaultCreateTime()
 		hc.mutation.SetCreateTime(v)
@@ -200,6 +205,16 @@ func (hc *HyperlinkCreate) preSave() error {
 	if _, ok := hc.mutation.UpdateTime(); !ok {
 		v := hyperlink.DefaultUpdateTime()
 		hc.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (hc *HyperlinkCreate) check() error {
+	if _, ok := hc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New("ent: missing required field \"create_time\"")}
+	}
+	if _, ok := hc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
 	if _, ok := hc.mutation.URL(); !ok {
 		return &ValidationError{Name: "url", err: errors.New("ent: missing required field \"url\"")}
@@ -345,13 +360,14 @@ func (hcb *HyperlinkCreateBulk) Save(ctx context.Context) ([]*Hyperlink, error) 
 	for i := range hcb.builders {
 		func(i int, root context.Context) {
 			builder := hcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				if err := builder.preSave(); err != nil {
-					return nil, err
-				}
 				mutation, ok := m.(*HyperlinkMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				if err := builder.check(); err != nil {
+					return nil, err
 				}
 				builder.mutation = mutation
 				nodes[i], specs[i] = builder.createSpec()

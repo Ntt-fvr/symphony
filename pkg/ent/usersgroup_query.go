@@ -71,8 +71,12 @@ func (ugq *UsersGroupQuery) QueryMembers() *UserQuery {
 		if err := ugq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ugq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, ugq.sqlQuery()),
+			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, usersgroup.MembersTable, usersgroup.MembersPrimaryKey...),
 		)
@@ -89,8 +93,12 @@ func (ugq *UsersGroupQuery) QueryPolicies() *PermissionsPolicyQuery {
 		if err := ugq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ugq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, ugq.sqlQuery()),
+			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, selector),
 			sqlgraph.To(permissionspolicy.Table, permissionspolicy.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, usersgroup.PoliciesTable, usersgroup.PoliciesPrimaryKey...),
 		)
@@ -107,8 +115,12 @@ func (ugq *UsersGroupQuery) QueryFeatures() *FeatureQuery {
 		if err := ugq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := ugq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, ugq.sqlQuery()),
+			sqlgraph.From(usersgroup.Table, usersgroup.FieldID, selector),
 			sqlgraph.To(feature.Table, feature.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, usersgroup.FeaturesTable, usersgroup.FeaturesPrimaryKey...),
 		)
@@ -660,7 +672,7 @@ func (ugq *UsersGroupQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := ugq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, usersgroup.ValidColumn)
 			}
 		}
 	}
@@ -679,7 +691,7 @@ func (ugq *UsersGroupQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range ugq.order {
-		p(selector)
+		p(selector, usersgroup.ValidColumn)
 	}
 	if offset := ugq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -914,8 +926,17 @@ func (uggb *UsersGroupGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (uggb *UsersGroupGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range uggb.fields {
+		if !usersgroup.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := uggb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := uggb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := uggb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -928,7 +949,7 @@ func (uggb *UsersGroupGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(uggb.fields)+len(uggb.fns))
 	columns = append(columns, uggb.fields...)
 	for _, fn := range uggb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, usersgroup.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(uggb.fields...)
 }
@@ -1148,6 +1169,11 @@ func (ugs *UsersGroupSelect) BoolX(ctx context.Context) bool {
 }
 
 func (ugs *UsersGroupSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range ugs.fields {
+		if !usersgroup.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := ugs.sqlQuery().Query()
 	if err := ugs.driver.Query(ctx, query, args, rows); err != nil {

@@ -71,8 +71,12 @@ func (swfsq *SurveyWiFiScanQuery) QueryChecklistItem() *CheckListItemQuery {
 		if err := swfsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := swfsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, swfsq.sqlQuery()),
+			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, selector),
 			sqlgraph.To(checklistitem.Table, checklistitem.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveywifiscan.ChecklistItemTable, surveywifiscan.ChecklistItemColumn),
 		)
@@ -89,8 +93,12 @@ func (swfsq *SurveyWiFiScanQuery) QuerySurveyQuestion() *SurveyQuestionQuery {
 		if err := swfsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := swfsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, swfsq.sqlQuery()),
+			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, selector),
 			sqlgraph.To(surveyquestion.Table, surveyquestion.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveywifiscan.SurveyQuestionTable, surveywifiscan.SurveyQuestionColumn),
 		)
@@ -107,8 +115,12 @@ func (swfsq *SurveyWiFiScanQuery) QueryLocation() *LocationQuery {
 		if err := swfsq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := swfsq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, swfsq.sqlQuery()),
+			sqlgraph.From(surveywifiscan.Table, surveywifiscan.FieldID, selector),
 			sqlgraph.To(location.Table, location.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, surveywifiscan.LocationTable, surveywifiscan.LocationColumn),
 		)
@@ -556,7 +568,7 @@ func (swfsq *SurveyWiFiScanQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := swfsq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, surveywifiscan.ValidColumn)
 			}
 		}
 	}
@@ -575,7 +587,7 @@ func (swfsq *SurveyWiFiScanQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range swfsq.order {
-		p(selector)
+		p(selector, surveywifiscan.ValidColumn)
 	}
 	if offset := swfsq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -810,8 +822,17 @@ func (swfsgb *SurveyWiFiScanGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (swfsgb *SurveyWiFiScanGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range swfsgb.fields {
+		if !surveywifiscan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := swfsgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := swfsgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := swfsgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -824,7 +845,7 @@ func (swfsgb *SurveyWiFiScanGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(swfsgb.fields)+len(swfsgb.fns))
 	columns = append(columns, swfsgb.fields...)
 	for _, fn := range swfsgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, surveywifiscan.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(swfsgb.fields...)
 }
@@ -1044,6 +1065,11 @@ func (swfss *SurveyWiFiScanSelect) BoolX(ctx context.Context) bool {
 }
 
 func (swfss *SurveyWiFiScanSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range swfss.fields {
+		if !surveywifiscan.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := swfss.sqlQuery().Query()
 	if err := swfss.driver.Query(ctx, query, args, rows); err != nil {

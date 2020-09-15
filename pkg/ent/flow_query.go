@@ -69,8 +69,12 @@ func (fq *FlowQuery) QueryBlocks() *BlockQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flow.Table, flow.FieldID, fq.sqlQuery()),
+			sqlgraph.From(flow.Table, flow.FieldID, selector),
 			sqlgraph.To(block.Table, block.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, flow.BlocksTable, flow.BlocksColumn),
 		)
@@ -87,8 +91,12 @@ func (fq *FlowQuery) QueryDraft() *FlowDraftQuery {
 		if err := fq.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
+		selector := fq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(flow.Table, flow.FieldID, fq.sqlQuery()),
+			sqlgraph.From(flow.Table, flow.FieldID, selector),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, flow.DraftTable, flow.DraftColumn),
 		)
@@ -495,7 +503,7 @@ func (fq *FlowQuery) querySpec() *sqlgraph.QuerySpec {
 	if ps := fq.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
-				ps[i](selector)
+				ps[i](selector, flow.ValidColumn)
 			}
 		}
 	}
@@ -514,7 +522,7 @@ func (fq *FlowQuery) sqlQuery() *sql.Selector {
 		p(selector)
 	}
 	for _, p := range fq.order {
-		p(selector)
+		p(selector, flow.ValidColumn)
 	}
 	if offset := fq.offset; offset != nil {
 		// limit is mandatory for offset clause. We start
@@ -749,8 +757,17 @@ func (fgb *FlowGroupBy) BoolX(ctx context.Context) bool {
 }
 
 func (fgb *FlowGroupBy) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fgb.fields {
+		if !flow.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for group-by", f)}
+		}
+	}
+	selector := fgb.sqlQuery()
+	if err := selector.Err(); err != nil {
+		return err
+	}
 	rows := &sql.Rows{}
-	query, args := fgb.sqlQuery().Query()
+	query, args := selector.Query()
 	if err := fgb.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
@@ -763,7 +780,7 @@ func (fgb *FlowGroupBy) sqlQuery() *sql.Selector {
 	columns := make([]string, 0, len(fgb.fields)+len(fgb.fns))
 	columns = append(columns, fgb.fields...)
 	for _, fn := range fgb.fns {
-		columns = append(columns, fn(selector))
+		columns = append(columns, fn(selector, flow.ValidColumn))
 	}
 	return selector.Select(columns...).GroupBy(fgb.fields...)
 }
@@ -983,6 +1000,11 @@ func (fs *FlowSelect) BoolX(ctx context.Context) bool {
 }
 
 func (fs *FlowSelect) sqlScan(ctx context.Context, v interface{}) error {
+	for _, f := range fs.fields {
+		if !flow.ValidColumn(f) {
+			return &ValidationError{Name: f, err: fmt.Errorf("invalid field %q for selection", f)}
+		}
+	}
 	rows := &sql.Rows{}
 	query, args := fs.sqlQuery().Query()
 	if err := fs.driver.Query(ctx, query, args, rows); err != nil {

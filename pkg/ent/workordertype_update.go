@@ -232,15 +232,11 @@ func (wotu *WorkOrderTypeUpdate) RemoveDefinitions(w ...*WorkOrderDefinition) *W
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (wotu *WorkOrderTypeUpdate) Save(ctx context.Context) (int, error) {
-	if _, ok := wotu.mutation.UpdateTime(); !ok {
-		v := workordertype.UpdateDefaultUpdateTime()
-		wotu.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err      error
 		affected int
 	)
+	wotu.defaults()
 	if len(wotu.hooks) == 0 {
 		affected, err = wotu.sqlSave(ctx)
 	} else {
@@ -283,6 +279,14 @@ func (wotu *WorkOrderTypeUpdate) Exec(ctx context.Context) error {
 func (wotu *WorkOrderTypeUpdate) ExecX(ctx context.Context) {
 	if err := wotu.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wotu *WorkOrderTypeUpdate) defaults() {
+	if _, ok := wotu.mutation.UpdateTime(); !ok {
+		v := workordertype.UpdateDefaultUpdateTime()
+		wotu.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -775,15 +779,11 @@ func (wotuo *WorkOrderTypeUpdateOne) RemoveDefinitions(w ...*WorkOrderDefinition
 
 // Save executes the query and returns the updated entity.
 func (wotuo *WorkOrderTypeUpdateOne) Save(ctx context.Context) (*WorkOrderType, error) {
-	if _, ok := wotuo.mutation.UpdateTime(); !ok {
-		v := workordertype.UpdateDefaultUpdateTime()
-		wotuo.mutation.SetUpdateTime(v)
-	}
-
 	var (
 		err  error
 		node *WorkOrderType
 	)
+	wotuo.defaults()
 	if len(wotuo.hooks) == 0 {
 		node, err = wotuo.sqlSave(ctx)
 	} else {
@@ -826,6 +826,14 @@ func (wotuo *WorkOrderTypeUpdateOne) Exec(ctx context.Context) error {
 func (wotuo *WorkOrderTypeUpdateOne) ExecX(ctx context.Context) {
 	if err := wotuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (wotuo *WorkOrderTypeUpdateOne) defaults() {
+	if _, ok := wotuo.mutation.UpdateTime(); !ok {
+		v := workordertype.UpdateDefaultUpdateTime()
+		wotuo.mutation.SetUpdateTime(v)
 	}
 }
 
