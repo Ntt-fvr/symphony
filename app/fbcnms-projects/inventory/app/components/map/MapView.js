@@ -21,14 +21,18 @@ import type {Theme} from '@material-ui/core';
 import type {WithStyles} from '@material-ui/core';
 
 import * as React from 'react';
+import IconButton from '@symphony/design-system/components/IconButton';
 import MapButtonGroup from '@fbcnms/ui/components/map/MapButtonGroup';
 import MapGeocoder from './geocoder/MapGeocoder';
 import PlaceIcon from '@material-ui/icons/Place';
 import ReactDOM from 'react-dom';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
+import classNames from 'classnames';
 import defaultTheme from '@fbcnms/ui/theme/default';
 import mapboxgl from 'mapbox-gl';
 import nullthrows from '@fbcnms/util/nullthrows';
+import symphony from '@symphony/design-system/theme/symphony';
+import {CloseIcon} from '@symphony/design-system/icons';
 import {Router, withRouter} from 'react-router-dom';
 import {SnackbarProvider} from 'notistack';
 import {getMapStyleForType} from '@fbcnms/ui/insights/map/styles';
@@ -47,6 +51,23 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     left: 0,
     bottom: 0,
+  },
+  popup: {
+    '& .mapboxgl-popup-content': {
+      boxShadow: symphony.shadows.DP2,
+      borderRadius: '4px',
+      padding: '24px',
+    },
+  },
+  hoverPopup: {
+    '& .mapboxgl-popup-content': {
+      padding: '12px',
+    },
+  },
+  popupCloseIcon: {
+    position: 'absolute',
+    right: '24px',
+    top: '24px',
   },
 });
 
@@ -753,11 +774,15 @@ class MapView<T> extends React.Component<Props<T>, State> {
     }
 
     const container = document.createElement('div');
-    const popupTrait = popOnHover
-      ? {closeButton: false, closeOnClick: false}
-      : {};
 
-    const popup = new mapboxgl.Popup(popupTrait).setLngLat(coordinates);
+    const popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: [0, -22],
+      className: classNames(this.props.classes.popup, {
+        [this.props.classes.hoverPopup]: popOnHover,
+      }),
+    }).setLngLat(coordinates);
     ReactDOM.render(
       <ThemeProvider theme={defaultTheme}>
         <SnackbarProvider
@@ -768,6 +793,16 @@ class MapView<T> extends React.Component<Props<T>, State> {
             horizontal: 'right',
           }}>
           <Router history={this.props.history}>
+            {!popOnHover ? (
+              <IconButton
+                icon={CloseIcon}
+                skin="secondaryGray"
+                className={this.props.classes.popupCloseIcon}
+                onClick={() => {
+                  this.state.popup?.remove();
+                }}
+              />
+            ) : null}
             {getPopupContent(event.features[0])}
           </Router>
         </SnackbarProvider>

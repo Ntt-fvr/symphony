@@ -20,89 +20,49 @@ import type {WorkOrderProperties} from '../map/MapUtil';
 import * as React from 'react';
 import DateTimeFormat from '../../common/DateTimeFormat';
 import EditWorkOrderMutation from '../../mutations/EditWorkOrderMutation';
+import PriorityTag from './PriorityTag';
+import StatusTag from './StatusTag';
 import Strings from '@fbcnms/strings/Strings';
 import Text from '@symphony/design-system/components/Text';
+import TextField from '../TextField';
 import UserTypeahead from '../typeahead/UserTypeahead';
-import classNames from 'classnames';
 import fbt from 'fbt';
+import nullthrows from 'nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
 import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {Link} from 'react-router-dom';
-import {formatMultiSelectValue} from '@fbcnms/ui/utils/displayUtils';
+import {closedStatus} from '../../common/FilterTypes';
 import {makeStyles} from '@material-ui/styles';
-import {priorityValues, useStatusValues} from '../../common/FilterTypes';
 
 const useStyles = makeStyles(() => ({
   fullDetails: {
     width: '100%',
-    padding: '24px',
+    maxWidth: '480px',
   },
   quickPeek: {
-    marginTop: '8px',
     minWidth: '157px',
   },
   notUnderlinedLink: {
     textDecoration: 'none',
   },
-  assigneeDiv: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexGrow: 1,
+  unassignedLabel: {
+    fontStyle: 'italic',
+    lineHeight: '0px',
   },
-  assigneeTypography: {
-    marginRight: '0.35em',
+  pills: {
+    marginBottom: '24px',
   },
-  gridInput: {
-    display: 'inline-flex',
-    margin: '5px',
-    width: '250px',
+  statusTag: {
+    marginRight: '8px',
   },
-  dueDiv: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    marginRight: '0.35em',
-    marginTop: '20px',
+  infoSection: {
+    marginBottom: '10px',
   },
-  section: {
-    '&:not(:first-child)': {
-      marginTop: '20px',
-    },
-    '&>*': {
-      '&:not(:first-child)': {
-        marginTop: '4px',
-      },
-    },
-  },
-  field: {
-    display: 'flex',
-    alignItems: 'baseline',
-    '&>:not(:first-child)': {
-      marginLeft: '2px',
-    },
-    '&>:last-child': {
-      flexGrow: '1',
-    },
-  },
-  trunckedContent: {
-    '-webkit-line-clamp': '2',
-    overflow: 'hidden',
-    display: '-webkit-box',
-    '-webkit-box-orient': 'vertical',
-  },
-  fieldBox: {
-    display: 'block',
-    '&:not(:first-child)': {
-      marginTop: '8px',
-    },
-    '&>*': {
-      display: 'inline-flex',
-      background: symphony.palette.background,
-      borderRadius: '4px',
-      padding: '3px 8px',
-    },
+  divider: {
+    width: '100%',
+    height: '1px',
+    backgroundColor: symphony.palette.separator,
+    margin: '24px 0px',
   },
 }));
 
@@ -128,7 +88,6 @@ const WorkOrderPopover = (props: Props) => {
     containerClassName,
   } = props;
   const classes = useStyles();
-  const {statusValues, closedStatus} = useStatusValues();
   const viewMode =
     selectedView === 'status' || workOrder.status === closedStatus.value;
 
@@ -167,16 +126,6 @@ const WorkOrderPopover = (props: Props) => {
     return assignee?.email || Strings.common.unassignedItem;
   };
 
-  const woHeader = (
-    <Link
-      className={classes.notUnderlinedLink}
-      to={InventoryAPIUrls.workorder(workOrder.id)}>
-      <Text variant="subtitle1" color="primary">
-        {workOrder.name}
-      </Text>
-    </Link>
-  );
-
   const nameAndCoordinates = (locationInput: BasicLocation) => {
     return `${locationInput.name} (${locationInput.latitude}, ${locationInput.longitude})`;
   };
@@ -185,22 +134,27 @@ const WorkOrderPopover = (props: Props) => {
     <div className={containerClassName}>
       {displayFullDetails ? (
         <div className={classes.fullDetails}>
-          {woHeader}
-          <div>
-            <Text
-              title={workOrder.description}
-              variant="body2"
-              className={classNames(classes.field, classes.trunckedContent)}>
-              {workOrder.description}
-            </Text>
+          <div className={classes.pills}>
+            <StatusTag
+              status={workOrder.status}
+              className={classes.statusTag}
+            />
+            <PriorityTag priority={workOrder.priority} />
           </div>
-          <div className={classes.section}>
-            <Text variant="body2" className={classes.field}>
-              <strong>
-                {fbt('Assignee:', 'Work Order card "Assignee" field title')}
-              </strong>
-              {!!viewMode ? (
-                <span>{showAssignee(workOrder.assignedTo)}</span>
+          <Link
+            className={classes.notUnderlinedLink}
+            to={InventoryAPIUrls.workorder(workOrder.id)}>
+            <Text variant="h6" color="primary">
+              {workOrder.name}
+            </Text>
+          </Link>
+          <div className={classes.divider} />
+          <TextField
+            className={classes.infoSection}
+            title={fbt('Assignee', '')}
+            content={
+              viewMode ? (
+                showAssignee(workOrder.assignedTo)
               ) : (
                 <UserTypeahead
                   margin="dense"
@@ -209,60 +163,57 @@ const WorkOrderPopover = (props: Props) => {
                     setWorkOrderDetails('assigneeId', user?.id)
                   }
                 />
-              )}
-            </Text>
-            {!!workOrder.location && (
-              <Text variant="body2" className={classes.field}>
-                <strong>
-                  {fbt('Location:', 'Work Order card "Location" field title')}
-                </strong>
-                <span>{nameAndCoordinates(workOrder.location)}</span>
-              </Text>
+              )
+            }
+          />
+          {workOrder.projectName != null && (
+            <TextField
+              className={classes.infoSection}
+              title={fbt('Project', '')}
+              content={nullthrows(workOrder.projectName)}
+            />
+          )}
+          {workOrder.description != null &&
+            workOrder.description !== 'null' && (
+              <TextField
+                className={classes.infoSection}
+                title={fbt('Description', '')}
+                content={workOrder.description}
+              />
             )}
-          </div>
-          <div className={classes.section}>
-            <div className={classes.fieldBox}>
-              <Text variant="body2" className={classes.field}>
-                <strong>
-                  {fbt('Status:', 'Work Order card "Status" field title')}
-                </strong>
-                <span>
-                  {formatMultiSelectValue(
-                    statusValues.map(({value, label}) => ({value, label})),
-                    workOrder.status,
-                  )}
-                </span>
-              </Text>
-            </div>
-            <div className={classes.fieldBox}>
-              <Text variant="body2" className={classes.field}>
-                <strong>
-                  {fbt('Priority:', 'Work Order card "Priority" field title')}
-                </strong>
-                <span>
-                  {formatMultiSelectValue(priorityValues, workOrder.priority)}
-                </span>
-              </Text>
-            </div>
-            <div className={classes.fieldBox}>
-              <Text variant="body2" className={classes.field}>
-                <strong>
-                  {fbt('Due:', 'Work Order card "Due" field title')}
-                </strong>
-                <span>
-                  {DateTimeFormat.dateTime(
-                    workOrder.installDate,
-                    Strings.common.emptyField,
-                  )}
-                </span>
-              </Text>
-            </div>
-          </div>
+          {workOrder.location != null && (
+            <TextField
+              className={classes.infoSection}
+              title={fbt('Location', '')}
+              content={nameAndCoordinates(workOrder.location)}
+            />
+          )}
+          <TextField
+            title={fbt('Due Date', '')}
+            content={DateTimeFormat.dateTime(
+              workOrder.installDate,
+              Strings.common.emptyField,
+            )}
+          />
         </div>
       ) : (
         <div className={classes.quickPeek}>
-          {woHeader}
-          <div>{showAssignee(workOrder.assignedTo)}</div>
+          <Text variant="caption" weight="bold">
+            {workOrder.name}
+          </Text>
+          <div>
+            {workOrder.assignedTo != null ? (
+              <Text variant="caption">{workOrder.assignedTo.email}</Text>
+            ) : (
+              <Text
+                variant="subtitle2"
+                className={classes.unassignedLabel}
+                color="gray"
+                weight="regular">
+                {Strings.common.unassignedItem}
+              </Text>
+            )}
+          </div>
         </div>
       )}
     </div>

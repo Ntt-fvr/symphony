@@ -61,6 +61,7 @@ export type WorkOrder = {
   properties: Array<Property>,
   project: ?{
     id: string,
+    name: string,
   },
   checkListCategories: ?CheckListCategoryExpandingPanel_list,
 };

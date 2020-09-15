@@ -109,6 +109,7 @@ fragment WorkOrdersMap_workOrders on WorkOrder {
   priority
   project {
     id
+    name
   }
   assignedTo {
     id
@@ -291,6 +292,16 @@ v16 = [
 v17 = {
   "alias": null,
   "args": null,
+  "concreteType": "Project",
+  "kind": "LinkedField",
+  "name": "project",
+  "plural": false,
+  "selections": (v16/*: any*/),
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
   "kind": "ScalarField",
   "name": "priority",
   "storageKey": null
@@ -423,16 +434,7 @@ return {
                     "selections": (v16/*: any*/),
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "Project",
-                    "kind": "LinkedField",
-                    "name": "project",
-                    "plural": false,
-                    "selections": (v16/*: any*/),
-                    "storageKey": null
-                  },
+                  (v17/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -440,7 +442,7 @@ return {
                     "name": "closeDate",
                     "storageKey": null
                   },
-                  (v17/*: any*/),
+                  (v18/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -531,19 +533,8 @@ return {
                   (v10/*: any*/),
                   (v12/*: any*/),
                   (v14/*: any*/),
+                  (v18/*: any*/),
                   (v17/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "Project",
-                    "kind": "LinkedField",
-                    "name": "project",
-                    "plural": false,
-                    "selections": [
-                      (v8/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
                   (v15/*: any*/),
                   (v13/*: any*/),
                   {
@@ -585,12 +576,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f06c5311224a9dc1db752f201658ddd9",
+    "cacheID": "2f6fbd36192392b208f6a71ce911b583",
     "id": null,
     "metadata": {},
     "name": "WorkOrderComparisonViewQueryRendererSearchQuery",
     "operationKind": "query",
-    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n  $orderBy: WorkOrderOrder\n) {\n  ...WorkOrdersView_query_10glCF\n  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_query_10glCF on Query {\n  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        description\n        owner {\n          id\n          email\n        }\n        creationDate\n        installDate\n        status\n        assignedTo {\n          id\n          email\n        }\n        location {\n          id\n          name\n        }\n        workOrderType {\n          id\n          name\n        }\n        project {\n          id\n          name\n        }\n        closeDate\n        priority\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n  $orderBy: WorkOrderOrder\n) {\n  ...WorkOrdersView_query_10glCF\n  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n    name\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_query_10glCF on Query {\n  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        description\n        owner {\n          id\n          email\n        }\n        creationDate\n        installDate\n        status\n        assignedTo {\n          id\n          email\n        }\n        location {\n          id\n          name\n        }\n        workOrderType {\n          id\n          name\n        }\n        project {\n          id\n          name\n        }\n        closeDate\n        priority\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
