@@ -61,6 +61,14 @@ func (s *exportTestSuite) TestPorts() {
 	s.testExport(exporttask.TypePort)
 }
 
+func (s *exportTestSuite) TestServices() {
+	s.testExport(exporttask.TypeService)
+}
+
+func (s *exportTestSuite) TestWorkOrders() {
+	s.testExport(exporttask.TypeWorkOrder)
+}
+
 func (s *exportTestSuite) testExport(t exporttask.Type) {
 	task, err := s.createExportTask(s.ctx, s.client, t)
 	s.Require().NoError(err)

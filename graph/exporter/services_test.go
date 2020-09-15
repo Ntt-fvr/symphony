@@ -15,6 +15,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -501,4 +502,8 @@ func TestServiceWithFilters(t *testing.T) {
 		err = res.Body.Close()
 		require.NoError(t, err)
 	}
+}
+
+func TestServicesAsyncExport(t *testing.T) {
+	testAsyncExport(t, exporttask.TypeService)
 }

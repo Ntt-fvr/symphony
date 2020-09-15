@@ -18,6 +18,7 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -310,4 +311,8 @@ func TestExportWOWithFilters(t *testing.T) {
 		}
 	}
 	require.Equal(t, 2, linesCount)
+}
+
+func TestWorkOrdersAsyncExport(t *testing.T) {
+	testAsyncExport(t, exporttask.TypeWorkOrder)
 }

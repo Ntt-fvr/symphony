@@ -444,25 +444,42 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	r := newExporterTestResolver(t)
 	logger := r.exporter.log
-	var e exporter
+	var (
+		e          exporter
+		exportPath string
+	)
 	switch typ {
 	case exporttask.TypeLocation:
 		e = exporter{logger, pkgexporter.LocationsRower{
 			Log:        logger,
 			Concurrent: false,
 		}}
+		exportPath = "/locations"
 	case exporttask.TypeEquipment:
 		e = exporter{logger, pkgexporter.EquipmentRower{
 			Log: logger,
 		}}
+		exportPath = "/equipment"
 	case exporttask.TypePort:
 		e = exporter{logger, pkgexporter.PortsRower{
 			Log: logger,
 		}}
+		exportPath = "/ports"
 	case exporttask.TypeLink:
 		e = exporter{logger, pkgexporter.LinksRower{
 			Log: logger,
 		}}
+		exportPath = "/links"
+	case exporttask.TypeService:
+		e = exporter{logger, pkgexporter.ServicesRower{
+			Log: logger,
+		}}
+		exportPath = "/services"
+	case exporttask.TypeWorkOrder:
+		e = exporter{logger, pkgexporter.WoRower{
+			Log: logger,
+		}}
+		exportPath = "/work_orders"
 	}
 
 	th := viewertest.TestHandler(t, &e, r.client)
@@ -470,7 +487,7 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	defer server.Close()
 
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	req, err := http.NewRequest(http.MethodGet, server.URL+"/links", nil)
+	req, err := http.NewRequest(http.MethodGet, server.URL+exportPath, nil)
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 	req.Header.Set(viewer.FeaturesHeader, "async_export")
