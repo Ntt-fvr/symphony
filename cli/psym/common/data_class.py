@@ -467,6 +467,21 @@ class WorkOrderType(NamedTuple):
     property_types: Sequence[PropertyDefinition]
 
 
+class WorkOrderDefinition(NamedTuple):
+    """
+    :param id: ID
+    :type id: str, optional
+    :param definition_index: Work order definition index
+    :type definition_index: int, optional
+    :param work_order_type_id: Work order type ID
+    :type work_order_type_id: str
+    """
+
+    id: Optional[str]
+    definition_index: Optional[int]
+    work_order_type_id: str
+
+
 class WorkOrder(NamedTuple):
     """
     :param id: ID
@@ -504,3 +519,24 @@ class WorkOrder(NamedTuple):
     assignee_id: Optional[str]
     status: Optional[WorkOrderStatus]
     priority: Optional[WorkOrderPriority]
+
+
+class ProjectType(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Project type name
+    :type name: str
+    :param description: Project type description
+    :type description: str, optional
+    :param property_types: PropertyTypes sequence
+    :type property_types: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param work_order_definitions: WorkOrderDefinitions sequence
+    :type work_order_definitions: Sequence[ :class:`~psym.common.data_class.WorkOrderDefinition` ]
+    """
+
+    id: str
+    name: str
+    description: Optional[str]
+    property_types: Sequence[PropertyDefinition]
+    work_order_definitions: Sequence[WorkOrderDefinition]

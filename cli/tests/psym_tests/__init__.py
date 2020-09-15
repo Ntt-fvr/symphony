@@ -29,6 +29,7 @@ def load_tests(
     from .test_work_order_type import TestWorkOrderType
     from .test_site_survey import TestSiteSurvey
     from .test_work_order_subscription import TestWorkOrderSubscription
+    from .test_project_type import TestProjectType
     from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
     TESTS = [
@@ -44,6 +45,7 @@ def load_tests(
         TestWorkOrderType,
         TestSiteSurvey,
         TestWorkOrderSubscription,
+        TestProjectType,
     ]
 
     print("Waiting for symphony to be ready")

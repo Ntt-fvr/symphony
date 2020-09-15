@@ -11,11 +11,11 @@ from .data_class import (
     EquipmentPortType,
     EquipmentType,
     LocationType,
+    ProjectType,
     ServiceType,
     WorkOrderType,
 )
 from .data_enum import Entity
-
 
 T = TypeVar("T")
 
@@ -54,6 +54,7 @@ EQUIPMENT_TYPES = Cache[EquipmentType](Entity.EquipmentType)
 SERVICE_TYPES = Cache[ServiceType](Entity.ServiceType)
 PORT_TYPES = Cache[EquipmentPortType](Entity.EquipmentPortType)
 WORK_ORDER_TYPES = Cache[WorkOrderType](Entity.WorkOrderType)
+PROJECT_TYPES = Cache[ProjectType](Entity.ProjectType)
 
 
 def clear_types() -> None:
@@ -62,3 +63,4 @@ def clear_types() -> None:
     SERVICE_TYPES.clear()
     PORT_TYPES.clear()
     WORK_ORDER_TYPES.clear()
+    PROJECT_TYPES.clear()

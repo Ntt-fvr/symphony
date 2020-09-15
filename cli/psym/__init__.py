@@ -11,6 +11,7 @@ from .api.equipment_type import (
     _populate_equipment_types,
 )
 from .api.location_type import _populate_location_types
+from .api.project_type import _populate_project_types
 from .api.service_type import _populate_service_types
 from .api.work_order_type import _populate_work_order_types
 from .client import SymphonyClient
@@ -220,7 +221,7 @@ class PsymClient(SymphonyClient):
             email,
             password,
             tenant,
-            f"Pyinventory/{__version__}",
+            f"Psym/{__version__}",
             is_local_host,
             is_dev_mode,
             reporter,
@@ -233,3 +234,4 @@ class PsymClient(SymphonyClient):
         _populate_service_types(self)
         _populate_equipment_port_types(self)
         _populate_work_order_types(self)
+        _populate_project_types(self)

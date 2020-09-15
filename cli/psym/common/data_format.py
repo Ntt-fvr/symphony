@@ -6,10 +6,11 @@
 from numbers import Number
 from typing import List, Sequence, cast
 
+from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
-from .data_class import PropertyDefinition
+from .data_class import ProjectType, PropertyDefinition, WorkOrderDefinition
 
 
 def format_to_property_definition(
@@ -164,3 +165,37 @@ def format_to_property_type_inputs(
         format_to_property_type_input(property_definition)
         for property_definition in data
     ]
+
+
+def format_to_project_type(project_type_fragment: ProjectTypeFragment) -> ProjectType:
+    """This function gets `psym.graphql.fragment.project_type.ProjectTypeFragment` object as argument
+    and formats it to `psym.common.data_class.ProjectType` object
+
+        :param project_type_fragment: Existing property type fragment object
+        :type project_type_fragment: :class:`~psym.graphql.fragment.project_type.ProjectTypeFragment`
+
+        :return: ProjectType object
+        :rtype: :class:`~psym.common.data_class.ProjectType`
+
+        **Example**
+
+        .. code-block:: python
+
+            project_type = format_to_project_type(
+                project_type_fragment=project_type_fragment,
+            )
+    """
+    return ProjectType(
+        id=project_type_fragment.id,
+        name=project_type_fragment.name,
+        description=project_type_fragment.description,
+        property_types=format_to_property_definitions(project_type_fragment.properties),
+        work_order_definitions=[
+            WorkOrderDefinition(
+                id=wod.id if wod.id else None,
+                definition_index=wod.index if wod.index else None,
+                work_order_type_id=wod.type.id,
+            )
+            for wod in project_type_fragment.workOrders
+        ],
+    )

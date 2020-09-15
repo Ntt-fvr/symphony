@@ -269,7 +269,7 @@ class DataclassesRenderer:
             query = child.fields[0]
             query_name = query.name
             query_result_type = f"{query.type}"
-            if query_result_type not in ("int", "str"):
+            if query_result_type not in ("int", "str", "bool"):
                 query_result_type = f"{parsed_op.name}Data.{query.type}"
             if query.nullable:
                 query_result_type = f"Optional[{query_result_type}]"
