@@ -19,4 +19,5 @@ export const UploadAPIUrls = {
   exported_links: () => '/graph/import/export_links',
   exported_locations: () => '/graph/import/export_locations',
   exported_service: () => '/graph/import/export_service',
+  exported_work_order: () => '/graph/export/single_work_order',
 };

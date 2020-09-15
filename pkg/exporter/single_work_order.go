@@ -209,8 +209,8 @@ func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, she
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	var (
-		projName, woType, locName, assigneeEmail, ownerEmail, closedDate string
-		err                                                              error
+		projName, woType, woDescription, locName, assigneeEmail, ownerEmail, closedDate string
+		err                                                                             error
 	)
 
 	assignee, err := wo.QueryAssignee().Only(ctx)
@@ -247,8 +247,11 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	if wo.Status == workorder.StatusDone || wo.Status == workorder.StatusClosed {
 		closedDate = wo.CloseDate.Format(timeLayout)
 	}
+	if wo.Description != nil {
+		woDescription = *wo.Description
+	}
 
-	return []string{strconv.Itoa(wo.ID), wo.Name, *wo.Description, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.Format(timeLayout), closedDate, locName, assigneeEmail, ownerEmail}, err
+	return []string{strconv.Itoa(wo.ID), wo.Name, woDescription, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.Format(timeLayout), closedDate, locName, assigneeEmail, ownerEmail}, err
 }
 
 func setHeaderStyle(f *excelize.File, sheetName string, cell string) {
