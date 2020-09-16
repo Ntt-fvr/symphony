@@ -9,8 +9,9 @@ package main
 import (
 	"context"
 	"database/sql"
-	"net/http"
 
+	"github.com/facebookincubator/symphony/admin/graphql"
+	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
@@ -33,13 +34,19 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		log.Provider,
 		provideHealthCheckers,
 		provideViews,
-		wire.InterfaceValue(
-			new(http.Handler),
-			http.NotFoundHandler(),
+		graphql.NewHandler,
+		wire.Struct(
+			new(graphql.HandlerConfig),
+			"*",
+		),
+		wire.Bind(
+			new(gqlutil.BeginTxExecQueryer),
+			new(*sql.DB),
 		),
 		xserver.ServiceSet,
 		wire.Struct(
-			new(application), "*",
+			new(application),
+			"*",
 		),
 	)
 	return nil, nil, nil
