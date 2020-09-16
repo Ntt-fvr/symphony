@@ -33,6 +33,17 @@ services:
       timeout: 3s
     restart: on-failure
 
+  admin:
+    image: ${DOCKER_REGISTRY}/admin:${TAG}
+    env_file:
+      - conf/db.env
+      - conf/log.env
+    depends_on:
+      - mysql
+    healthcheck: &healthcheck
+      test: curl -If localhost/healthz/liveness
+    restart: on-failure
+
   graph:
     image: ${DOCKER_REGISTRY}/graph:${TAG}
     env_file:
@@ -45,8 +56,8 @@ services:
       - migrate
       - mysql
       - nats
-    healthcheck: &healthcheck
-      test: curl -If localhost/healthz/liveness
+      - async
+    healthcheck: *healthcheck
     restart: on-failure
 
   migrate:

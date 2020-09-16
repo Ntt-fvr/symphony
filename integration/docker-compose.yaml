@@ -52,7 +52,7 @@ services:
       - private
     depends_on:
       - mysql
-    healthcheck:
+    healthcheck: &healthcheck
       test: curl -If localhost/healthz/liveness
     restart: on-failure
 
@@ -79,8 +79,8 @@ services:
       - migrate
       - mysql
       - nats
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+      - async
+    healthcheck: *healthcheck
     restart: on-failure
     ports:
       - 8083:443
@@ -103,8 +103,7 @@ services:
       - mysql
       - nats
       - platform-server
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
 
   migrate:
@@ -130,8 +129,7 @@ services:
       - conf/telemetry.env
     networks:
       - private
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
 
   docs:

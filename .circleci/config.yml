@@ -752,6 +752,13 @@ workflows:
             - validate-gql-test
           <<: *onlymaster
       - docker-publish:
+          name: admin/publish
+          context: symphony
+          path: admin
+          image: admin
+          requires: *dpreq
+          <<: *onlymaster
+      - docker-publish:
           name: store/publish
           context: symphony
           path: store
@@ -810,6 +817,7 @@ workflows:
           compose_file: integration/docker-compose.ci.yaml
           requires:
             - graph/publish
+            - admin/publish
             - store/publish
             - front/publish
             - async/publish
