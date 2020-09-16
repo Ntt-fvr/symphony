@@ -41,6 +41,7 @@ services:
       dockerfile: graph/Dockerfile
     env_file:
       - conf/graph.env
+      - conf/db.env
       - conf/log.env
     environment:
       - WS_AUTH_URL=http://front/user/me
@@ -48,7 +49,6 @@ services:
       - migrate
       - mysql
       - nats
-      - async
     healthcheck: &healthcheck
       test: curl -If localhost/healthz/liveness
     restart: on-failure
@@ -72,6 +72,7 @@ services:
       dockerfile: async/Dockerfile
     env_file:
       - conf/async.env
+      - conf/db.env
       - conf/log.env
     environment:
       - FEATURES_URL=http://front:1030/features

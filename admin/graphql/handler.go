@@ -59,7 +59,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 			ochttp.WithRouteTag(
 				playground.Handler(
 					"GraphQL playground",
-					"/admin/query",
+					"/query",
 				),
 				"graphiql",
 			),
