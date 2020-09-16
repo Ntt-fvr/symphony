@@ -11,8 +11,8 @@ from psym.common.cache import WORK_ORDER_TYPES
 from psym.common.data_class import PropertyDefinition, PropertyValue, WorkOrderType
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
-    format_to_property_definitions,
     format_to_property_type_inputs,
+    format_to_work_order_type,
 )
 from psym.exceptions import EntityNotFoundError
 
@@ -31,11 +31,8 @@ def _populate_work_order_types(client: SymphonyClient) -> None:
     for edge in edges:
         node = edge.node
         if node:
-            WORK_ORDER_TYPES[node.name] = WorkOrderType(
-                id=node.id,
-                name=node.name,
-                description=node.description,
-                property_types=format_to_property_definitions(node.propertyTypes),
+            WORK_ORDER_TYPES[node.name] = format_to_work_order_type(
+                work_order_type_fragment=node
             )
 
 
@@ -87,12 +84,7 @@ def add_work_order_type(
             assigneeCanCompleteWorkOrder=True,
         ),
     )
-    added = WorkOrderType(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        property_types=format_to_property_definitions(result.propertyTypes),
-    )
+    added = format_to_work_order_type(work_order_type_fragment=result)
     WORK_ORDER_TYPES[added.name] = added
     return added
 
@@ -120,12 +112,7 @@ def get_work_order_types(client: SymphonyClient) -> Iterator[WorkOrderType]:
     for edge in result.edges:
         node = edge.node
         if node is not None:
-            yield WorkOrderType(
-                id=node.id,
-                name=node.name,
-                description=node.description,
-                property_types=format_to_property_definitions(node.propertyTypes),
-            )
+            yield format_to_work_order_type(work_order_type_fragment=node)
 
 
 def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
@@ -152,12 +139,7 @@ def get_work_order_type_by_id(client: SymphonyClient, id: str) -> WorkOrderType:
     if result is None:
         raise EntityNotFoundError(entity=Entity.WorkOrderType, entity_id=id)
 
-    return WorkOrderType(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        property_types=format_to_property_definitions(result.propertyTypes),
-    )
+    return format_to_work_order_type(work_order_type_fragment=result)
 
 
 def get_work_order_type_by_name(client: SymphonyClient, name: str) -> WorkOrderType:
@@ -248,12 +230,7 @@ def edit_work_order_type(
             checkListCategories=[],
         ),
     )
-    edited = WorkOrderType(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        property_types=format_to_property_definitions(result.propertyTypes),
-    )
+    edited = format_to_work_order_type(work_order_type_fragment=result)
     WORK_ORDER_TYPES.pop(work_order_type.name)
     WORK_ORDER_TYPES[edited.name] = edited
     return edited
@@ -267,6 +244,7 @@ def delete_work_order_type(client: SymphonyClient, work_order_type_id: str) -> N
 
     :raises:
         * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Work order type does not exist
 
     **Example**
 
@@ -274,4 +252,10 @@ def delete_work_order_type(client: SymphonyClient, work_order_type_id: str) -> N
 
         client.delete_work_order_type("12345678")
     """
+    work_order_type = get_work_order_type_by_id(client=client, id=work_order_type_id)
+    if work_order_type is None:
+        raise EntityNotFoundError(
+            entity=Entity.WorkOrderType, entity_id=work_order_type_id
+        )
     RemoveWorkOrderTypeMutation.execute(client, id=work_order_type_id)
+    del WORK_ORDER_TYPES[work_order_type.name]

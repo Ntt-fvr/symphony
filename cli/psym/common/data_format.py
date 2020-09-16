@@ -8,9 +8,15 @@ from typing import List, Sequence, cast
 
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
+from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
-from .data_class import ProjectType, PropertyDefinition, WorkOrderDefinition
+from .data_class import (
+    ProjectType,
+    PropertyDefinition,
+    WorkOrderDefinition,
+    WorkOrderType,
+)
 
 
 def format_to_property_definition(
@@ -198,4 +204,34 @@ def format_to_project_type(project_type_fragment: ProjectTypeFragment) -> Projec
             )
             for wod in project_type_fragment.workOrders
         ],
+    )
+
+
+def format_to_work_order_type(
+    work_order_type_fragment: WorkOrderTypeFragment,
+) -> WorkOrderType:
+    """This function gets `psym.graphql.fragment.work_order_type.WorkOrderTypeFragment` object as argument
+    and formats it to `psym.common.data_class.WorkOrderType` object
+
+        :param work_order_type_fragment: Existing work order type fragment object
+        :type work_order_type_fragment: :class:`~psym.graphql.fragment.work_order_type.WorkOrderTypeFragment`
+
+        :return: WorkOrderType object
+        :rtype: :class:`~psym.common.data_class.WorkOrderType`
+
+        **Example**
+
+        .. code-block:: python
+
+            work_order_type = format_to_work_order_type(
+                work_order_type_fragment=work_order_type_fragment,
+            )
+    """
+    return WorkOrderType(
+        id=work_order_type_fragment.id,
+        name=work_order_type_fragment.name,
+        description=work_order_type_fragment.description,
+        property_types=format_to_property_definitions(
+            work_order_type_fragment.propertyTypes
+        ),
     )

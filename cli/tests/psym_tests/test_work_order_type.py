@@ -7,6 +7,7 @@
 from psym.api.work_order_type import (
     _populate_work_order_types,
     add_work_order_type,
+    delete_work_order_type,
     edit_work_order_type,
     get_work_order_type_by_id,
     get_work_order_type_by_name,
@@ -120,3 +121,9 @@ class TestWorkOrderType(BaseTest):
         self.assertEqual(self.work_order_type.id, fetched_work_order_type.id)
         self.assertEqual(fetched_work_order_type.name, "New name again")
         self.assertEqual(fetched_work_order_type.description, "New description again")
+
+    def test_delete_work_order_type(self) -> None:
+        delete_work_order_type(
+            client=self.client, work_order_type_id=self.work_order_type.id
+        )
+        self.assertEqual(len(WORK_ORDER_TYPES), 0)
