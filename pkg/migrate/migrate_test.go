@@ -10,15 +10,13 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/facebook/ent/dialect"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
-	"github.com/facebookincubator/symphony/graph/migrate"
-
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
+	"github.com/facebookincubator/symphony/pkg/migrate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

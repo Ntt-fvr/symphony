@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 )
 
@@ -110,7 +111,20 @@ func (m *migration) Do(ctx context.Context, tenants ...string) error {
 	return nil
 }
 
-func (m *migration) do(ctx context.Context, tenant string) error {
+func (m *migration) do(ctx context.Context, tenant string) (err error) {
+	ctx, span := trace.StartSpan(ctx, "ent.Migration")
+	defer func() {
+		if err != nil {
+			span.SetStatus(trace.Status{
+				Code:    trace.StatusCodeUnknown,
+				Message: err.Error(),
+			})
+		}
+		span.End()
+	}()
+	span.AddAttributes(
+		trace.StringAttribute("tenant", tenant),
+	)
 	query := fmt.Sprintf("USE `%s`", viewer.DBName(tenant))
 	if err := m.tx.Exec(ctx, query, []interface{}{}, new(sql.Result)); err != nil {
 		return fmt.Errorf("switching database: %w", err)

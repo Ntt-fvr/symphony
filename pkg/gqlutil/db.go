@@ -7,6 +7,7 @@ package gqlutil
 import (
 	"context"
 	"database/sql"
+	"database/sql/driver"
 	"errors"
 	"sync"
 
@@ -27,6 +28,12 @@ type BeginTxExecQueryer interface {
 	ExecQueryer
 }
 
+// TxExecQueryer joins driver.Tx and ExecQueryer interfaces.
+type TxExecQueryer interface {
+	driver.Tx
+	ExecQueryer
+}
+
 // dbCtxKey is the ExecQueryer context key.
 type dbCtxKey struct{}
 
@@ -39,6 +46,12 @@ func newDBContext(parent context.Context, db ExecQueryer) context.Context {
 func DBFromContext(ctx context.Context) ExecQueryer {
 	db, _ := ctx.Value(dbCtxKey{}).(ExecQueryer)
 	return db
+}
+
+// DBFromContext returns the TxExecQueryer stored in context, or nil if there isn't one.
+func TxFromContext(ctx context.Context) TxExecQueryer {
+	tx, _ := ctx.Value(dbCtxKey{}).(TxExecQueryer)
+	return tx
 }
 
 // DBInjector injects a database into passed in request context.

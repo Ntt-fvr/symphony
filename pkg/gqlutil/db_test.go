@@ -58,7 +58,7 @@ func TestDBInjector(t *testing.T) {
 
 			srv := newServer(db)
 			srv.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
-				require.NotNil(t, gqlutil.DBFromContext(ctx))
+				require.NotNil(t, gqlutil.TxFromContext(ctx))
 				return &graphql.Response{Data: []byte(`{"name":"test"}`)}
 			})
 
