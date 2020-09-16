@@ -20,8 +20,8 @@ import (
 	"go.uber.org/zap"
 )
 
-type singleWoRower struct {
-	log log.Logger
+type SingleWoRower struct {
+	Log log.Logger
 }
 
 var (
@@ -38,8 +38,8 @@ const (
 	summarySheetName = "Summary"
 )
 
-func (er singleWoRower) createExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
-	logger := er.log.For(ctx)
+func (er SingleWoRower) CreateExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
+	logger := er.Log.For(ctx)
 	f := excelize.NewFile()
 	id, err := strconv.Atoi(url.Query().Get("id"))
 	if err != nil {

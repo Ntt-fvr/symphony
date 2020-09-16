@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
@@ -166,7 +167,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 func TestWoWithInvalidId(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
-	e := &exporterExcel{log, singleWoRower{log}}
+	e := &exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -188,7 +189,7 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporterExcel{log, singleWoRower{log}}
+	e := &exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

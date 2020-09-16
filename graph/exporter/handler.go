@@ -31,13 +31,13 @@ type exporter struct {
 }
 
 type exporterExcel struct {
-	log log.Logger
+	Log log.Logger
 	excelFile
 }
 
 // Interface for creating an excel file
 type excelFile interface {
-	createExcelFile(context.Context, *url.URL) (*excelize.File, error)
+	CreateExcelFile(context.Context, *url.URL) (*excelize.File, error)
 }
 
 type rower interface {
@@ -157,8 +157,8 @@ func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename+"xlsx")
-	log := m.log.For(ctx)
-	xlsx, err := m.createExcelFile(ctx, r.URL)
+	log := m.Log.For(ctx)
+	xlsx, err := m.CreateExcelFile(ctx, r.URL)
 	if err != nil {
 		log.Error("error in export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
@@ -191,7 +191,7 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 
 	router.Path("/single_work_order").
 		Methods(http.MethodGet).
-		Handler(&exporterExcel{log, singleWoRower{log}}).
+		Handler(&exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}).
 		Name("single_work_order")
 
 	for _, route := range routes {
