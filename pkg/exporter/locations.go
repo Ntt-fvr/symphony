@@ -33,8 +33,7 @@ type locationsFilterInput struct {
 }
 
 type LocationsRower struct {
-	Log        log.Logger
-	Concurrent bool
+	Log log.Logger
 }
 
 func getFilterInput(filtersParam string, logger *zap.Logger) ([]*models.LocationFilterInput, error) {
@@ -55,7 +54,6 @@ func getFilterInput(filtersParam string, logger *zap.Logger) ([]*models.Location
 func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]string, error) {
 	var (
 		logger           = lr.Log.For(ctx)
-		useConcurrency   = lr.Concurrent
 		filterInput      []*models.LocationFilterInput
 		locationIDHeader = [...]string{bom + "Location ID"}
 		fixedHeaders     = [...]string{"External ID", "Latitude", "Longitude"}
@@ -102,64 +100,46 @@ func (lr LocationsRower) Rows(ctx context.Context, filtersParam string) ([][]str
 	title = append(title, propertyTypes...)
 
 	allRows[0] = title
-	if useConcurrency {
-		cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
-		for i, value := range locationsList {
-			value, i := value, i
-			cg.Go(func(ctx context.Context) error {
-				row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes, true)
-				if err != nil {
-					return err
-				}
-				allRows[i+1] = row
-				return nil
-			})
-		}
-		if err := cg.Wait(); err != nil {
-			logger.Error("error in wait", zap.Error(err))
-			return nil, errors.WithMessage(err, "error in wait")
-		}
-	} else {
-		for i, value := range locationsList {
-			value, i := value, i
-			row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes, false)
+
+	cg := ctxgroup.WithContext(ctx, ctxgroup.MaxConcurrency(32))
+	for i, value := range locationsList {
+		value, i := value, i
+		cg.Go(func(ctx context.Context) error {
+			row, err := locationToSlice(ctx, value, orderedLocTypes, propertyTypes)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			allRows[i+1] = row
-		}
+			return nil
+		})
 	}
+	if err := cg.Wait(); err != nil {
+		logger.Error("error in wait", zap.Error(err))
+		return nil, errors.WithMessage(err, "error in wait")
+	}
+
 	return allRows, nil
 }
 
-func locationToSlice(ctx context.Context, location *ent.Location, orderedLocTypes, propertyTypes []string, useConcurrency bool) ([]string, error) {
+func locationToSlice(ctx context.Context, location *ent.Location, orderedLocTypes, propertyTypes []string) ([]string, error) {
 	var (
 		lParents, properties []string
 		err                  error
 	)
-	if useConcurrency {
-		g := ctxgroup.WithContext(ctx)
-		g.Go(func(ctx context.Context) (err error) {
-			lParents, err = locationHierarchy(ctx, location, orderedLocTypes)
-			return err
-		})
-		g.Go(func(ctx context.Context) (err error) {
-			properties, err = PropertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
-			return err
-		})
-		if err := g.Wait(); err != nil {
-			return nil, err
-		}
-	} else {
+
+	g := ctxgroup.WithContext(ctx)
+	g.Go(func(ctx context.Context) (err error) {
 		lParents, err = locationHierarchy(ctx, location, orderedLocTypes)
-		if err != nil {
-			return nil, err
-		}
+		return err
+	})
+	g.Go(func(ctx context.Context) (err error) {
 		properties, err = PropertiesSlice(ctx, location, propertyTypes, enum.PropertyEntityLocation)
-		if err != nil {
-			return nil, err
-		}
+		return err
+	})
+	if err = g.Wait(); err != nil {
+		return nil, err
 	}
+
 	lat := fmt.Sprintf("%f", location.Latitude)
 	long := fmt.Sprintf("%f", location.Longitude)
 

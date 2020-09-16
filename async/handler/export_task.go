@@ -95,8 +95,7 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 	switch task.Type {
 	case exporttask.TypeLocation:
 		rower = exporter.LocationsRower{
-			Log:        logger,
-			Concurrent: false,
+			Log: logger,
 		}
 	case exporttask.TypeEquipment:
 		rower = exporter.EquipmentRower{

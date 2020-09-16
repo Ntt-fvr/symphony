@@ -451,8 +451,7 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	switch typ {
 	case exporttask.TypeLocation:
 		e = exporter{logger, pkgexporter.LocationsRower{
-			Log:        logger,
-			Concurrent: false,
+			Log: logger,
 		}}
 		exportPath = "/locations"
 	case exporttask.TypeEquipment:
