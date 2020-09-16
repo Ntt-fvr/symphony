@@ -33,7 +33,7 @@ import (
 	"gocloud.dev/server/health"
 )
 
-// NewApplication creates a new graph application.
+// NewApplication creates a new async application.
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),

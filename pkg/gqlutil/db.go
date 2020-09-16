@@ -37,8 +37,8 @@ type TxExecQueryer interface {
 // dbCtxKey is the ExecQueryer context key.
 type dbCtxKey struct{}
 
-// newDBContext returns a new context with the given DB attached.
-func newDBContext(parent context.Context, db ExecQueryer) context.Context {
+// NewDBContext returns a new context with the given DB attached.
+func NewDBContext(parent context.Context, db ExecQueryer) context.Context {
 	return context.WithValue(parent, dbCtxKey{}, db)
 }
 
@@ -95,7 +95,7 @@ func (DBInjector) MutateOperationContext(_ context.Context, oc *graphql.Operatio
 // DBInjector injects a database into context before calling next.
 func (dbi DBInjector) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	if op := graphql.GetOperationContext(ctx).Operation; op == nil || op.Operation != ast.Mutation {
-		ctx = newDBContext(ctx, dbi.DB)
+		ctx = NewDBContext(ctx, dbi.DB)
 		return next(ctx)
 	}
 	tx, err := dbi.DB.BeginTx(ctx, nil)
@@ -112,7 +112,7 @@ func (dbi DBInjector) InterceptResponse(ctx context.Context, next graphql.Respon
 		}
 	}()
 
-	ctx = newDBContext(ctx, tx)
+	ctx = NewDBContext(ctx, tx)
 	rsp := next(ctx)
 	if len(rsp.Errors) > 0 {
 		_ = tx.Rollback()
