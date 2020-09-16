@@ -180,7 +180,7 @@ func TestTriggerBlockNotExists(t *testing.T) {
 		TriggerType: flowschema.TriggerTypeWorkOrder,
 	})
 	require.Error(t, err)
-	t.SkipNow()
+
 	triggerType := trigger_mocks.TriggerType{}
 	description := "Some desc"
 	triggerType.On("Description").
@@ -189,7 +189,7 @@ func TestTriggerBlockNotExists(t *testing.T) {
 		Return([]*flowschema.VariableDefinition{})
 	triggerFactory.On("GetType", mock.Anything).
 		Return(&triggerType, nil).
-		Times(3)
+		Times(4)
 	_, err = mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
 		FlowDraftID: draft.ID,
 		Name:        "Trigger Block",
