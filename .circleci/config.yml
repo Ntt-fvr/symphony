@@ -64,6 +64,9 @@ executors:
         type: string
     docker:
       - image: hashicorp/terraform:<<parameters.tag>>
+  tflint:
+    docker:
+      - image: wata727/tflint
   testim:
     docker:
       - image: testim/docker-cli
@@ -346,20 +349,9 @@ jobs:
           working_directory: <<parameters.working_directory>>
 
   tflint:
-    executor: terraform
+    executor: tflint
     steps:
       - checkout
-      - tfinit
-      - run:
-          name: Install cURL
-          command: apk add curl
-      - run:
-          name: Install tflint
-          working_directory: /usr/local/bin
-          command: |
-            curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | \
-              grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip && \
-              unzip tflint.zip && rm tflint.zip
       - run:
           name: Run tflint
           working_directory: infra/tf
