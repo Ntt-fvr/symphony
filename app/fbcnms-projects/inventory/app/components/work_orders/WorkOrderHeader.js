@@ -20,6 +20,7 @@ import Button from '@symphony/design-system/components/Button';
 import React from 'react';
 import Select from '@symphony/design-system/components/Select/Select';
 import WorkOrderDeleteButton from './WorkOrderDeleteButton';
+import WorkOrderExportButton from './WorkOrderExportButton';
 import WorkOrderSaveButton from './WorkOrderSaveButton';
 import fbt from 'fbt';
 import nullthrows from '@fbcnms/util/nullthrows';
@@ -156,6 +157,7 @@ const WorkOrderHeader = (props: Props) => {
             workOrderTypeId={workOrder.workOrderType.id}
             onWorkOrderRemoved={onWorkOrderRemoved}
           />
+          <WorkOrderExportButton id={workOrder.id} />
           <Button
             className={classes.cancelButton}
             skin="regular"

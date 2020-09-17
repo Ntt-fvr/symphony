@@ -156,7 +156,7 @@ func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		filename = rout.GetName()
 	}
 	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename+"xlsx")
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename+".xlsx")
 	log := m.Log.For(ctx)
 	xlsx, err := m.CreateExcelFile(ctx, r.URL)
 	if err != nil {
