@@ -3,9 +3,8 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-
-from psym.api.equipment_type import _populate_equipment_port_types
 from psym.api.port_type import (
+    _populate_equipment_port_types,
     add_equipment_port_type,
     delete_equipment_port_type,
     edit_equipment_port_type,

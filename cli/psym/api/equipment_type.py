@@ -10,7 +10,6 @@ from psym.common.cache import EQUIPMENT_TYPES, PORT_TYPES
 from psym.common.data_class import (
     Equipment,
     EquipmentPortDefinition,
-    EquipmentPortType,
     EquipmentType,
     PropertyDefinition,
 )
@@ -31,7 +30,6 @@ from ..graphql.input.property_type import PropertyTypeInput
 from ..graphql.mutation.add_equipment_type import AddEquipmentTypeMutation
 from ..graphql.mutation.edit_equipment_type import EditEquipmentTypeMutation
 from ..graphql.mutation.remove_equipment_type import RemoveEquipmentTypeMutation
-from ..graphql.query.equipment_port_types import EquipmentPortTypesQuery
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
 from ..graphql.query.equipment_types import EquipmentTypesQuery
 from .equipment import delete_equipment
@@ -55,22 +53,6 @@ def _populate_equipment_types(client: SymphonyClient) -> None:
                 property_types=format_to_property_definitions(node.propertyTypes),
                 position_definitions=node.positionDefinitions,
                 port_definitions=node.portDefinitions,
-            )
-
-
-def _populate_equipment_port_types(client: SymphonyClient) -> None:
-    edges = EquipmentPortTypesQuery.execute(client).edges
-
-    for edge in edges:
-        node = edge.node
-        if node:
-            PORT_TYPES[node.name] = EquipmentPortType(
-                id=node.id,
-                name=node.name,
-                property_types=format_to_property_definitions(node.propertyTypes),
-                link_property_types=format_to_property_definitions(
-                    node.linkPropertyTypes
-                ),
             )
 
 

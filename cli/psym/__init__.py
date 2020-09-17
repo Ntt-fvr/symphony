@@ -5,11 +5,9 @@
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
 from psym.common.constant import __version__
 
-from .api.equipment_type import (
-    _populate_equipment_port_types,
-    _populate_equipment_types,
-)
+from .api.equipment_type import _populate_equipment_types
 from .api.location_type import _populate_location_types
+from .api.port_type import _populate_equipment_port_types
 from .api.project_type import _populate_project_types
 from .api.service_type import _populate_service_types
 from .api.work_order_type import _populate_work_order_types

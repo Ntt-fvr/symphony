@@ -27,6 +27,17 @@ from ..graphql.query.equipment_port_type import EquipmentPortTypeQuery
 from ..graphql.query.equipment_port_types import EquipmentPortTypesQuery
 
 
+def _populate_equipment_port_types(client: SymphonyClient) -> None:
+    edges = EquipmentPortTypesQuery.execute(client).edges
+
+    for edge in edges:
+        node = edge.node
+        if node:
+            PORT_TYPES[node.name] = format_to_equipment_port_type(
+                equipment_port_type_fragment=node
+            )
+
+
 def add_equipment_port_type(
     client: SymphonyClient,
     name: str,
