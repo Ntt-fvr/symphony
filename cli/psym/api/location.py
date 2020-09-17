@@ -221,7 +221,7 @@ def get_location(
     client: SymphonyClient, location_hirerchy: List[Tuple[str, str]]
 ) -> Location:
     """This function returns a location of a specific type with a specific name.
-    It can get only the requested location specifiers or the hirerchy leading to it
+    It gets the requested location specifiers or the hirerchy leading to it
 
     :param location_hirerchy: Locations hierarchy
     :type location_hirerchy: List[Tuple[str, str]]

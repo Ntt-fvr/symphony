@@ -3,14 +3,18 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-
 from psym.api.equipment_type import (
+    _populate_equipment_types,
     add_equipment_type,
+    delete_equipment_type,
     edit_equipment_type_property_type,
+    get_equipment_type_by_id,
+    get_equipment_types,
     get_or_create_equipment_type,
 )
 from psym.api.property_type import get_property_type_id, get_property_types
 from psym.client import SymphonyClient
+from psym.common.cache import EQUIPMENT_TYPES
 from psym.common.data_class import PropertyDefinition
 from psym.common.data_enum import Entity
 from psym.common.data_format import format_to_property_type_input
@@ -43,6 +47,23 @@ class TestEquipmentType(BaseTest):
             port_definitions=[],
             position_list=[],
         )
+
+    def test_equipment_type_populated(self) -> None:
+        self.assertEqual(len(EQUIPMENT_TYPES), 1)
+        EQUIPMENT_TYPES.clear()
+        _populate_equipment_types(client=self.client)
+        self.assertEqual(len(EQUIPMENT_TYPES), 1)
+
+    def test_get_equipment_type_by_id(self) -> None:
+        fetched_equipment_type = get_equipment_type_by_id(
+            client=self.client, equipment_type_id=self.equipment_type.id
+        )
+        self.assertEqual(self.equipment_type.id, fetched_equipment_type.id)
+
+    def test_get_equipment_types(self) -> None:
+        fetched_equipment_types = list(get_equipment_types(client=self.client))
+        self.assertEqual(len(fetched_equipment_types), 1)
+        self.assertEqual(self.equipment_type.id, fetched_equipment_types[0].id)
 
     def test_equipment_type_created(self) -> None:
         fetched_equipment_type = get_or_create_equipment_type(
@@ -137,3 +158,9 @@ class TestEquipmentType(BaseTest):
         assert fetched_property_type is not None, f"property {new_name} does not exist"
         if fetched_property_type is not None:
             self.assertEqual(fetched_property_type.name, new_name)
+
+    def test_delete_equipment_type(self) -> None:
+        delete_equipment_type(
+            client=self.client, equipment_type_id=self.equipment_type.id
+        )
+        self.assertEqual(len(EQUIPMENT_TYPES), 0)

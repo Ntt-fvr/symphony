@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import List, Optional
+from typing import Iterator, List, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES, PORT_TYPES
@@ -15,7 +15,7 @@ from psym.common.data_class import (
 )
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
-    format_to_property_definitions,
+    format_to_equipment_type,
     format_to_property_type_input,
     format_to_property_type_inputs,
 )
@@ -30,6 +30,7 @@ from ..graphql.input.property_type import PropertyTypeInput
 from ..graphql.mutation.add_equipment_type import AddEquipmentTypeMutation
 from ..graphql.mutation.edit_equipment_type import EditEquipmentTypeMutation
 from ..graphql.mutation.remove_equipment_type import RemoveEquipmentTypeMutation
+from ..graphql.query.equipment_type_details import EquipmentTypeDetailsQuery
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
 from ..graphql.query.equipment_types import EquipmentTypesQuery
 from .equipment import delete_equipment
@@ -46,13 +47,8 @@ def _populate_equipment_types(client: SymphonyClient) -> None:
     for edge in edges:
         node = edge.node
         if node:
-            EQUIPMENT_TYPES[node.name] = EquipmentType(
-                name=node.name,
-                category=node.category,
-                id=node.id,
-                property_types=format_to_property_definitions(node.propertyTypes),
-                position_definitions=node.positionDefinitions,
-                port_definitions=node.portDefinitions,
+            EQUIPMENT_TYPES[node.name] = format_to_equipment_type(
+                equipment_type_fragment=node
             )
 
 
@@ -178,15 +174,8 @@ def _update_equipment_type(
         position_definitions=position_definitions,
         port_definitions=port_definitions,
     )
-    equipment_type = EquipmentType(
-        name=equipment_type_result.name,
-        category=equipment_type_result.category,
-        id=equipment_type_result.id,
-        property_types=format_to_property_definitions(
-            equipment_type_result.propertyTypes
-        ),
-        position_definitions=equipment_type_result.positionDefinitions,
-        port_definitions=equipment_type_result.portDefinitions,
+    equipment_type = format_to_equipment_type(
+        equipment_type_fragment=equipment_type_result
     )
     EQUIPMENT_TYPES[name] = equipment_type
     return equipment_type
@@ -266,15 +255,8 @@ def add_equipment_type(
         position_definitions,
         new_port_definitions,
     )
-    equipment_type = EquipmentType(
-        name=equipment_type_result.name,
-        category=equipment_type_result.category,
-        id=equipment_type_result.id,
-        property_types=format_to_property_definitions(
-            equipment_type_result.propertyTypes
-        ),
-        position_definitions=equipment_type_result.positionDefinitions,
-        port_definitions=equipment_type_result.portDefinitions,
+    equipment_type = format_to_equipment_type(
+        equipment_type_fragment=equipment_type_result
     )
     EQUIPMENT_TYPES[name] = equipment_type
     return equipment_type
@@ -351,6 +333,62 @@ def edit_equipment_type(
     )
 
 
+def get_equipment_type_by_id(
+    client: SymphonyClient, equipment_type_id: str
+) -> EquipmentType:
+    """This function returns an equipment type.
+    It gets the requested equipment type ID
+
+    :param equipment_type_id: Equipment type ID
+    :type equipment_type_id: str
+
+    :raises:
+        :class:`~psym.exceptions.EntityNotFoundError`: Equipment type does not found
+
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
+
+    **Example**
+
+    .. code-block:: python
+
+        equipment_type = client.get_equipment_type_by_id(equipment_type_id="12345678)
+    """
+    result = EquipmentTypeDetailsQuery.execute(client, id=equipment_type_id)
+    if not result:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentType, entity_id=equipment_type_id
+        )
+
+    return format_to_equipment_type(equipment_type_fragment=result)
+
+
+def get_equipment_types(client: SymphonyClient) -> Iterator[EquipmentType]:
+    """Get the iterator of equipment types
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: EquipmentType Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.EquipmentType` ]
+
+    **Example**
+
+    .. code-block:: python
+
+        equipment_types = client.get_equipment_types()
+        for equipment_type in equipment_types:
+            print(equipment_type.name)
+    """
+    result = EquipmentTypesQuery.execute(client)
+    if result is None:
+        return
+    for edge in result.edges:
+        node = edge.node
+        if node is not None:
+            yield format_to_equipment_type(equipment_type_fragment=node)
+
+
 def copy_equipment_type(
     client: SymphonyClient, curr_equipment_type_name: str, new_equipment_type_name: str
 ) -> EquipmentType:
@@ -402,15 +440,8 @@ def copy_equipment_type(
         new_port_definitions,
     )
 
-    new_equipment_type = EquipmentType(
-        name=equipment_type_result.name,
-        category=equipment_type_result.category,
-        id=equipment_type_result.id,
-        property_types=format_to_property_definitions(
-            equipment_type_result.propertyTypes
-        ),
-        position_definitions=equipment_type_result.positionDefinitions,
-        port_definitions=equipment_type_result.portDefinitions,
+    new_equipment_type = format_to_equipment_type(
+        equipment_type_fragment=equipment_type_result
     )
 
     EQUIPMENT_TYPES[new_equipment_type_name] = new_equipment_type
@@ -601,4 +632,34 @@ def delete_equipment_type_with_equipments(
             ),
         )
 
-    RemoveEquipmentTypeMutation.execute(client, id=equipment_type.id)
+    delete_equipment_type(client=client, equipment_type_id=equipment_type.id)
+
+
+def delete_equipment_type(client: SymphonyClient, equipment_type_id: str) -> None:
+    """This function deletes an equipment type.
+    It gets the requested equipment type ID
+
+    :param equipment_type_id: Equipment type ID
+    :type equipment_type_id: str
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Equipment type does not exist
+
+    **Example**
+
+    .. code-block:: python
+
+        client.delete_equipment_type(
+            equipment_type_id="12345678"
+        )
+    """
+    equipment_type = get_equipment_type_by_id(
+        client=client, equipment_type_id=equipment_type_id
+    )
+    if equipment_type is None:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentType, entity_id=equipment_type_id
+        )
+    RemoveEquipmentTypeMutation.execute(client, id=equipment_type_id)
+    del EQUIPMENT_TYPES[equipment_type.name]

@@ -106,7 +106,7 @@ def get_equipment_port_type(
     client: SymphonyClient, equipment_port_type_id: str
 ) -> EquipmentPortType:
     """This function returns an equipment port type.
-    It can get only the requested equipment port type ID
+    It gets the requested equipment port type ID
 
     :param equipment_port_type_id: Equipment port type ID
     :type equipment_port_type_id: str
@@ -138,7 +138,7 @@ def get_equipment_port_types(client: SymphonyClient) -> Iterator[EquipmentPortTy
     :raises:
         FailedOperationException: Internal symphony error
 
-    :return: ProjectType Iterator
+    :return: EquipmentPortType Iterator
     :rtype: Iterator[ :class:`~psym.common.data_class.EquipmentPortType` ]
 
     **Example**
@@ -236,14 +236,14 @@ def delete_equipment_port_type(
     client: SymphonyClient, equipment_port_type_id: str
 ) -> None:
     """This function deletes an equipment port type.
-    It can get only the requested equipment port type ID
+    It gets the requested equipment port type ID
 
     :param equipment_port_type_id: Equipment port type ID
     :type equipment_port_type_id: str
 
     :raises:
         * FailedOperationException: Internal symphony error
-        * :class:`~psym.exceptions.EntityNotFoundError`: Project type does not exist
+        * :class:`~psym.exceptions.EntityNotFoundError`: Equipment port type does not exist
 
     **Example**
 

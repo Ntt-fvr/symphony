@@ -94,6 +94,9 @@ class PsymClient(SymphonyClient):
         get_equipment_type_property_type,
         get_equipment_type_property_type_by_external_id,
         edit_equipment_type_property_type,
+        delete_equipment_type,
+        get_equipment_type_by_id,
+        get_equipment_types,
     )
     from .api.equipment import (
         add_equipment,

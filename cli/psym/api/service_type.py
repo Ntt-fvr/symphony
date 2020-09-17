@@ -289,7 +289,7 @@ def edit_service_type(
 
 def delete_service_type(client: SymphonyClient, service_type: ServiceType) -> None:
     """This function deletes an service type.
-    It can get only the requested service type ID
+    It gets the requested service type ID
 
     :param service_type: ServiceType object
     :type service_type: :class:`~psym.common.data_class.ServiceType`

@@ -7,6 +7,7 @@ from numbers import Number
 from typing import List, Sequence, cast
 
 from psym.graphql.fragment.equipment_port_type import EquipmentPortTypeFragment
+from psym.graphql.fragment.equipment_type import EquipmentTypeFragment
 from psym.graphql.fragment.location_type import LocationTypeFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
@@ -15,6 +16,7 @@ from psym.graphql.input.property_type import PropertyTypeInput
 
 from .data_class import (
     EquipmentPortType,
+    EquipmentType,
     LocationType,
     ProjectType,
     PropertyDefinition,
@@ -302,4 +304,36 @@ def format_to_location_type(
         map_type=location_type_fragment.mapType,
         map_zoom_level=location_type_fragment.mapZoomLevel,
         is_site=location_type_fragment.isSite,
+    )
+
+
+def format_to_equipment_type(
+    equipment_type_fragment: EquipmentTypeFragment,
+) -> EquipmentType:
+    """This function gets `psym.graphql.fragment.equipment_type.EquipmentTypeFragment` object as argument
+    and formats it to `psym.common.data_class.EquipmentType` object
+
+        :param equipment_type_fragment: Existing equipment type fragment object
+        :type equipment_type_fragment: :class:`~psym.graphql.fragment.equipment_type.EquipmentTypeFragment`
+
+        :return: EquipmentType object
+        :rtype: :class:`~psym.common.data_class.EquipmentType`
+
+        **Example**
+
+        .. code-block:: python
+
+            equipment_type = format_to_equipment_type(
+                equipment_type_fragment=equipment_type_fragment,
+            )
+    """
+    return EquipmentType(
+        name=equipment_type_fragment.name,
+        category=equipment_type_fragment.category,
+        id=equipment_type_fragment.id,
+        property_types=format_to_property_definitions(
+            equipment_type_fragment.propertyTypes
+        ),
+        position_definitions=equipment_type_fragment.positionDefinitions,
+        port_definitions=equipment_type_fragment.portDefinitions,
     )
