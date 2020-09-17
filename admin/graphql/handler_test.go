@@ -19,7 +19,7 @@ func TestHandler(t *testing.T) {
 	require.NoError(t, err)
 	mock.ExpectQuery(regexp.QuoteMeta(
 		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
-	)).
+	) + "$").
 		WithArgs("tenant_foo").
 		WillReturnRows(
 			sqlmock.NewRows([]string{"COUNT"}).
