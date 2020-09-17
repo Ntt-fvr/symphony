@@ -16,7 +16,6 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
@@ -25,28 +24,28 @@ import (
 )
 
 // Exporter encapsulates accessing db and logging
-type exporter struct {
-	log log.Logger
-	rower
+type Exporter struct {
+	Log log.Logger
+	Rower
 }
 
-type exporterExcel struct {
+type ExcelExporter struct {
 	Log log.Logger
-	excelFile
+	ExcelFile
 }
 
 // Interface for creating an excel file
-type excelFile interface {
+type ExcelFile interface {
 	CreateExcelFile(context.Context, *url.URL) (*excelize.File, error)
 }
 
-type rower interface {
+type Rower interface {
 	Rows(ctx context.Context, filters string) ([][]string, error)
 }
 
-func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
+func (m Exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
 	var (
-		logger = m.log.For(ctx)
+		logger = m.Log.For(ctx)
 		err    error
 		etType exporttask.Type
 	)
@@ -87,8 +86,8 @@ func (m exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 	return t, nil
 }
 
-func (m *exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int) {
-	log := m.log.For(ctx)
+func (m *Exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int) {
+	log := m.Log.For(ctx)
 	taskID := struct {
 		TaskID string
 	}{
@@ -110,9 +109,9 @@ func (m *exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter,
 }
 
 // ServerHTTP handles requests to returns an export CSV file
-func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	log := m.log.For(ctx)
+	log := m.Log.For(ctx)
 	if viewer.FromContext(ctx).Features().Enabled("async_export") && r.URL.Path != "/single_work_order" {
 		et, err := m.createExportTask(ctx, r.URL)
 		if err != nil {
@@ -148,7 +147,7 @@ func (m *exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // ServerHTTP handles requests to returns an export Excel file with extension xlsx
-func (m *exporterExcel) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *ExcelExporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	filename := "exportExcel"
 	rout := mux.CurrentRoute(r)
@@ -179,19 +178,19 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 	router := mux.NewRouter()
 	routes := []struct {
 		name    string
-		handler exporter
+		handler Exporter
 	}{
-		{name: "equipment", handler: exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}},
-		{name: "ports", handler: exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}},
-		{name: "work_orders", handler: exporter{log: log, rower: pkgexporter.WoRower{Log: log}}},
-		{name: "links", handler: exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}},
-		{name: "locations", handler: exporter{log: log, rower: pkgexporter.LocationsRower{Log: log}}},
-		{name: "services", handler: exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}},
+		{name: "equipment", handler: Exporter{Log: log, Rower: EquipmentRower{Log: log}}},
+		{name: "ports", handler: Exporter{Log: log, Rower: PortsRower{Log: log}}},
+		{name: "work_orders", handler: Exporter{Log: log, Rower: WoRower{Log: log}}},
+		{name: "links", handler: Exporter{Log: log, Rower: LinksRower{Log: log}}},
+		{name: "locations", handler: Exporter{Log: log, Rower: LocationsRower{Log: log}}},
+		{name: "services", handler: Exporter{Log: log, Rower: ServicesRower{Log: log}}},
 	}
 
 	router.Path("/single_work_order").
 		Methods(http.MethodGet).
-		Handler(&exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}).
+		Handler(&ExcelExporter{Log: log, ExcelFile: SingleWoRower{Log: log}}).
 		Name("single_work_order")
 
 	for _, route := range routes {

@@ -225,9 +225,9 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 
 func TestEmptyServicesDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -263,9 +263,9 @@ func TestEmptyServicesDataExport(t *testing.T) {
 
 func TestServicesExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -382,9 +382,9 @@ func TestServicesExport(t *testing.T) {
 
 func TestServiceWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.ServicesRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

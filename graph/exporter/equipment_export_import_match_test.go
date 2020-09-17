@@ -145,8 +145,8 @@ func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResol
 }
 
 func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.Context, *http.Response) {
-	log := r.exporter.log
-	var h http.Handler = &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
+	log := r.exporter.Log
+	var h http.Handler = &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, h, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

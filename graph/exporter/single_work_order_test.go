@@ -166,8 +166,8 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 
 func TestWoWithInvalidId(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
-	e := &exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}
+	log := r.exporter.Log
+	e := &pkgexporter.ExcelExporter{Log: log, ExcelFile: pkgexporter.SingleWoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -187,9 +187,9 @@ func TestWoWithInvalidId(t *testing.T) {
 
 func TestSingleWorkOrderExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporterExcel{Log: log, excelFile: pkgexporter.SingleWoRower{Log: log}}
+	e := &pkgexporter.ExcelExporter{Log: log, ExcelFile: pkgexporter.SingleWoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

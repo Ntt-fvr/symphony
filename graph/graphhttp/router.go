@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/facebookincubator/symphony/graph/exporter"
 	"github.com/facebookincubator/symphony/graph/graphql"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/graph/jobs"
@@ -16,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ev"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	flowactions "github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -69,7 +69,7 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		Handler(http.StripPrefix("/import", handler)).
 		Name("import")
 
-	if handler, err = exporter.NewHandler(cfg.logger); err != nil {
+	if handler, err = pkgexporter.NewHandler(cfg.logger); err != nil {
 		return nil, nil, fmt.Errorf("creating export handler: %w", err)
 	}
 	router.PathPrefix("/export/").

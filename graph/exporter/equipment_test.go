@@ -36,9 +36,9 @@ type equipmentFilterInput struct {
 
 func TestEmptyWOExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -75,9 +75,9 @@ func TestEmptyWOExport(t *testing.T) {
 
 func TestExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -164,9 +164,9 @@ func TestExport(t *testing.T) {
 
 func TestExportWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log: log, rower: pkgexporter.EquipmentRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

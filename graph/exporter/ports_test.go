@@ -53,9 +53,9 @@ const servicesTitle = "Service Names"
 
 func TestEmptyPortsDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -96,9 +96,9 @@ func TestEmptyPortsDataExport(t *testing.T) {
 
 func TestPortsExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -198,9 +198,9 @@ func TestPortsExport(t *testing.T) {
 
 func TestPortWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

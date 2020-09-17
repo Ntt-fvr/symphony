@@ -93,7 +93,7 @@ type TestExporterResolver struct {
 	generated.ResolverRoot
 	drv      dialect.Driver
 	client   *ent.Client
-	exporter exporter
+	exporter pkgexporter.Exporter
 }
 
 func newExporterTestResolver(t *testing.T) *TestExporterResolver {
@@ -116,7 +116,7 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver {
 		Logger:          logger,
 		ReceiverFactory: ev.ErrFactory{},
 	})
-	e := exporter{log: logger, rower: pkgexporter.EquipmentRower{Log: logger}}
+	e := pkgexporter.Exporter{Log: logger, Rower: pkgexporter.EquipmentRower{Log: logger}}
 	return &TestExporterResolver{r, drv, client, e}
 }
 
@@ -443,39 +443,39 @@ func importLinksPortsFile(t *testing.T, client *ent.Client, r io.Reader, entity 
 
 func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	r := newExporterTestResolver(t)
-	logger := r.exporter.log
+	logger := r.exporter.Log
 	var (
-		e          exporter
+		e          pkgexporter.Exporter
 		exportPath string
 	)
 	switch typ {
 	case exporttask.TypeLocation:
-		e = exporter{logger, pkgexporter.LocationsRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.LocationsRower{
 			Log: logger,
 		}}
 		exportPath = "/locations"
 	case exporttask.TypeEquipment:
-		e = exporter{logger, pkgexporter.EquipmentRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.EquipmentRower{
 			Log: logger,
 		}}
 		exportPath = "/equipment"
 	case exporttask.TypePort:
-		e = exporter{logger, pkgexporter.PortsRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.PortsRower{
 			Log: logger,
 		}}
 		exportPath = "/ports"
 	case exporttask.TypeLink:
-		e = exporter{logger, pkgexporter.LinksRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.LinksRower{
 			Log: logger,
 		}}
 		exportPath = "/links"
 	case exporttask.TypeService:
-		e = exporter{logger, pkgexporter.ServicesRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.ServicesRower{
 			Log: logger,
 		}}
 		exportPath = "/services"
 	case exporttask.TypeWorkOrder:
-		e = exporter{logger, pkgexporter.WoRower{
+		e = pkgexporter.Exporter{Log: logger, Rower: pkgexporter.WoRower{
 			Log: logger,
 		}}
 		exportPath = "/work_orders"

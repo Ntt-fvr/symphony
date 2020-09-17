@@ -16,12 +16,13 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/exporter"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
+	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -256,7 +257,7 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 
 func exportServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) bytes.Buffer {
 	var buf bytes.Buffer
-	handler, err := exporter.NewHandler(logtest.NewTestLogger(t))
+	handler, err := pkgexporter.NewHandler(logtest.NewTestLogger(t))
 	require.NoError(t, err)
 	th := viewer.TenancyHandler(handler, viewer.NewFixedTenancy(r.client), logtest.NewTestLogger(t))
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

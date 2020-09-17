@@ -214,9 +214,9 @@ func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) 
 
 func TestEmptyLinksDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -263,9 +263,9 @@ func TestEmptyLinksDataExport(t *testing.T) {
 
 func TestLinksExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -382,9 +382,9 @@ func TestLinksExport(t *testing.T) {
 
 func TestLinksWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log: log, rower: pkgexporter.LinksRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

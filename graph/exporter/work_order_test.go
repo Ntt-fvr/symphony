@@ -150,9 +150,9 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 
 func TestEmptyDataExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -178,9 +178,9 @@ func TestEmptyDataExport(t *testing.T) {
 
 func TestWOExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 
-	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -249,9 +249,9 @@ func TestWOExport(t *testing.T) {
 
 func TestExportWOWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.log
+	log := r.exporter.Log
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &exporter{log: log, rower: pkgexporter.WoRower{Log: log}}
+	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()

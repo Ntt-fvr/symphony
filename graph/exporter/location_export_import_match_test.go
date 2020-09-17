@@ -115,8 +115,8 @@ func TestExportAndEditLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
-			log := r.exporter.log
-			e := &exporter{log: log, rower: pkgexporter.LocationsRower{Log: log}}
+			log := r.exporter.Log
+			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 			importLocationsFile(t, r.client, res.Body, MethodEdit, withVerify, skipLines)
 			res.Body.Close()
@@ -164,8 +164,8 @@ func TestExportAndAddLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
-			log := r.exporter.log
-			e := &exporter{log: log, rower: pkgexporter.LocationsRower{Log: log}}
+			log := r.exporter.Log
+			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
 			locs := r.client.Location.Query().AllX(ctx)

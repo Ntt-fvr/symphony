@@ -76,8 +76,8 @@ func TestImportAndEditPorts(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
 			r := newExporterTestResolver(t)
-			log := r.exporter.log
-			e := &exporter{log: log, rower: pkgexporter.PortsRower{Log: log}}
+			log := r.exporter.Log
+			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
 			importLinksPortsFile(t, r.client, res.Body, importer.ImportEntityPort, MethodEdit, skipLines, withVerify)
