@@ -123,9 +123,9 @@ module aws_node_role {
 
 # networking plugin for pod networking using ENI
 resource helm_release aws_vpc_cni {
-  chart      = "aws-vpc-cni"
-  repository = local.helm_repository.eks
   name       = "aws-vpc-cni"
+  repository = local.helm_repository.eks
+  chart      = "aws-vpc-cni"
   namespace  = "kube-system"
   version    = "1.0.9"
 
@@ -137,4 +137,12 @@ resource helm_release aws_vpc_cni {
       }
     }
   })]
+}
+
+resource helm_release aws_calico {
+  name       = "aws-calico"
+  repository = local.helm_repository.eks
+  chart      = "aws-calico"
+  namespace  = "kube-system"
+  version    = "0.3.2"
 }

@@ -33,7 +33,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	zapLogger := log.ProvideZapLogger(logger)
 	mysqlConfig := &flags.MySQLConfig
-	db, cleanup2 := mysql.Provider(mysqlConfig)
+	db, cleanup2 := provideDB(mysqlConfig)
 	handlerConfig := graphql.HandlerConfig{
 		DB:     db,
 		Logger: logger,
@@ -98,6 +98,12 @@ var (
 )
 
 // wire.go:
+
+func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
+	db, cleanup := mysql.Provider(cfg)
+	db.SetMaxOpenConns(1)
+	return db, cleanup
+}
 
 func provideHealthCheckers(db *sql.DB) []health.Checker {
 	return []health.Checker{sqlhealth.New(db)}

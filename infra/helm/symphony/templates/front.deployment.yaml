@@ -72,6 +72,8 @@ spec:
               value: {{ .Values.front.spec.mysql.user | quote }}
             - name: MYSQL_DB
               value: {{ .Values.front.spec.mysql.db | quote }}
+            - name: ADMIN_HOST
+              value: {{ include "symphony.admin.fullname" . | quote }}
             - name: GRAPH_HOST
               value: {{ include "symphony.graph.fullname" . | quote }}
             - name: STORE_HOST

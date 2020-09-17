@@ -9,7 +9,6 @@
  */
 import type {ExpressResponse} from 'express';
 import type {FBCNMSRequest} from '@fbcnms/auth/access';
-import type {UserModel} from '@fbcnms/sequelize-models/models/user';
 
 const {LOG_FORMAT, LOG_LEVEL} = require('./config');
 
@@ -47,7 +46,7 @@ const OrganizationOIDCStrategy = require('@fbcnms/auth/strategies/OrganizationOI
 const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
   .default;
 
-const {createGraphTenant, deleteGraphTenant} = require('./graphgrpc/tenant');
+const {createTenant, deleteTenant} = require('./admin/tenant');
 const {createGraphUser, deleteGraphUser} = require('./graphgrpc/user');
 const {access, configureAccess} = require('@fbcnms/auth/access');
 const {
@@ -61,23 +60,23 @@ const SessionStore = connectSession(session.Store);
 const sequelizeSessionStore = new SessionStore({db: sequelize});
 
 // add hooks to Organization model
-Organization.beforeCreate((org: any) => {
-  createGraphTenant(org.name);
+Organization.beforeCreate(async (org: any) => {
+  await createTenant(org.name);
 });
-Organization.beforeDestroy((org: any) => {
-  deleteGraphTenant(org.name);
+Organization.afterDestroy(async (org: any) => {
+  await deleteTenant(org.name);
 });
 
 // add hooks to User model
-User.beforeCreate((user: UserModel) => {
-  createGraphUser(
+User.beforeCreate(async user => {
+  await createGraphUser(
     user.getDataValue('organization'),
     user.getDataValue('email'),
     user.getDataValue('role') === SUPERUSER,
   );
 });
 
-User.beforeBulkDestroy(async (options: Object) => {
+User.beforeBulkDestroy(async options => {
   const {where, model, transaction, logging, benchmark} = options;
   const emails = await model
     .findAll({where, transaction, logging, benchmark})

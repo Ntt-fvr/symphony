@@ -14,7 +14,7 @@ import type {OrganizationType} from '@fbcnms/sequelize-models/models/organizatio
 import bcrypt from 'bcryptjs';
 import {AccessRoles} from '@fbcnms/auth/roles';
 import {Organization, User} from '@fbcnms/sequelize-models';
-import {createGraphTenant} from '../src/graphgrpc/tenant';
+import {createTenant} from '../src/admin/tenant';
 
 const SALT_GEN_ROUNDS = 10;
 
@@ -84,7 +84,7 @@ async function createOrFetchOrganization(
         ssoIssuer: '',
         ssoEntrypoint: '',
       }),
-      createGraphTenant(organization),
+      createTenant(organization),
     ]);
     org = o;
   }

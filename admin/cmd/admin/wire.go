@@ -30,7 +30,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"LogConfig",
 			"TelemetryConfig",
 		),
-		mysql.Provider,
+		provideDB,
 		log.Provider,
 		provideHealthCheckers,
 		provideViews,
@@ -50,6 +50,12 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 	)
 	return nil, nil, nil
+}
+
+func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
+	db, cleanup := mysql.Provider(cfg)
+	db.SetMaxOpenConns(1)
+	return db, cleanup
 }
 
 func provideHealthCheckers(db *sql.DB) []health.Checker {

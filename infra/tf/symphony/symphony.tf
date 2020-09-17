@@ -64,13 +64,13 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.0.0"
+  version             = "1.1.0"
   timeout             = 600
   max_history         = 100
 
   values = concat([
     yamlencode({
-      for s in toset(["front", "graph", "async", "store", "jobrunner", "docs"]) :
+      for s in toset(["front", "admin", "graph", "async", "store", "jobrunner", "docs"]) :
       s => {
         image = {
           repository = "${module.artifactory_secret.data.docker_registry}/${s}"
@@ -79,8 +79,19 @@ resource helm_release symphony {
       }
     }),
     yamlencode({
+      for s in toset(["admin", "graph", "async", "store"]) :
+      s => {
+        spec = {
+          log = {
+            level = "debug"
+          }
+        }
+      }
+    }),
+    yamlencode({
       for s in [
         { name = "front", replicas = 2 },
+        { name = "admin", replicas = 1 },
         { name = "graph", replicas = 3 },
         { name = "async", replicas = 1 },
         { name = "store", replicas = 1 },
@@ -160,9 +171,6 @@ resource helm_release symphony {
       }
       graph = {
         spec = {
-          log = {
-            level = "debug"
-          }
           tenancy = {
             tenantMaxDBConn = 10
           }
@@ -182,9 +190,6 @@ resource helm_release symphony {
           }
         }
         spec = {
-          log = {
-            level = "debug"
-          }
           tenancy = {
             tenantMaxDBConn = 5
           }
@@ -209,9 +214,6 @@ resource helm_release symphony {
           }
         }
         spec = {
-          log = {
-            level = "debug"
-          }
           bucket = {
             url = local.store_bucket_url
           }

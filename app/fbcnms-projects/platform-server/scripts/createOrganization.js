@@ -14,7 +14,7 @@ import type {Tab} from '@fbcnms/types/tabs';
 
 import {Organization} from '@fbcnms/sequelize-models';
 import {coerceToTab} from '@fbcnms/types/tabs';
-import {createGraphTenant} from '../src/graphgrpc/tenant';
+import {createTenant} from '../src/admin/tenant';
 import {difference} from 'lodash';
 import {getProjectTabs} from '@fbcnms/projects/projects';
 import {union} from 'lodash';
@@ -72,7 +72,7 @@ async function createOrUpdateOrganization(
   if (!organization) {
     await Promise.all([
       createOrganization(organizationObject),
-      createGraphTenant(organizationObject.name),
+      createTenant(organizationObject.name),
     ]);
   } else {
     await updateOrganization(organization, organizationObject);

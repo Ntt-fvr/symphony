@@ -34,7 +34,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	bucket, cleanup2, err := providerBucket(ctx, flags)
+	bucket, cleanup2, err := provideBucket(ctx, flags)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -97,7 +97,7 @@ var (
 
 // wire.go:
 
-func providerBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
+func provideBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), error) {
 	bucket, err := blob.OpenBucket(ctx, flags.BucketURL.String())
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot open blob bucket: %w", err)
