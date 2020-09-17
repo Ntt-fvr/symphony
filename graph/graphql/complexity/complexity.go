@@ -95,6 +95,7 @@ func New() (complexity generated.ComplexityRoot) {
 	complexity.Query.WorkOrders = func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, _ *ent.WorkOrderOrder, _ []*pkgmodels.WorkOrderFilterInput) int {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
+	complexity.Query.FlowDrafts = PaginationComplexity
 	return complexity
 }
 

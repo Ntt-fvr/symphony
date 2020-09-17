@@ -550,6 +550,17 @@ type ComplexityRoot struct {
 		Name                func(childComplexity int) int
 	}
 
+	FlowDraftConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	FlowDraftEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	FlowInstance struct {
 		ID func(childComplexity int) int
 	}
@@ -951,6 +962,7 @@ type ComplexityRoot struct {
 		EquipmentSearch          func(childComplexity int, filters []*models1.EquipmentFilterInput, limit *int) int
 		EquipmentTypes           func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		Equipments               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, orderBy *ent.EquipmentOrder, filterBy []*models1.EquipmentFilterInput) int
+		FlowDrafts               func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int) int
 		LatestPythonPackage      func(childComplexity int) int
 		LinkSearch               func(childComplexity int, filters []*models1.LinkFilterInput, limit *int) int
 		Links                    func(childComplexity int, after *ent.Cursor, first *int, before *ent.Cursor, last *int, filterBy []*models1.LinkFilterInput) int
@@ -1728,6 +1740,7 @@ type QueryResolver interface {
 	ActionsRules(ctx context.Context) (*models.ActionsRulesSearchResult, error)
 	ActionsTriggers(ctx context.Context) (*models.ActionsTriggersSearchResult, error)
 	ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error)
+	FlowDrafts(ctx context.Context, after *ent.Cursor, first *int, before *ent.Cursor, last *int) (*ent.FlowDraftConnection, error)
 }
 type ReportFilterResolver interface {
 	Entity(ctx context.Context, obj *ent.ReportFilter) (models.FilterEntity, error)
@@ -3603,6 +3616,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FlowDraft.Name(childComplexity), true
+
+	case "FlowDraftConnection.edges":
+		if e.complexity.FlowDraftConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.FlowDraftConnection.Edges(childComplexity), true
+
+	case "FlowDraftConnection.pageInfo":
+		if e.complexity.FlowDraftConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.FlowDraftConnection.PageInfo(childComplexity), true
+
+	case "FlowDraftConnection.totalCount":
+		if e.complexity.FlowDraftConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.FlowDraftConnection.TotalCount(childComplexity), true
+
+	case "FlowDraftEdge.cursor":
+		if e.complexity.FlowDraftEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.FlowDraftEdge.Cursor(childComplexity), true
+
+	case "FlowDraftEdge.node":
+		if e.complexity.FlowDraftEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.FlowDraftEdge.Node(childComplexity), true
 
 	case "FlowInstance.id":
 		if e.complexity.FlowInstance.ID == nil {
@@ -6130,6 +6178,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Equipments(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int), args["orderBy"].(*ent.EquipmentOrder), args["filterBy"].([]*models1.EquipmentFilterInput)), true
+
+	case "Query.flowDrafts":
+		if e.complexity.Query.FlowDrafts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_flowDrafts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FlowDrafts(childComplexity, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int)), true
 
 	case "Query.latestPythonPackage":
 		if e.complexity.Query.LatestPythonPackage == nil {
@@ -9351,6 +9411,37 @@ type SearchNodesConnection {
 }
 
 """
+A flow draft edge in a connection.
+"""
+type FlowDraftEdge {
+  """
+  The FlowDraft type at the end of the edge.
+  """
+  node: FlowDraft
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of FlowDrafts.
+"""
+type FlowDraftConnection {
+  """
+  Total count of FlowDrafts in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of FlowDraft edges.
+  """
+  edges: [FlowDraftEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -12265,6 +12356,12 @@ type Query {
   actionsRules: ActionsRulesSearchResult
   actionsTriggers: ActionsTriggersSearchResult
   reportFilters(entity: FilterEntity!): [ReportFilter!]!
+  flowDrafts(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowDraftConnection!
 }
 
 type Mutation {
@@ -14992,6 +15089,86 @@ func (ec *executionContext) field_Query_equipments_args(ctx context.Context, raw
 		}
 	}
 	args["filterBy"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_flowDrafts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *ent.Cursor
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("first"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if data, ok := tmp.(*int); ok {
+			arg1 = data
+		} else if tmp == nil {
+			arg1 = nil
+		} else {
+			return nil, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp)
+		}
+	}
+	args["first"] = arg1
+	var arg2 *ent.Cursor
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("last"))
+		directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalOInt2ᚖint(ctx, tmp) }
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.NumberValue == nil {
+				return nil, errors.New("directive numberValue is not implemented")
+			}
+			return ec.directives.NumberValue(ctx, rawArgs, directive0, nil, nil, min, nil, nil, nil, nil)
+		}
+
+		tmp, err = directive1(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if data, ok := tmp.(*int); ok {
+			arg3 = data
+		} else if tmp == nil {
+			arg3 = nil
+		} else {
+			return nil, fmt.Errorf(`unexpected type %T from directive, should be *int`, tmp)
+		}
+	}
+	args["last"] = arg3
 	return args, nil
 }
 
@@ -25043,6 +25220,170 @@ func (ec *executionContext) _FlowDraft_blocks(ctx context.Context, field graphql
 	res := resTmp.([]*ent.Block)
 	fc.Result = res
 	return ec.marshalNBlock2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlockᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraftConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraftConnection",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraftConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraftConnection",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.FlowDraftEdge)
+	fc.Result = res
+	return ec.marshalOFlowDraftEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraftConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftConnection) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraftConnection",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraftEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraftEdge",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.FlowDraft)
+	fc.Result = res
+	return ec.marshalOFlowDraft2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraft(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowDraftEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.FlowDraftEdge) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "FlowDraftEdge",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(ent.Cursor)
+	fc.Result = res
+	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FlowInstance_id(ctx context.Context, field graphql.CollectedField, obj *ent.FlowInstance) (ret graphql.Marshaler) {
@@ -36620,6 +36961,47 @@ func (ec *executionContext) _Query_reportFilters(ctx context.Context, field grap
 	res := resTmp.([]*ent.ReportFilter)
 	fc.Result = res
 	return ec.marshalNReportFilter2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐReportFilterᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_flowDrafts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_flowDrafts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FlowDrafts(rctx, args["after"].(*ent.Cursor), args["first"].(*int), args["before"].(*ent.Cursor), args["last"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.FlowDraftConnection)
+	fc.Result = res
+	return ec.marshalNFlowDraftConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -56378,6 +56760,69 @@ func (ec *executionContext) _FlowDraft(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
+var flowDraftConnectionImplementors = []string{"FlowDraftConnection"}
+
+func (ec *executionContext) _FlowDraftConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowDraftConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowDraftConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowDraftConnection")
+		case "totalCount":
+			out.Values[i] = ec._FlowDraftConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "edges":
+			out.Values[i] = ec._FlowDraftConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._FlowDraftConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var flowDraftEdgeImplementors = []string{"FlowDraftEdge"}
+
+func (ec *executionContext) _FlowDraftEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowDraftEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, flowDraftEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FlowDraftEdge")
+		case "node":
+			out.Values[i] = ec._FlowDraftEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._FlowDraftEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var flowInstanceImplementors = []string{"FlowInstance", "Node"}
 
 func (ec *executionContext) _FlowInstance(ctx context.Context, sel ast.SelectionSet, obj *ent.FlowInstance) graphql.Marshaler {
@@ -59369,6 +59814,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_reportFilters(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "flowDrafts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_flowDrafts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -64733,6 +65192,30 @@ func (ec *executionContext) marshalNFlowDraft2ᚖgithubᚗcomᚋfacebookincubato
 	return ec._FlowDraft(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNFlowDraftConnection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftConnection(ctx context.Context, sel ast.SelectionSet, v ent.FlowDraftConnection) graphql.Marshaler {
+	return ec._FlowDraftConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFlowDraftConnection2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftConnection(ctx context.Context, sel ast.SelectionSet, v *ent.FlowDraftConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowDraftConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNFlowDraftEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftEdge(ctx context.Context, sel ast.SelectionSet, v *ent.FlowDraftEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FlowDraftEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNFlowInstance2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx context.Context, sel ast.SelectionSet, v ent.FlowInstance) graphql.Marshaler {
 	return ec._FlowInstance(ctx, sel, &v)
 }
@@ -69268,6 +69751,46 @@ func (ec *executionContext) marshalOFlowDraft2ᚖgithubᚗcomᚋfacebookincubato
 		return graphql.Null
 	}
 	return ec._FlowDraft(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOFlowDraftEdge2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.FlowDraftEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFlowDraftEdge2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowDraftEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalOFutureState2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋschemaᚋenumᚐFutureState(ctx context.Context, v interface{}) (*enum.FutureState, error) {

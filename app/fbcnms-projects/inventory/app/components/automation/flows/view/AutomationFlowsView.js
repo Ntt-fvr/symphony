@@ -7,33 +7,55 @@
  * @flow
  * @format
  */
+import type {AutomationFlowsViewQuery} from './__generated__/AutomationFlowsViewQuery.graphql';
 
 import * as React from 'react';
-
+import AutomationFlowCard from './AutomationFlowCard';
 import Button from '@symphony/design-system/components/Button';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {TESTING_PURPOSES} from '../builder/FlowBuilder';
+import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useMemo} from 'react';
 import {useRouter} from '@fbcnms/ui/hooks';
 
 const useStyles = makeStyles(_theme => ({
-  root: {
-    display: 'flex',
-  },
+  root: {},
+  flowDraftCardContainer: {},
 }));
 
+const flowDraftsQuery = graphql`
+  query AutomationFlowsViewQuery {
+    flowDrafts(first: 500) @connection(key: "AutomationFlowsView_flowDrafts") {
+      edges {
+        node {
+          ...AutomationFlowCard_flowDraft
+        }
+      }
+    }
+  }
+`;
+
 type Props = $ReadOnly<{||}>;
+
+export const AUTOMATION_FLOWS_VIEW_HEADER = `${fbt('Automation Flows', '')}`;
 
 export default function AutomationFlowsView(_props: Props) {
   const classes = useStyles();
   const {history} = useRouter();
 
+  const data = useLazyLoadQuery<AutomationFlowsViewQuery>(flowDraftsQuery, {});
+  const flowDrafts = useMemo(() => {
+    const flowDraftsData = data.flowDrafts?.edges || [];
+    return flowDraftsData.map(p => p.node).filter(Boolean);
+  }, [data]);
+
   const header = useMemo(
     () => ({
-      title: <fbt desc="">Automation Flows</fbt>,
+      title: AUTOMATION_FLOWS_VIEW_HEADER,
       subtitle: <fbt desc="">List of all automation flows in the system</fbt>,
       actionButtons: [
         <Button
@@ -57,7 +79,13 @@ export default function AutomationFlowsView(_props: Props) {
 
   return (
     <ViewContainer header={header} className={classes.root}>
-      <fbt desc="">Table of all flows</fbt>
+      <div>
+        {flowDrafts.map(flowDraft => (
+          <div>
+            <AutomationFlowCard flowDraft={flowDraft} />
+          </div>
+        ))}
+      </div>
     </ViewContainer>
   );
 }

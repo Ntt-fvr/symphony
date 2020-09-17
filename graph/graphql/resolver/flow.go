@@ -144,3 +144,12 @@ func (r mutationResolver) StartFlow(ctx context.Context, input models.StartFlowI
 	}
 	return flowInstance, nil
 }
+
+func (r queryResolver) FlowDrafts(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+) (*ent.FlowDraftConnection, error) {
+	return r.ClientFrom(ctx).FlowDraft.Query().
+		Paginate(ctx, after, first, before, last)
+}

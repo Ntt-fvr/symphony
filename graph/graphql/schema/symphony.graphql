@@ -859,6 +859,37 @@ type SearchNodesConnection {
 }
 
 """
+A flow draft edge in a connection.
+"""
+type FlowDraftEdge {
+  """
+  The FlowDraft type at the end of the edge.
+  """
+  node: FlowDraft
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of FlowDrafts.
+"""
+type FlowDraftConnection {
+  """
+  Total count of FlowDrafts in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of FlowDraft edges.
+  """
+  edges: [FlowDraftEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+"""
 A connection to a list of equipment port types.
 """
 type EquipmentPortTypeConnection {
@@ -3773,6 +3804,12 @@ type Query {
   actionsRules: ActionsRulesSearchResult
   actionsTriggers: ActionsTriggersSearchResult
   reportFilters(entity: FilterEntity!): [ReportFilter!]!
+  flowDrafts(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowDraftConnection!
 }
 
 type Mutation {

@@ -26,6 +26,7 @@ export const InventoryAPIUrls = {
     `/workorders/projects/search?project=${projectId}`,
   workorder: (workorderId: ?string) =>
     `/workorders/search${!!workorderId ? `?workorder=${workorderId}` : ''}`,
+  flows: () => '/automation/flows',
   flow: (flowId: ?string) =>
     `/automation/flow/?flowId=${!!flowId ? flowId : NEW_FLOW_PARAM}`,
   search: POWER_SEARCH,

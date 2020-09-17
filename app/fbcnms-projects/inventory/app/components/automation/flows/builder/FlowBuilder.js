@@ -12,13 +12,15 @@ import type {FlowBuilder_FlowDraftQuery} from './__generated__/FlowBuilder_FlowD
 
 import AddFlowDialog from '../view/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
+import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import Canvas from './canvas/Canvas';
 import DetailsPane from './tools/DetailsPane';
 import JsonViewer from './tools/JsonViewer';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import Toolbar from './tools/Toolbar';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt/lib/fbt';
+import {AUTOMATION_FLOWS_VIEW_HEADER} from '../view/AutomationFlowsView';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
@@ -121,7 +123,7 @@ export default function FlowBuilder() {
   const flowId = queryParams.get('flowId');
 
   const isNewFlowDraft = flowId?.startsWith(NEW_FLOW_PARAM) || false;
-  const [_flowDraft, setFlowDraft] = useState<?FlowDraft>(
+  const [flowDraft, setFlowDraft] = useState<?FlowDraft>(
     isNewFlowDraft ? getInitialDefaultFlow() : null,
   );
   const fetchedFlow = useFlow(flowId || '');
@@ -158,13 +160,31 @@ export default function FlowBuilder() {
     setFlowDraft(fetchedFlow);
   }, [handleError, isNewFlowDraft, fetchedFlow, flowId]);
 
+  const flowName = flowDraft?.name;
+  const title = useMemo(() => {
+    const breadcrumbs = [
+      {
+        id: 'automation_flows',
+        name: AUTOMATION_FLOWS_VIEW_HEADER,
+        onClick: () => history.replace(InventoryAPIUrls.flows()),
+      },
+    ];
+    if (flowName != null && flowName.length > 0) {
+      breadcrumbs.push({
+        id: 'flow',
+        name: flowName,
+      });
+    }
+    return <Breadcrumbs breadcrumbs={breadcrumbs} size="large" />;
+  }, [flowName, history]);
+
   return (
     <GraphContextProvider>
       <GraphSelectionContextProvider>
         <ViewContainer
           className={classes.root}
           header={{
-            title: 'Flow Builder',
+            title,
             subtitle: 'Basic canvas view',
             actionButtons: [<Toolbar />],
           }}>
