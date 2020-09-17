@@ -14,7 +14,9 @@ import {useEffect, useRef} from 'react';
 import {useGraph} from './graph/GraphContext';
 
 const useStyles = makeStyles(() => ({
-  graphContainer: {},
+  graphContainer: {
+    overflow: 'hidden',
+  },
 }));
 
 export default function Canvas() {

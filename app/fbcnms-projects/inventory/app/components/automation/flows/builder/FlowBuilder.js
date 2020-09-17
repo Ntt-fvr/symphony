@@ -12,15 +12,11 @@ import type {FlowBuilder_FlowDraftQuery} from './__generated__/FlowBuilder_FlowD
 
 import AddFlowDialog from '../view/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
-import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
+import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
-import DetailsPane from './tools/DetailsPane';
-import JsonViewer from './tools/JsonViewer';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import Toolbar from './tools/Toolbar';
-import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
+import React, {useCallback, useEffect, useState} from 'react';
+import TopBar from './tools/TopBar';
 import fbt from 'fbt/lib/fbt';
-import {AUTOMATION_FLOWS_VIEW_HEADER} from '../view/AutomationFlowsView';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
@@ -34,44 +30,29 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 const useStyles = makeStyles(() => ({
   root: {
     height: '100%',
-  },
-  ide: {
     display: 'flex',
     flexGrow: 1,
   },
-  rightPane: {
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-    background: 'white',
-
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  rightPane: {
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-    background: 'white',
-
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  canvasContainer: {
+  workspace: {
     position: 'relative',
-    flexBasis: 0,
-    flexShrink: 0,
-    flexGrow: 4,
-    padding: '0 16px',
-  },
-  leftPane: {
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-    background: 'white',
-
     display: 'flex',
-    flexDirection: 'column',
+    flexGrow: 1,
+  },
+  topBarContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    background: 'transparent',
+    pointerEvents: 'none',
+  },
+  bottomBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    background: 'transparent',
+    pointerEvents: 'none',
   },
 }));
 
@@ -160,55 +141,25 @@ export default function FlowBuilder() {
     setFlowDraft(fetchedFlow);
   }, [handleError, isNewFlowDraft, fetchedFlow, flowId]);
 
-  const flowName = flowDraft?.name;
-  const title = useMemo(() => {
-    const breadcrumbs = [
-      {
-        id: 'automation_flows',
-        name: AUTOMATION_FLOWS_VIEW_HEADER,
-        onClick: () => history.replace(InventoryAPIUrls.flows()),
-      },
-    ];
-    if (flowName != null && flowName.length > 0) {
-      breadcrumbs.push({
-        id: 'flow',
-        name: flowName,
-      });
-    }
-    return <Breadcrumbs breadcrumbs={breadcrumbs} size="large" />;
-  }, [flowName, history]);
-
   return (
     <GraphContextProvider>
       <GraphSelectionContextProvider>
-        <ViewContainer
-          className={classes.root}
-          header={{
-            title,
-            subtitle: 'Basic canvas view',
-            actionButtons: [<Toolbar />],
-          }}>
-          <div className={classes.ide}>
-            <div className={classes.leftPane}>
-              <BlocksBar />
-            </div>
-            <div className={classes.canvasContainer}>
-              <Canvas />
-            </div>
-            <div className={classes.rightPane}>
-              <DetailsPane />
-              <JsonViewer />
-            </div>
+        <div className={classes.root}>
+          <BlocksBar flowDraft={flowDraft} />
+          <div className={classes.workspace}>
+            <TopBar />
+            <Canvas />
+            <BottomBar />
           </div>
-          <AddFlowDialog
-            open={dialogOpen}
-            onClose={hideDialog}
-            onSave={flowId => {
-              setDialogOpen(false);
-              history.push(InventoryAPIUrls.flow(flowId));
-            }}
-          />
-        </ViewContainer>
+        </div>
+        <AddFlowDialog
+          open={dialogOpen}
+          onClose={hideDialog}
+          onSave={flowId => {
+            setDialogOpen(false);
+            history.push(InventoryAPIUrls.flow(flowId));
+          }}
+        />
       </GraphSelectionContextProvider>
     </GraphContextProvider>
   );
