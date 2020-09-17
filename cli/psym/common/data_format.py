@@ -6,12 +6,14 @@
 from numbers import Number
 from typing import List, Sequence, cast
 
+from psym.graphql.fragment.location_type import LocationTypeFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
 from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
 from .data_class import (
+    LocationType,
     ProjectType,
     PropertyDefinition,
     WorkOrderDefinition,
@@ -234,4 +236,36 @@ def format_to_work_order_type(
         property_types=format_to_property_definitions(
             work_order_type_fragment.propertyTypes
         ),
+    )
+
+
+def format_to_location_type(
+    location_type_fragment: LocationTypeFragment,
+) -> LocationType:
+    """This function gets `psym.graphql.fragment.location_type.LocationTypeFragment` object as argument
+    and formats it to `psym.common.data_class.LocationType` object
+
+        :param location_type_fragment: Existing location type fragment object
+        :type location_type_fragment: :class:`~psym.graphql.fragment.location_type.LocationTypeFragment`
+
+        :return: LocationType object
+        :rtype: :class:`~psym.common.data_class.LocationType`
+
+        **Example**
+
+        .. code-block:: python
+
+            location_type = format_to_location_type(
+                location_type_fragment=location_type_fragment,
+            )
+    """
+    return LocationType(
+        name=location_type_fragment.name,
+        id=location_type_fragment.id,
+        property_types=format_to_property_definitions(
+            location_type_fragment.propertyTypes
+        ),
+        map_type=location_type_fragment.mapType,
+        map_zoom_level=location_type_fragment.mapZoomLevel,
+        is_site=location_type_fragment.isSite,
     )

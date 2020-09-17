@@ -30,6 +30,7 @@ def load_tests(
     from .test_site_survey import TestSiteSurvey
     from .test_work_order_subscription import TestWorkOrderSubscription
     from .test_project_type import TestProjectType
+    from .test_location_type import TestLocationType
     from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
     TESTS = [
@@ -37,6 +38,7 @@ def load_tests(
         TestEquipmentType,
         TestLink,
         TestLocation,
+        TestLocationType,
         TestEquipmentPortType,
         TestService,
         TestServiceType,

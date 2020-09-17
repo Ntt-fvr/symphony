@@ -3,7 +3,6 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
-
 from psym.common.constant import __version__
 
 from .api.equipment_type import (
@@ -69,6 +68,9 @@ class PsymClient(SymphonyClient):
     from .api.file import add_location_image, delete_document, add_file, add_files
     from .api.location_type import (
         add_location_type,
+        delete_location_type,
+        get_location_types,
+        get_location_type_by_id,
         delete_locations_by_location_type,
         delete_location_type_with_locations,
     )
