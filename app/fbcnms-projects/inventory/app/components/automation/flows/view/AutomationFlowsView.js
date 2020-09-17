@@ -13,6 +13,8 @@ import * as React from 'react';
 import Button from '@symphony/design-system/components/Button';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
+import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {TESTING_PURPOSES} from '../builder/FlowBuilder';
 import {makeStyles} from '@material-ui/styles';
 import {useMemo} from 'react';
 import {useRouter} from '@fbcnms/ui/hooks';
@@ -35,10 +37,18 @@ export default function AutomationFlowsView(_props: Props) {
       subtitle: <fbt desc="">List of all automation flows in the system</fbt>,
       actionButtons: [
         <Button
+          key="1"
           onClick={() => {
-            history.push(`flow/x`);
+            history.push(`flow/?flowId=${TESTING_PURPOSES}`);
           }}>
-          Go to Flow Builder
+          <fbt desc="">Go to Flow Builder</fbt>
+        </Button>,
+        <Button
+          key="2"
+          onClick={() => {
+            window.open(InventoryAPIUrls.flow(), '_blank');
+          }}>
+          <fbt desc="">Create new Flow</fbt>
         </Button>,
       ],
     }),
@@ -47,7 +57,7 @@ export default function AutomationFlowsView(_props: Props) {
 
   return (
     <ViewContainer header={header} className={classes.root}>
-      Table of all flows
+      <fbt desc="">Table of all flows</fbt>
     </ViewContainer>
   );
 }

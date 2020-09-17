@@ -117,6 +117,9 @@ export const LogEvents = {
   ADD_ENDPOINT_BUTTON_CLICKED: 'add_endpoint_button_clicked',
   DELETE_SERVICE_ENDPOINT_BUTTON_CLICKED:
     'delete_service_endpoint_button_clicked',
+
+  // Automation logs:
+  ADD_FLOW_BUTTON_CLICKED: 'add_flow_button_clicked',
 };
 
 export const ServerLogger = ServerLog('inventory');

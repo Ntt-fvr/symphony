@@ -8,16 +8,26 @@
  * @format
  */
 
+import type {FlowBuilder_FlowDraftQuery} from './__generated__/FlowBuilder_FlowDraftQuery.graphql';
+
+import AddFlowDialog from '../view/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import Canvas from './canvas/Canvas';
 import DetailsPane from './tools/DetailsPane';
 import JsonViewer from './tools/JsonViewer';
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Toolbar from './tools/Toolbar';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
+import fbt from 'fbt/lib/fbt';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
+import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {generateTempId} from '../../../../common/EntUtils';
+import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
+import {useHistory, useLocation} from 'react-router-dom';
+import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -63,8 +73,90 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+export const NEW_FLOW_PARAM = 'new';
+export const TESTING_PURPOSES = 'testing_playground';
+
+export type FlowDraft = $ReadOnly<{
+  id: ?string,
+  name: ?string,
+  description?: ?string,
+}>;
+
+const flowQuery = graphql`
+  query FlowBuilder_FlowDraftQuery($flowId: ID!) {
+    flowDraft: node(id: $flowId) {
+      ... on FlowDraft {
+        id
+        name
+        description
+      }
+    }
+  }
+`;
+
+export function useFlow(flowId: string): ?FlowDraft {
+  const data = useLazyLoadQuery<FlowBuilder_FlowDraftQuery>(flowQuery, {
+    flowId,
+  });
+  return data.flowDraft;
+}
+
+const getInitialDefaultFlow: () => FlowDraft = () => {
+  return {
+    id: generateTempId(),
+    name: '',
+    description: '',
+  };
+};
+
 export default function FlowBuilder() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const showDialog = () => setDialogOpen(true);
+  const hideDialog = () => setDialogOpen(false);
+
   const classes = useStyles();
+  const location = useLocation();
+  const history = useHistory();
+  const queryParams = new URLSearchParams(location.search);
+  const flowId = queryParams.get('flowId');
+
+  const isNewFlowDraft = flowId?.startsWith(NEW_FLOW_PARAM) || false;
+  const [_flowDraft, setFlowDraft] = useState<?FlowDraft>(
+    isNewFlowDraft ? getInitialDefaultFlow() : null,
+  );
+  const fetchedFlow = useFlow(flowId || '');
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const handleError = useCallback(
+    (error: string) => {
+      enqueueSnackbar(error, {variant: 'error'});
+    },
+    [enqueueSnackbar],
+  );
+
+  useEffect(() => {
+    if (flowId?.startsWith(TESTING_PURPOSES)) {
+      return;
+    }
+    if (isNewFlowDraft) {
+      showDialog();
+      return;
+    }
+    if (fetchedFlow == null) {
+      if (flowId != null) {
+        handleError(
+          `${fbt(
+            `Flow with id ${fbt.param(
+              'flow id url param',
+              flowId,
+            )} does not exist.`,
+            '',
+          )}`,
+        );
+      }
+    }
+    setFlowDraft(fetchedFlow);
+  }, [handleError, isNewFlowDraft, fetchedFlow, flowId]);
 
   return (
     <GraphContextProvider>
@@ -88,6 +180,14 @@ export default function FlowBuilder() {
               <JsonViewer />
             </div>
           </div>
+          <AddFlowDialog
+            open={dialogOpen}
+            onClose={hideDialog}
+            onSave={flowId => {
+              setDialogOpen(false);
+              history.push(InventoryAPIUrls.flow(flowId));
+            }}
+          />
         </ViewContainer>
       </GraphSelectionContextProvider>
     </GraphContextProvider>

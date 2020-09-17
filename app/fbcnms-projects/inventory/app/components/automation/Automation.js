@@ -55,7 +55,7 @@ function NavRoutes() {
   return (
     <Switch>
       <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
-      <Route path={relativeUrl('/flow/x')} component={FlowBuilder} />
+      <Route path={relativeUrl('/flow/')} component={FlowBuilder} />
       <Redirect to={relativeUrl('/flows')} />
     </Switch>
   );

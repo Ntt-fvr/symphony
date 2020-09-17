@@ -7,6 +7,7 @@
  * @flow
  * @format
  */
+import {NEW_FLOW_PARAM} from '../components/automation/flows/builder/FlowBuilder';
 
 const INVENTORY_PATH = '/inventory/inventory';
 const LOCATION_SEARCH_PARAM = 'location';
@@ -25,5 +26,7 @@ export const InventoryAPIUrls = {
     `/workorders/projects/search?project=${projectId}`,
   workorder: (workorderId: ?string) =>
     `/workorders/search${!!workorderId ? `?workorder=${workorderId}` : ''}`,
+  flow: (flowId: ?string) =>
+    `/automation/flow/?flowId=${!!flowId ? flowId : NEW_FLOW_PARAM}`,
   search: POWER_SEARCH,
 };
