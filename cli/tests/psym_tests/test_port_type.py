@@ -7,8 +7,10 @@
 from psym.api.equipment_type import _populate_equipment_port_types
 from psym.api.port_type import (
     add_equipment_port_type,
+    delete_equipment_port_type,
     edit_equipment_port_type,
     get_equipment_port_type,
+    get_equipment_port_types,
 )
 from psym.client import SymphonyClient
 from psym.common.cache import PORT_TYPES
@@ -54,11 +56,18 @@ class TestEquipmentPortType(BaseTest):
         _populate_equipment_port_types(client=self.client)
         self.assertEqual(len(PORT_TYPES), 1)
 
-    def test_equipment_port_type_created(self) -> None:
+    def test_get_equipment_port_type(self) -> None:
         fetched_port_type = get_equipment_port_type(
             client=self.client, equipment_port_type_id=self.port_type1.id
         )
         self.assertEqual(self.port_type1.id, fetched_port_type.id)
+
+    def test_get_equipment_port_types(self) -> None:
+        fetched_equipment_port_types = list(
+            get_equipment_port_types(client=self.client)
+        )
+        self.assertEqual(len(fetched_equipment_port_types), 1)
+        self.assertEqual(self.port_type1.id, fetched_equipment_port_types[0].id)
 
     def test_equipment_port_type_edited(self) -> None:
         edited_port_type = edit_equipment_port_type(
@@ -82,3 +91,9 @@ class TestEquipmentPortType(BaseTest):
             fetched_port_type.link_property_types[0].default_raw_value,
             "new link property value",
         )
+
+    def test_delete_equipment_port_type(self) -> None:
+        delete_equipment_port_type(
+            client=self.client, equipment_port_type_id=self.port_type1.id
+        )
+        self.assertEqual(len(PORT_TYPES), 0)

@@ -146,6 +146,7 @@ class PsymClient(SymphonyClient):
         get_equipment_port_type,
         edit_equipment_port_type,
         delete_equipment_port_type,
+        get_equipment_port_types,
     )
     from .api.port import (
         get_port,

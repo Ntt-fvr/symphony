@@ -6,6 +6,7 @@
 from numbers import Number
 from typing import List, Sequence, cast
 
+from psym.graphql.fragment.equipment_port_type import EquipmentPortTypeFragment
 from psym.graphql.fragment.location_type import LocationTypeFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
@@ -13,6 +14,7 @@ from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
 from .data_class import (
+    EquipmentPortType,
     LocationType,
     ProjectType,
     PropertyDefinition,
@@ -206,6 +208,38 @@ def format_to_project_type(project_type_fragment: ProjectTypeFragment) -> Projec
             )
             for wod in project_type_fragment.workOrders
         ],
+    )
+
+
+def format_to_equipment_port_type(
+    equipment_port_type_fragment: EquipmentPortTypeFragment,
+) -> EquipmentPortType:
+    """This function gets `psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment` object as argument
+    and formats it to `psym.common.data_class.EquipmentPortType` object
+
+        :param project_type_fragment: Existing property type fragment object
+        :type project_type_fragment: :class:`~psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment`
+
+        :return: EquipmentPortType object
+        :rtype: :class:`~psym.common.data_class.EquipmentPortType`
+
+        **Example**
+
+        .. code-block:: python
+
+            equipment_port_type = format_to_equipment_port_type(
+                equipment_port_type_fragment=equipment_port_type_fragment,
+            )
+    """
+    return EquipmentPortType(
+        id=equipment_port_type_fragment.id,
+        name=equipment_port_type_fragment.name,
+        property_types=format_to_property_definitions(
+            equipment_port_type_fragment.propertyTypes
+        ),
+        link_property_types=format_to_property_definitions(
+            equipment_port_type_fragment.linkPropertyTypes
+        ),
     )
 
 

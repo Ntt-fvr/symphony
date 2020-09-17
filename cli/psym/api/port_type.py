@@ -3,14 +3,14 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Dict, List, Optional
+from typing import Dict, Iterator, List, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import PORT_TYPES
 from psym.common.data_class import EquipmentPortType, PropertyDefinition, PropertyValue
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
-    format_to_property_definitions,
+    format_to_equipment_port_type,
     format_to_property_type_inputs,
 )
 
@@ -24,6 +24,7 @@ from ..graphql.mutation.remove_equipment_port_type import (
     RemoveEquipmentPortTypeMutation,
 )
 from ..graphql.query.equipment_port_type import EquipmentPortTypeQuery
+from ..graphql.query.equipment_port_types import EquipmentPortTypesQuery
 
 
 def add_equipment_port_type(
@@ -85,12 +86,7 @@ def add_equipment_port_type(
         ),
     )
 
-    added = EquipmentPortType(
-        id=result.id,
-        name=result.name,
-        property_types=format_to_property_definitions(result.propertyTypes),
-        link_property_types=format_to_property_definitions(result.linkPropertyTypes),
-    )
+    added = format_to_equipment_port_type(equipment_port_type_fragment=result)
     PORT_TYPES[added.name] = added
     return added
 
@@ -122,12 +118,33 @@ def get_equipment_port_type(
             entity=Entity.EquipmentPortType, entity_id=equipment_port_type_id
         )
 
-    return EquipmentPortType(
-        id=result.id,
-        name=result.name,
-        property_types=format_to_property_definitions(result.propertyTypes),
-        link_property_types=format_to_property_definitions(result.linkPropertyTypes),
-    )
+    return format_to_equipment_port_type(equipment_port_type_fragment=result)
+
+
+def get_equipment_port_types(client: SymphonyClient) -> Iterator[EquipmentPortType]:
+    """Get the iterator of equipment port types
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: ProjectType Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.EquipmentPortType` ]
+
+    **Example**
+
+    .. code-block:: python
+
+        equipment_port_types = client.get_equipment_port_types()
+        for equipment_port_type in equipment_port_types:
+            print(equipment_port_type.name)
+    """
+    result = EquipmentPortTypesQuery.execute(client)
+    if result is None:
+        return
+    for edge in result.edges:
+        node = edge.node
+        if node is not None:
+            yield format_to_equipment_port_type(equipment_port_type_fragment=node)
 
 
 def edit_equipment_port_type(
@@ -198,12 +215,10 @@ def edit_equipment_port_type(
             linkProperties=new_link_property_type_inputs,
         ),
     )
-    return EquipmentPortType(
-        id=result.id,
-        name=result.name,
-        property_types=format_to_property_definitions(result.propertyTypes),
-        link_property_types=format_to_property_definitions(result.linkPropertyTypes),
-    )
+    edited = format_to_equipment_port_type(equipment_port_type_fragment=result)
+    PORT_TYPES.pop(port_type.name)
+    PORT_TYPES[edited.name] = edited
+    return edited
 
 
 def delete_equipment_port_type(
@@ -215,12 +230,24 @@ def delete_equipment_port_type(
     :param equipment_port_type_id: Equipment port type ID
     :type equipment_port_type_id: str
 
-    :rtype: None
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Project type does not exist
 
     **Example**
 
     .. code-block:: python
 
-        client.delete_equipment_port_type(equipment_port_type_id=port_type1.id)
+        client.delete_equipment_port_type(
+            equipment_port_type_id="12345678"
+        )
     """
+    port_type = get_equipment_port_type(
+        client=client, equipment_port_type_id=equipment_port_type_id
+    )
+    if port_type is None:
+        raise EntityNotFoundError(
+            entity=Entity.EquipmentPortType, entity_id=equipment_port_type_id
+        )
     RemoveEquipmentPortTypeMutation.execute(client, id=equipment_port_type_id)
+    del PORT_TYPES[port_type.name]
