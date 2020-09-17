@@ -12,6 +12,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"github.com/facebookincubator/symphony/admin/graphql"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
@@ -20,7 +21,6 @@ import (
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"
-	"net/http"
 )
 
 // Injectors from wire.go:
@@ -32,21 +32,32 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	handler := _wireHandlerValue
-	xserverZapLogger := xserver.NewRequestLogger(logger)
 	mysqlConfig := &flags.MySQLConfig
 	db, cleanup2 := mysql.Provider(mysqlConfig)
-	v := provideHealthCheckers(db)
-	v2 := provideViews()
-	telemetryConfig := &flags.TelemetryConfig
-	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	handlerConfig := graphql.HandlerConfig{
+		DB:     db,
+		Logger: logger,
+	}
+	handler, cleanup3, err := graphql.NewHandler(handlerConfig)
 	if err != nil {
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	xserverZapLogger := xserver.NewRequestLogger(logger)
+	v := provideHealthCheckers(db)
+	v2 := provideViews()
+	telemetryConfig := &flags.TelemetryConfig
+	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	traceExporter, cleanup4, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -74,6 +85,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		addr:   string2,
 	}
 	return mainApplication, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -81,7 +93,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 }
 
 var (
-	_wireHandlerValue          = http.NotFoundHandler()
 	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )

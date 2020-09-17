@@ -25,21 +25,19 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/uuid"
 	"github.com/shurcooL/graphql"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
-	"golang.org/x/net/context/ctxhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type client struct {
-	client     *graphql.Client
+	admin      *graphql.Client
+	graph      *graphql.Client
 	log        *zap.Logger
 	tenant     string
 	user       string
@@ -47,7 +45,7 @@ type client struct {
 }
 
 func TestMain(m *testing.M) {
-	if err := waitFor("graph"); err != nil {
+	if err := waitFor("admin", "graph"); err != nil {
 		fmt.Printf("FAIL\n%v\n", err)
 		os.Exit(2)
 	}
@@ -63,7 +61,8 @@ func waitFor(services ...string) error {
 		target := fmt.Sprintf("http://%s/healthz", service)
 		g.Go(func(ctx context.Context) error {
 			return backoff.Retry(func() error {
-				rsp, err := ctxhttp.Get(ctx, nil, target)
+				req, _ := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+				rsp, err := http.DefaultClient.Do(req)
 				if err != nil {
 					return err
 				}
@@ -96,7 +95,11 @@ func newClient(t *testing.T, tenant, user string, opts ...option) *client {
 		tenant: tenant,
 		user:   user,
 	}
-	c.client = graphql.NewClient(
+	c.admin = graphql.NewClient(
+		"http://admin/query",
+		nil,
+	)
+	c.graph = graphql.NewClient(
 		"http://graph/query",
 		&http.Client{Transport: &c},
 	)
@@ -120,16 +123,17 @@ func (c *client) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 func (c *client) createTenant() error {
-	conn, err := grpc.Dial("graph:443", grpc.WithInsecure())
-	if err != nil {
-		return err
+	var m struct {
+		CreateTenant struct {
+			Tenant struct {
+				ID graphql.ID
+			}
+		} `graphql:"createTenant(input: {name: $name})"`
 	}
-	_, err = schema.NewTenantServiceClient(conn).
-		Create(context.Background(), &wrappers.StringValue{Value: c.tenant})
-	switch st, _ := status.FromError(err); st.Code() {
-	case codes.OK, codes.AlreadyExists:
-	default:
-		return st.Err()
+	vars := map[string]interface{}{"name": graphql.String(c.tenant)}
+	if err := c.admin.Mutate(context.Background(), &m, vars); err != nil &&
+		err.Error() != fmt.Sprintf("Tenant '%s' exists", c.tenant) {
+		return err
 	}
 	return nil
 }
@@ -167,7 +171,7 @@ func (c *client) addLocationType(name string, properties ...*pkgmodels.PropertyT
 			Properties: properties,
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -211,7 +215,7 @@ func (c *client) addLocation(name string, parent graphql.ID) (*addLocationRespon
 			Parent:    IDToIntOrNil(parent),
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -239,7 +243,7 @@ func (c *client) queryLocationType(id graphql.ID) (*locationTypeResponse, error)
 	vars := map[string]interface{}{
 		"id": id,
 	}
-	switch err := c.client.Query(context.Background(), &q, vars); {
+	switch err := c.graph.Query(context.Background(), &q, vars); {
 	case err != nil:
 		return nil, err
 	case q.Node.Response.ID == nil:
@@ -257,7 +261,7 @@ func (c *client) queryLocation(id graphql.ID) (*queryLocationResponse, error) {
 	vars := map[string]interface{}{
 		"id": id,
 	}
-	switch err := c.client.Query(context.Background(), &q, vars); {
+	switch err := c.graph.Query(context.Background(), &q, vars); {
 	case err != nil:
 		return nil, err
 	case q.Node.Response.ID == nil:
@@ -293,7 +297,7 @@ func (c *client) QueryLocations() (*queryLocationsResponse, error) {
 	var q struct {
 		Response queryLocationsResponse `graphql:"locations(first: null)"`
 	}
-	if err := c.client.Query(context.Background(), &q, nil); err != nil {
+	if err := c.graph.Query(context.Background(), &q, nil); err != nil {
 		return nil, err
 	}
 	return &q.Response, nil
@@ -319,7 +323,7 @@ func (c *client) addEquipmentType(name string, properties ...*pkgmodels.Property
 			Properties: properties,
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -341,7 +345,7 @@ func (c *client) addEquipment(name string, typ, location, workOrder graphql.ID) 
 			WorkOrder: IDToIntOrNil(workOrder),
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -355,7 +359,7 @@ func (c *client) removeEquipment(id, workOrder graphql.ID) error {
 		"id":        id,
 		"workOrder": workOrder,
 	}
-	return c.client.Mutate(context.Background(), &m, vars)
+	return c.graph.Mutate(context.Background(), &m, vars)
 }
 
 type queryEquipmentResponse struct {
@@ -373,7 +377,7 @@ func (c *client) queryEquipment(id graphql.ID) (*queryEquipmentResponse, error) 
 	vars := map[string]interface{}{
 		"id": id,
 	}
-	switch err := c.client.Query(context.Background(), &q, vars); {
+	switch err := c.graph.Query(context.Background(), &q, vars); {
 	case err != nil:
 		return nil, err
 	case q.Node.Response.ID == nil:
@@ -405,7 +409,7 @@ func (c *client) addWorkOrderType(name string, properties ...*pkgmodels.Property
 			Properties: properties,
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -432,7 +436,7 @@ func (c *client) addWorkOrder(name string, typ graphql.ID) (*addWorkOrderRespons
 			WorkOrderTypeID: IDToInt(typ),
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return nil, err
 	}
 	return &m.Response, nil
@@ -454,7 +458,7 @@ func (c *client) executeWorkOrder(workOrder *addWorkOrderResponse) error {
 			Status:  &st,
 		},
 	}
-	if err := c.client.Mutate(context.Background(), &em, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &em, vars); err != nil {
 		return fmt.Errorf("editing work order: %w", err)
 	}
 
@@ -466,7 +470,7 @@ func (c *client) executeWorkOrder(workOrder *addWorkOrderResponse) error {
 	vars = map[string]interface{}{
 		"id": workOrder.ID,
 	}
-	if err := c.client.Mutate(context.Background(), &m, vars); err != nil {
+	if err := c.graph.Mutate(context.Background(), &m, vars); err != nil {
 		return fmt.Errorf("executing work order: %w", err)
 	}
 	return nil
@@ -482,8 +486,8 @@ func TestAddLocation(t *testing.T) {
 	name := "location_" + uuid.New().String()
 	rsp, err := c.addLocation(name, nil)
 	require.NoError(t, err)
-	assert.NotNil(t, rsp.ID)
-	assert.EqualValues(t, name, rsp.Name)
+	require.NotNil(t, rsp.ID)
+	require.EqualValues(t, name, rsp.Name)
 }
 
 func TestAddLocationType(t *testing.T) {
@@ -491,8 +495,8 @@ func TestAddLocationType(t *testing.T) {
 	name := "location_type_" + uuid.New().String()
 	typ, err := c.addLocationType(name)
 	require.NoError(t, err)
-	assert.NotNil(t, typ.ID)
-	assert.EqualValues(t, name, typ.Name)
+	require.NotNil(t, typ.ID)
+	require.EqualValues(t, name, typ.Name)
 }
 
 func TestAddLocationWithAutomation(t *testing.T) {
@@ -500,8 +504,8 @@ func TestAddLocationWithAutomation(t *testing.T) {
 	name := "location_type_" + uuid.New().String()
 	typ, err := c.addLocationType(name)
 	require.NoError(t, err)
-	assert.NotNil(t, typ.ID)
-	assert.EqualValues(t, name, typ.Name)
+	require.NotNil(t, typ.ID)
+	require.EqualValues(t, name, typ.Name)
 }
 
 func TestAddLocationsDifferentTenants(t *testing.T) {
@@ -514,9 +518,9 @@ func TestAddLocationsDifferentTenants(t *testing.T) {
 	require.NoError(t, err)
 	l1, err := c1.queryLocation(rsp.ID)
 	require.NoError(t, err)
-	assert.EqualValues(t, name, l1.Name)
+	require.EqualValues(t, name, l1.Name)
 	_, err = c2.queryLocation(rsp.ID)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	name = "location_" + uuid.New().String()
 	_, err = c2.addLocation(name, nil)
@@ -525,7 +529,7 @@ func TestAddLocationsDifferentTenants(t *testing.T) {
 	require.NoError(t, err)
 	// make sure tenant-2 location does not exist in tenant-1.
 	for i := range locations.Edges {
-		assert.NotEqual(t, name, string(locations.Edges[i].Node.Name))
+		require.NotEqual(t, name, string(locations.Edges[i].Node.Name))
 	}
 }
 
@@ -541,10 +545,10 @@ func TestAddLocationWithChildren(t *testing.T) {
 
 	location, err := c.queryLocation(parent.ID)
 	require.NoError(t, err)
-	assert.EqualValues(t, parentName, location.Name)
+	require.EqualValues(t, parentName, location.Name)
 	require.Len(t, location.Children, 1)
-	assert.Equal(t, child.ID, location.Children[0].ID)
-	assert.EqualValues(t, childName, location.Children[0].Name)
+	require.Equal(t, child.ID, location.Children[0].ID)
+	require.EqualValues(t, childName, location.Children[0].Name)
 }
 
 func TestExecuteWorkOrder(t *testing.T) {
@@ -555,7 +559,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 	name := "work_order_" + uuid.New().String()
 	wo, err := c.addWorkOrder(name, typ.ID)
 	require.NoError(t, err)
-	assert.EqualValues(t, testUser, wo.Owner.Email)
+	require.EqualValues(t, testUser, wo.Owner.Email)
 
 	et, err := c.addEquipmentType("router_type_" + uuid.New().String())
 	require.NoError(t, err)
@@ -566,14 +570,14 @@ func TestExecuteWorkOrder(t *testing.T) {
 
 	eq, err := c.queryEquipment(e.ID)
 	require.NoError(t, err)
-	assert.Equal(t, enum.FutureStateInstall, eq.State)
+	require.Equal(t, enum.FutureStateInstall, eq.State)
 
 	err = c.executeWorkOrder(wo)
 	require.NoError(t, err)
 
 	eq, err = c.queryEquipment(e.ID)
 	require.NoError(t, err)
-	assert.Empty(t, eq.State)
+	require.Empty(t, eq.State)
 
 	wo, err = c.addWorkOrder(name, typ.ID)
 	require.NoError(t, err)
@@ -582,7 +586,7 @@ func TestExecuteWorkOrder(t *testing.T) {
 
 	eq, err = c.queryEquipment(e.ID)
 	require.NoError(t, err)
-	assert.Equal(t, enum.FutureStateRemove, eq.State)
+	require.Equal(t, enum.FutureStateRemove, eq.State)
 	err = c.executeWorkOrder(wo)
 	require.NoError(t, err)
 }
@@ -621,9 +625,9 @@ func TestPossibleProperties(t *testing.T) {
 	vars := map[string]interface{}{
 		"entityType": enum.PropertyEntityEquipment,
 	}
-	err = c.client.Query(context.Background(), &q, vars)
+	err = c.graph.Query(context.Background(), &q, vars)
 	require.NoError(t, err)
-	assert.Len(t, q.Properties, 2)
+	require.Len(t, q.Properties, 2)
 }
 
 func TestViewer(t *testing.T) {
@@ -634,8 +638,8 @@ func TestViewer(t *testing.T) {
 			User   User
 		} `graphql:"me"`
 	}
-	err := c.client.Query(context.Background(), &q, nil)
+	err := c.graph.Query(context.Background(), &q, nil)
 	require.NoError(t, err)
-	assert.EqualValues(t, testTenant, q.Viewer.Tenant)
-	assert.EqualValues(t, testUser, q.Viewer.User.Email)
+	require.EqualValues(t, testTenant, q.Viewer.Tenant)
+	require.EqualValues(t, testUser, q.Viewer.User.Email)
 }

@@ -35,12 +35,26 @@ services:
       timeout: 3s
     restart: on-failure
 
+  admin:
+    build:
+      context: ..
+      dockerfile: admin/Dockerfile
+    env_file:
+      - conf/db.env
+      - conf/log.env
+    depends_on:
+      - mysql
+    healthcheck: &healthcheck
+      test: curl -If localhost/healthz/liveness
+    restart: on-failure
+
   graph:
     build:
       context: ..
       dockerfile: graph/Dockerfile
     env_file:
       - conf/graph.env
+      - conf/db.env
       - conf/log.env
     environment:
       - WS_AUTH_URL=http://front/user/me
@@ -49,8 +63,7 @@ services:
       - mysql
       - nats
       - async
-    healthcheck: &healthcheck
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
 
   migrate:
@@ -72,6 +85,7 @@ services:
       dockerfile: async/Dockerfile
     env_file:
       - conf/async.env
+      - conf/db.env
       - conf/log.env
     environment:
       - FEATURES_URL=http://front:1030/features

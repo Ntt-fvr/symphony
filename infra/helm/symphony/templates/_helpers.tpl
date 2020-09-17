@@ -52,6 +52,13 @@ helm.sh/chart: {{ include "symphony.chart" . }}
 {{/* Meta labels for front service */}}
 {{- define "symphony.front.metaLabels" -}}
 app.kubernetes.io/component: front
+{{ include "symphony.admin.fullname" . }}-client : "true"
+{{ include "symphony.metaLabels" . }}
+{{- end }}
+
+{{/* Meta labels for admin service */}}
+{{- define "symphony.admin.metaLabels" -}}
+app.kubernetes.io/component: admin
 {{ include "symphony.metaLabels" . }}
 {{- end }}
 
@@ -97,6 +104,12 @@ app.kubernetes.io/component: jobrunner
 app.kubernetes.io/component: front
 {{- end }}
 
+{{/* Selector labels for admin service */}}
+{{- define "symphony.admin.selectorLabels" -}}
+{{ include "symphony.selectorLabels" . }}
+app.kubernetes.io/component: admin
+{{- end }}
+
 {{/* Selector labels for graph service */}}
 {{- define "symphony.graph.selectorLabels" -}}
 {{ include "symphony.selectorLabels" . }}
@@ -124,6 +137,11 @@ app.kubernetes.io/component: docs
 {{/* Fullname suffixed with front */}}
 {{- define "symphony.front.fullname" -}}
 {{- print (include "symphony.fullname" .) "-front" -}}
+{{- end }}
+
+{{/* Fullname suffixed with admin */}}
+{{- define "symphony.admin.fullname" -}}
+{{- print (include "symphony.fullname" .) "-admin" -}}
 {{- end }}
 
 {{/* Fullname suffixed with graph */}}
@@ -157,6 +175,15 @@ app.kubernetes.io/component: docs
 {{ default (include "symphony.front.fullname" .) .Values.front.serviceAccount.name }}
 {{- else -}}
 {{ default "default" .Values.front.serviceAccount.name }}
+{{- end -}}
+{{- end }}
+
+{{/* Create the name of admin service account to use */}}
+{{- define "symphony.admin.serviceAccountName" -}}
+{{- if .Values.admin.serviceAccount.create -}}
+{{ default (include "symphony.admin.fullname" .) .Values.admin.serviceAccount.name }}
+{{- else -}}
+{{ default "default" .Values.admin.serviceAccount.name }}
 {{- end -}}
 {{- end }}
 

@@ -39,6 +39,23 @@ services:
       test: "curl -If localhost:8080"
     restart: on-failure
 
+  admin:
+    build:
+      context: ..
+      dockerfile: admin/Dockerfile
+    image: integration_admin
+    env_file:
+      - conf/db.env
+      - conf/log.env
+      - conf/telemetry.env
+    networks:
+      - private
+    depends_on:
+      - mysql
+    healthcheck: &healthcheck
+      test: curl -If localhost/healthz/liveness
+    restart: on-failure
+
   graph:
     build:
       context: ..
@@ -50,6 +67,7 @@ services:
       ORC8R_PKEY: /magma_certs/${ORC8R_API_PRIVATE_KEY:-}api_key
     env_file:
       - conf/graph.env
+      - conf/db.env
       - conf/log.env
       - conf/telemetry.env
     networks:
@@ -62,8 +80,7 @@ services:
       - mysql
       - nats
       - async
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
     ports:
       - 8083:443
@@ -75,6 +92,7 @@ services:
     image: integration_async
     env_file:
       - conf/async.env
+      - conf/db.env
       - conf/log.env
       - conf/telemetry.env
     networks:
@@ -85,8 +103,7 @@ services:
       - mysql
       - nats
       - platform-server
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
 
   migrate:
@@ -112,8 +129,7 @@ services:
       - conf/telemetry.env
     networks:
       - private
-    healthcheck:
-      test: curl -If localhost/healthz/liveness
+    healthcheck: *healthcheck
     restart: on-failure
 
   docs:

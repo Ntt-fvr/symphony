@@ -222,6 +222,109 @@ graphDB:
     pass: "root"
     param: ""
 
+# Configuration for admin application
+admin:
+  # Annotations to be added to admin deployment
+  deploymentAnnotations: {}
+  # Annotations to be added to admin pods
+  podAnnotations: {}
+
+  # Configure update strategy for admin
+  # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  updateStrategy:
+    type: RollingUpdate
+
+  # Configure pod disruption budgets for admin
+  # ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+    maxUnavailable: ""
+
+  # Configure network policy for admin
+  # ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
+  networkPolicy:
+    enabled: true
+    allowExternal: false
+
+  # Configuration for admin service
+  service:
+    # Service external port
+    port: 80
+    # Service target port
+    targetPort: 8080
+
+  # Configuration for admin service account
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    annotations: {}
+
+  # Admin image
+  image:
+    repository: facebookconnectivity-symphony-docker.jfrog.io/admin
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Configuration for liveness / readiness probes
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
+  probes:
+    liveness:
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 3
+      successThreshold: 1
+      failureThreshold: 5
+
+    readiness:
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+
+  # Resource limits & requests
+  resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Define which Nodes the Pods are scheduled on.
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector: {}
+
+  # Tolerations for use with node taints
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  # Assign admin to run on specific nodes
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  affinity: {}
+
+  # Number of admin replicas desired
+  replicas: 1
+
+  # Settings affecting admin application
+  spec:
+    # Log configuration
+    log:
+      level: info
+      format: json
+
 # Configuration for graph application
 graph:
   # Annotations to be added to graph deployment
