@@ -246,3 +246,13 @@ func (r mutationResolver) DeleteConnector(ctx context.Context, input models.Conn
 		Target: source.Edges.NextBlocks[0],
 	}, nil
 }
+
+func (r mutationResolver) EditBlock(ctx context.Context, input models.EditBlockInput) (*ent.Block, error) {
+	client := ent.FromContext(ctx)
+	m := client.Block.UpdateOneID(input.ID).
+		SetNillableUIRepresentation(input.UIRepresentation)
+	if input.Name != nil {
+		m.SetName(*input.Name)
+	}
+	return m.Save(ctx)
+}

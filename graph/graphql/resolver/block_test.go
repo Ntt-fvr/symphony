@@ -9,6 +9,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	action_mocks "github.com/facebookincubator/symphony/pkg/flowengine/actions/mocks"
@@ -33,32 +34,32 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, blocks)
 
-	b, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
+	sb, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
 		FlowDraftID: flowDraft.ID,
 		Name:        "Start",
 	})
 	require.NoError(t, err)
-	require.Equal(t, block.TypeStart, b.Type)
-	require.Equal(t, "Start", b.Name)
-	blockFlowID, err := b.QueryFlowDraft().OnlyID(ctx)
+	require.Equal(t, block.TypeStart, sb.Type)
+	require.Equal(t, "Start", sb.Name)
+	blockFlowID, err := sb.QueryFlowDraft().OnlyID(ctx)
 	require.NoError(t, err)
 	require.Equal(t, flowDraft.ID, blockFlowID)
-	blockType, err := br.Details(ctx, b)
+	blockType, err := br.Details(ctx, sb)
 	require.NoError(t, err)
 	_, ok := blockType.(*models.StartBlock)
 	require.True(t, ok)
 
-	b, err = mr.AddEndBlock(ctx, models.AddEndBlockInput{
+	eb, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
 		FlowDraftID: flowDraft.ID,
 		Name:        "Success",
 	})
 	require.NoError(t, err)
-	require.Equal(t, block.TypeEnd, b.Type)
-	require.Equal(t, "Success", b.Name)
-	blockFlowID, err = b.QueryFlowDraft().OnlyID(ctx)
+	require.Equal(t, block.TypeEnd, eb.Type)
+	require.Equal(t, "Success", eb.Name)
+	blockFlowID, err = eb.QueryFlowDraft().OnlyID(ctx)
 	require.NoError(t, err)
 	require.Equal(t, flowDraft.ID, blockFlowID)
-	blockType, err = br.Details(ctx, b)
+	blockType, err = br.Details(ctx, eb)
 	require.NoError(t, err)
 	_, ok = blockType.(*models.EndBlock)
 	require.True(t, ok)
@@ -66,11 +67,27 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	blocks, err = fdr.Blocks(ctx, flowDraft)
 	require.NoError(t, err)
 	require.Len(t, blocks, 2)
-	_, err = mr.DeleteBlock(ctx, b.ID)
+	_, err = mr.DeleteBlock(ctx, eb.ID)
 	require.NoError(t, err)
 	blocks, err = fdr.Blocks(ctx, flowDraft)
 	require.NoError(t, err)
 	require.Len(t, blocks, 1)
+
+	require.Zero(t, sb.UIRepresentation)
+	xPosition := 201
+	yPosition := 21
+	sb, err = mr.EditBlock(ctx, models.EditBlockInput{
+		ID:   sb.ID,
+		Name: pointer.ToString("NewStart"),
+		UIRepresentation: &flowschema.BlockUIRepresentation{
+			XPosition: xPosition,
+			YPosition: yPosition,
+		},
+	})
+	require.NoError(t, err)
+	require.Equal(t, "NewStart", sb.Name)
+	require.Equal(t, xPosition, sb.UIRepresentation.XPosition)
+	require.Equal(t, yPosition, sb.UIRepresentation.YPosition)
 }
 
 func TestAddDeleteConnectors(t *testing.T) {

@@ -3390,6 +3390,12 @@ type ConnectorResult {
   target: Block!
 }
 
+input EditBlockInput {
+  id: ID!
+  name: String
+  uiRepresentation: BlockUIRepresentationInput
+}
+
 # Flow Definitions
 
 enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
@@ -4011,6 +4017,7 @@ type Mutation {
   addSubflowBlock(input: AddSubflowBlockInput!): Block!
   addTriggerBlock(input: AddTriggerBlockInput!): Block!
   addActionBlock(input: AddActionBlockInput!): Block!
+  editBlock(input: EditBlockInput!): Block!
   deleteBlock(id: ID!): Boolean!
   addConnector(input: ConnectorInput!): ConnectorResult!
   deleteConnector(input: ConnectorInput!): ConnectorResult!

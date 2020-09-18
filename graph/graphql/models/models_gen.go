@@ -378,6 +378,12 @@ type Device struct {
 	Up   *bool  `json:"up"`
 }
 
+type EditBlockInput struct {
+	ID               int                               `json:"id"`
+	Name             *string                           `json:"name"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type EditEquipmentInput struct {
 	ID         int              `json:"id"`
 	Name       string           `json:"name"`
