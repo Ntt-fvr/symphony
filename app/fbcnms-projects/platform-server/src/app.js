@@ -61,10 +61,10 @@ const sequelizeSessionStore = new SessionStore({db: sequelize});
 
 // add hooks to Organization model
 Organization.beforeCreate(async (org: any) => {
-  await createTenant(org.name);
+  await createTenant(org.name).catch(err => console.error(err));
 });
 Organization.afterDestroy(async (org: any) => {
-  await deleteTenant(org.name);
+  await deleteTenant(org.name).catch(err => console.error(err));
 });
 
 // add hooks to User model

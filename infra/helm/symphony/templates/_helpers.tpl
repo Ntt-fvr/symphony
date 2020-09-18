@@ -52,7 +52,6 @@ helm.sh/chart: {{ include "symphony.chart" . }}
 {{/* Meta labels for front service */}}
 {{- define "symphony.front.metaLabels" -}}
 app.kubernetes.io/component: front
-{{ include "symphony.admin.fullname" . }}-client : "true"
 {{ include "symphony.metaLabels" . }}
 {{- end }}
 
@@ -221,6 +220,17 @@ app.kubernetes.io/component: docs
 {{- else -}}
 {{ default "default" .Values.docs.serviceAccount.name }}
 {{- end -}}
+{{- end }}
+
+{{/* Generate admin client selector label */}}
+{{- define "symphony.admin.clientLabel" -}}
+{{- print (include "symphony.admin.fullname" .) "-client" }}: "true"
+{{- end }}
+
+{{/* Generate front pod labels */}}
+{{- define "symphony.front.podLabels" -}}
+{{ include "symphony.front.selectorLabels" . }}
+{{ include "symphony.admin.clientLabel" . }}
 {{- end }}
 
 {{/* Create the name for orc8r certs secret */}}

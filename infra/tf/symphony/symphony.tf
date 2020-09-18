@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.1.0"
+  version             = "1.2.0"
   timeout             = 600
   max_history         = 100
 
@@ -166,6 +166,18 @@ resource helm_release symphony {
             port = module.front_db.this_db_instance_port
             user = module.front_db.this_db_instance_username
             db   = "auth"
+          }
+        }
+      }
+      admin = {
+        spec = {
+          networkPolicy = {
+            ingressNSMatchLabels = {
+              "networking/namespace" = "monitoring"
+            }
+            ingressNSPodMatchLabels = {
+              app = "prometheus"
+            }
           }
         }
       }
@@ -308,16 +320,20 @@ resource kubernetes_cron_job tenant_cleaner {
       metadata {}
       spec {
         template {
-          metadata {}
+          metadata {
+            labels = {
+              format("%s-admin-client", local.symphony_name) = "true"
+            }
+          }
           spec {
             container {
               name  = "${local.symphony_name}-${each.key}-cleaner"
-              image = "networld/grpcurl"
+              image = "curlimages/curl"
               command = [
                 "/bin/sh",
                 "-c",
                 format(
-                  "/grpcurl -plaintext -d '%q' %s-graph.%s.svc.cluster.local:443 graph.TenantService.Truncate",
+                  "curl -s -H 'Content-Type: application/json' -d '{\"query\":\"mutation TruncateTenant {truncateTenant(input: {name: \\\"%s\\\"}) {clientMutationId}}\"}' http://%s-admin.%s.svc.cluster.local/query",
                   each.key, local.symphony_name, kubernetes_namespace.symphony.id,
                 ),
               ]

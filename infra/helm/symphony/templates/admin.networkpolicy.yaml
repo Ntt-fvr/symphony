@@ -19,7 +19,20 @@ spec:
       {{- if not .Values.admin.networkPolicy.allowExternal }}
       from:
         - podSelector:
+            matchLabels: {{- include "symphony.admin.clientLabel" . | nindent 14 }}
+        {{- with .Values.admin.networkPolicy.ingressNSMatchLabels }}
+        - namespaceSelector:
             matchLabels:
-              {{ template "symphony.admin.fullname" . }}-client: "true"
+              {{- range $key, $value := . }}
+              {{ $key | quote }}: {{ $value | quote }}
+              {{- end }}
+          {{- with $.Values.admin.networkPolicy.ingressNSPodMatchLabels }}
+          podSelector:
+            matchLabels:
+              {{- range $key, $value := . }}
+              {{ $key | quote }}: {{ $value | quote }}
+              {{- end }}
+          {{- end }}
+        {{- end }}
       {{- end }}
 {{- end }}

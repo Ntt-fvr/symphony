@@ -20,7 +20,7 @@ spec:
     matchLabels: {{- include "symphony.front.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      labels: {{- include "symphony.front.selectorLabels" . | nindent 8 }}
+      labels: {{- include "symphony.front.podLabels" . | nindent 8 }}
       {{- with .Values.front.podAnnotations }}
       annotations: {{- toYaml . | nindent 8 }}
       {{- end }}

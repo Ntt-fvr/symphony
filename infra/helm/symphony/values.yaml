@@ -244,8 +244,15 @@ admin:
   # Configure network policy for admin
   # ref: https://kubernetes.io/docs/concepts/services-networking/network-policies/
   networkPolicy:
+    # Specifies whether a NetworkPolicy should be created
     enabled: true
+    # The Policy model to apply. When set to false, only pods with the correct
+    # client label will have network access to the port admin is listening on.
+    # when true, admin will accept connections from any source.
     allowExternal: false
+    # Allow connections from other namespaces.
+    ingressNSMatchLabels: {}
+    ingressNSPodMatchLabels: {}
 
   # Configuration for admin service
   service:

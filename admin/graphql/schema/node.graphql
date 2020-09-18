@@ -2,23 +2,23 @@
 An object with an ID.
 """
 interface Node {
-    """
-    ID of the object.
-    """
-    id: ID!
+  """
+  ID of the object.
+  """
+  id: ID!
 }
 
 """
 The query root of Admin's GraphQL interface.
 """
 type Query {
+  """
+  Fetches an object given its ID.
+  """
+  node(
     """
-    Fetches an object given its ID.
+    ID of the object.
     """
-    node(
-        """
-        ID of the object.
-        """
-        id: ID!
-    ): Node
+    id: ID!
+  ): Node
 }
