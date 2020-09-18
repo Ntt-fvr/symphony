@@ -144,5 +144,5 @@ resource helm_release aws_calico {
   repository = local.helm_repository.eks
   chart      = "aws-calico"
   namespace  = "kube-system"
-  version    = "0.3.2"
+  version    = "0.3.1"
 }
