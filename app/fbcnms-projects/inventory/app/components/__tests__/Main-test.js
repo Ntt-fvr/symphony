@@ -48,14 +48,7 @@ jest.mock('../map/MapView', () => () => <div>Im the Map!</div>);
 jest.mock('../projects/ProjectsMap', () => () => (
   <div>Im the ProjectsMap!</div>
 ));
-jest.mock('@fbcnms/ui/insights/map/MapView', () => () => (
-  <div>Im the Map!</div>
-));
 
-jest.mock('@fbcnms/magmalte/app/components/Main', () => ({
-  __esModule: true,
-  default: () => <div>MagmaMain</div>,
-}));
 jest.mock('../Inventory', () => ({
   __esModule: true,
   default: () => <div>Inventory</div>,
@@ -74,11 +67,6 @@ const Wrapper = props => (
 afterEach(cleanup);
 
 const testCases = [
-  {
-    section: 'nms',
-    path: '/nms',
-    text: 'MagmaMain',
-  },
   {
     section: 'inventory',
     path: '/inventory',

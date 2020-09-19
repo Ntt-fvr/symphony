@@ -9,6 +9,12 @@
  */
 
 jest.mock('@fbcnms/sequelize-models');
+jest.mock('../../admin/tenant', () => ({
+  createTenant: async () => {},
+}));
+jest.mock('../../admin/user', () => ({
+  createUser: async () => {},
+}));
 
 import app from '../../app';
 import request from 'supertest';
@@ -72,8 +78,8 @@ describe('login csrf token tests', () => {
       .send('_csrf=' + csrfToken)
       .send('username=invaliduser')
       .send('password=invalidpassword')
-      .send('to=/nms')
+      .send('to=/inventory')
       .expect(302)
-      .expect('Location', '/user/login?invalid=true&to=%2Fnms');
+      .expect('Location', '/user/login?invalid=true&to=%2Finventory');
   });
 });

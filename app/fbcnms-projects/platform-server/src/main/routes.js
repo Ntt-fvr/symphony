@@ -56,21 +56,13 @@ const handleReact = tab =>
       ssoSelectedType,
       csvCharset: organization?.csvCharset,
     };
-    const tabs = organization?.tabs;
-    res.render(
-      // if an org has 'inventory' or 'workorders' tabs, show inventory UI
-      // otherwise magmalte
-      tabs?.indexOf('inventory') != -1 || tabs?.indexOf('workorders') != -1
-        ? 'index'
-        : 'magma',
-      {
-        staticDist,
-        configJson: JSON.stringify({
-          appData,
-          MAPBOX_ACCESS_TOKEN: req.user && MAPBOX_ACCESS_TOKEN,
-        }),
-      },
-    );
+    res.render('index', {
+      staticDist,
+      configJson: JSON.stringify({
+        appData,
+        MAPBOX_ACCESS_TOKEN: req.user && MAPBOX_ACCESS_TOKEN,
+      }),
+    });
   };
 
 router.use('/healthz', (req: FBCNMSRequest, res) => res.send('OK'));
@@ -99,15 +91,6 @@ router.get('/automation*', access(AccessRoles.USER), handleReact('automation'));
 router.get('/inventory*', access(AccessRoles.USER), handleReact('inventory'));
 router.get('/workorders*', access(AccessRoles.USER), handleReact('workorders'));
 router.get('/id*', access(AccessRoles.USER), handleReact('id'));
-router.use(
-  '/nms/apicontroller',
-  require('@fbcnms/platform-server/apicontroller/routes').default,
-);
-router.use(
-  '/nms/network',
-  require('@fbcnms/platform-server/network/routes').default,
-);
-router.get('/nms*', access(AccessRoles.USER), handleReact('nms'));
 router.use('/logger', require('@fbcnms/platform-server/logger/routes'));
 router.use('/docs', require('../docs/routes'));
 router.use('/test', require('@fbcnms/platform-server/test/routes'));

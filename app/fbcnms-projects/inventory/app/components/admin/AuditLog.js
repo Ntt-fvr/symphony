@@ -8,6 +8,7 @@
  * @format
  */
 
+import * as colors from '@fbcnms/ui/theme/colors';
 import Button from '@symphony/design-system/components/Button';
 import DeviceStatusCircle from '@fbcnms/ui/components/icons/DeviceStatusCircle';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,8 +27,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Text from '../../theme/design-system/Text';
-import {colors} from '../../theme/default';
+import Text from '@symphony/design-system/components/Text';
 
 import {Route} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3),
   },
   iconButton: {
-    color: colors.primary.brightGray,
+    color: colors.gray1,
     padding: '5px',
   },
 }));

@@ -12,7 +12,7 @@ import type {
   MainContextMeQuery,
   MainContextMeQueryResponse,
 } from './__generated__/MainContextMeQuery.graphql';
-import type {SessionUser} from '@fbcnms/magmalte/app/common/UserModel';
+import type {SessionUser} from '../common/UserModel';
 
 import * as React from 'react';
 import RelayEnvironment from '../common/RelayEnvironment';

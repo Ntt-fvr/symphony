@@ -9,13 +9,14 @@
  */
 
 import * as React from 'react';
-import AppContent from '../layout/AppContent';
+import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 
+import nullthrows from '@fbcnms/util/nullthrows';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
-import {shouldShowSettings} from '../Settings';
+import {useContext} from 'react';
 
 const useStyles = makeStyles(_theme => ({
   root: {
@@ -23,23 +24,24 @@ const useStyles = makeStyles(_theme => ({
   },
 }));
 
-export default function ErrorLayout({children}: {children: React.Node}) {
+type Props = {
+  navItems: () => React.Node,
+  navRoutes: () => React.Node,
+};
+
+export default function AdminMain(props: Props) {
   const classes = useStyles();
-  const {user, tabs, ssoEnabled} = React.useContext(AppContext);
+  const {tabs, user, ssoEnabled} = useContext(AppContext);
 
   return (
     <div className={classes.root}>
       <AppSideBar
-        mainItems={[]}
-        secondaryItems={[]}
+        mainItems={props.navItems()}
         projects={getProjectLinks(tabs, user)}
-        showSettings={shouldShowSettings({
-          isSuperUser: user.isSuperUser,
-          ssoEnabled,
-        })}
-        user={user}
+        user={nullthrows(user)}
+        showSettings={!ssoEnabled}
       />
-      <AppContent>{children}</AppContent>
+      <AppContent>{props.navRoutes()}</AppContent>
     </div>
   );
 }

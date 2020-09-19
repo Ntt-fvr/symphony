@@ -9,18 +9,16 @@
  */
 
 import * as React from 'react';
-import AdminContextProvider from '@fbcnms/magmalte/app/components/admin/AdminContextProvider';
-import AdminMain from '@fbcnms/magmalte/app/components/admin/AdminMain';
+import AdminContextProvider from './AdminContextProvider';
+import AdminMain from './AdminMain';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import AuditLog from '@fbcnms/magmalte/app/components/admin/AuditLog';
+import AuditLog from './AuditLog';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
-import Networks from '@fbcnms/magmalte/app/components/admin/Networks';
 import Paper from '@material-ui/core/Paper';
 import PeopleIcon from '@material-ui/icons/People';
-import SecuritySettings from '@fbcnms/magmalte/app/components/SecuritySettings';
-import SignalCellularAlt from '@material-ui/icons/SignalCellularAlt';
+import SecuritySettings from '../SecuritySettings';
 import UserManaementView from './userManagement/UserManaementView';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -53,11 +51,6 @@ function NavItems() {
           icon={<AssignmentIcon />}
         />
       )}
-      <NavListItem
-        label="Networks"
-        path={relativeUrl('/networks')}
-        icon={<SignalCellularAlt />}
-      />
     </>
   );
 }
@@ -72,7 +65,6 @@ function NavRoutes() {
         component={UserManaementView}
       />
       <Route path={relativeUrl('/audit_log')} component={AuditLog} />
-      <Route path={relativeUrl('/networks')} component={Networks} />
       <Route
         path={relativeUrl('/settings')}
         render={() => (

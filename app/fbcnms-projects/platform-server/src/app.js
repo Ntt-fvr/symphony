@@ -163,7 +163,7 @@ app.use('/user', require('@fbcnms/auth/express').unprotectedUserRoutes());
 
 app.use(configureAccess({loginUrl: '/user/login'}));
 
-// All /graph, /workflows and /store endpoints don't use CORS and
+// All /graph and /store endpoints don't use CORS and
 // are JSON (no form), so no CSRF is needed
 app.use(
   '/graph',

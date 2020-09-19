@@ -13,7 +13,6 @@ import AppContext, {AppContextProvider} from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import CloudMetrics from '@fbcnms/ui/master/CloudMetrics';
 import Features from '@fbcnms/ui/master/Features';
 import FlagIcon from '@material-ui/icons/Flag';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
@@ -22,9 +21,8 @@ import Organizations from '@fbcnms/ui/master/Organizations';
 import Paper from '@material-ui/core/Paper';
 import PeopleIcon from '@material-ui/icons/People';
 import React, {useContext} from 'react';
-import SecuritySettings from '@fbcnms/magmalte/app/components/SecuritySettings';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
-import UsersSettings from '@fbcnms/magmalte/app/components/UsersSettings';
+import SecuritySettings from '../SecuritySettings';
+import UsersSettings from '../UsersSettings';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {makeStyles} from '@material-ui/styles';
@@ -53,11 +51,6 @@ function NavItems() {
         label="Features"
         path={relativeUrl('/features')}
         icon={<FlagIcon />}
-      />
-      <NavListItem
-        label="Metrics"
-        path={relativeUrl('/metrics')}
-        icon={<ShowChartIcon />}
       />
       <NavListItem
         label="Users"
@@ -91,7 +84,6 @@ function Master() {
             component={Organizations}
           />
           <Route path={relativeUrl('/features')} component={Features} />
-          <Route path={relativeUrl('/metrics')} component={CloudMetrics} />
           <Route path={relativeUrl('/users')} component={UsersSettings} />
           <Route
             path={relativeUrl('/settings')}

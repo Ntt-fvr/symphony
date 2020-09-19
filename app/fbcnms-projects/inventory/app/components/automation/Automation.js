@@ -27,7 +27,7 @@ import AutomationFlowsView from './flows/view/AutomationFlowsView';
 import {Suspense, useContext} from 'react';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
-import {shouldShowSettings} from '@fbcnms/magmalte/app/components/Settings';
+import {shouldShowSettings} from '../Settings';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
 const useStyles = makeStyles(_theme => ({
