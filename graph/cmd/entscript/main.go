@@ -93,9 +93,12 @@ func main() { // nolint: funlen
 		tenants = append(tenants, cli.Tenant)
 	}
 
-	var features map[string][]string
+	var features viewer.TenantFeatures
 	if cli.Features != nil {
-		rsp, err := http.Get(cli.Features.String())
+		req, _ := http.NewRequestWithContext(
+			ctx, http.MethodGet, cli.Features.String(), nil,
+		)
+		rsp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			logger.Fatal("cannot get feature flags",
 				zap.Error(err),

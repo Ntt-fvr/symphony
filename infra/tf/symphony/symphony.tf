@@ -170,14 +170,12 @@ resource helm_release symphony {
         }
       }
       admin = {
-        spec = {
-          networkPolicy = {
-            ingressNSMatchLabels = {
-              "networking/namespace" = "monitoring"
-            }
-            ingressNSPodMatchLabels = {
-              app = "prometheus"
-            }
+        networkPolicy = {
+          ingressNSMatchLabels = {
+            "networking/namespace" = "monitoring"
+          }
+          ingressNSPodMatchLabels = {
+            app = "prometheus"
           }
         }
       }
