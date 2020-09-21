@@ -8,26 +8,20 @@
  * @format
  */
 
-import type {FlowBuilder_FlowDraftQuery} from './__generated__/FlowBuilder_FlowDraftQuery.graphql';
-
 import AddFlowDialog from '../view/AddFlowDialog';
 import BlocksBar from './tools/blocksBar/BlocksBar';
 import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TopBar from './tools/TopBar';
-import fbt from 'fbt/lib/fbt';
 import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
+import {FlowDataContextProvider} from '../data/FlowDataContext';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
-import {generateTempId} from '../../../../common/EntUtils';
-import {graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useHistory, useLocation} from 'react-router-dom';
-import {useLazyLoadQuery} from 'react-relay/hooks';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -67,33 +61,6 @@ export type FlowDraft = $ReadOnly<{
   description?: ?string,
 }>;
 
-const flowQuery = graphql`
-  query FlowBuilder_FlowDraftQuery($flowId: ID!) {
-    flowDraft: node(id: $flowId) {
-      ... on FlowDraft {
-        id
-        name
-        description
-      }
-    }
-  }
-`;
-
-export function useFlow(flowId: string): ?FlowDraft {
-  const data = useLazyLoadQuery<FlowBuilder_FlowDraftQuery>(flowQuery, {
-    flowId,
-  });
-  return data.flowDraft;
-}
-
-const getInitialDefaultFlow: () => FlowDraft = () => {
-  return {
-    id: generateTempId(),
-    name: '',
-    description: '',
-  };
-};
-
 export default function FlowBuilder() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const showDialog = () => setDialogOpen(true);
@@ -106,67 +73,44 @@ export default function FlowBuilder() {
   const flowId = queryParams.get('flowId');
 
   const isNewFlowDraft = flowId?.startsWith(NEW_FLOW_PARAM) || false;
-  const [flowDraft, setFlowDraft] = useState<?FlowDraft>(
-    isNewFlowDraft ? getInitialDefaultFlow() : null,
-  );
-  const fetchedFlow = useFlow(flowId || '');
-  const enqueueSnackbar = useEnqueueSnackbar();
-
-  const handleError = useCallback(
-    (error: string) => {
-      enqueueSnackbar(error, {variant: 'error'});
-    },
-    [enqueueSnackbar],
-  );
+  const isOnPlayground = flowId?.startsWith(TESTING_PURPOSES) || false;
 
   useEffect(() => {
-    if (flowId?.startsWith(TESTING_PURPOSES)) {
+    if (isOnPlayground) {
       return;
     }
     if (isNewFlowDraft) {
       showDialog();
-      return;
     }
-    if (fetchedFlow == null) {
-      if (flowId != null) {
-        handleError(
-          `${fbt(
-            `Flow with id ${fbt.param(
-              'flow id url param',
-              flowId,
-            )} does not exist.`,
-            '',
-          )}`,
-        );
-      }
-    }
-    setFlowDraft(fetchedFlow);
-  }, [handleError, isNewFlowDraft, fetchedFlow, flowId]);
+  }, [isNewFlowDraft, isOnPlayground]);
 
   return (
     <GraphContextProvider>
-      <DialogShowingContextProvider>
-        <GraphSelectionContextProvider>
-          <DetailsPanelContextProvider>
-            <div className={classes.root}>
-              <BlocksBar flowDraft={flowDraft} />
-              <div className={classes.workspace}>
-                <TopBar />
-                <Canvas />
-                <BottomBar />
+      <FlowDataContextProvider
+        flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+        <DialogShowingContextProvider>
+          <GraphSelectionContextProvider>
+            <DetailsPanelContextProvider>
+              <div className={classes.root}>
+                <BlocksBar />
+                <div className={classes.workspace}>
+                  <TopBar />
+                  <Canvas />
+                  <BottomBar />
+                </div>
               </div>
-            </div>
-            <AddFlowDialog
-              open={dialogOpen}
-              onClose={hideDialog}
-              onSave={flowId => {
-                setDialogOpen(false);
-                history.push(InventoryAPIUrls.flow(flowId));
-              }}
-            />
-          </DetailsPanelContextProvider>
-        </GraphSelectionContextProvider>
-      </DialogShowingContextProvider>
+              <AddFlowDialog
+                open={dialogOpen}
+                onClose={hideDialog}
+                onSave={flowId => {
+                  setDialogOpen(false);
+                  history.push(InventoryAPIUrls.flow(flowId));
+                }}
+              />
+            </DetailsPanelContextProvider>
+          </GraphSelectionContextProvider>
+        </DialogShowingContextProvider>
+      </FlowDataContextProvider>
     </GraphContextProvider>
   );
 }

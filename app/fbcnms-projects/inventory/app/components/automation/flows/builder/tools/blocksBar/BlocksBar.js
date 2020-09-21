@@ -8,7 +8,8 @@
  * @format
  */
 
-import type {FlowDraft} from '../../FlowBuilder';
+import type {BlocksBar_flowDraft} from './__generated__/BlocksBar_flowDraft.graphql';
+import type {WithFlowData} from '../../../data/FlowDataContext';
 
 import BlocksCategory from './BlocksCategory';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
@@ -19,15 +20,15 @@ import React from 'react';
 import SideBar from '@symphony/design-system/components/View/SideBar';
 import {AUTOMATION_FLOWS_VIEW_HEADER} from '../../../view/AutomationFlowsView';
 import {InventoryAPIUrls} from '../../../../../../common/InventoryAPI';
+import {createFragmentContainer, graphql} from 'react-relay';
 import {useGraph} from '../../canvas/graph/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useMemo} from 'react';
+import {withFlowData} from '../../../data/FlowDataContext';
 
-type Props = $ReadOnly<{|
-  flowDraft: ?FlowDraft,
-|}>;
+type Props = WithFlowData<BlocksBar_flowDraft>;
 
-export default function BlocksBar(props: Props) {
+function BlocksBar(props: Props) {
   const {flowDraft} = props;
   const flow = useGraph();
   const history = useHistory();
@@ -69,3 +70,13 @@ export default function BlocksBar(props: Props) {
     </SideBar>
   );
 }
+
+export default withFlowData(
+  createFragmentContainer(BlocksBar, {
+    flowDraft: graphql`
+      fragment BlocksBar_flowDraft on FlowDraft {
+        name
+      }
+    `,
+  }),
+);

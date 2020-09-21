@@ -8,14 +8,18 @@
  * @format
  */
 
+import type {DetailsView_flowDraft} from './__generated__/DetailsView_flowDraft.graphql';
 import type {GraphSelectionContextType} from '../selection/GraphSelectionContext';
+import type {WithFlowData} from '../../../data/FlowDataContext';
 
 import * as React from 'react';
 import JsonViewer from '../../tools/JsonViewer';
 import Text from '@symphony/design-system/components/Text';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
+import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
+import {withFlowData} from '../../../data/FlowDataContext';
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -49,8 +53,14 @@ export default function DetailsPane(props: Props) {
   }
 
   if (selectionCount === 0) {
+    const title = (
+      <>
+        <Text variant="subtitle1">Name: </Text>
+        <FlowDraftNameWithFragment />
+      </>
+    );
     return (
-      <ViewContainer header={{title: 'Graph JSON:'}} className={classes.root}>
+      <ViewContainer header={{title}} className={classes.root}>
         <JsonViewer />
       </ViewContainer>
     );
@@ -74,3 +84,21 @@ export function getDetailsTitle(
 
   return 'Flow Details';
 }
+
+type FlowDraftNameProps = WithFlowData<DetailsView_flowDraft>;
+
+function FlowDraftName(props: FlowDraftNameProps) {
+  const {flowDraft} = props;
+
+  return <Text>{flowDraft?.name ?? 'not loaded'}</Text>;
+}
+
+const FlowDraftNameWithFragment = withFlowData(
+  createFragmentContainer(FlowDraftName, {
+    flowDraft: graphql`
+      fragment DetailsView_flowDraft on FlowDraft {
+        name
+      }
+    `,
+  }),
+);
