@@ -14,9 +14,14 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"
+)
+
+import (
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 )
 
 // Injectors from wire.go:
@@ -30,9 +35,16 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	zapLogger := log.ProvideZapLogger(logger)
 	mysqlConfig := &flags.MySQLConfig
 	db, cleanup2 := provideDB(mysqlConfig)
+	tenancy, err := provideTenancy(mysqlConfig, logger)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	handlerConfig := graphql.HandlerConfig{
-		DB:     db,
-		Logger: logger,
+		DB:      db,
+		Tenancy: tenancy,
+		Logger:  logger,
 	}
 	handler, cleanup3, err := graphql.NewHandler(handlerConfig)
 	if err != nil {
@@ -99,6 +111,15 @@ func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
 	db, cleanup := mysql.Provider(cfg)
 	db.SetMaxOpenConns(1)
 	return db, cleanup
+}
+
+func provideTenancy(cfg *mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
+	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 0)
+	if err != nil {
+		return nil, err
+	}
+	tenancy.SetLogger(logger)
+	return viewer.NewCacheTenancy(tenancy, nil), nil
 }
 
 func provideHealthCheckers(db *sql.DB) []health.Checker {

@@ -13,16 +13,35 @@ import (
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"go.uber.org/zap"
 )
 
 func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, error) {
-	if _, err := r.Tenant(ctx, id.Tenant); err != nil {
+	tenant := model.NewTenant(id.Tenant)
+	if id.ID == 0 {
+		if _, err := r.tenant(ctx, id.Tenant); err != nil {
+			return nil, entgql.ErrNodeNotFound(id)
+		}
+		return tenant, nil
+	}
+	client, err := r.tenancy.ClientFor(ctx, id.Tenant)
+	if err != nil {
+		return nil, r.err(ctx, err, "cannot get ent client")
+	}
+	noder, err := client.Noder(ctx, id.ID)
+	if err != nil {
+		r.log.For(ctx).Error("cannot get node",
+			zap.Int("id", id.ID), zap.Error(err),
+		)
 		return nil, entgql.ErrNodeNotFound(id)
 	}
-	if id.ID == 0 {
-		return model.NewTenant(id.Tenant), nil
+	switch noder := noder.(type) {
+	case *ent.User:
+		return model.NewUser(tenant, noder), nil
+	default:
+		return nil, entgql.ErrNodeNotFound(id)
 	}
-	return nil, entgql.ErrNodeNotFound(id)
 }
 
 // Query returns exec.QueryResolver implementation.

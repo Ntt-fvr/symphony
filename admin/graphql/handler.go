@@ -5,17 +5,22 @@
 package graphql
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/NYTimes/gziphandler"
+	"github.com/facebookincubator/symphony/admin/graphql/directive"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
+	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
@@ -23,8 +28,9 @@ import (
 
 // HandlerConfig configures graphql handler.
 type HandlerConfig struct {
-	DB     gqlutil.BeginTxExecQueryer
-	Logger log.Logger
+	DB      gqlutil.BeginTxExecQueryer
+	Tenancy viewer.Tenancy
+	Logger  log.Logger
 }
 
 // NewHandler creates a graphql http handler.
@@ -39,11 +45,18 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 			exec.Config{
 				Resolvers: resolver.New(
 					resolver.Config{
-						Logger: cfg.Logger,
+						Logger:  cfg.Logger,
+						Tenancy: cfg.Tenancy,
 					},
 				),
+				Directives: directive.New(),
 			},
 		),
+	)
+	srv.AroundOperations(
+		func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+			return next(privacy.DecisionContext(ctx, privacy.Allow))
+		},
 	)
 	srv.Use(gqlutil.DBInjector{DB: cfg.DB})
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))

@@ -19,6 +19,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"go.uber.org/zap"
+
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 )
 
 type cliFlags struct {

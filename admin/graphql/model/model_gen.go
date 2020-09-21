@@ -2,6 +2,11 @@
 
 package model
 
+import (
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
+)
+
 // An object with an ID.
 type Node interface {
 	IsNode()
@@ -43,6 +48,8 @@ type Tenant struct {
 	ID ID `json:"id"`
 	// The name of the tenant.
 	Name string `json:"name"`
+	// A list of tenant users.
+	Users *UserConnection `json:"users"`
 }
 
 func (Tenant) IsNode() {}
@@ -61,4 +68,44 @@ type TruncateTenantPayload struct {
 	ClientMutationID *string `json:"clientMutationId"`
 	// The truncated tenant.
 	Tenant *Tenant `json:"tenant"`
+}
+
+// Input type of upsertUser.
+type UpsertUserInput struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// The user's tenant.
+	TenantID ID `json:"tenantId"`
+	// The user's authenication identifier.
+	AuthID string `json:"authId"`
+	// The role of the user.
+	Role *user.Role `json:"role"`
+	// The status of the user.
+	Status *user.Status `json:"status"`
+}
+
+// Output type of upsertUser.
+type UpsertUserPayload struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// The upserted user.
+	User *User `json:"user"`
+}
+
+// The connection type for User.
+type UserConnection struct {
+	// A list of edges.
+	Edges []*UserEdge `json:"edges"`
+	// Information to aid in pagination.
+	PageInfo *ent.PageInfo `json:"pageInfo"`
+	// Identifies the total count of items in the connection.
+	TotalCount int `json:"totalCount"`
+}
+
+// Represents a user.
+type UserEdge struct {
+	// A cursor for use in pagination.
+	Cursor ent.Cursor `json:"cursor"`
+	// The item at the end of the edge.
+	Node *User `json:"node"`
 }

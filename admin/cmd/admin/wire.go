@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
@@ -31,6 +32,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"TelemetryConfig",
 		),
 		provideDB,
+		provideTenancy,
 		log.Provider,
 		provideHealthCheckers,
 		provideViews,
@@ -56,6 +58,15 @@ func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
 	db, cleanup := mysql.Provider(cfg)
 	db.SetMaxOpenConns(1)
 	return db, cleanup
+}
+
+func provideTenancy(cfg *mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
+	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 0)
+	if err != nil {
+		return nil, err
+	}
+	tenancy.SetLogger(logger)
+	return viewer.NewCacheTenancy(tenancy, nil), nil
 }
 
 func provideHealthCheckers(db *sql.DB) []health.Checker {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -30,6 +31,40 @@ func (s *nodeSuite) TestQueryTenantNode() {
 	s.Require().NoError(err)
 	s.Require().Equal(tenant, rsp.Node.Name)
 	s.Require().Equal(id, rsp.Node.ID)
+}
+
+func (s *nodeSuite) TestQueryUserNode() {
+	s.expectBeginCommit()
+	id := model.ID{Tenant: s.T().Name()}.String()
+	var mrsp struct {
+		UpsertUser struct{ User struct{ ID string } }
+	}
+	const username = "baz"
+	err := s.client.Post(
+		`mutation($tenant: ID!, $username: String!) {
+			upsertUser(input: {tenantId: $tenant, authId: $username}) {
+				user {
+					id
+				}
+			}
+		}`,
+		&mrsp,
+		client.Var("tenant", id),
+		client.Var("username", username),
+	)
+	s.Require().NoError(err)
+	s.Require().NotEmpty(mrsp.UpsertUser.User.ID)
+
+	var rsp struct{ User userData }
+	err = s.client.Post(
+		`query($id: ID!) { user: node(id: $id) { ... on User { id authId role status } } }`,
+		&rsp, client.Var("id", mrsp.UpsertUser.User.ID),
+	)
+	s.Require().NoError(err)
+	s.Require().Equal(mrsp.UpsertUser.User.ID, rsp.User.ID)
+	s.Require().Equal(username, rsp.User.AuthID)
+	s.Require().Equal(user.DefaultRole.String(), rsp.User.Role)
+	s.Require().Equal(user.DefaultStatus.String(), rsp.User.Status)
 }
 
 func (s *nodeSuite) TestQueryNodeNotFound() {
