@@ -43,7 +43,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli/v2 v2.2.0 // indirect
 	github.com/vektah/dataloaden v0.3.0 // indirect
-	github.com/vektah/gqlparser/v2 v2.0.1
+	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vektra/mockery v1.1.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
 	go.opencensus.io v0.22.4
