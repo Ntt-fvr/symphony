@@ -18,11 +18,13 @@ import {createContext, useCallback, useContext, useMemo, useState} from 'react';
 export type DialogShowingContextValue = $ReadOnly<{|
   showDialog: (props: BaseDialogProps, replaceExisting?: ?boolean) => void,
   hideDialog: () => void,
+  isShown: boolean,
 |}>;
 
 const DialogShowingContext = createContext<DialogShowingContextValue>({
   showDialog: emptyFunction,
   hideDialog: emptyFunction,
+  isShown: false,
 });
 
 export function useDialogShowingContext() {
@@ -46,14 +48,18 @@ export function DialogShowingContextProvider(props: Props) {
     setBaseDialogProps,
   ] = useState<BaseDialogComponentProps>(EMPTY_HIDDEN_DIALOG_PROPS);
 
+  const isShown = useMemo(() => baseDialogProps.hidden !== true, [
+    baseDialogProps.hidden,
+  ]);
+
   const showDialog = useCallback(
     (props: BaseDialogProps, replaceExisting?: ?boolean) => {
-      if (baseDialogProps.hidden !== true && replaceExisting !== true) {
+      if (isShown && replaceExisting !== true) {
         return;
       }
       setBaseDialogProps(props);
     },
-    [baseDialogProps],
+    [isShown],
   );
   const hideDialog = useCallback(() => {
     setBaseDialogProps(currentDialogProps => ({
@@ -66,8 +72,9 @@ export function DialogShowingContextProvider(props: Props) {
     () => ({
       showDialog,
       hideDialog,
+      isShown,
     }),
-    [hideDialog, showDialog],
+    [hideDialog, showDialog, isShown],
   );
 
   return (

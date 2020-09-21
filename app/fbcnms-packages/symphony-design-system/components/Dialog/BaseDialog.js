@@ -49,6 +49,7 @@ export type BaseDialogProps = $ReadOnly<{|
   position?: ?DialogPosition,
   isModal?: ?boolean,
   title: React.Node,
+  className?: string,
   children: React.Node,
   showCloseButton?: ?boolean,
   onClose?: ?() => void,

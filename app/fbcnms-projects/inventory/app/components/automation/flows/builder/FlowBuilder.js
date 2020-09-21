@@ -17,6 +17,8 @@ import Canvas from './canvas/Canvas';
 import React, {useCallback, useEffect, useState} from 'react';
 import TopBar from './tools/TopBar';
 import fbt from 'fbt/lib/fbt';
+import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
+import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {GraphContextProvider} from './canvas/graph/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
@@ -143,24 +145,28 @@ export default function FlowBuilder() {
 
   return (
     <GraphContextProvider>
-      <GraphSelectionContextProvider>
-        <div className={classes.root}>
-          <BlocksBar flowDraft={flowDraft} />
-          <div className={classes.workspace}>
-            <TopBar />
-            <Canvas />
-            <BottomBar />
-          </div>
-        </div>
-        <AddFlowDialog
-          open={dialogOpen}
-          onClose={hideDialog}
-          onSave={flowId => {
-            setDialogOpen(false);
-            history.push(InventoryAPIUrls.flow(flowId));
-          }}
-        />
-      </GraphSelectionContextProvider>
+      <DialogShowingContextProvider>
+        <GraphSelectionContextProvider>
+          <DetailsPanelContextProvider>
+            <div className={classes.root}>
+              <BlocksBar flowDraft={flowDraft} />
+              <div className={classes.workspace}>
+                <TopBar />
+                <Canvas />
+                <BottomBar />
+              </div>
+            </div>
+            <AddFlowDialog
+              open={dialogOpen}
+              onClose={hideDialog}
+              onSave={flowId => {
+                setDialogOpen(false);
+                history.push(InventoryAPIUrls.flow(flowId));
+              }}
+            />
+          </DetailsPanelContextProvider>
+        </GraphSelectionContextProvider>
+      </DialogShowingContextProvider>
     </GraphContextProvider>
   );
 }

@@ -15,9 +15,7 @@ import {useEffect, useState} from 'react';
 import {useGraph} from '../canvas/graph/GraphContext';
 
 const useStyles = makeStyles(() => ({
-  root: {
-    padding: '8px 8px 16px 4px',
-  },
+  root: {},
   header: {
     marginBottom: '8px',
   },
@@ -29,7 +27,6 @@ const useStyles = makeStyles(() => ({
 export default function JsonViewer() {
   const classes = useStyles();
   const [json, setJson] = useState('');
-
   const flow = useGraph();
 
   useEffect(() => {
@@ -41,9 +38,6 @@ export default function JsonViewer() {
 
   return (
     <div className={classes.root}>
-      <div className={classes.header}>
-        <Text variant="subtitle1">Graph Serialization:</Text>
-      </div>
       <Text variant="body2" color="gray">
         {json}
       </Text>

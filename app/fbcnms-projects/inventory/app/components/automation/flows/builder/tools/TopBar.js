@@ -9,11 +9,10 @@
  */
 
 import Button from '@symphony/design-system/components/Button';
-import JsonInputDialog from './JsonInputDialog';
-import React, {useCallback} from 'react';
+import React from 'react';
 import ToolsBar from './ToolsBar';
 import {makeStyles} from '@material-ui/styles';
-import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
+import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useGraph} from '../canvas/graph/GraphContext';
 import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
 
@@ -33,30 +32,7 @@ export default function TopBar() {
 
   const flow = useGraph();
   const selection = useGraphSelection();
-
-  const dialogShowingContext = useDialogShowingContext();
-
-  const showLoadJsonDialog = useCallback(() => {
-    const jsonObj = flow.serialize();
-    const jsonInitialValue = JSON.stringify(jsonObj) || '';
-    dialogShowingContext.showDialog(
-      {
-        title: 'Load JSON',
-        children: (
-          <JsonInputDialog
-            json={jsonInitialValue}
-            onSave={newJsonValue => {
-              flow.deserialize(newJsonValue);
-              dialogShowingContext.hideDialog();
-            }}
-            onClose={dialogShowingContext.hideDialog}
-          />
-        ),
-        onClose: dialogShowingContext.hideDialog,
-      },
-      true,
-    );
-  }, [dialogShowingContext, flow]);
+  const detailsPane = useDetailsPane();
 
   return (
     <ToolsBar className={classes.root}>
@@ -77,7 +53,7 @@ export default function TopBar() {
       </div>
       <div className={classes.center} />
       <div className={classes.right}>
-        <Button onClick={() => showLoadJsonDialog()}>Load JSON</Button>
+        <Button onClick={() => detailsPane.toggle()}>Details</Button>
       </div>
     </ToolsBar>
   );
