@@ -6,6 +6,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -29,6 +32,7 @@ func main() { // nolint: funlen
 		DSN        string     `name:"db-dsn" env:"MYSQL_DSN" required:"" help:"Data source name."`
 		Tenant     string     `xor:"tenant" help:"Tenant name to target."`
 		AllTenants bool       `xor:"tenant" help:"Target all tenants."`
+		Features   *url.URL   `name:"features-url" help:"Endpoint to fetch features flags from."`
 		User       string     `required:"" help:"Who is running the script."`
 		Migration  string     `required:"" help:"Migration script name to run." enum:"${migrations}"`
 		LogConfig  log.Config `embed:""`
@@ -89,6 +93,22 @@ func main() { // nolint: funlen
 		tenants = append(tenants, cli.Tenant)
 	}
 
+	var features map[string][]string
+	if cli.Features != nil {
+		rsp, err := http.Get(cli.Features.String())
+		if err != nil {
+			logger.Fatal("cannot get feature flags",
+				zap.Error(err),
+			)
+		}
+		defer rsp.Body.Close()
+		if err := json.NewDecoder(rsp.Body).Decode(&features); err != nil {
+			logger.Fatal("cannot decode feature flags",
+				zap.Error(err),
+			)
+		}
+	}
+
 	for _, tenant := range tenants {
 		logger := logger.With(zap.String("tenant", tenant))
 		client, err := tenancy.ClientFor(ctx, tenant)
@@ -98,7 +118,9 @@ func main() { // nolint: funlen
 			)
 		}
 		ctx := ent.NewContext(ctx, client)
-		v := viewer.NewAutomation(tenant, cli.User, user.RoleOwner)
+		v := viewer.NewAutomation(tenant, cli.User, user.RoleOwner,
+			viewer.WithFeatures(features[tenant]...),
+		)
 		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
 		ctx = viewer.NewContext(ctx, v)
 		permissions, err := authz.Permissions(ctx)
