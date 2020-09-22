@@ -108,7 +108,7 @@ func TestPortsExport(t *testing.T) {
 	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	prepareData(ctx, t, *r)
+	pkgexporter.PrepareData(ctx, t)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -199,13 +199,13 @@ func TestPortsExport(t *testing.T) {
 func TestPortWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
 	log := r.exporter.Log
-	ctx := viewertest.NewContext(context.Background(), r.client)
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	prepareData(ctx, t, *r)
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	pkgexporter.PrepareData(ctx, t)
 	loc := r.client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
 	pDef2 := r.client.EquipmentPortDefinition.Query().Where(equipmentportdefinition.Name(portName2)).OnlyX(ctx)
 

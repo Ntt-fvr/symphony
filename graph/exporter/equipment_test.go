@@ -14,11 +14,15 @@ import (
 	"strconv"
 	"testing"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
+
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
@@ -36,8 +40,8 @@ type equipmentFilterInput struct {
 
 func TestEmptyWOExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
@@ -75,8 +79,8 @@ func TestEmptyWOExport(t *testing.T) {
 
 func TestExport(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
@@ -87,8 +91,8 @@ func TestExport(t *testing.T) {
 	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	prepareData(ctx, t, *r)
-	require.NoError(t, err)
+	pkgexporter.PrepareData(ctx, t)
+
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
 	defer res.Body.Close()
@@ -164,15 +168,15 @@ func TestExport(t *testing.T) {
 
 func TestExportWithFilters(t *testing.T) {
 	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	prepareData(ctx, t, *r)
-
+	pkgexporter.PrepareData(ctx, t)
 	req, err := http.NewRequest("GET", server.URL, nil)
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)

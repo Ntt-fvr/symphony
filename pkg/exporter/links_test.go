@@ -15,30 +15,22 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/require"
-)
 
-type linksFilterInput struct {
-	Name          enum.LinkFilterType         `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                        `json:"maxDepth"`
-}
+	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
+)
 
 const (
 	portANameTitle      = "Port A Name"
@@ -58,166 +50,174 @@ const (
 //		childEquipment2(equipemtnType2): with port2 and port3
 //		Link: parentEquipment(port1) <-> childEquipment(port2)
 //		Links: childEquipment(port3) <-> childEquipment2(port3)
-func prepareLinkData(ctx context.Context, t *testing.T, r TestExporterResolver) {
-	mr := r.Mutation()
+func prepareLinkData(ctx context.Context, t *testing.T) {
+	client := ent.FromContext(ctx)
 
-	locTypeL, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameL})
-	require.NoError(t, err)
-	locTypeM, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM})
-	require.NoError(t, err)
+	locTypeL := client.LocationType.Create().
+		SetName(locTypeNameL).
+		SetIndex(0).
+		SaveX(ctx)
+	locTypeM := client.LocationType.Create().
+		SetName(locTypeNameM).
+		SetIndex(1).
+		SaveX(ctx)
 
-	_, err = mr.EditLocationTypesIndex(ctx, []*models.LocationTypeIndex{
-		{
-			LocationTypeID: locTypeL.ID,
-			Index:          0,
-		},
-		{
-			LocationTypeID: locTypeM.ID,
-			Index:          1,
-		},
-	})
-	require.NoError(t, err)
+	gpLocation := client.Location.Create().
+		SetName(grandParentLocation).
+		SetType(locTypeL).
+		SaveX(ctx)
+	pLocation := client.Location.Create().
+		SetName(parentLocation).
+		SetType(locTypeM).
+		SetParent(gpLocation).
+		SaveX(ctx)
 
-	gpLocation, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: grandParentLocation,
-		Type: locTypeL.ID,
-	})
-	require.NoError(t, err)
-	pLocation, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name:   parentLocation,
-		Type:   locTypeM.ID,
-		Parent: &gpLocation.ID,
-	})
-	require.NoError(t, err)
-	strDefVal := propDefValue
-	intDefVal := propDevValInt
-	propDefInput1 := pkgmodels.PropertyTypeInput{
-		Name:        propNameStr,
-		Type:        "string",
-		StringValue: &strDefVal,
-	}
-	propDefInput2 := pkgmodels.PropertyTypeInput{
-		Name:     propNameInt,
-		Type:     "int",
-		IntValue: &intDefVal,
-	}
+	ptyp := client.EquipmentPortType.Create().
+		SetName("portType1").
+		SaveX(ctx)
 
-	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
-		Name: "portType1",
-		LinkProperties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:        propStr,
-				Type:        "string",
-				StringValue: pointer.ToString("t1"),
-			},
-			{
-				Name: propStr2,
-				Type: "string",
-			},
-		},
-	})
-	port1 := models.EquipmentPortInput{
-		Name:       portName1,
-		PortTypeID: &ptyp.ID,
-	}
+	client.PropertyType.Create().
+		SetName(propStr).
+		SetType(propertytype.TypeString).
+		SetLinkEquipmentPortType(ptyp).
+		SetStringVal("t1").
+		SaveX(ctx)
+	client.PropertyType.Create().
+		SetName(propStr2).
+		SetType(propertytype.TypeString).
+		SetLinkEquipmentPortType(ptyp).
+		SaveX(ctx)
 
-	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:  equipmentTypeName,
-		Ports: []*models.EquipmentPortInput{&port1},
-	})
-	require.NoError(t, err)
+	equipmentType := client.EquipmentType.Create().
+		SetName(equipmentTypeName).
+		SaveX(ctx)
 
-	port2 := models.EquipmentPortInput{
-		Name: portName2,
-	}
-	port3 := models.EquipmentPortInput{
-		Name: portName3,
-	}
-	position1 := models.EquipmentPositionInput{
-		Name: positionName,
-	}
-	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:       equipmentType2Name,
-		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput1, &propDefInput2},
-		Ports:      []*models.EquipmentPortInput{&port2, &port3},
-		Positions:  []*models.EquipmentPositionInput{&position1},
-	})
-	require.NoError(t, err)
+	client.EquipmentPortDefinition.Create().
+		SetName(portName1).
+		SetEquipmentPortTypeID(ptyp.ID).
+		SetEquipmentType(equipmentType).
+		SaveX(ctx)
+	port2 := client.EquipmentPortDefinition.Create().
+		SetName(portName2).
+		SaveX(ctx)
+	port3 := client.EquipmentPortDefinition.Create().
+		SetName(portName3).
+		SaveX(ctx)
 
-	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     parentEquip,
-		Type:     equipmentType.ID,
-		Location: &pLocation.ID,
-	})
-	require.NoError(t, err)
+	position1 := client.EquipmentPositionDefinition.Create().
+		SetName(positionName).
+		SaveX(ctx)
+
+	equipmentType2 := client.EquipmentType.Create().
+		SetName(equipmentType2Name).
+		AddPortDefinitions(port2, port3).
+		AddPositionDefinitions(position1).
+		SaveX(ctx)
+
+	client.PropertyType.Create().
+		SetName(propNameStr).
+		SetType(propertytype.TypeString).
+		SetEquipmentType(equipmentType2).
+		SetStringVal(propDefValue).
+		SaveX(ctx)
+	client.PropertyType.Create().
+		SetName(propNameInt).
+		SetType(propertytype.TypeInt).
+		SetEquipmentType(equipmentType2).
+		SetIntVal(propDevValInt).
+		SaveX(ctx)
+
+	parentEquipment := client.Equipment.Create().
+		SetName(parentEquip).
+		SetType(equipmentType).
+		SetLocation(pLocation).
+		SaveX(ctx)
 
 	posDef1 := equipmentType2.QueryPositionDefinitions().Where(equipmentpositiondefinition.Name(positionName)).OnlyX(ctx)
 
-	childEquip1, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:               currEquip,
-		Type:               equipmentType2.ID,
-		Parent:             &parentEquipment.ID,
-		PositionDefinition: &posDef1.ID,
-	})
-	require.NoError(t, err)
+	parentPos := client.EquipmentPosition.Create().
+		SetDefinitionID(posDef1.ID).
+		SetNillableParentID(&parentEquipment.ID).
+		SaveX(ctx)
 
-	childEquip2, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     currEquip2,
-		Type:     equipmentType2.ID,
-		Location: &pLocation.ID,
-	})
-	require.NoError(t, err)
+	childEquip1 := client.Equipment.Create().
+		SetName(currEquip).
+		SetType(equipmentType2).
+		SetParentPosition(parentPos).
+		SaveX(ctx)
+
+	childEquip2 := client.Equipment.Create().
+		SetName(currEquip2).
+		SetType(equipmentType2).
+		SetLocation(pLocation).
+		SaveX(ctx)
 
 	portDef1 := equipmentType.QueryPortDefinitions().Where(equipmentportdefinition.Name(portName1)).OnlyX(ctx)
 	portDef2 := equipmentType2.QueryPortDefinitions().Where(equipmentportdefinition.Name(portName2)).OnlyX(ctx)
 	portDef3 := equipmentType2.QueryPortDefinitions().Where(equipmentportdefinition.Name(portName3)).OnlyX(ctx)
+
 	propType2 := portDef1.QueryEquipmentPortType().QueryLinkPropertyTypes().Where(propertytype.Name(propStr2)).OnlyX(ctx)
-	l1, _ := mr.AddLink(ctx, models.AddLinkInput{
-		Sides: []*models.LinkSide{
-			{Equipment: parentEquipment.ID, Port: portDef1.ID},
-			{Equipment: childEquip1.ID, Port: portDef2.ID},
-		},
-		Properties: []*models.PropertyInput{
-			{
-				PropertyTypeID: propType2.ID,
-				StringValue:    pointer.ToString("p2"),
-			},
-		},
-	})
 
-	l2, _ := mr.AddLink(ctx, models.AddLinkInput{
-		Sides: []*models.LinkSide{
-			{Equipment: childEquip1.ID, Port: portDef3.ID},
-			{Equipment: childEquip2.ID, Port: portDef3.ID},
-		},
-	})
-	serviceType, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "L2 Service", HasCustomer: false})
-	s1, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "S1",
-		ServiceTypeID: serviceType.ID,
-		Status:        service.StatusPending,
-	})
-	require.NoError(t, err)
-	s2, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "S2",
-		ServiceTypeID: serviceType.ID,
-		Status:        service.StatusPending,
-	})
-	require.NoError(t, err)
+	ep1 := client.EquipmentPort.Create().
+		SetDefinitionID(portDef1.ID).
+		SetParentID(parentEquipment.ID).
+		SaveX(ctx)
+	ep2 := client.EquipmentPort.Create().
+		SetDefinitionID(portDef2.ID).
+		SetParentID(childEquip1.ID).
+		SaveX(ctx)
 
-	_, _ = mr.AddServiceLink(ctx, s1.ID, l1.ID)
-	_, _ = mr.AddServiceLink(ctx, s2.ID, l1.ID)
-	_, _ = mr.AddServiceLink(ctx, s1.ID, l2.ID)
+	l1 := client.Link.Create().
+		AddPorts(ep1, ep2).
+		SaveX(ctx)
 
-	require.NoError(t, err)
+	client.Property.Create().
+		SetTypeID(propType2.ID).
+		SetStringVal("p2").
+		SetLink(l1).
+		SaveX(ctx)
+
+	ep3 := client.EquipmentPort.Create().
+		SetDefinitionID(portDef3.ID).
+		SetParentID(childEquip1.ID).
+		SaveX(ctx)
+
+	ep4 := client.EquipmentPort.Create().
+		SetDefinitionID(portDef3.ID).
+		SetParentID(childEquip2.ID).
+		SaveX(ctx)
+
+	l2 := client.Link.Create().
+		AddPorts(ep3, ep4).
+		SaveX(ctx)
+
+	serviceType := client.ServiceType.Create().
+		SetName("L2 Service").
+		SetHasCustomer(false).
+		SaveX(ctx)
+
+	client.Service.Create().
+		SetName("S1").
+		SetTypeID(serviceType.ID).
+		SetStatus(service.StatusPending).
+		AddLinks(l1, l2).
+		SaveX(ctx)
+
+	client.Service.Create().
+		SetName("S2").
+		SetTypeID(serviceType.ID).
+		SetStatus(service.StatusPending).
+		AddLinks(l1).
+		SaveX(ctx)
 }
 
 func TestEmptyLinksDataExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -262,20 +262,19 @@ func TestEmptyLinksDataExport(t *testing.T) {
 }
 
 func TestLinksExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
 	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
-
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	prepareLinkData(ctx, t, *r)
+	prepareLinkData(ctx, t)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -381,17 +380,17 @@ func TestLinksExport(t *testing.T) {
 }
 
 func TestLinksWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	e := &Exporter{Log: log, Rower: LinksRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
-
-	prepareLinkData(ctx, t, *r)
-	loc := r.client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx)
-	equipType := r.client.EquipmentType.Query().Where(equipmenttype.Name(equipmentTypeName)).OnlyX(ctx)
+	prepareLinkData(ctx, t)
+	loc := client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx)
+	equipType := client.EquipmentType.Query().Where(equipmenttype.Name(equipmentTypeName)).OnlyX(ctx)
 	_ = equipType
 	maxDepth := 2
 	f1, err := json.Marshal([]linksFilterInput{
@@ -414,7 +413,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: pkgmodels.PropertyTypeInput{
+			PropertyValue: models.PropertyTypeInput{
 				Name:        propStr2,
 				Type:        "string",
 				StringValue: pointer.ToString("p2"),
@@ -428,7 +427,7 @@ func TestLinksWithFilters(t *testing.T) {
 		{
 			Name:     "PROPERTY",
 			Operator: "IS",
-			PropertyValue: pkgmodels.PropertyTypeInput{
+			PropertyValue: models.PropertyTypeInput{
 				Name:        propStr,
 				Type:        "string",
 				StringValue: pointer.ToString("t1"),

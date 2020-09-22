@@ -20,28 +20,19 @@ import (
 	"github.com/facebook/ent/dialect"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/enttest"
-	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
-	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
-	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/service"
-	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/testdb"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
-	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/require"
 )
 
@@ -52,11 +43,9 @@ const (
 	equipmentType2Name         = "equipmentType2"
 	parentEquip                = "parentEquipmentName"
 	currEquip                  = "currEquipmentName"
-	currEquip2                 = "currEquipmentName2"
 	positionName               = "Position"
 	portName1                  = "port1"
 	portName2                  = "port2"
-	portName3                  = "port3"
 	propNameStr                = "propNameStr"
 	propNameDate               = "propNameDate"
 	propNameBool               = "propNameBool"
@@ -66,7 +55,6 @@ const (
 	lat                        = 32.109
 	long                       = 34.855
 	newPropNameStr             = "newPropNameStr"
-	propDefValue               = "defaultVal"
 	propDefValue2              = "defaultVal2"
 	propDevValInt              = 15
 	propInstanceValue          = "newVal"
@@ -76,7 +64,6 @@ const (
 	grandParentLocation        = "grandParentLocation"
 	parentLocation             = "parentLocation"
 	childLocation              = "childLocation"
-	firstServiceName           = "S1"
 	secondServiceName          = "S2"
 	MethodAdd           method = "ADD"
 	MethodEdit          method = "EDIT"
@@ -120,270 +107,6 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver {
 	return &TestExporterResolver{r, drv, client, e}
 }
 
-func prepareData(ctx context.Context, t *testing.T, r TestExporterResolver) {
-	mr := r.Mutation()
-
-	locTypeL, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameL})
-	require.NoError(t, err)
-	locTypeM, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameM})
-	require.NoError(t, err)
-	locTypeS, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameS, Properties: []*pkgmodels.PropertyTypeInput{
-		{
-			Name:        propNameStr,
-			Type:        propertytype.TypeString,
-			StringValue: pointer.ToString("default"),
-		},
-		{
-			Name: propNameBool,
-			Type: propertytype.TypeBool,
-		},
-		{
-			Name:        propNameDate,
-			Type:        propertytype.TypeDate,
-			StringValue: pointer.ToString("1988-03-29"),
-		},
-	}})
-	require.NoError(t, err)
-
-	_, err = mr.EditLocationTypesIndex(ctx, []*models.LocationTypeIndex{
-		{
-			LocationTypeID: locTypeL.ID,
-			Index:          0,
-		},
-		{
-			LocationTypeID: locTypeM.ID,
-			Index:          1,
-		},
-		{
-			LocationTypeID: locTypeS.ID,
-			Index:          2,
-		},
-	})
-	require.NoError(t, err)
-
-	gpLocation, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name:       grandParentLocation,
-		Type:       locTypeL.ID,
-		ExternalID: pointer.ToString(externalIDL),
-		Latitude:   pointer.ToFloat64(lat),
-		Longitude:  pointer.ToFloat64(long),
-	})
-
-	require.NoError(t, err)
-	pLocation, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name:       parentLocation,
-		Type:       locTypeM.ID,
-		Parent:     &gpLocation.ID,
-		ExternalID: pointer.ToString(externalIDM),
-		Latitude:   pointer.ToFloat64(lat),
-		Longitude:  pointer.ToFloat64(long),
-	})
-	require.NoError(t, err)
-	strProp := locTypeS.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeString)).OnlyX(ctx)
-	boolProp := locTypeS.QueryPropertyTypes().Where(propertytype.TypeEQ(propertytype.TypeBool)).OnlyX(ctx)
-	clocation, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name:   childLocation,
-		Type:   locTypeS.ID,
-		Parent: &pLocation.ID,
-		Properties: []*models.PropertyInput{
-			{
-				PropertyTypeID: strProp.ID,
-				StringValue:    pointer.ToString("override"),
-			},
-			{
-				PropertyTypeID: boolProp.ID,
-				BooleanValue:   pointer.ToBool(true),
-			},
-		},
-	})
-	require.NoError(t, err)
-	position1 := models.EquipmentPositionInput{
-		Name: positionName,
-	}
-
-	ptyp, _ := mr.AddEquipmentPortType(ctx, models.AddEquipmentPortTypeInput{
-		Name: "portType1",
-		Properties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:        propStr,
-				Type:        "string",
-				StringValue: pointer.ToString("t1"),
-			},
-			{
-				Name: propStr2,
-				Type: "string",
-			},
-		},
-		LinkProperties: []*pkgmodels.PropertyTypeInput{
-			{
-				Name:        propNameStr,
-				Type:        "string",
-				StringValue: pointer.ToString("t1"),
-			},
-			{
-				Name: propNameBool,
-				Type: "bool",
-			},
-			{
-				Name:     propNameInt,
-				Type:     "int",
-				IntValue: pointer.ToInt(100),
-			},
-		},
-	})
-	port1 := models.EquipmentPortInput{
-		Name:       portName1,
-		PortTypeID: &ptyp.ID,
-	}
-	strDefVal := propDefValue
-	intDefVal := propDevValInt
-	propDefInput1 := pkgmodels.PropertyTypeInput{
-		Name:        propNameStr,
-		Type:        "string",
-		StringValue: &strDefVal,
-	}
-	propDefInput2 := pkgmodels.PropertyTypeInput{
-		Name:     propNameInt,
-		Type:     "int",
-		IntValue: &intDefVal,
-	}
-	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:      equipmentTypeName,
-		Positions: []*models.EquipmentPositionInput{&position1},
-		Ports:     []*models.EquipmentPortInput{&port1},
-	})
-	require.NoError(t, err)
-
-	port2 := models.EquipmentPortInput{
-		Name: portName2,
-	}
-	equipmentType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:       equipmentType2Name,
-		Properties: []*pkgmodels.PropertyTypeInput{&propDefInput1, &propDefInput2},
-		Ports:      []*models.EquipmentPortInput{&port2},
-	})
-	require.NoError(t, err)
-
-	posDef1 := equipmentType.QueryPositionDefinitions().Where(equipmentpositiondefinition.Name(positionName)).OnlyX(ctx)
-	propDef1 := equipmentType2.QueryPropertyTypes().Where(propertytype.Name(propNameStr)).OnlyX(ctx)
-
-	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     parentEquip,
-		Type:     equipmentType.ID,
-		Location: &clocation.ID,
-	})
-	require.NoError(t, err)
-
-	strVal := propInstanceValue
-	propInstance1 := models.PropertyInput{
-		PropertyTypeID: propDef1.ID,
-		StringValue:    &strVal,
-	}
-	childEquip, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:               currEquip,
-		Type:               equipmentType2.ID,
-		Parent:             &parentEquipment.ID,
-		PositionDefinition: &posDef1.ID,
-		ExternalID:         pointer.ToString(externalIDM),
-		Properties:         []*models.PropertyInput{&propInstance1},
-	})
-	require.NoError(t, err)
-
-	portDef1 := equipmentType.QueryPortDefinitions().Where(equipmentportdefinition.Name(portName1)).OnlyX(ctx)
-	portDef2 := equipmentType2.QueryPortDefinitions().Where(equipmentportdefinition.Name(portName2)).OnlyX(ctx)
-	_, _ = mr.AddLink(ctx, models.AddLinkInput{
-		Sides: []*models.LinkSide{
-			{Equipment: parentEquipment.ID, Port: portDef1.ID},
-			{Equipment: childEquip.ID, Port: portDef2.ID},
-		},
-	})
-
-	val := propDefValue2
-	propertyInput := pkgmodels.PropertyTypeInput{Name: newPropNameStr, StringValue: &val, Type: propertytype.TypeString}
-	_, err = r.Mutation().EditEquipmentType(ctx, models.EditEquipmentTypeInput{
-		ID:         equipmentType2.ID,
-		Name:       equipmentType2.Name,
-		Properties: []*pkgmodels.PropertyTypeInput{&propertyInput},
-	})
-	require.NoError(t, err)
-
-	portID1, err := parentEquipment.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.ID(portDef1.ID))).OnlyID(ctx)
-	require.NoError(t, err)
-	portID2, err := childEquip.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.ID(portDef2.ID))).OnlyID(ctx)
-	require.NoError(t, err)
-
-	serviceType, _ := mr.AddServiceType(ctx,
-		models.ServiceTypeCreateData{
-			Name:        "L2 Service",
-			HasCustomer: false,
-			Endpoints: []*models.ServiceEndpointDefinitionInput{
-				{
-					Name:            "endpoint type1",
-					Role:            pointer.ToString("CONSUMER"),
-					Index:           0,
-					EquipmentTypeID: equipmentType.ID,
-				},
-				{
-					Index:           1,
-					Name:            "endpoint type2",
-					Role:            pointer.ToString("PROVIDER"),
-					EquipmentTypeID: equipmentType2.ID,
-				},
-			},
-		})
-	s1, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          firstServiceName,
-		ServiceTypeID: serviceType.ID,
-		Status:        service.StatusPending,
-	})
-	require.NoError(t, err)
-	s2, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          secondServiceName,
-		ServiceTypeID: serviceType.ID,
-		Status:        service.StatusPending,
-	})
-	require.NoError(t, err)
-
-	ept0 := serviceType.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(0)).OnlyX(ctx)
-
-	_, _ = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          s1.ID,
-		EquipmentID: parentEquipment.ID,
-		PortID:      pointer.ToInt(portID1),
-		Definition:  ept0.ID,
-	})
-
-	_, _ = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          s2.ID,
-		EquipmentID: parentEquipment.ID,
-		PortID:      pointer.ToInt(portID1),
-		Definition:  ept0.ID,
-	})
-
-	ept1 := serviceType.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(1)).OnlyX(ctx)
-
-	_, _ = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          s1.ID,
-		EquipmentID: childEquip.ID,
-		PortID:      pointer.ToInt(portID2),
-		Definition:  ept1.ID,
-	})
-	/*
-		helper: data now is of type:
-		loc(grandParent):
-			loc(parent):
-				loc(child):
-						parentEquipment(equipmentType): with portType1 (has 2 string props)
-						childEquipment(equipmentType2): (no props props)
-						these ports are linked together
-		services:
-			firstService:
-					endpoints: parentEquipment consumer, childEquipment provider
-			secondService:
-					endpoints: parentEquipment consumer
-	*/
-}
-
 func prepareHandlerAndExport(t *testing.T, r *TestExporterResolver, e http.Handler) (context.Context, *http.Response) {
 	th := viewertest.TestHandler(t, e, r.client)
 	server := httptest.NewServer(th)
@@ -394,7 +117,7 @@ func prepareHandlerAndExport(t *testing.T, r *TestExporterResolver, e http.Handl
 	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	prepareData(ctx, t, *r)
+	pkgexporter.PrepareData(ctx, t)
 	locs := r.client.Location.Query().AllX(ctx)
 	require.Len(t, locs, 3)
 	res, err := http.DefaultClient.Do(req)
@@ -491,8 +214,7 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	viewertest.SetDefaultViewerHeaders(req)
 	req.Header.Set(viewer.FeaturesHeader, "async_export")
 
-	prepareData(ctx, t, *r)
-	require.NoError(t, err)
+	pkgexporter.PrepareData(ctx, t)
 
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)

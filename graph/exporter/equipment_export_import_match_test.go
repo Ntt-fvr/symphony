@@ -156,7 +156,7 @@ func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.C
 	viewertest.SetDefaultViewerHeaders(req)
 
 	ctx := viewertest.NewContext(context.Background(), r.client)
-	prepareData(ctx, t, *r)
+	pkgexporter.PrepareData(ctx, t)
 	locs := r.client.Location.Query().AllX(ctx)
 	require.Len(t, locs, 3)
 

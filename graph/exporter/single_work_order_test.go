@@ -28,7 +28,7 @@ import (
 )
 
 func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolver) *ent.WorkOrder {
-	prepareData(ctx, t, r)
+	pkgexporter.PrepareData(ctx, t)
 
 	// Add templates
 	typInput := models.AddWorkOrderTypeInput{
