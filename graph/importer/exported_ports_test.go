@@ -10,16 +10,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-
+	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
+	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-
-	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,13 +25,9 @@ const (
 	parentEquip  = "parentEquipmentName"
 	parentEquip2 = "parentEquipmentName2"
 	parentEquip3 = "parentEquipmentName3"
-
-	currEquip   = "currEquipmentName"
-	portName1   = "port1"
-	portName2   = "port2"
-	propNameStr = "propNameStr"
-	posName     = "pos"
-
+	currEquip    = "currEquipmentName"
+	propNameStr  = "propNameStr"
+	posName      = "pos"
 	propNameDate = "propNameDate"
 	propNameBool = "propNameBool"
 	propNameInt  = "propNameInt"

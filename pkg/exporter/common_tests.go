@@ -5,10 +5,15 @@
 package exporter
 
 import (
+	"bytes"
 	"context"
+	"encoding/csv"
 	"encoding/json"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -29,39 +34,43 @@ import (
 )
 
 const (
-	equipmentTypeName   = "equipmentType"
-	equipmentType2Name  = "equipmentType2"
-	parentEquip         = "parentEquipmentName"
-	currEquip           = "currEquipmentName"
-	currEquip2          = "currEquipmentName2"
-	positionName        = "Position"
-	portName1           = "port1"
-	portName2           = "port2"
-	portName3           = "port3"
-	propNameStr         = "propNameStr"
-	propNameDate        = "propNameDate"
-	propNameBool        = "propNameBool"
-	propNameInt         = "propNameInt"
-	externalIDL         = "11"
-	externalIDM         = "22"
-	lat                 = 32.109
-	long                = 34.855
-	newPropNameStr      = "newPropNameStr"
-	propDefValue        = "defaultVal"
-	propDefValue2       = "defaultVal2"
-	propDevValInt       = 15
-	propInstanceValue   = "newVal"
-	locTypeNameL        = "locTypeLarge"
-	locTypeNameM        = "locTypeMedium"
-	locTypeNameS        = "locTypeSmall"
-	grandParentLocation = "grandParentLocation"
-	parentLocation      = "parentLocation"
-	childLocation       = "childLocation"
-	firstServiceName    = "S1"
-	secondServiceName   = "S2"
-	propStr             = "propStr"
-	propStr2            = "propStr2"
+	equipmentTypeName          = "equipmentType"
+	equipmentType2Name         = "equipmentType2"
+	parentEquip                = "parentEquipmentName"
+	currEquip                  = "currEquipmentName"
+	currEquip2                 = "currEquipmentName2"
+	positionName               = "Position"
+	portName1                  = "port1"
+	portName2                  = "port2"
+	portName3                  = "port3"
+	propNameStr                = "propNameStr"
+	propNameDate               = "propNameDate"
+	propNameBool               = "propNameBool"
+	propNameInt                = "propNameInt"
+	externalIDL                = "11"
+	externalIDM                = "22"
+	lat                        = 32.109
+	long                       = 34.855
+	newPropNameStr             = "newPropNameStr"
+	propDefValue               = "defaultVal"
+	propDefValue2              = "defaultVal2"
+	propDevValInt              = 15
+	propInstanceValue          = "newVal"
+	locTypeNameL               = "locTypeLarge"
+	locTypeNameM               = "locTypeMedium"
+	locTypeNameS               = "locTypeSmall"
+	grandParentLocation        = "grandParentLocation"
+	parentLocation             = "parentLocation"
+	childLocation              = "childLocation"
+	firstServiceName           = "S1"
+	secondServiceName          = "S2"
+	propStr                    = "propStr"
+	propStr2                   = "propStr2"
+	methodAdd           Method = "ADD"
+	methodEdit          Method = "EDIT"
 )
+
+type Method string
 
 const Admin = "admin"
 const RoleAdmin = "ADMIN"
@@ -409,4 +418,114 @@ func testAsyncExport(t *testing.T, typ exporttask.Type) {
 	taskID := response.TaskID
 	require.NotEmpty(t, taskID)
 	require.True(t, len(response.TaskID) > 1)
+}
+
+func WriteModifiedPortsCSV(t *testing.T, r *csv.Reader, skipLines, withVerify bool) (*bytes.Buffer, string) {
+	var newLine []string
+	var lines = make([][]string, 3)
+	var buf bytes.Buffer
+	bw := multipart.NewWriter(&buf)
+	if skipLines {
+		_ = bw.WriteField("skip_lines", "[2]")
+	}
+	if withVerify {
+		_ = bw.WriteField("verify_before_commit", "true")
+	}
+	fileWriter, err := bw.CreateFormFile("file_0", "name1")
+	require.Nil(t, err)
+	for i := 0; ; i++ {
+		line, err := r.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			require.Nil(t, err)
+		}
+		if i == 0 {
+			lines[0] = line
+		} else {
+			newLine = line
+			if line[1] == portName1 {
+				newLine[17] = "new-prop-value"
+				newLine[18] = "new-prop-value2"
+			} else if line[1] == portName2 {
+				newLine[16] = ""
+			}
+			lines[i] = newLine
+		}
+	}
+
+	if withVerify {
+		failLine := make([]string, len(lines[1]))
+		copy(failLine, lines[1])
+		lines = append(lines, failLine)
+		lines[3][1] = "this"
+		lines[3][2] = "should"
+		lines[3][3] = "fail"
+	}
+	for _, l := range lines {
+		stringLine := strings.Join(l, ",")
+		fileWriter.Write([]byte(stringLine + "\n"))
+	}
+	ct := bw.FormDataContentType()
+	require.NoError(t, bw.Close())
+	return &buf, ct
+}
+
+func WriteModifiedLinksCSV(t *testing.T, r *csv.Reader, method Method, skipLines, withVerify bool) (*bytes.Buffer, string) {
+	var newLine []string
+	var lines = make([][]string, 2)
+	var buf bytes.Buffer
+	bw := multipart.NewWriter(&buf)
+	if skipLines {
+		_ = bw.WriteField("skip_lines", "[1]")
+	}
+	if withVerify {
+		_ = bw.WriteField("verify_before_commit", "true")
+	}
+	fileWriter, err := bw.CreateFormFile("file_0", "name1")
+	require.Nil(t, err)
+	for i := 0; ; i++ {
+		line, err := r.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			require.Nil(t, err)
+		}
+		if i == 0 {
+			lines[0] = line
+		} else {
+			switch method {
+			case methodAdd:
+				newLine = append([]string{""}, line[1:]...)
+			case methodEdit:
+				newLine = line
+				if line[1] == portName1 {
+					newLine[25] = secondServiceName
+					newLine[26] = "new-prop-value"
+					newLine[27] = "true"
+					newLine[28] = "10"
+				}
+			default:
+				require.Fail(t, "method should be add or edit")
+			}
+			lines[i] = newLine
+		}
+	}
+	if withVerify {
+		failLine := make([]string, len(lines[1]))
+		copy(failLine, lines[1])
+		lines = append(lines, failLine)
+		lines[2][1] = "this"
+		lines[2][2] = "should"
+		lines[2][3] = "fail"
+	}
+	for _, l := range lines {
+		stringLine := strings.Join(l, ",")
+		fileWriter.Write([]byte(stringLine + "\n"))
+	}
+	ct := bw.FormDataContentType()
+	require.NoError(t, bw.Close())
+	return &buf, ct
 }

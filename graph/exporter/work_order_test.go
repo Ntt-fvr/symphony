@@ -17,10 +17,12 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -38,7 +40,16 @@ type woTestType struct {
 const propStr = "propStr"
 const propStr2 = "propStr2"
 
-func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
+type equipmentFilterInput struct {
+	Name          enum.EquipmentFilterType    `json:"name"`
+	Operator      enum.FilterOperator         `jsons:"operator"`
+	StringValue   string                      `json:"stringValue"`
+	IDSet         []string                    `json:"idSet"`
+	StringSet     []string                    `json:"stringSet"`
+	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
+}
+
+func prepareWOData(ctx context.Context, t *testing.T, r importer.TestExporterResolver) woTestType {
 	pkgexporter.PrepareData(ctx, t)
 	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)
 
@@ -100,7 +111,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 		Name:            "WO1",
 		Description:     pointer.ToString("WO1 - description"),
 		WorkOrderTypeID: typ1.ID,
-		LocationID:      pointer.ToInt(r.client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx).ID),
+		LocationID:      pointer.ToInt(r.Client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx).ID),
 		ProjectID:       pointer.ToInt(proj.ID),
 		Properties: []*models.PropertyInput{
 			{
@@ -124,7 +135,7 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 		Name:            "WO2",
 		Description:     pointer.ToString("WO2 - description"),
 		WorkOrderTypeID: typ2.ID,
-		LocationID:      pointer.ToInt(r.client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx).ID),
+		LocationID:      pointer.ToInt(r.Client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx).ID),
 		Properties: []*models.PropertyInput{
 			{
 				PropertyTypeID: propIntEnt.ID,
@@ -152,11 +163,11 @@ func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) wo
 }
 
 func TestEmptyDataExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -180,11 +191,11 @@ func TestEmptyDataExport(t *testing.T) {
 }
 
 func TestWOExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -192,7 +203,7 @@ func TestWOExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	data := prepareWOData(ctx, t, *r)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
@@ -251,11 +262,11 @@ func TestWOExport(t *testing.T) {
 }
 
 func TestExportWOWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.WoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 

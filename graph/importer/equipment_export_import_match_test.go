@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package exporter
+package importer
 
 import (
 	"bytes"
@@ -17,33 +17,21 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
 )
 
-type equipmentFilterInput struct {
-	Name          enum.EquipmentFilterType `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
-}
-
 // TODO (T59270743): Move this file to importer folder and refactor similar code with exported_service_integration_test.go
-func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify bool) (*bytes.Buffer, string) {
+func writeExportModifiedCSV(t *testing.T, r *csv.Reader, method pkgexporter.Method, withVerify bool) (*bytes.Buffer, string) {
 	var newLine []string
 	var lines = make([][]string, 3)
 	var buf bytes.Buffer
@@ -66,9 +54,9 @@ func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify boo
 			lines[0] = line
 		} else {
 			switch method {
-			case MethodAdd:
+			case methodAdd:
 				newLine = append([]string{""}, line[1:]...)
-			case MethodEdit:
+			case methodEdit:
 				newLine = line
 				if line[1] == currEquip {
 					newLine[13] = "str-prop-value" + strconv.FormatInt(int64(i), 10)
@@ -106,12 +94,12 @@ func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify boo
 	return &buf, ct
 }
 
-func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method method, withVerify bool) {
+func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method pkgexporter.Method, withVerify bool) {
 	readr := csv.NewReader(r)
-	buf, contentType := writeModifiedCSV(t, readr, method, withVerify)
+	buf, contentType := writeExportModifiedCSV(t, readr, method, withVerify)
 
-	h, _ := importer.NewHandler(
-		importer.Config{
+	h, _ := NewHandler(
+		Config{
 			Logger:          logtest.NewTestLogger(t),
 			ReceiverFactory: ev.ErrFactory{},
 		},
@@ -134,31 +122,31 @@ func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method m
 }
 
 func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResolver) {
-	id := r.client.Equipment.Query().Where(equipment.Name(currEquip)).OnlyIDX(ctx)
+	id := r.Client.Equipment.Query().Where(equipment.Name(currEquip)).OnlyIDX(ctx)
 	_, err := r.Mutation().RemoveEquipment(ctx, id, nil)
 	require.NoError(t, err)
 
-	id = r.client.Equipment.Query().Where(equipment.Name(parentEquip)).OnlyIDX(ctx)
+	id = r.Client.Equipment.Query().Where(equipment.Name(parentEquip)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveEquipment(ctx, id, nil)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(childLocation)).OnlyIDX(ctx)
+	id = r.Client.Location.Query().Where(location.Name(childLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(parentLocation)).OnlyIDX(ctx)
+	id = r.Client.Location.Query().Where(location.Name(parentLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 
-	id = r.client.Location.Query().Where(location.Name(grandParentLocation)).OnlyIDX(ctx)
+	id = r.Client.Location.Query().Where(location.Name(grandParentLocation)).OnlyIDX(ctx)
 	_, err = r.Mutation().RemoveLocation(ctx, id)
 	require.NoError(t, err)
 }
 
 func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.Context, *http.Response) {
-	log := r.exporter.Log
+	log := r.Exporter.Log
 	var h http.Handler = &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, h, r.client)
+	th := viewertest.TestHandler(t, h, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -166,9 +154,9 @@ func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.C
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	pkgexporter.PrepareData(ctx, t)
-	locs := r.client.Location.Query().AllX(ctx)
+	locs := r.Client.Location.Query().AllX(ctx)
 	require.Len(t, locs, 3)
 
 	res, err := http.DefaultClient.Do(req)
@@ -180,16 +168,16 @@ func TestEquipmentExportAndImportMatch(t *testing.T) {
 	for _, verify := range []bool{true, false} {
 		verify := verify
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
-			r := newExporterTestResolver(t)
+			r := NewExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
 			defer res.Body.Close()
 			deleteEquipmentData(ctx, t, r)
 
-			locs := r.client.Location.Query().AllX(ctx)
+			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 0)
 
-			importEquipmentFile(t, r.client, res.Body, MethodAdd, verify)
-			locs = r.client.Location.Query().AllX(ctx)
+			importEquipmentFile(t, r.Client, res.Body, methodAdd, verify)
+			locs = r.Client.Location.Query().AllX(ctx)
 			if verify {
 				require.Len(t, locs, 0)
 			} else {
@@ -244,12 +232,12 @@ func TestEquipmentImportAndEdit(t *testing.T) {
 	for _, verify := range []bool{true, false} {
 		verify := verify
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
-			r := newExporterTestResolver(t)
+			r := NewExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
 			defer res.Body.Close()
 
-			importEquipmentFile(t, r.client, res.Body, MethodEdit, verify)
-			locs := r.client.Location.Query().AllX(ctx)
+			importEquipmentFile(t, r.Client, res.Body, methodEdit, verify)
+			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
 			equips, err := r.Query().EquipmentSearch(ctx, nil, nil)
 			require.NoError(t, err)

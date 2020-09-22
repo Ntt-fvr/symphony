@@ -37,13 +37,6 @@ const (
 	service3Name = "service3"
 )
 
-type method string
-
-const (
-	MethodAdd  method = "ADD"
-	MethodEdit method = "EDIT"
-)
-
 // "Service ID", "Service Name", "Service Type",  "Discovery Method", "Service External ID", "Customer Name", "Customer External ID", "prop1", "prop2", "prop3", "prop4"
 func editLine(t *testing.T, line []string, index int) {
 	switch index {
@@ -65,7 +58,7 @@ func editLine(t *testing.T, line []string, index int) {
 	}
 }
 
-func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify bool) (*bytes.Buffer, string) {
+func writeModifiedCSV(t *testing.T, r *csv.Reader, method pkgexporter.Method, withVerify bool) (*bytes.Buffer, string) {
 	var newLine []string
 	var lines = make([][]string, 4)
 	var buf bytes.Buffer
@@ -89,9 +82,9 @@ func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify boo
 			lines[0] = line
 		} else {
 			switch method {
-			case MethodAdd:
+			case methodAdd:
 				newLine = append([]string{""}, line[1:]...)
-			case MethodEdit:
+			case methodEdit:
 				newLine = line
 			default:
 				require.Fail(t, "method should be add or edit")
@@ -314,7 +307,7 @@ func TestServiceImportDataAdd(t *testing.T) {
 		exportedData := exportServiceData(ctx, t, r)
 		deleteServiceData(ctx, t, r)
 		readr := csv.NewReader(&exportedData)
-		modifiedExportedData, contentType := writeModifiedCSV(t, readr, MethodAdd, withVerify)
+		modifiedExportedData, contentType := writeModifiedCSV(t, readr, methodAdd, withVerify)
 		code := importServiceExportedData(ctx, t, *modifiedExportedData, contentType, r)
 		verifyServiceData(ctx, t, r, withVerify)
 		require.Equal(t, http.StatusOK, code)
@@ -328,7 +321,7 @@ func TestServiceImportDataEdit(t *testing.T) {
 		prepareServiceData(ctx, t, r)
 		exportedData := exportServiceData(ctx, t, r)
 		readr := csv.NewReader(&exportedData)
-		modifiedExportedData, contentType := writeModifiedCSV(t, readr, MethodEdit, withVerify)
+		modifiedExportedData, contentType := writeModifiedCSV(t, readr, methodEdit, withVerify)
 		code := importServiceExportedData(ctx, t, *modifiedExportedData, contentType, r)
 		verifyServiceData(ctx, t, r, withVerify)
 		require.Equal(t, http.StatusOK, code)

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package exporter
+package importer
 
 import (
 	"bytes"
@@ -16,7 +16,6 @@ import (
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -25,7 +24,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func writeModifiedLocationsCSV(t *testing.T, r *csv.Reader, method method, withVerify, skipLines bool) (*bytes.Buffer, string) {
+func writeModifiedLocationsCSV(t *testing.T, r *csv.Reader, method pkgexporter.Method, withVerify, skipLines bool) (*bytes.Buffer, string) {
 	var newLine []string
 	var lines = make([][]string, 4)
 	var buf bytes.Buffer
@@ -52,9 +51,9 @@ func writeModifiedLocationsCSV(t *testing.T, r *csv.Reader, method method, withV
 			lines[0] = line
 		} else {
 			switch method {
-			case MethodAdd:
+			case methodAdd:
 				newLine = append([]string{""}, line[1:]...)
-			case MethodEdit:
+			case methodEdit:
 				newLine = line
 				if line[3] == childLocation {
 					newLine[4] = "new-external-id"
@@ -84,13 +83,13 @@ func writeModifiedLocationsCSV(t *testing.T, r *csv.Reader, method method, withV
 	return &buf, ct
 }
 
-func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method method, withVerify, skipLines bool) {
+func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method pkgexporter.Method, withVerify, skipLines bool) {
 	readr := csv.NewReader(r)
 	buf, contentType := writeModifiedLocationsCSV(t, readr, method, withVerify, skipLines)
 
 	logger := logtest.NewTestLogger(t)
-	h, _ := importer.NewHandler(
-		importer.Config{
+	h, _ := NewHandler(
+		Config{
 			Logger:          logger,
 			ReceiverFactory: ev.ErrFactory{},
 		},
@@ -114,11 +113,11 @@ func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method m
 func TestExportAndEditLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := newExporterTestResolver(t)
-			log := r.exporter.Log
+			r := NewExporterTestResolver(t)
+			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			importLocationsFile(t, r.client, res.Body, MethodEdit, withVerify, skipLines)
+			importLocationsFile(t, r.Client, res.Body, methodEdit, withVerify, skipLines)
 			res.Body.Close()
 
 			locations, err := r.Query().LocationSearch(ctx, nil, nil)
@@ -163,19 +162,19 @@ func TestExportAndEditLocations(t *testing.T) {
 func TestExportAndAddLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := newExporterTestResolver(t)
-			log := r.exporter.Log
+			r := NewExporterTestResolver(t)
+			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
 
-			locs := r.client.Location.Query().AllX(ctx)
+			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
 			// Deleting link and of side's equipment to verify it creates it on import
 			deleteLocationsForReImport(ctx, t, r)
-			locs = r.client.Location.Query().AllX(ctx)
+			locs = r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 0)
 
-			importLocationsFile(t, r.client, res.Body, MethodAdd, withVerify, skipLines)
+			importLocationsFile(t, r.Client, res.Body, methodAdd, withVerify, skipLines)
 			res.Body.Close()
 
 			locations, err := r.Query().LocationSearch(ctx, nil, nil)
@@ -208,9 +207,9 @@ func TestExportAndAddLocations(t *testing.T) {
 }
 
 func deleteLocationsForReImport(ctx context.Context, t *testing.T, r *TestExporterResolver) {
-	locs := r.client.Location.Query().AllX(ctx)
+	locs := r.Client.Location.Query().AllX(ctx)
 	for _, loc := range locs {
-		err := r.client.Location.DeleteOne(loc).Exec(ctx)
+		err := r.Client.Location.DeleteOne(loc).Exec(ctx)
 		require.NoError(t, err)
 	}
 }

@@ -2,93 +2,29 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package exporter
+package importer
 
 import (
-	"bytes"
 	"context"
-	"encoding/csv"
-	"io"
-	"mime/multipart"
-	"strings"
 	"testing"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/stretchr/testify/require"
 )
 
-func writeModifiedLinksCSV(t *testing.T, r *csv.Reader, method method, skipLines, withVerify bool) (*bytes.Buffer, string) {
-	var newLine []string
-	var lines = make([][]string, 2)
-	var buf bytes.Buffer
-	bw := multipart.NewWriter(&buf)
-	if skipLines {
-		_ = bw.WriteField("skip_lines", "[1]")
-	}
-	if withVerify {
-		_ = bw.WriteField("verify_before_commit", "true")
-	}
-	fileWriter, err := bw.CreateFormFile("file_0", "name1")
-	require.Nil(t, err)
-	for i := 0; ; i++ {
-		line, err := r.Read()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			require.Nil(t, err)
-		}
-		if i == 0 {
-			lines[0] = line
-		} else {
-			switch method {
-			case MethodAdd:
-				newLine = append([]string{""}, line[1:]...)
-			case MethodEdit:
-				newLine = line
-				if line[1] == portName1 {
-					newLine[25] = secondServiceName
-					newLine[26] = "new-prop-value"
-					newLine[27] = "true"
-					newLine[28] = "10"
-				}
-			default:
-				require.Fail(t, "method should be add or edit")
-			}
-			lines[i] = newLine
-		}
-	}
-	if withVerify {
-		failLine := make([]string, len(lines[1]))
-		copy(failLine, lines[1])
-		lines = append(lines, failLine)
-		lines[2][1] = "this"
-		lines[2][2] = "should"
-		lines[2][3] = "fail"
-	}
-	for _, l := range lines {
-		stringLine := strings.Join(l, ",")
-		fileWriter.Write([]byte(stringLine + "\n"))
-	}
-	ct := bw.FormDataContentType()
-	require.NoError(t, bw.Close())
-	return &buf, ct
-}
-
 func TestExportAndEditLinks(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := newExporterTestResolver(t)
-			log := r.exporter.Log
+			r := NewExporterTestResolver(t)
+			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			importLinksPortsFile(t, r.client, res.Body, importer.ImportEntityLink, MethodEdit, skipLines, withVerify)
+			importLinksPortsFile(t, r.Client, res.Body, ImportEntityLink, methodEdit, skipLines, withVerify)
 			res.Body.Close()
 
-			locs := r.client.Location.Query().AllX(ctx)
+			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
 			links, err := r.Query().LinkSearch(ctx, nil, nil)
 			require.NoError(t, err)
@@ -120,18 +56,18 @@ func TestExportAndEditLinks(t *testing.T) {
 func TestExportAndAddLinks(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := newExporterTestResolver(t)
-			log := r.exporter.Log
+			r := NewExporterTestResolver(t)
+			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
-			locs := r.client.Location.Query().AllX(ctx)
+			locs := r.Client.Location.Query().AllX(ctx)
 			require.Len(t, locs, 3)
 			// Deleting link and of side's equipment to verify it creates it on import
 			deleteLinkAndEquipmentForReImport(ctx, t, r)
 
-			equips := r.client.Equipment.Query().AllX(ctx)
+			equips := r.Client.Equipment.Query().AllX(ctx)
 			require.Len(t, equips, 1)
-			importLinksPortsFile(t, r.client, res.Body, importer.ImportEntityLink, MethodAdd, skipLines, withVerify)
+			importLinksPortsFile(t, r.Client, res.Body, ImportEntityLink, methodAdd, skipLines, withVerify)
 			res.Body.Close()
 			links, err := r.Query().LinkSearch(ctx, nil, nil)
 			require.NoError(t, err)
@@ -159,7 +95,7 @@ func TestExportAndAddLinks(t *testing.T) {
 }
 
 func deleteLinkAndEquipmentForReImport(ctx context.Context, t *testing.T, r *TestExporterResolver) {
-	l := r.client.Link.Query().OnlyX(ctx)
+	l := r.Client.Link.Query().OnlyX(ctx)
 	equipToDelete := l.QueryPorts().QueryParent().Where(equipment.Name(currEquip)).OnlyX(ctx)
 	_, err := r.Mutation().RemoveLink(ctx, l.ID, nil)
 	require.NoError(t, err)

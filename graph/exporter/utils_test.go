@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -26,9 +27,9 @@ import (
 const strVal = "defVal"
 
 func TestLocationHierarchy(t *testing.T) {
-	r := newExporterTestResolver(t)
-	defer r.drv.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	defer r.Drv.Close()
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 
 	mr := r.Mutation()
 	locTypeL, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: "example_type_large"})
@@ -99,9 +100,9 @@ func TestLocationHierarchy(t *testing.T) {
 }
 
 func TestParentHierarchy(t *testing.T) {
-	r := newExporterTestResolver(t)
-	defer r.drv.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	defer r.Drv.Close()
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 
 	mr := r.Mutation()
 	mapType := "map"
@@ -169,9 +170,9 @@ func TestParentHierarchy(t *testing.T) {
 }
 
 func TestPropertiesForCSV(t *testing.T) {
-	r := newExporterTestResolver(t)
-	defer r.drv.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	defer r.Drv.Close()
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	client := ent.FromContext(ctx)
 
 	mr := r.Mutation()
@@ -363,9 +364,9 @@ func TestPropertiesForCSV(t *testing.T) {
 }
 
 func TestPropertyTypesForCSV(t *testing.T) {
-	r := newExporterTestResolver(t)
-	defer r.drv.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	defer r.Drv.Close()
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	client := ent.FromContext(ctx)
 
 	mr := r.Mutation()
@@ -445,9 +446,9 @@ func TestPropertyTypesForCSV(t *testing.T) {
 }
 
 func TestSamePropertyTypesForCSV(t *testing.T) {
-	r := newExporterTestResolver(t)
-	defer r.drv.Close()
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	defer r.Drv.Close()
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	client := ent.FromContext(ctx)
 
 	mr := r.Mutation()

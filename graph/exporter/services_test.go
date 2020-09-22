@@ -15,6 +15,7 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -81,7 +82,7 @@ func preparePropertyTypes() []*pkgmodels.PropertyTypeInput {
 	}
 }
 
-func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolver) {
+func prepareServiceData(ctx context.Context, t *testing.T, r importer.TestExporterResolver) {
 	mr := r.Mutation()
 
 	serviceType1, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "L2 Service", HasCustomer: false})
@@ -224,11 +225,11 @@ func prepareServiceData(ctx context.Context, t *testing.T, r TestExporterResolve
 }
 
 func TestEmptyServicesDataExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -262,11 +263,11 @@ func TestEmptyServicesDataExport(t *testing.T) {
 }
 
 func TestServicesExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -274,7 +275,7 @@ func TestServicesExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	prepareServiceData(ctx, t, *r)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
@@ -381,11 +382,11 @@ func TestServicesExport(t *testing.T) {
 }
 
 func TestServiceWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 
 	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -393,7 +394,7 @@ func TestServiceWithFilters(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	prepareServiceData(ctx, t, *r)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)

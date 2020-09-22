@@ -14,6 +14,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -27,7 +28,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolver) *ent.WorkOrder {
+func prepareSingleWOData(ctx context.Context, t *testing.T, r importer.TestExporterResolver) *ent.WorkOrder {
 	pkgexporter.PrepareData(ctx, t)
 
 	// Add templates
@@ -119,7 +120,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 		Name:            "Work Order 1",
 		Description:     pointer.ToString("WO1 - description"),
 		WorkOrderTypeID: typ.ID,
-		LocationID:      pointer.ToInt(r.client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx).ID),
+		LocationID:      pointer.ToInt(r.Client.Location.Query().Where(location.Name(parentLocation)).OnlyX(ctx).ID),
 		ProjectID:       pointer.ToInt(proj.ID),
 		Properties: []*models.PropertyInput{
 			{
@@ -150,7 +151,7 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 		Text:       "Testing comment 2",
 	})
 
-	_, _ = r.client.Activity.Create().
+	_, _ = r.Client.Activity.Create().
 		SetWorkOrder(wo).
 		SetActivityType(activity.ActivityTypePriorityChanged).
 		SetOldValue(workorder.PriorityLow.String()).
@@ -164,10 +165,10 @@ func prepareSingleWOData(ctx context.Context, t *testing.T, r TestExporterResolv
 }
 
 func TestWoWithInvalidId(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
 	e := &pkgexporter.ExcelExporter{Log: log, ExcelFile: pkgexporter.SingleWoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -185,11 +186,11 @@ func TestWoWithInvalidId(t *testing.T) {
 }
 
 func TestSingleWorkOrderExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	ctx := viewertest.NewContext(context.Background(), r.client)
+	r := importer.NewExporterTestResolver(t)
+	log := r.Exporter.Log
+	ctx := viewertest.NewContext(context.Background(), r.Client)
 	e := &pkgexporter.ExcelExporter{Log: log, ExcelFile: pkgexporter.SingleWoRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
