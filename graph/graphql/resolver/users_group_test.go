@@ -228,5 +228,5 @@ func TestEditUsersGroup(t *testing.T) {
 }
 
 func CreateUserEnt(ctx context.Context, client *ent.Client, userName string) (*ent.User, error) {
-	return client.User.Create().SetAuthID(userName).SetEmail(userName).Save(ctx)
+	return client.User.Create().SetAuthID(userName).Save(ctx)
 }

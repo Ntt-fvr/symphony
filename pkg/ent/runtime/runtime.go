@@ -1368,6 +1368,8 @@ func init() {
 	userHooks := schema.User{}.Hooks()
 
 	user.Hooks[1] = userHooks[0]
+
+	user.Hooks[2] = userHooks[1]
 	userMixinFields0 := userMixin[0].Fields()
 	userFields := schema.User{}.Fields()
 	_ = userFields

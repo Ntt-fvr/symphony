@@ -54,7 +54,7 @@ func (s UserService) Create(ctx context.Context, input *schema.AddUserInput) (*s
 	u, err := client.User.Query().Where(user.AuthID(input.Id)).Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			u, err = client.User.Create().SetAuthID(input.Id).SetEmail(input.Id).SetRole(role).Save(ctx)
+			u, err = client.User.Create().SetAuthID(input.Id).SetRole(role).Save(ctx)
 		}
 	} else {
 		_, err = client.User.UpdateOne(u).SetStatus(user.StatusActive).SetRole(role).Save(ctx)

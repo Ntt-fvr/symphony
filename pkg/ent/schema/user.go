@@ -5,7 +5,9 @@
 package schema
 
 import (
+	"github.com/badoux/checkmail"
 	"github.com/facebookincubator/symphony/pkg/authz"
+	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/facebook/ent"
@@ -33,7 +35,7 @@ func (User) Fields() []ent.Field {
 			NotEmpty().
 			Optional(),
 		field.String("email").
-			NotEmpty().
+			Validate(checkmail.ValidateFormat).
 			Optional(),
 		field.Enum("status").
 			NamedValues(
@@ -90,5 +92,6 @@ func (User) Policy() ent.Policy {
 func (User) Hooks() []ent.Hook {
 	return []ent.Hook{
 		viewer.UpdateCurrentUser(),
+		hooks.SetUserEmailOnCreateHook(),
 	}
 }

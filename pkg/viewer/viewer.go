@@ -340,7 +340,6 @@ func GetOrCreateUser(ctx context.Context, authID string, role user.Role) (*ent.U
 	}
 	u, err := client.Create().
 		SetAuthID(authID).
-		SetEmail(authID).
 		SetRole(role).
 		Save(ctx)
 	if ent.IsConstraintError(err) {
