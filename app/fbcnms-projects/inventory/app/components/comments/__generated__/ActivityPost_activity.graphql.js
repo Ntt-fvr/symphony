@@ -14,6 +14,9 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+type GenericActivityText_activity$ref = any;
+type WorkOrderCheckInActivityText_activity$ref = any;
+type WorkOrderCheckOutActivityText_activity$ref = any;
 export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type ActivityPost_activity$ref: FragmentReference;
@@ -23,29 +26,10 @@ export type ActivityPost_activity = {|
   +author: ?{|
     +email: string
   |},
-  +isCreate: boolean,
-  +activityType: ActivityField,
-  +newRelatedNode: ?({|
-    +__typename: "User",
-    +id: string,
-    +email: string,
-  |} | {|
-    // This will never be '%other', but we need some
-    // value in case none of the concrete values match.
-    +__typename: "%other"
-  |}),
-  +oldRelatedNode: ?({|
-    +__typename: "User",
-    +id: string,
-    +email: string,
-  |} | {|
-    // This will never be '%other', but we need some
-    // value in case none of the concrete values match.
-    +__typename: "%other"
-  |}),
-  +oldValue: ?string,
   +newValue: ?string,
+  +activityType: ActivityField,
   +createTime: any,
+  +$fragmentRefs: GenericActivityText_activity$ref & WorkOrderCheckInActivityText_activity$ref & WorkOrderCheckOutActivityText_activity$ref,
   +$refType: ActivityPost_activity$ref,
 |};
 export type ActivityPost_activity$data = ActivityPost_activity;
@@ -57,46 +41,19 @@ export type ActivityPost_activity$key = {
 */
 
 
-const node/*: ReaderFragment*/ = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-},
-v2 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "__typename",
-    "storageKey": null
-  },
-  {
-    "kind": "InlineFragment",
-    "selections": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
-    "type": "User",
-    "abstractKey": null
-  }
-];
-return {
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "ActivityPost_activity",
   "selections": [
-    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -105,49 +62,14 @@ return {
       "name": "author",
       "plural": false,
       "selections": [
-        (v1/*: any*/)
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "email",
+          "storageKey": null
+        }
       ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "isCreate",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "activityType",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": null,
-      "kind": "LinkedField",
-      "name": "newRelatedNode",
-      "plural": false,
-      "selections": (v2/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": null,
-      "kind": "LinkedField",
-      "name": "oldRelatedNode",
-      "plural": false,
-      "selections": (v2/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "oldValue",
       "storageKey": null
     },
     {
@@ -161,15 +83,36 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "activityType",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "createTime",
       "storageKey": null
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "GenericActivityText_activity"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "WorkOrderCheckInActivityText_activity"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "WorkOrderCheckOutActivityText_activity"
     }
   ],
   "type": "Activity",
   "abstractKey": null
 };
-})();
 // prettier-ignore
-(node/*: any*/).hash = 'd17349f40511e4424c6b43f0449af2be';
+(node/*: any*/).hash = 'e905cb523dfbfd117ac5a40644a06bd7';
 
 module.exports = node;

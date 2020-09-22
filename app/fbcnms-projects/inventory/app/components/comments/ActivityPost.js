@@ -10,13 +10,14 @@
 
 import type {ActivityPost_activity} from './__generated__/ActivityPost_activity.graphql.js';
 
-import ActivityCommentsIcon from './ActivityCommentsIcon';
+import ActivityIcon from './ActivityIcon';
 import DateTimeFormat from '../../common/DateTimeFormat.js';
+import GenericActivityText from './GenericActivityText';
 import React from 'react';
 import Text from '@symphony/design-system/components/Text';
-import classNames from 'classnames';
+import WorkOrderCheckInActivityText from './WorkOrderCheckInActivityText';
+import WorkOrderCheckOutActivityText from './WorkOrderCheckOutActivityText';
 import fbt from 'fbt';
-import symphony from '@symphony/design-system/theme/symphony';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
@@ -27,7 +28,7 @@ type Props = $ReadOnly<{|
 const useStyles = makeStyles(() => ({
   textActivityPost: {
     minHeight: '20px',
-    padding: '4px 4px 12px 0px',
+    padding: '4px 40px 12px 16px',
     display: 'flex',
     flexDirection: 'row',
   },
@@ -37,167 +38,44 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     alignItems: 'start',
   },
-  activityAuthor: {
-    fontWeight: 'bold',
-    paddingRight: '5px',
-  },
-  activityTime: {
-    color: symphony.palette.D300,
-  },
-  nameText: {
-    fontWeight: 'bold',
-  },
-  boldName: {
-    fontWeight: 'bold',
-    textTransform: 'capitalize',
-  },
 }));
 
 const ActivityPost = (props: Props) => {
   const classes = useStyles();
   const {activity} = props;
 
-  const shouldCapitalizeValue = () => {
-    return (
-      activity.activityType === 'STATUS' || activity.activityType === 'PRIORITY'
-    );
-  };
-
-  const genActivityValueComponent = (val: string) => {
-    return (
-      <span
-        className={classNames({
-          [classes.nameText]: !shouldCapitalizeValue(),
-          [classes.boldName]: shouldCapitalizeValue(),
-        })}>
-        {val}
-      </span>
-    );
-  };
-
-  const genActivityMessage = () => {
-    if (activity.activityType === 'CREATION_DATE') {
-      return (
-        <span>
-          <fbt desc="">created this work order</fbt>
-        </span>
-      );
-    }
-    if (activity.activityType === 'CLOCK_IN') {
-      return (
-        <span>
-          <fbt desc="">clocked in</fbt>
-        </span>
-      );
-    }
-    let oldVal = (activity.oldValue ?? '').toLowerCase();
-    let newVal = (activity.newValue ?? '').toLowerCase();
-    const oldValNode = activity.oldRelatedNode;
-    if (oldValNode && oldValNode?.__typename === 'User') {
-      oldVal = oldValNode.email;
-    }
-    const newValNode = activity.newRelatedNode;
-    if (newValNode && newValNode?.__typename === 'User') {
-      newVal = newValNode.email;
-    }
-    if (oldVal === '') {
-      return (
-        <span>
-          <fbt desc="">
-            set the{' '}
-            <fbt:param name="changed field">
-              <span>{activity.activityType.toLowerCase()}</span>
-            </fbt:param>
-            to{' '}
-            <fbt:param name="new value">
-              {genActivityValueComponent(newVal)}
-            </fbt:param>
-          </fbt>
-        </span>
-      );
-    }
-    if (newVal === '') {
-      if (oldValNode && oldValNode?.__typename === 'User') {
+  const getActivityMessage = () => {
+    switch (activity.activityType) {
+      case 'CREATION_DATE':
+        return <fbt desc="">created this work order</fbt>;
+      case 'DESCRIPTION':
+        return <fbt desc="">changed the description</fbt>;
+      case 'NAME':
         return (
-          <span>
-            <fbt desc="">
-              removed{' '}
-              <fbt:param name="old value">
-                {genActivityValueComponent(oldVal)}
-              </fbt:param>
-              as an
-              <fbt:param name="changed field">
-                <span>{activity.activityType.toLowerCase()}</span>
-              </fbt:param>
-            </fbt>
-          </span>
-        );
-      }
-      return (
-        <span>
-          <fbt desc="">
-            removed{' '}
-            <fbt:param name="changed field">
-              <span>{activity.activityType.toLowerCase()}</span>
-            </fbt:param>
-            value
-          </fbt>
-        </span>
-      );
-    }
-    if (activity.activityType === 'DESCRIPTION') {
-      return (
-        <span>
-          <fbt desc="">changed the description</fbt>
-        </span>
-      );
-    }
-    if (activity.activityType === 'NAME') {
-      return (
-        <span>
           <fbt desc="">
             changed work order name to{' '}
             <fbt:param name="new value">
-              {genActivityValueComponent(newVal)}
+              <strong>{activity.newValue}</strong>
             </fbt:param>
           </fbt>
-        </span>
-      );
+        );
+      case 'CLOCK_IN':
+        return <WorkOrderCheckInActivityText activity={activity} />;
+      case 'CLOCK_OUT':
+        return <WorkOrderCheckOutActivityText activity={activity} />;
+      default:
+        return <GenericActivityText activity={activity} />;
     }
-    return (
-      <span>
-        <fbt desc="">
-          changed the{' '}
-          <fbt:param name="changed field">
-            <span>{activity.activityType.toLowerCase()}</span>
-          </fbt:param>
-          from{' '}
-          <fbt:param name="old value">
-            {genActivityValueComponent(oldVal)}
-          </fbt:param>
-          to{' '}
-          <fbt:param name="new value">
-            {genActivityValueComponent(newVal)}
-          </fbt:param>
-        </fbt>
-      </span>
-    );
   };
 
   return (
     <div className={classes.textActivityPost}>
-      <ActivityCommentsIcon field={activity.activityType} />
+      <ActivityIcon field={activity.activityType} />
       <div className={classes.activityBody}>
         <Text variant="body2">
-          <span className={classes.activityAuthor}>
-            {activity.author?.email}
-          </span>
-          {genActivityMessage()}
+          <strong>{activity.author?.email}</strong> {getActivityMessage()}
         </Text>
-        <Text
-          color="light"
-          variant="subtitle2"
-          className={classes.activityTime}>
+        <Text color="gray" variant="body2">
           {DateTimeFormat.commentTime(activity.createTime)}
         </Text>
       </div>
@@ -212,25 +90,12 @@ export default createFragmentContainer(ActivityPost, {
       author {
         email
       }
-      isCreate
-      activityType
-      newRelatedNode {
-        __typename
-        ... on User {
-          id
-          email
-        }
-      }
-      oldRelatedNode {
-        __typename
-        ... on User {
-          id
-          email
-        }
-      }
-      oldValue
       newValue
+      activityType
       createTime
+      ...GenericActivityText_activity
+      ...WorkOrderCheckInActivityText_activity
+      ...WorkOrderCheckOutActivityText_activity
     }
   `,
 });

@@ -26,7 +26,6 @@ const useStyles = makeStyles(() => ({
     marginRight: '8px',
   },
   activityTypeIcon: {
-    fontSize: '16px',
     fill: symphony.palette.D100,
   },
 }));
@@ -35,7 +34,7 @@ type Props = {
   field: ActivityField | 'COMMENT',
 };
 
-const ActivityCommentsIcon = ({field}: Props) => {
+const ActivityIcon = ({field}: Props) => {
   const classes = useStyles();
   let Icon: ?React.ComponentType<SvgIconStyleProps> = null;
   switch (field) {
@@ -47,6 +46,7 @@ const ActivityCommentsIcon = ({field}: Props) => {
       Icon = ProfileIcon;
       break;
     case 'CLOCK_IN':
+    case 'CLOCK_OUT':
       Icon = PlannedIcon;
       break;
     default:
@@ -59,4 +59,4 @@ const ActivityCommentsIcon = ({field}: Props) => {
   );
 };
 
-export default ActivityCommentsIcon;
+export default ActivityIcon;
