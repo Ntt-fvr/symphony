@@ -8,9 +8,9 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 

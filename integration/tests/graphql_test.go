@@ -18,7 +18,6 @@ import (
 
 	"github.com/AlekSi/pointer"
 	"github.com/cenkalti/backoff/v4"
-	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
@@ -30,9 +29,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type client struct {
@@ -106,8 +102,10 @@ func newClient(t *testing.T, tenant, user string, opts ...option) *client {
 	for _, opt := range opts {
 		opt(&c)
 	}
-	require.NoError(t, c.createTenant())
-	require.NoError(t, c.createOwnerUser())
+	tenantID, err := c.createTenant()
+	require.NoError(t, err)
+	_, err = c.createOwnerUser(tenantID)
+	require.NoError(t, err)
 	return &c
 }
 
@@ -122,35 +120,48 @@ func (c *client) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func (c *client) createTenant() error {
+func (c *client) createTenant() (graphql.ID, error) {
+	ctx := context.Background()
 	var m struct {
 		CreateTenant struct {
 			Tenant struct {
-				ID graphql.ID
+				ID string
 			}
 		} `graphql:"createTenant(input: {name: $name})"`
 	}
-	vars := map[string]interface{}{"name": graphql.String(c.tenant)}
-	if err := c.admin.Mutate(context.Background(), &m, vars); err != nil &&
-		err.Error() != fmt.Sprintf("Tenant '%s' exists", c.tenant) {
-		return err
+	vars := map[string]interface{}{
+		"name": graphql.String(c.tenant),
 	}
-	return nil
+	err := c.admin.Mutate(ctx, &m, vars)
+	if err == nil {
+		return m.CreateTenant.Tenant.ID, nil
+	}
+	if err.Error() != fmt.Sprintf("Tenant '%s' exists", c.tenant) {
+		return nil, err
+	}
+	var q struct {
+		Tenant struct {
+			ID string
+		} `graphql:"tenant(name: $name)"`
+	}
+	err = c.admin.Query(ctx, &q, vars)
+	return q.Tenant.ID, err
 }
 
-func (c *client) createOwnerUser() error {
-	conn, err := grpc.Dial("graph:443", grpc.WithInsecure())
-	if err != nil {
-		return err
+func (c *client) createOwnerUser(tenant graphql.ID) (graphql.ID, error) {
+	var m struct {
+		UpsertUser struct {
+			User struct {
+				ID string
+			}
+		} `graphql:"upsertUser(input: {tenantId: $tenant, authId: $user, role: OWNER})"`
 	}
-	_, err = schema.NewUserServiceClient(conn).
-		Create(context.Background(), &schema.AddUserInput{Tenant: c.tenant, Id: c.user, IsOwner: true})
-	switch st, _ := status.FromError(err); st.Code() {
-	case codes.OK:
-	default:
-		return st.Err()
+	vars := map[string]interface{}{
+		"tenant": tenant,
+		"user":   graphql.String(c.user),
 	}
-	return nil
+	err := c.admin.Mutate(context.Background(), &m, vars)
+	return m.UpsertUser.User.ID, err
 }
 
 type locationTypeResponse struct {
