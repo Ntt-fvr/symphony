@@ -122,6 +122,22 @@ fragment WorkOrdersMap_workOrders on WorkOrder {
     latitude
     longitude
   }
+  lastCheckInActivity: activities(filter: {activityType: CLOCK_IN, limit: 1, orderDirection: DESC}) {
+    activityType
+    createTime
+    clockDetails {
+      distanceMeters
+    }
+    id
+  }
+  lastCheckOutActivity: activities(filter: {activityType: CLOCK_OUT, limit: 1, orderDirection: DESC}) {
+    activityType
+    createTime
+    clockDetails {
+      distanceMeters
+    }
+    id
+  }
 }
 
 fragment WorkOrdersView_query_10glCF on Query {
@@ -305,7 +321,42 @@ v18 = {
   "kind": "ScalarField",
   "name": "priority",
   "storageKey": null
-};
+},
+v19 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "activityType",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "createTime",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ClockDetails",
+    "kind": "LinkedField",
+    "name": "clockDetails",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "distanceMeters",
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  },
+  (v8/*: any*/)
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -563,6 +614,46 @@ return {
                       }
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "alias": "lastCheckInActivity",
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "filter",
+                        "value": {
+                          "activityType": "CLOCK_IN",
+                          "limit": 1,
+                          "orderDirection": "DESC"
+                        }
+                      }
+                    ],
+                    "concreteType": "Activity",
+                    "kind": "LinkedField",
+                    "name": "activities",
+                    "plural": true,
+                    "selections": (v19/*: any*/),
+                    "storageKey": "activities(filter:{\"activityType\":\"CLOCK_IN\",\"limit\":1,\"orderDirection\":\"DESC\"})"
+                  },
+                  {
+                    "alias": "lastCheckOutActivity",
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "filter",
+                        "value": {
+                          "activityType": "CLOCK_OUT",
+                          "limit": 1,
+                          "orderDirection": "DESC"
+                        }
+                      }
+                    ],
+                    "concreteType": "Activity",
+                    "kind": "LinkedField",
+                    "name": "activities",
+                    "plural": true,
+                    "selections": (v19/*: any*/),
+                    "storageKey": "activities(filter:{\"activityType\":\"CLOCK_OUT\",\"limit\":1,\"orderDirection\":\"DESC\"})"
                   }
                 ],
                 "storageKey": null
@@ -576,12 +667,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2f6fbd36192392b208f6a71ce911b583",
+    "cacheID": "90e24792be6b13c8ae83db1a3d35313d",
     "id": null,
     "metadata": {},
     "name": "WorkOrderComparisonViewQueryRendererSearchQuery",
     "operationKind": "query",
-    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n  $orderBy: WorkOrderOrder\n) {\n  ...WorkOrdersView_query_10glCF\n  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n    name\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n}\n\nfragment WorkOrdersView_query_10glCF on Query {\n  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        description\n        owner {\n          id\n          email\n        }\n        creationDate\n        installDate\n        status\n        assignedTo {\n          id\n          email\n        }\n        location {\n          id\n          name\n        }\n        workOrderType {\n          id\n          name\n        }\n        project {\n          id\n          name\n        }\n        closeDate\n        priority\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query WorkOrderComparisonViewQueryRendererSearchQuery(\n  $limit: Int\n  $filters: [WorkOrderFilterInput!]!\n  $orderBy: WorkOrderOrder\n) {\n  ...WorkOrdersView_query_10glCF\n  workOrdersMap: workOrders(orderBy: $orderBy, filterBy: $filters, first: 100) {\n    totalCount\n    edges {\n      node {\n        ...WorkOrdersMap_workOrders\n        id\n      }\n    }\n  }\n}\n\nfragment WorkOrdersMap_workOrders on WorkOrder {\n  id\n  name\n  description\n  owner {\n    id\n    email\n  }\n  status\n  priority\n  project {\n    id\n    name\n  }\n  assignedTo {\n    id\n    email\n  }\n  installDate\n  location {\n    id\n    name\n    latitude\n    longitude\n  }\n  lastCheckInActivity: activities(filter: {activityType: CLOCK_IN, limit: 1, orderDirection: DESC}) {\n    activityType\n    createTime\n    clockDetails {\n      distanceMeters\n    }\n    id\n  }\n  lastCheckOutActivity: activities(filter: {activityType: CLOCK_OUT, limit: 1, orderDirection: DESC}) {\n    activityType\n    createTime\n    clockDetails {\n      distanceMeters\n    }\n    id\n  }\n}\n\nfragment WorkOrdersView_query_10glCF on Query {\n  workOrders(first: $limit, orderBy: $orderBy, filterBy: $filters) {\n    totalCount\n    edges {\n      node {\n        id\n        name\n        description\n        owner {\n          id\n          email\n        }\n        creationDate\n        installDate\n        status\n        assignedTo {\n          id\n          email\n        }\n        location {\n          id\n          name\n        }\n        workOrderType {\n          id\n          name\n        }\n        project {\n          id\n          name\n        }\n        closeDate\n        priority\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

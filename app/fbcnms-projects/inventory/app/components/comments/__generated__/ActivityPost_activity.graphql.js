@@ -14,7 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
-export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
+export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type ActivityPost_activity$ref: FragmentReference;
 declare export opaque type ActivityPost_activity$fragmentType: ActivityPost_activity$ref;

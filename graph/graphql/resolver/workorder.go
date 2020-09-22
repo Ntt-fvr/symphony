@@ -70,7 +70,20 @@ func (workOrderTemplateResolver) CheckListCategoryDefinitions(ctx context.Contex
 
 type workOrderResolver struct{}
 
-func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Activity, error) {
+func (r workOrderResolver) Activities(ctx context.Context, obj *ent.WorkOrder, filter *models.ActivityFilterInput) ([]*ent.Activity, error) {
+	if filter != nil {
+		query := obj.QueryActivities().
+			Where(activity.ActivityTypeEQ(filter.ActivityType))
+
+		if filter.OrderDirection == ent.OrderDirectionAsc {
+			query = query.Order(ent.Asc(activity.FieldCreateTime))
+		} else {
+			query = query.Order(ent.Desc(activity.FieldCreateTime))
+		}
+
+		return query.Limit(filter.Limit).All(ctx)
+	}
+
 	return obj.QueryActivities().All(ctx)
 }
 

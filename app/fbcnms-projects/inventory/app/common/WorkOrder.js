@@ -38,6 +38,14 @@ export type WorkOrderType = {
   checklistCategoryDefinitions: Array<ChecklistCategoryDefinition>,
 };
 
+export type CheckInOutActivity = $ReadOnly<{|
+  activityType: string,
+  createTime: string,
+  clockDetails: ?{
+    distanceMeters: number,
+  },
+|}>;
+
 export type WorkOrder = {
   id: string,
   workOrderType: ?WorkOrderType,
@@ -64,6 +72,8 @@ export type WorkOrder = {
     name: string,
   },
   checkListCategories: ?CheckListCategoryExpandingPanel_list,
+  lastCheckInActivity?: ?CheckInOutActivity,
+  lastCheckOutActivity?: ?CheckInOutActivity,
 };
 
 export type WorkOrderIdentifier = {

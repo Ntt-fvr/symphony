@@ -14,6 +14,7 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
+export type ActivityField = "ASSIGNEE" | "CLOCK_IN" | "CLOCK_OUT" | "CREATION_DATE" | "DESCRIPTION" | "NAME" | "OWNER" | "PRIORITY" | "STATUS" | "%future added value";
 export type WorkOrderPriority = "HIGH" | "LOW" | "MEDIUM" | "NONE" | "URGENT" | "%future added value";
 export type WorkOrderStatus = "BLOCKED" | "CLOSED" | "DONE" | "IN_PROGRESS" | "PENDING" | "PLANNED" | "SUBMITTED" | "%future added value";
 import type { FragmentReference } from "relay-runtime";
@@ -44,6 +45,20 @@ export type WorkOrdersMap_workOrders = $ReadOnlyArray<{|
     +latitude: number,
     +longitude: number,
   |},
+  +lastCheckInActivity: $ReadOnlyArray<{|
+    +activityType: ActivityField,
+    +createTime: any,
+    +clockDetails: ?{|
+      +distanceMeters: ?number
+    |},
+  |}>,
+  +lastCheckOutActivity: $ReadOnlyArray<{|
+    +activityType: ActivityField,
+    +createTime: any,
+    +clockDetails: ?{|
+      +distanceMeters: ?number
+    |},
+  |}>,
   +$refType: WorkOrdersMap_workOrders$ref,
 |}>;
 export type WorkOrdersMap_workOrders$data = WorkOrdersMap_workOrders;
@@ -77,6 +92,40 @@ v2 = [
     "args": null,
     "kind": "ScalarField",
     "name": "email",
+    "storageKey": null
+  }
+],
+v3 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "activityType",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "createTime",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "ClockDetails",
+    "kind": "LinkedField",
+    "name": "clockDetails",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "distanceMeters",
+        "storageKey": null
+      }
+    ],
     "storageKey": null
   }
 ];
@@ -177,6 +226,46 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": "lastCheckInActivity",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "activityType": "CLOCK_IN",
+            "limit": 1,
+            "orderDirection": "DESC"
+          }
+        }
+      ],
+      "concreteType": "Activity",
+      "kind": "LinkedField",
+      "name": "activities",
+      "plural": true,
+      "selections": (v3/*: any*/),
+      "storageKey": "activities(filter:{\"activityType\":\"CLOCK_IN\",\"limit\":1,\"orderDirection\":\"DESC\"})"
+    },
+    {
+      "alias": "lastCheckOutActivity",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "activityType": "CLOCK_OUT",
+            "limit": 1,
+            "orderDirection": "DESC"
+          }
+        }
+      ],
+      "concreteType": "Activity",
+      "kind": "LinkedField",
+      "name": "activities",
+      "plural": true,
+      "selections": (v3/*: any*/),
+      "storageKey": "activities(filter:{\"activityType\":\"CLOCK_OUT\",\"limit\":1,\"orderDirection\":\"DESC\"})"
     }
   ],
   "type": "WorkOrder",
@@ -184,6 +273,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4559216120f002a9a9f9082a55567755';
+(node/*: any*/).hash = '55d7dfba17b995f7614297a6463c678a';
 
 module.exports = node;

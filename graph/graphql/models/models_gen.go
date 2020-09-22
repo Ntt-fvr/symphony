@@ -102,6 +102,12 @@ type ActionsTriggersSearchResult struct {
 	Count   int               `json:"count"`
 }
 
+type ActivityFilterInput struct {
+	Limit          int                   `json:"limit"`
+	OrderDirection ent.OrderDirection    `json:"orderDirection"`
+	ActivityType   activity.ActivityType `json:"activityType"`
+}
+
 type AddActionsRuleInput struct {
 	Name        string                    `json:"name"`
 	TriggerID   core.TriggerID            `json:"triggerID"`
@@ -317,6 +323,12 @@ type CheckListItemInput struct {
 	YesNoResponse      *checklistitem.YesNoVal              `json:"yesNoResponse"`
 	WifiData           []*SurveyWiFiScanData                `json:"wifiData"`
 	CellData           []*SurveyCellScanData                `json:"cellData"`
+}
+
+type ClockActivity struct {
+	Author  *ent.User              `json:"author"`
+	Details *activity.ClockDetails `json:"details"`
+	Time    time.Time              `json:"time"`
 }
 
 type CommentInput struct {

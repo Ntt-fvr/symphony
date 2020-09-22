@@ -542,6 +542,7 @@ enum ActivityField
   NAME
   DESCRIPTION
   CLOCK_IN
+  CLOCK_OUT
 }
 
 enum ClockOutReason  @goModel(
@@ -562,6 +563,12 @@ type ClockDetails
   comment: String
 }
 
+type ClockActivity {
+  author: User!
+  details: ClockDetails!
+  time: Time!
+}
+
 type Activity implements Node {
   id: ID!
   author: User
@@ -574,6 +581,12 @@ type Activity implements Node {
   createTime: Time!
   workOrder: WorkOrder!
   clockDetails: ClockDetails
+}
+
+input ActivityFilterInput {
+  limit: Int! @numberValue(min: 0)
+  orderDirection: OrderDirection!
+  activityType: ActivityField!
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -1766,7 +1779,7 @@ type WorkOrder implements Node & NamedNode {
   images: [File]!
   files: [File]!
   comments: [Comment]!
-  activities: [Activity!]!
+  activities(filter: ActivityFilterInput): [Activity!]!
   location: Location
   properties: [Property]!
   project: Project

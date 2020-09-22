@@ -9,6 +9,7 @@
  */
 
 import type {BasicLocation} from '../../common/Location';
+import type {CheckInOutActivity} from '../../common/WorkOrder';
 import type {
   EditWorkOrderMutationResponse,
   EditWorkOrderMutationVariables,
@@ -64,6 +65,9 @@ const useStyles = makeStyles(() => ({
     backgroundColor: symphony.palette.separator,
     margin: '24px 0px',
   },
+  lastTechnicianActivity: {
+    marginTop: '6px',
+  },
 }));
 
 type Props = {
@@ -78,6 +82,8 @@ type Props = {
     workOrderId: string,
   ) => void,
 };
+
+const TECHNICIAN_ACTIVITY_INVALID_DISTANCE_METERS = 200;
 
 const WorkOrderPopover = (props: Props) => {
   const {
@@ -129,6 +135,10 @@ const WorkOrderPopover = (props: Props) => {
   const nameAndCoordinates = (locationInput: BasicLocation) => {
     return `${locationInput.name} (${locationInput.latitude}, ${locationInput.longitude})`;
   };
+  const lastTechnicianActivity = getLastTechnicianActivity(
+    workOrder.lastCheckInActivity,
+    workOrder.lastCheckOutActivity,
+  );
 
   return (
     <div className={containerClassName}>
@@ -148,6 +158,39 @@ const WorkOrderPopover = (props: Props) => {
               {workOrder.name}
             </Text>
           </Link>
+          {lastTechnicianActivity != null && (
+            <div className={classes.lastTechnicianActivity}>
+              <Text
+                variant="body2"
+                color={
+                  (lastTechnicianActivity.clockDetails?.distanceMeters ?? 0) >
+                  TECHNICIAN_ACTIVITY_INVALID_DISTANCE_METERS
+                    ? 'error'
+                    : 'regular'
+                }>
+                {lastTechnicianActivity.activityType === 'CLOCK_IN' ? (
+                  <fbt desc="">Check-in</fbt>
+                ) : (
+                  <fbt desc="">Check-out</fbt>
+                )}
+                {': '}
+                {DateTimeFormat.dateTime(
+                  lastTechnicianActivity.createTime,
+                  Strings.common.emptyField,
+                )}
+                {lastTechnicianActivity.clockDetails?.distanceMeters !=
+                  null && (
+                  <fbt desc="">
+                    {', '}
+                    <fbt:param name="distance">
+                      {lastTechnicianActivity.clockDetails.distanceMeters}
+                    </fbt:param>
+                    meters from location
+                  </fbt>
+                )}
+              </Text>
+            </div>
+          )}
           <div className={classes.divider} />
           <TextField
             className={classes.infoSection}
@@ -218,6 +261,37 @@ const WorkOrderPopover = (props: Props) => {
       )}
     </div>
   );
+};
+
+const getLastTechnicianActivity = (
+  lastCheckInActivityJSON: ?string,
+  lastCheckOutActivityJSON: ?string,
+): ?CheckInOutActivity => {
+  const lastCheckInActivity: ?CheckInOutActivity =
+    lastCheckInActivityJSON != null
+      ? JSON.parse(lastCheckInActivityJSON)[0]
+      : null;
+  const lastCheckOutActivity: ?CheckInOutActivity =
+    lastCheckOutActivityJSON != null
+      ? JSON.parse(lastCheckOutActivityJSON)[0]
+      : null;
+
+  const lastCheckInTime =
+    lastCheckInActivity != null
+      ? new Date(lastCheckInActivity.createTime)
+      : null;
+  const lastCheckOutTime =
+    lastCheckOutActivity != null
+      ? new Date(lastCheckOutActivity.createTime)
+      : null;
+
+  if (lastCheckOutTime == null) {
+    return lastCheckInActivity;
+  }
+
+  return (lastCheckInTime?.getTime() ?? 0) > (lastCheckOutTime.getTime() ?? 0)
+    ? lastCheckInActivity
+    : lastCheckOutActivity;
 };
 
 export default WorkOrderPopover;

@@ -243,6 +243,24 @@ export default withRouter(
           latitude
           longitude
         }
+        lastCheckInActivity: activities(
+          filter: {activityType: CLOCK_IN, limit: 1, orderDirection: DESC}
+        ) {
+          activityType
+          createTime
+          clockDetails {
+            distanceMeters
+          }
+        }
+        lastCheckOutActivity: activities(
+          filter: {activityType: CLOCK_OUT, limit: 1, orderDirection: DESC}
+        ) {
+          activityType
+          createTime
+          clockDetails {
+            distanceMeters
+          }
+        }
       }
     `,
   }),

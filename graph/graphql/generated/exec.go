@@ -291,6 +291,12 @@ type ComplexityRoot struct {
 		Type                   func(childComplexity int) int
 	}
 
+	ClockActivity struct {
+		Author  func(childComplexity int) int
+		Details func(childComplexity int) int
+		Time    func(childComplexity int) int
+	}
+
 	ClockDetails struct {
 		ClockOutReason func(childComplexity int) int
 		Comment        func(childComplexity int) int
@@ -1317,7 +1323,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkOrder struct {
-		Activities          func(childComplexity int) int
+		Activities          func(childComplexity int, filter *models.ActivityFilterInput) int
 		AssignedTo          func(childComplexity int) int
 		CheckListCategories func(childComplexity int) int
 		CloseDate           func(childComplexity int) int
@@ -1855,7 +1861,7 @@ type WorkOrderResolver interface {
 	Images(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error)
 	Files(ctx context.Context, obj *ent.WorkOrder) ([]*ent.File, error)
 	Comments(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Comment, error)
-	Activities(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Activity, error)
+	Activities(ctx context.Context, obj *ent.WorkOrder, filter *models.ActivityFilterInput) ([]*ent.Activity, error)
 	Location(ctx context.Context, obj *ent.WorkOrder) (*ent.Location, error)
 	Properties(ctx context.Context, obj *ent.WorkOrder) ([]*ent.Property, error)
 	Project(ctx context.Context, obj *ent.WorkOrder) (*ent.Project, error)
@@ -2561,6 +2567,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CheckListItemDefinition.Type(childComplexity), true
+
+	case "ClockActivity.author":
+		if e.complexity.ClockActivity.Author == nil {
+			break
+		}
+
+		return e.complexity.ClockActivity.Author(childComplexity), true
+
+	case "ClockActivity.details":
+		if e.complexity.ClockActivity.Details == nil {
+			break
+		}
+
+		return e.complexity.ClockActivity.Details(childComplexity), true
+
+	case "ClockActivity.time":
+		if e.complexity.ClockActivity.Time == nil {
+			break
+		}
+
+		return e.complexity.ClockActivity.Time(childComplexity), true
 
 	case "ClockDetails.clockOutReason":
 		if e.complexity.ClockDetails.ClockOutReason == nil {
@@ -8043,7 +8070,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.WorkOrder.Activities(childComplexity), true
+		args, err := ec.field_WorkOrder_activities_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.WorkOrder.Activities(childComplexity, args["filter"].(*models.ActivityFilterInput)), true
 
 	case "WorkOrder.assignedTo":
 		if e.complexity.WorkOrder.AssignedTo == nil {
@@ -9153,6 +9185,7 @@ enum ActivityField
   NAME
   DESCRIPTION
   CLOCK_IN
+  CLOCK_OUT
 }
 
 enum ClockOutReason  @goModel(
@@ -9173,6 +9206,12 @@ type ClockDetails
   comment: String
 }
 
+type ClockActivity {
+  author: User!
+  details: ClockDetails!
+  time: Time!
+}
+
 type Activity implements Node {
   id: ID!
   author: User
@@ -9185,6 +9224,12 @@ type Activity implements Node {
   createTime: Time!
   workOrder: WorkOrder!
   clockDetails: ClockDetails
+}
+
+input ActivityFilterInput {
+  limit: Int! @numberValue(min: 0)
+  orderDirection: OrderDirection!
+  activityType: ActivityField!
 }
 
 # specific equipment instance: e.g. Wifi Access Point X at Location Y.
@@ -10377,7 +10422,7 @@ type WorkOrder implements Node & NamedNode {
   images: [File]!
   files: [File]!
   comments: [Comment]!
-  activities: [Activity!]!
+  activities(filter: ActivityFilterInput): [Activity!]!
   location: Location
   properties: [Property]!
   project: Project
@@ -17146,6 +17191,21 @@ func (ec *executionContext) field_VariableDefinition_nestedVariables_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_WorkOrder_activities_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *models.ActivityFilterInput
+	if tmp, ok := rawArgs["filter"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("filter"))
+		arg0, err = ec.unmarshalOActivityFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐActivityFilterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filter"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -20362,6 +20422,108 @@ func (ec *executionContext) _CheckListItemDefinition_helpText(ctx context.Contex
 	res := resTmp.(*string)
 	fc.Result = res
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClockActivity_author(ctx context.Context, field graphql.CollectedField, obj *models.ClockActivity) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClockActivity",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Author, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClockActivity_details(ctx context.Context, field graphql.CollectedField, obj *models.ClockActivity) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClockActivity",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Details, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*activity.ClockDetails)
+	fc.Result = res
+	return ec.marshalNClockDetails2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐClockDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ClockActivity_time(ctx context.Context, field graphql.CollectedField, obj *models.ClockActivity) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "ClockActivity",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Time, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ClockDetails_clockOutReason(ctx context.Context, field graphql.CollectedField, obj *activity.ClockDetails) (ret graphql.Marshaler) {
@@ -44754,9 +44916,16 @@ func (ec *executionContext) _WorkOrder_activities(ctx context.Context, field gra
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_WorkOrder_activities_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.WorkOrder().Activities(rctx, obj)
+		return ec.resolvers.WorkOrder().Activities(rctx, obj, args["filter"].(*models.ActivityFilterInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -47599,6 +47768,59 @@ func (ec *executionContext) unmarshalInputActionsRuleFilterInput(ctx context.Con
 
 			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("data"))
 			it.Data, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputActivityFilterInput(ctx context.Context, obj interface{}) (models.ActivityFilterInput, error) {
+	var it models.ActivityFilterInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "limit":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("limit"))
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNInt2int(ctx, v) }
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				min, err := ec.unmarshalOFloat2ᚖfloat64(ctx, 0)
+				if err != nil {
+					return nil, err
+				}
+				if ec.directives.NumberValue == nil {
+					return nil, errors.New("directive numberValue is not implemented")
+				}
+				return ec.directives.NumberValue(ctx, obj, directive0, nil, nil, min, nil, nil, nil, nil)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, err
+			}
+			if data, ok := tmp.(int); ok {
+				it.Limit = data
+			} else {
+				return it, fmt.Errorf(`unexpected type %T from directive, should be int`, tmp)
+			}
+		case "orderDirection":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("orderDirection"))
+			it.OrderDirection, err = ec.unmarshalNOrderDirection2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "activityType":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("activityType"))
+			it.ActivityType, err = ec.unmarshalNActivityField2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐActivityType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55438,6 +55660,43 @@ func (ec *executionContext) _CheckListItemDefinition(ctx context.Context, sel as
 			out.Values[i] = ec._CheckListItemDefinition_enumSelectionMode(ctx, field, obj)
 		case "helpText":
 			out.Values[i] = ec._CheckListItemDefinition_helpText(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var clockActivityImplementors = []string{"ClockActivity"}
+
+func (ec *executionContext) _ClockActivity(ctx context.Context, sel ast.SelectionSet, obj *models.ClockActivity) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, clockActivityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ClockActivity")
+		case "author":
+			out.Values[i] = ec._ClockActivity_author(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "details":
+			out.Values[i] = ec._ClockActivity_details(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "time":
+			out.Values[i] = ec._ClockActivity_time(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -64419,6 +64678,16 @@ func (ec *executionContext) marshalNCheckListItemType2githubᚗcomᚋfacebookinc
 	return v
 }
 
+func (ec *executionContext) marshalNClockDetails2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐClockDetails(ctx context.Context, sel ast.SelectionSet, v *activity.ClockDetails) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ClockDetails(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNClockOutReason2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋactivityᚐClockOutReason(ctx context.Context, v interface{}) (activity.ClockOutReason, error) {
 	tmp, err := graphql.UnmarshalString(v)
 	res := activity.ClockOutReason(tmp)
@@ -69784,6 +70053,14 @@ func (ec *executionContext) marshalOActionsTriggersSearchResult2ᚖgithubᚗcom�
 		return graphql.Null
 	}
 	return ec._ActionsTriggersSearchResult(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOActivityFilterInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐActivityFilterInput(ctx context.Context, v interface{}) (*models.ActivityFilterInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputActivityFilterInput(ctx, v)
+	return &res, graphql.WrapErrorWithInputPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOBasicCUDInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋauthzᚋmodelsᚐBasicCUDInput(ctx context.Context, v interface{}) (*models2.BasicCUDInput, error) {
