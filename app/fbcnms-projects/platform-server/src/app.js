@@ -47,7 +47,7 @@ const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
   .default;
 
 const {createTenant, deleteTenant} = require('./admin/tenant');
-const {createGraphUser, deleteGraphUser} = require('./graphgrpc/user');
+const {createUser, deactivateUsers} = require('./admin/user');
 const {access, configureAccess} = require('@fbcnms/auth/access');
 const {
   AccessRoles: {SUPERUSER, USER},
@@ -69,11 +69,11 @@ Organization.afterDestroy(async (org: any) => {
 
 // add hooks to User model
 User.beforeCreate(async user => {
-  await createGraphUser(
+  await createUser(
     user.getDataValue('organization'),
     user.getDataValue('email'),
     user.getDataValue('role') === SUPERUSER,
-  );
+  ).catch(err => console.error(err));
 });
 
 User.beforeBulkDestroy(async options => {
@@ -81,7 +81,9 @@ User.beforeBulkDestroy(async options => {
   const emails = await model
     .findAll({where, transaction, logging, benchmark})
     .map(el => el.get('email'));
-  emails.map(email => deleteGraphUser(where.organization, email));
+  await deactivateUsers(where.organization, emails).catch(err =>
+    console.error(err),
+  );
 });
 
 // FBC express initialization
