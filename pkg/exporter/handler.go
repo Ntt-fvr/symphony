@@ -190,7 +190,7 @@ func NewHandler(log log.Logger) (http.Handler, error) {
 
 	router.Path("/single_work_order").
 		Methods(http.MethodGet).
-		Handler(&ExcelExporter{Log: log, ExcelFile: SingleWoRower{Log: log}}).
+		Handler(&ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}).
 		Name("single_work_order")
 
 	for _, route := range routes {
