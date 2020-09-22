@@ -24,8 +24,8 @@ export type AddFlowDraftInput = {|
 export type VariableDefinitionInput = {|
   key: string,
   type: VariableType,
-  mandatory: boolean,
-  multipleValues: boolean,
+  mandatory?: ?boolean,
+  multipleValues?: ?boolean,
   choices?: ?$ReadOnlyArray<string>,
   defaultValue?: ?string,
 |};

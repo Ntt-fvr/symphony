@@ -47,6 +47,14 @@ type ActionBlock struct {
 
 func (ActionBlock) IsBlockDetails() {}
 
+type ActionBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	ActionType       flowschema.ActionTypeID           `json:"actionType"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type ActionsAction struct {
 	ActionID    core.ActionID `json:"actionID"`
 	Description string        `json:"description"`
@@ -94,14 +102,6 @@ type ActionsTriggersSearchResult struct {
 	Count   int               `json:"count"`
 }
 
-type AddActionBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	ActionType       flowschema.ActionTypeID           `json:"actionType"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type AddActionsRuleInput struct {
 	Name        string                    `json:"name"`
 	TriggerID   core.TriggerID            `json:"triggerID"`
@@ -112,13 +112,6 @@ type AddActionsRuleInput struct {
 type AddCustomerInput struct {
 	Name       string  `json:"name"`
 	ExternalID *string `json:"externalId"`
-}
-
-type AddEndBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type AddEquipmentInput struct {
@@ -166,13 +159,6 @@ type AddFlowDraftInput struct {
 	Description         *string                          `json:"description"`
 	FlowID              *int                             `json:"flowID"`
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
-}
-
-type AddGotoBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	TargetBlockID    int                               `json:"targetBlockId"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type AddHyperlinkInput struct {
@@ -254,29 +240,6 @@ type AddServiceEndpointInput struct {
 	Definition  int  `json:"definition"`
 }
 
-type AddStartBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	ParamDefinitions []*flowschema.VariableDefinition  `json:"paramDefinitions"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type AddSubflowBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	FlowID           int                               `json:"flowId"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type AddTriggerBlockInput struct {
-	FlowDraftID      int                               `json:"flowDraftId"`
-	Name             string                            `json:"name"`
-	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
-	Params           []*VariableExpressionInput        `json:"params"`
-	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
 type AddUsersGroupInput struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
@@ -306,6 +269,11 @@ type AddWorkOrderTypeInput struct {
 	Properties                   []*models.PropertyTypeInput         `json:"properties"`
 	CheckListCategories          []*CheckListCategoryDefinitionInput `json:"checkListCategories"`
 	AssigneeCanCompleteWorkOrder *bool                               `json:"assigneeCanCompleteWorkOrder"`
+}
+
+type BlockVariableInput struct {
+	BlockCid              string `json:"blockCid"`
+	VariableDefinitionKey string `json:"variableDefinitionKey"`
 }
 
 type CheckListCategoryDefinitionInput struct {
@@ -358,13 +326,8 @@ type CommentInput struct {
 }
 
 type ConnectorInput struct {
-	SourceBlockID int `json:"sourceBlockId"`
-	TargetBlockID int `json:"targetBlockId"`
-}
-
-type ConnectorResult struct {
-	Source *ent.Block `json:"source"`
-	Target *ent.Block `json:"target"`
+	SourceBlockCid string `json:"sourceBlockCid"`
+	TargetBlockCid string `json:"targetBlockCid"`
 }
 
 type Coordinates struct {
@@ -521,6 +484,13 @@ type EndBlock struct {
 
 func (EndBlock) IsBlockDetails() {}
 
+type EndBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type EquipmentPortInput struct {
 	ID           *int    `json:"id"`
 	Name         string  `json:"name"`
@@ -576,6 +546,27 @@ type GotoBlock struct {
 }
 
 func (GotoBlock) IsBlockDetails() {}
+
+type GotoBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	TargetBlockCid   string                            `json:"targetBlockCid"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type ImportFlowDraftInput struct {
+	ID                  int                              `json:"id"`
+	Name                string                           `json:"name"`
+	Description         *string                          `json:"description"`
+	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
+	StartBlock          *StartBlockInput                 `json:"startBlock"`
+	EndBlocks           []*EndBlockInput                 `json:"endBlocks"`
+	GotoBlocks          []*GotoBlockInput                `json:"gotoBlocks"`
+	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
+	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`
+	ActionBlocks        []*ActionBlockInput              `json:"actionBlocks"`
+	Connectors          []*ConnectorInput                `json:"connectors"`
+}
 
 type LatestPythonPackageResult struct {
 	LastPythonPackage         *PythonPackage `json:"lastPythonPackage"`
@@ -727,6 +718,13 @@ type StartBlock struct {
 
 func (StartBlock) IsBlockDetails() {}
 
+type StartBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	ParamDefinitions []*flowschema.VariableDefinition  `json:"paramDefinitions"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type StartFlowInput struct {
 	FlowID int                         `json:"flowID"`
 	Params []*flowschema.VariableValue `json:"params"`
@@ -738,6 +736,14 @@ type SubflowBlock struct {
 }
 
 func (SubflowBlock) IsBlockDetails() {}
+
+type SubflowBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	FlowID           int                               `json:"flowId"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
 
 type SurveyCellScanData struct {
 	NetworkType           surveycellscan.NetworkType `json:"networkType"`
@@ -873,6 +879,14 @@ type TriggerBlock struct {
 
 func (TriggerBlock) IsBlockDetails() {}
 
+type TriggerBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
+	Params           []*VariableExpressionInput        `json:"params"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type UpdateUserGroupsInput struct {
 	ID             int   `json:"id"`
 	AddGroupIds    []int `json:"addGroupIds"`
@@ -908,9 +922,9 @@ type UsersGroupSearchResult struct {
 }
 
 type VariableExpressionInput struct {
-	VariableDefinitionKey string                      `json:"variableDefinitionKey"`
-	Expression            string                      `json:"expression"`
-	BlockVariables        []*flowschema.BlockVariable `json:"blockVariables"`
+	VariableDefinitionKey string                `json:"variableDefinitionKey"`
+	Expression            string                `json:"expression"`
+	BlockVariables        []*BlockVariableInput `json:"blockVariables"`
 }
 
 type WorkOrderDefinitionInput struct {

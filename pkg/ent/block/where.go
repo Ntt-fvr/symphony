@@ -119,6 +119,13 @@ func Name(v string) predicate.Block {
 	})
 }
 
+// Cid applies equality check predicate on the "cid" field. It's identical to CidEQ.
+func Cid(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCid), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
@@ -379,6 +386,117 @@ func NameEqualFold(v string) predicate.Block {
 func NameContainsFold(v string) predicate.Block {
 	return predicate.Block(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldName), v))
+	})
+}
+
+// CidEQ applies the EQ predicate on the "cid" field.
+func CidEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCid), v))
+	})
+}
+
+// CidNEQ applies the NEQ predicate on the "cid" field.
+func CidNEQ(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCid), v))
+	})
+}
+
+// CidIn applies the In predicate on the "cid" field.
+func CidIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCid), v...))
+	})
+}
+
+// CidNotIn applies the NotIn predicate on the "cid" field.
+func CidNotIn(vs ...string) predicate.Block {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Block(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCid), v...))
+	})
+}
+
+// CidGT applies the GT predicate on the "cid" field.
+func CidGT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCid), v))
+	})
+}
+
+// CidGTE applies the GTE predicate on the "cid" field.
+func CidGTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCid), v))
+	})
+}
+
+// CidLT applies the LT predicate on the "cid" field.
+func CidLT(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCid), v))
+	})
+}
+
+// CidLTE applies the LTE predicate on the "cid" field.
+func CidLTE(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCid), v))
+	})
+}
+
+// CidContains applies the Contains predicate on the "cid" field.
+func CidContains(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldCid), v))
+	})
+}
+
+// CidHasPrefix applies the HasPrefix predicate on the "cid" field.
+func CidHasPrefix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldCid), v))
+	})
+}
+
+// CidHasSuffix applies the HasSuffix predicate on the "cid" field.
+func CidHasSuffix(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldCid), v))
+	})
+}
+
+// CidEqualFold applies the EqualFold predicate on the "cid" field.
+func CidEqualFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldCid), v))
+	})
+}
+
+// CidContainsFold applies the ContainsFold predicate on the "cid" field.
+func CidContainsFold(v string) predicate.Block {
+	return predicate.Block(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldCid), v))
 	})
 }
 

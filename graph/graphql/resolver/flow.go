@@ -8,12 +8,14 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
+	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
 type flowResolver struct{}
@@ -31,6 +33,26 @@ func (r flowResolver) Draft(ctx context.Context, obj *ent.Flow) (*ent.FlowDraft,
 	return draft, ent.MaskNotFound(err)
 }
 
+func (r flowResolver) Connectors(ctx context.Context, obj *ent.Flow) ([]*flowschema.Connector, error) {
+	var connectors []*flowschema.Connector
+	blocks, err := obj.QueryBlocks().
+		WithNextBlocks().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query blocks: %w", err)
+	}
+	for _, blk := range blocks {
+		for _, nextBlock := range blk.Edges.NextBlocks {
+			connectors = append(connectors, &flowschema.Connector{
+				FlowID:         pointer.ToInt(obj.ID),
+				SourceBlockCid: blk.Cid,
+				TargetBlockCid: nextBlock.Cid,
+			})
+		}
+	}
+	return connectors, nil
+}
+
 type flowDraftResolver struct{}
 
 func (r flowDraftResolver) Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*ent.Block, error) {
@@ -38,6 +60,26 @@ func (r flowDraftResolver) Blocks(ctx context.Context, obj *ent.FlowDraft) ([]*e
 		return blocks, err
 	}
 	return obj.QueryBlocks().All(ctx)
+}
+
+func (r flowDraftResolver) Connectors(ctx context.Context, obj *ent.FlowDraft) ([]*flowschema.Connector, error) {
+	var connectors []*flowschema.Connector
+	blocks, err := obj.QueryBlocks().
+		WithNextBlocks().
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query blocks: %w", err)
+	}
+	for _, blk := range blocks {
+		for _, nextBlock := range blk.Edges.NextBlocks {
+			connectors = append(connectors, &flowschema.Connector{
+				FlowDraftID:    pointer.ToInt(obj.ID),
+				SourceBlockCid: blk.Cid,
+				TargetBlockCid: nextBlock.Cid,
+			})
+		}
+	}
+	return connectors, nil
 }
 
 func (r mutationResolver) AddFlowDraft(ctx context.Context, input models.AddFlowDraftInput) (*ent.FlowDraft, error) {
@@ -152,4 +194,137 @@ func (r queryResolver) FlowDrafts(
 ) (*ent.FlowDraftConnection, error) {
 	return r.ClientFrom(ctx).FlowDraft.Query().
 		Paginate(ctx, after, first, before, last)
+}
+
+func (r mutationResolver) paramsHaveDependencies(params []*models.VariableExpressionInput, createdBlockCIDs map[string]struct{}) bool {
+	for _, param := range params {
+		for _, blockVariable := range param.BlockVariables {
+			if _, ok := createdBlockCIDs[blockVariable.BlockCid]; !ok {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportFlowDraftInput) error {
+	var (
+		blockInputs    []interface{}
+		newBlockInputs []interface{}
+	)
+	createdBlockCIDs := make(map[string]struct{})
+	if input.StartBlock != nil {
+		if _, err := r.AddStartBlock(ctx, input.ID, *input.StartBlock); err != nil {
+			return err
+		}
+		createdBlockCIDs[input.StartBlock.Cid] = struct{}{}
+	}
+	for _, blk := range input.EndBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.GotoBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.SubflowBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.TriggerBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.ActionBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for len(blockInputs) > 0 {
+		for _, blk := range blockInputs {
+			switch blkInput := blk.(type) {
+			case *models.EndBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddEndBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.GotoBlockInput:
+				if _, ok := createdBlockCIDs[blkInput.TargetBlockCid]; ok {
+					if _, err := r.AddGotoBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.SubflowBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddSubflowBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.TriggerBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddTriggerBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			case *models.ActionBlockInput:
+				if ok := r.paramsHaveDependencies(blkInput.Params, createdBlockCIDs); ok {
+					if _, err := r.AddActionBlock(ctx, input.ID, *blkInput); err != nil {
+						return err
+					}
+					createdBlockCIDs[blkInput.Cid] = struct{}{}
+				} else {
+					newBlockInputs = append(newBlockInputs, blkInput)
+				}
+			}
+		}
+		if len(blockInputs) == len(newBlockInputs) {
+			return fmt.Errorf("there is circular dependency between blocks or dependency doesn't exist. num=%d", len(blockInputs))
+		}
+		blockInputs = newBlockInputs
+	}
+	return nil
+}
+
+func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error) {
+	client := r.ClientFrom(ctx)
+	blocks, err := client.Block.Query().Where(
+		block.HasFlowDraftWith(flowdraft.ID(input.ID)),
+	).All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query flow draft current blocks: %w", err)
+	}
+	for _, blk := range blocks {
+		if err := client.Block.DeleteOne(blk).
+			Exec(ctx); err != nil {
+			return nil, fmt.Errorf("block failed to be deleted: %w", err)
+		}
+	}
+	draftQuery := client.FlowDraft.UpdateOneID(input.ID).
+		SetName(input.Name).
+		SetEndParamDefinitions(input.EndParamDefinitions)
+	if input.Description != nil {
+		draftQuery.SetDescription(*input.Description)
+	} else {
+		draftQuery.ClearDescription()
+	}
+	draft, err := draftQuery.Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create flow draft: %w", err)
+	}
+	if err := r.importBlocks(ctx, input); err != nil {
+		return nil, fmt.Errorf("failed to import blocks: %w", err)
+	}
+	for _, connectorInput := range input.Connectors {
+		if _, err := r.AddConnector(ctx, input.ID, *connectorInput); err != nil {
+			return nil, fmt.Errorf("failed to add connector: %w", err)
+		}
+	}
+	return draft, nil
 }

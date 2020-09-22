@@ -6,6 +6,7 @@ package triggers
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -38,7 +39,7 @@ func (workforceTrigger) Variables() []*flowschema.VariableDefinition {
 			Type:      enum.VariableTypeString,
 			Mandatory: true,
 			Choices: []string{
-				TypeWorkOrderInitiated,
+				strconv.Quote(TypeWorkOrderInitiated),
 			},
 			NestedVariables: func(ctx context.Context, value []interface{}) ([]*flowschema.VariableDefinition, error) {
 				if value[0].(string) == TypeWorkOrderInitiated {

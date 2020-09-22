@@ -63,6 +63,12 @@ func (bc *BlockCreate) SetName(s string) *BlockCreate {
 	return bc
 }
 
+// SetCid sets the cid field.
+func (bc *BlockCreate) SetCid(s string) *BlockCreate {
+	bc.mutation.SetCid(s)
+	return bc
+}
+
 // SetType sets the type field.
 func (bc *BlockCreate) SetType(b block.Type) *BlockCreate {
 	bc.mutation.SetType(b)
@@ -356,6 +362,14 @@ func (bc *BlockCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if _, ok := bc.mutation.Cid(); !ok {
+		return &ValidationError{Name: "cid", err: errors.New("ent: missing required field \"cid\"")}
+	}
+	if v, ok := bc.mutation.Cid(); ok {
+		if err := block.CidValidator(v); err != nil {
+			return &ValidationError{Name: "cid", err: fmt.Errorf("ent: validator failed for field \"cid\": %w", err)}
+		}
+	}
 	if _, ok := bc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New("ent: missing required field \"type\"")}
 	}
@@ -424,6 +438,14 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldName,
 		})
 		b.Name = value
+	}
+	if value, ok := bc.mutation.Cid(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCid,
+		})
+		b.Cid = value
 	}
 	if value, ok := bc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

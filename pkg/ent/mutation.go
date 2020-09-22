@@ -1530,6 +1530,7 @@ type BlockMutation struct {
 	create_time             *time.Time
 	update_time             *time.Time
 	name                    *string
+	cid                     *string
 	_type                   *block.Type
 	action_type             *flowschema.ActionTypeID
 	trigger_type            *flowschema.TriggerTypeID
@@ -1751,6 +1752,43 @@ func (m *BlockMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName reset all changes of the "name" field.
 func (m *BlockMutation) ResetName() {
 	m.name = nil
+}
+
+// SetCid sets the cid field.
+func (m *BlockMutation) SetCid(s string) {
+	m.cid = &s
+}
+
+// Cid returns the cid value in the mutation.
+func (m *BlockMutation) Cid() (r string, exists bool) {
+	v := m.cid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCid returns the old cid value of the Block.
+// If the Block object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *BlockMutation) OldCid(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldCid is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldCid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCid: %w", err)
+	}
+	return oldValue.Cid, nil
+}
+
+// ResetCid reset all changes of the "cid" field.
+func (m *BlockMutation) ResetCid() {
+	m.cid = nil
 }
 
 // SetType sets the type field.
@@ -2461,7 +2499,7 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
@@ -2470,6 +2508,9 @@ func (m *BlockMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, block.FieldName)
+	}
+	if m.cid != nil {
+		fields = append(fields, block.FieldCid)
 	}
 	if m._type != nil {
 		fields = append(fields, block.FieldType)
@@ -2503,6 +2544,8 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case block.FieldName:
 		return m.Name()
+	case block.FieldCid:
+		return m.Cid()
 	case block.FieldType:
 		return m.GetType()
 	case block.FieldActionType:
@@ -2530,6 +2573,8 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldUpdateTime(ctx)
 	case block.FieldName:
 		return m.OldName(ctx)
+	case block.FieldCid:
+		return m.OldCid(ctx)
 	case block.FieldType:
 		return m.OldType(ctx)
 	case block.FieldActionType:
@@ -2571,6 +2616,13 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case block.FieldCid:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCid(v)
 		return nil
 	case block.FieldType:
 		v, ok := value.(block.Type)
@@ -2705,6 +2757,9 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldName:
 		m.ResetName()
+		return nil
+	case block.FieldCid:
+		m.ResetCid()
 		return nil
 	case block.FieldType:
 		m.ResetType()

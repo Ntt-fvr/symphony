@@ -26,6 +26,8 @@ func (Block) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			NotEmpty(),
+		field.String("cid").
+			NotEmpty(),
 		field.Enum("type").
 			NamedValues(
 				"Start", "START",
@@ -88,6 +90,15 @@ func (Block) Indexes() []ent.Index {
 			Edges("flow").
 			Unique(),
 		index.Fields("name").
+			Edges("flow_template").
+			Unique(),
+		index.Fields("cid").
+			Edges("flow_draft").
+			Unique(),
+		index.Fields("cid").
+			Edges("flow").
+			Unique(),
+		index.Fields("cid").
 			Edges("flow_template").
 			Unique(),
 	}

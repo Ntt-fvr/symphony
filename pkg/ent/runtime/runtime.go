@@ -154,6 +154,10 @@ func init() {
 	blockDescName := blockFields[0].Descriptor()
 	// block.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	block.NameValidator = blockDescName.Validators[0].(func(string) error)
+	// blockDescCid is the schema descriptor for cid field.
+	blockDescCid := blockFields[1].Descriptor()
+	// block.CidValidator is a validator for the "cid" field. It is called by the builders before save.
+	block.CidValidator = blockDescCid.Validators[0].(func(string) error)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()
 	blockinstance.Policy = schema.BlockInstance{}.Policy()
 	blockinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {

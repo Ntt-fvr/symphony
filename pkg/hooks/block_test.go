@@ -218,6 +218,7 @@ func TestEndParamsVerifications(t *testing.T) {
 			b, err := client.Block.Create().
 				SetFlowDraft(flowDraft).
 				SetType(block.TypeEnd).
+				SetCid(strconv.Itoa(i)).
 				SetName(fmt.Sprintf("End_%d", i)).
 				Save(ctx)
 			require.NoError(t, err)
@@ -242,6 +243,7 @@ func createFlowWithStartBlock(ctx context.Context, t *testing.T, definitions []*
 	_, err = client.Block.Create().
 		SetType(block.TypeStart).
 		SetName("Start").
+		SetCid("start").
 		SetFlow(flow).
 		SetStartParamDefinitions(definitions).
 		Save(ctx)
@@ -304,6 +306,7 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 				SetFlowDraft(flowDraft).
 				SetType(block.TypeSubFlow).
 				SetSubFlow(subFlow).
+				SetCid(strconv.Itoa(i)).
 				SetName(fmt.Sprintf("SubFlow_%d", i)).
 				Save(ctx)
 			require.NoError(t, err)

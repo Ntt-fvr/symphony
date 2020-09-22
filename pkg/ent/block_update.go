@@ -42,6 +42,12 @@ func (bu *BlockUpdate) SetName(s string) *BlockUpdate {
 	return bu
 }
 
+// SetCid sets the cid field.
+func (bu *BlockUpdate) SetCid(s string) *BlockUpdate {
+	bu.mutation.SetCid(s)
+	return bu
+}
+
 // SetType sets the type field.
 func (bu *BlockUpdate) SetType(b block.Type) *BlockUpdate {
 	bu.mutation.SetType(b)
@@ -479,6 +485,11 @@ func (bu *BlockUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := bu.mutation.Cid(); ok {
+		if err := block.CidValidator(v); err != nil {
+			return &ValidationError{Name: "cid", err: fmt.Errorf("ent: validator failed for field \"cid\": %w", err)}
+		}
+	}
 	if v, ok := bu.mutation.GetType(); ok {
 		if err := block.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
@@ -527,6 +538,13 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: block.FieldName,
+		})
+	}
+	if value, ok := bu.mutation.Cid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCid,
 		})
 	}
 	if value, ok := bu.mutation.GetType(); ok {
@@ -1016,6 +1034,12 @@ func (buo *BlockUpdateOne) SetName(s string) *BlockUpdateOne {
 	return buo
 }
 
+// SetCid sets the cid field.
+func (buo *BlockUpdateOne) SetCid(s string) *BlockUpdateOne {
+	buo.mutation.SetCid(s)
+	return buo
+}
+
 // SetType sets the type field.
 func (buo *BlockUpdateOne) SetType(b block.Type) *BlockUpdateOne {
 	buo.mutation.SetType(b)
@@ -1453,6 +1477,11 @@ func (buo *BlockUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := buo.mutation.Cid(); ok {
+		if err := block.CidValidator(v); err != nil {
+			return &ValidationError{Name: "cid", err: fmt.Errorf("ent: validator failed for field \"cid\": %w", err)}
+		}
+	}
 	if v, ok := buo.mutation.GetType(); ok {
 		if err := block.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
@@ -1499,6 +1528,13 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: block.FieldName,
+		})
+	}
+	if value, ok := buo.mutation.Cid(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: block.FieldCid,
 		})
 	}
 	if value, ok := buo.mutation.GetType(); ok {

@@ -34,9 +34,9 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	require.Empty(t, blocks)
 
-	sb, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Start",
+	sb, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+		Name: "Start",
+		Cid:  "start",
 	})
 	require.NoError(t, err)
 	require.Equal(t, block.TypeStart, sb.Type)
@@ -49,9 +49,9 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	_, ok := blockType.(*models.StartBlock)
 	require.True(t, ok)
 
-	eb, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Success",
+	eb, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Name: "Success",
+		Cid:  "success",
 	})
 	require.NoError(t, err)
 	require.Equal(t, block.TypeEnd, eb.Type)
@@ -100,22 +100,22 @@ func TestAddDeleteConnectors(t *testing.T) {
 		Name: "Flow Name",
 	})
 	require.NoError(t, err)
-	startBlock, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Start",
+	startBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+		Name: "Start",
+		Cid:  "start",
 	})
 	require.NoError(t, err)
-	endBlock, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "End",
+	endBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+		Name: "End",
+		Cid:  "end",
 	})
 	require.NoError(t, err)
-	connector, err := mr.AddConnector(ctx, models.ConnectorInput{
-		SourceBlockID: startBlock.ID,
-		TargetBlockID: endBlock.ID,
+	connector, err := mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
-	require.Equal(t, startBlock.ID, connector.Source.ID)
+	require.Equal(t, startBlock.Cid, connector.SourceBlockCid)
 
 	blocks, err := br.NextBlocks(ctx, startBlock)
 	require.NoError(t, err)
@@ -133,14 +133,14 @@ func TestAddDeleteConnectors(t *testing.T) {
 	require.Len(t, blocks, 1)
 	require.Equal(t, blocks[0].ID, startBlock.ID)
 
-	_, err = mr.DeleteConnector(ctx, models.ConnectorInput{
-		SourceBlockID: endBlock.ID,
-		TargetBlockID: startBlock.ID,
+	_, err = mr.DeleteConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: endBlock.Cid,
+		TargetBlockCid: startBlock.Cid,
 	})
 	require.Error(t, err)
-	_, err = mr.DeleteConnector(ctx, models.ConnectorInput{
-		SourceBlockID: startBlock.ID,
-		TargetBlockID: endBlock.ID,
+	_, err = mr.DeleteConnector(ctx, flowDraft.ID, models.ConnectorInput{
+		SourceBlockCid: startBlock.Cid,
+		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
 	blocks, err = br.NextBlocks(ctx, startBlock)
@@ -158,16 +158,16 @@ func TestGotoBlock(t *testing.T) {
 		Name: "Flow Name",
 	})
 	require.NoError(t, err)
-	endBlock, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "End",
+	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Name: "End",
+		Cid:  "end",
 	})
 	require.NoError(t, err)
 
-	b, err := mr.AddGotoBlock(ctx, models.AddGotoBlockInput{
-		FlowDraftID:   flowDraft.ID,
-		Name:          "GotoEnd",
-		TargetBlockID: endBlock.ID,
+	b, err := mr.AddGotoBlock(ctx, flowDraft.ID, models.GotoBlockInput{
+		Name:           "GotoEnd",
+		Cid:            "goto_end",
+		TargetBlockCid: endBlock.Cid,
 	})
 	require.NoError(t, err)
 	details, err := br.Details(ctx, b)
@@ -191,9 +191,9 @@ func TestTriggerBlockNotExists(t *testing.T) {
 	triggerFactory.On("GetType", mock.Anything).
 		Return(nil, errors.New("not found")).
 		Once()
-	_, err = mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
-		FlowDraftID: draft.ID,
+	_, err = mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
 		Name:        "Trigger Block",
+		Cid:         "trigger_block",
 		TriggerType: flowschema.TriggerTypeWorkOrder,
 	})
 	require.Error(t, err)
@@ -207,15 +207,15 @@ func TestTriggerBlockNotExists(t *testing.T) {
 	triggerFactory.On("GetType", mock.Anything).
 		Return(&triggerType, nil).
 		Times(4)
-	_, err = mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
-		FlowDraftID: draft.ID,
+	_, err = mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
 		Name:        "Trigger Block",
+		Cid:         "trigger_block",
 		TriggerType: "Invalid",
 	})
 	require.Error(t, err)
-	triggerBlock, err := mr.AddTriggerBlock(ctx, models.AddTriggerBlockInput{
-		FlowDraftID: draft.ID,
+	triggerBlock, err := mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
 		Name:        "Trigger Block",
+		Cid:         "trigger_block",
 		TriggerType: flowschema.TriggerTypeWorkOrder,
 	})
 	require.NoError(t, err)
@@ -248,10 +248,10 @@ func TestActionBlockNotExists(t *testing.T) {
 	actionFactory.On("GetType", mock.Anything).
 		Return(nil, errors.New("not found")).
 		Once()
-	_, err = mr.AddActionBlock(ctx, models.AddActionBlockInput{
-		FlowDraftID: draft.ID,
-		Name:        "Action Block",
-		ActionType:  flowschema.ActionTypeWorkOrder,
+	_, err = mr.AddActionBlock(ctx, draft.ID, models.ActionBlockInput{
+		Name:       "Action Block",
+		Cid:        "action_block",
+		ActionType: flowschema.ActionTypeWorkOrder,
 	})
 	require.Error(t, err)
 
@@ -264,10 +264,10 @@ func TestActionBlockNotExists(t *testing.T) {
 	actionFactory.On("GetType", mock.Anything).
 		Return(&actionType, nil).
 		Times(3)
-	actionBlock, err := mr.AddActionBlock(ctx, models.AddActionBlockInput{
-		FlowDraftID: draft.ID,
-		Name:        "Action Block",
-		ActionType:  flowschema.ActionTypeWorkOrder,
+	actionBlock, err := mr.AddActionBlock(ctx, draft.ID, models.ActionBlockInput{
+		Name:       "Action Block",
+		Cid:        "action_block",
+		ActionType: flowschema.ActionTypeWorkOrder,
 	})
 	require.NoError(t, err)
 	require.Equal(t, "Action Block", actionBlock.Name)

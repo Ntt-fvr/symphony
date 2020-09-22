@@ -27,6 +27,7 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 	for _, blk := range blocks {
 		blockCreate := client.Block.Create().
 			SetName(blk.Name).
+			SetCid(blk.Cid).
 			SetType(blk.Type).
 			SetStartParamDefinitions(blk.StartParamDefinitions).
 			SetNillableTriggerType(blk.TriggerType).

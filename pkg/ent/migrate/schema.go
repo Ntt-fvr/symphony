@@ -70,6 +70,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "cid", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION"}},
 		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
 		{Name: "trigger_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
@@ -90,35 +91,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[10]},
+				Columns: []*schema.Column{BlocksColumns[11]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[11]},
+				Columns: []*schema.Column{BlocksColumns[12]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flows_blocks",
-				Columns: []*schema.Column{BlocksColumns[12]},
+				Columns: []*schema.Column{BlocksColumns[13]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[13]},
+				Columns: []*schema.Column{BlocksColumns[14]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[14]},
+				Columns: []*schema.Column{BlocksColumns[15]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -128,17 +129,32 @@ var (
 			{
 				Name:    "block_name_flow_draft_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[13]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[14]},
 			},
 			{
 				Name:    "block_name_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[12]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[13]},
 			},
 			{
 				Name:    "block_name_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[14]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[15]},
+			},
+			{
+				Name:    "block_cid_flow_draft_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[14]},
+			},
+			{
+				Name:    "block_cid_flow_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[13]},
+			},
+			{
+				Name:    "block_cid_flow_execution_template_blocks",
+				Unique:  true,
+				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[15]},
 			},
 		},
 	}

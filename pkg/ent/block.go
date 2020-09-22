@@ -31,6 +31,8 @@ type Block struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Cid holds the value of the "cid" field.
+	Cid string `json:"cid,omitempty"`
 	// Type holds the value of the "type" field.
 	Type block.Type `json:"type,omitempty"`
 	// ActionType holds the value of the "action_type" field.
@@ -191,6 +193,7 @@ func (*Block) scanValues() []interface{} {
 		&sql.NullTime{},   // create_time
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
+		&sql.NullString{}, // cid
 		&sql.NullString{}, // type
 		&sql.NullString{}, // action_type
 		&sql.NullString{}, // trigger_type
@@ -239,47 +242,52 @@ func (b *Block) assignValues(values ...interface{}) error {
 		b.Name = value.String
 	}
 	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field type", values[3])
+		return fmt.Errorf("unexpected type %T for field cid", values[3])
+	} else if value.Valid {
+		b.Cid = value.String
+	}
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field type", values[4])
 	} else if value.Valid {
 		b.Type = block.Type(value.String)
 	}
-	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field action_type", values[4])
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field action_type", values[5])
 	} else if value.Valid {
 		b.ActionType = new(flowschema.ActionTypeID)
 		*b.ActionType = flowschema.ActionTypeID(value.String)
 	}
-	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field trigger_type", values[5])
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field trigger_type", values[6])
 	} else if value.Valid {
 		b.TriggerType = new(flowschema.TriggerTypeID)
 		*b.TriggerType = flowschema.TriggerTypeID(value.String)
 	}
 
-	if value, ok := values[6].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field start_param_definitions", values[6])
+	if value, ok := values[7].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field start_param_definitions", values[7])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &b.StartParamDefinitions); err != nil {
 			return fmt.Errorf("unmarshal field start_param_definitions: %v", err)
 		}
 	}
 
-	if value, ok := values[7].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field input_params", values[7])
+	if value, ok := values[8].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field input_params", values[8])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &b.InputParams); err != nil {
 			return fmt.Errorf("unmarshal field input_params: %v", err)
 		}
 	}
 
-	if value, ok := values[8].(*[]byte); !ok {
-		return fmt.Errorf("unexpected type %T for field ui_representation", values[8])
+	if value, ok := values[9].(*[]byte); !ok {
+		return fmt.Errorf("unexpected type %T for field ui_representation", values[9])
 	} else if value != nil && len(*value) > 0 {
 		if err := json.Unmarshal(*value, &b.UIRepresentation); err != nil {
 			return fmt.Errorf("unmarshal field ui_representation: %v", err)
 		}
 	}
-	values = values[9:]
+	values = values[10:]
 	if len(values) == len(block.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field block_sub_flow", value)
@@ -389,6 +397,8 @@ func (b *Block) String() string {
 	builder.WriteString(b.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", name=")
 	builder.WriteString(b.Name)
+	builder.WriteString(", cid=")
+	builder.WriteString(b.Cid)
 	builder.WriteString(", type=")
 	builder.WriteString(fmt.Sprintf("%v", b.Type))
 	if v := b.ActionType; v != nil {

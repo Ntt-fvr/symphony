@@ -35,9 +35,9 @@ func TestEndBlockInputParams(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	endBlock, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Good End",
+	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Name: "Good End",
+		Cid:  "good_end",
 	})
 	require.NoError(t, err)
 	inputParams, err := br.InputParamDefinitions(ctx, endBlock)
@@ -46,9 +46,9 @@ func TestEndBlockInputParams(t *testing.T) {
 	outputParams, err := br.OutputParamDefinitions(ctx, endBlock)
 	require.NoError(t, err)
 	require.Empty(t, outputParams)
-	endBlock2, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Bad End",
+	endBlock2, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Name: "Bad End",
+		Cid:  "bad_end",
 		Params: []*models.VariableExpressionInput{
 			{
 				VariableDefinitionKey: "param1",
@@ -86,9 +86,9 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	startBlock, err := mr.AddStartBlock(ctx, models.AddStartBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Start",
+	startBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
+		Name: "Start",
+		Cid:  "start",
 		ParamDefinitions: []*flowschema.VariableDefinition{
 			{
 				Key:  "start_param",
@@ -103,16 +103,16 @@ func TestStartBlockParamDefinitionsUsed(t *testing.T) {
 	outputParams, err := br.OutputParamDefinitions(ctx, startBlock)
 	require.NoError(t, err)
 	require.Len(t, outputParams, 1)
-	endBlock, err := mr.AddEndBlock(ctx, models.AddEndBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "END",
+	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
+		Name: "END",
+		Cid:  "end",
 		Params: []*models.VariableExpressionInput{
 			{
 				VariableDefinitionKey: "param1",
 				Expression:            "${b_0}",
-				BlockVariables: []*flowschema.BlockVariable{
+				BlockVariables: []*models.BlockVariableInput{
 					{
-						BlockID:               startBlock.ID,
+						BlockCid:              startBlock.Cid,
 						VariableDefinitionKey: "start_param",
 					},
 				},
@@ -158,9 +158,9 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		EndParamDefinitions: endParamDefinitions,
 	})
 	require.NoError(t, err)
-	_, err = mr.AddStartBlock(ctx, models.AddStartBlockInput{
-		FlowDraftID:      draft.ID,
+	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
 		Name:             "Start",
+		Cid:              "start",
 		ParamDefinitions: startParamDefinitions,
 	})
 	require.NoError(t, err)
@@ -170,10 +170,10 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		Name: "Flow",
 	})
 	require.NoError(t, err)
-	subFlowBlock, err := mr.AddSubflowBlock(ctx, models.AddSubflowBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Sub Flow",
-		FlowID:      flw.ID,
+	subFlowBlock, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
+		Name:   "Sub Flow",
+		Cid:    "sub_flow",
+		FlowID: flw.ID,
 	})
 	require.NoError(t, err)
 	inputParams, err := br.InputParamDefinitions(ctx, subFlowBlock)
@@ -182,10 +182,10 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 	outputParams, err := br.OutputParamDefinitions(ctx, subFlowBlock)
 	require.NoError(t, err)
 	require.EqualValues(t, outputParams, endParamDefinitions)
-	subFlowBlock2, err := mr.AddSubflowBlock(ctx, models.AddSubflowBlockInput{
-		FlowDraftID: flowDraft.ID,
-		Name:        "Sub Flow2",
-		FlowID:      flw.ID,
+	subFlowBlock2, err := mr.AddSubflowBlock(ctx, flowDraft.ID, models.SubflowBlockInput{
+		Name:   "Sub Flow2",
+		Cid:    "sub_flow2",
+		FlowID: flw.ID,
 		Params: []*models.VariableExpressionInput{
 			{
 				VariableDefinitionKey: "start_param",

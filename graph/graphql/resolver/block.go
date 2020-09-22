@@ -6,11 +6,15 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -20,6 +24,50 @@ import (
 type blockResolver struct {
 	triggerFactory triggers.Factory
 	actionFactory  actions.Factory
+}
+
+type connectorResolver struct{}
+
+func getDraftBlock(ctx context.Context, flowDraftID int, blockCid string) (*ent.Block, error) {
+	client := ent.FromContext(ctx)
+	return client.Block.Query().
+		Where(
+			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
+			block.Cid(blockCid),
+		).
+		Only(ctx)
+}
+
+func getFlowBlock(ctx context.Context, flowID int, blockCid string) (*ent.Block, error) {
+	client := ent.FromContext(ctx)
+	return client.Block.Query().
+		Where(
+			block.HasFlowWith(flow.ID(flowID)),
+			block.Cid(blockCid),
+		).
+		Only(ctx)
+}
+
+func (r connectorResolver) Source(ctx context.Context, obj *flowschema.Connector) (*ent.Block, error) {
+	switch {
+	case obj.FlowDraftID != nil:
+		return getDraftBlock(ctx, *obj.FlowDraftID, obj.SourceBlockCid)
+	case obj.FlowID != nil:
+		return getFlowBlock(ctx, *obj.FlowID, obj.SourceBlockCid)
+	default:
+		return nil, errors.New("failed to find flow parent")
+	}
+}
+
+func (r connectorResolver) Target(ctx context.Context, obj *flowschema.Connector) (*ent.Block, error) {
+	switch {
+	case obj.FlowDraftID != nil:
+		return getDraftBlock(ctx, *obj.FlowDraftID, obj.TargetBlockCid)
+	case obj.FlowID != nil:
+		return getFlowBlock(ctx, *obj.FlowID, obj.TargetBlockCid)
+	default:
+		return nil, errors.New("failed to find flow parent")
+	}
 }
 
 func (r blockResolver) NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error) {
@@ -103,6 +151,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 
 func addBlockMutation(
 	ctx context.Context,
+	blockCID string,
 	blockName string,
 	blockType block.Type,
 	flowDraftID int,
@@ -110,84 +159,118 @@ func addBlockMutation(
 	client := ent.FromContext(ctx)
 	return client.Block.Create().
 		SetName(blockName).
+		SetCid(blockCID).
 		SetType(blockType).
 		SetNillableUIRepresentation(uiRepresentation).
 		SetFlowDraftID(flowDraftID)
 }
 
-func getBlockVariables(inputVariables []*models.VariableExpressionInput, blockID int) []*flowschema.VariableExpression {
+func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExpressionInput, blockID int) ([]*flowschema.VariableExpression, error) {
+	client := ent.FromContext(ctx)
 	vars := make([]*flowschema.VariableExpression, 0, len(inputVariables))
 	for _, variable := range inputVariables {
+		var blockVariables []*flowschema.BlockVariable
+		for _, blockVar := range variable.BlockVariables {
+			varBlockID, err := client.Block.Query().
+				Where(block.ID(blockID)).
+				QueryFlowDraft().
+				QueryBlocks().
+				Where(block.Cid(blockVar.BlockCid)).
+				OnlyID(ctx)
+			if err != nil {
+				return nil, err
+			}
+			blockVariables = append(blockVariables, &flowschema.BlockVariable{
+				BlockID:               varBlockID,
+				VariableDefinitionKey: blockVar.VariableDefinitionKey,
+			})
+		}
 		vars = append(vars, &flowschema.VariableExpression{
 			BlockID:               blockID,
 			VariableDefinitionKey: variable.VariableDefinitionKey,
 			Expression:            variable.Expression,
-			BlockVariables:        variable.BlockVariables,
+			BlockVariables:        blockVariables,
 		})
 	}
-	return vars
+	return vars, nil
 }
 
-func (r mutationResolver) AddStartBlock(ctx context.Context, input models.AddStartBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeStart, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddStartBlock(ctx context.Context, flowDraftID int, input models.StartBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeStart, flowDraftID, input.UIRepresentation)
 	return mutation.
 		SetStartParamDefinitions(input.ParamDefinitions).
 		Save(ctx)
 }
 
-func (r mutationResolver) AddEndBlock(ctx context.Context, input models.AddEndBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeEnd, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, input models.EndBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeEnd, flowDraftID, input.UIRepresentation)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	blockVariables := getBlockVariables(input.Params, b.ID)
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
 	return b.Update().
 		SetInputParams(blockVariables).
 		Save(ctx)
 }
 
-func (r mutationResolver) AddGotoBlock(ctx context.Context, input models.AddGotoBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeGoTo, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error) {
+	targetBlockID, err := getDraftBlock(ctx, flowDraftID, input.TargetBlockCid)
+	if err != nil {
+		return nil, err
+	}
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeGoTo, flowDraftID, input.UIRepresentation)
 	return mutation.
-		SetGotoBlockID(input.TargetBlockID).
+		SetGotoBlock(targetBlockID).
 		Save(ctx)
 }
 
-func (r mutationResolver) AddSubflowBlock(ctx context.Context, input models.AddSubflowBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeSubFlow, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddSubflowBlock(ctx context.Context, flowDraftID int, input models.SubflowBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetSubFlowID(input.FlowID).
 		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	blockVariables := getBlockVariables(input.Params, b.ID)
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
 	return b.Update().
 		SetInputParams(blockVariables).
 		Save(ctx)
 }
 
-func (r mutationResolver) AddTriggerBlock(ctx context.Context, input models.AddTriggerBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeTrigger, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddTriggerBlock(ctx context.Context, flowDraftID int, input models.TriggerBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeTrigger, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetTriggerType(input.TriggerType).
 		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	blockVariables := getBlockVariables(input.Params, b.ID)
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
 	return b.Update().
 		SetInputParams(blockVariables).
 		Save(ctx)
 }
 
-func (r mutationResolver) AddActionBlock(ctx context.Context, input models.AddActionBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Name, block.TypeAction, input.FlowDraftID, input.UIRepresentation)
+func (r mutationResolver) AddActionBlock(ctx context.Context, flowDraftID int, input models.ActionBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeAction, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetActionType(input.ActionType).
 		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	blockVariables := getBlockVariables(input.Params, b.ID)
+	blockVariables, err := getBlockVariables(ctx, input.Params, b.ID)
+	if err != nil {
+		return nil, err
+	}
 	return b.Update().
 		SetInputParams(blockVariables).
 		Save(ctx)
@@ -202,49 +285,51 @@ func (r mutationResolver) DeleteBlock(ctx context.Context, id int) (bool, error)
 	return true, nil
 }
 
-func (r mutationResolver) AddConnector(ctx context.Context, input models.ConnectorInput) (*models.ConnectorResult, error) {
+func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*flowschema.Connector, error) {
 	client := ent.FromContext(ctx)
-	target, err := client.Block.Get(ctx, input.TargetBlockID)
-	if err != nil {
-		return nil, err
-	}
-	source, err := client.Block.UpdateOneID(input.SourceBlockID).
-		AddNextBlocks(target).
-		Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return &models.ConnectorResult{
-		Source: source,
-		Target: target,
-	}, nil
-}
-
-func (r mutationResolver) DeleteConnector(ctx context.Context, input models.ConnectorInput) (*models.ConnectorResult, error) {
-	client := ent.FromContext(ctx)
-	source, err := client.Block.Query().
-		Where(
-			block.ID(input.SourceBlockID),
-		).
-		WithNextBlocks(func(query *ent.BlockQuery) {
-			query.Where(block.ID(input.TargetBlockID))
-		}).
-		Only(ctx)
+	source, err := getDraftBlock(ctx, flowDraftID, input.SourceBlockCid)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find source block: %w", err)
 	}
-	if len(source.Edges.NextBlocks) == 0 {
-		return nil, fmt.Errorf("failed to connected target block: %w", err)
+	target, err := getDraftBlock(ctx, flowDraftID, input.TargetBlockCid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find target block: %w", err)
 	}
-	if err := client.Block.UpdateOneID(input.SourceBlockID).
-		RemoveNextBlockIDs(input.TargetBlockID).
+	if err := client.Block.UpdateOne(source).
+		AddNextBlocks(target).
 		Exec(ctx); err != nil {
-		return nil, fmt.Errorf("failed to remove connector: %w", err)
+		return nil, err
 	}
-	return &models.ConnectorResult{
-		Source: source,
-		Target: source.Edges.NextBlocks[0],
+	return &flowschema.Connector{
+		FlowDraftID:    pointer.ToInt(flowDraftID),
+		SourceBlockCid: input.SourceBlockCid,
+		TargetBlockCid: input.TargetBlockCid,
 	}, nil
+}
+
+func (r mutationResolver) DeleteConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (bool, error) {
+	client := ent.FromContext(ctx)
+	source, err := client.Block.Query().
+		Where(
+			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
+			block.Cid(input.SourceBlockCid),
+		).
+		WithNextBlocks(func(query *ent.BlockQuery) {
+			query.Where(block.Cid(input.TargetBlockCid))
+		}).
+		Only(ctx)
+	if err != nil {
+		return false, fmt.Errorf("failed to find source block: %w", err)
+	}
+	if len(source.Edges.NextBlocks) == 0 {
+		return false, fmt.Errorf("failed to connected target block: %w", err)
+	}
+	if err := client.Block.UpdateOneID(source.ID).
+		RemoveNextBlocks(source.Edges.NextBlocks...).
+		Exec(ctx); err != nil {
+		return false, fmt.Errorf("failed to remove connector: %w", err)
+	}
+	return true, nil
 }
 
 func (r mutationResolver) EditBlock(ctx context.Context, input models.EditBlockInput) (*ent.Block, error) {

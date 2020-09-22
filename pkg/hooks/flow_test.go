@@ -245,6 +245,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		_, err = client.Block.Create().
 			SetName("End1").
+			SetCid("end1").
 			SetType(block.TypeEnd).
 			SetFlowDraft(draft).
 			Save(ctx)
@@ -259,6 +260,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		_, err = client.Block.Create().
 			SetName("End").
+			SetCid("end").
 			SetType(block.TypeEnd).
 			SetFlow(flw).
 			Save(ctx)
@@ -273,6 +275,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		blk, err := client.Block.Create().
 			SetName("End").
+			SetCid("end").
 			SetType(block.TypeEnd).
 			SetFlow(flw).
 			Save(ctx)
@@ -297,6 +300,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		blk, err := client.Block.Create().
 			SetName("End").
+			SetCid("end").
 			SetType(block.TypeEnd).
 			SetFlow(flw).
 			Save(ctx)
@@ -321,6 +325,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		blk, err := client.Block.Create().
 			SetName("End").
+			SetCid("end").
 			SetType(block.TypeEnd).
 			SetFlow(flw).
 			Save(ctx)
@@ -351,6 +356,7 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		require.NoError(t, err)
 		blk, err := client.Block.Create().
 			SetName("End").
+			SetCid("end").
 			SetType(block.TypeEnd).
 			SetFlow(flw).
 			Save(ctx)
@@ -500,6 +506,7 @@ func TestNestedMandatoryPropertiesEnforced(t *testing.T) {
 				require.NoError(t, err)
 				_, err = client.Block.Create().
 					SetName("Trigger").
+					SetCid("trigger").
 					SetType(block.TypeTrigger).
 					SetTriggerType(flowschema.TriggerTypeWorkOrder).
 					SetFlow(flw).
@@ -569,6 +576,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 
 	startBlock, err := client.Block.Create().
 		SetName("Start").
+		SetCid("start").
 		SetType(block.TypeStart).
 		SetFlow(flw).
 		SetStartParamDefinitions(startParamDefinitions).
@@ -589,6 +597,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 	}
 	actionBlock, err := client.Block.Create().
 		SetName("Action").
+		SetCid("action").
 		SetType(block.TypeAction).
 		SetFlow(flw).
 		SetActionType(actionName).
@@ -598,6 +607,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 	require.NoError(t, err)
 	_, err = client.Block.Create().
 		SetName("The End").
+		SetCid("the_end").
 		SetType(block.TypeEnd).
 		SetFlow(flw).
 		SetInputParams(endInputParams).

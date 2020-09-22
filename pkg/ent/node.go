@@ -255,7 +255,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 9),
+		Fields: make([]*Field, 10),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -283,10 +283,18 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "name",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(b.Type); err != nil {
+	if buf, err = json.Marshal(b.Cid); err != nil {
 		return nil, err
 	}
 	node.Fields[3] = &Field{
+		Type:  "string",
+		Name:  "cid",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(b.Type); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
 		Type:  "block.Type",
 		Name:  "type",
 		Value: string(buf),
@@ -294,7 +302,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.ActionType); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "flowschema.ActionTypeID",
 		Name:  "action_type",
 		Value: string(buf),
@@ -302,7 +310,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.TriggerType); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "flowschema.TriggerTypeID",
 		Name:  "trigger_type",
 		Value: string(buf),
@@ -310,7 +318,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.StartParamDefinitions); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "start_param_definitions",
 		Value: string(buf),
@@ -318,7 +326,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.InputParams); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[8] = &Field{
 		Type:  "[]*flowschema.VariableExpression",
 		Name:  "input_params",
 		Value: string(buf),
@@ -326,7 +334,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.UIRepresentation); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[9] = &Field{
 		Type:  "flowschema.BlockUIRepresentation",
 		Name:  "ui_representation",
 		Value: string(buf),

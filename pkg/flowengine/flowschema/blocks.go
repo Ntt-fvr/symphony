@@ -9,3 +9,10 @@ type BlockUIRepresentation struct {
 	XPosition int
 	YPosition int
 }
+
+type Connector struct {
+	FlowDraftID    *int
+	FlowID         *int
+	SourceBlockCid string
+	TargetBlockCid string
+}
