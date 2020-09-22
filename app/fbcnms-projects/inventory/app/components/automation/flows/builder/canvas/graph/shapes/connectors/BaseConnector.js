@@ -17,7 +17,9 @@ import type {IShape} from '../../facades/shapes/BaseShape';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
+import nullthrows from 'nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
+import {PORTS_GROUPS} from '../../facades/shapes/vertexes/BaseVertext';
 
 export const STROKE = {
   COLOR: {
@@ -100,23 +102,37 @@ export default class BaseConnector implements IConnector {
       this.setSource(source);
       this.setTarget(target);
       this.model.addTo(this.paper.model);
-      this.model.router('jumpover', {
-        padding: 16,
-        maximumLoops: 200,
-        maxAllowedDirectionChange: 3,
-      });
+      // this.model.router('jumpover', {
+      //   padding: 16,
+      //   maximumLoops: 200,
+      //   maxAllowedDirectionChange: 3,
+      // });
     }
 
     this.id = this.model.id;
   }
 
   setSource(source: ?IBlock) {
-    this.model.source(source?.model);
+    const sourceAttrs =
+      source != null
+        ? {
+            id: source.id,
+            port: nullthrows(source.getPort(PORTS_GROUPS.OUTPUT)?.id),
+          }
+        : null;
+    this.model.source(sourceAttrs);
     this.source = source;
   }
 
   setTarget(target: ?IBlock) {
-    this.model.target(target?.model);
+    const targetAttrs =
+      target != null
+        ? {
+            id: target.id,
+            port: nullthrows(target.getPort(PORTS_GROUPS.INPUT)?.id),
+          }
+        : null;
+    this.model.target(targetAttrs);
     this.target = target;
   }
 

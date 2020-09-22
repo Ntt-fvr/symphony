@@ -28,11 +28,21 @@ export type VertexDescriptor = $ReadOnly<{|
   type: string,
 |}>;
 
+export type VertexPort = $ReadOnly<{|
+  id: string,
+  group: string,
+|}>;
+
+type VertexPorts = $ReadOnly<{|
+  items: $ReadOnlyArray<VertexPort>,
+|}>;
+
 export interface IVertexModelAttributes extends IBaseShapeAttributes {
   +position: Position;
   +size: Size;
   +z: number;
   +attrs: KeyValuePair;
+  +ports: VertexPorts;
 }
 
 export type VertexEventCallback = (
@@ -100,13 +110,19 @@ function getDefaultPortMarkup(
   strokeColor: string,
   horizontalAlign: number = 0,
 ) {
-  // return `<circle cx="10" r="7" stroke-width="4" stroke="${strokeColor}" fill="white"/>`;
   return `<circle r="7" cx="${horizontalAlign}" stroke-width="4" stroke="${strokeColor}" fill="white" magnet="true"/>`;
 }
 
+export const PORTS_GROUPS = {
+  INPUT: 'input',
+  OUTPUT: 'output',
+};
+
+export type PortGroupName = 'input' | 'output';
+
 function getPortsArray(
   settings: ?PortsGroupInitValue,
-  groupName: 'input' | 'output',
+  groupName: PortGroupName,
 ) {
   const inputPortsCount = settings?.count ?? 1;
   return Array(inputPortsCount).fill({group: groupName});
@@ -119,8 +135,8 @@ export function getInitObject(
     output?: PortsGroupInitValue,
   },
 ): KeyValuePair {
-  const inputPorts = getPortsArray(ports?.input, 'input');
-  const outputPorts = getPortsArray(ports?.output, 'output');
+  const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
+  const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
   const portsArray = inputPorts.concat(outputPorts);
 
   return {

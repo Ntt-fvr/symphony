@@ -12,7 +12,7 @@
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
-import {DISPLAY_SETTINGS, getInitObject} from '../BaseVertext';
+import {DISPLAY_SETTINGS, PORTS_GROUPS, getInitObject} from '../BaseVertext';
 
 export const TYPE = 'administrative.End';
 
@@ -86,7 +86,7 @@ const EndBaseClass = jointJS.dia.Element.define(
 
 export default class End extends EndBaseClass implements IVertexModel {
   constructor() {
-    super(getInitObject(FILL_COLOR, {output: {count: 0}}));
+    super(getInitObject(FILL_COLOR, {[PORTS_GROUPS.OUTPUT]: {count: 0}}));
     // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }

@@ -28,10 +28,15 @@ export interface ILinkAttributes extends IBaseShapeAttributes {
   +z: number;
 }
 
+type LinkVertexEndpoint = $ReadOnly<{
+  id: string,
+  port: ?string,
+}>;
+
 export interface ILink extends IShape {
   +attributes: ILinkAttributes;
-  +source: (?IVertexModel) => void;
-  +target: (?IVertexModel | ?Position) => void;
+  +source: (?LinkVertexEndpoint) => void;
+  +target: (?LinkVertexEndpoint | ?Position) => void;
   +addTo: Graph => void;
   +router: (string, KeyValuePair) => void;
   +getTargetElement: () => ?IVertexModel;

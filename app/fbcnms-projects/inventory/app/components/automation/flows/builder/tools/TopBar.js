@@ -50,6 +50,23 @@ export default function TopBar() {
           }>
           Delete
         </Button>
+        <Button
+          onClick={() => {
+            try {
+              flow.addConnector({
+                source: selection.selectedElements[0],
+                target: selection.selectedElements[1],
+              });
+            } catch {
+              flow.addConnector({
+                source: selection.selectedElements[1],
+                target: selection.selectedElements[0],
+              });
+            }
+          }}
+          disabled={selection.selectedElements.length !== 2}>
+          Connect
+        </Button>
       </div>
       <div className={classes.center} />
       <div className={classes.right}>

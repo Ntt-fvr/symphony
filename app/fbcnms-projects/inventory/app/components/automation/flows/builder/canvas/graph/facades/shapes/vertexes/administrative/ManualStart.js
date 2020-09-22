@@ -12,7 +12,7 @@
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
-import {DISPLAY_SETTINGS, getInitObject} from '../BaseVertext';
+import {DISPLAY_SETTINGS, PORTS_GROUPS, getInitObject} from '../BaseVertext';
 
 export const TYPE = 'administrative.ManualStart';
 
@@ -87,7 +87,7 @@ const ManualStartBaseClass = jointJS.dia.Element.define(
 export default class ManualStart extends ManualStartBaseClass
   implements IVertexModel {
   constructor() {
-    super(getInitObject(FILL_COLOR, {input: {count: 0}}));
+    super(getInitObject(FILL_COLOR, {[PORTS_GROUPS.INPUT]: {count: 0}}));
     // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }

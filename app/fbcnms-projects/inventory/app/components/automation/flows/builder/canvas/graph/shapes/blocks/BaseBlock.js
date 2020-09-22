@@ -12,6 +12,8 @@
 import type {
   IVertexModel,
   IVertexView,
+  PortGroupName,
+  VertexPort,
 } from '../../facades/shapes/vertexes/BaseVertext';
 import type {Paper} from '../../facades/Paper';
 
@@ -25,6 +27,7 @@ export interface IBlock {
   +view: IVertexView;
   +type: string;
   +isSelected: boolean;
+  +getPort: (portsGroup: PortGroupName) => ?VertexPort;
 }
 
 export default class BaseBlock implements IBlock {
@@ -71,5 +74,9 @@ export default class BaseBlock implements IBlock {
         stroke: DISPLAY_SETTINGS.body.stroke.default,
       },
     });
+  }
+
+  getPort(portsGroup: PortGroupName): ?VertexPort {
+    return this.model.attributes.ports.items.find(p => p.group === portsGroup);
   }
 }
