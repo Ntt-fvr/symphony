@@ -469,17 +469,17 @@ class WorkOrderType(NamedTuple):
 
 class WorkOrderDefinition(NamedTuple):
     """
-    :param id: ID
-    :type id: str, optional
     :param definition_index: Work order definition index
     :type definition_index: int, optional
     :param work_order_type_id: Work order type ID
     :type work_order_type_id: str
+    :param id: ID
+    :type id: str, optional
     """
 
-    id: Optional[str]
     definition_index: Optional[int]
     work_order_type_id: str
+    id: Optional[str] = None
 
 
 class WorkOrder(NamedTuple):
@@ -531,12 +531,12 @@ class ProjectType(NamedTuple):
     :type description: str, optional
     :param property_types: PropertyTypes sequence
     :type property_types: Sequence[ :class:`~psym.common.data_class.PropertyDefinition` ]
-    :param work_order_definitions: WorkOrderDefinitions sequence
-    :type work_order_definitions: Sequence[ :class:`~psym.common.data_class.WorkOrderDefinition` ]
+    :param work_order_definitions: WorkOrderDefinitions list
+    :type work_order_definitions: List[ :class:`~psym.common.data_class.WorkOrderDefinition` ]
     """
 
     id: str
     name: str
     description: Optional[str]
     property_types: Sequence[PropertyDefinition]
-    work_order_definitions: Sequence[WorkOrderDefinition]
+    work_order_definitions: List[WorkOrderDefinition]

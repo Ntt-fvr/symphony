@@ -3,11 +3,17 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Mapping, Optional
 
+from psym._utils import get_graphql_property_type_inputs
 from psym.client import SymphonyClient
 from psym.common.cache import PROJECT_TYPES
-from psym.common.data_class import ProjectType, PropertyDefinition, WorkOrderDefinition
+from psym.common.data_class import (
+    ProjectType,
+    PropertyDefinition,
+    PropertyValue,
+    WorkOrderDefinition,
+)
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
     format_to_project_type,
@@ -17,6 +23,10 @@ from psym.exceptions import EntityNotFoundError
 from psym.graphql.input.add_project_type import AddProjectTypeInput
 from psym.graphql.input.work_order_definition import WorkOrderDefinitionInput
 from psym.graphql.mutation.add_project_type import AddProjectTypeMutation
+from psym.graphql.mutation.edit_project_type import (
+    EditProjectTypeInput,
+    EditProjectTypeMutation,
+)
 from psym.graphql.mutation.remove_project_type import RemoveProjectTypeMutation
 from psym.graphql.query.project_type_details import ProjectTypeDetailsQuery
 from psym.graphql.query.project_types import ProjectTypesQuery
@@ -152,6 +162,89 @@ def get_project_type_by_id(client: SymphonyClient, id: str) -> ProjectType:
         raise EntityNotFoundError(entity=Entity.ProjectType, entity_id=id)
 
     return format_to_project_type(project_type_fragment=result)
+
+
+def edit_project_type(
+    client: SymphonyClient,
+    project_type_id: str,
+    new_name: Optional[str] = None,
+    new_description: Optional[str] = None,
+    new_properties_defaults: Optional[Mapping[str, PropertyValue]] = None,
+    new_work_order_definitions: Optional[List[WorkOrderDefinition]] = [],
+) -> ProjectType:
+    """This function edits existing ProjectType.
+
+    :param project_type_id: Existing project type ID
+    :type project_type_id: str
+    :param new_name: Project type new name
+    :type new_name: str, optional
+    :param new_description: Project type new description
+    :type new_description: str, optional
+    :param new_properties_defaults: Mapping of property name to property default value
+
+        * str - property name
+        * PropertyValue - new default value of the same type for this property
+
+    :type new_properties_defaults: Mapping[str, PropertyValue], optional
+    :param new_work_order_definitions: List of new work order definitions
+    :type new_work_order_definitions: List[ :class:`~psym.common.data_class.WorkOrderDefinition` ], optional
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Project type does not exist
+
+    :return: Project type
+    :rtype: :class:`~psym.common.data_class.ProjectType`
+
+    **Example**
+
+    .. code-block:: python
+
+        edited_project_type = client.edit_project_type(
+            project_type_id="12345678,
+            new_name="New name",
+            new_description="New description",
+        )
+    """
+    project_type = get_project_type_by_id(client=client, id=project_type_id)
+    new_name = project_type.name if new_name is None else new_name
+    new_description = (
+        project_type.description if new_description is None else new_description
+    )
+
+    new_property_type_inputs = []
+    if new_properties_defaults:
+        property_types = project_type.property_types
+        new_property_type_inputs = get_graphql_property_type_inputs(
+            property_types, new_properties_defaults
+        )
+    work_order_definitions = (
+        project_type.work_order_definitions
+        if project_type.work_order_definitions
+        else []
+    )
+    if new_work_order_definitions:
+        work_order_definitions = new_work_order_definitions
+
+    result = EditProjectTypeMutation.execute(
+        client,
+        EditProjectTypeInput(
+            id=project_type.id,
+            name=new_name,
+            description=new_description,
+            properties=new_property_type_inputs,
+            workOrders=[
+                WorkOrderDefinitionInput(
+                    index=wod.definition_index, type=wod.work_order_type_id
+                )
+                for wod in work_order_definitions
+            ],
+        ),
+    )
+    edited = format_to_project_type(project_type_fragment=result)
+    PROJECT_TYPES.pop(project_type.name)
+    PROJECT_TYPES[edited.name] = edited
+    return edited
 
 
 def delete_project_type(client: SymphonyClient, id: str) -> None:
