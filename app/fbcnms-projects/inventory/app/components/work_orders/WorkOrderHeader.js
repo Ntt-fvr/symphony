@@ -31,6 +31,7 @@ import {
   doneStatus,
   inProgressStatus,
   pendingStatus,
+  plannedStatus,
   priorityValues,
   submittedStatus,
   useStatusValues,
@@ -178,6 +179,8 @@ const WorkOrderHeader = (props: Props) => {
 
 const getSkinFromStatus = status => {
   switch (status) {
+    case plannedStatus.value:
+      return 'darkGray';
     case doneStatus.value:
     case submittedStatus.value:
       return 'green';
@@ -187,7 +190,7 @@ const getSkinFromStatus = status => {
     case blockedStatus.value:
       return 'red';
     case closedStatus.value:
-      return 'secondaryGray';
+      return 'brightGray';
     default:
       return 'regular';
   }

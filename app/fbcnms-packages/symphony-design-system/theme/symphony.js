@@ -43,6 +43,18 @@ export const RED = {
   R800: '#C82C31',
 };
 
+export const GREEN = {
+  G600: '#00AF5B',
+  G700: '#00A052',
+  G800: '#008E46',
+};
+
+export const YELLOW = {
+  Y600: '#FFB63E',
+  Y700: '#FFA500',
+  Y800: '#FF9600',
+};
+
 export type TextVariant =
   | 'h1'
   | 'h2'
@@ -69,8 +81,8 @@ export default {
     disabled: `rgba(${hexToRgb(DARK.D900)},0.38)`,
     overlay: `rgba(${hexToRgb(DARK.D900)},0.5)`,
     ...RED,
-    G600: '#00AF5B',
-    Y600: '#FFB63E',
+    ...GREEN,
+    ...YELLOW,
     separator: 'rgba(0, 0, 0, 0.12)',
     separatorLight: 'rgba(0, 0, 0, 0.06)',
   },

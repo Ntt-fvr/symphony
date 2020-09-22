@@ -1,4 +1,5 @@
 import Select from '../../components/Select/Select';
+import StoryFrame from '../StoryFrame';
 import symphony from '../../theme/symphony';
 import {Meta, Preview, Story} from '@storybook/addon-docs/blocks';
 import {STORY_CATEGORIES} from '../storybookUtils';
@@ -92,5 +93,33 @@ export const OPTIONS = [
         />
       );
     }}
+  </Story>
+</Preview>
+
+### Skins
+
+export const SelectWithSkin = ({skin}) => {
+  return (
+    <Select
+      label="Project"
+      options={OPTIONS}
+      skin={skin}
+    />
+  );
+}
+
+<Preview>
+  <Story name="Skins">
+    <StoryFrame>
+      <SelectWithSkin skin='primary' />
+      <SelectWithSkin skin='regular' />
+      <SelectWithSkin skin='red' />
+      <SelectWithSkin skin='gray' />
+      <SelectWithSkin skin='secondaryGray' />
+      <SelectWithSkin skin='darkGray' />
+      <SelectWithSkin skin='brightGray' />
+      <SelectWithSkin skin='orange' />
+      <SelectWithSkin skin='green' />
+    </StoryFrame>
   </Story>
 </Preview>

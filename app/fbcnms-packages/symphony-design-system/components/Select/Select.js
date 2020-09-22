@@ -61,7 +61,14 @@ type Props<TValue> = $ReadOnly<{|
   ...SelectMenuProps<TValue>,
 |}>;
 
-const INVERTED_TEXT_SKINS = ['primary', 'red', 'orange', 'green'];
+const INVERTED_TEXT_SKINS = [
+  'primary',
+  'red',
+  'orange',
+  'green',
+  'darkGray',
+  'brightGray',
+];
 
 const Select = <TValue>(props: Props<TValue>) => {
   const {

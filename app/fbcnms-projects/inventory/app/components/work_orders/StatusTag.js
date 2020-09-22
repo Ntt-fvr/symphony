@@ -42,7 +42,7 @@ type Props = $ReadOnly<{|
 export const getStatusColor = (status: WorkOrderStatus) => {
   switch (status) {
     case plannedStatus.value:
-      return symphony.palette.D600;
+      return symphony.palette.D700;
     case pendingStatus.value:
     case inProgressStatus.value:
       return symphony.palette.Y600;
@@ -52,7 +52,7 @@ export const getStatusColor = (status: WorkOrderStatus) => {
     case blockedStatus.value:
       return symphony.palette.R600;
     case closedStatus.value:
-      return symphony.palette.D200;
+      return symphony.palette.D300;
     default:
       return symphony.palette.D300;
   }

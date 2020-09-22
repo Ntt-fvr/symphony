@@ -63,6 +63,8 @@ const useStyles = makeStyles(_theme => ({
   regularSkin: {},
   graySkin: {},
   secondaryGraySkin: {},
+  darkGraySkin: {},
+  brightGraySkin: {},
   disabled: {},
   containedVariant: {
     height: '36px',
@@ -113,6 +115,12 @@ const useStyles = makeStyles(_theme => ({
           fill: symphony.palette.white,
         },
       },
+      '&:hover:not($disabled)': {
+        backgroundColor: symphony.palette.Y700,
+      },
+      '&:active:not($disabled)': {
+        backgroundColor: symphony.palette.Y800,
+      },
     },
     '&$greenSkin': {
       backgroundColor: symphony.palette.G600,
@@ -121,6 +129,12 @@ const useStyles = makeStyles(_theme => ({
           color: symphony.palette.white,
           fill: symphony.palette.white,
         },
+      },
+      '&:hover:not($disabled)': {
+        backgroundColor: symphony.palette.G700,
+      },
+      '&:active:not($disabled)': {
+        backgroundColor: symphony.palette.G800,
       },
     },
     '&$regularSkin': {
@@ -184,6 +198,36 @@ const useStyles = makeStyles(_theme => ({
           color: symphony.palette.B700,
           fill: symphony.palette.B700,
         },
+      },
+    },
+    '&$darkGraySkin': {
+      backgroundColor: symphony.palette.D700,
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.white,
+          fill: symphony.palette.white,
+        },
+      },
+      '&:hover:not($disabled)': {
+        backgroundColor: symphony.palette.D800,
+      },
+      '&:active:not($disabled)': {
+        backgroundColor: symphony.palette.D900,
+      },
+    },
+    '&$brightGraySkin': {
+      backgroundColor: symphony.palette.D300,
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.white,
+          fill: symphony.palette.white,
+        },
+      },
+      '&:hover:not($disabled)': {
+        backgroundColor: symphony.palette.D400,
+      },
+      '&:active:not($disabled)': {
+        backgroundColor: symphony.palette.D500,
       },
     },
     '&$disabled': {
@@ -301,6 +345,42 @@ const useStyles = makeStyles(_theme => ({
         },
       },
     },
+    '&$darkGraySkin': {
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.D700,
+          fill: symphony.palette.D700,
+        },
+      },
+      '&:hover:not($disabled)': {
+        '& $buttonText, $icon': {
+          opacity: 0.75,
+        },
+      },
+      '&:active:not($disabled)': {
+        '& $buttonText, $icon': {
+          opacity: 0.75,
+        },
+      },
+    },
+    '&$brightGraySkin': {
+      '&:not($disabled)': {
+        '& $buttonText, $icon': {
+          color: symphony.palette.D300,
+          fill: symphony.palette.D300,
+        },
+      },
+      '&:hover:not($disabled)': {
+        '& $buttonText, $icon': {
+          opacity: 0.75,
+        },
+      },
+      '&:active:not($disabled)': {
+        '& $buttonText, $icon': {
+          opacity: 0.75,
+        },
+      },
+    },
     '&$disabled': {
       cursor: 'default',
       '& $buttonText, $icon': {
@@ -318,6 +398,8 @@ export type ButtonSkin =
   | 'red'
   | 'gray'
   | 'secondaryGray'
+  | 'darkGray'
+  | 'brightGray'
   | 'orange'
   | 'green';
 type SvgIcon = React$ComponentType<SvgIconExports>;
