@@ -23,13 +23,24 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
+	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
+	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
 	"github.com/stretchr/testify/require"
 )
+
+type equipmentFilterInput struct {
+	Name          enum.EquipmentFilterType `json:"name"`
+	Operator      enum.FilterOperator      `jsons:"operator"`
+	StringValue   string                   `json:"stringValue"`
+	IDSet         []string                 `json:"idSet"`
+	StringSet     []string                 `json:"stringSet"`
+	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
+}
 
 // TODO (T59270743): Move this file to importer folder and refactor similar code with exported_service_integration_test.go
 func writeModifiedCSV(t *testing.T, r *csv.Reader, method method, withVerify bool) (*bytes.Buffer, string) {

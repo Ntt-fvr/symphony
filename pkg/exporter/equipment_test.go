@@ -19,9 +19,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	"github.com/facebookincubator/symphony/pkg/exporter/models"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -29,21 +26,12 @@ import (
 
 const nameTitle = "Equipment Name"
 
-type equipmentFilterInput struct {
-	Name          enum.EquipmentFilterType `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
-}
-
 func TestEmptyWOExport(t *testing.T) {
-	r := newExporterTestResolver(t)
+	client := viewertest.NewTestClient(t)
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -78,11 +66,11 @@ func TestEmptyWOExport(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-	r := newExporterTestResolver(t)
+	client := viewertest.NewTestClient(t)
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -90,8 +78,8 @@ func TestExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
 
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -167,21 +155,21 @@ func TestExport(t *testing.T) {
 }
 
 func TestExportWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
+	client := viewertest.NewTestClient(t)
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	ctx := viewertest.NewContext(context.Background(), client)
+	e := &Exporter{Log: log, Rower: EquipmentRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	pkgexporter.PrepareData(ctx, t)
+	PrepareData(ctx, t)
 	req, err := http.NewRequest("GET", server.URL, nil)
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	loc := r.client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
+	loc := client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
 
 	f, err := json.Marshal([]equipmentFilterInput{
 		{

@@ -35,6 +35,9 @@ type woTestType struct {
 	wo2 ent.WorkOrder
 }
 
+const propStr = "propStr"
+const propStr2 = "propStr2"
+
 func prepareWOData(ctx context.Context, t *testing.T, r TestExporterResolver) woTestType {
 	pkgexporter.PrepareData(ctx, t)
 	u2 := viewer.MustGetOrCreateUser(ctx, "tester2@example.com", user.RoleOwner)

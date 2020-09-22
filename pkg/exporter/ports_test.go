@@ -14,26 +14,18 @@ import (
 	"strconv"
 	"testing"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
-
-type portFilterInput struct {
-	Name          enum.EquipmentFilterType    `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-	BoolValue     bool                        `json:"boolValue"`
-}
 
 const portNameTitle = "Port Name"
 const portTypeTitle = "Port Type"
@@ -47,16 +39,15 @@ const linkPID = "Linked Port ID"
 const linkPName = "Linked Port Name"
 const linkEID = "Linked Equipment ID"
 const linkEName = "Linked Equipment"
-const propStr = "propStr"
-const propStr2 = "propStr2"
 const servicesTitle = "Service Names"
 
 func TestEmptyPortsDataExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -95,11 +86,12 @@ func TestEmptyPortsDataExport(t *testing.T) {
 }
 
 func TestPortsExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -107,8 +99,8 @@ func TestPortsExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -197,17 +189,19 @@ func TestPortsExport(t *testing.T) {
 }
 
 func TestPortWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+
+	e := &Exporter{Log: log, Rower: PortsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
-	loc := r.client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
-	pDef2 := r.client.EquipmentPortDefinition.Query().Where(equipmentportdefinition.Name(portName2)).OnlyX(ctx)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
+	loc := client.Location.Query().Where(location.Name(childLocation)).OnlyX(ctx)
+	pDef2 := client.EquipmentPortDefinition.Query().Where(equipmentportdefinition.Name(portName2)).OnlyX(ctx)
 
 	f1, err := json.Marshal([]portFilterInput{
 		{

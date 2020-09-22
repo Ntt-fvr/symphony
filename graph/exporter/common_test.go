@@ -50,10 +50,6 @@ const (
 	propNameDate               = "propNameDate"
 	propNameBool               = "propNameBool"
 	propNameInt                = "propNameInt"
-	externalIDL                = "11"
-	externalIDM                = "22"
-	lat                        = 32.109
-	long                       = 34.855
 	newPropNameStr             = "newPropNameStr"
 	propDefValue2              = "defaultVal2"
 	propDevValInt              = 15

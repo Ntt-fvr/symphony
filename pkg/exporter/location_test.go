@@ -14,32 +14,24 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
-	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
 	"github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
 
-type locationsFilterInput struct {
-	Name          enum.LocationFilterType  `json:"name"`
-	Operator      enum.FilterOperator      `jsons:"operator"`
-	StringValue   string                   `json:"stringValue"`
-	IDSet         []string                 `json:"idSet"`
-	StringSet     []string                 `json:"stringSet"`
-	PropertyValue models.PropertyTypeInput `json:"propertyValue"`
-	MaxDepth      *int                     `json:"maxDepth"`
-	BoolValue     *bool                    `json:"boolValue"`
-}
-
 func TestEmptyLocationDataExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -68,11 +60,12 @@ func TestEmptyLocationDataExport(t *testing.T) {
 }
 
 func TestLocationsExport(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -80,8 +73,8 @@ func TestLocationsExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
 	defer res.Body.Close()
@@ -150,15 +143,17 @@ func TestLocationsExport(t *testing.T) {
 }
 
 func TestExportLocationWithFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+
+	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
 
 	req, err := http.NewRequest("GET", server.URL, nil)
 	require.NoError(t, err)
@@ -220,15 +215,16 @@ func TestExportLocationWithFilters(t *testing.T) {
 }
 
 func TestExportLocationWithPropertyFilters(t *testing.T) {
-	r := newExporterTestResolver(t)
-	log := r.exporter.Log
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.client)
+	client := viewertest.NewTestClient(t)
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	e := &Exporter{Log: log, Rower: LocationsRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	pkgexporter.PrepareData(ctx, t)
+	ctx := viewertest.NewContext(context.Background(), client)
+	PrepareData(ctx, t)
 
 	req, err := http.NewRequest("GET", server.URL, nil)
 	require.NoError(t, err)

@@ -81,8 +81,7 @@ func PrepareData(ctx context.Context, t *testing.T) {
 		SetName(locTypeNameS).
 		SaveX(ctx)
 
-	client.PropertyType.
-		Create().
+	client.PropertyType.Create().
 		SetName(propNameStr).
 		SetType(propertytype.TypeString).
 		SetLocationType(locTypeS).
@@ -100,12 +99,10 @@ func PrepareData(ctx context.Context, t *testing.T) {
 		SetStringVal("1988-03-29").
 		SaveX(ctx)
 
-	client.LocationType.
-		UpdateOneID(locTypeL.ID).
+	client.LocationType.UpdateOneID(locTypeL.ID).
 		SetIndex(0).
 		SaveX(ctx)
-	client.LocationType.
-		UpdateOneID(locTypeM.ID).
+	client.LocationType.UpdateOneID(locTypeM.ID).
 		SetIndex(1).
 		SaveX(ctx)
 	client.LocationType.UpdateOneID(locTypeS.ID).
@@ -274,8 +271,18 @@ func PrepareData(ctx context.Context, t *testing.T) {
 	portID2, err := childEquip.QueryPorts().Where(equipmentport.HasDefinitionWith(equipmentportdefinition.ID(portDef2.ID))).OnlyID(ctx)
 	require.NoError(t, err)
 
-	endp1 := client.ServiceEndpointDefinition.Create().SetName("endpoint type1").SetRole("CONSUMER").SetIndex(0).SetEquipmentType(equipmentType).SaveX(ctx)
-	endp2 := client.ServiceEndpointDefinition.Create().SetName("endpoint type2").SetRole("PROVIDER").SetIndex(1).SetEquipmentType(equipmentType2).SaveX(ctx)
+	endp1 := client.ServiceEndpointDefinition.Create().
+		SetName("endpoint type1").
+		SetRole("CONSUMER").
+		SetIndex(0).
+		SetEquipmentType(equipmentType).
+		SaveX(ctx)
+	endp2 := client.ServiceEndpointDefinition.Create().
+		SetName("endpoint type2").
+		SetRole("PROVIDER").
+		SetIndex(1).
+		SetEquipmentType(equipmentType2).
+		SaveX(ctx)
 	serviceType := client.ServiceType.Create().
 		SetName("L2 Service").
 		SetHasCustomer(false).
