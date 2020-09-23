@@ -8,7 +8,7 @@ type User implements Node {
   id: ID!
 
   """
-  The user's authenication identifier.
+  The user's authentication identifier.
   """
   authId: String!
 

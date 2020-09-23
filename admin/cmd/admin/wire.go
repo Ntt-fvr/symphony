@@ -61,7 +61,7 @@ func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
 }
 
 func provideTenancy(cfg *mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 0)
+	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 5)
 	if err != nil {
 		return nil, err
 	}

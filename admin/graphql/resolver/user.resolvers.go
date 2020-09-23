@@ -18,7 +18,7 @@ import (
 
 func (r *mutationResolver) UpsertUser(ctx context.Context, input model.UpsertUserInput) (*model.UpsertUserPayload, error) {
 	tenant := model.NewTenant(input.TenantID.Tenant)
-	client, err := r.tenancy.ClientFor(ctx, input.TenantID.Tenant)
+	client, err := r.tenancy.ClientFor(ctx, tenant.Name)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot get ent client")
 	}
