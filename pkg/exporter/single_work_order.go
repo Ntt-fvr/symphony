@@ -29,7 +29,6 @@ var (
 	checklistHeader    = []string{"Checklist Item", "Is Mandatory", "Response", "Additional instructions"}
 	cellScanHeader     = []string{"Created at", "Updated at", "Network Type", "Signal Strength", "Timestamp", "Latitude", "Longitude"}
 	wifiScanHeader     = []string{"Created at", "Updated at", "Band", "BSSID", "SSID", "Capabilities", "Channel", "Channel Width", "Frequency", "RSSI", "Strength", "Latitude", "Longitude"}
-	fileHeader         = []string{"Name", "Type", "Created", "Modified", "Uploaded", "Size", "Category", "Content-type", "Annotation"}
 	activityHeader     = []string{"Author", "Activity/Comment", "Created", "Updated"}
 )
 
@@ -183,60 +182,70 @@ func getItemData(ctx context.Context, item *ent.CheckListItem) string {
 		}
 		return "N/A"
 	case enum.CheckListItemTypeCellScan:
-		cellScans, err := item.QueryCellScan().All(ctx)
-		if err != nil {
-			return ""
-		}
-		data := ""
-		for _, header := range cellScanHeader {
-			data += header + ","
-		}
-		data = strings.Trim(data, ",")
-		data += "\n\r"
-		for _, cellScan := range cellScans {
-			for _, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)} {
-				data += value + ","
-			}
-			data = strings.Trim(data, ",")
-			data += "\n\r"
-		}
-		return data
-
+		return getCellScanData(ctx, item)
 	case enum.CheckListItemTypeFiles:
-		files, err := item.QueryFiles().All(ctx)
-		if err != nil {
-			return ""
-		}
-		data := ""
-		data = strings.Trim(data, ",")
-		data += "\n\r"
-		for _, file := range files {
-			data += file.Name + ","
-		}
-		data = strings.Trim(data, ",")
-		return data
-
+		return getFileData(ctx, item)
 	case enum.CheckListItemTypeWifiScan:
-		wifiScans, err := item.QueryWifiScan().All(ctx)
-		if err != nil {
-			return ""
-		}
-		data := ""
-		for _, header := range wifiScanHeader {
-			data += header + ","
-		}
-		data = strings.Trim(data, ",")
-		data += "\n\r"
-		for _, wifiScan := range wifiScans {
-			for _, value := range []string{wifiScan.CreateTime.Format(timeLayout), wifiScan.UpdateTime.Format(timeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)} {
-				data += value + ","
-			}
-			data = strings.Trim(data, ",")
-			data += "\n\r"
-		}
-		return data
+		return getWifiScanData(ctx, item)
 	}
 	return ""
+}
+
+func getCellScanData(ctx context.Context, item *ent.CheckListItem) string {
+	cellScans, err := item.QueryCellScan().All(ctx)
+	if err != nil {
+		return ""
+	}
+	data := ""
+	for _, header := range cellScanHeader {
+		data += header + ","
+	}
+	data = strings.Trim(data, ",")
+	data += "\n\r"
+	for _, cellScan := range cellScans {
+		for _, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)} {
+			data += value + ","
+		}
+		data = strings.Trim(data, ",")
+		data += "\n\r"
+	}
+	return data
+}
+
+func getWifiScanData(ctx context.Context, item *ent.CheckListItem) string {
+	wifiScans, err := item.QueryWifiScan().All(ctx)
+	if err != nil {
+		return ""
+	}
+	data := ""
+	for _, header := range wifiScanHeader {
+		data += header + ","
+	}
+	data = strings.Trim(data, ",")
+	data += "\n\r"
+	for _, wifiScan := range wifiScans {
+		for _, value := range []string{wifiScan.CreateTime.Format(timeLayout), wifiScan.UpdateTime.Format(timeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)} {
+			data += value + ","
+		}
+		data = strings.Trim(data, ",")
+		data += "\n\r"
+	}
+	return data
+}
+
+func getFileData(ctx context.Context, item *ent.CheckListItem) string {
+	files, err := item.QueryFiles().All(ctx)
+	if err != nil {
+		return ""
+	}
+	data := ""
+	data = strings.Trim(data, ",")
+	data += "\n\r"
+	for _, file := range files {
+		data += file.Name + ","
+	}
+	data = strings.Trim(data, ",")
+	return data
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
