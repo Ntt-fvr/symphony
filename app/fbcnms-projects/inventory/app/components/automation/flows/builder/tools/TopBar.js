@@ -13,6 +13,7 @@ import React from 'react';
 import ToolsBar from './ToolsBar';
 import {makeStyles} from '@material-ui/styles';
 import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
+import {useFlowData} from '../../data/FlowDataContext';
 import {useGraph} from '../canvas/graph/GraphContext';
 import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
 
@@ -33,6 +34,7 @@ export default function TopBar() {
   const flow = useGraph();
   const selection = useGraphSelection();
   const detailsPane = useDetailsPane();
+  const flowData = useFlowData();
 
   return (
     <ToolsBar className={classes.root}>
@@ -71,6 +73,11 @@ export default function TopBar() {
       <div className={classes.center} />
       <div className={classes.right}>
         <Button onClick={() => detailsPane.toggle()}>Details</Button>
+        <Button
+          disabled={!flowData.flowDraft?.id}
+          onClick={() => flowData.save()}>
+          Save
+        </Button>
       </div>
     </ToolsBar>
   );

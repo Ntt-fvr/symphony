@@ -85,8 +85,14 @@ const EndBaseClass = jointJS.dia.Element.define(
 );
 
 export default class End extends EndBaseClass implements IVertexModel {
-  constructor() {
-    super(getInitObject(FILL_COLOR, {[PORTS_GROUPS.OUTPUT]: {count: 0}}));
+  constructor(id?: string) {
+    super(
+      getInitObject(
+        FILL_COLOR,
+        {[PORTS_GROUPS.OUTPUT]: {count: 0}},
+        id ? id : undefined,
+      ),
+    );
     // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }

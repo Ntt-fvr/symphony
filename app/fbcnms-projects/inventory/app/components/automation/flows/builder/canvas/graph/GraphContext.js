@@ -134,6 +134,8 @@ export type GraphContextType = {
   deserialize: string => void,
   drawLasso: Position => ?Lasso,
   getBlocksInArea: Rect => Array<IBlock>,
+  getBlocksByType: (type: string) => Array<IBlock>,
+  getConnectors: () => Array<IConnector>,
 };
 
 const GraphContextDefaults = {
@@ -160,6 +162,8 @@ const GraphContextDefaults = {
   deserialize: emptyFunction,
   drawLasso: emptyFunction,
   getBlocksInArea: () => [],
+  getBlocksByType: () => [],
+  getConnectors: () => [],
 };
 
 const GraphContext = React.createContext<GraphContextType>(
@@ -195,7 +199,7 @@ function graphAddBlock(
   const position =
     options?.position || getPaperViewPortCenter(this.current.paper);
 
-  const newBlock = shapesFactory.createBlock(type);
+  const newBlock = shapesFactory.createBlock(type, options?.id ?? '');
   newBlock.model.position(position.x, position.y);
   if (options?.text) {
     newBlock.model.attr({
@@ -572,6 +576,22 @@ function graphGetMainPaper(): ?Paper {
   return this.current?.paper;
 }
 
+function getBlocksByTypeFromMap(type: string): IBlock[] {
+  if (this.current == null) {
+    return [];
+  }
+
+  return [...this.current.blocks.values()].filter(block => block.type === type);
+}
+
+function getConnectorsFromMap(): IConnector[] {
+  if (this.current == null) {
+    return [];
+  }
+
+  return [...this.current.connectors.values()];
+}
+
 type FlowWrapper = {|
   graph: Graph,
   paper: Paper,
@@ -645,6 +665,8 @@ export function GraphContextProvider(props: Props) {
   const getBlock = graphGetBlock.bind(flowWrapper);
   const drawLasso = graphDrawLasso.bind(flowWrapper);
   const getBlocksInArea = graphGetBlocksInArea.bind(flowWrapper);
+  const getBlocksByType = getBlocksByTypeFromMap.bind(flowWrapper);
+  const getConnectors = getConnectorsFromMap.bind(flowWrapper);
 
   const value = {
     bindGraphContainer,
@@ -670,6 +692,8 @@ export function GraphContextProvider(props: Props) {
     getBlock,
     drawLasso,
     getBlocksInArea,
+    getBlocksByType,
+    getConnectors,
   };
 
   return (

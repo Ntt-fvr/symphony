@@ -87,8 +87,8 @@ const CreateWorkorderBaseClass = jointJS.dia.Element.define(
 
 export default class CreateWorkorder extends CreateWorkorderBaseClass
   implements IVertexModel {
-  constructor() {
-    super(getInitObject(FILL_COLOR));
+  constructor(id?: string) {
+    super(getInitObject(FILL_COLOR, {}, id ? id : undefined));
     // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE - 2 * PADDING);
   }

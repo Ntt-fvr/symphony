@@ -86,8 +86,16 @@ const ManualStartBaseClass = jointJS.dia.Element.define(
 
 export default class ManualStart extends ManualStartBaseClass
   implements IVertexModel {
-  constructor() {
-    super(getInitObject(FILL_COLOR, {[PORTS_GROUPS.INPUT]: {count: 0}}));
+  constructor(id?: string) {
+    super(
+      getInitObject(
+        FILL_COLOR,
+        {
+          [PORTS_GROUPS.INPUT]: {count: 0},
+        },
+        id ? id : undefined,
+      ),
+    );
     // super();
     this.resize(TOTAL_SIZE, TOTAL_SIZE);
   }
