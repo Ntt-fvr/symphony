@@ -104,7 +104,7 @@ func newClient(t *testing.T, tenant, user string, opts ...option) *client {
 	}
 	tenantID, err := c.createTenant()
 	require.NoError(t, err)
-	_, err = c.createOwnerUser(tenantID)
+	_, err = c.createUser(tenantID)
 	require.NoError(t, err)
 	return &c
 }
@@ -116,7 +116,7 @@ func (c *client) RoundTrip(req *http.Request) (*http.Response, error) {
 	} else {
 		req.Header.Set("x-auth-automation-name", c.user)
 	}
-	req.Header.Set("x-auth-user-role", "OWNER")
+	req.Header.Set("x-auth-user-role", "ADMIN")
 	return http.DefaultTransport.RoundTrip(req)
 }
 
@@ -148,13 +148,13 @@ func (c *client) createTenant() (graphql.ID, error) {
 	return q.Tenant.ID, err
 }
 
-func (c *client) createOwnerUser(tenant graphql.ID) (graphql.ID, error) {
+func (c *client) createUser(tenant graphql.ID) (graphql.ID, error) {
 	var m struct {
 		UpsertUser struct {
 			User struct {
 				ID string
 			}
-		} `graphql:"upsertUser(input: {tenantId: $tenant, authId: $user, role: OWNER})"`
+		} `graphql:"upsertUser(input: {tenantId: $tenant, authId: $user, role: ADMIN})"`
 	}
 	vars := map[string]interface{}{
 		"tenant": tenant,

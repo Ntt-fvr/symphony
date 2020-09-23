@@ -18,7 +18,7 @@ const logger = require('@fbcnms/logging').getLogger(module);
 export async function createUser(
   tenant: string,
   email: string,
-  owner: boolean,
+  admin: boolean,
 ): Promise<void> {
   const tenantId = await getTenantID(tenant);
   const mutation = gql`
@@ -42,7 +42,7 @@ export async function createUser(
     .request(mutation, {
       tenantId: tenantId,
       authId: email,
-      role: owner ? 'OWNER' : 'USER',
+      role: admin ? 'ADMIN' : 'USER',
     })
     .then(data => data.upsertUser.user);
   logger.info(

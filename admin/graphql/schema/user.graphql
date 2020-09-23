@@ -37,7 +37,6 @@ The role of a user.
 enum UserRole {
   USER
   ADMIN
-  OWNER
 }
 
 """

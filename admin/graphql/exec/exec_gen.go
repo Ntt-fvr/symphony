@@ -628,7 +628,10 @@ type DeleteTenantPayload {
   clientMutationId: String
 }
 
-extend type Mutation {
+"""
+The mutation root of Admin's GraphQL interface.
+"""
+type Mutation {
   """
   Create a new tenant.
   """
@@ -684,7 +687,6 @@ The role of a user.
 enum UserRole {
   USER
   ADMIN
-  OWNER
 }
 
 """
