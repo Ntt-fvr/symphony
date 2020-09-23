@@ -26,7 +26,7 @@ class TestUser(BaseTest):
     @staticmethod
     def random_string(length: int = 10) -> str:
         letters = string.ascii_lowercase
-        return "".join(random.choice(letters) for _ in range(length))
+        return "".join(random.choices(letters, k=length))
 
     def test_user_created(self) -> None:
         user_name = f"{self.random_string()}@fb.com"
