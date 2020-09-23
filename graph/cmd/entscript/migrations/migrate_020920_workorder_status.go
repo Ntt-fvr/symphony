@@ -15,20 +15,20 @@ import (
 	"go.uber.org/zap"
 )
 
-// MigrateWorkOrderStatus change all work order statuses: (DONE->CLOSED, PENDING->IN_PROGRESS)
+// MigrateWorkOrderStatus change all work order statuses: (DONE->CLOSED, PENDING->PLANNED)
 func MigrateWorkOrderStatus(ctx context.Context, logger *zap.Logger) error {
 	client := ent.FromContext(ctx)
 
-	// PENDING -> IN_PROGRESS
+	// PENDING -> PLANNED
 	changed, err := client.WorkOrder.Update().
 		Where(workorder.StatusEQ(workorder.StatusPending)).
-		SetStatus(workorder.StatusInProgress).
+		SetStatus(workorder.StatusPlanned).
 		Save(privacy.DecisionContext(
 			ctx, privacy.Allow,
 		))
 
 	if err != nil {
-		return fmt.Errorf("failed to update status from pending to in-progress: %w", err)
+		return fmt.Errorf("failed to update status from pending to planned: %w", err)
 	}
 	logger.Info("workorders with pending status updated", zap.Int("count", changed))
 
