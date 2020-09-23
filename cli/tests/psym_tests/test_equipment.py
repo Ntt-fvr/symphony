@@ -21,21 +21,14 @@ from psym.api.location import add_location
 from psym.api.location_type import add_location_type
 from psym.api.port import edit_port_properties, get_port, get_ports
 from psym.api.port_type import add_equipment_port_type
-from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES
 from psym.common.data_class import EquipmentPortDefinition, PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestEquipment(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.date_time_date = datetime.strptime("2020-08-16", "%Y-%m-%d").date()

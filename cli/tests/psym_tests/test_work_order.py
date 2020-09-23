@@ -14,21 +14,14 @@ from psym.api.work_order import (
     get_work_orders,
 )
 from psym.api.work_order_type import add_work_order_type
-from psym.client import SymphonyClient
 from psym.common.data_class import PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestWorkOrder(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.work_order_type = add_work_order_type(

@@ -11,21 +11,14 @@ from psym.api.port_type import (
     get_equipment_port_type,
     get_equipment_port_types,
 )
-from psym.client import SymphonyClient
 from psym.common.cache import PORT_TYPES
 from psym.common.data_class import PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestEquipmentPortType(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.port_type1 = add_equipment_port_type(

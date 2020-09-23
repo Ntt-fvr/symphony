@@ -18,11 +18,10 @@ require (
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/facebook/ent v0.4.4-0.20200922172230-49101d7d051a
-	github.com/facebookincubator/ent-contrib v0.0.0-20200923084553-b3b31b3daa94
+	github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2
-	github.com/google/addlicense v0.0.0-20200906110928-a0294312aa76 // indirect
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0

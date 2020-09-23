@@ -9,21 +9,14 @@ from psym.api.location_type import (
     get_location_type_by_id,
     get_location_types,
 )
-from psym.client import SymphonyClient
 from psym.common.cache import LOCATION_TYPES
 from psym.common.data_class import PropertyDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestLocationType(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.location_type = add_location_type(

@@ -6,10 +6,7 @@
 from typing import Optional
 from unittest import TestSuite
 from unittest.loader import TestLoader
-
-from grpc import insecure_channel
-
-from ..utils import get_grpc_server_address, init_client, wait_for_platform
+from ..utils import init_cleaner, init_client, wait_for_platform
 from ..utils.constant import TEST_USER_EMAIL
 
 
@@ -31,7 +28,6 @@ def load_tests(
     from .test_work_order_subscription import TestWorkOrderSubscription
     from .test_project_type import TestProjectType
     from .test_location_type import TestLocationType
-    from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
     TESTS = [
         TestEquipment,
@@ -55,13 +51,11 @@ def load_tests(
     print("Initializing client")
     client = init_client(TEST_USER_EMAIL, TEST_USER_EMAIL)
     print("Initializing cleaner")
-    address = get_grpc_server_address()
-    channel = insecure_channel(address)
-    stub = TenantServiceStub(channel)
+    cleaner = init_cleaner()
     print("Packing tests")
     test_suite = TestSuite()
     for test_class in TESTS:
         testCaseNames = loader.getTestCaseNames(test_class)
         for test_case_name in testCaseNames:
-            test_suite.addTest(test_class(test_case_name, client, stub))
+            test_suite.addTest(test_class(test_case_name, client, cleaner))
     return test_suite
