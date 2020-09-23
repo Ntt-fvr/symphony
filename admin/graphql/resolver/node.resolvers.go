@@ -36,6 +36,8 @@ func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, erro
 		switch noder := noder.(type) {
 		case *ent.User:
 			node = model.NewUser(id.Tenant, noder)
+		case *ent.Feature:
+			node = model.NewFeature(id.Tenant, noder)
 		default:
 			return entgql.ErrNodeNotFound(id)
 		}

@@ -1,7 +1,10 @@
 """
 A user is an individual's account on Symphony.
 """
-type User implements Node {
+type User implements Node
+  @goModel(
+    model: "github.com/facebookincubator/symphony/admin/graphql/model.User"
+  ) {
   """
   The id of the user.
   """
@@ -21,12 +24,18 @@ type User implements Node {
   The status of the user.
   """
   status: UserStatus!
+
+  """
+  The tenant of the user.
+  """
+  tenant: Tenant
 }
 
 """
 The activity status of a user.
 """
-enum UserStatus {
+enum UserStatus
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.Status") {
   ACTIVE
   DEACTIVATED
 }
@@ -34,7 +43,8 @@ enum UserStatus {
 """
 The role of a user.
 """
-enum UserRole {
+enum UserRole
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/user.Role") {
   USER
   ADMIN
 }
@@ -98,7 +108,7 @@ extend type Tenant {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): UserConnection!
+  ): UserConnection! @goField(forceResolver: true)
 }
 
 """

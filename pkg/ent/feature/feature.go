@@ -90,4 +90,6 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultGlobal holds the default value on creation for the global field.
+	DefaultGlobal bool
 )

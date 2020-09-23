@@ -2,11 +2,13 @@
 Position within a pagination.
 """
 scalar Cursor
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent.Cursor")
 
 """
 Information about pagination in a connection.
 """
-type PageInfo {
+type PageInfo
+  @goModel(model: "github.com/facebookincubator/symphony/pkg/ent.PageInfo") {
   """
   When paginating forwards, are there more items?
   """

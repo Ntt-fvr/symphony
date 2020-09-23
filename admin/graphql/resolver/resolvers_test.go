@@ -17,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver/mocks"
-	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
@@ -28,19 +27,18 @@ import (
 
 type testSuite struct {
 	suite.Suite
-	ec       *ent.Client
+	server   *handler.Server
 	client   *client.Client
 	mock     sqlmock.SqlmockCommon
 	migrator *mocks.Migrator
+	tenancy  viewertest.Tenancy
 }
 
 func (s *testSuite) SetupTest() {
-	s.ec = viewertest.NewTestClient(s.T())
-	tenancy := viewer.NewFixedTenancy(s.ec)
 	db, mock, err := sqlmock.New()
 	s.Require().NoError(err)
 	s.migrator = &mocks.Migrator{}
-	server := handler.New(
+	s.server = handler.New(
 		exec.NewExecutableSchema(
 			exec.Config{
 				Resolvers: resolver.New(
@@ -53,16 +51,16 @@ func (s *testSuite) SetupTest() {
 			},
 		),
 	)
-	server.AddTransport(transport.POST{})
-	server.Use(gqlutil.DBInjector{DB: db})
-	server.AroundOperations(
+	s.server.AddTransport(transport.POST{})
+	s.server.Use(gqlutil.DBInjector{DB: db})
+	s.server.AroundOperations(
 		func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 			ctx = privacy.DecisionContext(ctx, privacy.Allow)
-			ctx = viewer.NewTenancyContext(ctx, tenancy)
+			ctx = viewer.NewTenancyContext(ctx, &s.tenancy)
 			return next(ctx)
 		},
 	)
-	s.client = client.New(server)
+	s.client = client.New(s.server)
 	s.mock = mock
 }
 
@@ -70,7 +68,7 @@ func (s *testSuite) TearDownTest() {
 	err := s.mock.ExpectationsWereMet()
 	s.Require().NoError(err)
 	s.migrator.AssertExpectations(s.T())
-	err = s.ec.Close()
+	err = s.tenancy.Close()
 	s.Require().NoError(err)
 }
 
@@ -92,6 +90,17 @@ func (s *testSuite) expectTenant(name string) {
 
 func (s *testSuite) expectNoTenant(name string) {
 	s.expectTenantCount(name, 0)
+}
+
+func (s *testSuite) expectTenants(names ...string) {
+	rows := sqlmock.NewRows([]string{"SCHEMA_NAME"})
+	for _, name := range names {
+		rows = rows.AddRow("tenant_" + name)
+	}
+	s.mock.ExpectQuery(tenantsSQLQuery).
+		WithArgs("tenant_%").
+		WillReturnRows(rows).
+		RowsWillBeClosed()
 }
 
 func (s *testSuite) expectBeginCommit() {

@@ -26,12 +26,29 @@ func tenantType(ctx context.Context, _ interface{}, next graphql.Resolver) (inte
 	if err != nil {
 		return res, err
 	}
-	id, ok := res.(model.ID)
-	if !ok {
+	switch res := res.(type) {
+	case model.ID:
+		if res.ID != 0 {
+			return nil, entgql.ErrNodeNotFound(res)
+		}
+	case *model.ID:
+		if res.ID != 0 {
+			return nil, entgql.ErrNodeNotFound(res)
+		}
+	case []model.ID:
+		for _, id := range res {
+			if id.ID != 0 {
+				return nil, entgql.ErrNodeNotFound(id)
+			}
+		}
+	case []*model.ID:
+		for _, id := range res {
+			if id.ID != 0 {
+				return nil, entgql.ErrNodeNotFound(id)
+			}
+		}
+	default:
 		return nil, gqlerror.Errorf("@tenantType directive on %T", res)
-	}
-	if id.ID != 0 {
-		return nil, entgql.ErrNodeNotFound(id)
 	}
 	return res, nil
 }

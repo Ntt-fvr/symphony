@@ -10,6 +10,7 @@ package resolver
 import (
 	"context"
 
+	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
@@ -76,3 +77,12 @@ func (r *tenantResolver) Users(ctx context.Context, obj *model.Tenant, after *en
 	}
 	return conn, nil
 }
+
+func (r *userResolver) Tenant(ctx context.Context, obj *model.User) (*model.Tenant, error) {
+	return model.NewTenant(obj.ID.Tenant), nil
+}
+
+// User returns exec.UserResolver implementation.
+func (r *resolver) User() exec.UserResolver { return &userResolver{r} }
+
+type userResolver struct{ *resolver }

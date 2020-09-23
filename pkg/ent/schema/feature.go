@@ -23,6 +23,7 @@ func (Feature) Fields() []ent.Field {
 			Immutable().
 			Unique(),
 		field.Bool("global").
+			Default(true).
 			Optional(),
 	}
 }

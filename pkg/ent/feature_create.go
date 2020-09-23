@@ -164,6 +164,10 @@ func (fc *FeatureCreate) defaults() {
 		v := feature.DefaultUpdateTime()
 		fc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := fc.mutation.Global(); !ok {
+		v := feature.DefaultGlobal
+		fc.mutation.SetGlobal(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
