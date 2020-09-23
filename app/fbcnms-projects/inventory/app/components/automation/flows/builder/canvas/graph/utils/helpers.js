@@ -9,6 +9,7 @@
  */
 
 import type {FlowWrapper} from '../GraphContext';
+import type {IBlock} from '../shapes/blocks/BaseBlock';
 import type {
   ILink,
   LinkEndpoint,
@@ -29,12 +30,46 @@ export function handleNewConnections(flow: ?FlowWrapper) {
 
   const handler = (args: LinkEventArgs) => {
     const newLink: ILink = args.model;
-    if (!flow.connectors.has(newLink.id) && isLinkValid(flow, newLink)) {
-      const connector = flow.shapesFactory.createConnectorForLink(newLink);
-      flow.connectors.set(connector.id, connector);
+    if (flow.connectors.has(newLink.id) || !isLinkValid(flow, newLink)) {
+      return;
     }
+
+    const sourceBlock = getLinkEndpointBlock(flow, newLink, 'source');
+    if (sourceBlock == null) {
+      return;
+    }
+
+    const targetBlock = getLinkEndpointBlock(flow, newLink, 'target');
+    if (targetBlock == null) {
+      return;
+    }
+
+    const connector = flow.shapesFactory.createNewConnector(
+      sourceBlock,
+      targetBlock,
+      newLink,
+    );
+    flow.connectors.set(connector.id, connector);
   };
   flow.paper.on(Events.Connector.MouseUp, handler);
+}
+
+function getLinkEndpointBlock(
+  flow: ?FlowWrapper,
+  link: ILink,
+  side: 'source' | 'target',
+): ?IBlock {
+  if (flow == null) {
+    return;
+  }
+
+  const linkSide =
+    side === 'source' ? link.attributes.source : link.attributes.target;
+  if (linkSide.id == null) {
+    return;
+  }
+
+  return flow.blocks.get(linkSide.id);
 }
 
 function isLinkValid(flow: ?FlowWrapper, newLink: ILink) {

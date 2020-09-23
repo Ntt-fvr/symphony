@@ -42,8 +42,11 @@ export function isVertex(cell: ?IShape | IBaseShapeAttributes) {
 
 export interface IShapesFactory {
   +createBlock: (type: string, id: string) => Block;
-  +createNewConnector: (source?: ?IBlock, target?: ?IBlock) => IConnector;
-  +createConnectorForLink: (model: ILink) => IConnector;
+  +createNewConnector: (
+    source: IBlock,
+    target: IBlock,
+    model?: ?ILink,
+  ) => IConnector;
 }
 
 export default class ShapesFactory {
@@ -59,10 +62,8 @@ export default class ShapesFactory {
 
     return new Block(vertexModel, this.paper);
   }
-  createNewConnector(source?: ?IBlock, target?: ?IBlock) {
-    return new BaseConnector(this.paper, source, target);
-  }
-  createConnectorForLink(model: ILink) {
-    return new BaseConnector(this.paper, null, null, model);
+
+  createNewConnector(source: IBlock, target: IBlock, model?: ?ILink) {
+    return new BaseConnector(this.paper, source, target, model);
   }
 }

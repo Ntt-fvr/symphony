@@ -78,26 +78,18 @@ export default class BaseConnector implements IConnector {
   target: ?IBlock;
   isSelected: boolean;
 
-  constructor(
-    paper: Paper,
-    source?: ?IBlock,
-    target?: ?IBlock,
-    model?: ?ILink,
-  ) {
+  constructor(paper: Paper, source: IBlock, target: IBlock, model?: ?ILink) {
     this.paper = paper;
 
     if (model) {
       this.model = model;
+      this.source = source;
+      this.target = target;
     } else {
       this.model = new Link();
       this.setSource(source);
       this.setTarget(target);
       this.model.addTo(this.paper.model);
-      // this.model.router('jumpover', {
-      //   padding: 16,
-      //   maximumLoops: 200,
-      //   maxAllowedDirectionChange: 3,
-      // });
     }
 
     this.id = this.model.id;

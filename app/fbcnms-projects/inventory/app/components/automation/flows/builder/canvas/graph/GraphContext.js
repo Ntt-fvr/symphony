@@ -72,12 +72,10 @@ type AddBlockFunctionType = (
   },
 ) => ?IBlock;
 
-type AddConnectorFunctionType = (
-  options?: ?{
-    source?: ?IBlock,
-    target?: ?IBlock,
-  },
-) => ?IConnector;
+type AddConnectorFunctionType = (options: {
+  source: IBlock,
+  target: IBlock,
+}) => ?IConnector;
 
 export type BlockEventCallback = (IBlock, MouseEvent, number, number) => void;
 export type BlockPortEventCallback = (
@@ -255,7 +253,7 @@ function graphRemoveConnector(connector: IConnector) {
   connector.model.remove();
 }
 
-function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
+function graphAddConnector(options: {source: IBlock, target: IBlock}) {
   if (this.current == null) {
     return;
   }
@@ -264,8 +262,8 @@ function graphAddConnector(options?: ?{source?: ?IBlock, target?: ?IBlock}) {
   const connectorsMap = this.current.connectors;
 
   const connector = shapesFactory.createNewConnector(
-    options?.source,
-    options?.target,
+    options.source,
+    options.target,
   );
 
   connectorsMap.set(connector.id, connector);

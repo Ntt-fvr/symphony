@@ -153,10 +153,12 @@ function FlowDataContextProviderComponent(props: Props) {
     blocks => {
       blocks.forEach(block => {
         block.nextBlocks.forEach(nextBlock => {
-          flow.addConnector({
-            source: flow.getBlock(block.cid),
-            target: flow.getBlock(nextBlock.cid),
-          });
+          const source = flow.getBlock(block.cid);
+          const target = flow.getBlock(nextBlock.cid);
+          if (source == null || target == null) {
+            return;
+          }
+          flow.addConnector({source, target});
         });
       });
     },
