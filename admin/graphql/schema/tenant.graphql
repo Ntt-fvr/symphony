@@ -1,4 +1,9 @@
 """
+Defines that a passed in global ID must be a tenant ID.
+"""
+directive @tenantType on INPUT_FIELD_DEFINITION
+
+"""
 A tenant encapsulates a set of resources.
 """
 type Tenant implements Node {
@@ -102,7 +107,7 @@ input DeleteTenantInput {
   """
   The tenant id to delete.
   """
-  id: ID!
+  id: ID! @tenantType
 }
 
 """
@@ -115,7 +120,10 @@ type DeleteTenantPayload {
   clientMutationId: String
 }
 
-extend type Mutation {
+"""
+The mutation root of Admin's GraphQL interface.
+"""
+type Mutation {
   """
   Create a new tenant.
   """

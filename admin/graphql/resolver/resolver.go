@@ -12,27 +12,34 @@ import (
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/hashicorp/go-multierror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
 
 // resolver is a graphql resolver root.
 type resolver struct {
+	tenancy  viewer.Tenancy
 	log      log.Logger
 	migrator Migrator
 }
 
 // Config configures resolver root.
 type Config struct {
+	Tenancy  viewer.Tenancy
 	Logger   log.Logger
 	Migrator Migrator
 }
 
 // New creates a resolver root from config.
 func New(cfg Config) exec.ResolverRoot {
+	if cfg.Tenancy == nil {
+		panic("tenancy is nil")
+	}
 	if cfg.Logger == nil {
 		cfg.Logger = log.NewNopLogger()
 	}
@@ -44,6 +51,7 @@ func New(cfg Config) exec.ResolverRoot {
 		)
 	}
 	return &resolver{
+		tenancy:  cfg.Tenancy,
 		log:      cfg.Logger,
 		migrator: cfg.Migrator,
 	}
@@ -95,4 +103,35 @@ func (r *resolver) tenant(ctx context.Context, name string) (*model.Tenant, erro
 		return nil, err
 	}
 	return model.NewTenant(name), nil
+}
+
+// withTx creates a transaction, runs fn and commits/rolls back the transaction based on error.
+func (r *mutationResolver) withTx(ctx context.Context, client *ent.Client, fn func(*ent.Client) error) error {
+	logger := r.log.For(ctx)
+	tx, err := client.Tx(ctx)
+	if err != nil {
+		logger.Error("cannot create transaction", zap.Error(err))
+		return err
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			if err := tx.Rollback(); err != nil {
+				logger.Error("cannot rollback transaction", zap.Error(err))
+			}
+			panic(r)
+		}
+	}()
+	if err := fn(tx.Client()); err != nil {
+		if r := tx.Rollback(); r != nil {
+			logger.Error("cannot rollback transaction", zap.Error(r))
+			err = multierror.Append(err, r)
+		}
+		return err
+	}
+	if err := tx.Commit(); err != nil {
+		const msg = "cannot commit transaction"
+		logger.Error(msg, zap.Error(err))
+		return fmt.Errorf(msg+": %w", err)
+	}
+	return nil
 }

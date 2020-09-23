@@ -11,6 +11,8 @@ import (
 	"github.com/99designs/gqlgen/client"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/facebookincubator/symphony/admin/graphql"
+	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -30,6 +32,9 @@ func TestHandler(t *testing.T) {
 	handler, _, err := graphql.NewHandler(
 		graphql.HandlerConfig{
 			DB: db,
+			Tenancy: viewer.NewFixedTenancy(
+				viewertest.NewTestClient(t),
+			),
 		},
 	)
 	require.NoError(t, err)

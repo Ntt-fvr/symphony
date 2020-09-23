@@ -22,7 +22,6 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/hashicorp/go-multierror"
 	"github.com/vektah/gqlparser/v2/gqlerror"
-	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateTenantInput) (*model.CreateTenantPayload, error) {
@@ -81,13 +80,6 @@ func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.Trunc
 }
 
 func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteTenantInput) (*model.DeleteTenantPayload, error) {
-	if input.ID.ID != 0 {
-		r.log.For(ctx).
-			Error("tenant with non zero object id",
-				zap.Object("id", input.ID),
-			)
-		return nil, entgql.ErrNodeNotFound(input.ID)
-	}
 	if _, err := r.db(ctx).ExecContext(ctx,
 		fmt.Sprintf("DROP DATABASE `%s`", viewer.DBName(input.ID.Tenant)),
 	); err != nil {
@@ -133,4 +125,8 @@ func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {
 // Mutation returns exec.MutationResolver implementation.
 func (r *resolver) Mutation() exec.MutationResolver { return &mutationResolver{r} }
 
+// Tenant returns exec.TenantResolver implementation.
+func (r *resolver) Tenant() exec.TenantResolver { return &tenantResolver{r} }
+
 type mutationResolver struct{ *resolver }
+type tenantResolver struct{ *resolver }

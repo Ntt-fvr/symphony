@@ -25,8 +25,10 @@ export async function createTenant(name: string): Promise<void> {
       }
     }
   `;
-  await client.request(mutation, {name: name});
-  logger.info(`created tenant: name=${name}`);
+  const tenant = await client
+    .request(mutation, {name: name})
+    .then(data => data.createTenant.tenant);
+  logger.info(`created tenant: name=${tenant.name}`);
 }
 
 export async function deleteTenant(name: string): Promise<void> {
