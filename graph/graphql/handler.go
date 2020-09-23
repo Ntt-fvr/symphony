@@ -148,22 +148,17 @@ func errorPresenter(logger log.Logger) graphql.ErrorPresenterFunc {
 		}()
 		if errors.As(err, &gqlerr) {
 			if gqlerr.Path == nil {
-				gqlerr.Path = graphql.GetFieldContext(ctx).Path()
+				gqlerr.Path = graphql.GetPath(ctx)
 			}
 			return gqlerr
 		}
 		logger.For(ctx).
-			Warn("graphql internal failure",
+			Error("graphql internal failure",
 				zap.Error(err),
 			)
-		gqlerr = &gqlerror.Error{
+		return &gqlerror.Error{
 			Message: "Sorry, something went wrong",
-			Path:    graphql.GetFieldContext(ctx).Path(),
+			Path:    graphql.GetPath(ctx),
 		}
-		var ee graphql.ExtendedError
-		if errors.As(err, &ee) {
-			gqlerr.Extensions = ee.Extensions()
-		}
-		return gqlerr
 	}
 }

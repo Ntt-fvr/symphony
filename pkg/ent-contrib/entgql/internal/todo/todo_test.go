@@ -19,7 +19,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/AlekSi/pointer"
 	"github.com/facebook/ent/dialect"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	gen "github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/enttest"
 	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql/internal/todo/ent/migrate"
@@ -67,7 +66,6 @@ func (s *todoTestSuite) SetupTest() {
 
 	srv := handler.New(gen.NewSchema(ec))
 	srv.AddTransport(transport.POST{})
-	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	s.Client = client.New(srv)
 
 	const mutation = `mutation($priority: Int, $text: String!, $parent: ID) {

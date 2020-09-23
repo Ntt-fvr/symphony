@@ -98,8 +98,8 @@ func TestDBInjector(t *testing.T) {
 			srv.SetRecoverFunc(func(_ context.Context, err interface{}) error {
 				return err.(error)
 			})
-			srv.AroundResponses(func(context.Context, graphql.ResponseHandler) *graphql.Response {
-				panic(io.ErrUnexpectedEOF)
+			srv.AroundResponses(func(ctx context.Context, _ graphql.ResponseHandler) *graphql.Response {
+				panic(graphql.ErrorOnPath(ctx, io.ErrUnexpectedEOF))
 			})
 
 			c := client.New(srv)

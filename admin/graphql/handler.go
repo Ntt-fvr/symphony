@@ -13,7 +13,6 @@ import (
 	"github.com/NYTimes/gziphandler"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
@@ -47,7 +46,6 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 		),
 	)
 	srv.Use(gqlutil.DBInjector{DB: cfg.DB})
-	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
 
 	router := mux.NewRouter()

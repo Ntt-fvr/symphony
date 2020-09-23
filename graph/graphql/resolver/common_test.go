@@ -163,7 +163,6 @@ func (tr *TestResolver) GraphClient(opts ...viewertest.Option) *client.Client {
 			},
 		),
 	)
-	srv.SetErrorPresenter(entgql.DefaultErrorPresenter)
 	srv.AroundOperations(func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 		ctx = viewertest.NewContext(ctx, tr.client, opts...)
 		return next(ctx)
