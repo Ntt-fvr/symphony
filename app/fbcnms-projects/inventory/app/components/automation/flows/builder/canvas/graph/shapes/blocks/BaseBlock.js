@@ -27,7 +27,9 @@ export interface IBlock {
   +view: IVertexView;
   +type: string;
   +isSelected: boolean;
-  +getPort: (portsGroup: PortGroupName) => ?VertexPort;
+  +getPorts: () => $ReadOnlyArray<VertexPort>;
+  +getPortByGroup: (portsGroup: PortGroupName) => ?VertexPort;
+  +getPortByID: (portID: string) => ?VertexPort;
 }
 
 export default class BaseBlock implements IBlock {
@@ -76,7 +78,15 @@ export default class BaseBlock implements IBlock {
     });
   }
 
-  getPort(portsGroup: PortGroupName): ?VertexPort {
-    return this.model.attributes.ports.items.find(p => p.group === portsGroup);
+  getPorts(): $ReadOnlyArray<VertexPort> {
+    return this.model.attributes.ports.items;
+  }
+
+  getPortByGroup(portsGroup: PortGroupName): ?VertexPort {
+    return this.getPorts().find(p => p.group === portsGroup);
+  }
+
+  getPortByID(portID: string): ?VertexPort {
+    return this.getPorts().find(p => p.id === portID);
   }
 }

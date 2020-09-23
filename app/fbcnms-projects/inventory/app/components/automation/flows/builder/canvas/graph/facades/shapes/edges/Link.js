@@ -21,22 +21,24 @@ import * as jointJS from 'jointjs';
 
 export const TYPE = 'standard.Link';
 
-export interface ILinkAttributes extends IBaseShapeAttributes {
-  +source: IVertexModel;
-  +target: IVertexModel;
-  +type: 'standard.Link';
-  +z: number;
-}
-
-type LinkVertexEndpoint = $ReadOnly<{
+export type LinkVertexEndpoint = $ReadOnly<{
   id: string,
   port: ?string,
 }>;
 
+export type LinkEndpoint = LinkVertexEndpoint | Position;
+
+export interface ILinkAttributes extends IBaseShapeAttributes {
+  +source: LinkEndpoint;
+  +target: LinkEndpoint;
+  +type: 'standard.Link';
+  +z: number;
+}
+
 export interface ILink extends IShape {
   +attributes: ILinkAttributes;
-  +source: (?LinkVertexEndpoint) => void;
-  +target: (?LinkVertexEndpoint | ?Position) => void;
+  +source: (?LinkEndpoint) => void;
+  +target: (?LinkEndpoint) => void;
   +addTo: Graph => void;
   +router: (string, KeyValuePair) => void;
   +getTargetElement: () => ?IVertexModel;

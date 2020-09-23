@@ -13,7 +13,6 @@ import Link from '../../facades/shapes/edges/Link';
 import type {GraphContextType} from '../../GraphContext';
 import type {IBlock} from '../blocks/BaseBlock';
 import type {ILink} from '../../facades/shapes/edges/Link';
-import type {IShape} from '../../facades/shapes/BaseShape';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
@@ -53,14 +52,6 @@ export const DEFAULT_LINK_SETTINGS = {
     name: 'anchor',
   },
   magnetThreshold: 'onleave',
-  validateConnection: (
-    _cellViewS: IShape,
-    magnetS: IShape,
-    _cellViewT: IShape,
-    magnetT: IShape,
-  ) => {
-    return magnetT != null && magnetT != magnetS;
-  },
   markAvailable: true,
   interactive: true,
 };
@@ -117,7 +108,7 @@ export default class BaseConnector implements IConnector {
       source != null
         ? {
             id: source.id,
-            port: nullthrows(source.getPort(PORTS_GROUPS.OUTPUT)?.id),
+            port: nullthrows(source.getPortByGroup(PORTS_GROUPS.OUTPUT)?.id),
           }
         : null;
     this.model.source(sourceAttrs);
@@ -129,7 +120,7 @@ export default class BaseConnector implements IConnector {
       target != null
         ? {
             id: target.id,
-            port: nullthrows(target.getPort(PORTS_GROUPS.INPUT)?.id),
+            port: nullthrows(target.getPortByGroup(PORTS_GROUPS.INPUT)?.id),
           }
         : null;
     this.model.target(targetAttrs);

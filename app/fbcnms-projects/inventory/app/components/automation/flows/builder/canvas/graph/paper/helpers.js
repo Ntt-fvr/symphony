@@ -8,31 +8,11 @@
  * @format
  */
 
-import type {Graph, GraphEventCallback} from '../facades/Graph';
-import type {ILink} from '../facades/shapes/edges/Link';
-import type {IShape} from '../facades/shapes/BaseShape';
 import type {Paper} from '../facades/Paper';
 import type {VertexEventCallback} from '../facades/shapes/vertexes/BaseVertext';
 
 import symphony from '@symphony/design-system/theme/symphony';
 import {Events} from '../facades/Helpers';
-
-export function handleNewConnections(
-  graph: Graph,
-  onNewConnectionCallback: ILink => void,
-) {
-  const handler: GraphEventCallback = (addedShape: IShape) => {
-    if (addedShape.isLink() != true) {
-      return;
-    }
-
-    // eslint-disable-next-line no-warning-comments
-    // $FlowFixMe - is it possible to cast otherwise?
-    const newLink: ILink = addedShape;
-    onNewConnectionCallback(newLink);
-  };
-  graph.on(Events.Graph.OnAdd, handler);
-}
 
 function stroke(element: HTMLElement, strokeValue?: string): string {
   const elementStroke = element.attributes['stroke'];

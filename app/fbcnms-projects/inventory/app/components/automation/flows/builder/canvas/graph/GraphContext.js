@@ -37,8 +37,12 @@ import emptyFunction from '@fbcnms/util/emptyFunction';
 import symphony from '@symphony/design-system/theme/symphony';
 import {DEFAULT_LINK_SETTINGS} from './shapes/connectors/BaseConnector';
 import {Events} from './facades/Helpers';
+import {
+  buildPaperConnectionValidation,
+  handleNewConnections,
+} from './utils/helpers';
 import {getRectCenter, getRectDiff} from '../../../utils/helpers';
-import {handleMagnetPorts, handleNewConnections} from './paper/helpers';
+import {handleMagnetPorts} from './paper/helpers';
 import {useCallback, useContext, useRef} from 'react';
 
 export type BlockDescriptor = $ReadOnly<{|
@@ -228,8 +232,10 @@ function graphRemoveBlocks(blocks: IBlock[]) {
   // This is temporary until we finalize the connectors logic implementation
   connectorsMap.forEach(({id, model}: IConnector) => {
     if (
-      idsToRemove.includes(model.attributes.source.id) ||
-      idsToRemove.includes(model.attributes.target.id)
+      (model.attributes.source.id != null &&
+        idsToRemove.includes(model.attributes.source.id)) ||
+      (model.attributes.target.id != null &&
+        idsToRemove.includes(model.attributes.target.id))
     ) {
       connectorsMap.delete(id);
     }
@@ -592,12 +598,12 @@ function getConnectorsFromMap(): IConnector[] {
   return [...this.current.connectors.values()];
 }
 
-type FlowWrapper = {|
-  graph: Graph,
-  paper: Paper,
-  blocks: Map<string, IBlock>,
-  connectors: Map<string, IConnector>,
-  shapesFactory: IShapesFactory,
+export type FlowWrapper = {|
+  +graph: Graph,
+  +paper: Paper,
+  +blocks: Map<string, IBlock>,
+  +connectors: Map<string, IConnector>,
+  +shapesFactory: IShapesFactory,
   paperScale: number,
   paperTranslation: Position,
 |};
@@ -618,15 +624,12 @@ export function GraphContextProvider(props: Props) {
         color: symphony.palette.D100,
       },
       ...DEFAULT_LINK_SETTINGS,
+      validateConnection: buildPaperConnectionValidation(flowWrapper),
     });
 
     const shapesFactory = new ShapesFactory(paper);
     const connectors = new Map();
 
-    handleNewConnections(graph, newLink => {
-      const connector = shapesFactory.createConnectorForLink(newLink);
-      connectors.set(connector.id, connector);
-    });
     handleMagnetPorts(paper);
 
     flowWrapper.current = {
@@ -641,6 +644,8 @@ export function GraphContextProvider(props: Props) {
         y: 0,
       },
     };
+
+    handleNewConnections(flowWrapper.current);
   }, []);
 
   const getMainPaper = graphGetMainPaper.bind(flowWrapper);
