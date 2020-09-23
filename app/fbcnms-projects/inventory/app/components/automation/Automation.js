@@ -20,7 +20,7 @@ import FlowBuilder from './flows/builder/FlowBuilder';
 import LoadingIndicator from '../../common/LoadingIndicator';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import RelayEnvironment from '../../common/RelayEnvironment';
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
 import AutomationFlowsView from './flows/view/AutomationFlowsView';
@@ -50,12 +50,14 @@ function NavItems() {
   );
 }
 
+const FLOW_BUILDER_PATH = '/flow/';
+
 function NavRoutes() {
   const relativeUrl = useRelativeUrl();
   return (
     <Switch>
       <Route path={relativeUrl('/flows')} component={AutomationFlowsView} />
-      <Route path={relativeUrl('/flow/')} component={FlowBuilder} />
+      <Route path={relativeUrl(FLOW_BUILDER_PATH)} component={FlowBuilder} />
       <Redirect to={relativeUrl('/flows')} />
     </Switch>
   );
@@ -64,17 +66,23 @@ function NavRoutes() {
 function Automation() {
   const classes = useStyles();
   const {tabs, user, ssoEnabled} = useContext(AppContext);
+
+  const location = useLocation();
+  const shouldHideAppSideBar = location.pathname.includes(FLOW_BUILDER_PATH);
+
   return (
     <div className={classes.root}>
-      <AppSideBar
-        mainItems={<NavItems />}
-        projects={getProjectLinks(tabs, user)}
-        user={user}
-        showSettings={shouldShowSettings({
-          isSuperUser: user.isSuperUser,
-          ssoEnabled,
-        })}
-      />
+      {!shouldHideAppSideBar ? (
+        <AppSideBar
+          mainItems={<NavItems />}
+          projects={getProjectLinks(tabs, user)}
+          user={user}
+          showSettings={shouldShowSettings({
+            isSuperUser: user.isSuperUser,
+            ssoEnabled,
+          })}
+        />
+      ) : null}
       <AppContent>
         <Suspense fallback={<LoadingIndicator />}>
           <NavRoutes />
