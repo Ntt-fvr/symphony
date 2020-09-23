@@ -59,8 +59,7 @@ if __name__ == "__main__":
 
     loader = TestLoader()
     loader.testNamePatterns = [args.pattern]  # type: ignore
-    suite_list: List[TestSuite] = []
-    suite_list.append(loader.loadTestsFromModule(psym_tests))
+    suite_list: List[TestSuite] = [loader.loadTestsFromModule(psym_tests)]
     suite: TestSuite = TestSuite(suite_list)
 
     runner: TextTestRunner = TextTestRunner(verbosity=2)

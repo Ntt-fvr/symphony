@@ -15,19 +15,12 @@ from psym.api.site_survey import (
     get_site_surveys,
     upload_site_survey,
 )
-from psym.client import SymphonyClient
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 @skip("site survey is deprecated")
 class TestSiteSurvey(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         add_location_type(self.client, "City Center", [])

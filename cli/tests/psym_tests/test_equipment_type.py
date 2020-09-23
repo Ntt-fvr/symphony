@@ -13,7 +13,6 @@ from psym.api.equipment_type import (
     get_or_create_equipment_type,
 )
 from psym.api.property_type import get_property_type_id, get_property_types
-from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES
 from psym.common.data_class import PropertyDefinition
 from psym.common.data_enum import Entity
@@ -21,15 +20,9 @@ from psym.common.data_format import format_to_property_type_input
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestEquipmentType(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.equipment_type = add_equipment_type(

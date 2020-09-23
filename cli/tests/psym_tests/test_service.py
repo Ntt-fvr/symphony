@@ -19,7 +19,6 @@ from psym.api.service import (
     get_service_links,
 )
 from psym.api.service_type import add_service_type, edit_service_type
-from psym.client import SymphonyClient
 from psym.common.cache import SERVICE_TYPES
 from psym.common.data_class import (
     EquipmentPortDefinition,
@@ -29,15 +28,9 @@ from psym.common.data_class import (
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestService(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         self.service_type = add_service_type(

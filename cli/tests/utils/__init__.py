@@ -2,24 +2,16 @@
 # Copyright (c) 2004-present Facebook All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
-import os
-import sys
+import functools
 import time
-
 import requests
+
+from typing import Callable
+from gql.gql.graphql_client import GraphqlClient
 from psym.client import SymphonyClient
 from psym.common.endpoint import LOCALHOST_SERVER
 
 from .constant import PLATFORM_SERVER_HEALTH_CHECK_URL, TestMode
-
-
-if True:
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "grpc"))
-    from .grpc.rpc_pb2_grpc import (
-        TenantServiceStub,
-        google_dot_protobuf_dot_wrappers__pb2,
-    )
-
 
 TEST_MODE: TestMode = TestMode.DEV
 TENANT = "fb-test"
@@ -59,14 +51,21 @@ def init_client(email: str, password: str) -> SymphonyClient:
         return SymphonyClient(email, password, is_dev_mode=True)
 
 
-def get_grpc_server_address() -> str:
+def init_cleaner() -> Callable:
     if TEST_MODE == TestMode.LOCAL:
-        return LOCALHOST_SERVER + ":8083"
+        endpoint = f"https://admin.{LOCALHOST_SERVER}/query"
     elif TEST_MODE == TestMode.REMOTE:
         raise NotImplementedError("T64902729")
     else:
-        return "graph:443"
+        endpoint = "http://admin/query"
 
-
-def truncate_client(stub: TenantServiceStub) -> None:
-    stub.Truncate(google_dot_protobuf_dot_wrappers__pb2.StringValue(value=TENANT))
+    client = GraphqlClient(endpoint, requests.Session(), "psym")
+    mutation = """
+        mutation TruncateTenant($name: String!) {
+            truncateTenant(input: { name: $name }) {
+                clientMutationId
+            }
+        }
+    """
+    variables = {"name": TENANT}
+    return functools.partial(client.call, query=mutation, variables=variables)

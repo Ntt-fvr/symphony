@@ -64,8 +64,6 @@ setuptools.setup(
         "sphinxcontrib-napoleon",
         "colorama>=0.4.1",
         "unittest-xml-reporting>=2.5.2",
-        "grpcio>=1.27.2",
-        "grpcio-tools>=1.27.2",
         "websocket-client>=0.56.0",
         "mypy",
         "black",

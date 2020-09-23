@@ -15,25 +15,18 @@ from psym.api.user import (
     edit_user,
     get_active_users,
 )
-from psym.client import SymphonyClient
 from psym.graphql.enum.user_role import UserRole
 from psym.graphql.enum.user_status import UserStatus
 
 from ..utils import init_client
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestUser(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     @staticmethod
-    def random_string(stringLength: int = 10) -> str:
+    def random_string(length: int = 10) -> str:
         letters = string.ascii_lowercase
-        return "".join(random.choice(letters) for i in range(stringLength))
+        return "".join(random.choice(letters) for _ in range(length))
 
     def test_user_created(self) -> None:
         user_name = f"{self.random_string()}@fb.com"
