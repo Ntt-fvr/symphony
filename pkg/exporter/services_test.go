@@ -13,28 +13,19 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/importer"
+	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
 	"github.com/facebookincubator/symphony/pkg/ent/serviceendpointdefinition"
-	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
-	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
+	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-	"github.com/stretchr/testify/require"
-)
 
-type servicesFilterInput struct {
-	Name          enum.ServiceFilterType      `json:"name"`
-	Operator      enum.FilterOperator         `jsons:"operator"`
-	StringValue   string                      `json:"stringValue"`
-	IDSet         []string                    `json:"idSet"`
-	StringSet     []string                    `json:"stringSet"`
-	PropertyValue pkgmodels.PropertyTypeInput `json:"propertyValue"`
-}
+	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
+)
 
 const (
 	serviceNameTitle        = "Service Name"
@@ -55,181 +46,178 @@ var endpointHeader = [...]string{"Endpoint Definition 1", "Location 1", "Equipme
 	"Endpoint Definition 4", "Location 4", "Equipment 4", "Endpoint Definition 5", "Location 5", "Equipment 5",
 }
 
-func preparePropertyTypes() []*pkgmodels.PropertyTypeInput {
-	serviceStrPropType := pkgmodels.PropertyTypeInput{
-		Name:        strPropTitle,
-		Type:        "string",
-		StringValue: pointer.ToString("Foo is the best"),
-	}
-	serviceIntPropType := pkgmodels.PropertyTypeInput{
-		Name: intPropTitle,
-		Type: "int",
-	}
-	serviceBoolPropType := pkgmodels.PropertyTypeInput{
-		Name: boolPropTitle,
-		Type: "bool",
-	}
-	serviceFloatPropType := pkgmodels.PropertyTypeInput{
-		Name: floatPropTitle,
-		Type: "float",
-	}
+func prepareServiceData(ctx context.Context) {
+	client := ent.FromContext(ctx)
 
-	return []*pkgmodels.PropertyTypeInput{
-		&serviceStrPropType,
-		&serviceIntPropType,
-		&serviceBoolPropType,
-		&serviceFloatPropType,
-	}
-}
+	serviceType1 := client.ServiceType.Create().
+		SetName("L2 Service").
+		SetHasCustomer(false).
+		SaveX(ctx)
 
-func prepareServiceData(ctx context.Context, t *testing.T, r importer.TestExporterResolver) {
-	mr := r.Mutation()
+	locType := client.LocationType.Create().
+		SetName("locType1").
+		SaveX(ctx)
 
-	serviceType1, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "L2 Service", HasCustomer: false})
-	require.NoError(t, err)
-	locType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
-		Name: "locType1",
-	})
-	require.NoError(t, err)
-	loc1, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "loc1",
-		Type: locType.ID,
-	})
-	require.NoError(t, err)
-	portTypes := []*models.EquipmentPortInput{
-		{
-			Name: "p1",
-		},
-		{
-			Name: "p2",
-		},
-	}
-	equipType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:  "etype1",
-		Ports: portTypes,
-	})
-	require.NoError(t, err)
+	loc1 := client.Location.Create().
+		SetName("loc1").
+		SetType(locType).
+		SaveX(ctx)
 
-	equipType2, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:  "etype2",
-		Ports: portTypes,
-	})
-	require.NoError(t, err)
-	serviceType2, err := mr.AddServiceType(ctx, models.ServiceTypeCreateData{
-		Name:        "L3 Service",
-		HasCustomer: true,
-		Properties:  preparePropertyTypes(),
-		Endpoints: []*models.ServiceEndpointDefinitionInput{
-			{
-				Name:            "endpoint type1",
-				Role:            pointer.ToString("CONSUMER"),
-				Index:           0,
-				EquipmentTypeID: equipType.ID,
-			},
-			{
-				Index:           1,
-				Name:            "endpoint type2",
-				Role:            pointer.ToString("PROVIDER"),
-				EquipmentTypeID: equipType2.ID,
-			},
-		}})
-	require.NoError(t, err)
+	equipType1 := client.EquipmentType.Create().
+		SetName("etype1").
+		SaveX(ctx)
 
-	strType, _ := serviceType2.QueryPropertyTypes().Where(propertytype.Name(strPropTitle)).Only(ctx)
-	intType, _ := serviceType2.QueryPropertyTypes().Where(propertytype.Name(intPropTitle)).Only(ctx)
-	boolType, _ := serviceType2.QueryPropertyTypes().Where(propertytype.Name(boolPropTitle)).Only(ctx)
-	floatType, _ := serviceType2.QueryPropertyTypes().Where(propertytype.Name(floatPropTitle)).Only(ctx)
+	client.EquipmentPortDefinition.Create().
+		SetName("p1").
+		SetEquipmentType(equipType1).
+		SaveX(ctx)
 
-	customer1, err := mr.AddCustomer(ctx, models.AddCustomerInput{
-		Name:       "Customer 1",
-		ExternalID: pointer.ToString("AD123"),
-	})
-	require.NoError(t, err)
+	client.EquipmentPortDefinition.Create().
+		SetName("p2").
+		SetEquipmentType(equipType1).
+		SaveX(ctx)
 
-	customer2, err := mr.AddCustomer(ctx, models.AddCustomerInput{
-		Name: "Customer 2",
-	})
-	require.NoError(t, err)
+	equipType2 := client.EquipmentType.Create().
+		SetName("etype2").
+		SaveX(ctx)
 
-	_, err = mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "L2 S1",
-		ExternalID:    pointer.ToString("XS542"),
-		ServiceTypeID: serviceType1.ID,
-		Status:        service.StatusInService,
-	})
-	require.NoError(t, err)
+	client.EquipmentPortDefinition.Create().
+		SetName("p1").
+		SetEquipmentType(equipType2).
+		SaveX(ctx)
 
-	strProp := models.PropertyInput{
-		PropertyTypeID: strType.ID,
-		StringValue:    pointer.ToString("Foo"),
-	}
-	intProp := models.PropertyInput{
-		PropertyTypeID: intType.ID,
-		IntValue:       pointer.ToInt(10),
-	}
+	client.EquipmentPortDefinition.Create().
+		SetName("p2").
+		SetEquipmentType(equipType2).
+		SaveX(ctx)
 
-	boolProp := models.PropertyInput{
-		PropertyTypeID: boolType.ID,
-		BooleanValue:   pointer.ToBool(false),
-	}
+	serviceType2 := client.ServiceType.Create().
+		SetName("L3 Service").
+		SetHasCustomer(true).
+		SaveX(ctx)
 
-	floatProp := models.PropertyInput{
-		PropertyTypeID: floatType.ID,
-		FloatValue:     pointer.ToFloat64(3.5),
-	}
+	client.ServiceEndpointDefinition.Create().
+		SetName("endpoint type1").
+		SetRole("CONSUMER").
+		SetIndex(0).
+		SetEquipmentType(equipType1).
+		SetServiceType(serviceType2).
+		SaveX(ctx)
 
-	_, err = mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "L3 S1",
-		ServiceTypeID: serviceType2.ID,
-		CustomerID:    &customer1.ID,
-		Properties:    []*models.PropertyInput{&strProp, &intProp, &boolProp},
-		Status:        service.StatusMaintenance,
-	})
-	require.NoError(t, err)
+	client.ServiceEndpointDefinition.Create().
+		SetName("endpoint type2").
+		SetRole("PROVIDER").
+		SetIndex(1).
+		SetEquipmentType(equipType2).
+		SetServiceType(serviceType2).
+		SaveX(ctx)
 
-	s2, err := mr.AddService(ctx, models.ServiceCreateData{
-		Name:          "L3 S2",
-		ServiceTypeID: serviceType2.ID,
-		CustomerID:    &customer2.ID,
-		Properties:    []*models.PropertyInput{&floatProp},
-		Status:        service.StatusDisconnected,
-	})
-	require.NoError(t, err)
-	e1, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     "e1",
-		Type:     equipType.ID,
-		Location: pointer.ToInt(loc1.ID),
-	})
-	require.NoError(t, err)
-	e2, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     "e2",
-		Type:     equipType2.ID,
-		Location: pointer.ToInt(loc1.ID),
-	})
-	require.NoError(t, err)
+	client.PropertyType.Create().
+		SetName(strPropTitle).
+		SetType(propertytype.TypeString).
+		SetServiceType(serviceType2).
+		SetStringVal("Foo is the best").
+		SaveX(ctx)
+	client.PropertyType.Create().
+		SetName(intPropTitle).
+		SetType(propertytype.TypeInt).
+		SetServiceType(serviceType2).
+		SaveX(ctx)
+	client.PropertyType.Create().
+		SetName(boolPropTitle).
+		SetType(propertytype.TypeBool).
+		SetServiceType(serviceType2).
+		SaveX(ctx)
+	client.PropertyType.Create().
+		SetName(floatPropTitle).
+		SetType(propertytype.TypeFloat).
+		SetServiceType(serviceType2).
+		SaveX(ctx)
 
-	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          s2.ID,
-		PortID:      nil,
-		EquipmentID: e1.ID,
-		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(0)).OnlyIDX(ctx),
-	})
-	require.NoError(t, err)
-	_, err = mr.AddServiceEndpoint(ctx, models.AddServiceEndpointInput{
-		ID:          s2.ID,
-		PortID:      nil,
-		EquipmentID: e2.ID,
-		Definition:  serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(1)).OnlyIDX(ctx),
-	})
-	require.NoError(t, err)
+	strType := serviceType2.QueryPropertyTypes().Where(propertytype.Name(strPropTitle)).OnlyX(ctx)
+	intType := serviceType2.QueryPropertyTypes().Where(propertytype.Name(intPropTitle)).OnlyX(ctx)
+	boolType := serviceType2.QueryPropertyTypes().Where(propertytype.Name(boolPropTitle)).OnlyX(ctx)
+	floatType := serviceType2.QueryPropertyTypes().Where(propertytype.Name(floatPropTitle)).OnlyX(ctx)
+
+	customer1 := client.Customer.Create().
+		SetName("Customer 1").
+		SetExternalID("AD123").
+		SaveX(ctx)
+	customer2 := client.Customer.Create().
+		SetName("Customer 2").
+		SaveX(ctx)
+
+	client.Service.Create().
+		SetName("L2 S1").
+		SetExternalID("XS542").
+		SetTypeID(serviceType1.ID).
+		SetStatus(service.StatusInService).
+		SaveX(ctx)
+
+	service1 := client.Service.Create().
+		SetName("L3 S1").
+		SetTypeID(serviceType2.ID).
+		AddCustomer(customer1).
+		SetStatus(service.StatusMaintenance).
+		SaveX(ctx)
+	client.Property.Create().
+		SetType(strType).
+		SetStringVal("Foo").
+		SetService(service1).
+		SaveX(ctx)
+	client.Property.Create().
+		SetType(intType).
+		SetIntVal(10).
+		SetService(service1).
+		SaveX(ctx)
+	client.Property.Create().
+		SetType(boolType).
+		SetBoolVal(false).
+		SetService(service1).
+		SaveX(ctx)
+
+	service2 := client.Service.Create().
+		SetName("L3 S2").
+		SetType(serviceType2).
+		AddCustomer(customer2).
+		SetStatus(service.StatusDisconnected).
+		SaveX(ctx)
+	client.Property.Create().
+		SetType(floatType).
+		SetFloatVal(3.5).
+		SetService(service2).
+		SaveX(ctx)
+
+	e1 := client.Equipment.Create().
+		SetName("e1").
+		SetType(equipType1).
+		SetLocation(loc1).
+		SaveX(ctx)
+	e2 := client.Equipment.Create().
+		SetName("e2").
+		SetType(equipType2).
+		SetLocation(loc1).
+		SaveX(ctx)
+
+	client.ServiceEndpoint.Create().
+		SetService(service2).
+		SetEquipment(e1).
+		SetDefinition(serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(0)).OnlyX(ctx)).
+		SaveX(ctx)
+	client.ServiceEndpoint.Create().
+		SetService(service2).
+		SetEquipment(e2).
+		SetDefinition(serviceType2.QueryEndpointDefinitions().Where(serviceendpointdefinition.Index(1)).OnlyX(ctx)).
+		SaveX(ctx)
 }
 
 func TestEmptyServicesDataExport(t *testing.T) {
-	r := importer.NewExporterTestResolver(t)
-	log := r.Exporter.Log
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.Client)
+	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -263,11 +251,12 @@ func TestEmptyServicesDataExport(t *testing.T) {
 }
 
 func TestServicesExport(t *testing.T) {
-	r := importer.NewExporterTestResolver(t)
-	log := r.Exporter.Log
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.Client)
+	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -275,8 +264,8 @@ func TestServicesExport(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.Client)
-	prepareServiceData(ctx, t, *r)
+	ctx := viewertest.NewContext(context.Background(), client)
+	prepareServiceData(ctx)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)
@@ -382,11 +371,12 @@ func TestServicesExport(t *testing.T) {
 }
 
 func TestServiceWithFilters(t *testing.T) {
-	r := importer.NewExporterTestResolver(t)
-	log := r.Exporter.Log
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
 
-	e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.ServicesRower{Log: log}}
-	th := viewertest.TestHandler(t, e, r.Client)
+	e := &Exporter{Log: log, Rower: ServicesRower{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
 
@@ -394,8 +384,8 @@ func TestServiceWithFilters(t *testing.T) {
 	require.NoError(t, err)
 	viewertest.SetDefaultViewerHeaders(req)
 
-	ctx := viewertest.NewContext(context.Background(), r.Client)
-	prepareServiceData(ctx, t, *r)
+	ctx := viewertest.NewContext(context.Background(), client)
+	prepareServiceData(ctx)
 	require.NoError(t, err)
 	res, err := http.DefaultClient.Do(req)
 	require.NoError(t, err)

@@ -9,10 +9,12 @@ import (
 	"context"
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -74,6 +76,11 @@ type Method string
 
 const Admin = "admin"
 const RoleAdmin = "ADMIN"
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	os.Exit(m.Run())
+}
 
 // nolint: funlen
 func PrepareData(ctx context.Context, t *testing.T) {

@@ -28,6 +28,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	propStr        = "propStr"
+	propStr2       = "propStr2"
+	parentLocation = "parentLocation"
+)
+
 func prepareSingleWOData(ctx context.Context, t *testing.T, r importer.TestExporterResolver) *ent.WorkOrder {
 	pkgexporter.PrepareData(ctx, t)
 
