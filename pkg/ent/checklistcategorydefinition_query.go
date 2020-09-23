@@ -133,23 +133,23 @@ func (clcdq *CheckListCategoryDefinitionQuery) QueryWorkOrderTemplate() *WorkOrd
 
 // First returns the first CheckListCategoryDefinition entity in the query. Returns *NotFoundError when no checklistcategorydefinition was found.
 func (clcdq *CheckListCategoryDefinitionQuery) First(ctx context.Context) (*CheckListCategoryDefinition, error) {
-	clcds, err := clcdq.Limit(1).All(ctx)
+	nodes, err := clcdq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(clcds) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{checklistcategorydefinition.Label}
 	}
-	return clcds[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (clcdq *CheckListCategoryDefinitionQuery) FirstX(ctx context.Context) *CheckListCategoryDefinition {
-	clcd, err := clcdq.First(ctx)
+	node, err := clcdq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return clcd
+	return node
 }
 
 // FirstID returns the first CheckListCategoryDefinition id in the query. Returns *NotFoundError when no id was found.
@@ -176,13 +176,13 @@ func (clcdq *CheckListCategoryDefinitionQuery) FirstXID(ctx context.Context) int
 
 // Only returns the only CheckListCategoryDefinition entity in the query, returns an error if not exactly one entity was returned.
 func (clcdq *CheckListCategoryDefinitionQuery) Only(ctx context.Context) (*CheckListCategoryDefinition, error) {
-	clcds, err := clcdq.Limit(2).All(ctx)
+	nodes, err := clcdq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(clcds) {
+	switch len(nodes) {
 	case 1:
-		return clcds[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{checklistcategorydefinition.Label}
 	default:
@@ -192,11 +192,11 @@ func (clcdq *CheckListCategoryDefinitionQuery) Only(ctx context.Context) (*Check
 
 // OnlyX is like Only, but panics if an error occurs.
 func (clcdq *CheckListCategoryDefinitionQuery) OnlyX(ctx context.Context) *CheckListCategoryDefinition {
-	clcd, err := clcdq.Only(ctx)
+	node, err := clcdq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clcd
+	return node
 }
 
 // OnlyID returns the only CheckListCategoryDefinition id in the query, returns an error if not exactly one id was returned.
@@ -235,11 +235,11 @@ func (clcdq *CheckListCategoryDefinitionQuery) All(ctx context.Context) ([]*Chec
 
 // AllX is like All, but panics if an error occurs.
 func (clcdq *CheckListCategoryDefinitionQuery) AllX(ctx context.Context) []*CheckListCategoryDefinition {
-	clcds, err := clcdq.All(ctx)
+	nodes, err := clcdq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clcds
+	return nodes
 }
 
 // IDs executes the query and returns a list of CheckListCategoryDefinition ids.
@@ -455,6 +455,7 @@ func (clcdq *CheckListCategoryDefinitionQuery) sqlAll(ctx context.Context) ([]*C
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CheckListItemDefinitions = []*CheckListItemDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.CheckListItemDefinition(func(s *sql.Selector) {

@@ -602,11 +602,11 @@ func (cliduo *CheckListItemDefinitionUpdateOne) Save(ctx context.Context) (*Chec
 
 // SaveX is like Save, but panics if an error occurs.
 func (cliduo *CheckListItemDefinitionUpdateOne) SaveX(ctx context.Context) *CheckListItemDefinition {
-	clid, err := cliduo.Save(ctx)
+	node, err := cliduo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clid
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -648,7 +648,7 @@ func (cliduo *CheckListItemDefinitionUpdateOne) check() error {
 	return nil
 }
 
-func (cliduo *CheckListItemDefinitionUpdateOne) sqlSave(ctx context.Context) (clid *CheckListItemDefinition, err error) {
+func (cliduo *CheckListItemDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *CheckListItemDefinition, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   checklistitemdefinition.Table,
@@ -792,9 +792,9 @@ func (cliduo *CheckListItemDefinitionUpdateOne) sqlSave(ctx context.Context) (cl
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	clid = &CheckListItemDefinition{config: cliduo.config}
-	_spec.Assign = clid.assignValues
-	_spec.ScanValues = clid.scanValues()
+	_node = &CheckListItemDefinition{config: cliduo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, cliduo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{checklistitemdefinition.Label}
@@ -803,5 +803,5 @@ func (cliduo *CheckListItemDefinitionUpdateOne) sqlSave(ctx context.Context) (cl
 		}
 		return nil, err
 	}
-	return clid, nil
+	return _node, nil
 }

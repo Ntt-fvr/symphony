@@ -108,23 +108,23 @@ func (fq *FeatureQuery) QueryGroups() *UsersGroupQuery {
 
 // First returns the first Feature entity in the query. Returns *NotFoundError when no feature was found.
 func (fq *FeatureQuery) First(ctx context.Context) (*Feature, error) {
-	fs, err := fq.Limit(1).All(ctx)
+	nodes, err := fq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{feature.Label}
 	}
-	return fs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fq *FeatureQuery) FirstX(ctx context.Context) *Feature {
-	f, err := fq.First(ctx)
+	node, err := fq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return f
+	return node
 }
 
 // FirstID returns the first Feature id in the query. Returns *NotFoundError when no id was found.
@@ -151,13 +151,13 @@ func (fq *FeatureQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Feature entity in the query, returns an error if not exactly one entity was returned.
 func (fq *FeatureQuery) Only(ctx context.Context) (*Feature, error) {
-	fs, err := fq.Limit(2).All(ctx)
+	nodes, err := fq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fs) {
+	switch len(nodes) {
 	case 1:
-		return fs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{feature.Label}
 	default:
@@ -167,11 +167,11 @@ func (fq *FeatureQuery) Only(ctx context.Context) (*Feature, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fq *FeatureQuery) OnlyX(ctx context.Context) *Feature {
-	f, err := fq.Only(ctx)
+	node, err := fq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return node
 }
 
 // OnlyID returns the only Feature id in the query, returns an error if not exactly one id was returned.
@@ -210,11 +210,11 @@ func (fq *FeatureQuery) All(ctx context.Context) ([]*Feature, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (fq *FeatureQuery) AllX(ctx context.Context) []*Feature {
-	fs, err := fq.All(ctx)
+	nodes, err := fq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fs
+	return nodes
 }
 
 // IDs executes the query and returns a list of Feature ids.
@@ -408,6 +408,7 @@ func (fq *FeatureQuery) sqlAll(ctx context.Context) ([]*Feature, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Users = []*User{}
 		}
 		var (
 			edgeids []int
@@ -471,6 +472,7 @@ func (fq *FeatureQuery) sqlAll(ctx context.Context) ([]*Feature, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Groups = []*UsersGroup{}
 		}
 		var (
 			edgeids []int

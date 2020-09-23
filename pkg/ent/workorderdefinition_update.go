@@ -508,11 +508,11 @@ func (woduo *WorkOrderDefinitionUpdateOne) Save(ctx context.Context) (*WorkOrder
 
 // SaveX is like Save, but panics if an error occurs.
 func (woduo *WorkOrderDefinitionUpdateOne) SaveX(ctx context.Context) *WorkOrderDefinition {
-	wod, err := woduo.Save(ctx)
+	node, err := woduo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wod
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -536,7 +536,7 @@ func (woduo *WorkOrderDefinitionUpdateOne) defaults() {
 	}
 }
 
-func (woduo *WorkOrderDefinitionUpdateOne) sqlSave(ctx context.Context) (wod *WorkOrderDefinition, err error) {
+func (woduo *WorkOrderDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrderDefinition, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   workorderdefinition.Table,
@@ -684,9 +684,9 @@ func (woduo *WorkOrderDefinitionUpdateOne) sqlSave(ctx context.Context) (wod *Wo
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	wod = &WorkOrderDefinition{config: woduo.config}
-	_spec.Assign = wod.assignValues
-	_spec.ScanValues = wod.scanValues()
+	_node = &WorkOrderDefinition{config: woduo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, woduo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorderdefinition.Label}
@@ -695,5 +695,5 @@ func (woduo *WorkOrderDefinitionUpdateOne) sqlSave(ctx context.Context) (wod *Wo
 		}
 		return nil, err
 	}
-	return wod, nil
+	return _node, nil
 }

@@ -180,7 +180,7 @@ func (stcc *SurveyTemplateCategoryCreate) check() error {
 }
 
 func (stcc *SurveyTemplateCategoryCreate) sqlSave(ctx context.Context) (*SurveyTemplateCategory, error) {
-	stc, _spec := stcc.createSpec()
+	_node, _spec := stcc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, stcc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -188,13 +188,13 @@ func (stcc *SurveyTemplateCategoryCreate) sqlSave(ctx context.Context) (*SurveyT
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	stc.ID = int(id)
-	return stc, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory, *sqlgraph.CreateSpec) {
 	var (
-		stc   = &SurveyTemplateCategory{config: stcc.config}
+		_node = &SurveyTemplateCategory{config: stcc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: surveytemplatecategory.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -209,7 +209,7 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 			Value:  value,
 			Column: surveytemplatecategory.FieldCreateTime,
 		})
-		stc.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := stcc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -217,7 +217,7 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 			Value:  value,
 			Column: surveytemplatecategory.FieldUpdateTime,
 		})
-		stc.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := stcc.mutation.CategoryTitle(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -225,7 +225,7 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 			Value:  value,
 			Column: surveytemplatecategory.FieldCategoryTitle,
 		})
-		stc.CategoryTitle = value
+		_node.CategoryTitle = value
 	}
 	if value, ok := stcc.mutation.CategoryDescription(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -233,7 +233,7 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 			Value:  value,
 			Column: surveytemplatecategory.FieldCategoryDescription,
 		})
-		stc.CategoryDescription = value
+		_node.CategoryDescription = value
 	}
 	if nodes := stcc.mutation.SurveyTemplateQuestionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -273,7 +273,7 @@ func (stcc *SurveyTemplateCategoryCreate) createSpec() (*SurveyTemplateCategory,
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return stc, _spec
+	return _node, _spec
 }
 
 // SurveyTemplateCategoryCreateBulk is the builder for creating a bulk of SurveyTemplateCategory entities.

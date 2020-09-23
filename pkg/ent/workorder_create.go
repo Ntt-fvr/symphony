@@ -499,7 +499,7 @@ func (woc *WorkOrderCreate) check() error {
 }
 
 func (woc *WorkOrderCreate) sqlSave(ctx context.Context) (*WorkOrder, error) {
-	wo, _spec := woc.createSpec()
+	_node, _spec := woc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, woc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -507,13 +507,13 @@ func (woc *WorkOrderCreate) sqlSave(ctx context.Context) (*WorkOrder, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	wo.ID = int(id)
-	return wo, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 	var (
-		wo    = &WorkOrder{config: woc.config}
+		_node = &WorkOrder{config: woc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: workorder.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -528,7 +528,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldCreateTime,
 		})
-		wo.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := woc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -536,7 +536,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldUpdateTime,
 		})
-		wo.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := woc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -544,7 +544,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldName,
 		})
-		wo.Name = value
+		_node.Name = value
 	}
 	if value, ok := woc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -552,7 +552,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldStatus,
 		})
-		wo.Status = value
+		_node.Status = value
 	}
 	if value, ok := woc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -560,7 +560,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldPriority,
 		})
-		wo.Priority = value
+		_node.Priority = value
 	}
 	if value, ok := woc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -568,7 +568,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldDescription,
 		})
-		wo.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := woc.mutation.InstallDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -576,7 +576,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldInstallDate,
 		})
-		wo.InstallDate = &value
+		_node.InstallDate = &value
 	}
 	if value, ok := woc.mutation.CreationDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -584,7 +584,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldCreationDate,
 		})
-		wo.CreationDate = value
+		_node.CreationDate = value
 	}
 	if value, ok := woc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -592,7 +592,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldIndex,
 		})
-		wo.Index = value
+		_node.Index = value
 	}
 	if value, ok := woc.mutation.CloseDate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -600,7 +600,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: workorder.FieldCloseDate,
 		})
-		wo.CloseDate = &value
+		_node.CloseDate = &value
 	}
 	if nodes := woc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -868,7 +868,7 @@ func (woc *WorkOrderCreate) createSpec() (*WorkOrder, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return wo, _spec
+	return _node, _spec
 }
 
 // WorkOrderCreateBulk is the builder for creating a bulk of WorkOrder entities.

@@ -205,23 +205,23 @@ func (epq *EquipmentPortQuery) QueryService() *ServiceQuery {
 
 // First returns the first EquipmentPort entity in the query. Returns *NotFoundError when no equipmentport was found.
 func (epq *EquipmentPortQuery) First(ctx context.Context) (*EquipmentPort, error) {
-	eps, err := epq.Limit(1).All(ctx)
+	nodes, err := epq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(eps) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{equipmentport.Label}
 	}
-	return eps[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (epq *EquipmentPortQuery) FirstX(ctx context.Context) *EquipmentPort {
-	ep, err := epq.First(ctx)
+	node, err := epq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return ep
+	return node
 }
 
 // FirstID returns the first EquipmentPort id in the query. Returns *NotFoundError when no id was found.
@@ -248,13 +248,13 @@ func (epq *EquipmentPortQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only EquipmentPort entity in the query, returns an error if not exactly one entity was returned.
 func (epq *EquipmentPortQuery) Only(ctx context.Context) (*EquipmentPort, error) {
-	eps, err := epq.Limit(2).All(ctx)
+	nodes, err := epq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(eps) {
+	switch len(nodes) {
 	case 1:
-		return eps[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{equipmentport.Label}
 	default:
@@ -264,11 +264,11 @@ func (epq *EquipmentPortQuery) Only(ctx context.Context) (*EquipmentPort, error)
 
 // OnlyX is like Only, but panics if an error occurs.
 func (epq *EquipmentPortQuery) OnlyX(ctx context.Context) *EquipmentPort {
-	ep, err := epq.Only(ctx)
+	node, err := epq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ep
+	return node
 }
 
 // OnlyID returns the only EquipmentPort id in the query, returns an error if not exactly one id was returned.
@@ -307,11 +307,11 @@ func (epq *EquipmentPortQuery) All(ctx context.Context) ([]*EquipmentPort, error
 
 // AllX is like All, but panics if an error occurs.
 func (epq *EquipmentPortQuery) AllX(ctx context.Context) []*EquipmentPort {
-	eps, err := epq.All(ctx)
+	nodes, err := epq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return eps
+	return nodes
 }
 
 // IDs executes the query and returns a list of EquipmentPort ids.
@@ -638,6 +638,7 @@ func (epq *EquipmentPortQuery) sqlAll(ctx context.Context) ([]*EquipmentPort, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {
@@ -666,6 +667,7 @@ func (epq *EquipmentPortQuery) sqlAll(ctx context.Context) ([]*EquipmentPort, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Endpoints = []*ServiceEndpoint{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ServiceEndpoint(func(s *sql.Selector) {
@@ -694,6 +696,7 @@ func (epq *EquipmentPortQuery) sqlAll(ctx context.Context) ([]*EquipmentPort, er
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Service = []*Service{}
 		}
 		var (
 			edgeids []int

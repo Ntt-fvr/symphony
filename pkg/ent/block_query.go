@@ -272,23 +272,23 @@ func (bq *BlockQuery) QueryInstances() *BlockInstanceQuery {
 
 // First returns the first Block entity in the query. Returns *NotFoundError when no block was found.
 func (bq *BlockQuery) First(ctx context.Context) (*Block, error) {
-	bs, err := bq.Limit(1).All(ctx)
+	nodes, err := bq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(bs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{block.Label}
 	}
-	return bs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (bq *BlockQuery) FirstX(ctx context.Context) *Block {
-	b, err := bq.First(ctx)
+	node, err := bq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return b
+	return node
 }
 
 // FirstID returns the first Block id in the query. Returns *NotFoundError when no id was found.
@@ -315,13 +315,13 @@ func (bq *BlockQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Block entity in the query, returns an error if not exactly one entity was returned.
 func (bq *BlockQuery) Only(ctx context.Context) (*Block, error) {
-	bs, err := bq.Limit(2).All(ctx)
+	nodes, err := bq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(bs) {
+	switch len(nodes) {
 	case 1:
-		return bs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{block.Label}
 	default:
@@ -331,11 +331,11 @@ func (bq *BlockQuery) Only(ctx context.Context) (*Block, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (bq *BlockQuery) OnlyX(ctx context.Context) *Block {
-	b, err := bq.Only(ctx)
+	node, err := bq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return b
+	return node
 }
 
 // OnlyID returns the only Block id in the query, returns an error if not exactly one id was returned.
@@ -374,11 +374,11 @@ func (bq *BlockQuery) All(ctx context.Context) ([]*Block, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (bq *BlockQuery) AllX(ctx context.Context) []*Block {
-	bs, err := bq.All(ctx)
+	nodes, err := bq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return bs
+	return nodes
 }
 
 // IDs executes the query and returns a list of Block ids.
@@ -666,6 +666,7 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.PrevBlocks = []*Block{}
 		}
 		var (
 			edgeids []int
@@ -729,6 +730,7 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.NextBlocks = []*Block{}
 		}
 		var (
 			edgeids []int
@@ -892,6 +894,7 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.SourceBlock = []*Block{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Block(func(s *sql.Selector) {
@@ -945,6 +948,7 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Instances = []*BlockInstance{}
 		}
 		query.withFKs = true
 		query.Where(predicate.BlockInstance(func(s *sql.Selector) {

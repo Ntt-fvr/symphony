@@ -357,7 +357,7 @@ func (swfsc *SurveyWiFiScanCreate) check() error {
 }
 
 func (swfsc *SurveyWiFiScanCreate) sqlSave(ctx context.Context) (*SurveyWiFiScan, error) {
-	swfs, _spec := swfsc.createSpec()
+	_node, _spec := swfsc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, swfsc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -365,13 +365,13 @@ func (swfsc *SurveyWiFiScanCreate) sqlSave(ctx context.Context) (*SurveyWiFiScan
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	swfs.ID = int(id)
-	return swfs, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.CreateSpec) {
 	var (
-		swfs  = &SurveyWiFiScan{config: swfsc.config}
+		_node = &SurveyWiFiScan{config: swfsc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: surveywifiscan.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -386,7 +386,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldCreateTime,
 		})
-		swfs.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := swfsc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -394,7 +394,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldUpdateTime,
 		})
-		swfs.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := swfsc.mutation.Ssid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -402,7 +402,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldSsid,
 		})
-		swfs.Ssid = value
+		_node.Ssid = value
 	}
 	if value, ok := swfsc.mutation.Bssid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -410,7 +410,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldBssid,
 		})
-		swfs.Bssid = value
+		_node.Bssid = value
 	}
 	if value, ok := swfsc.mutation.Timestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -418,7 +418,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldTimestamp,
 		})
-		swfs.Timestamp = value
+		_node.Timestamp = value
 	}
 	if value, ok := swfsc.mutation.Frequency(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -426,7 +426,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldFrequency,
 		})
-		swfs.Frequency = value
+		_node.Frequency = value
 	}
 	if value, ok := swfsc.mutation.Channel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -434,7 +434,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldChannel,
 		})
-		swfs.Channel = value
+		_node.Channel = value
 	}
 	if value, ok := swfsc.mutation.Band(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -442,7 +442,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldBand,
 		})
-		swfs.Band = value
+		_node.Band = value
 	}
 	if value, ok := swfsc.mutation.ChannelWidth(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -450,7 +450,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldChannelWidth,
 		})
-		swfs.ChannelWidth = value
+		_node.ChannelWidth = value
 	}
 	if value, ok := swfsc.mutation.Capabilities(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -458,7 +458,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldCapabilities,
 		})
-		swfs.Capabilities = value
+		_node.Capabilities = value
 	}
 	if value, ok := swfsc.mutation.Strength(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -466,7 +466,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldStrength,
 		})
-		swfs.Strength = value
+		_node.Strength = value
 	}
 	if value, ok := swfsc.mutation.Latitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -474,7 +474,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldLatitude,
 		})
-		swfs.Latitude = value
+		_node.Latitude = value
 	}
 	if value, ok := swfsc.mutation.Longitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -482,7 +482,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldLongitude,
 		})
-		swfs.Longitude = value
+		_node.Longitude = value
 	}
 	if value, ok := swfsc.mutation.Altitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -490,7 +490,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldAltitude,
 		})
-		swfs.Altitude = &value
+		_node.Altitude = &value
 	}
 	if value, ok := swfsc.mutation.Heading(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -498,7 +498,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldHeading,
 		})
-		swfs.Heading = &value
+		_node.Heading = &value
 	}
 	if value, ok := swfsc.mutation.Rssi(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -506,7 +506,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 			Value:  value,
 			Column: surveywifiscan.FieldRssi,
 		})
-		swfs.Rssi = &value
+		_node.Rssi = &value
 	}
 	if nodes := swfsc.mutation.ChecklistItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -565,7 +565,7 @@ func (swfsc *SurveyWiFiScanCreate) createSpec() (*SurveyWiFiScan, *sqlgraph.Crea
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return swfs, _spec
+	return _node, _spec
 }
 
 // SurveyWiFiScanCreateBulk is the builder for creating a bulk of SurveyWiFiScan entities.

@@ -242,7 +242,7 @@ func (bic *BlockInstanceCreate) check() error {
 }
 
 func (bic *BlockInstanceCreate) sqlSave(ctx context.Context) (*BlockInstance, error) {
-	bi, _spec := bic.createSpec()
+	_node, _spec := bic.createSpec()
 	if err := sqlgraph.CreateNode(ctx, bic.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -250,13 +250,13 @@ func (bic *BlockInstanceCreate) sqlSave(ctx context.Context) (*BlockInstance, er
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	bi.ID = int(id)
-	return bi, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSpec) {
 	var (
-		bi    = &BlockInstance{config: bic.config}
+		_node = &BlockInstance{config: bic.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: blockinstance.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -271,7 +271,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldCreateTime,
 		})
-		bi.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := bic.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -279,7 +279,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldUpdateTime,
 		})
-		bi.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := bic.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -287,7 +287,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldStatus,
 		})
-		bi.Status = value
+		_node.Status = value
 	}
 	if value, ok := bic.mutation.Inputs(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -295,7 +295,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldInputs,
 		})
-		bi.Inputs = value
+		_node.Inputs = value
 	}
 	if value, ok := bic.mutation.Outputs(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -303,7 +303,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldOutputs,
 		})
-		bi.Outputs = value
+		_node.Outputs = value
 	}
 	if value, ok := bic.mutation.FailureReason(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -311,7 +311,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldFailureReason,
 		})
-		bi.FailureReason = value
+		_node.FailureReason = value
 	}
 	if value, ok := bic.mutation.BlockInstanceCounter(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -319,7 +319,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 			Value:  value,
 			Column: blockinstance.FieldBlockInstanceCounter,
 		})
-		bi.BlockInstanceCounter = value
+		_node.BlockInstanceCounter = value
 	}
 	if nodes := bic.mutation.FlowInstanceIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -378,7 +378,7 @@ func (bic *BlockInstanceCreate) createSpec() (*BlockInstance, *sqlgraph.CreateSp
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return bi, _spec
+	return _node, _spec
 }
 
 // BlockInstanceCreateBulk is the builder for creating a bulk of BlockInstance entities.

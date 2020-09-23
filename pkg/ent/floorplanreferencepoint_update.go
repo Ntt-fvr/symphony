@@ -336,11 +336,11 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) Save(ctx context.Context) (*Floo
 
 // SaveX is like Save, but panics if an error occurs.
 func (fprpuo *FloorPlanReferencePointUpdateOne) SaveX(ctx context.Context) *FloorPlanReferencePoint {
-	fprp, err := fprpuo.Save(ctx)
+	node, err := fprpuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fprp
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -364,7 +364,7 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) defaults() {
 	}
 }
 
-func (fprpuo *FloorPlanReferencePointUpdateOne) sqlSave(ctx context.Context) (fprp *FloorPlanReferencePoint, err error) {
+func (fprpuo *FloorPlanReferencePointUpdateOne) sqlSave(ctx context.Context) (_node *FloorPlanReferencePoint, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   floorplanreferencepoint.Table,
@@ -443,9 +443,9 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) sqlSave(ctx context.Context) (fp
 			Column: floorplanreferencepoint.FieldLongitude,
 		})
 	}
-	fprp = &FloorPlanReferencePoint{config: fprpuo.config}
-	_spec.Assign = fprp.assignValues
-	_spec.ScanValues = fprp.scanValues()
+	_node = &FloorPlanReferencePoint{config: fprpuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fprpuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{floorplanreferencepoint.Label}
@@ -454,5 +454,5 @@ func (fprpuo *FloorPlanReferencePointUpdateOne) sqlSave(ctx context.Context) (fp
 		}
 		return nil, err
 	}
-	return fprp, nil
+	return _node, nil
 }

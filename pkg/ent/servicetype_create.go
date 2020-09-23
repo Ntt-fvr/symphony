@@ -251,7 +251,7 @@ func (stc *ServiceTypeCreate) check() error {
 }
 
 func (stc *ServiceTypeCreate) sqlSave(ctx context.Context) (*ServiceType, error) {
-	st, _spec := stc.createSpec()
+	_node, _spec := stc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, stc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -259,13 +259,13 @@ func (stc *ServiceTypeCreate) sqlSave(ctx context.Context) (*ServiceType, error)
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	st.ID = int(id)
-	return st, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) {
 	var (
-		st    = &ServiceType{config: stc.config}
+		_node = &ServiceType{config: stc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: servicetype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldCreateTime,
 		})
-		st.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := stc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -288,7 +288,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldUpdateTime,
 		})
-		st.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := stc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -296,7 +296,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldName,
 		})
-		st.Name = value
+		_node.Name = value
 	}
 	if value, ok := stc.mutation.HasCustomer(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -304,7 +304,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldHasCustomer,
 		})
-		st.HasCustomer = value
+		_node.HasCustomer = value
 	}
 	if value, ok := stc.mutation.IsDeleted(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -312,7 +312,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldIsDeleted,
 		})
-		st.IsDeleted = value
+		_node.IsDeleted = value
 	}
 	if value, ok := stc.mutation.DiscoveryMethod(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -320,7 +320,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: servicetype.FieldDiscoveryMethod,
 		})
-		st.DiscoveryMethod = value
+		_node.DiscoveryMethod = value
 	}
 	if nodes := stc.mutation.ServicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -379,7 +379,7 @@ func (stc *ServiceTypeCreate) createSpec() (*ServiceType, *sqlgraph.CreateSpec) 
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return st, _spec
+	return _node, _spec
 }
 
 // ServiceTypeCreateBulk is the builder for creating a bulk of ServiceType entities.

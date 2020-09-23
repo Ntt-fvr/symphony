@@ -175,7 +175,7 @@ func (rfc *ReportFilterCreate) check() error {
 }
 
 func (rfc *ReportFilterCreate) sqlSave(ctx context.Context) (*ReportFilter, error) {
-	rf, _spec := rfc.createSpec()
+	_node, _spec := rfc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, rfc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -183,13 +183,13 @@ func (rfc *ReportFilterCreate) sqlSave(ctx context.Context) (*ReportFilter, erro
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	rf.ID = int(id)
-	return rf, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec) {
 	var (
-		rf    = &ReportFilter{config: rfc.config}
+		_node = &ReportFilter{config: rfc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: reportfilter.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -204,7 +204,7 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: reportfilter.FieldCreateTime,
 		})
-		rf.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := rfc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -212,7 +212,7 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: reportfilter.FieldUpdateTime,
 		})
-		rf.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := rfc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -220,7 +220,7 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: reportfilter.FieldName,
 		})
-		rf.Name = value
+		_node.Name = value
 	}
 	if value, ok := rfc.mutation.Entity(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -228,7 +228,7 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: reportfilter.FieldEntity,
 		})
-		rf.Entity = value
+		_node.Entity = value
 	}
 	if value, ok := rfc.mutation.Filters(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -236,9 +236,9 @@ func (rfc *ReportFilterCreate) createSpec() (*ReportFilter, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: reportfilter.FieldFilters,
 		})
-		rf.Filters = value
+		_node.Filters = value
 	}
-	return rf, _spec
+	return _node, _spec
 }
 
 // ReportFilterCreateBulk is the builder for creating a bulk of ReportFilter entities.

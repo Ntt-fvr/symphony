@@ -151,7 +151,7 @@ func (ecc *EquipmentCategoryCreate) check() error {
 }
 
 func (ecc *EquipmentCategoryCreate) sqlSave(ctx context.Context) (*EquipmentCategory, error) {
-	ec, _spec := ecc.createSpec()
+	_node, _spec := ecc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ecc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -159,13 +159,13 @@ func (ecc *EquipmentCategoryCreate) sqlSave(ctx context.Context) (*EquipmentCate
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	ec.ID = int(id)
-	return ec, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.CreateSpec) {
 	var (
-		ec    = &EquipmentCategory{config: ecc.config}
+		_node = &EquipmentCategory{config: ecc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmentcategory.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -180,7 +180,7 @@ func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.
 			Value:  value,
 			Column: equipmentcategory.FieldCreateTime,
 		})
-		ec.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ecc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -188,7 +188,7 @@ func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.
 			Value:  value,
 			Column: equipmentcategory.FieldUpdateTime,
 		})
-		ec.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ecc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -196,7 +196,7 @@ func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.
 			Value:  value,
 			Column: equipmentcategory.FieldName,
 		})
-		ec.Name = value
+		_node.Name = value
 	}
 	if nodes := ecc.mutation.TypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -217,7 +217,7 @@ func (ecc *EquipmentCategoryCreate) createSpec() (*EquipmentCategory, *sqlgraph.
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return ec, _spec
+	return _node, _spec
 }
 
 // EquipmentCategoryCreateBulk is the builder for creating a bulk of EquipmentCategory entities.

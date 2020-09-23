@@ -569,11 +569,11 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) Save(ctx context.Context) (*
 
 // SaveX is like Save, but panics if an error occurs.
 func (clcduo *CheckListCategoryDefinitionUpdateOne) SaveX(ctx context.Context) *CheckListCategoryDefinition {
-	clcd, err := clcduo.Save(ctx)
+	node, err := clcduo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clcd
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -607,7 +607,7 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) check() error {
 	return nil
 }
 
-func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context) (clcd *CheckListCategoryDefinition, err error) {
+func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *CheckListCategoryDefinition, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   checklistcategorydefinition.Table,
@@ -774,9 +774,9 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	clcd = &CheckListCategoryDefinition{config: clcduo.config}
-	_spec.Assign = clcd.assignValues
-	_spec.ScanValues = clcd.scanValues()
+	_node = &CheckListCategoryDefinition{config: clcduo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, clcduo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{checklistcategorydefinition.Label}
@@ -785,5 +785,5 @@ func (clcduo *CheckListCategoryDefinitionUpdateOne) sqlSave(ctx context.Context)
 		}
 		return nil, err
 	}
-	return clcd, nil
+	return _node, nil
 }

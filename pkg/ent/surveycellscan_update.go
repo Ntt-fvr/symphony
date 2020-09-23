@@ -1818,11 +1818,11 @@ func (scsuo *SurveyCellScanUpdateOne) Save(ctx context.Context) (*SurveyCellScan
 
 // SaveX is like Save, but panics if an error occurs.
 func (scsuo *SurveyCellScanUpdateOne) SaveX(ctx context.Context) *SurveyCellScan {
-	scs, err := scsuo.Save(ctx)
+	node, err := scsuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return scs
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1856,7 +1856,7 @@ func (scsuo *SurveyCellScanUpdateOne) check() error {
 	return nil
 }
 
-func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyCellScan, err error) {
+func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (_node *SurveyCellScan, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   surveycellscan.Table,
@@ -2341,9 +2341,9 @@ func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyC
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	scs = &SurveyCellScan{config: scsuo.config}
-	_spec.Assign = scs.assignValues
-	_spec.ScanValues = scs.scanValues()
+	_node = &SurveyCellScan{config: scsuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, scsuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{surveycellscan.Label}
@@ -2352,5 +2352,5 @@ func (scsuo *SurveyCellScanUpdateOne) sqlSave(ctx context.Context) (scs *SurveyC
 		}
 		return nil, err
 	}
-	return scs, nil
+	return _node, nil
 }

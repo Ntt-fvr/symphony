@@ -248,7 +248,7 @@ func (fic *FlowInstanceCreate) check() error {
 }
 
 func (fic *FlowInstanceCreate) sqlSave(ctx context.Context) (*FlowInstance, error) {
-	fi, _spec := fic.createSpec()
+	_node, _spec := fic.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fic.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -256,13 +256,13 @@ func (fic *FlowInstanceCreate) sqlSave(ctx context.Context) (*FlowInstance, erro
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fi.ID = int(id)
-	return fi, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec) {
 	var (
-		fi    = &FlowInstance{config: fic.config}
+		_node = &FlowInstance{config: fic.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: flowinstance.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -277,7 +277,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: flowinstance.FieldCreateTime,
 		})
-		fi.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fic.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -285,7 +285,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: flowinstance.FieldUpdateTime,
 		})
-		fi.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fic.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -293,7 +293,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: flowinstance.FieldStatus,
 		})
-		fi.Status = value
+		_node.Status = value
 	}
 	if value, ok := fic.mutation.OutputParams(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -301,7 +301,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: flowinstance.FieldOutputParams,
 		})
-		fi.OutputParams = value
+		_node.OutputParams = value
 	}
 	if value, ok := fic.mutation.IncompletionReason(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -309,7 +309,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: flowinstance.FieldIncompletionReason,
 		})
-		fi.IncompletionReason = value
+		_node.IncompletionReason = value
 	}
 	if nodes := fic.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -387,7 +387,7 @@ func (fic *FlowInstanceCreate) createSpec() (*FlowInstance, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return fi, _spec
+	return _node, _spec
 }
 
 // FlowInstanceCreateBulk is the builder for creating a bulk of FlowInstance entities.

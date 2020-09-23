@@ -196,7 +196,7 @@ func (sec *ServiceEndpointCreate) check() error {
 }
 
 func (sec *ServiceEndpointCreate) sqlSave(ctx context.Context) (*ServiceEndpoint, error) {
-	se, _spec := sec.createSpec()
+	_node, _spec := sec.createSpec()
 	if err := sqlgraph.CreateNode(ctx, sec.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -204,13 +204,13 @@ func (sec *ServiceEndpointCreate) sqlSave(ctx context.Context) (*ServiceEndpoint
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	se.ID = int(id)
-	return se, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.CreateSpec) {
 	var (
-		se    = &ServiceEndpoint{config: sec.config}
+		_node = &ServiceEndpoint{config: sec.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: serviceendpoint.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -225,7 +225,7 @@ func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.Crea
 			Value:  value,
 			Column: serviceendpoint.FieldCreateTime,
 		})
-		se.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := sec.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -233,7 +233,7 @@ func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.Crea
 			Value:  value,
 			Column: serviceendpoint.FieldUpdateTime,
 		})
-		se.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if nodes := sec.mutation.PortIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -311,7 +311,7 @@ func (sec *ServiceEndpointCreate) createSpec() (*ServiceEndpoint, *sqlgraph.Crea
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return se, _spec
+	return _node, _spec
 }
 
 // ServiceEndpointCreateBulk is the builder for creating a bulk of ServiceEndpoint entities.

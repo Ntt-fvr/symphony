@@ -703,11 +703,11 @@ func (stuo *ServiceTypeUpdateOne) Save(ctx context.Context) (*ServiceType, error
 
 // SaveX is like Save, but panics if an error occurs.
 func (stuo *ServiceTypeUpdateOne) SaveX(ctx context.Context) *ServiceType {
-	st, err := stuo.Save(ctx)
+	node, err := stuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return st
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -741,7 +741,7 @@ func (stuo *ServiceTypeUpdateOne) check() error {
 	return nil
 }
 
-func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType, err error) {
+func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (_node *ServiceType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   servicetype.Table,
@@ -954,9 +954,9 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	st = &ServiceType{config: stuo.config}
-	_spec.Assign = st.assignValues
-	_spec.ScanValues = st.scanValues()
+	_node = &ServiceType{config: stuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, stuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{servicetype.Label}
@@ -965,5 +965,5 @@ func (stuo *ServiceTypeUpdateOne) sqlSave(ctx context.Context) (st *ServiceType,
 		}
 		return nil, err
 	}
-	return st, nil
+	return _node, nil
 }

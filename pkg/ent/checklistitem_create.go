@@ -301,7 +301,7 @@ func (clic *CheckListItemCreate) check() error {
 }
 
 func (clic *CheckListItemCreate) sqlSave(ctx context.Context) (*CheckListItem, error) {
-	cli, _spec := clic.createSpec()
+	_node, _spec := clic.createSpec()
 	if err := sqlgraph.CreateNode(ctx, clic.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -309,13 +309,13 @@ func (clic *CheckListItemCreate) sqlSave(ctx context.Context) (*CheckListItem, e
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	cli.ID = int(id)
-	return cli, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateSpec) {
 	var (
-		cli   = &CheckListItem{config: clic.config}
+		_node = &CheckListItem{config: clic.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: checklistitem.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -330,7 +330,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldTitle,
 		})
-		cli.Title = value
+		_node.Title = value
 	}
 	if value, ok := clic.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -338,7 +338,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldType,
 		})
-		cli.Type = value
+		_node.Type = value
 	}
 	if value, ok := clic.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -346,7 +346,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldIndex,
 		})
-		cli.Index = value
+		_node.Index = value
 	}
 	if value, ok := clic.mutation.IsMandatory(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -354,7 +354,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldIsMandatory,
 		})
-		cli.IsMandatory = value
+		_node.IsMandatory = value
 	}
 	if value, ok := clic.mutation.Checked(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -362,7 +362,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldChecked,
 		})
-		cli.Checked = value
+		_node.Checked = value
 	}
 	if value, ok := clic.mutation.StringVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -370,7 +370,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldStringVal,
 		})
-		cli.StringVal = value
+		_node.StringVal = value
 	}
 	if value, ok := clic.mutation.EnumValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -378,7 +378,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldEnumValues,
 		})
-		cli.EnumValues = value
+		_node.EnumValues = value
 	}
 	if value, ok := clic.mutation.EnumSelectionModeValue(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -386,7 +386,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldEnumSelectionModeValue,
 		})
-		cli.EnumSelectionModeValue = &value
+		_node.EnumSelectionModeValue = &value
 	}
 	if value, ok := clic.mutation.SelectedEnumValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -394,7 +394,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldSelectedEnumValues,
 		})
-		cli.SelectedEnumValues = value
+		_node.SelectedEnumValues = value
 	}
 	if value, ok := clic.mutation.YesNoVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -402,7 +402,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldYesNoVal,
 		})
-		cli.YesNoVal = &value
+		_node.YesNoVal = &value
 	}
 	if value, ok := clic.mutation.HelpText(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -410,7 +410,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 			Value:  value,
 			Column: checklistitem.FieldHelpText,
 		})
-		cli.HelpText = &value
+		_node.HelpText = &value
 	}
 	if nodes := clic.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -488,7 +488,7 @@ func (clic *CheckListItemCreate) createSpec() (*CheckListItem, *sqlgraph.CreateS
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return cli, _spec
+	return _node, _spec
 }
 
 // CheckListItemCreateBulk is the builder for creating a bulk of CheckListItem entities.

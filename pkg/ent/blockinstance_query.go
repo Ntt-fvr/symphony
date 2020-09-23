@@ -132,23 +132,23 @@ func (biq *BlockInstanceQuery) QuerySubflowInstance() *FlowInstanceQuery {
 
 // First returns the first BlockInstance entity in the query. Returns *NotFoundError when no blockinstance was found.
 func (biq *BlockInstanceQuery) First(ctx context.Context) (*BlockInstance, error) {
-	bis, err := biq.Limit(1).All(ctx)
+	nodes, err := biq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(bis) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{blockinstance.Label}
 	}
-	return bis[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (biq *BlockInstanceQuery) FirstX(ctx context.Context) *BlockInstance {
-	bi, err := biq.First(ctx)
+	node, err := biq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return bi
+	return node
 }
 
 // FirstID returns the first BlockInstance id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (biq *BlockInstanceQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only BlockInstance entity in the query, returns an error if not exactly one entity was returned.
 func (biq *BlockInstanceQuery) Only(ctx context.Context) (*BlockInstance, error) {
-	bis, err := biq.Limit(2).All(ctx)
+	nodes, err := biq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(bis) {
+	switch len(nodes) {
 	case 1:
-		return bis[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{blockinstance.Label}
 	default:
@@ -191,11 +191,11 @@ func (biq *BlockInstanceQuery) Only(ctx context.Context) (*BlockInstance, error)
 
 // OnlyX is like Only, but panics if an error occurs.
 func (biq *BlockInstanceQuery) OnlyX(ctx context.Context) *BlockInstance {
-	bi, err := biq.Only(ctx)
+	node, err := biq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return bi
+	return node
 }
 
 // OnlyID returns the only BlockInstance id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (biq *BlockInstanceQuery) All(ctx context.Context) ([]*BlockInstance, error
 
 // AllX is like All, but panics if an error occurs.
 func (biq *BlockInstanceQuery) AllX(ctx context.Context) []*BlockInstance {
-	bis, err := biq.All(ctx)
+	nodes, err := biq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return bis
+	return nodes
 }
 
 // IDs executes the query and returns a list of BlockInstance ids.

@@ -575,11 +575,11 @@ func (eptuo *EquipmentPortTypeUpdateOne) Save(ctx context.Context) (*EquipmentPo
 
 // SaveX is like Save, but panics if an error occurs.
 func (eptuo *EquipmentPortTypeUpdateOne) SaveX(ctx context.Context) *EquipmentPortType {
-	ept, err := eptuo.Save(ctx)
+	node, err := eptuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ept
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -603,7 +603,7 @@ func (eptuo *EquipmentPortTypeUpdateOne) defaults() {
 	}
 }
 
-func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *EquipmentPortType, err error) {
+func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (_node *EquipmentPortType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   equipmentporttype.Table,
@@ -795,9 +795,9 @@ func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *Equi
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	ept = &EquipmentPortType{config: eptuo.config}
-	_spec.Assign = ept.assignValues
-	_spec.ScanValues = ept.scanValues()
+	_node = &EquipmentPortType{config: eptuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, eptuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{equipmentporttype.Label}
@@ -806,5 +806,5 @@ func (eptuo *EquipmentPortTypeUpdateOne) sqlSave(ctx context.Context) (ept *Equi
 		}
 		return nil, err
 	}
-	return ept, nil
+	return _node, nil
 }

@@ -521,11 +521,11 @@ func (fduo *FlowDraftUpdateOne) Save(ctx context.Context) (*FlowDraft, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (fduo *FlowDraftUpdateOne) SaveX(ctx context.Context) *FlowDraft {
-	fd, err := fduo.Save(ctx)
+	node, err := fduo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fd
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -559,7 +559,7 @@ func (fduo *FlowDraftUpdateOne) check() error {
 	return nil
 }
 
-func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err error) {
+func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (_node *FlowDraft, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   flowdraft.Table,
@@ -704,9 +704,9 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	fd = &FlowDraft{config: fduo.config}
-	_spec.Assign = fd.assignValues
-	_spec.ScanValues = fd.scanValues()
+	_node = &FlowDraft{config: fduo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fduo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{flowdraft.Label}
@@ -715,5 +715,5 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (fd *FlowDraft, err
 		}
 		return nil, err
 	}
-	return fd, nil
+	return _node, nil
 }

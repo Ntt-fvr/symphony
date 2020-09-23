@@ -186,7 +186,7 @@ func (fc *FeatureCreate) check() error {
 }
 
 func (fc *FeatureCreate) sqlSave(ctx context.Context) (*Feature, error) {
-	f, _spec := fc.createSpec()
+	_node, _spec := fc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -194,13 +194,13 @@ func (fc *FeatureCreate) sqlSave(ctx context.Context) (*Feature, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	f.ID = int(id)
-	return f, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 	var (
-		f     = &Feature{config: fc.config}
+		_node = &Feature{config: fc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: feature.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -215,7 +215,7 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: feature.FieldCreateTime,
 		})
-		f.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -223,7 +223,7 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: feature.FieldUpdateTime,
 		})
-		f.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -231,7 +231,7 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: feature.FieldName,
 		})
-		f.Name = value
+		_node.Name = value
 	}
 	if value, ok := fc.mutation.Global(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -239,7 +239,7 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: feature.FieldGlobal,
 		})
-		f.Global = value
+		_node.Global = value
 	}
 	if nodes := fc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -279,7 +279,7 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return f, _spec
+	return _node, _spec
 }
 
 // FeatureCreateBulk is the builder for creating a bulk of Feature entities.

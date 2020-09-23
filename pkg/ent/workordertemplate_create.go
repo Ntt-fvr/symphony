@@ -219,7 +219,7 @@ func (wotc *WorkOrderTemplateCreate) check() error {
 }
 
 func (wotc *WorkOrderTemplateCreate) sqlSave(ctx context.Context) (*WorkOrderTemplate, error) {
-	wot, _spec := wotc.createSpec()
+	_node, _spec := wotc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, wotc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -227,13 +227,13 @@ func (wotc *WorkOrderTemplateCreate) sqlSave(ctx context.Context) (*WorkOrderTem
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	wot.ID = int(id)
-	return wot, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph.CreateSpec) {
 	var (
-		wot   = &WorkOrderTemplate{config: wotc.config}
+		_node = &WorkOrderTemplate{config: wotc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: workordertemplate.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -248,7 +248,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldCreateTime,
 		})
-		wot.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := wotc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -256,7 +256,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldUpdateTime,
 		})
-		wot.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := wotc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -264,7 +264,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldName,
 		})
-		wot.Name = value
+		_node.Name = value
 	}
 	if value, ok := wotc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -272,7 +272,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldDescription,
 		})
-		wot.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := wotc.mutation.AssigneeCanCompleteWorkOrder(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 			Value:  value,
 			Column: workordertemplate.FieldAssigneeCanCompleteWorkOrder,
 		})
-		wot.AssigneeCanCompleteWorkOrder = value
+		_node.AssigneeCanCompleteWorkOrder = value
 	}
 	if nodes := wotc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -339,7 +339,7 @@ func (wotc *WorkOrderTemplateCreate) createSpec() (*WorkOrderTemplate, *sqlgraph
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return wot, _spec
+	return _node, _spec
 }
 
 // WorkOrderTemplateCreateBulk is the builder for creating a bulk of WorkOrderTemplate entities.

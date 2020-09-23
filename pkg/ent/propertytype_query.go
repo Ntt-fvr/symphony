@@ -300,23 +300,23 @@ func (ptq *PropertyTypeQuery) QueryProjectTemplate() *ProjectTemplateQuery {
 
 // First returns the first PropertyType entity in the query. Returns *NotFoundError when no propertytype was found.
 func (ptq *PropertyTypeQuery) First(ctx context.Context) (*PropertyType, error) {
-	pts, err := ptq.Limit(1).All(ctx)
+	nodes, err := ptq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(pts) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{propertytype.Label}
 	}
-	return pts[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ptq *PropertyTypeQuery) FirstX(ctx context.Context) *PropertyType {
-	pt, err := ptq.First(ctx)
+	node, err := ptq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // FirstID returns the first PropertyType id in the query. Returns *NotFoundError when no id was found.
@@ -343,13 +343,13 @@ func (ptq *PropertyTypeQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only PropertyType entity in the query, returns an error if not exactly one entity was returned.
 func (ptq *PropertyTypeQuery) Only(ctx context.Context) (*PropertyType, error) {
-	pts, err := ptq.Limit(2).All(ctx)
+	nodes, err := ptq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(pts) {
+	switch len(nodes) {
 	case 1:
-		return pts[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{propertytype.Label}
 	default:
@@ -359,11 +359,11 @@ func (ptq *PropertyTypeQuery) Only(ctx context.Context) (*PropertyType, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ptq *PropertyTypeQuery) OnlyX(ctx context.Context) *PropertyType {
-	pt, err := ptq.Only(ctx)
+	node, err := ptq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // OnlyID returns the only PropertyType id in the query, returns an error if not exactly one id was returned.
@@ -402,11 +402,11 @@ func (ptq *PropertyTypeQuery) All(ctx context.Context) ([]*PropertyType, error) 
 
 // AllX is like All, but panics if an error occurs.
 func (ptq *PropertyTypeQuery) AllX(ctx context.Context) []*PropertyType {
-	pts, err := ptq.All(ctx)
+	nodes, err := ptq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pts
+	return nodes
 }
 
 // IDs executes the query and returns a list of PropertyType ids.
@@ -706,6 +706,7 @@ func (ptq *PropertyTypeQuery) sqlAll(ctx context.Context) ([]*PropertyType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {

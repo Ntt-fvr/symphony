@@ -84,23 +84,23 @@ func (clidq *CheckListItemDefinitionQuery) QueryCheckListCategoryDefinition() *C
 
 // First returns the first CheckListItemDefinition entity in the query. Returns *NotFoundError when no checklistitemdefinition was found.
 func (clidq *CheckListItemDefinitionQuery) First(ctx context.Context) (*CheckListItemDefinition, error) {
-	clids, err := clidq.Limit(1).All(ctx)
+	nodes, err := clidq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(clids) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{checklistitemdefinition.Label}
 	}
-	return clids[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (clidq *CheckListItemDefinitionQuery) FirstX(ctx context.Context) *CheckListItemDefinition {
-	clid, err := clidq.First(ctx)
+	node, err := clidq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return clid
+	return node
 }
 
 // FirstID returns the first CheckListItemDefinition id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (clidq *CheckListItemDefinitionQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only CheckListItemDefinition entity in the query, returns an error if not exactly one entity was returned.
 func (clidq *CheckListItemDefinitionQuery) Only(ctx context.Context) (*CheckListItemDefinition, error) {
-	clids, err := clidq.Limit(2).All(ctx)
+	nodes, err := clidq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(clids) {
+	switch len(nodes) {
 	case 1:
-		return clids[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{checklistitemdefinition.Label}
 	default:
@@ -143,11 +143,11 @@ func (clidq *CheckListItemDefinitionQuery) Only(ctx context.Context) (*CheckList
 
 // OnlyX is like Only, but panics if an error occurs.
 func (clidq *CheckListItemDefinitionQuery) OnlyX(ctx context.Context) *CheckListItemDefinition {
-	clid, err := clidq.Only(ctx)
+	node, err := clidq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clid
+	return node
 }
 
 // OnlyID returns the only CheckListItemDefinition id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (clidq *CheckListItemDefinitionQuery) All(ctx context.Context) ([]*CheckLis
 
 // AllX is like All, but panics if an error occurs.
 func (clidq *CheckListItemDefinitionQuery) AllX(ctx context.Context) []*CheckListItemDefinition {
-	clids, err := clidq.All(ctx)
+	nodes, err := clidq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clids
+	return nodes
 }
 
 // IDs executes the query and returns a list of CheckListItemDefinition ids.

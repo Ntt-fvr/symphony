@@ -58,23 +58,23 @@ func (etq *ExportTaskQuery) Order(o ...OrderFunc) *ExportTaskQuery {
 
 // First returns the first ExportTask entity in the query. Returns *NotFoundError when no exporttask was found.
 func (etq *ExportTaskQuery) First(ctx context.Context) (*ExportTask, error) {
-	ets, err := etq.Limit(1).All(ctx)
+	nodes, err := etq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ets) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{exporttask.Label}
 	}
-	return ets[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (etq *ExportTaskQuery) FirstX(ctx context.Context) *ExportTask {
-	et, err := etq.First(ctx)
+	node, err := etq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return et
+	return node
 }
 
 // FirstID returns the first ExportTask id in the query. Returns *NotFoundError when no id was found.
@@ -101,13 +101,13 @@ func (etq *ExportTaskQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ExportTask entity in the query, returns an error if not exactly one entity was returned.
 func (etq *ExportTaskQuery) Only(ctx context.Context) (*ExportTask, error) {
-	ets, err := etq.Limit(2).All(ctx)
+	nodes, err := etq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ets) {
+	switch len(nodes) {
 	case 1:
-		return ets[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{exporttask.Label}
 	default:
@@ -117,11 +117,11 @@ func (etq *ExportTaskQuery) Only(ctx context.Context) (*ExportTask, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (etq *ExportTaskQuery) OnlyX(ctx context.Context) *ExportTask {
-	et, err := etq.Only(ctx)
+	node, err := etq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return et
+	return node
 }
 
 // OnlyID returns the only ExportTask id in the query, returns an error if not exactly one id was returned.
@@ -160,11 +160,11 @@ func (etq *ExportTaskQuery) All(ctx context.Context) ([]*ExportTask, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (etq *ExportTaskQuery) AllX(ctx context.Context) []*ExportTask {
-	ets, err := etq.All(ctx)
+	nodes, err := etq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ets
+	return nodes
 }
 
 // IDs executes the query and returns a list of ExportTask ids.

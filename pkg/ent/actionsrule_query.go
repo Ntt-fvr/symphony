@@ -58,23 +58,23 @@ func (arq *ActionsRuleQuery) Order(o ...OrderFunc) *ActionsRuleQuery {
 
 // First returns the first ActionsRule entity in the query. Returns *NotFoundError when no actionsrule was found.
 func (arq *ActionsRuleQuery) First(ctx context.Context) (*ActionsRule, error) {
-	ars, err := arq.Limit(1).All(ctx)
+	nodes, err := arq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ars) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{actionsrule.Label}
 	}
-	return ars[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (arq *ActionsRuleQuery) FirstX(ctx context.Context) *ActionsRule {
-	ar, err := arq.First(ctx)
+	node, err := arq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return ar
+	return node
 }
 
 // FirstID returns the first ActionsRule id in the query. Returns *NotFoundError when no id was found.
@@ -101,13 +101,13 @@ func (arq *ActionsRuleQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ActionsRule entity in the query, returns an error if not exactly one entity was returned.
 func (arq *ActionsRuleQuery) Only(ctx context.Context) (*ActionsRule, error) {
-	ars, err := arq.Limit(2).All(ctx)
+	nodes, err := arq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ars) {
+	switch len(nodes) {
 	case 1:
-		return ars[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{actionsrule.Label}
 	default:
@@ -117,11 +117,11 @@ func (arq *ActionsRuleQuery) Only(ctx context.Context) (*ActionsRule, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (arq *ActionsRuleQuery) OnlyX(ctx context.Context) *ActionsRule {
-	ar, err := arq.Only(ctx)
+	node, err := arq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ar
+	return node
 }
 
 // OnlyID returns the only ActionsRule id in the query, returns an error if not exactly one id was returned.
@@ -160,11 +160,11 @@ func (arq *ActionsRuleQuery) All(ctx context.Context) ([]*ActionsRule, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (arq *ActionsRuleQuery) AllX(ctx context.Context) []*ActionsRule {
-	ars, err := arq.All(ctx)
+	nodes, err := arq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ars
+	return nodes
 }
 
 // IDs executes the query and returns a list of ActionsRule ids.

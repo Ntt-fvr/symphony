@@ -109,23 +109,23 @@ func (clcq *CheckListCategoryQuery) QueryWorkOrder() *WorkOrderQuery {
 
 // First returns the first CheckListCategory entity in the query. Returns *NotFoundError when no checklistcategory was found.
 func (clcq *CheckListCategoryQuery) First(ctx context.Context) (*CheckListCategory, error) {
-	clcs, err := clcq.Limit(1).All(ctx)
+	nodes, err := clcq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(clcs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{checklistcategory.Label}
 	}
-	return clcs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (clcq *CheckListCategoryQuery) FirstX(ctx context.Context) *CheckListCategory {
-	clc, err := clcq.First(ctx)
+	node, err := clcq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return clc
+	return node
 }
 
 // FirstID returns the first CheckListCategory id in the query. Returns *NotFoundError when no id was found.
@@ -152,13 +152,13 @@ func (clcq *CheckListCategoryQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only CheckListCategory entity in the query, returns an error if not exactly one entity was returned.
 func (clcq *CheckListCategoryQuery) Only(ctx context.Context) (*CheckListCategory, error) {
-	clcs, err := clcq.Limit(2).All(ctx)
+	nodes, err := clcq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(clcs) {
+	switch len(nodes) {
 	case 1:
-		return clcs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{checklistcategory.Label}
 	default:
@@ -168,11 +168,11 @@ func (clcq *CheckListCategoryQuery) Only(ctx context.Context) (*CheckListCategor
 
 // OnlyX is like Only, but panics if an error occurs.
 func (clcq *CheckListCategoryQuery) OnlyX(ctx context.Context) *CheckListCategory {
-	clc, err := clcq.Only(ctx)
+	node, err := clcq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clc
+	return node
 }
 
 // OnlyID returns the only CheckListCategory id in the query, returns an error if not exactly one id was returned.
@@ -211,11 +211,11 @@ func (clcq *CheckListCategoryQuery) All(ctx context.Context) ([]*CheckListCatego
 
 // AllX is like All, but panics if an error occurs.
 func (clcq *CheckListCategoryQuery) AllX(ctx context.Context) []*CheckListCategory {
-	clcs, err := clcq.All(ctx)
+	nodes, err := clcq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clcs
+	return nodes
 }
 
 // IDs executes the query and returns a list of CheckListCategory ids.
@@ -419,6 +419,7 @@ func (clcq *CheckListCategoryQuery) sqlAll(ctx context.Context) ([]*CheckListCat
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CheckListItems = []*CheckListItem{}
 		}
 		query.withFKs = true
 		query.Where(predicate.CheckListItem(func(s *sql.Selector) {

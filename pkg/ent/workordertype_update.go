@@ -809,11 +809,11 @@ func (wotuo *WorkOrderTypeUpdateOne) Save(ctx context.Context) (*WorkOrderType, 
 
 // SaveX is like Save, but panics if an error occurs.
 func (wotuo *WorkOrderTypeUpdateOne) SaveX(ctx context.Context) *WorkOrderType {
-	wot, err := wotuo.Save(ctx)
+	node, err := wotuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wot
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -837,7 +837,7 @@ func (wotuo *WorkOrderTypeUpdateOne) defaults() {
 	}
 }
 
-func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrderType, err error) {
+func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrderType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   workordertype.Table,
@@ -1109,9 +1109,9 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	wot = &WorkOrderType{config: wotuo.config}
-	_spec.Assign = wot.assignValues
-	_spec.ScanValues = wot.scanValues()
+	_node = &WorkOrderType{config: wotuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, wotuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workordertype.Label}
@@ -1120,5 +1120,5 @@ func (wotuo *WorkOrderTypeUpdateOne) sqlSave(ctx context.Context) (wot *WorkOrde
 		}
 		return nil, err
 	}
-	return wot, nil
+	return _node, nil
 }

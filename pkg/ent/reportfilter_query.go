@@ -58,23 +58,23 @@ func (rfq *ReportFilterQuery) Order(o ...OrderFunc) *ReportFilterQuery {
 
 // First returns the first ReportFilter entity in the query. Returns *NotFoundError when no reportfilter was found.
 func (rfq *ReportFilterQuery) First(ctx context.Context) (*ReportFilter, error) {
-	rves, err := rfq.Limit(1).All(ctx)
+	nodes, err := rfq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(rves) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{reportfilter.Label}
 	}
-	return rves[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (rfq *ReportFilterQuery) FirstX(ctx context.Context) *ReportFilter {
-	rf, err := rfq.First(ctx)
+	node, err := rfq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return rf
+	return node
 }
 
 // FirstID returns the first ReportFilter id in the query. Returns *NotFoundError when no id was found.
@@ -101,13 +101,13 @@ func (rfq *ReportFilterQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ReportFilter entity in the query, returns an error if not exactly one entity was returned.
 func (rfq *ReportFilterQuery) Only(ctx context.Context) (*ReportFilter, error) {
-	rves, err := rfq.Limit(2).All(ctx)
+	nodes, err := rfq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(rves) {
+	switch len(nodes) {
 	case 1:
-		return rves[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{reportfilter.Label}
 	default:
@@ -117,11 +117,11 @@ func (rfq *ReportFilterQuery) Only(ctx context.Context) (*ReportFilter, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (rfq *ReportFilterQuery) OnlyX(ctx context.Context) *ReportFilter {
-	rf, err := rfq.Only(ctx)
+	node, err := rfq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return rf
+	return node
 }
 
 // OnlyID returns the only ReportFilter id in the query, returns an error if not exactly one id was returned.
@@ -160,11 +160,11 @@ func (rfq *ReportFilterQuery) All(ctx context.Context) ([]*ReportFilter, error) 
 
 // AllX is like All, but panics if an error occurs.
 func (rfq *ReportFilterQuery) AllX(ctx context.Context) []*ReportFilter {
-	rves, err := rfq.All(ctx)
+	nodes, err := rfq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return rves
+	return nodes
 }
 
 // IDs executes the query and returns a list of ReportFilter ids.

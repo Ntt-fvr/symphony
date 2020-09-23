@@ -182,7 +182,7 @@ func (stqc *SurveyTemplateQuestionCreate) check() error {
 }
 
 func (stqc *SurveyTemplateQuestionCreate) sqlSave(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	stq, _spec := stqc.createSpec()
+	_node, _spec := stqc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, stqc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -190,13 +190,13 @@ func (stqc *SurveyTemplateQuestionCreate) sqlSave(ctx context.Context) (*SurveyT
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	stq.ID = int(id)
-	return stq, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion, *sqlgraph.CreateSpec) {
 	var (
-		stq   = &SurveyTemplateQuestion{config: stqc.config}
+		_node = &SurveyTemplateQuestion{config: stqc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: surveytemplatequestion.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -211,7 +211,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldCreateTime,
 		})
-		stq.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := stqc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -219,7 +219,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldUpdateTime,
 		})
-		stq.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := stqc.mutation.QuestionTitle(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -227,7 +227,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldQuestionTitle,
 		})
-		stq.QuestionTitle = value
+		_node.QuestionTitle = value
 	}
 	if value, ok := stqc.mutation.QuestionDescription(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -235,7 +235,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldQuestionDescription,
 		})
-		stq.QuestionDescription = value
+		_node.QuestionDescription = value
 	}
 	if value, ok := stqc.mutation.QuestionType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -243,7 +243,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldQuestionType,
 		})
-		stq.QuestionType = value
+		_node.QuestionType = value
 	}
 	if value, ok := stqc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -251,7 +251,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 			Value:  value,
 			Column: surveytemplatequestion.FieldIndex,
 		})
-		stq.Index = value
+		_node.Index = value
 	}
 	if nodes := stqc.mutation.CategoryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -272,7 +272,7 @@ func (stqc *SurveyTemplateQuestionCreate) createSpec() (*SurveyTemplateQuestion,
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return stq, _spec
+	return _node, _spec
 }
 
 // SurveyTemplateQuestionCreateBulk is the builder for creating a bulk of SurveyTemplateQuestion entities.

@@ -108,23 +108,23 @@ func (fq *FlowQuery) QueryDraft() *FlowDraftQuery {
 
 // First returns the first Flow entity in the query. Returns *NotFoundError when no flow was found.
 func (fq *FlowQuery) First(ctx context.Context) (*Flow, error) {
-	fs, err := fq.Limit(1).All(ctx)
+	nodes, err := fq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{flow.Label}
 	}
-	return fs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fq *FlowQuery) FirstX(ctx context.Context) *Flow {
-	f, err := fq.First(ctx)
+	node, err := fq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return f
+	return node
 }
 
 // FirstID returns the first Flow id in the query. Returns *NotFoundError when no id was found.
@@ -151,13 +151,13 @@ func (fq *FlowQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Flow entity in the query, returns an error if not exactly one entity was returned.
 func (fq *FlowQuery) Only(ctx context.Context) (*Flow, error) {
-	fs, err := fq.Limit(2).All(ctx)
+	nodes, err := fq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fs) {
+	switch len(nodes) {
 	case 1:
-		return fs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{flow.Label}
 	default:
@@ -167,11 +167,11 @@ func (fq *FlowQuery) Only(ctx context.Context) (*Flow, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fq *FlowQuery) OnlyX(ctx context.Context) *Flow {
-	f, err := fq.Only(ctx)
+	node, err := fq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return node
 }
 
 // OnlyID returns the only Flow id in the query, returns an error if not exactly one id was returned.
@@ -210,11 +210,11 @@ func (fq *FlowQuery) All(ctx context.Context) ([]*Flow, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (fq *FlowQuery) AllX(ctx context.Context) []*Flow {
-	fs, err := fq.All(ctx)
+	nodes, err := fq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fs
+	return nodes
 }
 
 // IDs executes the query and returns a list of Flow ids.
@@ -408,6 +408,7 @@ func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Blocks = []*Block{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Block(func(s *sql.Selector) {
@@ -436,6 +437,7 @@ func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Draft = []*FlowDraft{}
 		}
 		query.withFKs = true
 		query.Where(predicate.FlowDraft(func(s *sql.Selector) {

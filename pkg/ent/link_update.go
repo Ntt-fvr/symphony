@@ -719,11 +719,11 @@ func (luo *LinkUpdateOne) Save(ctx context.Context) (*Link, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (luo *LinkUpdateOne) SaveX(ctx context.Context) *Link {
-	l, err := luo.Save(ctx)
+	node, err := luo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -757,7 +757,7 @@ func (luo *LinkUpdateOne) check() error {
 	return nil
 }
 
-func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
+func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (_node *Link, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   link.Table,
@@ -990,9 +990,9 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	l = &Link{config: luo.config}
-	_spec.Assign = l.assignValues
-	_spec.ScanValues = l.scanValues()
+	_node = &Link{config: luo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, luo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{link.Label}
@@ -1001,5 +1001,5 @@ func (luo *LinkUpdateOne) sqlSave(ctx context.Context) (l *Link, err error) {
 		}
 		return nil, err
 	}
-	return l, nil
+	return _node, nil
 }

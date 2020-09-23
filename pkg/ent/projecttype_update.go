@@ -651,11 +651,11 @@ func (ptuo *ProjectTypeUpdateOne) Save(ctx context.Context) (*ProjectType, error
 
 // SaveX is like Save, but panics if an error occurs.
 func (ptuo *ProjectTypeUpdateOne) SaveX(ctx context.Context) *ProjectType {
-	pt, err := ptuo.Save(ctx)
+	node, err := ptuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -689,7 +689,7 @@ func (ptuo *ProjectTypeUpdateOne) check() error {
 	return nil
 }
 
-func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType, err error) {
+func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (_node *ProjectType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   projecttype.Table,
@@ -894,9 +894,9 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	pt = &ProjectType{config: ptuo.config}
-	_spec.Assign = pt.assignValues
-	_spec.ScanValues = pt.scanValues()
+	_node = &ProjectType{config: ptuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ptuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{projecttype.Label}
@@ -905,5 +905,5 @@ func (ptuo *ProjectTypeUpdateOne) sqlSave(ctx context.Context) (pt *ProjectType,
 		}
 		return nil, err
 	}
-	return pt, nil
+	return _node, nil
 }

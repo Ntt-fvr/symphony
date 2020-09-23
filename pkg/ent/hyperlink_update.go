@@ -559,11 +559,11 @@ func (huo *HyperlinkUpdateOne) Save(ctx context.Context) (*Hyperlink, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (huo *HyperlinkUpdateOne) SaveX(ctx context.Context) *Hyperlink {
-	h, err := huo.Save(ctx)
+	node, err := huo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return h
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -587,7 +587,7 @@ func (huo *HyperlinkUpdateOne) defaults() {
 	}
 }
 
-func (huo *HyperlinkUpdateOne) sqlSave(ctx context.Context) (h *Hyperlink, err error) {
+func (huo *HyperlinkUpdateOne) sqlSave(ctx context.Context) (_node *Hyperlink, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   hyperlink.Table,
@@ -748,9 +748,9 @@ func (huo *HyperlinkUpdateOne) sqlSave(ctx context.Context) (h *Hyperlink, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	h = &Hyperlink{config: huo.config}
-	_spec.Assign = h.assignValues
-	_spec.ScanValues = h.scanValues()
+	_node = &Hyperlink{config: huo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, huo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{hyperlink.Label}
@@ -759,5 +759,5 @@ func (huo *HyperlinkUpdateOne) sqlSave(ctx context.Context) (h *Hyperlink, err e
 		}
 		return nil, err
 	}
-	return h, nil
+	return _node, nil
 }

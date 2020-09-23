@@ -228,7 +228,7 @@ func (sc *SurveyCreate) check() error {
 }
 
 func (sc *SurveyCreate) sqlSave(ctx context.Context) (*Survey, error) {
-	s, _spec := sc.createSpec()
+	_node, _spec := sc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, sc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -236,13 +236,13 @@ func (sc *SurveyCreate) sqlSave(ctx context.Context) (*Survey, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	s.ID = int(id)
-	return s, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 	var (
-		s     = &Survey{config: sc.config}
+		_node = &Survey{config: sc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: survey.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -257,7 +257,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldCreateTime,
 		})
-		s.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := sc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -265,7 +265,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldUpdateTime,
 		})
-		s.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := sc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -273,7 +273,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldName,
 		})
-		s.Name = value
+		_node.Name = value
 	}
 	if value, ok := sc.mutation.OwnerName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -281,7 +281,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldOwnerName,
 		})
-		s.OwnerName = &value
+		_node.OwnerName = &value
 	}
 	if value, ok := sc.mutation.CreationTimestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -289,7 +289,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldCreationTimestamp,
 		})
-		s.CreationTimestamp = &value
+		_node.CreationTimestamp = &value
 	}
 	if value, ok := sc.mutation.CompletionTimestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -297,7 +297,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: survey.FieldCompletionTimestamp,
 		})
-		s.CompletionTimestamp = value
+		_node.CompletionTimestamp = value
 	}
 	if nodes := sc.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -356,7 +356,7 @@ func (sc *SurveyCreate) createSpec() (*Survey, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return s, _spec
+	return _node, _spec
 }
 
 // SurveyCreateBulk is the builder for creating a bulk of Survey entities.

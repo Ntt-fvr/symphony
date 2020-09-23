@@ -58,23 +58,23 @@ func (fprpq *FloorPlanReferencePointQuery) Order(o ...OrderFunc) *FloorPlanRefer
 
 // First returns the first FloorPlanReferencePoint entity in the query. Returns *NotFoundError when no floorplanreferencepoint was found.
 func (fprpq *FloorPlanReferencePointQuery) First(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	fprps, err := fprpq.Limit(1).All(ctx)
+	nodes, err := fprpq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fprps) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{floorplanreferencepoint.Label}
 	}
-	return fprps[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fprpq *FloorPlanReferencePointQuery) FirstX(ctx context.Context) *FloorPlanReferencePoint {
-	fprp, err := fprpq.First(ctx)
+	node, err := fprpq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return fprp
+	return node
 }
 
 // FirstID returns the first FloorPlanReferencePoint id in the query. Returns *NotFoundError when no id was found.
@@ -101,13 +101,13 @@ func (fprpq *FloorPlanReferencePointQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only FloorPlanReferencePoint entity in the query, returns an error if not exactly one entity was returned.
 func (fprpq *FloorPlanReferencePointQuery) Only(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	fprps, err := fprpq.Limit(2).All(ctx)
+	nodes, err := fprpq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fprps) {
+	switch len(nodes) {
 	case 1:
-		return fprps[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{floorplanreferencepoint.Label}
 	default:
@@ -117,11 +117,11 @@ func (fprpq *FloorPlanReferencePointQuery) Only(ctx context.Context) (*FloorPlan
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fprpq *FloorPlanReferencePointQuery) OnlyX(ctx context.Context) *FloorPlanReferencePoint {
-	fprp, err := fprpq.Only(ctx)
+	node, err := fprpq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fprp
+	return node
 }
 
 // OnlyID returns the only FloorPlanReferencePoint id in the query, returns an error if not exactly one id was returned.
@@ -160,11 +160,11 @@ func (fprpq *FloorPlanReferencePointQuery) All(ctx context.Context) ([]*FloorPla
 
 // AllX is like All, but panics if an error occurs.
 func (fprpq *FloorPlanReferencePointQuery) AllX(ctx context.Context) []*FloorPlanReferencePoint {
-	fprps, err := fprpq.All(ctx)
+	nodes, err := fprpq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fprps
+	return nodes
 }
 
 // IDs executes the query and returns a list of FloorPlanReferencePoint ids.

@@ -109,23 +109,23 @@ func (stcq *SurveyTemplateCategoryQuery) QueryLocationType() *LocationTypeQuery 
 
 // First returns the first SurveyTemplateCategory entity in the query. Returns *NotFoundError when no surveytemplatecategory was found.
 func (stcq *SurveyTemplateCategoryQuery) First(ctx context.Context) (*SurveyTemplateCategory, error) {
-	stcs, err := stcq.Limit(1).All(ctx)
+	nodes, err := stcq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(stcs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{surveytemplatecategory.Label}
 	}
-	return stcs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (stcq *SurveyTemplateCategoryQuery) FirstX(ctx context.Context) *SurveyTemplateCategory {
-	stc, err := stcq.First(ctx)
+	node, err := stcq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return stc
+	return node
 }
 
 // FirstID returns the first SurveyTemplateCategory id in the query. Returns *NotFoundError when no id was found.
@@ -152,13 +152,13 @@ func (stcq *SurveyTemplateCategoryQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only SurveyTemplateCategory entity in the query, returns an error if not exactly one entity was returned.
 func (stcq *SurveyTemplateCategoryQuery) Only(ctx context.Context) (*SurveyTemplateCategory, error) {
-	stcs, err := stcq.Limit(2).All(ctx)
+	nodes, err := stcq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(stcs) {
+	switch len(nodes) {
 	case 1:
-		return stcs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{surveytemplatecategory.Label}
 	default:
@@ -168,11 +168,11 @@ func (stcq *SurveyTemplateCategoryQuery) Only(ctx context.Context) (*SurveyTempl
 
 // OnlyX is like Only, but panics if an error occurs.
 func (stcq *SurveyTemplateCategoryQuery) OnlyX(ctx context.Context) *SurveyTemplateCategory {
-	stc, err := stcq.Only(ctx)
+	node, err := stcq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return stc
+	return node
 }
 
 // OnlyID returns the only SurveyTemplateCategory id in the query, returns an error if not exactly one id was returned.
@@ -211,11 +211,11 @@ func (stcq *SurveyTemplateCategoryQuery) All(ctx context.Context) ([]*SurveyTemp
 
 // AllX is like All, but panics if an error occurs.
 func (stcq *SurveyTemplateCategoryQuery) AllX(ctx context.Context) []*SurveyTemplateCategory {
-	stcs, err := stcq.All(ctx)
+	nodes, err := stcq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return stcs
+	return nodes
 }
 
 // IDs executes the query and returns a list of SurveyTemplateCategory ids.
@@ -419,6 +419,7 @@ func (stcq *SurveyTemplateCategoryQuery) sqlAll(ctx context.Context) ([]*SurveyT
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.SurveyTemplateQuestions = []*SurveyTemplateQuestion{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyTemplateQuestion(func(s *sql.Selector) {

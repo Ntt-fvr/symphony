@@ -219,7 +219,7 @@ func (sedc *ServiceEndpointDefinitionCreate) check() error {
 }
 
 func (sedc *ServiceEndpointDefinitionCreate) sqlSave(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	sed, _spec := sedc.createSpec()
+	_node, _spec := sedc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, sedc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -227,13 +227,13 @@ func (sedc *ServiceEndpointDefinitionCreate) sqlSave(ctx context.Context) (*Serv
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	sed.ID = int(id)
-	return sed, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefinition, *sqlgraph.CreateSpec) {
 	var (
-		sed   = &ServiceEndpointDefinition{config: sedc.config}
+		_node = &ServiceEndpointDefinition{config: sedc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: serviceendpointdefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -248,7 +248,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 			Value:  value,
 			Column: serviceendpointdefinition.FieldCreateTime,
 		})
-		sed.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := sedc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -256,7 +256,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 			Value:  value,
 			Column: serviceendpointdefinition.FieldUpdateTime,
 		})
-		sed.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := sedc.mutation.Role(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -264,7 +264,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 			Value:  value,
 			Column: serviceendpointdefinition.FieldRole,
 		})
-		sed.Role = value
+		_node.Role = value
 	}
 	if value, ok := sedc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -272,7 +272,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 			Value:  value,
 			Column: serviceendpointdefinition.FieldName,
 		})
-		sed.Name = value
+		_node.Name = value
 	}
 	if value, ok := sedc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 			Value:  value,
 			Column: serviceendpointdefinition.FieldIndex,
 		})
-		sed.Index = value
+		_node.Index = value
 	}
 	if nodes := sedc.mutation.EndpointsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -339,7 +339,7 @@ func (sedc *ServiceEndpointDefinitionCreate) createSpec() (*ServiceEndpointDefin
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return sed, _spec
+	return _node, _spec
 }
 
 // ServiceEndpointDefinitionCreateBulk is the builder for creating a bulk of ServiceEndpointDefinition entities.

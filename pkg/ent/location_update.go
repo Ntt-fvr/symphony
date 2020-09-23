@@ -1873,11 +1873,11 @@ func (luo *LocationUpdateOne) Save(ctx context.Context) (*Location, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (luo *LocationUpdateOne) SaveX(ctx context.Context) *Location {
-	l, err := luo.Save(ctx)
+	node, err := luo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1924,7 +1924,7 @@ func (luo *LocationUpdateOne) check() error {
 	return nil
 }
 
-func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err error) {
+func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (_node *Location, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   location.Table,
@@ -2618,9 +2618,9 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	l = &Location{config: luo.config}
-	_spec.Assign = l.assignValues
-	_spec.ScanValues = l.scanValues()
+	_node = &Location{config: luo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, luo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{location.Label}
@@ -2629,5 +2629,5 @@ func (luo *LocationUpdateOne) sqlSave(ctx context.Context) (l *Location, err err
 		}
 		return nil, err
 	}
-	return l, nil
+	return _node, nil
 }

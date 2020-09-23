@@ -512,11 +512,11 @@ func (seuo *ServiceEndpointUpdateOne) Save(ctx context.Context) (*ServiceEndpoin
 
 // SaveX is like Save, but panics if an error occurs.
 func (seuo *ServiceEndpointUpdateOne) SaveX(ctx context.Context) *ServiceEndpoint {
-	se, err := seuo.Save(ctx)
+	node, err := seuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return se
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -551,7 +551,7 @@ func (seuo *ServiceEndpointUpdateOne) check() error {
 	return nil
 }
 
-func (seuo *ServiceEndpointUpdateOne) sqlSave(ctx context.Context) (se *ServiceEndpoint, err error) {
+func (seuo *ServiceEndpointUpdateOne) sqlSave(ctx context.Context) (_node *ServiceEndpoint, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   serviceendpoint.Table,
@@ -714,9 +714,9 @@ func (seuo *ServiceEndpointUpdateOne) sqlSave(ctx context.Context) (se *ServiceE
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	se = &ServiceEndpoint{config: seuo.config}
-	_spec.Assign = se.assignValues
-	_spec.ScanValues = se.scanValues()
+	_node = &ServiceEndpoint{config: seuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, seuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{serviceendpoint.Label}
@@ -725,5 +725,5 @@ func (seuo *ServiceEndpointUpdateOne) sqlSave(ctx context.Context) (se *ServiceE
 		}
 		return nil, err
 	}
-	return se, nil
+	return _node, nil
 }

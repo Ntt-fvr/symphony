@@ -251,23 +251,23 @@ func (sq *ServiceQuery) QueryEndpoints() *ServiceEndpointQuery {
 
 // First returns the first Service entity in the query. Returns *NotFoundError when no service was found.
 func (sq *ServiceQuery) First(ctx context.Context) (*Service, error) {
-	sSlice, err := sq.Limit(1).All(ctx)
+	nodes, err := sq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(sSlice) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{service.Label}
 	}
-	return sSlice[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (sq *ServiceQuery) FirstX(ctx context.Context) *Service {
-	s, err := sq.First(ctx)
+	node, err := sq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return s
+	return node
 }
 
 // FirstID returns the first Service id in the query. Returns *NotFoundError when no id was found.
@@ -294,13 +294,13 @@ func (sq *ServiceQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Service entity in the query, returns an error if not exactly one entity was returned.
 func (sq *ServiceQuery) Only(ctx context.Context) (*Service, error) {
-	sSlice, err := sq.Limit(2).All(ctx)
+	nodes, err := sq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(sSlice) {
+	switch len(nodes) {
 	case 1:
-		return sSlice[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{service.Label}
 	default:
@@ -310,11 +310,11 @@ func (sq *ServiceQuery) Only(ctx context.Context) (*Service, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (sq *ServiceQuery) OnlyX(ctx context.Context) *Service {
-	s, err := sq.Only(ctx)
+	node, err := sq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return s
+	return node
 }
 
 // OnlyID returns the only Service id in the query, returns an error if not exactly one id was returned.
@@ -353,11 +353,11 @@ func (sq *ServiceQuery) All(ctx context.Context) ([]*Service, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (sq *ServiceQuery) AllX(ctx context.Context) []*Service {
-	sSlice, err := sq.All(ctx)
+	nodes, err := sq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sSlice
+	return nodes
 }
 
 // IDs executes the query and returns a list of Service ids.
@@ -658,6 +658,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Downstream = []*Service{}
 		}
 		var (
 			edgeids []int
@@ -721,6 +722,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Upstream = []*Service{}
 		}
 		var (
 			edgeids []int
@@ -784,6 +786,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {
@@ -812,6 +815,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Links = []*Link{}
 		}
 		var (
 			edgeids []int
@@ -875,6 +879,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Ports = []*EquipmentPort{}
 		}
 		var (
 			edgeids []int
@@ -938,6 +943,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Customer = []*Customer{}
 		}
 		var (
 			edgeids []int
@@ -1001,6 +1007,7 @@ func (sq *ServiceQuery) sqlAll(ctx context.Context) ([]*Service, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Endpoints = []*ServiceEndpoint{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ServiceEndpoint(func(s *sql.Selector) {

@@ -1829,11 +1829,11 @@ func (squo *SurveyQuestionUpdateOne) Save(ctx context.Context) (*SurveyQuestion,
 
 // SaveX is like Save, but panics if an error occurs.
 func (squo *SurveyQuestionUpdateOne) SaveX(ctx context.Context) *SurveyQuestion {
-	sq, err := squo.Save(ctx)
+	node, err := squo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sq
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1865,7 +1865,7 @@ func (squo *SurveyQuestionUpdateOne) check() error {
 	return nil
 }
 
-func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQuestion, err error) {
+func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (_node *SurveyQuestion, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   surveyquestion.Table,
@@ -2417,9 +2417,9 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	sq = &SurveyQuestion{config: squo.config}
-	_spec.Assign = sq.assignValues
-	_spec.ScanValues = sq.scanValues()
+	_node = &SurveyQuestion{config: squo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, squo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{surveyquestion.Label}
@@ -2428,5 +2428,5 @@ func (squo *SurveyQuestionUpdateOne) sqlSave(ctx context.Context) (sq *SurveyQue
 		}
 		return nil, err
 	}
-	return sq, nil
+	return _node, nil
 }

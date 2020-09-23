@@ -172,7 +172,7 @@ func (etc *ExportTaskCreate) check() error {
 }
 
 func (etc *ExportTaskCreate) sqlSave(ctx context.Context) (*ExportTask, error) {
-	et, _spec := etc.createSpec()
+	_node, _spec := etc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, etc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -180,13 +180,13 @@ func (etc *ExportTaskCreate) sqlSave(ctx context.Context) (*ExportTask, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	et.ID = int(id)
-	return et, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 	var (
-		et    = &ExportTask{config: etc.config}
+		_node = &ExportTask{config: etc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: exporttask.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -201,7 +201,7 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: exporttask.FieldType,
 		})
-		et.Type = value
+		_node.Type = value
 	}
 	if value, ok := etc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -209,7 +209,7 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: exporttask.FieldStatus,
 		})
-		et.Status = value
+		_node.Status = value
 	}
 	if value, ok := etc.mutation.Progress(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -217,7 +217,7 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: exporttask.FieldProgress,
 		})
-		et.Progress = value
+		_node.Progress = value
 	}
 	if value, ok := etc.mutation.Filters(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -225,7 +225,7 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: exporttask.FieldFilters,
 		})
-		et.Filters = value
+		_node.Filters = value
 	}
 	if value, ok := etc.mutation.StoreKey(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -233,9 +233,9 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: exporttask.FieldStoreKey,
 		})
-		et.StoreKey = &value
+		_node.StoreKey = &value
 	}
-	return et, _spec
+	return _node, _spec
 }
 
 // ExportTaskCreateBulk is the builder for creating a bulk of ExportTask entities.

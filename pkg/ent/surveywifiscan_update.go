@@ -1196,11 +1196,11 @@ func (swfsuo *SurveyWiFiScanUpdateOne) Save(ctx context.Context) (*SurveyWiFiSca
 
 // SaveX is like Save, but panics if an error occurs.
 func (swfsuo *SurveyWiFiScanUpdateOne) SaveX(ctx context.Context) *SurveyWiFiScan {
-	swfs, err := swfsuo.Save(ctx)
+	node, err := swfsuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return swfs
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1224,7 +1224,7 @@ func (swfsuo *SurveyWiFiScanUpdateOne) defaults() {
 	}
 }
 
-func (swfsuo *SurveyWiFiScanUpdateOne) sqlSave(ctx context.Context) (swfs *SurveyWiFiScan, err error) {
+func (swfsuo *SurveyWiFiScanUpdateOne) sqlSave(ctx context.Context) (_node *SurveyWiFiScan, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   surveywifiscan.Table,
@@ -1567,9 +1567,9 @@ func (swfsuo *SurveyWiFiScanUpdateOne) sqlSave(ctx context.Context) (swfs *Surve
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	swfs = &SurveyWiFiScan{config: swfsuo.config}
-	_spec.Assign = swfs.assignValues
-	_spec.ScanValues = swfs.scanValues()
+	_node = &SurveyWiFiScan{config: swfsuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, swfsuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{surveywifiscan.Label}
@@ -1578,5 +1578,5 @@ func (swfsuo *SurveyWiFiScanUpdateOne) sqlSave(ctx context.Context) (swfs *Surve
 		}
 		return nil, err
 	}
-	return swfs, nil
+	return _node, nil
 }

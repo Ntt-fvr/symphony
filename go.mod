@@ -17,7 +17,8 @@ require (
 	github.com/aws/aws-sdk-go v1.34.26
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.3-0.20200915131743-bd4d2a553cce
+	github.com/facebook/ent v0.4.4-0.20200922172230-49101d7d051a
+	github.com/facebookincubator/ent-contrib v0.0.0-20200923084553-b3b31b3daa94
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/golang/protobuf v1.4.2

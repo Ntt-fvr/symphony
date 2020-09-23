@@ -396,23 +396,23 @@ func (woq *WorkOrderQuery) QueryAssignee() *UserQuery {
 
 // First returns the first WorkOrder entity in the query. Returns *NotFoundError when no workorder was found.
 func (woq *WorkOrderQuery) First(ctx context.Context) (*WorkOrder, error) {
-	wos, err := woq.Limit(1).All(ctx)
+	nodes, err := woq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(wos) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{workorder.Label}
 	}
-	return wos[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (woq *WorkOrderQuery) FirstX(ctx context.Context) *WorkOrder {
-	wo, err := woq.First(ctx)
+	node, err := woq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return wo
+	return node
 }
 
 // FirstID returns the first WorkOrder id in the query. Returns *NotFoundError when no id was found.
@@ -439,13 +439,13 @@ func (woq *WorkOrderQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only WorkOrder entity in the query, returns an error if not exactly one entity was returned.
 func (woq *WorkOrderQuery) Only(ctx context.Context) (*WorkOrder, error) {
-	wos, err := woq.Limit(2).All(ctx)
+	nodes, err := woq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(wos) {
+	switch len(nodes) {
 	case 1:
-		return wos[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{workorder.Label}
 	default:
@@ -455,11 +455,11 @@ func (woq *WorkOrderQuery) Only(ctx context.Context) (*WorkOrder, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (woq *WorkOrderQuery) OnlyX(ctx context.Context) *WorkOrder {
-	wo, err := woq.Only(ctx)
+	node, err := woq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wo
+	return node
 }
 
 // OnlyID returns the only WorkOrder id in the query, returns an error if not exactly one id was returned.
@@ -498,11 +498,11 @@ func (woq *WorkOrderQuery) All(ctx context.Context) ([]*WorkOrder, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (woq *WorkOrderQuery) AllX(ctx context.Context) []*WorkOrder {
-	wos, err := woq.All(ctx)
+	nodes, err := woq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wos
+	return nodes
 }
 
 // IDs executes the query and returns a list of WorkOrder ids.
@@ -900,6 +900,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Equipment = []*Equipment{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Equipment(func(s *sql.Selector) {
@@ -928,6 +929,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Links = []*Link{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Link(func(s *sql.Selector) {
@@ -956,6 +958,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Files = []*File{}
 		}
 		query.withFKs = true
 		query.Where(predicate.File(func(s *sql.Selector) {
@@ -984,6 +987,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Hyperlinks = []*Hyperlink{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Hyperlink(func(s *sql.Selector) {
@@ -1037,6 +1041,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Comments = []*Comment{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Comment(func(s *sql.Selector) {
@@ -1065,6 +1070,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Activities = []*Activity{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Activity(func(s *sql.Selector) {
@@ -1093,6 +1099,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {
@@ -1121,6 +1128,7 @@ func (woq *WorkOrderQuery) sqlAll(ctx context.Context) ([]*WorkOrder, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CheckListCategories = []*CheckListCategory{}
 		}
 		query.withFKs = true
 		query.Where(predicate.CheckListCategory(func(s *sql.Selector) {

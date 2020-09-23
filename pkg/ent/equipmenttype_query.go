@@ -205,23 +205,23 @@ func (etq *EquipmentTypeQuery) QueryServiceEndpointDefinitions() *ServiceEndpoin
 
 // First returns the first EquipmentType entity in the query. Returns *NotFoundError when no equipmenttype was found.
 func (etq *EquipmentTypeQuery) First(ctx context.Context) (*EquipmentType, error) {
-	ets, err := etq.Limit(1).All(ctx)
+	nodes, err := etq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ets) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{equipmenttype.Label}
 	}
-	return ets[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (etq *EquipmentTypeQuery) FirstX(ctx context.Context) *EquipmentType {
-	et, err := etq.First(ctx)
+	node, err := etq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return et
+	return node
 }
 
 // FirstID returns the first EquipmentType id in the query. Returns *NotFoundError when no id was found.
@@ -248,13 +248,13 @@ func (etq *EquipmentTypeQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only EquipmentType entity in the query, returns an error if not exactly one entity was returned.
 func (etq *EquipmentTypeQuery) Only(ctx context.Context) (*EquipmentType, error) {
-	ets, err := etq.Limit(2).All(ctx)
+	nodes, err := etq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ets) {
+	switch len(nodes) {
 	case 1:
-		return ets[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{equipmenttype.Label}
 	default:
@@ -264,11 +264,11 @@ func (etq *EquipmentTypeQuery) Only(ctx context.Context) (*EquipmentType, error)
 
 // OnlyX is like Only, but panics if an error occurs.
 func (etq *EquipmentTypeQuery) OnlyX(ctx context.Context) *EquipmentType {
-	et, err := etq.Only(ctx)
+	node, err := etq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return et
+	return node
 }
 
 // OnlyID returns the only EquipmentType id in the query, returns an error if not exactly one id was returned.
@@ -307,11 +307,11 @@ func (etq *EquipmentTypeQuery) All(ctx context.Context) ([]*EquipmentType, error
 
 // AllX is like All, but panics if an error occurs.
 func (etq *EquipmentTypeQuery) AllX(ctx context.Context) []*EquipmentType {
-	ets, err := etq.All(ctx)
+	nodes, err := etq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ets
+	return nodes
 }
 
 // IDs executes the query and returns a list of EquipmentType ids.
@@ -563,6 +563,7 @@ func (etq *EquipmentTypeQuery) sqlAll(ctx context.Context) ([]*EquipmentType, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PortDefinitions = []*EquipmentPortDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.EquipmentPortDefinition(func(s *sql.Selector) {
@@ -591,6 +592,7 @@ func (etq *EquipmentTypeQuery) sqlAll(ctx context.Context) ([]*EquipmentType, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PositionDefinitions = []*EquipmentPositionDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.EquipmentPositionDefinition(func(s *sql.Selector) {
@@ -619,6 +621,7 @@ func (etq *EquipmentTypeQuery) sqlAll(ctx context.Context) ([]*EquipmentType, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyTypes = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
@@ -647,6 +650,7 @@ func (etq *EquipmentTypeQuery) sqlAll(ctx context.Context) ([]*EquipmentType, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Equipment = []*Equipment{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Equipment(func(s *sql.Selector) {
@@ -700,6 +704,7 @@ func (etq *EquipmentTypeQuery) sqlAll(ctx context.Context) ([]*EquipmentType, er
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ServiceEndpointDefinitions = []*ServiceEndpointDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ServiceEndpointDefinition(func(s *sql.Selector) {

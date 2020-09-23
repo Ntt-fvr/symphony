@@ -657,7 +657,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 			require.Equal(t, "The End", blk.Name)
 			require.Len(t, blk.InputParams, 1)
 			require.Equal(t, blk.ID, blk.InputParams[0].BlockID)
-			require.Nil(t, blk.Edges.NextBlocks)
+			require.Empty(t, blk.Edges.NextBlocks)
 		default:
 			t.Fail()
 		}

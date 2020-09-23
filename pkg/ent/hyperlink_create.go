@@ -223,7 +223,7 @@ func (hc *HyperlinkCreate) check() error {
 }
 
 func (hc *HyperlinkCreate) sqlSave(ctx context.Context) (*Hyperlink, error) {
-	h, _spec := hc.createSpec()
+	_node, _spec := hc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, hc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -231,13 +231,13 @@ func (hc *HyperlinkCreate) sqlSave(ctx context.Context) (*Hyperlink, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	h.ID = int(id)
-	return h, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 	var (
-		h     = &Hyperlink{config: hc.config}
+		_node = &Hyperlink{config: hc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: hyperlink.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -252,7 +252,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: hyperlink.FieldCreateTime,
 		})
-		h.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := hc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -260,7 +260,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: hyperlink.FieldUpdateTime,
 		})
-		h.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := hc.mutation.URL(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -268,7 +268,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: hyperlink.FieldURL,
 		})
-		h.URL = value
+		_node.URL = value
 	}
 	if value, ok := hc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -276,7 +276,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: hyperlink.FieldName,
 		})
-		h.Name = value
+		_node.Name = value
 	}
 	if value, ok := hc.mutation.Category(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -284,7 +284,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: hyperlink.FieldCategory,
 		})
-		h.Category = value
+		_node.Category = value
 	}
 	if nodes := hc.mutation.EquipmentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -343,7 +343,7 @@ func (hc *HyperlinkCreate) createSpec() (*Hyperlink, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return h, _spec
+	return _node, _spec
 }
 
 // HyperlinkCreateBulk is the builder for creating a bulk of Hyperlink entities.

@@ -132,23 +132,23 @@ func (ltq *LocationTypeQuery) QuerySurveyTemplateCategories() *SurveyTemplateCat
 
 // First returns the first LocationType entity in the query. Returns *NotFoundError when no locationtype was found.
 func (ltq *LocationTypeQuery) First(ctx context.Context) (*LocationType, error) {
-	lts, err := ltq.Limit(1).All(ctx)
+	nodes, err := ltq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(lts) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{locationtype.Label}
 	}
-	return lts[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ltq *LocationTypeQuery) FirstX(ctx context.Context) *LocationType {
-	lt, err := ltq.First(ctx)
+	node, err := ltq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return lt
+	return node
 }
 
 // FirstID returns the first LocationType id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (ltq *LocationTypeQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only LocationType entity in the query, returns an error if not exactly one entity was returned.
 func (ltq *LocationTypeQuery) Only(ctx context.Context) (*LocationType, error) {
-	lts, err := ltq.Limit(2).All(ctx)
+	nodes, err := ltq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(lts) {
+	switch len(nodes) {
 	case 1:
-		return lts[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{locationtype.Label}
 	default:
@@ -191,11 +191,11 @@ func (ltq *LocationTypeQuery) Only(ctx context.Context) (*LocationType, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ltq *LocationTypeQuery) OnlyX(ctx context.Context) *LocationType {
-	lt, err := ltq.Only(ctx)
+	node, err := ltq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return lt
+	return node
 }
 
 // OnlyID returns the only LocationType id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (ltq *LocationTypeQuery) All(ctx context.Context) ([]*LocationType, error) 
 
 // AllX is like All, but panics if an error occurs.
 func (ltq *LocationTypeQuery) AllX(ctx context.Context) []*LocationType {
-	lts, err := ltq.All(ctx)
+	nodes, err := ltq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return lts
+	return nodes
 }
 
 // IDs executes the query and returns a list of LocationType ids.
@@ -444,6 +444,7 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Locations = []*Location{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Location(func(s *sql.Selector) {
@@ -472,6 +473,7 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyTypes = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
@@ -500,6 +502,7 @@ func (ltq *LocationTypeQuery) sqlAll(ctx context.Context) ([]*LocationType, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.SurveyTemplateCategories = []*SurveyTemplateCategory{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyTemplateCategory(func(s *sql.Selector) {

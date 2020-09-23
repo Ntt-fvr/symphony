@@ -1845,11 +1845,11 @@ func (puo *PropertyUpdateOne) Save(ctx context.Context) (*Property, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (puo *PropertyUpdateOne) SaveX(ctx context.Context) *Property {
-	pr, err := puo.Save(ctx)
+	node, err := puo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pr
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1881,7 +1881,7 @@ func (puo *PropertyUpdateOne) check() error {
 	return nil
 }
 
-func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (pr *Property, err error) {
+func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (_node *Property, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   property.Table,
@@ -2505,9 +2505,9 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (pr *Property, err er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	pr = &Property{config: puo.config}
-	_spec.Assign = pr.assignValues
-	_spec.ScanValues = pr.scanValues()
+	_node = &Property{config: puo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, puo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{property.Label}
@@ -2516,5 +2516,5 @@ func (puo *PropertyUpdateOne) sqlSave(ctx context.Context) (pr *Property, err er
 		}
 		return nil, err
 	}
-	return pr, nil
+	return _node, nil
 }

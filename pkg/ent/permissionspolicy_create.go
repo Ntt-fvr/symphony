@@ -201,7 +201,7 @@ func (ppc *PermissionsPolicyCreate) check() error {
 }
 
 func (ppc *PermissionsPolicyCreate) sqlSave(ctx context.Context) (*PermissionsPolicy, error) {
-	pp, _spec := ppc.createSpec()
+	_node, _spec := ppc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ppc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -209,13 +209,13 @@ func (ppc *PermissionsPolicyCreate) sqlSave(ctx context.Context) (*PermissionsPo
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	pp.ID = int(id)
-	return pp, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.CreateSpec) {
 	var (
-		pp    = &PermissionsPolicy{config: ppc.config}
+		_node = &PermissionsPolicy{config: ppc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: permissionspolicy.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -230,7 +230,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldCreateTime,
 		})
-		pp.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ppc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -238,7 +238,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldUpdateTime,
 		})
-		pp.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ppc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -246,7 +246,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldName,
 		})
-		pp.Name = value
+		_node.Name = value
 	}
 	if value, ok := ppc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -254,7 +254,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldDescription,
 		})
-		pp.Description = value
+		_node.Description = value
 	}
 	if value, ok := ppc.mutation.IsGlobal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -262,7 +262,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldIsGlobal,
 		})
-		pp.IsGlobal = value
+		_node.IsGlobal = value
 	}
 	if value, ok := ppc.mutation.InventoryPolicy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -270,7 +270,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldInventoryPolicy,
 		})
-		pp.InventoryPolicy = value
+		_node.InventoryPolicy = value
 	}
 	if value, ok := ppc.mutation.WorkforcePolicy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -278,7 +278,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 			Value:  value,
 			Column: permissionspolicy.FieldWorkforcePolicy,
 		})
-		pp.WorkforcePolicy = value
+		_node.WorkforcePolicy = value
 	}
 	if nodes := ppc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -299,7 +299,7 @@ func (ppc *PermissionsPolicyCreate) createSpec() (*PermissionsPolicy, *sqlgraph.
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return pp, _spec
+	return _node, _spec
 }
 
 // PermissionsPolicyCreateBulk is the builder for creating a bulk of PermissionsPolicy entities.

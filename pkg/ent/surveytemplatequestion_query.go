@@ -84,23 +84,23 @@ func (stqq *SurveyTemplateQuestionQuery) QueryCategory() *SurveyTemplateCategory
 
 // First returns the first SurveyTemplateQuestion entity in the query. Returns *NotFoundError when no surveytemplatequestion was found.
 func (stqq *SurveyTemplateQuestionQuery) First(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	stqs, err := stqq.Limit(1).All(ctx)
+	nodes, err := stqq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(stqs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{surveytemplatequestion.Label}
 	}
-	return stqs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (stqq *SurveyTemplateQuestionQuery) FirstX(ctx context.Context) *SurveyTemplateQuestion {
-	stq, err := stqq.First(ctx)
+	node, err := stqq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return stq
+	return node
 }
 
 // FirstID returns the first SurveyTemplateQuestion id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (stqq *SurveyTemplateQuestionQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only SurveyTemplateQuestion entity in the query, returns an error if not exactly one entity was returned.
 func (stqq *SurveyTemplateQuestionQuery) Only(ctx context.Context) (*SurveyTemplateQuestion, error) {
-	stqs, err := stqq.Limit(2).All(ctx)
+	nodes, err := stqq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(stqs) {
+	switch len(nodes) {
 	case 1:
-		return stqs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{surveytemplatequestion.Label}
 	default:
@@ -143,11 +143,11 @@ func (stqq *SurveyTemplateQuestionQuery) Only(ctx context.Context) (*SurveyTempl
 
 // OnlyX is like Only, but panics if an error occurs.
 func (stqq *SurveyTemplateQuestionQuery) OnlyX(ctx context.Context) *SurveyTemplateQuestion {
-	stq, err := stqq.Only(ctx)
+	node, err := stqq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return stq
+	return node
 }
 
 // OnlyID returns the only SurveyTemplateQuestion id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (stqq *SurveyTemplateQuestionQuery) All(ctx context.Context) ([]*SurveyTemp
 
 // AllX is like All, but panics if an error occurs.
 func (stqq *SurveyTemplateQuestionQuery) AllX(ctx context.Context) []*SurveyTemplateQuestion {
-	stqs, err := stqq.All(ctx)
+	nodes, err := stqq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return stqs
+	return nodes
 }
 
 // IDs executes the query and returns a list of SurveyTemplateQuestion ids.

@@ -84,23 +84,23 @@ func (fetq *FlowExecutionTemplateQuery) QueryBlocks() *BlockQuery {
 
 // First returns the first FlowExecutionTemplate entity in the query. Returns *NotFoundError when no flowexecutiontemplate was found.
 func (fetq *FlowExecutionTemplateQuery) First(ctx context.Context) (*FlowExecutionTemplate, error) {
-	fets, err := fetq.Limit(1).All(ctx)
+	nodes, err := fetq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fets) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{flowexecutiontemplate.Label}
 	}
-	return fets[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fetq *FlowExecutionTemplateQuery) FirstX(ctx context.Context) *FlowExecutionTemplate {
-	fet, err := fetq.First(ctx)
+	node, err := fetq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return fet
+	return node
 }
 
 // FirstID returns the first FlowExecutionTemplate id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (fetq *FlowExecutionTemplateQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only FlowExecutionTemplate entity in the query, returns an error if not exactly one entity was returned.
 func (fetq *FlowExecutionTemplateQuery) Only(ctx context.Context) (*FlowExecutionTemplate, error) {
-	fets, err := fetq.Limit(2).All(ctx)
+	nodes, err := fetq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fets) {
+	switch len(nodes) {
 	case 1:
-		return fets[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{flowexecutiontemplate.Label}
 	default:
@@ -143,11 +143,11 @@ func (fetq *FlowExecutionTemplateQuery) Only(ctx context.Context) (*FlowExecutio
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fetq *FlowExecutionTemplateQuery) OnlyX(ctx context.Context) *FlowExecutionTemplate {
-	fet, err := fetq.Only(ctx)
+	node, err := fetq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fet
+	return node
 }
 
 // OnlyID returns the only FlowExecutionTemplate id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (fetq *FlowExecutionTemplateQuery) All(ctx context.Context) ([]*FlowExecuti
 
 // AllX is like All, but panics if an error occurs.
 func (fetq *FlowExecutionTemplateQuery) AllX(ctx context.Context) []*FlowExecutionTemplate {
-	fets, err := fetq.All(ctx)
+	nodes, err := fetq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fets
+	return nodes
 }
 
 // IDs executes the query and returns a list of FlowExecutionTemplate ids.
@@ -372,6 +372,7 @@ func (fetq *FlowExecutionTemplateQuery) sqlAll(ctx context.Context) ([]*FlowExec
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Blocks = []*Block{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Block(func(s *sql.Selector) {

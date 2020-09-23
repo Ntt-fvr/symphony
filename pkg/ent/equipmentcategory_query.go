@@ -84,23 +84,23 @@ func (ecq *EquipmentCategoryQuery) QueryTypes() *EquipmentTypeQuery {
 
 // First returns the first EquipmentCategory entity in the query. Returns *NotFoundError when no equipmentcategory was found.
 func (ecq *EquipmentCategoryQuery) First(ctx context.Context) (*EquipmentCategory, error) {
-	ecs, err := ecq.Limit(1).All(ctx)
+	nodes, err := ecq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ecs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{equipmentcategory.Label}
 	}
-	return ecs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ecq *EquipmentCategoryQuery) FirstX(ctx context.Context) *EquipmentCategory {
-	ec, err := ecq.First(ctx)
+	node, err := ecq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return ec
+	return node
 }
 
 // FirstID returns the first EquipmentCategory id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (ecq *EquipmentCategoryQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only EquipmentCategory entity in the query, returns an error if not exactly one entity was returned.
 func (ecq *EquipmentCategoryQuery) Only(ctx context.Context) (*EquipmentCategory, error) {
-	ecs, err := ecq.Limit(2).All(ctx)
+	nodes, err := ecq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ecs) {
+	switch len(nodes) {
 	case 1:
-		return ecs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{equipmentcategory.Label}
 	default:
@@ -143,11 +143,11 @@ func (ecq *EquipmentCategoryQuery) Only(ctx context.Context) (*EquipmentCategory
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ecq *EquipmentCategoryQuery) OnlyX(ctx context.Context) *EquipmentCategory {
-	ec, err := ecq.Only(ctx)
+	node, err := ecq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ec
+	return node
 }
 
 // OnlyID returns the only EquipmentCategory id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (ecq *EquipmentCategoryQuery) All(ctx context.Context) ([]*EquipmentCategor
 
 // AllX is like All, but panics if an error occurs.
 func (ecq *EquipmentCategoryQuery) AllX(ctx context.Context) []*EquipmentCategory {
-	ecs, err := ecq.All(ctx)
+	nodes, err := ecq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ecs
+	return nodes
 }
 
 // IDs executes the query and returns a list of EquipmentCategory ids.
@@ -372,6 +372,7 @@ func (ecq *EquipmentCategoryQuery) sqlAll(ctx context.Context) ([]*EquipmentCate
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Types = []*EquipmentType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.EquipmentType(func(s *sql.Selector) {

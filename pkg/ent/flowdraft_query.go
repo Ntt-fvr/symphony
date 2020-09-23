@@ -109,23 +109,23 @@ func (fdq *FlowDraftQuery) QueryFlow() *FlowQuery {
 
 // First returns the first FlowDraft entity in the query. Returns *NotFoundError when no flowdraft was found.
 func (fdq *FlowDraftQuery) First(ctx context.Context) (*FlowDraft, error) {
-	fds, err := fdq.Limit(1).All(ctx)
+	nodes, err := fdq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fds) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{flowdraft.Label}
 	}
-	return fds[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fdq *FlowDraftQuery) FirstX(ctx context.Context) *FlowDraft {
-	fd, err := fdq.First(ctx)
+	node, err := fdq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return fd
+	return node
 }
 
 // FirstID returns the first FlowDraft id in the query. Returns *NotFoundError when no id was found.
@@ -152,13 +152,13 @@ func (fdq *FlowDraftQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only FlowDraft entity in the query, returns an error if not exactly one entity was returned.
 func (fdq *FlowDraftQuery) Only(ctx context.Context) (*FlowDraft, error) {
-	fds, err := fdq.Limit(2).All(ctx)
+	nodes, err := fdq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fds) {
+	switch len(nodes) {
 	case 1:
-		return fds[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{flowdraft.Label}
 	default:
@@ -168,11 +168,11 @@ func (fdq *FlowDraftQuery) Only(ctx context.Context) (*FlowDraft, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fdq *FlowDraftQuery) OnlyX(ctx context.Context) *FlowDraft {
-	fd, err := fdq.Only(ctx)
+	node, err := fdq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fd
+	return node
 }
 
 // OnlyID returns the only FlowDraft id in the query, returns an error if not exactly one id was returned.
@@ -211,11 +211,11 @@ func (fdq *FlowDraftQuery) All(ctx context.Context) ([]*FlowDraft, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (fdq *FlowDraftQuery) AllX(ctx context.Context) []*FlowDraft {
-	fds, err := fdq.All(ctx)
+	nodes, err := fdq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fds
+	return nodes
 }
 
 // IDs executes the query and returns a list of FlowDraft ids.
@@ -419,6 +419,7 @@ func (fdq *FlowDraftQuery) sqlAll(ctx context.Context) ([]*FlowDraft, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Blocks = []*Block{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Block(func(s *sql.Selector) {

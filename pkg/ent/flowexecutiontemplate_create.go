@@ -177,7 +177,7 @@ func (fetc *FlowExecutionTemplateCreate) check() error {
 }
 
 func (fetc *FlowExecutionTemplateCreate) sqlSave(ctx context.Context) (*FlowExecutionTemplate, error) {
-	fet, _spec := fetc.createSpec()
+	_node, _spec := fetc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fetc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -185,13 +185,13 @@ func (fetc *FlowExecutionTemplateCreate) sqlSave(ctx context.Context) (*FlowExec
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fet.ID = int(id)
-	return fet, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *sqlgraph.CreateSpec) {
 	var (
-		fet   = &FlowExecutionTemplate{config: fetc.config}
+		_node = &FlowExecutionTemplate{config: fetc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: flowexecutiontemplate.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -206,7 +206,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			Value:  value,
 			Column: flowexecutiontemplate.FieldCreateTime,
 		})
-		fet.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fetc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -214,7 +214,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			Value:  value,
 			Column: flowexecutiontemplate.FieldUpdateTime,
 		})
-		fet.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fetc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -222,7 +222,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			Value:  value,
 			Column: flowexecutiontemplate.FieldName,
 		})
-		fet.Name = value
+		_node.Name = value
 	}
 	if value, ok := fetc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -230,7 +230,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			Value:  value,
 			Column: flowexecutiontemplate.FieldDescription,
 		})
-		fet.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := fetc.mutation.EndParamDefinitions(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -238,7 +238,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 			Value:  value,
 			Column: flowexecutiontemplate.FieldEndParamDefinitions,
 		})
-		fet.EndParamDefinitions = value
+		_node.EndParamDefinitions = value
 	}
 	if nodes := fetc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -259,7 +259,7 @@ func (fetc *FlowExecutionTemplateCreate) createSpec() (*FlowExecutionTemplate, *
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return fet, _spec
+	return _node, _spec
 }
 
 // FlowExecutionTemplateCreateBulk is the builder for creating a bulk of FlowExecutionTemplate entities.

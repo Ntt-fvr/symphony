@@ -162,7 +162,7 @@ func (fprpc *FloorPlanReferencePointCreate) check() error {
 }
 
 func (fprpc *FloorPlanReferencePointCreate) sqlSave(ctx context.Context) (*FloorPlanReferencePoint, error) {
-	fprp, _spec := fprpc.createSpec()
+	_node, _spec := fprpc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fprpc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -170,13 +170,13 @@ func (fprpc *FloorPlanReferencePointCreate) sqlSave(ctx context.Context) (*Floor
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fprp.ID = int(id)
-	return fprp, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoint, *sqlgraph.CreateSpec) {
 	var (
-		fprp  = &FloorPlanReferencePoint{config: fprpc.config}
+		_node = &FloorPlanReferencePoint{config: fprpc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: floorplanreferencepoint.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -191,7 +191,7 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldCreateTime,
 		})
-		fprp.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fprpc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -199,7 +199,7 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldUpdateTime,
 		})
-		fprp.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fprpc.mutation.X(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -207,7 +207,7 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldX,
 		})
-		fprp.X = value
+		_node.X = value
 	}
 	if value, ok := fprpc.mutation.Y(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -215,7 +215,7 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldY,
 		})
-		fprp.Y = value
+		_node.Y = value
 	}
 	if value, ok := fprpc.mutation.Latitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -223,7 +223,7 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldLatitude,
 		})
-		fprp.Latitude = value
+		_node.Latitude = value
 	}
 	if value, ok := fprpc.mutation.Longitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -231,9 +231,9 @@ func (fprpc *FloorPlanReferencePointCreate) createSpec() (*FloorPlanReferencePoi
 			Value:  value,
 			Column: floorplanreferencepoint.FieldLongitude,
 		})
-		fprp.Longitude = value
+		_node.Longitude = value
 	}
-	return fprp, _spec
+	return _node, _spec
 }
 
 // FloorPlanReferencePointCreateBulk is the builder for creating a bulk of FloorPlanReferencePoint entities.

@@ -421,7 +421,7 @@ func (fc *FileCreate) check() error {
 }
 
 func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
-	f, _spec := fc.createSpec()
+	_node, _spec := fc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -429,13 +429,13 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	f.ID = int(id)
-	return f, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	var (
-		f     = &File{config: fc.config}
+		_node = &File{config: fc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: file.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -450,7 +450,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldCreateTime,
 		})
-		f.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -458,7 +458,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldUpdateTime,
 		})
-		f.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -466,7 +466,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldType,
 		})
-		f.Type = value
+		_node.Type = value
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -474,7 +474,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldName,
 		})
-		f.Name = value
+		_node.Name = value
 	}
 	if value, ok := fc.mutation.Size(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -482,7 +482,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldSize,
 		})
-		f.Size = value
+		_node.Size = value
 	}
 	if value, ok := fc.mutation.ModifiedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -490,7 +490,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldModifiedAt,
 		})
-		f.ModifiedAt = value
+		_node.ModifiedAt = value
 	}
 	if value, ok := fc.mutation.UploadedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -498,7 +498,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldUploadedAt,
 		})
-		f.UploadedAt = value
+		_node.UploadedAt = value
 	}
 	if value, ok := fc.mutation.ContentType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -506,7 +506,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldContentType,
 		})
-		f.ContentType = value
+		_node.ContentType = value
 	}
 	if value, ok := fc.mutation.StoreKey(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -514,7 +514,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldStoreKey,
 		})
-		f.StoreKey = value
+		_node.StoreKey = value
 	}
 	if value, ok := fc.mutation.Category(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -522,7 +522,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldCategory,
 		})
-		f.Category = value
+		_node.Category = value
 	}
 	if value, ok := fc.mutation.Annotation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -530,7 +530,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: file.FieldAnnotation,
 		})
-		f.Annotation = value
+		_node.Annotation = value
 	}
 	if nodes := fc.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -703,7 +703,7 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return f, _spec
+	return _node, _spec
 }
 
 // FileCreateBulk is the builder for creating a bulk of File entities.

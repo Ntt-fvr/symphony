@@ -84,23 +84,23 @@ func (ppq *PermissionsPolicyQuery) QueryGroups() *UsersGroupQuery {
 
 // First returns the first PermissionsPolicy entity in the query. Returns *NotFoundError when no permissionspolicy was found.
 func (ppq *PermissionsPolicyQuery) First(ctx context.Context) (*PermissionsPolicy, error) {
-	pps, err := ppq.Limit(1).All(ctx)
+	nodes, err := ppq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(pps) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{permissionspolicy.Label}
 	}
-	return pps[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ppq *PermissionsPolicyQuery) FirstX(ctx context.Context) *PermissionsPolicy {
-	pp, err := ppq.First(ctx)
+	node, err := ppq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return pp
+	return node
 }
 
 // FirstID returns the first PermissionsPolicy id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (ppq *PermissionsPolicyQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only PermissionsPolicy entity in the query, returns an error if not exactly one entity was returned.
 func (ppq *PermissionsPolicyQuery) Only(ctx context.Context) (*PermissionsPolicy, error) {
-	pps, err := ppq.Limit(2).All(ctx)
+	nodes, err := ppq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(pps) {
+	switch len(nodes) {
 	case 1:
-		return pps[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{permissionspolicy.Label}
 	default:
@@ -143,11 +143,11 @@ func (ppq *PermissionsPolicyQuery) Only(ctx context.Context) (*PermissionsPolicy
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ppq *PermissionsPolicyQuery) OnlyX(ctx context.Context) *PermissionsPolicy {
-	pp, err := ppq.Only(ctx)
+	node, err := ppq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pp
+	return node
 }
 
 // OnlyID returns the only PermissionsPolicy id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (ppq *PermissionsPolicyQuery) All(ctx context.Context) ([]*PermissionsPolic
 
 // AllX is like All, but panics if an error occurs.
 func (ppq *PermissionsPolicyQuery) AllX(ctx context.Context) []*PermissionsPolicy {
-	pps, err := ppq.All(ctx)
+	nodes, err := ppq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pps
+	return nodes
 }
 
 // IDs executes the query and returns a list of PermissionsPolicy ids.
@@ -372,6 +372,7 @@ func (ppq *PermissionsPolicyQuery) sqlAll(ctx context.Context) ([]*PermissionsPo
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Groups = []*UsersGroup{}
 		}
 		var (
 			edgeids []int

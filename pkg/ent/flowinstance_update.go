@@ -708,11 +708,11 @@ func (fiuo *FlowInstanceUpdateOne) Save(ctx context.Context) (*FlowInstance, err
 
 // SaveX is like Save, but panics if an error occurs.
 func (fiuo *FlowInstanceUpdateOne) SaveX(ctx context.Context) *FlowInstance {
-	fi, err := fiuo.Save(ctx)
+	node, err := fiuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fi
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -746,7 +746,7 @@ func (fiuo *FlowInstanceUpdateOne) check() error {
 	return nil
 }
 
-func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (fi *FlowInstance, err error) {
+func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (_node *FlowInstance, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   flowinstance.Table,
@@ -961,9 +961,9 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (fi *FlowInstanc
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	fi = &FlowInstance{config: fiuo.config}
-	_spec.Assign = fi.assignValues
-	_spec.ScanValues = fi.scanValues()
+	_node = &FlowInstance{config: fiuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fiuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{flowinstance.Label}
@@ -972,5 +972,5 @@ func (fiuo *FlowInstanceUpdateOne) sqlSave(ctx context.Context) (fi *FlowInstanc
 		}
 		return nil, err
 	}
-	return fi, nil
+	return _node, nil
 }

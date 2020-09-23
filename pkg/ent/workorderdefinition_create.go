@@ -200,7 +200,7 @@ func (wodc *WorkOrderDefinitionCreate) check() error {
 }
 
 func (wodc *WorkOrderDefinitionCreate) sqlSave(ctx context.Context) (*WorkOrderDefinition, error) {
-	wod, _spec := wodc.createSpec()
+	_node, _spec := wodc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, wodc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -208,13 +208,13 @@ func (wodc *WorkOrderDefinitionCreate) sqlSave(ctx context.Context) (*WorkOrderD
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	wod.ID = int(id)
-	return wod, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlgraph.CreateSpec) {
 	var (
-		wod   = &WorkOrderDefinition{config: wodc.config}
+		_node = &WorkOrderDefinition{config: wodc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: workorderdefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -229,7 +229,7 @@ func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlg
 			Value:  value,
 			Column: workorderdefinition.FieldCreateTime,
 		})
-		wod.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := wodc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -237,7 +237,7 @@ func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlg
 			Value:  value,
 			Column: workorderdefinition.FieldUpdateTime,
 		})
-		wod.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := wodc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -245,7 +245,7 @@ func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlg
 			Value:  value,
 			Column: workorderdefinition.FieldIndex,
 		})
-		wod.Index = value
+		_node.Index = value
 	}
 	if nodes := wodc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -304,7 +304,7 @@ func (wodc *WorkOrderDefinitionCreate) createSpec() (*WorkOrderDefinition, *sqlg
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return wod, _spec
+	return _node, _spec
 }
 
 // WorkOrderDefinitionCreateBulk is the builder for creating a bulk of WorkOrderDefinition entities.

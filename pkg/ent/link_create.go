@@ -214,7 +214,7 @@ func (lc *LinkCreate) check() error {
 }
 
 func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
-	l, _spec := lc.createSpec()
+	_node, _spec := lc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -222,13 +222,13 @@ func (lc *LinkCreate) sqlSave(ctx context.Context) (*Link, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	l.ID = int(id)
-	return l, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 	var (
-		l     = &Link{config: lc.config}
+		_node = &Link{config: lc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: link.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -243,7 +243,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: link.FieldCreateTime,
 		})
-		l.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := lc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -251,7 +251,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: link.FieldUpdateTime,
 		})
-		l.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := lc.mutation.FutureState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -259,7 +259,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: link.FieldFutureState,
 		})
-		l.FutureState = &value
+		_node.FutureState = &value
 	}
 	if nodes := lc.mutation.PortsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -337,7 +337,7 @@ func (lc *LinkCreate) createSpec() (*Link, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return l, _spec
+	return _node, _spec
 }
 
 // LinkCreateBulk is the builder for creating a bulk of Link entities.

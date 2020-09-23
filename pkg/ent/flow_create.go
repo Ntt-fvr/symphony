@@ -219,7 +219,7 @@ func (fc *FlowCreate) check() error {
 }
 
 func (fc *FlowCreate) sqlSave(ctx context.Context) (*Flow, error) {
-	f, _spec := fc.createSpec()
+	_node, _spec := fc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -227,13 +227,13 @@ func (fc *FlowCreate) sqlSave(ctx context.Context) (*Flow, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	f.ID = int(id)
-	return f, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 	var (
-		f     = &Flow{config: fc.config}
+		_node = &Flow{config: fc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: flow.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -248,7 +248,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldCreateTime,
 		})
-		f.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -256,7 +256,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldUpdateTime,
 		})
-		f.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -264,7 +264,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldName,
 		})
-		f.Name = value
+		_node.Name = value
 	}
 	if value, ok := fc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -272,7 +272,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldDescription,
 		})
-		f.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := fc.mutation.EndParamDefinitions(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldEndParamDefinitions,
 		})
-		f.EndParamDefinitions = value
+		_node.EndParamDefinitions = value
 	}
 	if value, ok := fc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -288,7 +288,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flow.FieldStatus,
 		})
-		f.Status = value
+		_node.Status = value
 	}
 	if nodes := fc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -328,7 +328,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return f, _spec
+	return _node, _spec
 }
 
 // FlowCreateBulk is the builder for creating a bulk of Flow entities.

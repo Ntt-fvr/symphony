@@ -175,7 +175,7 @@ func (cc *CustomerCreate) check() error {
 }
 
 func (cc *CustomerCreate) sqlSave(ctx context.Context) (*Customer, error) {
-	c, _spec := cc.createSpec()
+	_node, _spec := cc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -183,13 +183,13 @@ func (cc *CustomerCreate) sqlSave(ctx context.Context) (*Customer, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	c.ID = int(id)
-	return c, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 	var (
-		c     = &Customer{config: cc.config}
+		_node = &Customer{config: cc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: customer.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -204,7 +204,7 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: customer.FieldCreateTime,
 		})
-		c.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := cc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -212,7 +212,7 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: customer.FieldUpdateTime,
 		})
-		c.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := cc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -220,7 +220,7 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: customer.FieldName,
 		})
-		c.Name = value
+		_node.Name = value
 	}
 	if value, ok := cc.mutation.ExternalID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -228,7 +228,7 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: customer.FieldExternalID,
 		})
-		c.ExternalID = &value
+		_node.ExternalID = &value
 	}
 	if nodes := cc.mutation.ServicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -249,7 +249,7 @@ func (cc *CustomerCreate) createSpec() (*Customer, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return c, _spec
+	return _node, _spec
 }
 
 // CustomerCreateBulk is the builder for creating a bulk of Customer entities.

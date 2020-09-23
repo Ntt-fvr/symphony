@@ -132,23 +132,23 @@ func (wodq *WorkOrderDefinitionQuery) QueryProjectTemplate() *ProjectTemplateQue
 
 // First returns the first WorkOrderDefinition entity in the query. Returns *NotFoundError when no workorderdefinition was found.
 func (wodq *WorkOrderDefinitionQuery) First(ctx context.Context) (*WorkOrderDefinition, error) {
-	wods, err := wodq.Limit(1).All(ctx)
+	nodes, err := wodq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(wods) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{workorderdefinition.Label}
 	}
-	return wods[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (wodq *WorkOrderDefinitionQuery) FirstX(ctx context.Context) *WorkOrderDefinition {
-	wod, err := wodq.First(ctx)
+	node, err := wodq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return wod
+	return node
 }
 
 // FirstID returns the first WorkOrderDefinition id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (wodq *WorkOrderDefinitionQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only WorkOrderDefinition entity in the query, returns an error if not exactly one entity was returned.
 func (wodq *WorkOrderDefinitionQuery) Only(ctx context.Context) (*WorkOrderDefinition, error) {
-	wods, err := wodq.Limit(2).All(ctx)
+	nodes, err := wodq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(wods) {
+	switch len(nodes) {
 	case 1:
-		return wods[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{workorderdefinition.Label}
 	default:
@@ -191,11 +191,11 @@ func (wodq *WorkOrderDefinitionQuery) Only(ctx context.Context) (*WorkOrderDefin
 
 // OnlyX is like Only, but panics if an error occurs.
 func (wodq *WorkOrderDefinitionQuery) OnlyX(ctx context.Context) *WorkOrderDefinition {
-	wod, err := wodq.Only(ctx)
+	node, err := wodq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wod
+	return node
 }
 
 // OnlyID returns the only WorkOrderDefinition id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (wodq *WorkOrderDefinitionQuery) All(ctx context.Context) ([]*WorkOrderDefi
 
 // AllX is like All, but panics if an error occurs.
 func (wodq *WorkOrderDefinitionQuery) AllX(ctx context.Context) []*WorkOrderDefinition {
-	wods, err := wodq.All(ctx)
+	nodes, err := wodq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wods
+	return nodes
 }
 
 // IDs executes the query and returns a list of WorkOrderDefinition ids.

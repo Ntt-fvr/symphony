@@ -233,7 +233,7 @@ func (epdc *EquipmentPortDefinitionCreate) check() error {
 }
 
 func (epdc *EquipmentPortDefinitionCreate) sqlSave(ctx context.Context) (*EquipmentPortDefinition, error) {
-	epd, _spec := epdc.createSpec()
+	_node, _spec := epdc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, epdc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -241,13 +241,13 @@ func (epdc *EquipmentPortDefinitionCreate) sqlSave(ctx context.Context) (*Equipm
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	epd.ID = int(id)
-	return epd, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinition, *sqlgraph.CreateSpec) {
 	var (
-		epd   = &EquipmentPortDefinition{config: epdc.config}
+		_node = &EquipmentPortDefinition{config: epdc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmentportdefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -262,7 +262,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldCreateTime,
 		})
-		epd.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := epdc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -270,7 +270,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldUpdateTime,
 		})
-		epd.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := epdc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -278,7 +278,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldName,
 		})
-		epd.Name = value
+		_node.Name = value
 	}
 	if value, ok := epdc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -286,7 +286,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldIndex,
 		})
-		epd.Index = value
+		_node.Index = value
 	}
 	if value, ok := epdc.mutation.Bandwidth(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -294,7 +294,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldBandwidth,
 		})
-		epd.Bandwidth = value
+		_node.Bandwidth = value
 	}
 	if value, ok := epdc.mutation.VisibilityLabel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -302,7 +302,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 			Value:  value,
 			Column: equipmentportdefinition.FieldVisibilityLabel,
 		})
-		epd.VisibilityLabel = value
+		_node.VisibilityLabel = value
 	}
 	if nodes := epdc.mutation.EquipmentPortTypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -361,7 +361,7 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return epd, _spec
+	return _node, _spec
 }
 
 // EquipmentPortDefinitionCreateBulk is the builder for creating a bulk of EquipmentPortDefinition entities.

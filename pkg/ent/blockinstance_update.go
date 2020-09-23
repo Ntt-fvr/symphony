@@ -667,11 +667,11 @@ func (biuo *BlockInstanceUpdateOne) Save(ctx context.Context) (*BlockInstance, e
 
 // SaveX is like Save, but panics if an error occurs.
 func (biuo *BlockInstanceUpdateOne) SaveX(ctx context.Context) *BlockInstance {
-	bi, err := biuo.Save(ctx)
+	node, err := biuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return bi
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -711,7 +711,7 @@ func (biuo *BlockInstanceUpdateOne) check() error {
 	return nil
 }
 
-func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (bi *BlockInstance, err error) {
+func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (_node *BlockInstance, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   blockinstance.Table,
@@ -905,9 +905,9 @@ func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (bi *BlockInsta
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	bi = &BlockInstance{config: biuo.config}
-	_spec.Assign = bi.assignValues
-	_spec.ScanValues = bi.scanValues()
+	_node = &BlockInstance{config: biuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, biuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{blockinstance.Label}
@@ -916,5 +916,5 @@ func (biuo *BlockInstanceUpdateOne) sqlSave(ctx context.Context) (bi *BlockInsta
 		}
 		return nil, err
 	}
-	return bi, nil
+	return _node, nil
 }

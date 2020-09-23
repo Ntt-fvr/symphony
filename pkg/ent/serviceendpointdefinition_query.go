@@ -133,23 +133,23 @@ func (sedq *ServiceEndpointDefinitionQuery) QueryEquipmentType() *EquipmentTypeQ
 
 // First returns the first ServiceEndpointDefinition entity in the query. Returns *NotFoundError when no serviceendpointdefinition was found.
 func (sedq *ServiceEndpointDefinitionQuery) First(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	seds, err := sedq.Limit(1).All(ctx)
+	nodes, err := sedq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(seds) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{serviceendpointdefinition.Label}
 	}
-	return seds[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (sedq *ServiceEndpointDefinitionQuery) FirstX(ctx context.Context) *ServiceEndpointDefinition {
-	sed, err := sedq.First(ctx)
+	node, err := sedq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return sed
+	return node
 }
 
 // FirstID returns the first ServiceEndpointDefinition id in the query. Returns *NotFoundError when no id was found.
@@ -176,13 +176,13 @@ func (sedq *ServiceEndpointDefinitionQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ServiceEndpointDefinition entity in the query, returns an error if not exactly one entity was returned.
 func (sedq *ServiceEndpointDefinitionQuery) Only(ctx context.Context) (*ServiceEndpointDefinition, error) {
-	seds, err := sedq.Limit(2).All(ctx)
+	nodes, err := sedq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(seds) {
+	switch len(nodes) {
 	case 1:
-		return seds[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{serviceendpointdefinition.Label}
 	default:
@@ -192,11 +192,11 @@ func (sedq *ServiceEndpointDefinitionQuery) Only(ctx context.Context) (*ServiceE
 
 // OnlyX is like Only, but panics if an error occurs.
 func (sedq *ServiceEndpointDefinitionQuery) OnlyX(ctx context.Context) *ServiceEndpointDefinition {
-	sed, err := sedq.Only(ctx)
+	node, err := sedq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sed
+	return node
 }
 
 // OnlyID returns the only ServiceEndpointDefinition id in the query, returns an error if not exactly one id was returned.
@@ -235,11 +235,11 @@ func (sedq *ServiceEndpointDefinitionQuery) All(ctx context.Context) ([]*Service
 
 // AllX is like All, but panics if an error occurs.
 func (sedq *ServiceEndpointDefinitionQuery) AllX(ctx context.Context) []*ServiceEndpointDefinition {
-	seds, err := sedq.All(ctx)
+	nodes, err := sedq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return seds
+	return nodes
 }
 
 // IDs executes the query and returns a list of ServiceEndpointDefinition ids.
@@ -455,6 +455,7 @@ func (sedq *ServiceEndpointDefinitionQuery) sqlAll(ctx context.Context) ([]*Serv
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Endpoints = []*ServiceEndpoint{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ServiceEndpoint(func(s *sql.Selector) {

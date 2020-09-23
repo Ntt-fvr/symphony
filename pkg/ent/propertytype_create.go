@@ -596,7 +596,7 @@ func (ptc *PropertyTypeCreate) check() error {
 }
 
 func (ptc *PropertyTypeCreate) sqlSave(ctx context.Context) (*PropertyType, error) {
-	pt, _spec := ptc.createSpec()
+	_node, _spec := ptc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -604,13 +604,13 @@ func (ptc *PropertyTypeCreate) sqlSave(ctx context.Context) (*PropertyType, erro
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	pt.ID = int(id)
-	return pt, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec) {
 	var (
-		pt    = &PropertyType{config: ptc.config}
+		_node = &PropertyType{config: ptc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: propertytype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -625,7 +625,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldCreateTime,
 		})
-		pt.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ptc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -633,7 +633,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldUpdateTime,
 		})
-		pt.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ptc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -641,7 +641,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldType,
 		})
-		pt.Type = value
+		_node.Type = value
 	}
 	if value, ok := ptc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -649,7 +649,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldName,
 		})
-		pt.Name = value
+		_node.Name = value
 	}
 	if value, ok := ptc.mutation.ExternalID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -657,7 +657,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldExternalID,
 		})
-		pt.ExternalID = value
+		_node.ExternalID = value
 	}
 	if value, ok := ptc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -665,7 +665,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldIndex,
 		})
-		pt.Index = value
+		_node.Index = value
 	}
 	if value, ok := ptc.mutation.Category(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -673,7 +673,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldCategory,
 		})
-		pt.Category = value
+		_node.Category = value
 	}
 	if value, ok := ptc.mutation.IntVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -681,7 +681,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldIntVal,
 		})
-		pt.IntVal = &value
+		_node.IntVal = &value
 	}
 	if value, ok := ptc.mutation.BoolVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -689,7 +689,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldBoolVal,
 		})
-		pt.BoolVal = &value
+		_node.BoolVal = &value
 	}
 	if value, ok := ptc.mutation.FloatVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -697,7 +697,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldFloatVal,
 		})
-		pt.FloatVal = &value
+		_node.FloatVal = &value
 	}
 	if value, ok := ptc.mutation.LatitudeVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -705,7 +705,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldLatitudeVal,
 		})
-		pt.LatitudeVal = &value
+		_node.LatitudeVal = &value
 	}
 	if value, ok := ptc.mutation.LongitudeVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -713,7 +713,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldLongitudeVal,
 		})
-		pt.LongitudeVal = &value
+		_node.LongitudeVal = &value
 	}
 	if value, ok := ptc.mutation.StringVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -721,7 +721,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldStringVal,
 		})
-		pt.StringVal = &value
+		_node.StringVal = &value
 	}
 	if value, ok := ptc.mutation.RangeFromVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -729,7 +729,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldRangeFromVal,
 		})
-		pt.RangeFromVal = &value
+		_node.RangeFromVal = &value
 	}
 	if value, ok := ptc.mutation.RangeToVal(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -737,7 +737,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldRangeToVal,
 		})
-		pt.RangeToVal = &value
+		_node.RangeToVal = &value
 	}
 	if value, ok := ptc.mutation.IsInstanceProperty(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -745,7 +745,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldIsInstanceProperty,
 		})
-		pt.IsInstanceProperty = value
+		_node.IsInstanceProperty = value
 	}
 	if value, ok := ptc.mutation.Editable(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -753,7 +753,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldEditable,
 		})
-		pt.Editable = value
+		_node.Editable = value
 	}
 	if value, ok := ptc.mutation.Mandatory(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -761,7 +761,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldMandatory,
 		})
-		pt.Mandatory = value
+		_node.Mandatory = value
 	}
 	if value, ok := ptc.mutation.Deleted(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -769,7 +769,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldDeleted,
 		})
-		pt.Deleted = value
+		_node.Deleted = value
 	}
 	if value, ok := ptc.mutation.NodeType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -777,7 +777,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: propertytype.FieldNodeType,
 		})
-		pt.NodeType = value
+		_node.NodeType = value
 	}
 	if nodes := ptc.mutation.PropertiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -969,7 +969,7 @@ func (ptc *PropertyTypeCreate) createSpec() (*PropertyType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return pt, _spec
+	return _node, _spec
 }
 
 // PropertyTypeCreateBulk is the builder for creating a bulk of PropertyType entities.

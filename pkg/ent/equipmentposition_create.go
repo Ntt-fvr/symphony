@@ -180,7 +180,7 @@ func (epc *EquipmentPositionCreate) check() error {
 }
 
 func (epc *EquipmentPositionCreate) sqlSave(ctx context.Context) (*EquipmentPosition, error) {
-	ep, _spec := epc.createSpec()
+	_node, _spec := epc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, epc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -188,13 +188,13 @@ func (epc *EquipmentPositionCreate) sqlSave(ctx context.Context) (*EquipmentPosi
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	ep.ID = int(id)
-	return ep, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (epc *EquipmentPositionCreate) createSpec() (*EquipmentPosition, *sqlgraph.CreateSpec) {
 	var (
-		ep    = &EquipmentPosition{config: epc.config}
+		_node = &EquipmentPosition{config: epc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmentposition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -209,7 +209,7 @@ func (epc *EquipmentPositionCreate) createSpec() (*EquipmentPosition, *sqlgraph.
 			Value:  value,
 			Column: equipmentposition.FieldCreateTime,
 		})
-		ep.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := epc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -217,7 +217,7 @@ func (epc *EquipmentPositionCreate) createSpec() (*EquipmentPosition, *sqlgraph.
 			Value:  value,
 			Column: equipmentposition.FieldUpdateTime,
 		})
-		ep.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if nodes := epc.mutation.DefinitionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -276,7 +276,7 @@ func (epc *EquipmentPositionCreate) createSpec() (*EquipmentPosition, *sqlgraph.
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return ep, _spec
+	return _node, _spec
 }
 
 // EquipmentPositionCreateBulk is the builder for creating a bulk of EquipmentPosition entities.

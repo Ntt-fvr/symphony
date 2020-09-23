@@ -2069,11 +2069,11 @@ func (wouo *WorkOrderUpdateOne) Save(ctx context.Context) (*WorkOrder, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (wouo *WorkOrderUpdateOne) SaveX(ctx context.Context) *WorkOrder {
-	wo, err := wouo.Save(ctx)
+	node, err := wouo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wo
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -2120,7 +2120,7 @@ func (wouo *WorkOrderUpdateOne) check() error {
 	return nil
 }
 
-func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err error) {
+func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (_node *WorkOrder, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   workorder.Table,
@@ -2872,9 +2872,9 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	wo = &WorkOrder{config: wouo.config}
-	_spec.Assign = wo.assignValues
-	_spec.ScanValues = wo.scanValues()
+	_node = &WorkOrder{config: wouo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, wouo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{workorder.Label}
@@ -2883,5 +2883,5 @@ func (wouo *WorkOrderUpdateOne) sqlSave(ctx context.Context) (wo *WorkOrder, err
 		}
 		return nil, err
 	}
-	return wo, nil
+	return _node, nil
 }

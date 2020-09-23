@@ -691,11 +691,11 @@ func (uguo *UsersGroupUpdateOne) Save(ctx context.Context) (*UsersGroup, error) 
 
 // SaveX is like Save, but panics if an error occurs.
 func (uguo *UsersGroupUpdateOne) SaveX(ctx context.Context) *UsersGroup {
-	ug, err := uguo.Save(ctx)
+	node, err := uguo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ug
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -734,7 +734,7 @@ func (uguo *UsersGroupUpdateOne) check() error {
 	return nil
 }
 
-func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, err error) {
+func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (_node *UsersGroup, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   usersgroup.Table,
@@ -946,9 +946,9 @@ func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	ug = &UsersGroup{config: uguo.config}
-	_spec.Assign = ug.assignValues
-	_spec.ScanValues = ug.scanValues()
+	_node = &UsersGroup{config: uguo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, uguo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{usersgroup.Label}
@@ -957,5 +957,5 @@ func (uguo *UsersGroupUpdateOne) sqlSave(ctx context.Context) (ug *UsersGroup, e
 		}
 		return nil, err
 	}
-	return ug, nil
+	return _node, nil
 }

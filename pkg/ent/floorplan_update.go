@@ -539,11 +539,11 @@ func (fpuo *FloorPlanUpdateOne) Save(ctx context.Context) (*FloorPlan, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (fpuo *FloorPlanUpdateOne) SaveX(ctx context.Context) *FloorPlan {
-	fp, err := fpuo.Save(ctx)
+	node, err := fpuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fp
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -567,7 +567,7 @@ func (fpuo *FloorPlanUpdateOne) defaults() {
 	}
 }
 
-func (fpuo *FloorPlanUpdateOne) sqlSave(ctx context.Context) (fp *FloorPlan, err error) {
+func (fpuo *FloorPlanUpdateOne) sqlSave(ctx context.Context) (_node *FloorPlan, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   floorplan.Table,
@@ -737,9 +737,9 @@ func (fpuo *FloorPlanUpdateOne) sqlSave(ctx context.Context) (fp *FloorPlan, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	fp = &FloorPlan{config: fpuo.config}
-	_spec.Assign = fp.assignValues
-	_spec.ScanValues = fp.scanValues()
+	_node = &FloorPlan{config: fpuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fpuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{floorplan.Label}
@@ -748,5 +748,5 @@ func (fpuo *FloorPlanUpdateOne) sqlSave(ctx context.Context) (fp *FloorPlan, err
 		}
 		return nil, err
 	}
-	return fp, nil
+	return _node, nil
 }

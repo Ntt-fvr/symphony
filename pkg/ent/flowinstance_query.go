@@ -156,23 +156,23 @@ func (fiq *FlowInstanceQuery) QueryParentSubflowBlock() *BlockInstanceQuery {
 
 // First returns the first FlowInstance entity in the query. Returns *NotFoundError when no flowinstance was found.
 func (fiq *FlowInstanceQuery) First(ctx context.Context) (*FlowInstance, error) {
-	fis, err := fiq.Limit(1).All(ctx)
+	nodes, err := fiq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fis) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{flowinstance.Label}
 	}
-	return fis[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fiq *FlowInstanceQuery) FirstX(ctx context.Context) *FlowInstance {
-	fi, err := fiq.First(ctx)
+	node, err := fiq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return fi
+	return node
 }
 
 // FirstID returns the first FlowInstance id in the query. Returns *NotFoundError when no id was found.
@@ -199,13 +199,13 @@ func (fiq *FlowInstanceQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only FlowInstance entity in the query, returns an error if not exactly one entity was returned.
 func (fiq *FlowInstanceQuery) Only(ctx context.Context) (*FlowInstance, error) {
-	fis, err := fiq.Limit(2).All(ctx)
+	nodes, err := fiq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fis) {
+	switch len(nodes) {
 	case 1:
-		return fis[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{flowinstance.Label}
 	default:
@@ -215,11 +215,11 @@ func (fiq *FlowInstanceQuery) Only(ctx context.Context) (*FlowInstance, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fiq *FlowInstanceQuery) OnlyX(ctx context.Context) *FlowInstance {
-	fi, err := fiq.Only(ctx)
+	node, err := fiq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fi
+	return node
 }
 
 // OnlyID returns the only FlowInstance id in the query, returns an error if not exactly one id was returned.
@@ -258,11 +258,11 @@ func (fiq *FlowInstanceQuery) All(ctx context.Context) ([]*FlowInstance, error) 
 
 // AllX is like All, but panics if an error occurs.
 func (fiq *FlowInstanceQuery) AllX(ctx context.Context) []*FlowInstance {
-	fis, err := fiq.All(ctx)
+	nodes, err := fiq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fis
+	return nodes
 }
 
 // IDs executes the query and returns a list of FlowInstance ids.
@@ -540,6 +540,7 @@ func (fiq *FlowInstanceQuery) sqlAll(ctx context.Context) ([]*FlowInstance, erro
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Blocks = []*BlockInstance{}
 		}
 		query.withFKs = true
 		query.Where(predicate.BlockInstance(func(s *sql.Selector) {

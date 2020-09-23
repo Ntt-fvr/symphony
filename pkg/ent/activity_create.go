@@ -243,7 +243,7 @@ func (ac *ActivityCreate) check() error {
 }
 
 func (ac *ActivityCreate) sqlSave(ctx context.Context) (*Activity, error) {
-	a, _spec := ac.createSpec()
+	_node, _spec := ac.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ac.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -251,13 +251,13 @@ func (ac *ActivityCreate) sqlSave(ctx context.Context) (*Activity, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	a.ID = int(id)
-	return a, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 	var (
-		a     = &Activity{config: ac.config}
+		_node = &Activity{config: ac.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: activity.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -272,7 +272,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldCreateTime,
 		})
-		a.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ac.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldUpdateTime,
 		})
-		a.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ac.mutation.ActivityType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -288,7 +288,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldActivityType,
 		})
-		a.ActivityType = value
+		_node.ActivityType = value
 	}
 	if value, ok := ac.mutation.IsCreate(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -296,7 +296,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldIsCreate,
 		})
-		a.IsCreate = value
+		_node.IsCreate = value
 	}
 	if value, ok := ac.mutation.OldValue(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -304,7 +304,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldOldValue,
 		})
-		a.OldValue = value
+		_node.OldValue = value
 	}
 	if value, ok := ac.mutation.NewValue(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -312,7 +312,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldNewValue,
 		})
-		a.NewValue = value
+		_node.NewValue = value
 	}
 	if value, ok := ac.mutation.ClockDetails(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -320,7 +320,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: activity.FieldClockDetails,
 		})
-		a.ClockDetails = value
+		_node.ClockDetails = value
 	}
 	if nodes := ac.mutation.AuthorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -360,7 +360,7 @@ func (ac *ActivityCreate) createSpec() (*Activity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return a, _spec
+	return _node, _spec
 }
 
 // ActivityCreateBulk is the builder for creating a bulk of Activity entities.

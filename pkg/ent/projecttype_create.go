@@ -202,7 +202,7 @@ func (ptc *ProjectTypeCreate) check() error {
 }
 
 func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error) {
-	pt, _spec := ptc.createSpec()
+	_node, _spec := ptc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ptc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -210,13 +210,13 @@ func (ptc *ProjectTypeCreate) sqlSave(ctx context.Context) (*ProjectType, error)
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	pt.ID = int(id)
-	return pt, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) {
 	var (
-		pt    = &ProjectType{config: ptc.config}
+		_node = &ProjectType{config: ptc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: projecttype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -231,7 +231,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: projecttype.FieldCreateTime,
 		})
-		pt.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ptc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -239,7 +239,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: projecttype.FieldUpdateTime,
 		})
-		pt.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ptc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -247,7 +247,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: projecttype.FieldName,
 		})
-		pt.Name = value
+		_node.Name = value
 	}
 	if value, ok := ptc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -255,7 +255,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: projecttype.FieldDescription,
 		})
-		pt.Description = &value
+		_node.Description = &value
 	}
 	if nodes := ptc.mutation.PropertiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -314,7 +314,7 @@ func (ptc *ProjectTypeCreate) createSpec() (*ProjectType, *sqlgraph.CreateSpec) 
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return pt, _spec
+	return _node, _spec
 }
 
 // ProjectTypeCreateBulk is the builder for creating a bulk of ProjectType entities.

@@ -240,7 +240,7 @@ func (clidc *CheckListItemDefinitionCreate) check() error {
 }
 
 func (clidc *CheckListItemDefinitionCreate) sqlSave(ctx context.Context) (*CheckListItemDefinition, error) {
-	clid, _spec := clidc.createSpec()
+	_node, _spec := clidc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, clidc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -248,13 +248,13 @@ func (clidc *CheckListItemDefinitionCreate) sqlSave(ctx context.Context) (*Check
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	clid.ID = int(id)
-	return clid, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefinition, *sqlgraph.CreateSpec) {
 	var (
-		clid  = &CheckListItemDefinition{config: clidc.config}
+		_node = &CheckListItemDefinition{config: clidc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: checklistitemdefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -269,7 +269,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldCreateTime,
 		})
-		clid.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := clidc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -277,7 +277,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldUpdateTime,
 		})
-		clid.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := clidc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -285,7 +285,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldTitle,
 		})
-		clid.Title = value
+		_node.Title = value
 	}
 	if value, ok := clidc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -293,7 +293,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldType,
 		})
-		clid.Type = value
+		_node.Type = value
 	}
 	if value, ok := clidc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -301,7 +301,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldIndex,
 		})
-		clid.Index = value
+		_node.Index = value
 	}
 	if value, ok := clidc.mutation.IsMandatory(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -309,7 +309,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldIsMandatory,
 		})
-		clid.IsMandatory = value
+		_node.IsMandatory = value
 	}
 	if value, ok := clidc.mutation.EnumValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -317,7 +317,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldEnumValues,
 		})
-		clid.EnumValues = &value
+		_node.EnumValues = &value
 	}
 	if value, ok := clidc.mutation.EnumSelectionModeValue(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -325,7 +325,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldEnumSelectionModeValue,
 		})
-		clid.EnumSelectionModeValue = &value
+		_node.EnumSelectionModeValue = &value
 	}
 	if value, ok := clidc.mutation.HelpText(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -333,7 +333,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 			Value:  value,
 			Column: checklistitemdefinition.FieldHelpText,
 		})
-		clid.HelpText = &value
+		_node.HelpText = &value
 	}
 	if nodes := clidc.mutation.CheckListCategoryDefinitionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -354,7 +354,7 @@ func (clidc *CheckListItemDefinitionCreate) createSpec() (*CheckListItemDefiniti
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return clid, _spec
+	return _node, _spec
 }
 
 // CheckListItemDefinitionCreateBulk is the builder for creating a bulk of CheckListItemDefinition entities.

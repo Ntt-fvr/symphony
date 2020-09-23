@@ -503,7 +503,7 @@ func (scsc *SurveyCellScanCreate) check() error {
 }
 
 func (scsc *SurveyCellScanCreate) sqlSave(ctx context.Context) (*SurveyCellScan, error) {
-	scs, _spec := scsc.createSpec()
+	_node, _spec := scsc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, scsc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -511,13 +511,13 @@ func (scsc *SurveyCellScanCreate) sqlSave(ctx context.Context) (*SurveyCellScan,
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	scs.ID = int(id)
-	return scs, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.CreateSpec) {
 	var (
-		scs   = &SurveyCellScan{config: scsc.config}
+		_node = &SurveyCellScan{config: scsc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: surveycellscan.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -532,7 +532,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldCreateTime,
 		})
-		scs.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := scsc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -540,7 +540,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldUpdateTime,
 		})
-		scs.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := scsc.mutation.NetworkType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -548,7 +548,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldNetworkType,
 		})
-		scs.NetworkType = value
+		_node.NetworkType = value
 	}
 	if value, ok := scsc.mutation.SignalStrength(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -556,7 +556,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldSignalStrength,
 		})
-		scs.SignalStrength = value
+		_node.SignalStrength = value
 	}
 	if value, ok := scsc.mutation.Timestamp(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -564,7 +564,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldTimestamp,
 		})
-		scs.Timestamp = &value
+		_node.Timestamp = &value
 	}
 	if value, ok := scsc.mutation.BaseStationID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -572,7 +572,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldBaseStationID,
 		})
-		scs.BaseStationID = &value
+		_node.BaseStationID = &value
 	}
 	if value, ok := scsc.mutation.NetworkID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -580,7 +580,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldNetworkID,
 		})
-		scs.NetworkID = &value
+		_node.NetworkID = &value
 	}
 	if value, ok := scsc.mutation.SystemID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -588,7 +588,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldSystemID,
 		})
-		scs.SystemID = &value
+		_node.SystemID = &value
 	}
 	if value, ok := scsc.mutation.CellID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -596,7 +596,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldCellID,
 		})
-		scs.CellID = &value
+		_node.CellID = &value
 	}
 	if value, ok := scsc.mutation.LocationAreaCode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -604,7 +604,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldLocationAreaCode,
 		})
-		scs.LocationAreaCode = &value
+		_node.LocationAreaCode = &value
 	}
 	if value, ok := scsc.mutation.MobileCountryCode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -612,7 +612,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldMobileCountryCode,
 		})
-		scs.MobileCountryCode = &value
+		_node.MobileCountryCode = &value
 	}
 	if value, ok := scsc.mutation.MobileNetworkCode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -620,7 +620,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldMobileNetworkCode,
 		})
-		scs.MobileNetworkCode = &value
+		_node.MobileNetworkCode = &value
 	}
 	if value, ok := scsc.mutation.PrimaryScramblingCode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -628,7 +628,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldPrimaryScramblingCode,
 		})
-		scs.PrimaryScramblingCode = &value
+		_node.PrimaryScramblingCode = &value
 	}
 	if value, ok := scsc.mutation.Operator(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -636,7 +636,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldOperator,
 		})
-		scs.Operator = &value
+		_node.Operator = &value
 	}
 	if value, ok := scsc.mutation.Arfcn(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -644,7 +644,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldArfcn,
 		})
-		scs.Arfcn = &value
+		_node.Arfcn = &value
 	}
 	if value, ok := scsc.mutation.PhysicalCellID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -652,7 +652,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldPhysicalCellID,
 		})
-		scs.PhysicalCellID = &value
+		_node.PhysicalCellID = &value
 	}
 	if value, ok := scsc.mutation.TrackingAreaCode(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -660,7 +660,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldTrackingAreaCode,
 		})
-		scs.TrackingAreaCode = &value
+		_node.TrackingAreaCode = &value
 	}
 	if value, ok := scsc.mutation.TimingAdvance(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -668,7 +668,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldTimingAdvance,
 		})
-		scs.TimingAdvance = &value
+		_node.TimingAdvance = &value
 	}
 	if value, ok := scsc.mutation.Earfcn(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -676,7 +676,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldEarfcn,
 		})
-		scs.Earfcn = &value
+		_node.Earfcn = &value
 	}
 	if value, ok := scsc.mutation.Uarfcn(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -684,7 +684,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldUarfcn,
 		})
-		scs.Uarfcn = &value
+		_node.Uarfcn = &value
 	}
 	if value, ok := scsc.mutation.Latitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -692,7 +692,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldLatitude,
 		})
-		scs.Latitude = &value
+		_node.Latitude = &value
 	}
 	if value, ok := scsc.mutation.Longitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -700,7 +700,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldLongitude,
 		})
-		scs.Longitude = &value
+		_node.Longitude = &value
 	}
 	if value, ok := scsc.mutation.Altitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -708,7 +708,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldAltitude,
 		})
-		scs.Altitude = &value
+		_node.Altitude = &value
 	}
 	if value, ok := scsc.mutation.Heading(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -716,7 +716,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldHeading,
 		})
-		scs.Heading = &value
+		_node.Heading = &value
 	}
 	if value, ok := scsc.mutation.Rssi(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -724,7 +724,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 			Value:  value,
 			Column: surveycellscan.FieldRssi,
 		})
-		scs.Rssi = &value
+		_node.Rssi = &value
 	}
 	if nodes := scsc.mutation.ChecklistItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -783,7 +783,7 @@ func (scsc *SurveyCellScanCreate) createSpec() (*SurveyCellScan, *sqlgraph.Creat
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return scs, _spec
+	return _node, _spec
 }
 
 // SurveyCellScanCreateBulk is the builder for creating a bulk of SurveyCellScan entities.

@@ -228,7 +228,7 @@ func (ugc *UsersGroupCreate) check() error {
 }
 
 func (ugc *UsersGroupCreate) sqlSave(ctx context.Context) (*UsersGroup, error) {
-	ug, _spec := ugc.createSpec()
+	_node, _spec := ugc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ugc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -236,13 +236,13 @@ func (ugc *UsersGroupCreate) sqlSave(ctx context.Context) (*UsersGroup, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	ug.ID = int(id)
-	return ug, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 	var (
-		ug    = &UsersGroup{config: ugc.config}
+		_node = &UsersGroup{config: ugc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: usersgroup.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -257,7 +257,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: usersgroup.FieldCreateTime,
 		})
-		ug.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ugc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -265,7 +265,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: usersgroup.FieldUpdateTime,
 		})
-		ug.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ugc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -273,7 +273,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: usersgroup.FieldName,
 		})
-		ug.Name = value
+		_node.Name = value
 	}
 	if value, ok := ugc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -281,7 +281,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: usersgroup.FieldDescription,
 		})
-		ug.Description = value
+		_node.Description = value
 	}
 	if value, ok := ugc.mutation.Status(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -289,7 +289,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: usersgroup.FieldStatus,
 		})
-		ug.Status = value
+		_node.Status = value
 	}
 	if nodes := ugc.mutation.MembersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -348,7 +348,7 @@ func (ugc *UsersGroupCreate) createSpec() (*UsersGroup, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return ug, _spec
+	return _node, _spec
 }
 
 // UsersGroupCreateBulk is the builder for creating a bulk of UsersGroup entities.

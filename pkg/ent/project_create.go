@@ -303,7 +303,7 @@ func (pc *ProjectCreate) check() error {
 }
 
 func (pc *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
-	pr, _spec := pc.createSpec()
+	_node, _spec := pc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -311,13 +311,13 @@ func (pc *ProjectCreate) sqlSave(ctx context.Context) (*Project, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	pr.ID = int(id)
-	return pr, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 	var (
-		pr    = &Project{config: pc.config}
+		_node = &Project{config: pc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: project.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -332,7 +332,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: project.FieldCreateTime,
 		})
-		pr.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := pc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -340,7 +340,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: project.FieldUpdateTime,
 		})
-		pr.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := pc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -348,7 +348,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: project.FieldName,
 		})
-		pr.Name = value
+		_node.Name = value
 	}
 	if value, ok := pc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -356,7 +356,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: project.FieldDescription,
 		})
-		pr.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := pc.mutation.Priority(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -364,7 +364,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: project.FieldPriority,
 		})
-		pr.Priority = value
+		_node.Priority = value
 	}
 	if nodes := pc.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -499,7 +499,7 @@ func (pc *ProjectCreate) createSpec() (*Project, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return pr, _spec
+	return _node, _spec
 }
 
 // ProjectCreateBulk is the builder for creating a bulk of Project entities.

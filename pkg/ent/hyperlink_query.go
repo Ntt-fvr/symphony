@@ -132,23 +132,23 @@ func (hq *HyperlinkQuery) QueryWorkOrder() *WorkOrderQuery {
 
 // First returns the first Hyperlink entity in the query. Returns *NotFoundError when no hyperlink was found.
 func (hq *HyperlinkQuery) First(ctx context.Context) (*Hyperlink, error) {
-	hs, err := hq.Limit(1).All(ctx)
+	nodes, err := hq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(hs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{hyperlink.Label}
 	}
-	return hs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (hq *HyperlinkQuery) FirstX(ctx context.Context) *Hyperlink {
-	h, err := hq.First(ctx)
+	node, err := hq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return h
+	return node
 }
 
 // FirstID returns the first Hyperlink id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (hq *HyperlinkQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Hyperlink entity in the query, returns an error if not exactly one entity was returned.
 func (hq *HyperlinkQuery) Only(ctx context.Context) (*Hyperlink, error) {
-	hs, err := hq.Limit(2).All(ctx)
+	nodes, err := hq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(hs) {
+	switch len(nodes) {
 	case 1:
-		return hs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{hyperlink.Label}
 	default:
@@ -191,11 +191,11 @@ func (hq *HyperlinkQuery) Only(ctx context.Context) (*Hyperlink, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (hq *HyperlinkQuery) OnlyX(ctx context.Context) *Hyperlink {
-	h, err := hq.Only(ctx)
+	node, err := hq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return h
+	return node
 }
 
 // OnlyID returns the only Hyperlink id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (hq *HyperlinkQuery) All(ctx context.Context) ([]*Hyperlink, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (hq *HyperlinkQuery) AllX(ctx context.Context) []*Hyperlink {
-	hs, err := hq.All(ctx)
+	nodes, err := hq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return hs
+	return nodes
 }
 
 // IDs executes the query and returns a list of Hyperlink ids.

@@ -373,11 +373,11 @@ func (etuo *ExportTaskUpdateOne) Save(ctx context.Context) (*ExportTask, error) 
 
 // SaveX is like Save, but panics if an error occurs.
 func (etuo *ExportTaskUpdateOne) SaveX(ctx context.Context) *ExportTask {
-	et, err := etuo.Save(ctx)
+	node, err := etuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return et
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -413,7 +413,7 @@ func (etuo *ExportTaskUpdateOne) check() error {
 	return nil
 }
 
-func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (et *ExportTask, err error) {
+func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (_node *ExportTask, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   exporttask.Table,
@@ -477,9 +477,9 @@ func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (et *ExportTask, e
 			Column: exporttask.FieldStoreKey,
 		})
 	}
-	et = &ExportTask{config: etuo.config}
-	_spec.Assign = et.assignValues
-	_spec.ScanValues = et.scanValues()
+	_node = &ExportTask{config: etuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, etuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{exporttask.Label}
@@ -488,5 +488,5 @@ func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (et *ExportTask, e
 		}
 		return nil, err
 	}
-	return et, nil
+	return _node, nil
 }

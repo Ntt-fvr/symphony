@@ -215,7 +215,7 @@ func (fpc *FloorPlanCreate) check() error {
 }
 
 func (fpc *FloorPlanCreate) sqlSave(ctx context.Context) (*FloorPlan, error) {
-	fp, _spec := fpc.createSpec()
+	_node, _spec := fpc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fpc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -223,13 +223,13 @@ func (fpc *FloorPlanCreate) sqlSave(ctx context.Context) (*FloorPlan, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fp.ID = int(id)
-	return fp, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 	var (
-		fp    = &FloorPlan{config: fpc.config}
+		_node = &FloorPlan{config: fpc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: floorplan.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -244,7 +244,7 @@ func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: floorplan.FieldCreateTime,
 		})
-		fp.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fpc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -252,7 +252,7 @@ func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: floorplan.FieldUpdateTime,
 		})
-		fp.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fpc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -260,7 +260,7 @@ func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: floorplan.FieldName,
 		})
-		fp.Name = value
+		_node.Name = value
 	}
 	if nodes := fpc.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -338,7 +338,7 @@ func (fpc *FloorPlanCreate) createSpec() (*FloorPlan, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return fp, _spec
+	return _node, _spec
 }
 
 // FloorPlanCreateBulk is the builder for creating a bulk of FloorPlan entities.

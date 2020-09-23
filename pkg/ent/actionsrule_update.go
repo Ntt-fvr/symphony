@@ -253,11 +253,11 @@ func (aruo *ActionsRuleUpdateOne) Save(ctx context.Context) (*ActionsRule, error
 
 // SaveX is like Save, but panics if an error occurs.
 func (aruo *ActionsRuleUpdateOne) SaveX(ctx context.Context) *ActionsRule {
-	ar, err := aruo.Save(ctx)
+	node, err := aruo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ar
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -281,7 +281,7 @@ func (aruo *ActionsRuleUpdateOne) defaults() {
 	}
 }
 
-func (aruo *ActionsRuleUpdateOne) sqlSave(ctx context.Context) (ar *ActionsRule, err error) {
+func (aruo *ActionsRuleUpdateOne) sqlSave(ctx context.Context) (_node *ActionsRule, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   actionsrule.Table,
@@ -332,9 +332,9 @@ func (aruo *ActionsRuleUpdateOne) sqlSave(ctx context.Context) (ar *ActionsRule,
 			Column: actionsrule.FieldRuleActions,
 		})
 	}
-	ar = &ActionsRule{config: aruo.config}
-	_spec.Assign = ar.assignValues
-	_spec.ScanValues = ar.scanValues()
+	_node = &ActionsRule{config: aruo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, aruo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{actionsrule.Label}
@@ -343,5 +343,5 @@ func (aruo *ActionsRuleUpdateOne) sqlSave(ctx context.Context) (ar *ActionsRule,
 		}
 		return nil, err
 	}
-	return ar, nil
+	return _node, nil
 }

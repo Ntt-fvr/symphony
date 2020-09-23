@@ -132,23 +132,23 @@ func (scsq *SurveyCellScanQuery) QueryLocation() *LocationQuery {
 
 // First returns the first SurveyCellScan entity in the query. Returns *NotFoundError when no surveycellscan was found.
 func (scsq *SurveyCellScanQuery) First(ctx context.Context) (*SurveyCellScan, error) {
-	scsSlice, err := scsq.Limit(1).All(ctx)
+	nodes, err := scsq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(scsSlice) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{surveycellscan.Label}
 	}
-	return scsSlice[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (scsq *SurveyCellScanQuery) FirstX(ctx context.Context) *SurveyCellScan {
-	scs, err := scsq.First(ctx)
+	node, err := scsq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return scs
+	return node
 }
 
 // FirstID returns the first SurveyCellScan id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (scsq *SurveyCellScanQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only SurveyCellScan entity in the query, returns an error if not exactly one entity was returned.
 func (scsq *SurveyCellScanQuery) Only(ctx context.Context) (*SurveyCellScan, error) {
-	scsSlice, err := scsq.Limit(2).All(ctx)
+	nodes, err := scsq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(scsSlice) {
+	switch len(nodes) {
 	case 1:
-		return scsSlice[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{surveycellscan.Label}
 	default:
@@ -191,11 +191,11 @@ func (scsq *SurveyCellScanQuery) Only(ctx context.Context) (*SurveyCellScan, err
 
 // OnlyX is like Only, but panics if an error occurs.
 func (scsq *SurveyCellScanQuery) OnlyX(ctx context.Context) *SurveyCellScan {
-	scs, err := scsq.Only(ctx)
+	node, err := scsq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return scs
+	return node
 }
 
 // OnlyID returns the only SurveyCellScan id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (scsq *SurveyCellScanQuery) All(ctx context.Context) ([]*SurveyCellScan, er
 
 // AllX is like All, but panics if an error occurs.
 func (scsq *SurveyCellScanQuery) AllX(ctx context.Context) []*SurveyCellScan {
-	scsSlice, err := scsq.All(ctx)
+	nodes, err := scsq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return scsSlice
+	return nodes
 }
 
 // IDs executes the query and returns a list of SurveyCellScan ids.

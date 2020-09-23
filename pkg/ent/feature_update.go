@@ -483,11 +483,11 @@ func (fuo *FeatureUpdateOne) Save(ctx context.Context) (*Feature, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (fuo *FeatureUpdateOne) SaveX(ctx context.Context) *Feature {
-	f, err := fuo.Save(ctx)
+	node, err := fuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return f
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -511,7 +511,7 @@ func (fuo *FeatureUpdateOne) defaults() {
 	}
 }
 
-func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (f *Feature, err error) {
+func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   feature.Table,
@@ -655,9 +655,9 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (f *Feature, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	f = &Feature{config: fuo.config}
-	_spec.Assign = f.assignValues
-	_spec.ScanValues = f.scanValues()
+	_node = &Feature{config: fuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{feature.Label}
@@ -666,5 +666,5 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (f *Feature, err error
 		}
 		return nil, err
 	}
-	return f, nil
+	return _node, nil
 }

@@ -108,23 +108,23 @@ func (aq *ActivityQuery) QueryWorkOrder() *WorkOrderQuery {
 
 // First returns the first Activity entity in the query. Returns *NotFoundError when no activity was found.
 func (aq *ActivityQuery) First(ctx context.Context) (*Activity, error) {
-	as, err := aq.Limit(1).All(ctx)
+	nodes, err := aq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(as) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{activity.Label}
 	}
-	return as[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (aq *ActivityQuery) FirstX(ctx context.Context) *Activity {
-	a, err := aq.First(ctx)
+	node, err := aq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return a
+	return node
 }
 
 // FirstID returns the first Activity id in the query. Returns *NotFoundError when no id was found.
@@ -151,13 +151,13 @@ func (aq *ActivityQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Activity entity in the query, returns an error if not exactly one entity was returned.
 func (aq *ActivityQuery) Only(ctx context.Context) (*Activity, error) {
-	as, err := aq.Limit(2).All(ctx)
+	nodes, err := aq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(as) {
+	switch len(nodes) {
 	case 1:
-		return as[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{activity.Label}
 	default:
@@ -167,11 +167,11 @@ func (aq *ActivityQuery) Only(ctx context.Context) (*Activity, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (aq *ActivityQuery) OnlyX(ctx context.Context) *Activity {
-	a, err := aq.Only(ctx)
+	node, err := aq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return a
+	return node
 }
 
 // OnlyID returns the only Activity id in the query, returns an error if not exactly one id was returned.
@@ -210,11 +210,11 @@ func (aq *ActivityQuery) All(ctx context.Context) ([]*Activity, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (aq *ActivityQuery) AllX(ctx context.Context) []*Activity {
-	as, err := aq.All(ctx)
+	nodes, err := aq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return as
+	return nodes
 }
 
 // IDs executes the query and returns a list of Activity ids.

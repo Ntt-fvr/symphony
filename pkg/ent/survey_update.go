@@ -620,11 +620,11 @@ func (suo *SurveyUpdateOne) Save(ctx context.Context) (*Survey, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (suo *SurveyUpdateOne) SaveX(ctx context.Context) *Survey {
-	s, err := suo.Save(ctx)
+	node, err := suo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return s
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -648,7 +648,7 @@ func (suo *SurveyUpdateOne) defaults() {
 	}
 }
 
-func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (s *Survey, err error) {
+func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (_node *Survey, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   survey.Table,
@@ -835,9 +835,9 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (s *Survey, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	s = &Survey{config: suo.config}
-	_spec.Assign = s.assignValues
-	_spec.ScanValues = s.scanValues()
+	_node = &Survey{config: suo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, suo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{survey.Label}
@@ -846,5 +846,5 @@ func (suo *SurveyUpdateOne) sqlSave(ctx context.Context) (s *Survey, err error) 
 		}
 		return nil, err
 	}
-	return s, nil
+	return _node, nil
 }

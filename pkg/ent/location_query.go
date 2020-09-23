@@ -347,23 +347,23 @@ func (lq *LocationQuery) QueryFloorPlans() *FloorPlanQuery {
 
 // First returns the first Location entity in the query. Returns *NotFoundError when no location was found.
 func (lq *LocationQuery) First(ctx context.Context) (*Location, error) {
-	ls, err := lq.Limit(1).All(ctx)
+	nodes, err := lq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ls) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{location.Label}
 	}
-	return ls[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (lq *LocationQuery) FirstX(ctx context.Context) *Location {
-	l, err := lq.First(ctx)
+	node, err := lq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // FirstID returns the first Location id in the query. Returns *NotFoundError when no id was found.
@@ -390,13 +390,13 @@ func (lq *LocationQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Location entity in the query, returns an error if not exactly one entity was returned.
 func (lq *LocationQuery) Only(ctx context.Context) (*Location, error) {
-	ls, err := lq.Limit(2).All(ctx)
+	nodes, err := lq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ls) {
+	switch len(nodes) {
 	case 1:
-		return ls[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{location.Label}
 	default:
@@ -406,11 +406,11 @@ func (lq *LocationQuery) Only(ctx context.Context) (*Location, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (lq *LocationQuery) OnlyX(ctx context.Context) *Location {
-	l, err := lq.Only(ctx)
+	node, err := lq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // OnlyID returns the only Location id in the query, returns an error if not exactly one id was returned.
@@ -449,11 +449,11 @@ func (lq *LocationQuery) All(ctx context.Context) ([]*Location, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (lq *LocationQuery) AllX(ctx context.Context) []*Location {
-	ls, err := lq.All(ctx)
+	nodes, err := lq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ls
+	return nodes
 }
 
 // IDs executes the query and returns a list of Location ids.
@@ -827,6 +827,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Children = []*Location{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Location(func(s *sql.Selector) {
@@ -855,6 +856,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Files = []*File{}
 		}
 		query.withFKs = true
 		query.Where(predicate.File(func(s *sql.Selector) {
@@ -883,6 +885,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Hyperlinks = []*Hyperlink{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Hyperlink(func(s *sql.Selector) {
@@ -911,6 +914,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Equipment = []*Equipment{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Equipment(func(s *sql.Selector) {
@@ -939,6 +943,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {
@@ -967,6 +972,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Survey = []*Survey{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Survey(func(s *sql.Selector) {
@@ -995,6 +1001,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WifiScan = []*SurveyWiFiScan{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyWiFiScan(func(s *sql.Selector) {
@@ -1023,6 +1030,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CellScan = []*SurveyCellScan{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyCellScan(func(s *sql.Selector) {
@@ -1051,6 +1059,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WorkOrders = []*WorkOrder{}
 		}
 		query.withFKs = true
 		query.Where(predicate.WorkOrder(func(s *sql.Selector) {
@@ -1079,6 +1088,7 @@ func (lq *LocationQuery) sqlAll(ctx context.Context) ([]*Location, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.FloorPlans = []*FloorPlan{}
 		}
 		query.withFKs = true
 		query.Where(predicate.FloorPlan(func(s *sql.Selector) {

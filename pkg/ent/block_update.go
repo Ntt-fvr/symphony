@@ -1442,11 +1442,11 @@ func (buo *BlockUpdateOne) Save(ctx context.Context) (*Block, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (buo *BlockUpdateOne) SaveX(ctx context.Context) *Block {
-	b, err := buo.Save(ctx)
+	node, err := buo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return b
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1500,7 +1500,7 @@ func (buo *BlockUpdateOne) check() error {
 	return nil
 }
 
-func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
+func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   block.Table,
@@ -2000,9 +2000,9 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	b = &Block{config: buo.config}
-	_spec.Assign = b.assignValues
-	_spec.ScanValues = b.scanValues()
+	_node = &Block{config: buo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, buo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{block.Label}
@@ -2011,5 +2011,5 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (b *Block, err error) {
 		}
 		return nil, err
 	}
-	return b, nil
+	return _node, nil
 }

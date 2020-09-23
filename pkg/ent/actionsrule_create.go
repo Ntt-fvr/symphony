@@ -163,7 +163,7 @@ func (arc *ActionsRuleCreate) check() error {
 }
 
 func (arc *ActionsRuleCreate) sqlSave(ctx context.Context) (*ActionsRule, error) {
-	ar, _spec := arc.createSpec()
+	_node, _spec := arc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, arc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -171,13 +171,13 @@ func (arc *ActionsRuleCreate) sqlSave(ctx context.Context) (*ActionsRule, error)
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	ar.ID = int(id)
-	return ar, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) {
 	var (
-		ar    = &ActionsRule{config: arc.config}
+		_node = &ActionsRule{config: arc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: actionsrule.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -192,7 +192,7 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldCreateTime,
 		})
-		ar.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := arc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -200,7 +200,7 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldUpdateTime,
 		})
-		ar.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := arc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -208,7 +208,7 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldName,
 		})
-		ar.Name = value
+		_node.Name = value
 	}
 	if value, ok := arc.mutation.TriggerID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -216,7 +216,7 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldTriggerID,
 		})
-		ar.TriggerID = value
+		_node.TriggerID = value
 	}
 	if value, ok := arc.mutation.RuleFilters(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -224,7 +224,7 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldRuleFilters,
 		})
-		ar.RuleFilters = value
+		_node.RuleFilters = value
 	}
 	if value, ok := arc.mutation.RuleActions(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -232,9 +232,9 @@ func (arc *ActionsRuleCreate) createSpec() (*ActionsRule, *sqlgraph.CreateSpec) 
 			Value:  value,
 			Column: actionsrule.FieldRuleActions,
 		})
-		ar.RuleActions = value
+		_node.RuleActions = value
 	}
-	return ar, _spec
+	return _node, _spec
 }
 
 // ActionsRuleCreateBulk is the builder for creating a bulk of ActionsRule entities.

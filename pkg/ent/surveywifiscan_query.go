@@ -132,23 +132,23 @@ func (swfsq *SurveyWiFiScanQuery) QueryLocation() *LocationQuery {
 
 // First returns the first SurveyWiFiScan entity in the query. Returns *NotFoundError when no surveywifiscan was found.
 func (swfsq *SurveyWiFiScanQuery) First(ctx context.Context) (*SurveyWiFiScan, error) {
-	swfsSlice, err := swfsq.Limit(1).All(ctx)
+	nodes, err := swfsq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(swfsSlice) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{surveywifiscan.Label}
 	}
-	return swfsSlice[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (swfsq *SurveyWiFiScanQuery) FirstX(ctx context.Context) *SurveyWiFiScan {
-	swfs, err := swfsq.First(ctx)
+	node, err := swfsq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return swfs
+	return node
 }
 
 // FirstID returns the first SurveyWiFiScan id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (swfsq *SurveyWiFiScanQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only SurveyWiFiScan entity in the query, returns an error if not exactly one entity was returned.
 func (swfsq *SurveyWiFiScanQuery) Only(ctx context.Context) (*SurveyWiFiScan, error) {
-	swfsSlice, err := swfsq.Limit(2).All(ctx)
+	nodes, err := swfsq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(swfsSlice) {
+	switch len(nodes) {
 	case 1:
-		return swfsSlice[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{surveywifiscan.Label}
 	default:
@@ -191,11 +191,11 @@ func (swfsq *SurveyWiFiScanQuery) Only(ctx context.Context) (*SurveyWiFiScan, er
 
 // OnlyX is like Only, but panics if an error occurs.
 func (swfsq *SurveyWiFiScanQuery) OnlyX(ctx context.Context) *SurveyWiFiScan {
-	swfs, err := swfsq.Only(ctx)
+	node, err := swfsq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return swfs
+	return node
 }
 
 // OnlyID returns the only SurveyWiFiScan id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (swfsq *SurveyWiFiScanQuery) All(ctx context.Context) ([]*SurveyWiFiScan, e
 
 // AllX is like All, but panics if an error occurs.
 func (swfsq *SurveyWiFiScanQuery) AllX(ctx context.Context) []*SurveyWiFiScan {
-	swfsSlice, err := swfsq.All(ctx)
+	nodes, err := swfsq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return swfsSlice
+	return nodes
 }
 
 // IDs executes the query and returns a list of SurveyWiFiScan ids.

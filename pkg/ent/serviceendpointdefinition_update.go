@@ -609,11 +609,11 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) Save(ctx context.Context) (*Ser
 
 // SaveX is like Save, but panics if an error occurs.
 func (seduo *ServiceEndpointDefinitionUpdateOne) SaveX(ctx context.Context) *ServiceEndpointDefinition {
-	sed, err := seduo.Save(ctx)
+	node, err := seduo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sed
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -647,7 +647,7 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) check() error {
 	return nil
 }
 
-func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (sed *ServiceEndpointDefinition, err error) {
+func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *ServiceEndpointDefinition, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   serviceendpointdefinition.Table,
@@ -828,9 +828,9 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (s
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	sed = &ServiceEndpointDefinition{config: seduo.config}
-	_spec.Assign = sed.assignValues
-	_spec.ScanValues = sed.scanValues()
+	_node = &ServiceEndpointDefinition{config: seduo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, seduo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{serviceendpointdefinition.Label}
@@ -839,5 +839,5 @@ func (seduo *ServiceEndpointDefinitionUpdateOne) sqlSave(ctx context.Context) (s
 		}
 		return nil, err
 	}
-	return sed, nil
+	return _node, nil
 }

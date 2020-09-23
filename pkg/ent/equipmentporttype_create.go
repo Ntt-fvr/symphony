@@ -182,7 +182,7 @@ func (eptc *EquipmentPortTypeCreate) check() error {
 }
 
 func (eptc *EquipmentPortTypeCreate) sqlSave(ctx context.Context) (*EquipmentPortType, error) {
-	ept, _spec := eptc.createSpec()
+	_node, _spec := eptc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, eptc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -190,13 +190,13 @@ func (eptc *EquipmentPortTypeCreate) sqlSave(ctx context.Context) (*EquipmentPor
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	ept.ID = int(id)
-	return ept, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph.CreateSpec) {
 	var (
-		ept   = &EquipmentPortType{config: eptc.config}
+		_node = &EquipmentPortType{config: eptc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmentporttype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -211,7 +211,7 @@ func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph
 			Value:  value,
 			Column: equipmentporttype.FieldCreateTime,
 		})
-		ept.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := eptc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -219,7 +219,7 @@ func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph
 			Value:  value,
 			Column: equipmentporttype.FieldUpdateTime,
 		})
-		ept.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := eptc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -227,7 +227,7 @@ func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph
 			Value:  value,
 			Column: equipmentporttype.FieldName,
 		})
-		ept.Name = value
+		_node.Name = value
 	}
 	if nodes := eptc.mutation.PropertyTypesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -286,7 +286,7 @@ func (eptc *EquipmentPortTypeCreate) createSpec() (*EquipmentPortType, *sqlgraph
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return ept, _spec
+	return _node, _spec
 }
 
 // EquipmentPortTypeCreateBulk is the builder for creating a bulk of EquipmentPortType entities.

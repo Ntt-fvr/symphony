@@ -235,7 +235,7 @@ func (etc *EquipmentTypeCreate) check() error {
 }
 
 func (etc *EquipmentTypeCreate) sqlSave(ctx context.Context) (*EquipmentType, error) {
-	et, _spec := etc.createSpec()
+	_node, _spec := etc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, etc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -243,13 +243,13 @@ func (etc *EquipmentTypeCreate) sqlSave(ctx context.Context) (*EquipmentType, er
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	et.ID = int(id)
-	return et, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (etc *EquipmentTypeCreate) createSpec() (*EquipmentType, *sqlgraph.CreateSpec) {
 	var (
-		et    = &EquipmentType{config: etc.config}
+		_node = &EquipmentType{config: etc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmenttype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -264,7 +264,7 @@ func (etc *EquipmentTypeCreate) createSpec() (*EquipmentType, *sqlgraph.CreateSp
 			Value:  value,
 			Column: equipmenttype.FieldCreateTime,
 		})
-		et.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := etc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -272,7 +272,7 @@ func (etc *EquipmentTypeCreate) createSpec() (*EquipmentType, *sqlgraph.CreateSp
 			Value:  value,
 			Column: equipmenttype.FieldUpdateTime,
 		})
-		et.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := etc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -280,7 +280,7 @@ func (etc *EquipmentTypeCreate) createSpec() (*EquipmentType, *sqlgraph.CreateSp
 			Value:  value,
 			Column: equipmenttype.FieldName,
 		})
-		et.Name = value
+		_node.Name = value
 	}
 	if nodes := etc.mutation.PortDefinitionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -396,7 +396,7 @@ func (etc *EquipmentTypeCreate) createSpec() (*EquipmentType, *sqlgraph.CreateSp
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return et, _spec
+	return _node, _spec
 }
 
 // EquipmentTypeCreateBulk is the builder for creating a bulk of EquipmentType entities.

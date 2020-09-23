@@ -257,7 +257,7 @@ func (ltc *LocationTypeCreate) check() error {
 }
 
 func (ltc *LocationTypeCreate) sqlSave(ctx context.Context) (*LocationType, error) {
-	lt, _spec := ltc.createSpec()
+	_node, _spec := ltc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ltc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -265,13 +265,13 @@ func (ltc *LocationTypeCreate) sqlSave(ctx context.Context) (*LocationType, erro
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	lt.ID = int(id)
-	return lt, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec) {
 	var (
-		lt    = &LocationType{config: ltc.config}
+		_node = &LocationType{config: ltc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: locationtype.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -286,7 +286,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldCreateTime,
 		})
-		lt.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ltc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -294,7 +294,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldUpdateTime,
 		})
-		lt.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ltc.mutation.Site(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -302,7 +302,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldSite,
 		})
-		lt.Site = value
+		_node.Site = value
 	}
 	if value, ok := ltc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -310,7 +310,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldName,
 		})
-		lt.Name = value
+		_node.Name = value
 	}
 	if value, ok := ltc.mutation.MapType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -318,7 +318,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldMapType,
 		})
-		lt.MapType = value
+		_node.MapType = value
 	}
 	if value, ok := ltc.mutation.MapZoomLevel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -326,7 +326,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldMapZoomLevel,
 		})
-		lt.MapZoomLevel = value
+		_node.MapZoomLevel = value
 	}
 	if value, ok := ltc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -334,7 +334,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 			Value:  value,
 			Column: locationtype.FieldIndex,
 		})
-		lt.Index = value
+		_node.Index = value
 	}
 	if nodes := ltc.mutation.LocationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -393,7 +393,7 @@ func (ltc *LocationTypeCreate) createSpec() (*LocationType, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return lt, _spec
+	return _node, _spec
 }
 
 // LocationTypeCreateBulk is the builder for creating a bulk of LocationType entities.

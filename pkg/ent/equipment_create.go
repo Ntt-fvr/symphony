@@ -363,7 +363,7 @@ func (ec *EquipmentCreate) check() error {
 }
 
 func (ec *EquipmentCreate) sqlSave(ctx context.Context) (*Equipment, error) {
-	e, _spec := ec.createSpec()
+	_node, _spec := ec.createSpec()
 	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -371,13 +371,13 @@ func (ec *EquipmentCreate) sqlSave(ctx context.Context) (*Equipment, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	e.ID = int(id)
-	return e, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 	var (
-		e     = &Equipment{config: ec.config}
+		_node = &Equipment{config: ec.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipment.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -392,7 +392,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldCreateTime,
 		})
-		e.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := ec.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -400,7 +400,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldUpdateTime,
 		})
-		e.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := ec.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -408,7 +408,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldName,
 		})
-		e.Name = value
+		_node.Name = value
 	}
 	if value, ok := ec.mutation.FutureState(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -416,7 +416,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldFutureState,
 		})
-		e.FutureState = &value
+		_node.FutureState = &value
 	}
 	if value, ok := ec.mutation.DeviceID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -424,7 +424,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldDeviceID,
 		})
-		e.DeviceID = value
+		_node.DeviceID = value
 	}
 	if value, ok := ec.mutation.ExternalID(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -432,7 +432,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: equipment.FieldExternalID,
 		})
-		e.ExternalID = value
+		_node.ExternalID = value
 	}
 	if nodes := ec.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -624,7 +624,7 @@ func (ec *EquipmentCreate) createSpec() (*Equipment, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return e, _spec
+	return _node, _spec
 }
 
 // EquipmentCreateBulk is the builder for creating a bulk of Equipment entities.

@@ -132,23 +132,23 @@ func (stq *ServiceTypeQuery) QueryEndpointDefinitions() *ServiceEndpointDefiniti
 
 // First returns the first ServiceType entity in the query. Returns *NotFoundError when no servicetype was found.
 func (stq *ServiceTypeQuery) First(ctx context.Context) (*ServiceType, error) {
-	sts, err := stq.Limit(1).All(ctx)
+	nodes, err := stq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(sts) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{servicetype.Label}
 	}
-	return sts[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (stq *ServiceTypeQuery) FirstX(ctx context.Context) *ServiceType {
-	st, err := stq.First(ctx)
+	node, err := stq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return st
+	return node
 }
 
 // FirstID returns the first ServiceType id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (stq *ServiceTypeQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ServiceType entity in the query, returns an error if not exactly one entity was returned.
 func (stq *ServiceTypeQuery) Only(ctx context.Context) (*ServiceType, error) {
-	sts, err := stq.Limit(2).All(ctx)
+	nodes, err := stq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(sts) {
+	switch len(nodes) {
 	case 1:
-		return sts[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{servicetype.Label}
 	default:
@@ -191,11 +191,11 @@ func (stq *ServiceTypeQuery) Only(ctx context.Context) (*ServiceType, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (stq *ServiceTypeQuery) OnlyX(ctx context.Context) *ServiceType {
-	st, err := stq.Only(ctx)
+	node, err := stq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return st
+	return node
 }
 
 // OnlyID returns the only ServiceType id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (stq *ServiceTypeQuery) All(ctx context.Context) ([]*ServiceType, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (stq *ServiceTypeQuery) AllX(ctx context.Context) []*ServiceType {
-	sts, err := stq.All(ctx)
+	nodes, err := stq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sts
+	return nodes
 }
 
 // IDs executes the query and returns a list of ServiceType ids.
@@ -444,6 +444,7 @@ func (stq *ServiceTypeQuery) sqlAll(ctx context.Context) ([]*ServiceType, error)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Services = []*Service{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Service(func(s *sql.Selector) {
@@ -472,6 +473,7 @@ func (stq *ServiceTypeQuery) sqlAll(ctx context.Context) ([]*ServiceType, error)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyTypes = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
@@ -500,6 +502,7 @@ func (stq *ServiceTypeQuery) sqlAll(ctx context.Context) ([]*ServiceType, error)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.EndpointDefinitions = []*ServiceEndpointDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.ServiceEndpointDefinition(func(s *sql.Selector) {

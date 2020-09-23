@@ -109,23 +109,23 @@ func (epdq *EquipmentPositionDefinitionQuery) QueryEquipmentType() *EquipmentTyp
 
 // First returns the first EquipmentPositionDefinition entity in the query. Returns *NotFoundError when no equipmentpositiondefinition was found.
 func (epdq *EquipmentPositionDefinitionQuery) First(ctx context.Context) (*EquipmentPositionDefinition, error) {
-	epds, err := epdq.Limit(1).All(ctx)
+	nodes, err := epdq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(epds) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{equipmentpositiondefinition.Label}
 	}
-	return epds[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (epdq *EquipmentPositionDefinitionQuery) FirstX(ctx context.Context) *EquipmentPositionDefinition {
-	epd, err := epdq.First(ctx)
+	node, err := epdq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return epd
+	return node
 }
 
 // FirstID returns the first EquipmentPositionDefinition id in the query. Returns *NotFoundError when no id was found.
@@ -152,13 +152,13 @@ func (epdq *EquipmentPositionDefinitionQuery) FirstXID(ctx context.Context) int 
 
 // Only returns the only EquipmentPositionDefinition entity in the query, returns an error if not exactly one entity was returned.
 func (epdq *EquipmentPositionDefinitionQuery) Only(ctx context.Context) (*EquipmentPositionDefinition, error) {
-	epds, err := epdq.Limit(2).All(ctx)
+	nodes, err := epdq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(epds) {
+	switch len(nodes) {
 	case 1:
-		return epds[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{equipmentpositiondefinition.Label}
 	default:
@@ -168,11 +168,11 @@ func (epdq *EquipmentPositionDefinitionQuery) Only(ctx context.Context) (*Equipm
 
 // OnlyX is like Only, but panics if an error occurs.
 func (epdq *EquipmentPositionDefinitionQuery) OnlyX(ctx context.Context) *EquipmentPositionDefinition {
-	epd, err := epdq.Only(ctx)
+	node, err := epdq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return epd
+	return node
 }
 
 // OnlyID returns the only EquipmentPositionDefinition id in the query, returns an error if not exactly one id was returned.
@@ -211,11 +211,11 @@ func (epdq *EquipmentPositionDefinitionQuery) All(ctx context.Context) ([]*Equip
 
 // AllX is like All, but panics if an error occurs.
 func (epdq *EquipmentPositionDefinitionQuery) AllX(ctx context.Context) []*EquipmentPositionDefinition {
-	epds, err := epdq.All(ctx)
+	nodes, err := epdq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return epds
+	return nodes
 }
 
 // IDs executes the query and returns a list of EquipmentPositionDefinition ids.
@@ -419,6 +419,7 @@ func (epdq *EquipmentPositionDefinitionQuery) sqlAll(ctx context.Context) ([]*Eq
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Positions = []*EquipmentPosition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.EquipmentPosition(func(s *sql.Selector) {

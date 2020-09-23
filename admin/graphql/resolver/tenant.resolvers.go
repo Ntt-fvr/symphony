@@ -14,9 +14,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/VividCortex/mysqlerr"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/go-sql-driver/mysql"

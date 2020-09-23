@@ -157,23 +157,23 @@ func (lq *LinkQuery) QueryService() *ServiceQuery {
 
 // First returns the first Link entity in the query. Returns *NotFoundError when no link was found.
 func (lq *LinkQuery) First(ctx context.Context) (*Link, error) {
-	ls, err := lq.Limit(1).All(ctx)
+	nodes, err := lq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ls) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{link.Label}
 	}
-	return ls[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (lq *LinkQuery) FirstX(ctx context.Context) *Link {
-	l, err := lq.First(ctx)
+	node, err := lq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // FirstID returns the first Link id in the query. Returns *NotFoundError when no id was found.
@@ -200,13 +200,13 @@ func (lq *LinkQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Link entity in the query, returns an error if not exactly one entity was returned.
 func (lq *LinkQuery) Only(ctx context.Context) (*Link, error) {
-	ls, err := lq.Limit(2).All(ctx)
+	nodes, err := lq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ls) {
+	switch len(nodes) {
 	case 1:
-		return ls[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{link.Label}
 	default:
@@ -216,11 +216,11 @@ func (lq *LinkQuery) Only(ctx context.Context) (*Link, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (lq *LinkQuery) OnlyX(ctx context.Context) *Link {
-	l, err := lq.Only(ctx)
+	node, err := lq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return l
+	return node
 }
 
 // OnlyID returns the only Link id in the query, returns an error if not exactly one id was returned.
@@ -259,11 +259,11 @@ func (lq *LinkQuery) All(ctx context.Context) ([]*Link, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (lq *LinkQuery) AllX(ctx context.Context) []*Link {
-	ls, err := lq.All(ctx)
+	nodes, err := lq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ls
+	return nodes
 }
 
 // IDs executes the query and returns a list of Link ids.
@@ -491,6 +491,7 @@ func (lq *LinkQuery) sqlAll(ctx context.Context) ([]*Link, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Ports = []*EquipmentPort{}
 		}
 		query.withFKs = true
 		query.Where(predicate.EquipmentPort(func(s *sql.Selector) {
@@ -544,6 +545,7 @@ func (lq *LinkQuery) sqlAll(ctx context.Context) ([]*Link, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*Property{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Property(func(s *sql.Selector) {
@@ -572,6 +574,7 @@ func (lq *LinkQuery) sqlAll(ctx context.Context) ([]*Link, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Service = []*Service{}
 		}
 		var (
 			edgeids []int

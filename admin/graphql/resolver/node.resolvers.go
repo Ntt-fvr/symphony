@@ -10,9 +10,9 @@ package resolver
 import (
 	"context"
 
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
-	"github.com/facebookincubator/symphony/pkg/ent-contrib/entgql"
 )
 
 func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, error) {

@@ -197,7 +197,7 @@ func (fdc *FlowDraftCreate) check() error {
 }
 
 func (fdc *FlowDraftCreate) sqlSave(ctx context.Context) (*FlowDraft, error) {
-	fd, _spec := fdc.createSpec()
+	_node, _spec := fdc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fdc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -205,13 +205,13 @@ func (fdc *FlowDraftCreate) sqlSave(ctx context.Context) (*FlowDraft, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fd.ID = int(id)
-	return fd, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 	var (
-		fd    = &FlowDraft{config: fdc.config}
+		_node = &FlowDraft{config: fdc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: flowdraft.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -226,7 +226,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flowdraft.FieldCreateTime,
 		})
-		fd.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fdc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -234,7 +234,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flowdraft.FieldUpdateTime,
 		})
-		fd.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fdc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -242,7 +242,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flowdraft.FieldName,
 		})
-		fd.Name = value
+		_node.Name = value
 	}
 	if value, ok := fdc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -250,7 +250,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flowdraft.FieldDescription,
 		})
-		fd.Description = &value
+		_node.Description = &value
 	}
 	if value, ok := fdc.mutation.EndParamDefinitions(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -258,7 +258,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: flowdraft.FieldEndParamDefinitions,
 		})
-		fd.EndParamDefinitions = value
+		_node.EndParamDefinitions = value
 	}
 	if nodes := fdc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -298,7 +298,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return fd, _spec
+	return _node, _spec
 }
 
 // FlowDraftCreateBulk is the builder for creating a bulk of FlowDraft entities.

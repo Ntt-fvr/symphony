@@ -525,11 +525,11 @@ func (ppuo *PermissionsPolicyUpdateOne) Save(ctx context.Context) (*PermissionsP
 
 // SaveX is like Save, but panics if an error occurs.
 func (ppuo *PermissionsPolicyUpdateOne) SaveX(ctx context.Context) *PermissionsPolicy {
-	pp, err := ppuo.Save(ctx)
+	node, err := ppuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pp
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -563,7 +563,7 @@ func (ppuo *PermissionsPolicyUpdateOne) check() error {
 	return nil
 }
 
-func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (pp *PermissionsPolicy, err error) {
+func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (_node *PermissionsPolicy, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   permissionspolicy.Table,
@@ -699,9 +699,9 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (pp *Permis
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	pp = &PermissionsPolicy{config: ppuo.config}
-	_spec.Assign = pp.assignValues
-	_spec.ScanValues = pp.scanValues()
+	_node = &PermissionsPolicy{config: ppuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ppuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{permissionspolicy.Label}
@@ -710,5 +710,5 @@ func (ppuo *PermissionsPolicyUpdateOne) sqlSave(ctx context.Context) (pp *Permis
 		}
 		return nil, err
 	}
-	return pp, nil
+	return _node, nil
 }

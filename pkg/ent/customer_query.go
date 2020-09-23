@@ -84,23 +84,23 @@ func (cq *CustomerQuery) QueryServices() *ServiceQuery {
 
 // First returns the first Customer entity in the query. Returns *NotFoundError when no customer was found.
 func (cq *CustomerQuery) First(ctx context.Context) (*Customer, error) {
-	cs, err := cq.Limit(1).All(ctx)
+	nodes, err := cq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(cs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{customer.Label}
 	}
-	return cs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (cq *CustomerQuery) FirstX(ctx context.Context) *Customer {
-	c, err := cq.First(ctx)
+	node, err := cq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return c
+	return node
 }
 
 // FirstID returns the first Customer id in the query. Returns *NotFoundError when no id was found.
@@ -127,13 +127,13 @@ func (cq *CustomerQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Customer entity in the query, returns an error if not exactly one entity was returned.
 func (cq *CustomerQuery) Only(ctx context.Context) (*Customer, error) {
-	cs, err := cq.Limit(2).All(ctx)
+	nodes, err := cq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(cs) {
+	switch len(nodes) {
 	case 1:
-		return cs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{customer.Label}
 	default:
@@ -143,11 +143,11 @@ func (cq *CustomerQuery) Only(ctx context.Context) (*Customer, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (cq *CustomerQuery) OnlyX(ctx context.Context) *Customer {
-	c, err := cq.Only(ctx)
+	node, err := cq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return c
+	return node
 }
 
 // OnlyID returns the only Customer id in the query, returns an error if not exactly one id was returned.
@@ -186,11 +186,11 @@ func (cq *CustomerQuery) All(ctx context.Context) ([]*Customer, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (cq *CustomerQuery) AllX(ctx context.Context) []*Customer {
-	cs, err := cq.All(ctx)
+	nodes, err := cq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return cs
+	return nodes
 }
 
 // IDs executes the query and returns a list of Customer ids.
@@ -372,6 +372,7 @@ func (cq *CustomerQuery) sqlAll(ctx context.Context) ([]*Customer, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Services = []*Service{}
 		}
 		var (
 			edgeids []int

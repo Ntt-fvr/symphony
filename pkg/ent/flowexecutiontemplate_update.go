@@ -435,11 +435,11 @@ func (fetuo *FlowExecutionTemplateUpdateOne) Save(ctx context.Context) (*FlowExe
 
 // SaveX is like Save, but panics if an error occurs.
 func (fetuo *FlowExecutionTemplateUpdateOne) SaveX(ctx context.Context) *FlowExecutionTemplate {
-	fet, err := fetuo.Save(ctx)
+	node, err := fetuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fet
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -473,7 +473,7 @@ func (fetuo *FlowExecutionTemplateUpdateOne) check() error {
 	return nil
 }
 
-func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (fet *FlowExecutionTemplate, err error) {
+func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (_node *FlowExecutionTemplate, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   flowexecutiontemplate.Table,
@@ -583,9 +583,9 @@ func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (fet *
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	fet = &FlowExecutionTemplate{config: fetuo.config}
-	_spec.Assign = fet.assignValues
-	_spec.ScanValues = fet.scanValues()
+	_node = &FlowExecutionTemplate{config: fetuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, fetuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{flowexecutiontemplate.Label}
@@ -594,5 +594,5 @@ func (fetuo *FlowExecutionTemplateUpdateOne) sqlSave(ctx context.Context) (fet *
 		}
 		return nil, err
 	}
-	return fet, nil
+	return _node, nil
 }

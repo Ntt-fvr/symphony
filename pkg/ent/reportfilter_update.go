@@ -276,11 +276,11 @@ func (rfuo *ReportFilterUpdateOne) Save(ctx context.Context) (*ReportFilter, err
 
 // SaveX is like Save, but panics if an error occurs.
 func (rfuo *ReportFilterUpdateOne) SaveX(ctx context.Context) *ReportFilter {
-	rf, err := rfuo.Save(ctx)
+	node, err := rfuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return rf
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -319,7 +319,7 @@ func (rfuo *ReportFilterUpdateOne) check() error {
 	return nil
 }
 
-func (rfuo *ReportFilterUpdateOne) sqlSave(ctx context.Context) (rf *ReportFilter, err error) {
+func (rfuo *ReportFilterUpdateOne) sqlSave(ctx context.Context) (_node *ReportFilter, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   reportfilter.Table,
@@ -363,9 +363,9 @@ func (rfuo *ReportFilterUpdateOne) sqlSave(ctx context.Context) (rf *ReportFilte
 			Column: reportfilter.FieldFilters,
 		})
 	}
-	rf = &ReportFilter{config: rfuo.config}
-	_spec.Assign = rf.assignValues
-	_spec.ScanValues = rf.scanValues()
+	_node = &ReportFilter{config: rfuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, rfuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{reportfilter.Label}
@@ -374,5 +374,5 @@ func (rfuo *ReportFilterUpdateOne) sqlSave(ctx context.Context) (rf *ReportFilte
 		}
 		return nil, err
 	}
-	return rf, nil
+	return _node, nil
 }

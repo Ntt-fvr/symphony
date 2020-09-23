@@ -794,11 +794,11 @@ func (ltuo *LocationTypeUpdateOne) Save(ctx context.Context) (*LocationType, err
 
 // SaveX is like Save, but panics if an error occurs.
 func (ltuo *LocationTypeUpdateOne) SaveX(ctx context.Context) *LocationType {
-	lt, err := ltuo.Save(ctx)
+	node, err := ltuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return lt
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -822,7 +822,7 @@ func (ltuo *LocationTypeUpdateOne) defaults() {
 	}
 }
 
-func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationType, err error) {
+func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (_node *LocationType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   locationtype.Table,
@@ -1068,9 +1068,9 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationTyp
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	lt = &LocationType{config: ltuo.config}
-	_spec.Assign = lt.assignValues
-	_spec.ScanValues = lt.scanValues()
+	_node = &LocationType{config: ltuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ltuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{locationtype.Label}
@@ -1079,5 +1079,5 @@ func (ltuo *LocationTypeUpdateOne) sqlSave(ctx context.Context) (lt *LocationTyp
 		}
 		return nil, err
 	}
-	return lt, nil
+	return _node, nil
 }

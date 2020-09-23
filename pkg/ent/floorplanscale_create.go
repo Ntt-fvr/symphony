@@ -171,7 +171,7 @@ func (fpsc *FloorPlanScaleCreate) check() error {
 }
 
 func (fpsc *FloorPlanScaleCreate) sqlSave(ctx context.Context) (*FloorPlanScale, error) {
-	fps, _spec := fpsc.createSpec()
+	_node, _spec := fpsc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, fpsc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -179,13 +179,13 @@ func (fpsc *FloorPlanScaleCreate) sqlSave(ctx context.Context) (*FloorPlanScale,
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	fps.ID = int(id)
-	return fps, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.CreateSpec) {
 	var (
-		fps   = &FloorPlanScale{config: fpsc.config}
+		_node = &FloorPlanScale{config: fpsc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: floorplanscale.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -200,7 +200,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldCreateTime,
 		})
-		fps.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := fpsc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -208,7 +208,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldUpdateTime,
 		})
-		fps.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := fpsc.mutation.ReferencePoint1X(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -216,7 +216,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldReferencePoint1X,
 		})
-		fps.ReferencePoint1X = value
+		_node.ReferencePoint1X = value
 	}
 	if value, ok := fpsc.mutation.ReferencePoint1Y(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -224,7 +224,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldReferencePoint1Y,
 		})
-		fps.ReferencePoint1Y = value
+		_node.ReferencePoint1Y = value
 	}
 	if value, ok := fpsc.mutation.ReferencePoint2X(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -232,7 +232,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldReferencePoint2X,
 		})
-		fps.ReferencePoint2X = value
+		_node.ReferencePoint2X = value
 	}
 	if value, ok := fpsc.mutation.ReferencePoint2Y(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -240,7 +240,7 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldReferencePoint2Y,
 		})
-		fps.ReferencePoint2Y = value
+		_node.ReferencePoint2Y = value
 	}
 	if value, ok := fpsc.mutation.ScaleInMeters(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -248,9 +248,9 @@ func (fpsc *FloorPlanScaleCreate) createSpec() (*FloorPlanScale, *sqlgraph.Creat
 			Value:  value,
 			Column: floorplanscale.FieldScaleInMeters,
 		})
-		fps.ScaleInMeters = value
+		_node.ScaleInMeters = value
 	}
-	return fps, _spec
+	return _node, _spec
 }
 
 // FloorPlanScaleCreateBulk is the builder for creating a bulk of FloorPlanScale entities.

@@ -133,23 +133,23 @@ func (ptq *ProjectTemplateQuery) QueryType() *ProjectTypeQuery {
 
 // First returns the first ProjectTemplate entity in the query. Returns *NotFoundError when no projecttemplate was found.
 func (ptq *ProjectTemplateQuery) First(ctx context.Context) (*ProjectTemplate, error) {
-	pts, err := ptq.Limit(1).All(ctx)
+	nodes, err := ptq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(pts) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{projecttemplate.Label}
 	}
-	return pts[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ptq *ProjectTemplateQuery) FirstX(ctx context.Context) *ProjectTemplate {
-	pt, err := ptq.First(ctx)
+	node, err := ptq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // FirstID returns the first ProjectTemplate id in the query. Returns *NotFoundError when no id was found.
@@ -176,13 +176,13 @@ func (ptq *ProjectTemplateQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only ProjectTemplate entity in the query, returns an error if not exactly one entity was returned.
 func (ptq *ProjectTemplateQuery) Only(ctx context.Context) (*ProjectTemplate, error) {
-	pts, err := ptq.Limit(2).All(ctx)
+	nodes, err := ptq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(pts) {
+	switch len(nodes) {
 	case 1:
-		return pts[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{projecttemplate.Label}
 	default:
@@ -192,11 +192,11 @@ func (ptq *ProjectTemplateQuery) Only(ctx context.Context) (*ProjectTemplate, er
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ptq *ProjectTemplateQuery) OnlyX(ctx context.Context) *ProjectTemplate {
-	pt, err := ptq.Only(ctx)
+	node, err := ptq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // OnlyID returns the only ProjectTemplate id in the query, returns an error if not exactly one id was returned.
@@ -235,11 +235,11 @@ func (ptq *ProjectTemplateQuery) All(ctx context.Context) ([]*ProjectTemplate, e
 
 // AllX is like All, but panics if an error occurs.
 func (ptq *ProjectTemplateQuery) AllX(ctx context.Context) []*ProjectTemplate {
-	pts, err := ptq.All(ctx)
+	nodes, err := ptq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pts
+	return nodes
 }
 
 // IDs executes the query and returns a list of ProjectTemplate ids.
@@ -455,6 +455,7 @@ func (ptq *ProjectTemplateQuery) sqlAll(ctx context.Context) ([]*ProjectTemplate
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Properties = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
@@ -483,6 +484,7 @@ func (ptq *ProjectTemplateQuery) sqlAll(ctx context.Context) ([]*ProjectTemplate
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WorkOrders = []*WorkOrderDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.WorkOrderDefinition(func(s *sql.Selector) {

@@ -156,23 +156,23 @@ func (wotq *WorkOrderTypeQuery) QueryDefinitions() *WorkOrderDefinitionQuery {
 
 // First returns the first WorkOrderType entity in the query. Returns *NotFoundError when no workordertype was found.
 func (wotq *WorkOrderTypeQuery) First(ctx context.Context) (*WorkOrderType, error) {
-	wots, err := wotq.Limit(1).All(ctx)
+	nodes, err := wotq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(wots) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{workordertype.Label}
 	}
-	return wots[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (wotq *WorkOrderTypeQuery) FirstX(ctx context.Context) *WorkOrderType {
-	wot, err := wotq.First(ctx)
+	node, err := wotq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return wot
+	return node
 }
 
 // FirstID returns the first WorkOrderType id in the query. Returns *NotFoundError when no id was found.
@@ -199,13 +199,13 @@ func (wotq *WorkOrderTypeQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only WorkOrderType entity in the query, returns an error if not exactly one entity was returned.
 func (wotq *WorkOrderTypeQuery) Only(ctx context.Context) (*WorkOrderType, error) {
-	wots, err := wotq.Limit(2).All(ctx)
+	nodes, err := wotq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(wots) {
+	switch len(nodes) {
 	case 1:
-		return wots[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{workordertype.Label}
 	default:
@@ -215,11 +215,11 @@ func (wotq *WorkOrderTypeQuery) Only(ctx context.Context) (*WorkOrderType, error
 
 // OnlyX is like Only, but panics if an error occurs.
 func (wotq *WorkOrderTypeQuery) OnlyX(ctx context.Context) *WorkOrderType {
-	wot, err := wotq.Only(ctx)
+	node, err := wotq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wot
+	return node
 }
 
 // OnlyID returns the only WorkOrderType id in the query, returns an error if not exactly one id was returned.
@@ -258,11 +258,11 @@ func (wotq *WorkOrderTypeQuery) All(ctx context.Context) ([]*WorkOrderType, erro
 
 // AllX is like All, but panics if an error occurs.
 func (wotq *WorkOrderTypeQuery) AllX(ctx context.Context) []*WorkOrderType {
-	wots, err := wotq.All(ctx)
+	nodes, err := wotq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return wots
+	return nodes
 }
 
 // IDs executes the query and returns a list of WorkOrderType ids.
@@ -480,6 +480,7 @@ func (wotq *WorkOrderTypeQuery) sqlAll(ctx context.Context) ([]*WorkOrderType, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.PropertyTypes = []*PropertyType{}
 		}
 		query.withFKs = true
 		query.Where(predicate.PropertyType(func(s *sql.Selector) {
@@ -508,6 +509,7 @@ func (wotq *WorkOrderTypeQuery) sqlAll(ctx context.Context) ([]*WorkOrderType, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CheckListCategoryDefinitions = []*CheckListCategoryDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.CheckListCategoryDefinition(func(s *sql.Selector) {
@@ -536,6 +538,7 @@ func (wotq *WorkOrderTypeQuery) sqlAll(ctx context.Context) ([]*WorkOrderType, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WorkOrders = []*WorkOrder{}
 		}
 		query.withFKs = true
 		query.Where(predicate.WorkOrder(func(s *sql.Selector) {
@@ -564,6 +567,7 @@ func (wotq *WorkOrderTypeQuery) sqlAll(ctx context.Context) ([]*WorkOrderType, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Definitions = []*WorkOrderDefinition{}
 		}
 		query.withFKs = true
 		query.Where(predicate.WorkOrderDefinition(func(s *sql.Selector) {

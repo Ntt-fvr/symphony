@@ -1480,11 +1480,11 @@ func (euo *EquipmentUpdateOne) Save(ctx context.Context) (*Equipment, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (euo *EquipmentUpdateOne) SaveX(ctx context.Context) *Equipment {
-	e, err := euo.Save(ctx)
+	node, err := euo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return e
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -1531,7 +1531,7 @@ func (euo *EquipmentUpdateOne) check() error {
 	return nil
 }
 
-func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err error) {
+func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (_node *Equipment, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   equipment.Table,
@@ -2064,9 +2064,9 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	e = &Equipment{config: euo.config}
-	_spec.Assign = e.assignValues
-	_spec.ScanValues = e.scanValues()
+	_node = &Equipment{config: euo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, euo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{equipment.Label}
@@ -2075,5 +2075,5 @@ func (euo *EquipmentUpdateOne) sqlSave(ctx context.Context) (e *Equipment, err e
 		}
 		return nil, err
 	}
-	return e, nil
+	return _node, nil
 }

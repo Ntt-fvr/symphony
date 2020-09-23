@@ -133,23 +133,23 @@ func (sq *SurveyQuery) QueryQuestions() *SurveyQuestionQuery {
 
 // First returns the first Survey entity in the query. Returns *NotFoundError when no survey was found.
 func (sq *SurveyQuery) First(ctx context.Context) (*Survey, error) {
-	sSlice, err := sq.Limit(1).All(ctx)
+	nodes, err := sq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(sSlice) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{survey.Label}
 	}
-	return sSlice[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (sq *SurveyQuery) FirstX(ctx context.Context) *Survey {
-	s, err := sq.First(ctx)
+	node, err := sq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return s
+	return node
 }
 
 // FirstID returns the first Survey id in the query. Returns *NotFoundError when no id was found.
@@ -176,13 +176,13 @@ func (sq *SurveyQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only Survey entity in the query, returns an error if not exactly one entity was returned.
 func (sq *SurveyQuery) Only(ctx context.Context) (*Survey, error) {
-	sSlice, err := sq.Limit(2).All(ctx)
+	nodes, err := sq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(sSlice) {
+	switch len(nodes) {
 	case 1:
-		return sSlice[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{survey.Label}
 	default:
@@ -192,11 +192,11 @@ func (sq *SurveyQuery) Only(ctx context.Context) (*Survey, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (sq *SurveyQuery) OnlyX(ctx context.Context) *Survey {
-	s, err := sq.Only(ctx)
+	node, err := sq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return s
+	return node
 }
 
 // OnlyID returns the only Survey id in the query, returns an error if not exactly one id was returned.
@@ -235,11 +235,11 @@ func (sq *SurveyQuery) All(ctx context.Context) ([]*Survey, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (sq *SurveyQuery) AllX(ctx context.Context) []*Survey {
-	sSlice, err := sq.All(ctx)
+	nodes, err := sq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return sSlice
+	return nodes
 }
 
 // IDs executes the query and returns a list of Survey ids.
@@ -508,6 +508,7 @@ func (sq *SurveyQuery) sqlAll(ctx context.Context) ([]*Survey, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Questions = []*SurveyQuestion{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyQuestion(func(s *sql.Selector) {

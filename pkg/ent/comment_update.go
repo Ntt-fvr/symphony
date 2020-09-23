@@ -458,11 +458,11 @@ func (cuo *CommentUpdateOne) Save(ctx context.Context) (*Comment, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (cuo *CommentUpdateOne) SaveX(ctx context.Context) *Comment {
-	c, err := cuo.Save(ctx)
+	node, err := cuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return c
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -494,7 +494,7 @@ func (cuo *CommentUpdateOne) check() error {
 	return nil
 }
 
-func (cuo *CommentUpdateOne) sqlSave(ctx context.Context) (c *Comment, err error) {
+func (cuo *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   comment.Table,
@@ -629,9 +629,9 @@ func (cuo *CommentUpdateOne) sqlSave(ctx context.Context) (c *Comment, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	c = &Comment{config: cuo.config}
-	_spec.Assign = c.assignValues
-	_spec.ScanValues = c.scanValues()
+	_node = &Comment{config: cuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, cuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{comment.Label}
@@ -640,5 +640,5 @@ func (cuo *CommentUpdateOne) sqlSave(ctx context.Context) (c *Comment, err error
 		}
 		return nil, err
 	}
-	return c, nil
+	return _node, nil
 }

@@ -190,7 +190,7 @@ func (cc *CommentCreate) check() error {
 }
 
 func (cc *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
-	c, _spec := cc.createSpec()
+	_node, _spec := cc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, cc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -198,13 +198,13 @@ func (cc *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	c.ID = int(id)
-	return c, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	var (
-		c     = &Comment{config: cc.config}
+		_node = &Comment{config: cc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: comment.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -219,7 +219,7 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: comment.FieldCreateTime,
 		})
-		c.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := cc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -227,7 +227,7 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: comment.FieldUpdateTime,
 		})
-		c.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := cc.mutation.Text(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -235,7 +235,7 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: comment.FieldText,
 		})
-		c.Text = value
+		_node.Text = value
 	}
 	if nodes := cc.mutation.AuthorIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -294,7 +294,7 @@ func (cc *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return c, _spec
+	return _node, _spec
 }
 
 // CommentCreateBulk is the builder for creating a bulk of Comment entities.

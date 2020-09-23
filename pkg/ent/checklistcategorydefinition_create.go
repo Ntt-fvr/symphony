@@ -210,7 +210,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) check() error {
 }
 
 func (clcdc *CheckListCategoryDefinitionCreate) sqlSave(ctx context.Context) (*CheckListCategoryDefinition, error) {
-	clcd, _spec := clcdc.createSpec()
+	_node, _spec := clcdc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, clcdc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -218,13 +218,13 @@ func (clcdc *CheckListCategoryDefinitionCreate) sqlSave(ctx context.Context) (*C
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	clcd.ID = int(id)
-	return clcd, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategoryDefinition, *sqlgraph.CreateSpec) {
 	var (
-		clcd  = &CheckListCategoryDefinition{config: clcdc.config}
+		_node = &CheckListCategoryDefinition{config: clcdc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: checklistcategorydefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -239,7 +239,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategory
 			Value:  value,
 			Column: checklistcategorydefinition.FieldCreateTime,
 		})
-		clcd.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := clcdc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -247,7 +247,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategory
 			Value:  value,
 			Column: checklistcategorydefinition.FieldUpdateTime,
 		})
-		clcd.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := clcdc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -255,7 +255,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategory
 			Value:  value,
 			Column: checklistcategorydefinition.FieldTitle,
 		})
-		clcd.Title = value
+		_node.Title = value
 	}
 	if value, ok := clcdc.mutation.Description(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -263,7 +263,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategory
 			Value:  value,
 			Column: checklistcategorydefinition.FieldDescription,
 		})
-		clcd.Description = value
+		_node.Description = value
 	}
 	if nodes := clcdc.mutation.CheckListItemDefinitionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -322,7 +322,7 @@ func (clcdc *CheckListCategoryDefinitionCreate) createSpec() (*CheckListCategory
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return clcd, _spec
+	return _node, _spec
 }
 
 // CheckListCategoryDefinitionCreateBulk is the builder for creating a bulk of CheckListCategoryDefinition entities.

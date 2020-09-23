@@ -446,7 +446,7 @@ func (sqc *SurveyQuestionCreate) check() error {
 }
 
 func (sqc *SurveyQuestionCreate) sqlSave(ctx context.Context) (*SurveyQuestion, error) {
-	sq, _spec := sqc.createSpec()
+	_node, _spec := sqc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, sqc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -454,13 +454,13 @@ func (sqc *SurveyQuestionCreate) sqlSave(ctx context.Context) (*SurveyQuestion, 
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	sq.ID = int(id)
-	return sq, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.CreateSpec) {
 	var (
-		sq    = &SurveyQuestion{config: sqc.config}
+		_node = &SurveyQuestion{config: sqc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: surveyquestion.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -475,7 +475,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldCreateTime,
 		})
-		sq.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := sqc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -483,7 +483,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldUpdateTime,
 		})
-		sq.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := sqc.mutation.FormName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -491,7 +491,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldFormName,
 		})
-		sq.FormName = value
+		_node.FormName = value
 	}
 	if value, ok := sqc.mutation.FormDescription(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -499,7 +499,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldFormDescription,
 		})
-		sq.FormDescription = value
+		_node.FormDescription = value
 	}
 	if value, ok := sqc.mutation.FormIndex(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -507,7 +507,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldFormIndex,
 		})
-		sq.FormIndex = value
+		_node.FormIndex = value
 	}
 	if value, ok := sqc.mutation.QuestionType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -515,7 +515,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldQuestionType,
 		})
-		sq.QuestionType = value
+		_node.QuestionType = value
 	}
 	if value, ok := sqc.mutation.QuestionFormat(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -523,7 +523,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldQuestionFormat,
 		})
-		sq.QuestionFormat = value
+		_node.QuestionFormat = value
 	}
 	if value, ok := sqc.mutation.QuestionText(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -531,7 +531,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldQuestionText,
 		})
-		sq.QuestionText = value
+		_node.QuestionText = value
 	}
 	if value, ok := sqc.mutation.QuestionIndex(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -539,7 +539,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldQuestionIndex,
 		})
-		sq.QuestionIndex = value
+		_node.QuestionIndex = value
 	}
 	if value, ok := sqc.mutation.BoolData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -547,7 +547,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldBoolData,
 		})
-		sq.BoolData = value
+		_node.BoolData = value
 	}
 	if value, ok := sqc.mutation.EmailData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -555,7 +555,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldEmailData,
 		})
-		sq.EmailData = value
+		_node.EmailData = value
 	}
 	if value, ok := sqc.mutation.Latitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -563,7 +563,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldLatitude,
 		})
-		sq.Latitude = value
+		_node.Latitude = value
 	}
 	if value, ok := sqc.mutation.Longitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -571,7 +571,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldLongitude,
 		})
-		sq.Longitude = value
+		_node.Longitude = value
 	}
 	if value, ok := sqc.mutation.LocationAccuracy(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -579,7 +579,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldLocationAccuracy,
 		})
-		sq.LocationAccuracy = value
+		_node.LocationAccuracy = value
 	}
 	if value, ok := sqc.mutation.Altitude(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -587,7 +587,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldAltitude,
 		})
-		sq.Altitude = value
+		_node.Altitude = value
 	}
 	if value, ok := sqc.mutation.PhoneData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -595,7 +595,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldPhoneData,
 		})
-		sq.PhoneData = value
+		_node.PhoneData = value
 	}
 	if value, ok := sqc.mutation.TextData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -603,7 +603,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldTextData,
 		})
-		sq.TextData = value
+		_node.TextData = value
 	}
 	if value, ok := sqc.mutation.FloatData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -611,7 +611,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldFloatData,
 		})
-		sq.FloatData = value
+		_node.FloatData = value
 	}
 	if value, ok := sqc.mutation.IntData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -619,7 +619,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldIntData,
 		})
-		sq.IntData = value
+		_node.IntData = value
 	}
 	if value, ok := sqc.mutation.DateData(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -627,7 +627,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 			Value:  value,
 			Column: surveyquestion.FieldDateData,
 		})
-		sq.DateData = value
+		_node.DateData = value
 	}
 	if nodes := sqc.mutation.SurveyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -724,7 +724,7 @@ func (sqc *SurveyQuestionCreate) createSpec() (*SurveyQuestion, *sqlgraph.Create
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return sq, _spec
+	return _node, _spec
 }
 
 // SurveyQuestionCreateBulk is the builder for creating a bulk of SurveyQuestion entities.

@@ -392,7 +392,7 @@ func (bc *BlockCreate) check() error {
 }
 
 func (bc *BlockCreate) sqlSave(ctx context.Context) (*Block, error) {
-	b, _spec := bc.createSpec()
+	_node, _spec := bc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, bc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -400,13 +400,13 @@ func (bc *BlockCreate) sqlSave(ctx context.Context) (*Block, error) {
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	b.ID = int(id)
-	return b, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 	var (
-		b     = &Block{config: bc.config}
+		_node = &Block{config: bc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: block.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -421,7 +421,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldCreateTime,
 		})
-		b.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := bc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -429,7 +429,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldUpdateTime,
 		})
-		b.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := bc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -437,7 +437,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldName,
 		})
-		b.Name = value
+		_node.Name = value
 	}
 	if value, ok := bc.mutation.Cid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -445,7 +445,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldCid,
 		})
-		b.Cid = value
+		_node.Cid = value
 	}
 	if value, ok := bc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -453,7 +453,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldType,
 		})
-		b.Type = value
+		_node.Type = value
 	}
 	if value, ok := bc.mutation.ActionType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -461,7 +461,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldActionType,
 		})
-		b.ActionType = &value
+		_node.ActionType = &value
 	}
 	if value, ok := bc.mutation.TriggerType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -469,7 +469,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldTriggerType,
 		})
-		b.TriggerType = &value
+		_node.TriggerType = &value
 	}
 	if value, ok := bc.mutation.StartParamDefinitions(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -477,7 +477,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldStartParamDefinitions,
 		})
-		b.StartParamDefinitions = value
+		_node.StartParamDefinitions = value
 	}
 	if value, ok := bc.mutation.InputParams(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -485,7 +485,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldInputParams,
 		})
-		b.InputParams = value
+		_node.InputParams = value
 	}
 	if value, ok := bc.mutation.UIRepresentation(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -493,7 +493,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: block.FieldUIRepresentation,
 		})
-		b.UIRepresentation = value
+		_node.UIRepresentation = value
 	}
 	if nodes := bc.mutation.PrevBlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -666,7 +666,7 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return b, _spec
+	return _node, _spec
 }
 
 // BlockCreateBulk is the builder for creating a bulk of Block entities.

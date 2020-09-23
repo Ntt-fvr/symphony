@@ -583,11 +583,11 @@ func (auo *ActivityUpdateOne) Save(ctx context.Context) (*Activity, error) {
 
 // SaveX is like Save, but panics if an error occurs.
 func (auo *ActivityUpdateOne) SaveX(ctx context.Context) *Activity {
-	a, err := auo.Save(ctx)
+	node, err := auo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return a
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -621,7 +621,7 @@ func (auo *ActivityUpdateOne) check() error {
 	return nil
 }
 
-func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err error) {
+func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (_node *Activity, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   activity.Table,
@@ -767,9 +767,9 @@ func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	a = &Activity{config: auo.config}
-	_spec.Assign = a.assignValues
-	_spec.ScanValues = a.scanValues()
+	_node = &Activity{config: auo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, auo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{activity.Label}
@@ -778,5 +778,5 @@ func (auo *ActivityUpdateOne) sqlSave(ctx context.Context) (a *Activity, err err
 		}
 		return nil, err
 	}
-	return a, nil
+	return _node, nil
 }

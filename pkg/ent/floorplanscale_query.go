@@ -58,23 +58,23 @@ func (fpsq *FloorPlanScaleQuery) Order(o ...OrderFunc) *FloorPlanScaleQuery {
 
 // First returns the first FloorPlanScale entity in the query. Returns *NotFoundError when no floorplanscale was found.
 func (fpsq *FloorPlanScaleQuery) First(ctx context.Context) (*FloorPlanScale, error) {
-	fpsSlice, err := fpsq.Limit(1).All(ctx)
+	nodes, err := fpsq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(fpsSlice) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{floorplanscale.Label}
 	}
-	return fpsSlice[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (fpsq *FloorPlanScaleQuery) FirstX(ctx context.Context) *FloorPlanScale {
-	fps, err := fpsq.First(ctx)
+	node, err := fpsq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return fps
+	return node
 }
 
 // FirstID returns the first FloorPlanScale id in the query. Returns *NotFoundError when no id was found.
@@ -101,13 +101,13 @@ func (fpsq *FloorPlanScaleQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only FloorPlanScale entity in the query, returns an error if not exactly one entity was returned.
 func (fpsq *FloorPlanScaleQuery) Only(ctx context.Context) (*FloorPlanScale, error) {
-	fpsSlice, err := fpsq.Limit(2).All(ctx)
+	nodes, err := fpsq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(fpsSlice) {
+	switch len(nodes) {
 	case 1:
-		return fpsSlice[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{floorplanscale.Label}
 	default:
@@ -117,11 +117,11 @@ func (fpsq *FloorPlanScaleQuery) Only(ctx context.Context) (*FloorPlanScale, err
 
 // OnlyX is like Only, but panics if an error occurs.
 func (fpsq *FloorPlanScaleQuery) OnlyX(ctx context.Context) *FloorPlanScale {
-	fps, err := fpsq.Only(ctx)
+	node, err := fpsq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fps
+	return node
 }
 
 // OnlyID returns the only FloorPlanScale id in the query, returns an error if not exactly one id was returned.
@@ -160,11 +160,11 @@ func (fpsq *FloorPlanScaleQuery) All(ctx context.Context) ([]*FloorPlanScale, er
 
 // AllX is like All, but panics if an error occurs.
 func (fpsq *FloorPlanScaleQuery) AllX(ctx context.Context) []*FloorPlanScale {
-	fpsSlice, err := fpsq.All(ctx)
+	nodes, err := fpsq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return fpsSlice
+	return nodes
 }
 
 // IDs executes the query and returns a list of FloorPlanScale ids.

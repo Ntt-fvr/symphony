@@ -132,23 +132,23 @@ func (ugq *UsersGroupQuery) QueryFeatures() *FeatureQuery {
 
 // First returns the first UsersGroup entity in the query. Returns *NotFoundError when no usersgroup was found.
 func (ugq *UsersGroupQuery) First(ctx context.Context) (*UsersGroup, error) {
-	ugs, err := ugq.Limit(1).All(ctx)
+	nodes, err := ugq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(ugs) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{usersgroup.Label}
 	}
-	return ugs[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (ugq *UsersGroupQuery) FirstX(ctx context.Context) *UsersGroup {
-	ug, err := ugq.First(ctx)
+	node, err := ugq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return ug
+	return node
 }
 
 // FirstID returns the first UsersGroup id in the query. Returns *NotFoundError when no id was found.
@@ -175,13 +175,13 @@ func (ugq *UsersGroupQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only UsersGroup entity in the query, returns an error if not exactly one entity was returned.
 func (ugq *UsersGroupQuery) Only(ctx context.Context) (*UsersGroup, error) {
-	ugs, err := ugq.Limit(2).All(ctx)
+	nodes, err := ugq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(ugs) {
+	switch len(nodes) {
 	case 1:
-		return ugs[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{usersgroup.Label}
 	default:
@@ -191,11 +191,11 @@ func (ugq *UsersGroupQuery) Only(ctx context.Context) (*UsersGroup, error) {
 
 // OnlyX is like Only, but panics if an error occurs.
 func (ugq *UsersGroupQuery) OnlyX(ctx context.Context) *UsersGroup {
-	ug, err := ugq.Only(ctx)
+	node, err := ugq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ug
+	return node
 }
 
 // OnlyID returns the only UsersGroup id in the query, returns an error if not exactly one id was returned.
@@ -234,11 +234,11 @@ func (ugq *UsersGroupQuery) All(ctx context.Context) ([]*UsersGroup, error) {
 
 // AllX is like All, but panics if an error occurs.
 func (ugq *UsersGroupQuery) AllX(ctx context.Context) []*UsersGroup {
-	ugs, err := ugq.All(ctx)
+	nodes, err := ugq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return ugs
+	return nodes
 }
 
 // IDs executes the query and returns a list of UsersGroup ids.
@@ -444,6 +444,7 @@ func (ugq *UsersGroupQuery) sqlAll(ctx context.Context) ([]*UsersGroup, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Members = []*User{}
 		}
 		var (
 			edgeids []int
@@ -507,6 +508,7 @@ func (ugq *UsersGroupQuery) sqlAll(ctx context.Context) ([]*UsersGroup, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Policies = []*PermissionsPolicy{}
 		}
 		var (
 			edgeids []int
@@ -570,6 +572,7 @@ func (ugq *UsersGroupQuery) sqlAll(ctx context.Context) ([]*UsersGroup, error) {
 		for _, node := range nodes {
 			ids[node.ID] = node
 			fks = append(fks, node.ID)
+			node.Edges.Features = []*Feature{}
 		}
 		var (
 			edgeids []int

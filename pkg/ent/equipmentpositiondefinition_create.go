@@ -199,7 +199,7 @@ func (epdc *EquipmentPositionDefinitionCreate) check() error {
 }
 
 func (epdc *EquipmentPositionDefinitionCreate) sqlSave(ctx context.Context) (*EquipmentPositionDefinition, error) {
-	epd, _spec := epdc.createSpec()
+	_node, _spec := epdc.createSpec()
 	if err := sqlgraph.CreateNode(ctx, epdc.driver, _spec); err != nil {
 		if cerr, ok := isSQLConstraintError(err); ok {
 			err = cerr
@@ -207,13 +207,13 @@ func (epdc *EquipmentPositionDefinitionCreate) sqlSave(ctx context.Context) (*Eq
 		return nil, err
 	}
 	id := _spec.ID.Value.(int64)
-	epd.ID = int(id)
-	return epd, nil
+	_node.ID = int(id)
+	return _node, nil
 }
 
 func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionDefinition, *sqlgraph.CreateSpec) {
 	var (
-		epd   = &EquipmentPositionDefinition{config: epdc.config}
+		_node = &EquipmentPositionDefinition{config: epdc.config}
 		_spec = &sqlgraph.CreateSpec{
 			Table: equipmentpositiondefinition.Table,
 			ID: &sqlgraph.FieldSpec{
@@ -228,7 +228,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 			Value:  value,
 			Column: equipmentpositiondefinition.FieldCreateTime,
 		})
-		epd.CreateTime = value
+		_node.CreateTime = value
 	}
 	if value, ok := epdc.mutation.UpdateTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -236,7 +236,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 			Value:  value,
 			Column: equipmentpositiondefinition.FieldUpdateTime,
 		})
-		epd.UpdateTime = value
+		_node.UpdateTime = value
 	}
 	if value, ok := epdc.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -244,7 +244,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 			Value:  value,
 			Column: equipmentpositiondefinition.FieldName,
 		})
-		epd.Name = value
+		_node.Name = value
 	}
 	if value, ok := epdc.mutation.Index(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -252,7 +252,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 			Value:  value,
 			Column: equipmentpositiondefinition.FieldIndex,
 		})
-		epd.Index = value
+		_node.Index = value
 	}
 	if value, ok := epdc.mutation.VisibilityLabel(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -260,7 +260,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 			Value:  value,
 			Column: equipmentpositiondefinition.FieldVisibilityLabel,
 		})
-		epd.VisibilityLabel = value
+		_node.VisibilityLabel = value
 	}
 	if nodes := epdc.mutation.PositionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -300,7 +300,7 @@ func (epdc *EquipmentPositionDefinitionCreate) createSpec() (*EquipmentPositionD
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	return epd, _spec
+	return _node, _spec
 }
 
 // EquipmentPositionDefinitionCreateBulk is the builder for creating a bulk of EquipmentPositionDefinition entities.

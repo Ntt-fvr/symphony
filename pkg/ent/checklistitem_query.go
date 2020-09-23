@@ -157,23 +157,23 @@ func (cliq *CheckListItemQuery) QueryCheckListCategory() *CheckListCategoryQuery
 
 // First returns the first CheckListItem entity in the query. Returns *NotFoundError when no checklistitem was found.
 func (cliq *CheckListItemQuery) First(ctx context.Context) (*CheckListItem, error) {
-	clis, err := cliq.Limit(1).All(ctx)
+	nodes, err := cliq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if len(clis) == 0 {
+	if len(nodes) == 0 {
 		return nil, &NotFoundError{checklistitem.Label}
 	}
-	return clis[0], nil
+	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
 func (cliq *CheckListItemQuery) FirstX(ctx context.Context) *CheckListItem {
-	cli, err := cliq.First(ctx)
+	node, err := cliq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
-	return cli
+	return node
 }
 
 // FirstID returns the first CheckListItem id in the query. Returns *NotFoundError when no id was found.
@@ -200,13 +200,13 @@ func (cliq *CheckListItemQuery) FirstXID(ctx context.Context) int {
 
 // Only returns the only CheckListItem entity in the query, returns an error if not exactly one entity was returned.
 func (cliq *CheckListItemQuery) Only(ctx context.Context) (*CheckListItem, error) {
-	clis, err := cliq.Limit(2).All(ctx)
+	nodes, err := cliq.Limit(2).All(ctx)
 	if err != nil {
 		return nil, err
 	}
-	switch len(clis) {
+	switch len(nodes) {
 	case 1:
-		return clis[0], nil
+		return nodes[0], nil
 	case 0:
 		return nil, &NotFoundError{checklistitem.Label}
 	default:
@@ -216,11 +216,11 @@ func (cliq *CheckListItemQuery) Only(ctx context.Context) (*CheckListItem, error
 
 // OnlyX is like Only, but panics if an error occurs.
 func (cliq *CheckListItemQuery) OnlyX(ctx context.Context) *CheckListItem {
-	cli, err := cliq.Only(ctx)
+	node, err := cliq.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return cli
+	return node
 }
 
 // OnlyID returns the only CheckListItem id in the query, returns an error if not exactly one id was returned.
@@ -259,11 +259,11 @@ func (cliq *CheckListItemQuery) All(ctx context.Context) ([]*CheckListItem, erro
 
 // AllX is like All, but panics if an error occurs.
 func (cliq *CheckListItemQuery) AllX(ctx context.Context) []*CheckListItem {
-	clis, err := cliq.All(ctx)
+	nodes, err := cliq.All(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return clis
+	return nodes
 }
 
 // IDs executes the query and returns a list of CheckListItem ids.
@@ -491,6 +491,7 @@ func (cliq *CheckListItemQuery) sqlAll(ctx context.Context) ([]*CheckListItem, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Files = []*File{}
 		}
 		query.withFKs = true
 		query.Where(predicate.File(func(s *sql.Selector) {
@@ -519,6 +520,7 @@ func (cliq *CheckListItemQuery) sqlAll(ctx context.Context) ([]*CheckListItem, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.WifiScan = []*SurveyWiFiScan{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyWiFiScan(func(s *sql.Selector) {
@@ -547,6 +549,7 @@ func (cliq *CheckListItemQuery) sqlAll(ctx context.Context) ([]*CheckListItem, e
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.CellScan = []*SurveyCellScan{}
 		}
 		query.withFKs = true
 		query.Where(predicate.SurveyCellScan(func(s *sql.Selector) {

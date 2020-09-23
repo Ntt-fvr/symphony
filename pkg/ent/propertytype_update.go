@@ -2059,11 +2059,11 @@ func (ptuo *PropertyTypeUpdateOne) Save(ctx context.Context) (*PropertyType, err
 
 // SaveX is like Save, but panics if an error occurs.
 func (ptuo *PropertyTypeUpdateOne) SaveX(ctx context.Context) *PropertyType {
-	pt, err := ptuo.Save(ctx)
+	node, err := ptuo.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
-	return pt
+	return node
 }
 
 // Exec executes the query on the entity.
@@ -2097,7 +2097,7 @@ func (ptuo *PropertyTypeUpdateOne) check() error {
 	return nil
 }
 
-func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (pt *PropertyType, err error) {
+func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (_node *PropertyType, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   propertytype.Table,
@@ -2736,9 +2736,9 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (pt *PropertyTyp
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	pt = &PropertyType{config: ptuo.config}
-	_spec.Assign = pt.assignValues
-	_spec.ScanValues = pt.scanValues()
+	_node = &PropertyType{config: ptuo.config}
+	_spec.Assign = _node.assignValues
+	_spec.ScanValues = _node.scanValues()
 	if err = sqlgraph.UpdateNode(ctx, ptuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{propertytype.Label}
@@ -2747,5 +2747,5 @@ func (ptuo *PropertyTypeUpdateOne) sqlSave(ctx context.Context) (pt *PropertyTyp
 		}
 		return nil, err
 	}
-	return pt, nil
+	return _node, nil
 }
