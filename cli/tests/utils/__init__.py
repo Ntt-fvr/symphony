@@ -59,7 +59,9 @@ def init_cleaner() -> Callable:
     else:
         endpoint = "http://admin/query"
 
-    client = GraphqlClient(endpoint, requests.Session(), "psym")
+    session = requests.Session()
+    session.verify = False
+    client = GraphqlClient(endpoint, session, "psym")
     mutation = """
         mutation TruncateTenant($name: String!) {
             truncateTenant(input: { name: $name }) {
