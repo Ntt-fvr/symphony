@@ -1173,6 +1173,8 @@ func (r mutationResolver) AddImage(ctx context.Context, input models.AddImageInp
 			create.SetEquipmentID(input.EntityID)
 		case models.ImageEntityUser:
 			create.SetUserID(input.EntityID)
+		case models.ImageEntityChecklistItem:
+			create.SetNillableChecklistItemID(&input.EntityID)
 		default:
 			return fmt.Errorf("unknown image owner type: %s", input.EntityType)
 		}
