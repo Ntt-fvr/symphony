@@ -13,6 +13,7 @@ import type {GraphSelectionContextType} from '../selection/GraphSelectionContext
 import type {WithFlowData} from '../../../data/FlowDataContext';
 
 import * as React from 'react';
+import FormFieldTextInput from '../../../../../admin/userManagement/utils/FormFieldTextInput';
 import JsonViewer from '../../tools/JsonViewer';
 import Text from '@symphony/design-system/components/Text';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
@@ -66,7 +67,16 @@ export default function DetailsPane(props: Props) {
     );
   }
 
-  return null;
+  return (
+    <FormFieldTextInput
+      label={`${fbt('Block Name', '')}`}
+      value={flowSelection.selectedElements[0].name}
+      onValueChanged={name => {
+        flowSelection.selectedElements[0].setName(name);
+      }}
+      immediateUpdate={true}
+    />
+  );
 }
 
 export function getDetailsTitle(
@@ -75,7 +85,7 @@ export function getDetailsTitle(
   const selectionCount = selection.selectedElements.length;
 
   if (selectionCount === 1) {
-    return selection.selectedElements[0].type;
+    return selection.selectedElements[0].name;
   }
 
   if (selectionCount > 1) {

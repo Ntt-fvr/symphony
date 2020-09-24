@@ -26,10 +26,12 @@ export interface IBlock {
   +model: IVertexModel;
   +view: IVertexView;
   +type: string;
+  +name: string;
   +isSelected: boolean;
   +getPorts: () => $ReadOnlyArray<VertexPort>;
   +getPortByGroup: (portsGroup: PortGroupName) => ?VertexPort;
   +getPortByID: (portID: string) => ?VertexPort;
+  +setName: string => void;
 }
 
 export default class BaseBlock implements IBlock {
@@ -37,6 +39,7 @@ export default class BaseBlock implements IBlock {
   model: IVertexModel;
   view: IVertexView;
   type: string;
+  name: string;
   isSelected: boolean;
   id: string;
 
@@ -44,12 +47,7 @@ export default class BaseBlock implements IBlock {
     this.paper = paper;
     this.model = model;
 
-    // this.model.addPort({
-    //   group: 'input',
-    // });
-    // this.model.addPort({
-    //   group: 'output',
-    // });
+    this.name = model.attributes.attrs.label.text;
 
     const graph = this.paper.model;
     this.model.addTo(graph);
@@ -58,6 +56,11 @@ export default class BaseBlock implements IBlock {
 
     this.type = model.attributes.type;
     this.id = model.id;
+  }
+
+  setName(newName: string) {
+    this.name = newName;
+    this.model.attributes.attrs.label.text = newName;
   }
 
   select() {

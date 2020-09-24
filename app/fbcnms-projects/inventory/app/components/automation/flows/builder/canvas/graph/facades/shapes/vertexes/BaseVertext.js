@@ -22,6 +22,25 @@ import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
+export const VERTEX_COMMON_DISPLAY = {
+  attrs: {
+    label: {
+      text: 'manual action',
+      textVerticalAnchor: 'middle',
+      textAnchor: 'center',
+      refY: '120%',
+      fontSize: 14,
+      fill: symphony.palette.secondary,
+    },
+  },
+  markup: [
+    {
+      tagName: 'text',
+      selector: 'label',
+    },
+  ],
+};
+
 export type VertexDescriptor = $ReadOnly<{|
   id: string,
   position: Position,
@@ -41,7 +60,12 @@ export interface IVertexModelAttributes extends IBaseShapeAttributes {
   +position: Position;
   +size: Size;
   +z: number;
-  +attrs: KeyValuePair;
+  +attrs: {
+    ...KeyValuePair,
+    label: {
+      text: string,
+    },
+  };
   +ports: VertexPorts;
 }
 

@@ -12,7 +12,13 @@
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
-import {DISPLAY_SETTINGS, PORTS_GROUPS, getInitObject} from '../BaseVertext';
+import fbt from 'fbt';
+import {
+  DISPLAY_SETTINGS,
+  PORTS_GROUPS,
+  VERTEX_COMMON_DISPLAY,
+  getInitObject,
+} from '../BaseVertext';
 
 export const TYPE = 'administrative.ManualStart';
 
@@ -32,6 +38,7 @@ const IMAGE_PADDING = INNER_CENTER - IMAGE_CENTER;
 
 const defaultProperties = {
   attrs: {
+    ...VERTEX_COMMON_DISPLAY.attrs,
     body: {
       strokeWidth: BORDER,
       stroke: DISPLAY_SETTINGS.body.stroke.default,
@@ -49,20 +56,13 @@ const defaultProperties = {
       y: IMAGE_PADDING,
       refX2: PADDING,
     },
-    // label: {
-    //   text: 'manual action',
-    //   textVerticalAnchor: 'middle',
-    //   textAnchor: 'middle',
-    //   refX: '50%',
-    //   refY: '50%',
-    //   fontSize: 14,
-    //   fill: symphony.palette.white,
-    // },
   },
 };
+defaultProperties.attrs.label.text = `${fbt('Start', '')}`;
 
 const markup = {
   markup: [
+    ...VERTEX_COMMON_DISPLAY.markup,
     {
       tagName: 'circle',
       selector: 'body',
@@ -71,10 +71,6 @@ const markup = {
       tagName: 'image',
       selector: 'image',
     },
-    // {
-    //   tagName: 'text',
-    //   selector: 'label',
-    // },
   ],
 };
 

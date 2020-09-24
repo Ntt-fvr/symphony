@@ -9,7 +9,7 @@
  * @format
  */
 import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
-import {generateTempId, getGraphError} from '../../../../common/EntUtils';
+import {getGraphError} from '../../../../common/EntUtils';
 import type {
   ActionBlockInput,
   ConnectorInput,
@@ -43,34 +43,39 @@ export function saveFlowDraft(
 
 export function mapStartBlockForSave(block: IBlock): StartBlockInput {
   return {
-    cid: block.id,
-    name: `Start block ${generateTempId()}`,
+    ...mapBlockForSave(block),
     paramDefinitions: [],
-    uiRepresentation: {
-      xPosition: Math.floor(block.model.attributes.position.x),
-      yPosition: Math.floor(block.model.attributes.position.y),
-    },
   };
 }
 
 export function mapActionBlocksForSave(block: IBlock): ActionBlockInput {
   return {
-    cid: block.id,
-    name: `Action block ${generateTempId()}`,
+    ...mapBlockForSave(block),
     params: [],
     actionType: 'work_order',
-    uiRepresentation: {
-      xPosition: Math.floor(block.model.attributes.position.x),
-      yPosition: Math.floor(block.model.attributes.position.y),
-    },
   };
 }
 
 export function mapEndBlockForSave(block: IBlock): EndBlockInput {
   return {
-    cid: block.id,
-    name: `End block ${generateTempId()}`,
+    ...mapBlockForSave(block),
     params: [],
+  };
+}
+
+type BaseBlockInput = $ReadOnly<{|
+  cid: string,
+  name: string,
+  uiRepresentation: {|
+    xPosition: number,
+    yPosition: number,
+  |},
+|}>;
+
+function mapBlockForSave(block: IBlock): BaseBlockInput {
+  return {
+    cid: block.id,
+    name: block.name,
     uiRepresentation: {
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),

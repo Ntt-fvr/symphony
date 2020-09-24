@@ -12,7 +12,12 @@
 import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
-import {DISPLAY_SETTINGS, getInitObject} from '../BaseVertext';
+import fbt from 'fbt';
+import {
+  DISPLAY_SETTINGS,
+  VERTEX_COMMON_DISPLAY,
+  getInitObject,
+} from '../BaseVertext';
 
 export const TYPE = 'actions.CreateWorkorder';
 
@@ -32,6 +37,7 @@ const IMAGE_PADDING = INNER_CENTER - IMAGE_CENTER;
 
 const defaultProperties = {
   attrs: {
+    ...VERTEX_COMMON_DISPLAY.attrs,
     body: {
       strokeWidth: BORDER,
       stroke: DISPLAY_SETTINGS.body.stroke.default,
@@ -50,20 +56,13 @@ const defaultProperties = {
       y: IMAGE_PADDING - PADDING,
       refX2: 4,
     },
-    // label: {
-    //   text: 'manual action',
-    //   textVerticalAnchor: 'middle',
-    //   textAnchor: 'middle',
-    //   refX: '50%',
-    //   refY: '50%',
-    //   fontSize: 14,
-    //   fill: symphony.palette.white,
-    // },
   },
 };
+defaultProperties.attrs.label.text = `${fbt('Create Workorder', '')}`;
 
 const markup = {
   markup: [
+    ...VERTEX_COMMON_DISPLAY.markup,
     {
       tagName: 'rect',
       selector: 'body',
@@ -72,10 +71,6 @@ const markup = {
       tagName: 'image',
       selector: 'image',
     },
-    // {
-    //   tagName: 'text',
-    //   selector: 'label',
-    // },
   ],
 };
 
