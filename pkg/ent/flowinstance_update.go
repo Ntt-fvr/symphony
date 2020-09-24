@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/facebook/ent/dialect/sql"
@@ -103,14 +104,6 @@ func (fiu *FlowInstanceUpdate) SetFlow(f *Flow) *FlowInstanceUpdate {
 // SetTemplateID sets the template edge to FlowExecutionTemplate by id.
 func (fiu *FlowInstanceUpdate) SetTemplateID(id int) *FlowInstanceUpdate {
 	fiu.mutation.SetTemplateID(id)
-	return fiu
-}
-
-// SetNillableTemplateID sets the template edge to FlowExecutionTemplate by id if the given value is not nil.
-func (fiu *FlowInstanceUpdate) SetNillableTemplateID(id *int) *FlowInstanceUpdate {
-	if id != nil {
-		fiu = fiu.SetTemplateID(*id)
-	}
 	return fiu
 }
 
@@ -269,6 +262,9 @@ func (fiu *FlowInstanceUpdate) check() error {
 		if err := flowinstance.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
+	}
+	if _, ok := fiu.mutation.TemplateID(); fiu.mutation.TemplateCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"template\"")
 	}
 	return nil
 }
@@ -579,14 +575,6 @@ func (fiuo *FlowInstanceUpdateOne) SetTemplateID(id int) *FlowInstanceUpdateOne 
 	return fiuo
 }
 
-// SetNillableTemplateID sets the template edge to FlowExecutionTemplate by id if the given value is not nil.
-func (fiuo *FlowInstanceUpdateOne) SetNillableTemplateID(id *int) *FlowInstanceUpdateOne {
-	if id != nil {
-		fiuo = fiuo.SetTemplateID(*id)
-	}
-	return fiuo
-}
-
 // SetTemplate sets the template edge to FlowExecutionTemplate.
 func (fiuo *FlowInstanceUpdateOne) SetTemplate(f *FlowExecutionTemplate) *FlowInstanceUpdateOne {
 	return fiuo.SetTemplateID(f.ID)
@@ -742,6 +730,9 @@ func (fiuo *FlowInstanceUpdateOne) check() error {
 		if err := flowinstance.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
+	}
+	if _, ok := fiuo.mutation.TemplateID(); fiuo.mutation.TemplateCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"template\"")
 	}
 	return nil
 }

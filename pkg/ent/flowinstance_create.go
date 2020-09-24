@@ -115,14 +115,6 @@ func (fic *FlowInstanceCreate) SetTemplateID(id int) *FlowInstanceCreate {
 	return fic
 }
 
-// SetNillableTemplateID sets the template edge to FlowExecutionTemplate by id if the given value is not nil.
-func (fic *FlowInstanceCreate) SetNillableTemplateID(id *int) *FlowInstanceCreate {
-	if id != nil {
-		fic = fic.SetTemplateID(*id)
-	}
-	return fic
-}
-
 // SetTemplate sets the template edge to FlowExecutionTemplate.
 func (fic *FlowInstanceCreate) SetTemplate(f *FlowExecutionTemplate) *FlowInstanceCreate {
 	return fic.SetTemplateID(f.ID)
@@ -243,6 +235,9 @@ func (fic *FlowInstanceCreate) check() error {
 		if err := flowinstance.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
+	}
+	if _, ok := fic.mutation.TemplateID(); !ok {
+		return &ValidationError{Name: "template", err: errors.New("ent: missing required edge \"template\"")}
 	}
 	return nil
 }

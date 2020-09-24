@@ -170,7 +170,8 @@ func (FlowInstance) Edges() []ent.Edge {
 		edge.To("flow", Flow.Type).
 			Unique(),
 		edge.To("template", FlowExecutionTemplate.Type).
-			Unique(),
+			Unique().
+			Required(),
 		edge.To("blocks", BlockInstance.Type),
 		edge.From("parent_subflow_block", BlockInstance.Type).
 			Unique().
