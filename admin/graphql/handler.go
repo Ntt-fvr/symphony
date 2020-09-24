@@ -29,6 +29,7 @@ import (
 // HandlerConfig configures graphql handler.
 type HandlerConfig struct {
 	DB      gqlutil.BeginTxExecQueryer
+	Dialect fmt.Stringer
 	Tenancy viewer.Tenancy
 	Logger  log.Logger
 }
@@ -46,6 +47,12 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 				Resolvers: resolver.New(
 					resolver.Config{
 						Logger: cfg.Logger,
+						Migrator: resolver.NewMigrator(
+							resolver.MigratorConfig{
+								Logger:  cfg.Logger,
+								Dialect: cfg.Dialect,
+							},
+						),
 					},
 				),
 				Directives: directive.New(),

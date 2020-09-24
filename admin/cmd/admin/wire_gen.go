@@ -8,11 +8,13 @@ package main
 import (
 	"context"
 	"database/sql"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.opencensus.io/stats/view"
@@ -35,6 +37,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	zapLogger := log.ProvideZapLogger(logger)
 	mysqlConfig := &flags.MySQLConfig
 	db, cleanup2 := provideDB(mysqlConfig)
+	stringer := _wireStringerValue
 	tenancy, err := provideTenancy(mysqlConfig, logger)
 	if err != nil {
 		cleanup2()
@@ -43,6 +46,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	handlerConfig := graphql.HandlerConfig{
 		DB:      db,
+		Dialect: stringer,
 		Tenancy: tenancy,
 		Logger:  logger,
 	}
@@ -101,6 +105,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 }
 
 var (
+	_wireStringerValue         = strutil.Stringer(dialect.MySQL)
 	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )

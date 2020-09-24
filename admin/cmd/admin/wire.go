@@ -9,12 +9,15 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
@@ -40,6 +43,13 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		wire.Struct(
 			new(graphql.HandlerConfig),
 			"*",
+		),
+		wire.Value(
+			strutil.Stringer(dialect.MySQL),
+		),
+		wire.Bind(
+			new(fmt.Stringer),
+			new(strutil.Stringer),
 		),
 		wire.Bind(
 			new(gqlutil.BeginTxExecQueryer),

@@ -15,6 +15,7 @@ import (
 	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
+	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/stretchr/testify/require"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -57,7 +58,9 @@ func TestMigrator(t *testing.T) {
 	})
 	err = resolver.NewMigrator(
 		resolver.MigratorConfig{
-			Dialect: dialect.SQLite,
+			Dialect: strutil.Stringer(
+				dialect.SQLite,
+			),
 		},
 	).Migrate(ctx, t.Name())
 	require.NoError(t, err)

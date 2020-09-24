@@ -12,6 +12,8 @@ import (
 	"sync"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/facebook/ent/dialect"
+	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -126,4 +128,35 @@ func (dbi DBInjector) InterceptResponse(ctx context.Context, next graphql.Respon
 		)
 	}
 	return rsp
+}
+
+// DrvFromTx returns a dialect.Driver wrapping an existing transaction.
+func DrvFromTx(dialect string, tx TxExecQueryer) dialect.Driver {
+	return txDrv{
+		dialect: dialect,
+		Conn: entsql.Conn{
+			ExecQuerier: tx,
+		},
+	}
+}
+
+// txDrv implements dialect.Driver over an existing transaction.
+type txDrv struct {
+	dialect string
+	entsql.Conn
+}
+
+// Tx returns a no-op tx wrapping txDrv.
+func (d txDrv) Tx(context.Context) (dialect.Tx, error) {
+	return dialect.NopTx(d), nil
+}
+
+// Close is a no-op
+func (txDrv) Close() error {
+	return nil
+}
+
+// Dialect is a mysql dialect.
+func (d txDrv) Dialect() string {
+	return d.dialect
 }
