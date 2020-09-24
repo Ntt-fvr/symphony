@@ -35,13 +35,13 @@ type MigratorConfig struct {
 func NewMigrator(cfg MigratorConfig) Migrator {
 	m := &migrator{
 		logger:  cfg.Logger,
-		dialect: dialect.MySQL,
+		dialect: cfg.Dialect.String(),
 	}
 	if m.logger == nil {
 		m.logger = log.NewNopLogger()
 	}
-	if cfg.Dialect != nil {
-		m.dialect = cfg.Dialect.String()
+	if m.dialect == "" {
+		m.dialect = dialect.MySQL
 	}
 	return m
 }

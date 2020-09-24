@@ -18,36 +18,32 @@ import (
 
 func (r *mutationResolver) UpsertUser(ctx context.Context, input model.UpsertUserInput) (*model.UpsertUserPayload, error) {
 	tenant := input.TenantID.Tenant
-	client, err := r.ClientFor(ctx, tenant)
+	client, release, err := r.clientFor(ctx, tenant)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot get ent client")
 	}
-	var u *ent.User
-	if err := r.withTx(ctx, client, func(client *ent.Client) (err error) {
-		u, err = client.User.Query().
-			Where(user.AuthID(input.AuthID)).
-			Only(ctx)
-		if err == nil {
-			u, err = u.Update().
-				SetNillableRole(input.Role).
-				SetNillableStatus(input.Status).
-				Save(ctx)
-		} else if ent.IsNotFound(err) {
-			u, err = client.User.Create().
-				SetAuthID(input.AuthID).
-				SetNillableRole(input.Role).
-				SetNillableStatus(input.Status).
-				Save(ctx)
-		}
-		if err != nil {
-			r.log.For(ctx).Error("cannot upsert user",
-				zap.String("tenant", tenant),
-				zap.String("auth_id", input.AuthID),
-				zap.Error(err),
-			)
-		}
-		return err
-	}); err != nil {
+	defer release()
+	u, err := client.User.Query().
+		Where(user.AuthID(input.AuthID)).
+		Only(ctx)
+	if err == nil {
+		u, err = u.Update().
+			SetNillableRole(input.Role).
+			SetNillableStatus(input.Status).
+			Save(ctx)
+	} else if ent.IsNotFound(err) {
+		u, err = client.User.Create().
+			SetAuthID(input.AuthID).
+			SetNillableRole(input.Role).
+			SetNillableStatus(input.Status).
+			Save(ctx)
+	}
+	if err != nil {
+		r.log.For(ctx).Error("cannot upsert user",
+			zap.String("tenant", tenant),
+			zap.String("auth_id", input.AuthID),
+			zap.Error(err),
+		)
 		return nil, err
 	}
 	return &model.UpsertUserPayload{
@@ -57,10 +53,11 @@ func (r *mutationResolver) UpsertUser(ctx context.Context, input model.UpsertUse
 }
 
 func (r *tenantResolver) Users(ctx context.Context, obj *model.Tenant, after *ent.Cursor, before *ent.Cursor, first *int, last *int) (*model.UserConnection, error) {
-	client, err := r.ClientFor(ctx, obj.Name)
+	client, release, err := r.clientFor(ctx, obj.Name)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot get ent client")
 	}
+	defer release()
 	page, err := client.User.Query().Paginate(ctx, after, first, before, last)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot paginate users")

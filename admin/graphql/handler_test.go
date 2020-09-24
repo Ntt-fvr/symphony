@@ -5,12 +5,21 @@
 package graphql_test
 
 import (
+	"context"
+	"fmt"
 	"regexp"
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
+	gql "github.com/99designs/gqlgen/graphql"
+	"github.com/99designs/gqlgen/graphql/handler/testserver"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql"
+	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/gqlutil"
+	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -31,7 +40,8 @@ func TestHandler(t *testing.T) {
 
 	handler, _, err := graphql.NewHandler(
 		graphql.HandlerConfig{
-			DB: db,
+			DB:      db,
+			Dialect: strutil.Stringer(dialect.SQLite),
 			Tenancy: viewer.NewFixedTenancy(
 				viewertest.NewTestClient(t),
 			),
@@ -45,4 +55,49 @@ func TestHandler(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, rsp.Tenant.ID)
 	require.Equal(t, "foo", rsp.Tenant.Name)
+}
+
+func TestTenancyInjector(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer func() {
+		err := mock.ExpectationsWereMet()
+		require.NoError(t, err)
+	}()
+	mock.ExpectBegin()
+	tenants := []string{"foo", "bar", "baz"}
+	result := sqlmock.NewResult(0, 0)
+	for _, tenant := range tenants {
+		mock.ExpectExec(
+			fmt.Sprintf("USE `tenant_%s`", tenant),
+		).
+			WillReturnResult(result)
+	}
+	mock.ExpectCommit()
+
+	srv := testserver.New()
+	srv.AddTransport(transport.POST{})
+	srv.Use(gqlutil.DBInjector{DB: db})
+	srv.Use(graphql.TenancyInjector{
+		Tenancy: viewer.NewFixedTenancy(&ent.Client{}),
+		Dialect: dialect.MySQL,
+	})
+	srv.AroundResponses(func(ctx context.Context, _ gql.ResponseHandler) *gql.Response {
+		type tenancyReleaser interface {
+			viewer.Tenancy
+			Release()
+		}
+		tenancy, ok := viewer.TenancyFromContext(ctx).(tenancyReleaser)
+		require.True(t, ok)
+		for _, tenant := range tenants {
+			_, err := tenancy.ClientFor(ctx, tenant)
+			require.NoError(t, err)
+			tenancy.Release()
+		}
+		return &gql.Response{Data: []byte(`{"name":"test"}`)}
+	})
+
+	c := client.New(srv)
+	err = c.Post(`mutation { name }`, &struct{ Name string }{})
+	require.NoError(t, err)
 }

@@ -24,10 +24,11 @@ func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, erro
 		}
 		return model.NewTenant(id.Tenant), nil
 	}
-	client, err := r.ClientFor(ctx, id.Tenant)
+	client, release, err := r.clientFor(ctx, id.Tenant)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot get ent client")
 	}
+	defer release()
 	noder, err := client.Noder(ctx, id.ID)
 	if err != nil {
 		r.log.For(ctx).Error("cannot get node",
