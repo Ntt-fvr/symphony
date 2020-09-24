@@ -17,6 +17,35 @@ This is template for release notes
 
 
 ***
+## 2.1.0 - release date 24.09.2020
+### Features
+- Project:
+    -`add_project`
+    -`delete_project`
+    -`edit_project`
+    -`get_project_by_id`
+    -`get_projects`
+- ProjectType:
+    -`add_project_type`
+    -`delete_project_type`
+    -`edit_project_type`
+    -`get_project_type_by_id`
+    -`get_project_types`
+- PortType:
+    -`get_equipment_port_types`
+- LocationType:
+    -`delete_location_type`
+    -`get_location_type_by_id`
+    -`get_location_types`
+- EquipmentType:
+    -`delete_equipment_type`
+    -`get_equipment_type_by_id`
+    -`get_equipment_types`
+### Bug fixes
+***
+
+
+***
 ## 2.0.0 - release date 13.09.2020
 ### Features
 - WorkOrder:

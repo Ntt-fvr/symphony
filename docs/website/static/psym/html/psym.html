@@ -813,6 +813,118 @@ in the chain and it is not clear where to create or what to return</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.add_project">
+<code class="sig-name descname">add_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">project_type</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a></span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">priority</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.project_priority.ProjectPriority<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">creator_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">properties_dict</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">{}</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project">psym.common.data_class.Project</a><a class="headerlink" href="#psym.PsymClient.add_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates Project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Project name</p></li>
+<li><p><strong>project_type</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a>) – Project type object</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project description</p></li>
+<li><p><strong>priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectPriority</span></code>, optional) – Project priority</p></li>
+<li><p><strong>creator_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Creator ID</p></li>
+<li><p><strong>location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing location ID</p></li>
+<li><p><strong>properties_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em>) – <p>Dictionary of property name to property value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new value of the same type for this property</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_project_type</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Project type&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project type description&quot;</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;project type property&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="s2">&quot;string value&quot;</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">work_order_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">WorkOrderDefinition</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+            <span class="n">definition_index</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="n">work_order_type_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">add_project</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new project&quot;</span><span class="p">,</span>
+    <span class="n">project_type</span><span class="o">=</span><span class="n">project_type</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project description&quot;</span><span class="p">,</span>
+    <span class="n">priority</span><span class="o">=</span><span class="s2">&quot;MEDIUM&quot;</span><span class="p">,</span>
+    <span class="n">creator_id</span><span class="o">=</span><span class="s2">&quot;81726354&quot;</span><span class="p">,</span>
+    <span class="n">location_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">properties_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Date Property&quot;</span><span class="p">:</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+        <span class="s2">&quot;Lat/Lng Property&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.23</span><span class="p">,</span><span class="mf">9.232</span><span class="p">),</span>
+        <span class="s2">&quot;E-mail Property&quot;</span><span class="p">:</span> <span class="s2">&quot;user@fb.com&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Number Property&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">&quot;String Property&quot;</span><span class="p">:</span> <span class="s2">&quot;aa&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Float Property&quot;</span><span class="p">:</span> <span class="mf">1.23</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_project_type">
+<code class="sig-name descname">add_project_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">work_order_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition">psym.common.data_class.WorkOrderDefinition</a><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">[]</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><a class="headerlink" href="#psym.PsymClient.add_project_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates ProjectType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Project type name</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project type description</p></li>
+<li><p><strong>properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+<li><p><strong>work_order_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderDefinition</span></code></a> ]) – List of work order definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project type</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">add_project_type</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Project type&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Project type description&quot;</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;project type property&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="s2">&quot;string value&quot;</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">work_order_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">WorkOrderDefinition</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+            <span class="n">definition_index</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="n">work_order_type_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.add_service">
 <code class="sig-name descname">add_service</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">external_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">service_type</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">customer</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.Customer" title="psym.common.data_class.Customer">psym.common.data_class.Customer</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">properties_dict</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Service" title="psym.common.data_class.Service">psym.common.data_class.Service</a><a class="headerlink" href="#psym.PsymClient.add_service" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates service.</p>
@@ -1032,7 +1144,7 @@ in the chain and it is not clear where to create or what to return</p></li>
         <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
-<span class="n">client</span><span class="o">.</span><span class="n">add_work_order_type</span><span class="p">(</span>
+<span class="n">client</span><span class="o">.</span><span class="n">add_work_order</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;new work order&quot;</span><span class="p">,</span>
     <span class="n">work_order_type</span><span class="o">=</span><span class="n">work_order_type</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Work order description&quot;</span><span class="p">,</span>
@@ -1358,17 +1470,46 @@ Users in symphony are never deleted. Only de-activated.</p>
 <dt id="psym.PsymClient.delete_equipment_port_type">
 <code class="sig-name descname">delete_equipment_port_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_port_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_equipment_port_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function deletes an equipment port type.
-It can get only the requested equipment port type ID</p>
+It gets the requested equipment port type ID</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>equipment_port_type_id</strong> (<em>str</em>) – Equipment port type ID</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Equipment port type does not exist</p></li>
+</ul>
 </dd>
 </dl>
 <p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_equipment_port_type</span><span class="p">(</span><span class="n">equipment_port_type_id</span><span class="o">=</span><span class="n">port_type1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_equipment_port_type</span><span class="p">(</span>
+    <span class="n">equipment_port_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.delete_equipment_type">
+<code class="sig-name descname">delete_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_equipment_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes an equipment type.
+It gets the requested equipment type ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>equipment_type_id</strong> (<em>str</em>) – Equipment type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Equipment type does not exist</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_equipment_type</span><span class="p">(</span>
+    <span class="n">equipment_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1434,6 +1575,29 @@ It can get only the requested equipment port type ID</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.delete_location_type">
+<code class="sig-name descname">delete_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_location_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes LocatoinType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>location_type_id</strong> (<em>str</em>) – Location type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location type does not exist</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_location_type</span><span class="p">(</span>
+    <span class="n">location_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.delete_location_type_with_locations">
 <code class="sig-name descname">delete_location_type_with_locations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_type</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_location_type_with_locations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete locaton type with existing locations.</p>
@@ -1476,10 +1640,49 @@ It can get only the requested equipment port type ID</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.delete_project">
+<code class="sig-name descname">delete_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes Project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Project ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.delete_project_type">
+<code class="sig-name descname">delete_project_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_project_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function deletes ProjectType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Project type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Project type does not exist</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">delete_project_type</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.delete_service_type">
 <code class="sig-name descname">delete_service_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service_type</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType">psym.common.data_class.ServiceType</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#psym.PsymClient.delete_service_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function deletes an service type.
-It can get only the requested service type ID</p>
+It gets the requested service type ID</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>service_type</strong> (<a class="reference internal" href="psym.common.html#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceType</span></code></a>) – ServiceType object</p>
@@ -1544,6 +1747,7 @@ It can get only the requested service type ID</p>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Work order type does not exist</p></li>
 </ul>
 </dd>
 </dl>
@@ -2206,7 +2410,7 @@ or none with this name or the position is not occupied.</p></li>
 <dt id="psym.PsymClient.get_equipment_port_type">
 <code class="sig-name descname">get_equipment_port_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_port_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType">psym.common.data_class.EquipmentPortType</a><a class="headerlink" href="#psym.PsymClient.get_equipment_port_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns an equipment port type.
-It can get only the requested equipment port type ID</p>
+It gets the requested equipment port type ID</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>equipment_port_type_id</strong> (<em>str</em>) – Equipment port type ID</p>
@@ -2223,6 +2427,29 @@ It can get only the requested equipment port type ID</p>
 </dl>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">port_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment_port_type</span><span class="p">(</span><span class="n">equipment_port_type_id</span><span class="o">=</span><span class="n">port_type1</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_equipment_port_types">
+<code class="sig-name descname">get_equipment_port_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType">psym.common.data_class.EquipmentPortType</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_equipment_port_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of equipment port types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>EquipmentPortType Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortType</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_port_types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment_port_types</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">equipment_port_type</span> <span class="ow">in</span> <span class="n">equipment_port_types</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">equipment_port_type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2258,6 +2485,31 @@ It can get only the requested equipment port type ID</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">({(</span><span class="s2">&quot;Country&quot;</span><span class="p">,</span> <span class="s2">&quot;LS_IND_Prod_Copy&quot;</span><span class="p">)})</span>
 <span class="n">equipment</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment</span><span class="p">(</span><span class="s2">&quot;indProdCpy1_AIO&quot;</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
 <span class="n">properties</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment_properties</span><span class="p">(</span><span class="n">equipment</span><span class="o">=</span><span class="n">equipment</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_equipment_type_by_id">
+<code class="sig-name descname">get_equipment_type_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_type_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.get_equipment_type_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns an equipment type.
+It gets the requested equipment type ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>equipment_type_id</strong> (<em>str</em>) – Equipment type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Equipment type does not found</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>EquipmentType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment_type_by_id</span><span class="p">(</span><span class="n">equipment_type_id</span><span class="o">=</span><span class="s2">&quot;12345678)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2348,6 +2600,29 @@ It can get only the requested equipment port type ID</p>
     <span class="n">equipment_type_name</span><span class="o">=</span><span class="s2">&quot;Card&quot;</span><span class="p">,</span>
     <span class="n">property_type_external_id</span><span class="o">=</span><span class="s2">&quot;12345&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_equipment_types">
+<code class="sig-name descname">get_equipment_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_equipment_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of equipment types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>EquipmentType Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentType</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_equipment_types</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">equipment_type</span> <span class="ow">in</span> <span class="n">equipment_types</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">equipment_type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2482,7 +2757,7 @@ It can get only the requested equipment port type ID</p>
 <dt id="psym.PsymClient.get_location">
 <code class="sig-name descname">get_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_hirerchy</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Tuple<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Location" title="psym.common.data_class.Location">psym.common.data_class.Location</a><a class="headerlink" href="#psym.PsymClient.get_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns a location of a specific type with a specific name.
-It can get only the requested location specifiers or the hirerchy leading to it</p>
+It gets the requested location specifiers or the hirerchy leading to it</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>location_hirerchy</strong> – Locations hierarchy</p>
@@ -2615,6 +2890,56 @@ in the chain and it is not clear where to create or what to return</p></li>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># this call will fail if there is Bletchley Park in two cities</span>
 <span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location</span><span class="p">(</span><span class="n">location_hirerchy</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;Site&quot;</span><span class="p">,</span> <span class="s2">&quot;Bletchley Park&quot;</span><span class="p">)])</span>
 <span class="n">location</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location_documents</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_location_type_by_id">
+<code class="sig-name descname">get_location_type_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.PsymClient.get_location_type_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets existing LocationType by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Location type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location type does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Location type</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_location_type_by_id</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_location_types">
+<code class="sig-name descname">get_location_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_location_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of location types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>LocationType Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location_types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_location_types</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">location_type</span> <span class="ow">in</span> <span class="n">location_types</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">location_type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2857,6 +3182,108 @@ in case it is not found, creates one.</p>
 </dl>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_ports</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_ports</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_project_by_id">
+<code class="sig-name descname">get_project_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project">psym.common.data_class.Project</a><a class="headerlink" href="#psym.PsymClient.get_project_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get project by ID</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Project ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Project does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project_by_id</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_project_type_by_id">
+<code class="sig-name descname">get_project_type_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><a class="headerlink" href="#psym.PsymClient.get_project_type_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets existing ProjectType by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>str</em>) – Project type ID</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Project type does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Project type</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">get_project_type_by_id</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_project_types">
+<code class="sig-name descname">get_project_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_project_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of project types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ProjectType Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_project_types</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">project_type</span> <span class="ow">in</span> <span class="n">project_types</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">project_type</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">project_type</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_projects">
+<code class="sig-name descname">get_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project">psym.common.data_class.Project</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of projects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">projects</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_projects</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">project</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

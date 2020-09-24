@@ -191,6 +191,10 @@
         <li><a href="psym.html#psym.PsymClient.add_location_type">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.html#psym.PsymClient.add_project">add_project() (psym.PsymClient method)</a>
+</li>
+      <li><a href="psym.html#psym.PsymClient.add_project_type">add_project_type() (psym.PsymClient method)</a>
+</li>
       <li><a href="psym.api.html#psym.api.service.add_service">add_service() (in module psym.api.service)</a>
 
       <ul>
@@ -309,6 +313,8 @@
         <li><a href="psym.html#psym.PsymClient.copy_equipment_with_all_attachments">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.common.html#psym.common.data_class.Project.created_by">created_by() (psym.common.data_class.Project property)</a>
+</li>
       <li><a href="psym.common.html#psym.common.data_class.Customer">Customer (class in psym.common.data_class)</a>
 
       <ul>
@@ -341,6 +347,8 @@
 </li>
       <li><a href="psym.common.html#psym.common.data_class.ServiceEndpoint.definition_id">definition_id() (psym.common.data_class.ServiceEndpoint property)</a>
 </li>
+      <li><a href="psym.common.html#psym.common.data_class.WorkOrderDefinition.definition_index">definition_index() (psym.common.data_class.WorkOrderDefinition property)</a>
+</li>
       <li><a href="psym.api.html#psym.api.equipment.delete_all_equipments">delete_all_equipments() (in module psym.api.equipment)</a>
 
       <ul>
@@ -371,6 +379,12 @@
         <li><a href="psym.html#psym.PsymClient.delete_equipment_port_type">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.api.html#psym.api.equipment_type.delete_equipment_type">delete_equipment_type() (in module psym.api.equipment_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.delete_equipment_type">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
       <li><a href="psym.api.html#psym.api.equipment_type.delete_equipment_type_with_equipments">delete_equipment_type_with_equipments() (in module psym.api.equipment_type)</a>
 
       <ul>
@@ -381,12 +395,18 @@
 </li>
       <li><a href="psym.api.html#psym.api.file.delete_image">delete_image() (in module psym.api.file)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="psym.api.html#psym.api.location.delete_location">delete_location() (in module psym.api.location)</a>
 
       <ul>
         <li><a href="psym.html#psym.PsymClient.delete_location">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="psym.api.html#psym.api.location_type.delete_location_type">delete_location_type() (in module psym.api.location_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.delete_location_type">(psym.PsymClient method)</a>
 </li>
       </ul></li>
       <li><a href="psym.api.html#psym.api.location_type.delete_location_type_with_locations">delete_location_type_with_locations() (in module psym.api.location_type)</a>
@@ -401,6 +421,10 @@
         <li><a href="psym.html#psym.PsymClient.delete_locations_by_location_type">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.html#psym.PsymClient.delete_project">delete_project() (psym.PsymClient method)</a>
+</li>
+      <li><a href="psym.html#psym.PsymClient.delete_project_type">delete_project_type() (psym.PsymClient method)</a>
+</li>
       <li><a href="psym.api.html#psym.api.service_type.delete_service_type">delete_service_type() (in module psym.api.service_type)</a>
 
       <ul>
@@ -431,9 +455,13 @@
       </ul></li>
       <li><a href="psym.api.html#psym.api.site_survey.dependency_check">dependency_check() (in module psym.api.site_survey)</a>
 </li>
-      <li><a href="psym.common.html#psym.common.data_class.WorkOrder.description">description() (psym.common.data_class.WorkOrder property)</a>
+      <li><a href="psym.common.html#psym.common.data_class.Project.description">description() (psym.common.data_class.Project property)</a>
 
       <ul>
+        <li><a href="psym.common.html#psym.common.data_class.ProjectType.description">(psym.common.data_class.ProjectType property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.WorkOrder.description">(psym.common.data_class.WorkOrder property)</a>
+</li>
         <li><a href="psym.common.html#psym.common.data_class.WorkOrderType.description">(psym.common.data_class.WorkOrderType property)</a>
 </li>
       </ul></li>
@@ -589,15 +617,29 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="psym.common.html#psym.common.data_format.format_to_property_definition">format_to_property_definition() (in module psym.common.data_format)</a>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_equipment_port_type">format_to_equipment_port_type() (in module psym.common.data_format)</a>
 </li>
-      <li><a href="psym.common.html#psym.common.data_format.format_to_property_definitions">format_to_property_definitions() (in module psym.common.data_format)</a>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_equipment_type">format_to_equipment_type() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_location_type">format_to_location_type() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_project">format_to_project() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_project_type">format_to_project_type() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_property_definition">format_to_property_definition() (in module psym.common.data_format)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_property_definitions">format_to_property_definitions() (in module psym.common.data_format)</a>
+</li>
       <li><a href="psym.common.html#psym.common.data_format.format_to_property_type_input">format_to_property_type_input() (in module psym.common.data_format)</a>
 </li>
       <li><a href="psym.common.html#psym.common.data_format.format_to_property_type_inputs">format_to_property_type_inputs() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_work_order">format_to_work_order() (in module psym.common.data_format)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_format.format_to_work_order_type">format_to_work_order_type() (in module psym.common.data_format)</a>
 </li>
       <li><a href="psym.common.html#psym.common.data_class.SiteSurvey.forms">forms() (psym.common.data_class.SiteSurvey property)</a>
 </li>
@@ -657,10 +699,22 @@
         <li><a href="psym.html#psym.PsymClient.get_equipment_port_type">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.api.html#psym.api.port_type.get_equipment_port_types">get_equipment_port_types() (in module psym.api.port_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.get_equipment_port_types">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
       <li><a href="psym.api.html#psym.api.equipment.get_equipment_properties">get_equipment_properties() (in module psym.api.equipment)</a>
 
       <ul>
         <li><a href="psym.html#psym.PsymClient.get_equipment_properties">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
+      <li><a href="psym.api.html#psym.api.equipment_type.get_equipment_type_by_id">get_equipment_type_by_id() (in module psym.api.equipment_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.get_equipment_type_by_id">(psym.PsymClient method)</a>
 </li>
       </ul></li>
       <li><a href="psym.api.html#psym.api.equipment.get_equipment_type_of_equipment">get_equipment_type_of_equipment() (in module psym.api.equipment)</a>
@@ -679,6 +733,12 @@
 
       <ul>
         <li><a href="psym.html#psym.PsymClient.get_equipment_type_property_type_by_external_id">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
+      <li><a href="psym.api.html#psym.api.equipment_type.get_equipment_types">get_equipment_types() (in module psym.api.equipment_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.get_equipment_types">(psym.PsymClient method)</a>
 </li>
       </ul></li>
       <li><a href="psym.api.html#psym.api.equipment.get_equipments">get_equipments() (in module psym.api.equipment)</a>
@@ -737,8 +797,20 @@
       </ul></li>
       <li><a href="psym.html#psym.exceptions.get_location_id_msg">get_location_id_msg() (in module psym.exceptions)</a>
 </li>
+      <li><a href="psym.api.html#psym.api.location_type.get_location_type_by_id">get_location_type_by_id() (in module psym.api.location_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.get_location_type_by_id">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="psym.api.html#psym.api.location_type.get_location_types">get_location_types() (in module psym.api.location_type)</a>
+
+      <ul>
+        <li><a href="psym.html#psym.PsymClient.get_location_types">(psym.PsymClient method)</a>
+</li>
+      </ul></li>
       <li><a href="psym.api.html#psym.api.location.get_locations">get_locations() (in module psym.api.location)</a>
 
       <ul>
@@ -775,6 +847,14 @@
         <li><a href="psym.html#psym.PsymClient.get_ports">(psym.PsymClient method)</a>
 </li>
       </ul></li>
+      <li><a href="psym.html#psym.PsymClient.get_project_by_id">get_project_by_id() (psym.PsymClient method)</a>
+</li>
+      <li><a href="psym.html#psym.PsymClient.get_project_type_by_id">get_project_type_by_id() (psym.PsymClient method)</a>
+</li>
+      <li><a href="psym.html#psym.PsymClient.get_project_types">get_project_types() (psym.PsymClient method)</a>
+</li>
+      <li><a href="psym.html#psym.PsymClient.get_projects">get_projects() (psym.PsymClient method)</a>
+</li>
       <li><a href="psym.api.html#psym.api.property_type.get_property_type">get_property_type() (in module psym.api.property_type)</a>
 
       <ul>
@@ -902,6 +982,10 @@
 </li>
         <li><a href="psym.common.html#psym.common.data_class.LocationType.id">(psym.common.data_class.LocationType property)</a>
 </li>
+        <li><a href="psym.common.html#psym.common.data_class.Project.id">(psym.common.data_class.Project property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.ProjectType.id">(psym.common.data_class.ProjectType property)</a>
+</li>
         <li><a href="psym.common.html#psym.common.data_class.PropertyDefinition.id">(psym.common.data_class.PropertyDefinition property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.Service.id">(psym.common.data_class.Service property)</a>
@@ -915,6 +999,8 @@
         <li><a href="psym.common.html#psym.common.data_class.User.id">(psym.common.data_class.User property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.WorkOrder.id">(psym.common.data_class.WorkOrder property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.WorkOrderDefinition.id">(psym.common.data_class.WorkOrderDefinition property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.WorkOrderType.id">(psym.common.data_class.WorkOrderType property)</a>
 </li>
@@ -959,8 +1045,12 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="psym.common.html#psym.common.data_class.WorkOrder.location_id">location_id() (psym.common.data_class.WorkOrder property)</a>
+      <li><a href="psym.common.html#psym.common.data_class.Project.location_id">location_id() (psym.common.data_class.Project property)</a>
+
+      <ul>
+        <li><a href="psym.common.html#psym.common.data_class.WorkOrder.location_id">(psym.common.data_class.WorkOrder property)</a>
 </li>
+      </ul></li>
       <li><a href="psym.common.html#psym.common.data_class.Location.location_type_name">location_type_name() (psym.common.data_class.Location property)</a>
 </li>
       <li><a href="psym.html#psym.exceptions.LocationCannotBeDeletedWithDependency">LocationCannotBeDeletedWithDependency</a>
@@ -1083,6 +1173,10 @@
 </li>
         <li><a href="psym.common.html#psym.common.data_class.LocationType.name">(psym.common.data_class.LocationType property)</a>
 </li>
+        <li><a href="psym.common.html#psym.common.data_class.Project.name">(psym.common.data_class.Project property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.ProjectType.name">(psym.common.data_class.ProjectType property)</a>
+</li>
         <li><a href="psym.common.html#psym.common.data_class.Service.name">(psym.common.data_class.Service property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.ServiceEndpointDefinition.name">(psym.common.data_class.ServiceEndpointDefinition property)</a>
@@ -1128,16 +1222,38 @@
 </li>
       <li><a href="psym.html#psym.client.SymphonyClient.post">post() (psym.client.SymphonyClient method)</a>
 </li>
-      <li><a href="psym.common.html#psym.common.data_class.WorkOrder.priority">priority() (psym.common.data_class.WorkOrder property)</a>
+      <li><a href="psym.common.html#psym.common.data_class.Project.priority">priority() (psym.common.data_class.Project property)</a>
+
+      <ul>
+        <li><a href="psym.common.html#psym.common.data_class.WorkOrder.priority">(psym.common.data_class.WorkOrder property)</a>
 </li>
+      </ul></li>
+      <li><a href="psym.common.html#psym.common.data_class.Project">Project (class in psym.common.data_class)</a>
+
+      <ul>
+        <li><a href="psym.common.html#psym.common.data_enum.Entity.Project">(psym.common.data_enum.Entity attribute)</a>
+</li>
+      </ul></li>
       <li><a href="psym.common.html#psym.common.data_class.WorkOrder.project_id">project_id() (psym.common.data_class.WorkOrder property)</a>
 </li>
+      <li><a href="psym.common.html#psym.common.data_class.Project.project_type_id">project_type_id() (psym.common.data_class.Project property)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_class.Project.project_type_name">project_type_name() (psym.common.data_class.Project property)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_class.ProjectType">ProjectType (class in psym.common.data_class)</a>
+
+      <ul>
+        <li><a href="psym.common.html#psym.common.data_enum.Entity.ProjectType">(psym.common.data_enum.Entity attribute)</a>
+</li>
+      </ul></li>
       <li><a href="psym.common.html#psym.common.data_class.EquipmentPort.properties">properties() (psym.common.data_class.EquipmentPort property)</a>
 
       <ul>
         <li><a href="psym.common.html#psym.common.data_class.Link.properties">(psym.common.data_class.Link property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.Location.properties">(psym.common.data_class.Location property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.Project.properties">(psym.common.data_class.Project property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.Service.properties">(psym.common.data_class.Service property)</a>
 </li>
@@ -1156,6 +1272,8 @@
         <li><a href="psym.common.html#psym.common.data_class.EquipmentType.property_types">(psym.common.data_class.EquipmentType property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.LocationType.property_types">(psym.common.data_class.LocationType property)</a>
+</li>
+        <li><a href="psym.common.html#psym.common.data_class.ProjectType.property_types">(psym.common.data_class.ProjectType property)</a>
 </li>
         <li><a href="psym.common.html#psym.common.data_class.ServiceType.property_types">(psym.common.data_class.ServiceType property)</a>
 </li>
@@ -1215,6 +1333,8 @@
         <li><a href="psym.api.html#module-psym.api.file">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     psym.api.link
 
@@ -1229,8 +1349,6 @@
         <li><a href="psym.api.html#module-psym.api.location">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     psym.api.location_template
 
@@ -1510,7 +1628,13 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="psym.common.html#psym.common.data_class.ProjectType.work_order_definitions">work_order_definitions() (psym.common.data_class.ProjectType property)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_class.WorkOrderDefinition.work_order_type_id">work_order_type_id() (psym.common.data_class.WorkOrderDefinition property)</a>
+</li>
       <li><a href="psym.common.html#psym.common.data_class.WorkOrder.work_order_type_name">work_order_type_name() (psym.common.data_class.WorkOrder property)</a>
+</li>
+      <li><a href="psym.common.html#psym.common.data_class.Project.work_orders">work_orders() (psym.common.data_class.Project property)</a>
 </li>
       <li><a href="psym.common.html#psym.common.data_class.WorkOrder">WorkOrder (class in psym.common.data_class)</a>
 
@@ -1518,14 +1642,16 @@
         <li><a href="psym.common.html#psym.common.data_enum.Entity.WorkOrder">(psym.common.data_enum.Entity attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="psym.common.html#psym.common.data_class.WorkOrderDefinition">WorkOrderDefinition (class in psym.common.data_class)</a>
+</li>
       <li><a href="psym.common.html#psym.common.data_class.WorkOrderType">WorkOrderType (class in psym.common.data_class)</a>
 
       <ul>
         <li><a href="psym.common.html#psym.common.data_enum.Entity.WorkOrderType">(psym.common.data_enum.Entity attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="psym.api.html#psym.api.site_survey.write_column_titles">write_column_titles() (in module psym.api.site_survey)</a>
 </li>
       <li><a href="psym.api.html#psym.api.site_survey.write_conditional_blank_color_if_dependency_fails">write_conditional_blank_color_if_dependency_fails() (in module psym.api.site_survey)</a>

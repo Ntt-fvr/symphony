@@ -622,6 +622,135 @@
 </dd></dl>
 
 <dl class="py class">
+<dt id="psym.common.data_class.Project">
+<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">priority</span><span class="p">:</span> <span class="n">psym.graphql.enum.project_priority.ProjectPriority</span></em>, <em class="sig-param"><span class="n">created_by</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">project_type_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">project_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">work_orders</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>psym.graphql.fragment.property.PropertyFragment<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.Project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Project name</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project description</p></li>
+<li><p><strong>priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectPriority</span></code>) – Project priority</p></li>
+<li><p><strong>created_by</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing user ID, project creator</p></li>
+<li><p><strong>project_type_name</strong> (<em>str</em>) – Existing project type name</p></li>
+<li><p><strong>project_type_id</strong> (<em>str</em>) – Existing project type ID</p></li>
+<li><p><strong>location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Existing location ID</p></li>
+<li><p><strong>work_orders</strong> (List[ <a class="reference internal" href="#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a> ]) – WorkOrders list</p></li>
+<li><p><strong>properties</strong> (Sequence[ <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyFragment</span></code> ]) – PropertyFragment sequence</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="psym.common.data_class.Project.created_by">
+<em class="property">property </em><code class="sig-name descname">created_by</code><a class="headerlink" href="#psym.common.data_class.Project.created_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.description">
+<em class="property">property </em><code class="sig-name descname">description</code><a class="headerlink" href="#psym.common.data_class.Project.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.id">
+<em class="property">property </em><code class="sig-name descname">id</code><a class="headerlink" href="#psym.common.data_class.Project.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.location_id">
+<em class="property">property </em><code class="sig-name descname">location_id</code><a class="headerlink" href="#psym.common.data_class.Project.location_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#psym.common.data_class.Project.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.priority">
+<em class="property">property </em><code class="sig-name descname">priority</code><a class="headerlink" href="#psym.common.data_class.Project.priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.project_type_id">
+<em class="property">property </em><code class="sig-name descname">project_type_id</code><a class="headerlink" href="#psym.common.data_class.Project.project_type_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.project_type_name">
+<em class="property">property </em><code class="sig-name descname">project_type_name</code><a class="headerlink" href="#psym.common.data_class.Project.project_type_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.properties">
+<em class="property">property </em><code class="sig-name descname">properties</code><a class="headerlink" href="#psym.common.data_class.Project.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Project.work_orders">
+<em class="property">property </em><code class="sig-name descname">work_orders</code><a class="headerlink" href="#psym.common.data_class.Project.work_orders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="psym.common.data_class.ProjectType">
+<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">ProjectType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">property_types</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">work_order_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition">psym.common.data_class.WorkOrderDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.ProjectType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – ID</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Project type name</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project type description</p></li>
+<li><p><strong>property_types</strong> (Sequence[ <a class="reference internal" href="#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – PropertyTypes sequence</p></li>
+<li><p><strong>work_order_definitions</strong> (List[ <a class="reference internal" href="#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderDefinition</span></code></a> ]) – WorkOrderDefinitions list</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="psym.common.data_class.ProjectType.description">
+<em class="property">property </em><code class="sig-name descname">description</code><a class="headerlink" href="#psym.common.data_class.ProjectType.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.ProjectType.id">
+<em class="property">property </em><code class="sig-name descname">id</code><a class="headerlink" href="#psym.common.data_class.ProjectType.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.ProjectType.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#psym.common.data_class.ProjectType.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.ProjectType.property_types">
+<em class="property">property </em><code class="sig-name descname">property_types</code><a class="headerlink" href="#psym.common.data_class.ProjectType.property_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.ProjectType.work_order_definitions">
+<em class="property">property </em><code class="sig-name descname">work_order_definitions</code><a class="headerlink" href="#psym.common.data_class.ProjectType.work_order_definitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="psym.common.data_class.PropertyDefinition">
 <em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">PropertyDefinition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">property_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">property_kind</span><span class="p">:</span> <span class="n">psym.graphql.enum.property_kind.PropertyKind</span></em>, <em class="sig-param"><span class="n">default_raw_value</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_fixed</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">external_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_mandatory</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">is_deleted</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.PropertyDefinition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -1086,6 +1215,39 @@
 </dd></dl>
 
 <dl class="py class">
+<dt id="psym.common.data_class.WorkOrderDefinition">
+<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">WorkOrderDefinition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">definition_index</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">work_order_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.WorkOrderDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>definition_index</strong> (<em>int</em><em>, </em><em>optional</em>) – Work order definition index</p></li>
+<li><p><strong>work_order_type_id</strong> (<em>str</em>) – Work order type ID</p></li>
+<li><p><strong>id</strong> (<em>str</em><em>, </em><em>optional</em>) – ID</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrderDefinition.definition_index">
+<em class="property">property </em><code class="sig-name descname">definition_index</code><a class="headerlink" href="#psym.common.data_class.WorkOrderDefinition.definition_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrderDefinition.id">
+<em class="property">property </em><code class="sig-name descname">id</code><a class="headerlink" href="#psym.common.data_class.WorkOrderDefinition.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.WorkOrderDefinition.work_order_type_id">
+<em class="property">property </em><code class="sig-name descname">work_order_type_id</code><a class="headerlink" href="#psym.common.data_class.WorkOrderDefinition.work_order_type_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="psym.common.data_class.WorkOrderType">
 <em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">WorkOrderType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">property_types</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span><a class="reference internal" href="#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.WorkOrderType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
@@ -1179,6 +1341,16 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="psym.common.data_enum.Entity.Project">
+<code class="sig-name descname">Project</code><em class="property"> = 'Project'</em><a class="headerlink" href="#psym.common.data_enum.Entity.Project" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="psym.common.data_enum.Entity.ProjectType">
+<code class="sig-name descname">ProjectType</code><em class="property"> = 'ProjectType'</em><a class="headerlink" href="#psym.common.data_enum.Entity.ProjectType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt id="psym.common.data_enum.Entity.Property">
 <code class="sig-name descname">Property</code><em class="property"> = 'Property'</em><a class="headerlink" href="#psym.common.data_enum.Entity.Property" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1233,6 +1405,151 @@
 </div>
 <div class="section" id="module-psym.common.data_format">
 <span id="psym-common-data-format-module"></span><h2>psym.common.data_format module<a class="headerlink" href="#module-psym.common.data_format" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_equipment_port_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_equipment_port_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_port_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType">psym.common.data_class.EquipmentPortType</a><a class="headerlink" href="#psym.common.data_format.format_to_equipment_port_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.EquipmentPortType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param project_type_fragment</dt>
+<dd class="field-odd"><p>Existing equipment port type fragment object</p>
+</dd>
+<dt class="field-even">type project_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>EquipmentPortType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_port_type</span> <span class="o">=</span> <span class="n">format_to_equipment_port_type</span><span class="p">(</span>
+    <span class="n">equipment_port_type_fragment</span><span class="o">=</span><span class="n">equipment_port_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_equipment_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.equipment_type.EquipmentTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.common.data_format.format_to_equipment_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.equipment_type.EquipmentTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.EquipmentType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param equipment_type_fragment</dt>
+<dd class="field-odd"><p>Existing equipment type fragment object</p>
+</dd>
+<dt class="field-even">type equipment_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>EquipmentType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_type</span> <span class="o">=</span> <span class="n">format_to_equipment_type</span><span class="p">(</span>
+    <span class="n">equipment_type_fragment</span><span class="o">=</span><span class="n">equipment_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_location_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.location_type.LocationTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.common.data_format.format_to_location_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.location_type.LocationTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.LocationType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param location_type_fragment</dt>
+<dd class="field-odd"><p>Existing location type fragment object</p>
+</dd>
+<dt class="field-even">type location_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>LocationType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location_type</span> <span class="o">=</span> <span class="n">format_to_location_type</span><span class="p">(</span>
+    <span class="n">location_type_fragment</span><span class="o">=</span><span class="n">location_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_project">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.project.ProjectFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.Project" title="psym.common.data_class.Project">psym.common.data_class.Project</a><a class="headerlink" href="#psym.common.data_format.format_to_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.project.ProjectFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.Project</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param project_fragment</dt>
+<dd class="field-odd"><p>Existing project fragment object</p>
+</dd>
+<dt class="field-even">type project_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Project object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.Project" title="psym.common.data_class.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">format_to_project</span><span class="p">(</span>
+    <span class="n">project_fragment</span><span class="o">=</span><span class="n">project_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_project_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_project_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.project_type.ProjectTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><a class="headerlink" href="#psym.common.data_format.format_to_project_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.project_type.ProjectTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.ProjectType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param project_type_fragment</dt>
+<dd class="field-odd"><p>Existing project type fragment object</p>
+</dd>
+<dt class="field-even">type project_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>ProjectType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_type</span> <span class="o">=</span> <span class="n">format_to_project_type</span><span class="p">(</span>
+    <span class="n">project_type_fragment</span><span class="o">=</span><span class="n">project_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
 <dl class="py function">
 <dt id="psym.common.data_format.format_to_property_definition">
 <code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_property_definition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">property_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.property_type.PropertyTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><a class="headerlink" href="#psym.common.data_format.format_to_property_definition" title="Permalink to this definition">¶</a></dt>
@@ -1332,6 +1649,64 @@ and formats it to <cite>psym.common.data_class.PropertyDefinition</cite> object<
 <span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_work_order">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_work_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">work_order_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.work_order.WorkOrderFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder">psym.common.data_class.WorkOrder</a><a class="headerlink" href="#psym.common.data_format.format_to_work_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.work_order.WorkOrderFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.WorkOrder</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param work_order_fragment</dt>
+<dd class="field-odd"><p>Existing work order fragment object</p>
+</dd>
+<dt class="field-even">type work_order_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>WorkOrder object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.WorkOrder" title="psym.common.data_class.WorkOrder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrder</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_order</span> <span class="o">=</span> <span class="n">format_to_work_order</span><span class="p">(</span>
+    <span class="n">work_order_fragment</span><span class="o">=</span><span class="n">work_order_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_work_order_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_work_order_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">work_order_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.work_order_type.WorkOrderTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a><a class="headerlink" href="#psym.common.data_format.format_to_work_order_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.work_order_type.WorkOrderTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.WorkOrderType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param work_order_type_fragment</dt>
+<dd class="field-odd"><p>Existing work order type fragment object</p>
+</dd>
+<dt class="field-even">type work_order_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>WorkOrderType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_order_type</span> <span class="o">=</span> <span class="n">format_to_work_order_type</span><span class="p">(</span>
+    <span class="n">work_order_type_fragment</span><span class="o">=</span><span class="n">work_order_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
 </dd></dl>
 
 </div>
