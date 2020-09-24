@@ -137,7 +137,9 @@ export type GraphContextType = {
   drawLasso: Position => ?Lasso,
   getBlocksInArea: Rect => Array<IBlock>,
   getBlocksByType: (type: string) => Array<IBlock>,
+  getBlocks: () => Array<IBlock>,
   getConnectors: () => Array<IConnector>,
+  clearGraph: () => void,
 };
 
 const GraphContextDefaults = {
@@ -165,7 +167,9 @@ const GraphContextDefaults = {
   drawLasso: emptyFunction,
   getBlocksInArea: () => [],
   getBlocksByType: () => [],
+  getBlocks: () => [],
   getConnectors: () => [],
+  clearGraph: emptyFunction,
 };
 
 const GraphContext = React.createContext<GraphContextType>(
@@ -588,6 +592,14 @@ function getBlocksByTypeFromMap(type: string): IBlock[] {
   return [...this.current.blocks.values()].filter(block => block.type === type);
 }
 
+function graphGetBlocks(): IBlock[] {
+  if (this.current == null) {
+    return [];
+  }
+
+  return [...this.current.blocks.values()];
+}
+
 function getConnectorsFromMap(): IConnector[] {
   if (this.current == null) {
     return [];
@@ -669,7 +681,12 @@ export function GraphContextProvider(props: Props) {
   const drawLasso = graphDrawLasso.bind(flowWrapper);
   const getBlocksInArea = graphGetBlocksInArea.bind(flowWrapper);
   const getBlocksByType = getBlocksByTypeFromMap.bind(flowWrapper);
+  const getBlocks = graphGetBlocks.bind(flowWrapper);
   const getConnectors = getConnectorsFromMap.bind(flowWrapper);
+
+  function clearGraph() {
+    removeBlocks(getBlocks());
+  }
 
   const value = {
     bindGraphContainer,
@@ -696,7 +713,9 @@ export function GraphContextProvider(props: Props) {
     drawLasso,
     getBlocksInArea,
     getBlocksByType,
+    getBlocks,
     getConnectors,
+    clearGraph,
   };
 
   return (

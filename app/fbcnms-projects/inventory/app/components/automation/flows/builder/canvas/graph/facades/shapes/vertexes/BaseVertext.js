@@ -152,12 +152,8 @@ function getPortsArray(
   return Array(inputPortsCount).fill({group: groupName});
 }
 type InitObjectType = {
-  [key: string]:
-    | Primitive
-    | Array<Primitive>
-    | KeyValuePair
-    | Array<KeyValuePair>,
-  id?: string,
+  ...KeyValuePair,
+  id?: ?string,
 };
 export function getInitObject(
   backgroundColor: string,
@@ -165,12 +161,13 @@ export function getInitObject(
     input?: PortsGroupInitValue,
     output?: PortsGroupInitValue,
   },
-  id?: string,
+  id?: ?string,
 ): InitObjectType {
   const inputPorts = getPortsArray(ports?.input, PORTS_GROUPS.INPUT);
   const outputPorts = getPortsArray(ports?.output, PORTS_GROUPS.OUTPUT);
   const portsArray = inputPorts.concat(outputPorts);
-  const obj: InitObjectType = {
+
+  return {
     ports: {
       groups: {
         input: {
@@ -186,11 +183,6 @@ export function getInitObject(
       },
       items: portsArray,
     },
+    id: id ?? undefined,
   };
-
-  if (id) {
-    obj.id = id;
-  }
-
-  return obj;
 }

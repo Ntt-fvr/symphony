@@ -41,7 +41,7 @@ export function isVertex(cell: ?IShape | IBaseShapeAttributes) {
 }
 
 export interface IShapesFactory {
-  +createBlock: (type: string, id: string) => Block;
+  +createBlock: (type: string, id?: ?string) => Block;
   +createNewConnector: (
     source: IBlock,
     target: IBlock,
@@ -56,7 +56,7 @@ export default class ShapesFactory {
     this.paper = paper;
   }
 
-  createBlock(type: string, id?: string) {
+  createBlock(type: string, id?: ?string) {
     const VertexCtor = nullthrows(VERTEXES[type]);
     const vertexModel = new VertexCtor(id);
 

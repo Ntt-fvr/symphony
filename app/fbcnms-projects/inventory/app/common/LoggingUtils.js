@@ -120,6 +120,7 @@ export const LogEvents = {
 
   // Automation logs:
   ADD_FLOW_BUTTON_CLICKED: 'add_flow_button_clicked',
+  LOAD_BLOCK_ERROR: 'load_block_error',
 };
 
 export const ServerLogger = ServerLog('inventory');

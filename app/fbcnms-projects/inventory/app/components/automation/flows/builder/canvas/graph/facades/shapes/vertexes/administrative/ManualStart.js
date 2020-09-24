@@ -89,7 +89,7 @@ export default class ManualStart extends ManualStartBaseClass
         {
           [PORTS_GROUPS.INPUT]: {count: 0},
         },
-        id ? id : undefined,
+        id,
       ),
     );
     // super();

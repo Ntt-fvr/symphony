@@ -12,17 +12,20 @@ import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBou
 import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
+
+import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {
   FlowDataContext_FlowDraftQuery,
   FlowDataContext_FlowDraftQueryResponse,
 } from './__generated__/FlowDataContext_FlowDraftQuery.graphql';
 import type {FragmentReference} from 'relay-runtime';
 import type {ImportFlowDraftInput} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
+import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 
 import * as React from 'react';
-import emptyFunction from '@fbcnms/util/emptyFunction';
 import fbt from 'fbt';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
 import {graphql} from 'react-relay';
 import {
   mapActionBlocksForSave,
@@ -50,12 +53,12 @@ type FlowDraftResponse = $ElementType<
 
 export type FlowDataContextType = {
   flowDraft: FlowDraftResponse,
-  save: () => void,
+  save: () => Promise<ImportFlowDraftMutationResponse>,
 };
 
 const FlowDataContextDefaults = {
   flowDraft: null,
-  save: emptyFunction,
+  save: () => Promise.reject(),
 };
 
 const FlowDataContext = React.createContext<FlowDataContextType>(
@@ -135,18 +138,54 @@ function FlowDataContextProviderComponent(props: Props) {
 
   const loadBlocksIntoGraph = useCallback(
     blocks => {
+      const errors: Array<{id: string, name: string}> = [];
       blocks.forEach(block => {
-        flow.addBlock(BLOCK_TYPES[block.details.__typename], {
-          id: block.cid,
-          text: block.name,
-          position: {
-            x: block.uiRepresentation?.xPosition ?? 0,
-            y: block.uiRepresentation?.yPosition ?? 0,
+        const createdBlock = flow.addBlock(
+          BLOCK_TYPES[block.details.__typename],
+          {
+            id: block.cid,
+            text: block.name,
+            position: {
+              x: block.uiRepresentation?.xPosition ?? 0,
+              y: block.uiRepresentation?.yPosition ?? 0,
+            },
           },
-        });
+        );
+        if (!(createdBlock instanceof BaseBlock)) {
+          errors.push({
+            id: block.cid,
+            name: block.name,
+          });
+        }
       });
+
+      let logMessage = '';
+      let clientMessage = '';
+      if (errors.length === 1) {
+        logMessage = `Failed loading Block cid: ${errors[0].id}.`;
+        clientMessage = `Failed loading Block: ${errors[0].name}.`;
+      } else if (errors.length > 1) {
+        if (errors.length === blocks.length) {
+          logMessage = `failed to load flow Blocks.`;
+          clientMessage = 'Flow Blocks failed to get loaded.';
+        } else {
+          logMessage = `Blocks with cids ${errors
+            .map(el => el.id)
+            .toString()} failed to load.`;
+          clientMessage = 'Some Blocks failed to get loaded.';
+        }
+      }
+
+      if (errors.length > 0) {
+        ServerLogger.error(LogEvents.LOAD_BLOCK_ERROR, {
+          message: logMessage,
+        });
+        enqueueSnackbar(clientMessage, {
+          variant: 'error',
+        });
+      }
     },
-    [flow],
+    [flow, enqueueSnackbar],
   );
 
   const loadConnectorsIntoGraph = useCallback(
@@ -166,19 +205,27 @@ function FlowDataContextProviderComponent(props: Props) {
   );
 
   useEffect(() => {
-    if (!flowDraft || !flowDraft.blocks) {
+    flow.clearGraph();
+
+    if (flowDraft?.blocks == null) {
       return;
     }
 
     const blocks = [...flowDraft.blocks];
     loadBlocksIntoGraph(blocks);
     loadConnectorsIntoGraph(blocks);
-  }, [flowDraft, flow, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
+  }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
   const save = useCallback(() => {
-    if (!flowDraft) {
-      return;
+    if (flowDraft == null) {
+      return Promise.reject('There was not flowDraftData to save.');
     }
+
+    const flowData: ImportFlowDraftInput = {
+      id: flowDraft.id ?? '',
+      name: flowDraft.name ?? '',
+      endParamDefinitions: [],
+    };
 
     const connectors = flow.getConnectors().map(mapConnectorsForSave);
     const startBlocks = flow
@@ -188,12 +235,6 @@ function FlowDataContextProviderComponent(props: Props) {
       .getBlocksByType(CreateWorkorderType)
       .map(mapActionBlocksForSave);
     const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
-
-    const flowData: ImportFlowDraftInput = {
-      id: flowDraft.id ?? '',
-      name: flowDraft.name ?? '',
-      endParamDefinitions: [],
-    };
 
     if (startBlocks.length > 0) {
       flowData.startBlock = startBlocks[0];
@@ -211,10 +252,8 @@ function FlowDataContextProviderComponent(props: Props) {
       flowData.connectors = connectors;
     }
 
-    saveFlowDraft(flowData).then(() => {
-      enqueueSnackbar('Flow draft has been saved!', {variant: 'success'});
-    });
-  }, [flow, flowDraft, enqueueSnackbar]);
+    return saveFlowDraft(flowData);
+  }, [flow, flowDraft]);
 
   return (
     <FlowDataContext.Provider value={{flowDraft, save}}>
