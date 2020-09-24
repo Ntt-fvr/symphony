@@ -189,12 +189,14 @@ class PsymClient(SymphonyClient):
     from .api.project_type import (
         add_project_type,
         delete_project_type,
+        edit_project_type,
         get_project_type_by_id,
         get_project_types,
     )
     from .api.project import (
         add_project,
         delete_project,
+        edit_project,
         get_project_by_id,
         get_projects,
     )

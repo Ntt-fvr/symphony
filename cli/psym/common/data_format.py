@@ -243,8 +243,11 @@ def format_to_project(project_fragment: ProjectFragment) -> Project:
         name=project_fragment.name,
         description=project_fragment.description,
         priority=project_fragment.priority,
-        created_by=project_fragment.createdBy if project_fragment.createdBy else None,
+        created_by=project_fragment.createdBy.id
+        if project_fragment.createdBy
+        else None,
         project_type_name=project_fragment.type.name,
+        project_type_id=project_fragment.type.id,
         location_id=project_fragment.location.id if project_fragment.location else None,
         work_orders=work_orders,
         properties=project_fragment.properties,

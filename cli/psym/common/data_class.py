@@ -557,6 +557,8 @@ class Project(NamedTuple):
     :type created_by: str, optional
     :param project_type_name: Existing project type name
     :type project_type_name: str
+    :param project_type_id: Existing project type ID
+    :type project_type_id: str
     :param location_id: Existing location ID
     :type location_id: str, optional
     :param work_orders: WorkOrders list
@@ -571,6 +573,7 @@ class Project(NamedTuple):
     priority: ProjectPriority
     created_by: Optional[str]
     project_type_name: str
+    project_type_id: str
     location_id: Optional[str]
     work_orders: List[WorkOrder]
     properties: Sequence[PropertyFragment]

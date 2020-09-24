@@ -14,7 +14,9 @@ from psym.common.data_format import format_to_project
 from psym.exceptions import EntityNotFoundError
 from psym.graphql.enum.project_priority import ProjectPriority
 from psym.graphql.input.add_project import AddProjectInput
+from psym.graphql.input.edit_project import EditProjectInput
 from psym.graphql.mutation.add_project import AddProjectMutation
+from psym.graphql.mutation.edit_project import EditProjectMutation
 from psym.graphql.mutation.remove_project import RemoveProjectMutation
 from psym.graphql.query.project_details import ProjectDetailsQuery
 from psym.graphql.query.projects import ProjectsQuery
@@ -108,6 +110,94 @@ def add_project(
             properties=properties,
         ),
     )
+    return format_to_project(project_fragment=result)
+
+
+def edit_project(
+    client: SymphonyClient,
+    project_id: str,
+    new_name: Optional[str] = None,
+    new_description: Optional[str] = None,
+    new_priority: Optional[ProjectPriority] = None,
+    new_creator_id: Optional[str] = None,
+    new_location_id: Optional[str] = None,
+    new_properties_dict: Optional[Dict[str, PropertyValue]] = None,
+) -> Project:
+    """This function edits existing project.
+
+    :param project_id: Existing project ID
+    :type project_id: str
+    :param new_name: Project new name
+    :type new_name: str, optional
+    :param new_description: Project new description
+    :type new_description: str, optional
+    :param new_priority: New project priority
+    :type new_priority: :class:`~psym.common.data_enum.project_priority.ProjectPriority`, optional
+    :param new_creator_id: New creator ID
+    :type new_creator_id: str, optional
+    :param new_location_id: Project new existing location ID
+    :type new_location_id: str, optional
+    :param new_properties_dict: Dictionary of property name to property default value
+
+        * str - property name
+        * PropertyValue - new default value of the same type for this property
+
+    :type new_properties_dict: Dict[str, PropertyValue], optional
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Project does not exist
+
+    :return: Project
+    :rtype: :class:`~psym.common.data_class.Project`
+
+    **Example**
+
+    .. code-block:: python
+
+        edited_project = client.edit_project(
+            project_id="12345678,
+            new_name="New name",
+            new_description="New description",
+            new_properties_dict={
+                "Date Property": date.today(),
+                "Lat/Lng Property": (-1.23,9.232),
+                "E-mail Property": "user@fb.com",
+                "Number Property": 11,
+                "String Property": "aa",
+                "Float Property": 1.23
+            },
+            new_work_order_definitions=[
+                WorkOrderDefinition(
+                    id="12345678",
+                    definition_index="1",
+                    work_order_type_id="87654321",
+                ),
+            ],
+        )
+    """
+    project = get_project_by_id(client=client, id=project_id)
+    new_name = project.name if new_name is None else new_name
+    new_description = (
+        project.description if new_description is None else new_description
+    )
+    new_properties = []
+    if new_properties_dict:
+        property_types = PROJECT_TYPES[project.project_type_name].property_types
+        new_properties = get_graphql_property_inputs(
+            property_types, new_properties_dict
+        )
+    edit_project_input = EditProjectInput(
+        id=project_id,
+        name=new_name,
+        description=new_description,
+        priority=new_priority,
+        creatorId=new_creator_id,
+        type=project.project_type_id,
+        location=new_location_id,
+        properties=new_properties,
+    )
+    result = EditProjectMutation.execute(client, edit_project_input)
     return format_to_project(project_fragment=result)
 
 
