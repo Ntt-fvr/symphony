@@ -562,7 +562,7 @@ class Project(NamedTuple):
     :param work_orders: WorkOrders list
     :type work_orders: List[ :class:`~psym.common.data_class.WorkOrder` ]
     :param properties: PropertyFragment sequence
-    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ])
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ]
     """
 
     id: str

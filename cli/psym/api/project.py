@@ -38,7 +38,7 @@ def add_project(
     :type project_type: :class:`~psym.common.data_class.ProjectType`
     :param description: Project description
     :type description: str, optional
-    :param priority: Work order priority
+    :param priority: Project priority
     :type priority: :class:`~psym.common.data_enum.project_priority.ProjectPriority`, optional
     :param creator_id: Creator ID
     :type creator_id: str, optional
@@ -78,7 +78,7 @@ def add_project(
             ],
         )
         client.add_project(
-            name="new projecct",
+            name="new project",
             project_type=project_type,
             description="Project description",
             priority="MEDIUM",

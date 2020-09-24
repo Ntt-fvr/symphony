@@ -14,20 +14,13 @@ from psym.api.project import (
 from psym.api.project_type import add_project_type
 from psym.api.user import add_user
 from psym.api.work_order_type import add_work_order_type
-from psym.client import SymphonyClient
 from psym.common.data_class import PropertyDefinition, WorkOrderDefinition
 from psym.graphql.enum.property_kind import PropertyKind
 
 from ..utils.base_test import BaseTest
-from ..utils.grpc.rpc_pb2_grpc import TenantServiceStub
 
 
 class TestProject(BaseTest):
-    def __init__(
-        self, test_name: str, client: SymphonyClient, stub: TenantServiceStub
-    ) -> None:
-        super().__init__(test_name, client, stub)
-
     def setUp(self) -> None:
         super().setUp()
         user_name = f"{self.random_string()}@fb.com"
@@ -67,7 +60,7 @@ class TestProject(BaseTest):
         )
         self.project = add_project(
             client=self.client,
-            name="new projecct",
+            name="new project",
             project_type=self.project_type,
             description="Project description",
             creator_id=self.user.id,
