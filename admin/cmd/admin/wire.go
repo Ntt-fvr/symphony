@@ -65,7 +65,7 @@ func provideTenancy(cfg *mysql.Config, logger log.Logger) (viewer.Tenancy, error
 	if err != nil {
 		return nil, err
 	}
-	tenancy.SetLogger(logger)
+	mysql.SetLogger(logger)
 	return viewer.NewCacheTenancy(tenancy, nil), nil
 }
 

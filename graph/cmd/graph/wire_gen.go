@@ -137,7 +137,6 @@ func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logg
 	if err != nil {
 		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
 	}
-	tenancy.SetLogger(logger)
 	mysql.SetLogger(logger)
 	return tenancy, nil
 }
