@@ -14,7 +14,7 @@ require (
 	github.com/VividCortex/mysqlerr v0.0.0-20200629151747-c28746d985dd
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/alecthomas/kong v0.2.11
-	github.com/aws/aws-sdk-go v1.34.26
+	github.com/aws/aws-sdk-go v1.34.30
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/facebook/ent v0.4.4-0.20200922172230-49101d7d051a
