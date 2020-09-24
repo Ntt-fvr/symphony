@@ -383,15 +383,15 @@ func UserHandler(h http.Handler, logger log.Logger) http.Handler {
 	})
 }
 
-type contextKey struct{}
+type ctxKey struct{}
 
 // FromContext returns the Viewer stored in a context, or nil if there isn't one.
 func FromContext(ctx context.Context) Viewer {
-	v, _ := ctx.Value(contextKey{}).(Viewer)
+	v, _ := ctx.Value(ctxKey{}).(Viewer)
 	return v
 }
 
 // NewContext returns a new context with the given Viewer attached.
 func NewContext(parent context.Context, v Viewer) context.Context {
-	return context.WithValue(parent, contextKey{}, v)
+	return context.WithValue(parent, ctxKey{}, v)
 }

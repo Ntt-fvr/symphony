@@ -16,7 +16,6 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"gocloud.dev/server/health"
@@ -25,15 +24,15 @@ import (
 func TestFixedTenancy(t *testing.T) {
 	want := &ent.Client{}
 	tenancy := viewer.NewFixedTenancy(want)
-	assert.Implements(t, (*viewer.Tenancy)(nil), tenancy)
+	require.Implements(t, (*viewer.Tenancy)(nil), tenancy)
 	t.Run("ClientFor", func(t *testing.T) {
 		got, err := tenancy.ClientFor(context.Background(), "")
-		assert.NoError(t, err)
-		assert.True(t, want == got)
+		require.NoError(t, err)
+		require.True(t, want == got)
 	})
 	t.Run("Client", func(t *testing.T) {
 		got := tenancy.Client()
-		assert.True(t, want == got)
+		require.True(t, want == got)
 	})
 }
 
@@ -62,21 +61,21 @@ func TestCacheTenancy(t *testing.T) {
 
 	var count int
 	tenancy := viewer.NewCacheTenancy(&m, func(*ent.Client) { count++ })
-	assert.Implements(t, (*health.Checker)(nil), tenancy)
+	require.Implements(t, (*health.Checker)(nil), tenancy)
 
 	client, err := tenancy.ClientFor(context.Background(), "bar")
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+	require.NoError(t, err)
+	require.NotNil(t, client)
 	cached, err := tenancy.ClientFor(context.Background(), "bar")
-	assert.NoError(t, err)
-	assert.True(t, client == cached)
+	require.NoError(t, err)
+	require.True(t, client == cached)
 	client, err = tenancy.ClientFor(context.Background(), "baz")
-	assert.Error(t, err)
-	assert.Nil(t, client)
+	require.Error(t, err)
+	require.Nil(t, client)
 	client, err = tenancy.ClientFor(context.Background(), "baz")
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
-	assert.Equal(t, 2, count)
+	require.NoError(t, err)
+	require.NotNil(t, client)
+	require.Equal(t, 2, count)
 }
 
 func createMySQLDatabase(db *sql.DB) (string, func() error, error) {
@@ -101,28 +100,41 @@ func TestMySQLTenancy(t *testing.T) {
 	tenancy, err := viewer.NewMySQLTenancy(dsn, 10)
 	require.NoError(t, err)
 
-	assert.Implements(t, (*health.Checker)(nil), tenancy)
+	require.Implements(t, (*health.Checker)(nil), tenancy)
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 	b := backoff.WithContext(backoff.NewConstantBackOff(10*time.Millisecond), ctx)
 	err = backoff.Retry(tenancy.CheckHealth, b)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	n1, cleaner, err := createMySQLDatabase(db)
 	require.NoError(t, err)
 	defer func(cleaner func() error) {
-		assert.NoError(t, cleaner())
+		require.NoError(t, cleaner())
 	}(cleaner)
 	n2, cleaner, err := createMySQLDatabase(db)
 	require.NoError(t, err)
 	defer func(cleaner func() error) {
-		assert.NoError(t, cleaner())
+		require.NoError(t, cleaner())
 	}(cleaner)
 
 	c1, err := tenancy.ClientFor(context.Background(), n1)
-	assert.NotNil(t, c1)
-	assert.NoError(t, err)
+	require.NotNil(t, c1)
+	require.NoError(t, err)
 	c2, err := tenancy.ClientFor(context.Background(), n2)
-	assert.NoError(t, err)
-	assert.True(t, c1 != c2)
+	require.NoError(t, err)
+	require.True(t, c1 != c2)
+}
+
+func TestTenancyContext(t *testing.T) {
+	want := &ent.Client{}
+	var m testTenancy
+	m.On("ClientFor", mock.Anything, t.Name()).
+		Return(want, nil).
+		Once()
+	ctx := viewer.NewTenancyContext(context.Background(), &m)
+	tenancy := viewer.TenancyFromContext(ctx)
+	got, err := tenancy.ClientFor(ctx, t.Name())
+	require.NoError(t, err)
+	require.Equal(t, want, got)
 }

@@ -10,8 +10,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewContext(t *testing.T) {
@@ -25,6 +24,6 @@ func TestNewContext(t *testing.T) {
 		viewertest.WithUser(userName),
 	)
 	got := viewer.FromContext(ctx)
-	assert.Equal(t, tenantName, got.Tenant())
-	assert.Equal(t, userName, got.Name())
+	require.Equal(t, tenantName, got.Tenant())
+	require.Equal(t, userName, got.Name())
 }

@@ -21,9 +21,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/gorilla/websocket"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.opencensus.io/stats"
@@ -48,15 +48,15 @@ func TestViewerHandler(t *testing.T) {
 				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-				assert.Equal(t, http.StatusOK, rec.Code)
-				assert.Equal(t, "test", rec.Body.String())
+				require.Equal(t, http.StatusOK, rec.Code)
+				require.Equal(t, "test", rec.Body.String())
 			},
 		},
 		{
 			name: "NoTenant",
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-				assert.Equal(t, http.StatusBadRequest, rec.Code)
-				assert.NotZero(t, rec.Body.Len())
+				require.Equal(t, http.StatusBadRequest, rec.Code)
+				require.NotZero(t, rec.Body.Len())
 			},
 		},
 		{
@@ -66,8 +66,8 @@ func TestViewerHandler(t *testing.T) {
 				req.Header.Set(viewer.UserHeader, "user")
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-				assert.Equal(t, http.StatusBadRequest, rec.Code)
-				assert.NotZero(t, rec.Body.Len())
+				require.Equal(t, http.StatusBadRequest, rec.Code)
+				require.NotZero(t, rec.Body.Len())
 			},
 		},
 		{
@@ -78,7 +78,7 @@ func TestViewerHandler(t *testing.T) {
 				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-				assert.Equal(t, http.StatusOK, rec.Code)
+				require.Equal(t, http.StatusOK, rec.Code)
 			},
 		},
 		{
@@ -88,7 +88,7 @@ func TestViewerHandler(t *testing.T) {
 				req.Header.Set(viewer.RoleHeader, string(user.RoleOwner))
 			},
 			expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-				assert.Equal(t, http.StatusBadRequest, rec.Code)
+				require.Equal(t, http.StatusBadRequest, rec.Code)
 			},
 		},
 	}
@@ -106,7 +106,7 @@ func TestViewerHandler(t *testing.T) {
 			v := viewer.FromContext(ctx)
 			require.NotNil(t, v)
 			require.Equal(t, r.Header.Get(viewer.UserHeader), v.Name())
-			assert.NotNil(t, log.FieldsFromContext(ctx))
+			require.NotNil(t, log.FieldsFromContext(ctx))
 			_, _ = io.WriteString(w, v.Tenant())
 		}),
 		viewer.NewFixedTenancy(client),
@@ -152,7 +152,7 @@ func TestWebSocketUpgradeHandler(t *testing.T) {
 		rsp, err := srv.Client().Get(srv.URL)
 		require.NoError(t, err)
 		defer rsp.Body.Close()
-		assert.Equal(t, http.StatusOK, rsp.StatusCode)
+		require.Equal(t, http.StatusOK, rsp.StatusCode)
 	})
 	t.Run("AuthenticatedUpgrade", func(t *testing.T) {
 		header := http.Header{}
@@ -207,9 +207,9 @@ func TestWebSocketUpgradeHandler(t *testing.T) {
 			rec := httptest.NewRecorder()
 			handler.ServeHTTP(rec, req)
 			require.Equal(t, http.StatusOK, rec.Code)
-			assert.Equal(t, "test", rec.Header().Get(viewer.TenantHeader))
-			assert.Equal(t, "tester", rec.Header().Get(viewer.UserHeader))
-			assert.Equal(t, "user", rec.Header().Get(viewer.RoleHeader))
+			require.Equal(t, "test", rec.Header().Get(viewer.TenantHeader))
+			require.Equal(t, "tester", rec.Header().Get(viewer.UserHeader))
+			require.Equal(t, "user", rec.Header().Get(viewer.RoleHeader))
 		}
 
 		t.Run("Basic", func(t *testing.T) {
@@ -257,8 +257,8 @@ func TestDeactivatedUser(t *testing.T) {
 	var m mockHandler
 	defer m.AssertExpectations(t)
 	viewer.UserHandler(&m, logtest.NewTestLogger(t)).ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusForbidden, rec.Code)
-	assert.Equal(t, "user is deactivated\n", rec.Body.String())
+	require.Equal(t, http.StatusForbidden, rec.Code)
+	require.Equal(t, "user is deactivated\n", rec.Body.String())
 }
 
 func TestAutomationViewerIsNotDeactivated(t *testing.T) {
@@ -289,8 +289,8 @@ func TestViewerMarshalLog(t *testing.T) {
 	require.Len(t, logs, 1)
 	field, ok := logs[0].ContextMap()["viewer"].(map[string]interface{})
 	require.True(t, ok)
-	assert.Equal(t, v.Tenant(), field["tenant"])
-	assert.Equal(t, u.AuthID, field["user"])
+	require.Equal(t, v.Tenant(), field["tenant"])
+	require.Equal(t, u.AuthID, field["user"])
 }
 
 type testExporter struct {
@@ -318,8 +318,8 @@ func TestViewerSpanAttributes(t *testing.T) {
 		te.On("ExportSpan", mock.AnythingOfType("*trace.SpanData")).
 			Run(func(args mock.Arguments) {
 				s := args.Get(0).(*trace.SpanData)
-				assert.Equal(t, viewertest.DefaultTenant, s.Attributes["viewer.tenant"])
-				assert.Equal(t, viewertest.DefaultUser, s.Attributes["viewer.user"])
+				require.Equal(t, viewertest.DefaultTenant, s.Attributes["viewer.tenant"])
+				require.Equal(t, viewertest.DefaultUser, s.Attributes["viewer.user"])
 			}).
 			Once()
 		defer te.AssertExpectations(t)
@@ -333,14 +333,14 @@ func TestViewerSpanAttributes(t *testing.T) {
 		viewertest.SetDefaultViewerHeaders(req)
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, req)
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		require.Equal(t, http.StatusAccepted, rec.Code)
 	})
 	t.Run("WithoutSpan", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 		viewertest.SetDefaultViewerHeaders(req)
 		rec := httptest.NewRecorder()
-		assert.NotPanics(t, func() { h.ServeHTTP(rec, req) })
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		require.NotPanics(t, func() { h.ServeHTTP(rec, req) })
+		require.Equal(t, http.StatusAccepted, rec.Code)
 	})
 }
 
@@ -375,7 +375,7 @@ func TestViewerTags(t *testing.T) {
 		viewer.NewFixedTenancy(client),
 		logtest.NewTestLogger(t),
 	).ServeHTTP(rec, req)
-	assert.Equal(t, http.StatusNoContent, rec.Code)
+	require.Equal(t, http.StatusNoContent, rec.Code)
 
 	rows, err := view.RetrieveData(v.Name)
 	require.NoError(t, err)
@@ -391,9 +391,9 @@ func TestViewerTags(t *testing.T) {
 			return false
 		}
 	}
-	assert.Condition(t, hasTag(viewer.KeyTenant, "test-tenant"))
-	assert.Condition(t, hasTag(viewer.KeyUser, "test-user"))
-	assert.Condition(t, hasTag(viewer.KeyRole, "USER"))
+	require.Condition(t, hasTag(viewer.KeyTenant, "test-tenant"))
+	require.Condition(t, hasTag(viewer.KeyUser, "test-user"))
+	require.Condition(t, hasTag(viewer.KeyRole, "USER"))
 }
 
 func TestViewerTenancy(t *testing.T) {
@@ -401,12 +401,12 @@ func TestViewerTenancy(t *testing.T) {
 		client := viewertest.NewTestClient(t)
 		h := viewer.TenancyHandler(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.True(t, client == ent.FromContext(r.Context()))
+				require.True(t, client == ent.FromContext(r.Context()))
 				v, ok := viewer.FromContext(r.Context()).(*viewer.UserViewer)
-				assert.True(t, ok)
-				assert.Equal(t, viewertest.DefaultTenant, v.Tenant())
-				assert.Equal(t, viewertest.DefaultRole, v.Role())
-				assert.Equal(t, viewertest.DefaultUser, v.Name())
+				require.True(t, ok)
+				require.Equal(t, viewertest.DefaultTenant, v.Tenant())
+				require.Equal(t, viewertest.DefaultRole, v.Role())
+				require.Equal(t, viewertest.DefaultUser, v.Name())
 				w.WriteHeader(http.StatusAccepted)
 			}),
 			viewer.NewFixedTenancy(client),
@@ -416,17 +416,17 @@ func TestViewerTenancy(t *testing.T) {
 		viewertest.SetDefaultViewerHeaders(req)
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, req)
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		require.Equal(t, http.StatusAccepted, rec.Code)
 	})
 	t.Run("WithFeatures", func(t *testing.T) {
 		client := viewertest.NewTestClient(t)
 		h := viewer.TenancyHandler(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				v := viewer.FromContext(r.Context())
-				assert.True(t, v.Features().Enabled("feature1"))
-				assert.True(t, v.Features().Enabled("feature2"))
-				assert.False(t, v.Features().Enabled("feature3"))
-				assert.Equal(t, "feature1,feature2", v.Features().String())
+				require.True(t, v.Features().Enabled("feature1"))
+				require.True(t, v.Features().Enabled("feature2"))
+				require.False(t, v.Features().Enabled("feature3"))
+				require.Equal(t, "feature1,feature2", v.Features().String())
 				w.WriteHeader(http.StatusAccepted)
 			}),
 			viewer.NewFixedTenancy(client),
@@ -437,19 +437,19 @@ func TestViewerTenancy(t *testing.T) {
 		req.Header.Set(viewer.FeaturesHeader, "feature1,feature2")
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, req)
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		require.Equal(t, http.StatusAccepted, rec.Code)
 	})
 	t.Run("WithAutomation", func(t *testing.T) {
 		client := viewertest.NewTestClient(t)
 		name := "Scheduler"
 		h := viewer.TenancyHandler(
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.True(t, client == ent.FromContext(r.Context()))
+				require.True(t, client == ent.FromContext(r.Context()))
 				v, ok := viewer.FromContext(r.Context()).(*viewer.AutomationViewer)
-				assert.True(t, ok)
-				assert.Equal(t, viewertest.DefaultTenant, v.Tenant())
-				assert.Equal(t, viewertest.DefaultRole, v.Role())
-				assert.Equal(t, name, v.Name())
+				require.True(t, ok)
+				require.Equal(t, viewertest.DefaultTenant, v.Tenant())
+				require.Equal(t, viewertest.DefaultRole, v.Role())
+				require.Equal(t, name, v.Name())
 				w.WriteHeader(http.StatusAccepted)
 			}),
 			viewer.NewFixedTenancy(client),
@@ -461,7 +461,7 @@ func TestViewerTenancy(t *testing.T) {
 		req.Header.Set(viewertest.RoleHeader, string(viewertest.DefaultRole))
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, req)
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		require.Equal(t, http.StatusAccepted, rec.Code)
 	})
 	t.Run("WithNoViewer", func(t *testing.T) {
 		client := viewertest.NewTestClient(t)
@@ -475,6 +475,6 @@ func TestViewerTenancy(t *testing.T) {
 		req.Header.Set(viewertest.RoleHeader, string(viewertest.DefaultRole))
 		rec := httptest.NewRecorder()
 		h.ServeHTTP(rec, req)
-		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		require.Equal(t, http.StatusBadRequest, rec.Code)
 	})
 }

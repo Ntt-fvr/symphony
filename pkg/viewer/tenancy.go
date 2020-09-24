@@ -145,3 +145,16 @@ func DBName(name string) string {
 func FromDBName(name string) string {
 	return strings.TrimPrefix(name, "tenant_")
 }
+
+type tenancyCtxKey struct{}
+
+// TenancyFromContext returns the Tenancy stored in a context, or nil if there isn't one.
+func TenancyFromContext(ctx context.Context) Tenancy {
+	t, _ := ctx.Value(tenancyCtxKey{}).(Tenancy)
+	return t
+}
+
+// NewTenancyContext returns a new context with the given Tenancy attached.
+func NewTenancyContext(parent context.Context, tenancy Tenancy) context.Context {
+	return context.WithValue(parent, tenancyCtxKey{}, tenancy)
+}
