@@ -13,6 +13,7 @@ import (
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -157,7 +158,7 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	}
 	currRow++
 	for _, item := range items {
-		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemData(ctx, item)} {
+		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
 			_ = f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
 		}
 		if item.HelpText != nil {
@@ -168,7 +169,7 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	return nil
 }
 
-func getItemData(ctx context.Context, item *ent.CheckListItem) string {
+func getItemString(ctx context.Context, item *ent.CheckListItem) string {
 	switch item.Type {
 	case enum.CheckListItemTypeEnum:
 		return item.SelectedEnumValues
@@ -182,70 +183,65 @@ func getItemData(ctx context.Context, item *ent.CheckListItem) string {
 		}
 		return "N/A"
 	case enum.CheckListItemTypeCellScan:
-		return getCellScanData(ctx, item)
+		data, err := getCellScanData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
 	case enum.CheckListItemTypeFiles:
-		return getFileData(ctx, item)
+		data, err := getFileData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
 	case enum.CheckListItemTypeWifiScan:
-		return getWifiScanData(ctx, item)
+		data, err := getWifiScanData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
 	}
 	return ""
 }
 
-func getCellScanData(ctx context.Context, item *ent.CheckListItem) string {
+func getCellScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
 	cellScans, err := item.QueryCellScan().All(ctx)
 	if err != nil {
-		return ""
+		return "", err
 	}
-	data := ""
-	for _, header := range cellScanHeader {
-		data += header + ","
-	}
-	data = strings.Trim(data, ",")
-	data += "\n\r"
+	var data strings.Builder
+	data.WriteString(strings.Join(cellScanHeader, ", "))
+	data.WriteString("\n\r")
 	for _, cellScan := range cellScans {
-		for _, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)} {
-			data += value + ","
-		}
-		data = strings.Trim(data, ",")
-		data += "\n\r"
+		fields := []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)}
+		data.WriteString(strings.Join(fields, ", "))
+		data.WriteString("\n\r")
 	}
-	return data
+	return data.String(), nil
 }
 
-func getWifiScanData(ctx context.Context, item *ent.CheckListItem) string {
+func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
 	wifiScans, err := item.QueryWifiScan().All(ctx)
 	if err != nil {
-		return ""
+		return "", err
 	}
-	data := ""
-	for _, header := range wifiScanHeader {
-		data += header + ","
-	}
-	data = strings.Trim(data, ",")
-	data += "\n\r"
+	var data strings.Builder
+	data.WriteString(strings.Join(wifiScanHeader, ", "))
+	data.WriteString("\n\r")
 	for _, wifiScan := range wifiScans {
-		for _, value := range []string{wifiScan.CreateTime.Format(timeLayout), wifiScan.UpdateTime.Format(timeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)} {
-			data += value + ","
-		}
-		data = strings.Trim(data, ",")
-		data += "\n\r"
+		fields := []string{wifiScan.CreateTime.Format(timeLayout), wifiScan.UpdateTime.Format(timeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
+		data.WriteString(strings.Join(fields, ", "))
+		data.WriteString("\n\r")
 	}
-	return data
+	return data.String(), nil
 }
 
-func getFileData(ctx context.Context, item *ent.CheckListItem) string {
-	files, err := item.QueryFiles().All(ctx)
+func getFileData(ctx context.Context, item *ent.CheckListItem) (string, error) {
+	files, err := item.QueryFiles().Select(file.FieldName).Strings(ctx)
 	if err != nil {
-		return ""
+		return "", err
 	}
-	data := ""
-	data = strings.Trim(data, ",")
-	data += "\n\r"
-	for _, file := range files {
-		data += file.Name + ","
-	}
-	data = strings.Trim(data, ",")
-	return data
+	return strings.Join(files, ", "), nil
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
