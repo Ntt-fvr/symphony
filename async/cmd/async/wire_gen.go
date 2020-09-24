@@ -101,7 +101,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	zapLogger := xserver.NewRequestLogger(logger)
 	v2 := newHealthChecks(mySQLTenancy)
 	v3 := provideViews()
-	telemetryConfig := &flags.TelemetryConfig
+	telemetryConfig := flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
 		cleanup5()

@@ -17,7 +17,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
-	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -101,65 +100,6 @@ type Edge struct {
 	Type string `json:"type,omitempty"` // edge type.
 	Name string `json:"name,omitempty"` // edge name.
 	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
-}
-
-func (ar *ActionsRule) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     ar.ID,
-		Type:   "ActionsRule",
-		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 0),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(ar.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.TriggerID); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "string",
-		Name:  "triggerID",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.RuleFilters); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "[]*core.ActionsRuleFilter",
-		Name:  "ruleFilters",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.RuleActions); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "[]*core.ActionsRuleAction",
-		Name:  "ruleActions",
-		Value: string(buf),
-	}
-	return node, nil
 }
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
@@ -6053,15 +5993,6 @@ func (c *Client) Noder(ctx context.Context, id int) (_ Noder, err error) {
 
 func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 	switch tbl {
-	case actionsrule.Table:
-		n, err := c.ActionsRule.Query().
-			Where(actionsrule.ID(id)).
-			CollectFields(ctx, "ActionsRule").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
 	case activity.Table:
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).

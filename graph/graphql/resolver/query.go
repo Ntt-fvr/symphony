@@ -14,8 +14,6 @@ import (
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
-	"github.com/facebookincubator/symphony/pkg/actions"
-	"github.com/facebookincubator/symphony/pkg/actions/core"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/location"
@@ -408,50 +406,6 @@ func (r queryResolver) Customers(
 ) (*ent.CustomerConnection, error) {
 	return r.ClientFrom(ctx).Customer.Query().
 		Paginate(ctx, after, first, before, last)
-}
-
-func (r queryResolver) ActionsRules(
-	ctx context.Context,
-) (*models.ActionsRulesSearchResult, error) {
-	results, err := r.ClientFrom(ctx).ActionsRule.Query().All(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("querying action rules: %w", err)
-	}
-	return &models.ActionsRulesSearchResult{
-		Results: results,
-		Count:   len(results),
-	}, nil
-}
-
-func (r queryResolver) ActionsTriggers(
-	ctx context.Context,
-) (*models.ActionsTriggersSearchResult, error) {
-	triggers := actions.FromContext(ctx).Triggers()
-	ret := make([]*models.ActionsTrigger, len(triggers))
-	for i, trigger := range triggers {
-		ret[i] = &models.ActionsTrigger{
-			TriggerID:   trigger.ID(),
-			Description: trigger.Description(),
-		}
-	}
-	return &models.ActionsTriggersSearchResult{
-		Results: ret,
-		Count:   len(ret),
-	}, nil
-}
-
-func (r queryResolver) ActionsTrigger(
-	ctx context.Context, triggerID core.TriggerID,
-) (*models.ActionsTrigger, error) {
-	trigger, err := actions.FromContext(ctx).
-		TriggerForID(triggerID)
-	if err != nil {
-		return nil, fmt.Errorf("getting trigger: %w", err)
-	}
-	return &models.ActionsTrigger{
-		TriggerID:   triggerID,
-		Description: trigger.Description(),
-	}, nil
 }
 
 func (r queryResolver) ReportFilters(ctx context.Context, entity models.FilterEntity) ([]*ent.ReportFilter, error) {

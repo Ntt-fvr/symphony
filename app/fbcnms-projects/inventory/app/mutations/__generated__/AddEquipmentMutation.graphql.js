@@ -77,9 +77,6 @@ fragment EquipmentTable_equipments on Equipment {
     id
     status
   }
-  device {
-    up
-  }
   services {
     id
   }
@@ -200,24 +197,6 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "Device",
-            "kind": "LinkedField",
-            "name": "device",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "up",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
             "concreteType": "Service",
             "kind": "LinkedField",
             "name": "services",
@@ -233,12 +212,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b503aed78c26b29eabb00d74fd286055",
+    "cacheID": "24888dcd346733b47dd22d2f571243f0",
     "id": null,
     "metadata": {},
     "name": "AddEquipmentMutation",
     "operationKind": "mutation",
-    "text": "mutation AddEquipmentMutation(\n  $input: AddEquipmentInput!\n) {\n  addEquipment(input: $input) {\n    ...EquipmentTable_equipments\n    id\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  device {\n    up\n  }\n  services {\n    id\n  }\n}\n"
+    "text": "mutation AddEquipmentMutation(\n  $input: AddEquipmentInput!\n) {\n  addEquipment(input: $input) {\n    ...EquipmentTable_equipments\n    id\n  }\n}\n\nfragment EquipmentTable_equipments on Equipment {\n  id\n  name\n  futureState\n  equipmentType {\n    id\n    name\n  }\n  workOrder {\n    id\n    status\n  }\n  services {\n    id\n  }\n}\n"
   }
 };
 })();

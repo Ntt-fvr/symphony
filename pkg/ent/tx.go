@@ -16,8 +16,6 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// ActionsRule is the client for interacting with the ActionsRule builders.
-	ActionsRule *ActionsRuleClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
 	// Block is the client for interacting with the Block builders.
@@ -261,7 +259,6 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.ActionsRule = NewActionsRuleClient(tx.config)
 	tx.Activity = NewActivityClient(tx.config)
 	tx.Block = NewBlockClient(tx.config)
 	tx.BlockInstance = NewBlockInstanceClient(tx.config)
@@ -325,7 +322,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: ActionsRule.QueryXXX(), the query will be executed
+// applies a query, for example: Activity.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

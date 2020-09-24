@@ -9,10 +9,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphactions"
 	"github.com/facebookincubator/symphony/graph/graphgrpc/schema"
-	"github.com/facebookincubator/symphony/pkg/actions"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/grpc-middleware/sqltx"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -22,12 +19,11 @@ import (
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-func newServer(tenancy viewer.Tenancy, db *sql.DB, logger log.Logger, registry *executor.Registry) (*grpc.Server, func(), error) {
+func newServer(tenancy viewer.Tenancy, db *sql.DB, logger log.Logger) (*grpc.Server, func(), error) {
 	grpc_zap.ReplaceGrpcLoggerV2(logger.Background())
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
@@ -45,26 +41,6 @@ func newServer(tenancy viewer.Tenancy, db *sql.DB, logger log.Logger, registry *
 			}),
 			tenancy,
 		),
-	)
-	schema.RegisterActionsAlertServiceServer(s,
-		NewActionsAlertService(func(ctx context.Context, tenantID string) (*actions.Client, error) {
-			entClient, err := tenancy.ClientFor(ctx, tenantID)
-			if err != nil {
-				return nil, err
-			}
-			dataLoader := graphactions.EntDataLoader{
-				Client: entClient,
-			}
-			onError := func(ctx context.Context, err error) {
-				logger.For(ctx).Error("error executing action", zap.Error(err))
-			}
-			exc := &executor.Executor{
-				Registry:   registry,
-				DataLoader: dataLoader,
-				OnError:    onError,
-			}
-			return actions.NewClient(exc), nil
-		}),
 	)
 	schema.RegisterUserServiceServer(s, NewUserService(tenancy))
 

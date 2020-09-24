@@ -7,15 +7,9 @@
 package graphgrpc
 
 import (
-	"net/http"
-
 	"database/sql"
 
-	"github.com/facebookincubator/symphony/pkg/actions/action/magmarebootnode"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
-	"github.com/facebookincubator/symphony/pkg/actions/trigger/magmaalert"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/google/wire"
@@ -26,29 +20,14 @@ import (
 type Config struct {
 	DB      *sql.DB
 	Logger  log.Logger
-	Orc8r   orc8r.Config
 	Tenancy viewer.Tenancy
 }
 
 // NewServer creates a server from config.
 func NewServer(cfg Config) (*grpc.Server, func(), error) {
 	wire.Build(
-		wire.FieldsOf(new(Config), "Tenancy", "DB", "Logger", "Orc8r"),
-		newOrc8rClient,
-		newActionsRegistry,
+		wire.FieldsOf(new(Config), "Tenancy", "DB", "Logger"),
 		newServer,
 	)
 	return nil, nil, nil
-}
-
-func newOrc8rClient(config orc8r.Config) *http.Client {
-	client, _ := orc8r.NewClient(config)
-	return client
-}
-
-func newActionsRegistry(orc8rClient *http.Client) *executor.Registry {
-	registry := executor.NewRegistry()
-	registry.MustRegisterTrigger(magmaalert.New())
-	registry.MustRegisterAction(magmarebootnode.New(orc8rClient))
-	return registry
 }

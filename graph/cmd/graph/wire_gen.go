@@ -59,9 +59,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	actionsFactory := actions.NewFactory()
 	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
 	url := flags.AuthURL
-	telemetryConfig := &flags.TelemetryConfig
+	telemetryConfig := flags.TelemetryConfig
 	v := newHealthChecks(mySQLTenancy)
-	orc8rConfig := flags.Orc8rConfig
 	graphhttpConfig := graphhttp.Config{
 		Tenancy:         tenancy,
 		AuthURL:         url,
@@ -71,7 +70,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Logger:          logger,
 		Telemetry:       telemetryConfig,
 		HealthChecks:    v,
-		Orc8r:           orc8rConfig,
 	}
 	server, cleanup3, err := graphhttp.NewServer(graphhttpConfig)
 	if err != nil {
@@ -79,12 +77,10 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	config2 := &flags.MySQLConfig
-	db, cleanup4 := mysql.Provider(config2)
+	db, cleanup4 := mysql.Provider(mysqlConfig)
 	graphgrpcConfig := graphgrpc.Config{
 		DB:      db,
 		Logger:  logger,
-		Orc8r:   orc8rConfig,
 		Tenancy: tenancy,
 	}
 	grpcServer, cleanup5, err := graphgrpc.NewServer(graphgrpcConfig)

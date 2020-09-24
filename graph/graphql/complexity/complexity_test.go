@@ -51,10 +51,18 @@ func TestComplexityRoot(t *testing.T) {
 }
 func TestQueryComplexity(t *testing.T) {
 	exempted := strset.New(
-		"ActionsRules", "ActionsTriggers", "LatestPythonPackage",
-		"Me", "NearestSites", "Node", "PossibleProperties",
-		"PythonPackages", "ReportFilters", "Surveys", "User", "Vertex",
-		"TriggerType", "ActionType",
+		"ActionType",
+		"LatestPythonPackage",
+		"Me",
+		"NearestSites",
+		"Node",
+		"PossibleProperties",
+		"PythonPackages",
+		"ReportFilters",
+		"Surveys",
+		"TriggerType",
+		"User",
+		"Vertex",
 	)
 	query := reflect.ValueOf(complexity.New().Query)
 	for i, n := 0, query.NumField(); i < n; i++ {

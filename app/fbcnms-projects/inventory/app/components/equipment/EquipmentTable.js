@@ -21,7 +21,6 @@ import type {WithSnackbarProps} from 'notistack';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import Button from '@symphony/design-system/components/Button';
 import CommonStrings from '@fbcnms/strings/Strings';
-import DeviceStatusCircle from '@fbcnms/ui/components/icons/DeviceStatusCircle';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import IconButton from '@symphony/design-system/components/IconButton';
 import React, {useCallback, useContext, useMemo} from 'react';
@@ -79,8 +78,6 @@ const getEquipmentStatus = row =>
         row.equipment.futureState,
       )}`
     : '';
-const getIsEquipmentDeviceActive = (eq: TableRowDataType<RelayEquipment>) =>
-  eq.device?.up;
 const getEquipmentType = row => row.equipment.equipmentType.name || '';
 const getEquipmentName = row => row.equipment.name || '';
 
@@ -159,7 +156,6 @@ const EquipmentTable = (props: Props) => {
   );
 
   const equipmetStatusEnabled = isFeatureEnabled('planned_equipment');
-  const equipmentLiveStatusEnabled = isFeatureEnabled('equipment_live_status');
 
   const columns = useMemo(() => {
     const colsToReturn = [
@@ -172,12 +168,6 @@ const EquipmentTable = (props: Props) => {
             variant="text"
             useEllipsis={true}
             onClick={() => onEquipmentSelected(row.equipment)}>
-            {equipmentLiveStatusEnabled ? (
-              <DeviceStatusCircle
-                isGrey={!getIsEquipmentDeviceActive(row.equipment)}
-                isActive={!!getIsEquipmentDeviceActive(row.equipment)}
-              />
-            ) : null}
             {getEquipmentName(row)}
           </Button>
         ),
@@ -224,7 +214,6 @@ const EquipmentTable = (props: Props) => {
     return colsToReturn;
   }, [
     classes.iconColumn,
-    equipmentLiveStatusEnabled,
     equipmetStatusEnabled,
     onDelete,
     onEquipmentSelected,
@@ -261,9 +250,6 @@ export default withAlert(
           workOrder {
             id
             status
-          }
-          device {
-            up
           }
           services {
             id

@@ -10,15 +10,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/facebookincubator/symphony/pkg/actions/action/magmarebootnode"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
-	"github.com/facebookincubator/symphony/pkg/actions/trigger/magmaalert"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
@@ -38,9 +34,8 @@ type Config struct {
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
 	Logger          log.Logger
-	Telemetry       *telemetry.Config
+	Telemetry       telemetry.Config
 	HealthChecks    []health.Checker
-	Orc8r           orc8r.Config
 }
 
 // NewServer creates a server from config.
@@ -57,22 +52,12 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 }
 
 func newRouterConfig(config Config) (cfg routerConfig, err error) {
-	client, _ := orc8r.NewClient(config.Orc8r)
-	registry := executor.NewRegistry()
-	if err = registry.RegisterTrigger(magmaalert.New()); err != nil {
-		return
-	}
-	if err = registry.RegisterAction(magmarebootnode.New(client)); err != nil {
-		return
-	}
 	cfg = routerConfig{logger: config.Logger}
 	cfg.viewer.tenancy = config.Tenancy
 	cfg.viewer.authurl = config.AuthURL.String()
 	cfg.events.ReceiverFactory = config.ReceiverFactory
 	cfg.flow.triggerFactory = config.TriggerFactory
 	cfg.flow.actionFactory = config.ActionFactory
-	cfg.orc8r.client = client
-	cfg.actions.registry = registry
 	return cfg, nil
 }
 

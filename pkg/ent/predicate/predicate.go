@@ -10,9 +10,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 )
 
-// ActionsRule is the predicate function for actionsrule builders.
-type ActionsRule func(*sql.Selector)
-
 // Activity is the predicate function for activity builders.
 type Activity func(*sql.Selector)
 

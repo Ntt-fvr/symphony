@@ -92,7 +92,7 @@ func (connector) Driver() driver.Driver {
 var DefaultViews = ocsql.DefaultViews
 
 // Provider is a wire provider that produces *sql.DB from config.
-func Provider(config *Config) (*sql.DB, func()) {
+func Provider(config Config) (*sql.DB, func()) {
 	db := Open(config.String())
 	return db, RecordStats(db)
 }

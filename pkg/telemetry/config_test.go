@@ -78,13 +78,13 @@ func TestProvider(t *testing.T) {
 		"--telemetry.view.exporter", "prometheus",
 	})
 	require.NoError(t, err)
-	te, flusher, err := telemetry.ProvideTraceExporter(&cfg)
+	te, flusher, err := telemetry.ProvideTraceExporter(cfg)
 	require.NoError(t, err)
 	require.NotNil(t, te)
 	require.NotNil(t, flusher)
-	sampler := telemetry.ProvideTraceSampler(&cfg)
+	sampler := telemetry.ProvideTraceSampler(cfg)
 	require.NotNil(t, sampler)
-	ve, err := telemetry.ProvideViewExporter(&cfg)
+	ve, err := telemetry.ProvideViewExporter(cfg)
 	require.NoError(t, err)
 	require.NotNil(t, ve)
 }

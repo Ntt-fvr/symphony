@@ -20,7 +20,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -41,7 +40,6 @@ type cliFlags struct {
 	EventPubsubURL  ev.TopicFactory  `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
 	LogConfig       log.Config       `embed:""`
 	TelemetryConfig telemetry.Config `embed:""`
-	Orc8rConfig     orc8r.Config     `embed:""`
 	TenancyConfig   viewer.Config    `embed:""`
 }
 

@@ -54,12 +54,6 @@ type options struct {
 	}
 }
 
-func withResolverOptions(opts ...resolver.Option) option {
-	return func(o *options) {
-		o.opts = append(o.opts, opts...)
-	}
-}
-
 func withEventFactory(factory ev.Factory) option {
 	return func(o *options) {
 		o.factory = factory

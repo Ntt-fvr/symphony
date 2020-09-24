@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
@@ -40,7 +39,6 @@ type (
 			triggerFactory triggers.Factory
 			actionFactory  actions.Factory
 		}
-		orc8r struct{ client *http.Client }
 	}
 )
 
@@ -54,13 +52,6 @@ func New(cfg Config, opts ...Option) generated.ResolverRoot {
 		opt(r)
 	}
 	return r
-}
-
-// WithOrc8rClient is used to provide orchestrator http client.
-func WithOrc8rClient(client *http.Client) Option {
-	return func(r *resolver) {
-		r.orc8r.client = client
-	}
 }
 
 func (resolver) ClientFrom(ctx context.Context) *ent.Client {
@@ -213,22 +204,6 @@ func (resolver) CheckListItem() generated.CheckListItemResolver {
 
 func (resolver) CheckListCategoryDefinition() generated.CheckListCategoryDefinitionResolver {
 	return checkListCategoryDefinitionResolver{}
-}
-
-func (resolver) ActionsRule() generated.ActionsRuleResolver {
-	return actionsRuleResolver{}
-}
-
-func (resolver) ActionsRuleAction() generated.ActionsRuleActionResolver {
-	return actionsRuleActionResolver{}
-}
-
-func (resolver) ActionsRuleFilter() generated.ActionsRuleFilterResolver {
-	return actionsRuleFilterResolver{}
-}
-
-func (resolver) ActionsTrigger() generated.ActionsTriggerResolver {
-	return actionsTriggerResolver{}
 }
 
 func (resolver) Viewer() generated.ViewerResolver {

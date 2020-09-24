@@ -13,7 +13,6 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
 
-	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -79,8 +78,6 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// ActionsRule is the client for interacting with the ActionsRule builders.
-	ActionsRule *ActionsRuleClient
 	// Activity is the client for interacting with the Activity builders.
 	Activity *ActivityClient
 	// Block is the client for interacting with the Block builders.
@@ -205,7 +202,6 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.ActionsRule = NewActionsRuleClient(c.config)
 	c.Activity = NewActivityClient(c.config)
 	c.Block = NewBlockClient(c.config)
 	c.BlockInstance = NewBlockInstanceClient(c.config)
@@ -292,7 +288,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                         ctx,
 		config:                      cfg,
-		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
@@ -362,7 +357,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := config{driver: &txDriver{tx: tx, drv: c.driver}, log: c.log, debug: c.debug, hooks: c.hooks}
 	return &Tx{
 		config:                      cfg,
-		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),
@@ -423,7 +417,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		ActionsRule.
+//		Activity.
 //		Query().
 //		Count(ctx)
 //
@@ -445,7 +439,6 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.ActionsRule.Use(hooks...)
 	c.Activity.Use(hooks...)
 	c.Block.Use(hooks...)
 	c.BlockInstance.Use(hooks...)
@@ -500,95 +493,6 @@ func (c *Client) Use(hooks ...Hook) {
 	c.WorkOrderDefinition.Use(hooks...)
 	c.WorkOrderTemplate.Use(hooks...)
 	c.WorkOrderType.Use(hooks...)
-}
-
-// ActionsRuleClient is a client for the ActionsRule schema.
-type ActionsRuleClient struct {
-	config
-}
-
-// NewActionsRuleClient returns a client for the ActionsRule from the given config.
-func NewActionsRuleClient(c config) *ActionsRuleClient {
-	return &ActionsRuleClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `actionsrule.Hooks(f(g(h())))`.
-func (c *ActionsRuleClient) Use(hooks ...Hook) {
-	c.hooks.ActionsRule = append(c.hooks.ActionsRule, hooks...)
-}
-
-// Create returns a create builder for ActionsRule.
-func (c *ActionsRuleClient) Create() *ActionsRuleCreate {
-	mutation := newActionsRuleMutation(c.config, OpCreate)
-	return &ActionsRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// BulkCreate returns a builder for creating a bulk of ActionsRule entities.
-func (c *ActionsRuleClient) CreateBulk(builders ...*ActionsRuleCreate) *ActionsRuleCreateBulk {
-	return &ActionsRuleCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for ActionsRule.
-func (c *ActionsRuleClient) Update() *ActionsRuleUpdate {
-	mutation := newActionsRuleMutation(c.config, OpUpdate)
-	return &ActionsRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *ActionsRuleClient) UpdateOne(ar *ActionsRule) *ActionsRuleUpdateOne {
-	mutation := newActionsRuleMutation(c.config, OpUpdateOne, withActionsRule(ar))
-	return &ActionsRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *ActionsRuleClient) UpdateOneID(id int) *ActionsRuleUpdateOne {
-	mutation := newActionsRuleMutation(c.config, OpUpdateOne, withActionsRuleID(id))
-	return &ActionsRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for ActionsRule.
-func (c *ActionsRuleClient) Delete() *ActionsRuleDelete {
-	mutation := newActionsRuleMutation(c.config, OpDelete)
-	return &ActionsRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a delete builder for the given entity.
-func (c *ActionsRuleClient) DeleteOne(ar *ActionsRule) *ActionsRuleDeleteOne {
-	return c.DeleteOneID(ar.ID)
-}
-
-// DeleteOneID returns a delete builder for the given id.
-func (c *ActionsRuleClient) DeleteOneID(id int) *ActionsRuleDeleteOne {
-	builder := c.Delete().Where(actionsrule.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &ActionsRuleDeleteOne{builder}
-}
-
-// Query returns a query builder for ActionsRule.
-func (c *ActionsRuleClient) Query() *ActionsRuleQuery {
-	return &ActionsRuleQuery{config: c.config}
-}
-
-// Get returns a ActionsRule entity by its id.
-func (c *ActionsRuleClient) Get(ctx context.Context, id int) (*ActionsRule, error) {
-	return c.Query().Where(actionsrule.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *ActionsRuleClient) GetX(ctx context.Context, id int) *ActionsRule {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *ActionsRuleClient) Hooks() []Hook {
-	hooks := c.hooks.ActionsRule
-	return append(hooks[:len(hooks):len(hooks)], actionsrule.Hooks[:]...)
 }
 
 // ActivityClient is a client for the Activity schema.

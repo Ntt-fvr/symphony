@@ -10,7 +10,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -74,29 +73,6 @@ import (
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
-	actionsruleMixin := schema.ActionsRule{}.Mixin()
-	actionsrule.Policy = schema.ActionsRule{}.Policy()
-	actionsrule.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := actionsrule.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	actionsruleMixinFields0 := actionsruleMixin[0].Fields()
-	actionsruleFields := schema.ActionsRule{}.Fields()
-	_ = actionsruleFields
-	// actionsruleDescCreateTime is the schema descriptor for create_time field.
-	actionsruleDescCreateTime := actionsruleMixinFields0[0].Descriptor()
-	// actionsrule.DefaultCreateTime holds the default value on creation for the create_time field.
-	actionsrule.DefaultCreateTime = actionsruleDescCreateTime.Default.(func() time.Time)
-	// actionsruleDescUpdateTime is the schema descriptor for update_time field.
-	actionsruleDescUpdateTime := actionsruleMixinFields0[1].Descriptor()
-	// actionsrule.DefaultUpdateTime holds the default value on creation for the update_time field.
-	actionsrule.DefaultUpdateTime = actionsruleDescUpdateTime.Default.(func() time.Time)
-	// actionsrule.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	actionsrule.UpdateDefaultUpdateTime = actionsruleDescUpdateTime.UpdateDefault.(func() time.Time)
 	activityMixin := schema.Activity{}.Mixin()
 	activity.Policy = schema.Activity{}.Policy()
 	activity.Hooks[0] = func(next ent.Mutator) ent.Mutator {

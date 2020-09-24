@@ -22,7 +22,6 @@ func (c *Client) ReadOnly() *Client {
 	return &Client{
 		config:                      cfg,
 		Schema:                      migrate.NewSchema(cfg.driver),
-		ActionsRule:                 NewActionsRuleClient(cfg),
 		Activity:                    NewActivityClient(cfg),
 		Block:                       NewBlockClient(cfg),
 		BlockInstance:               NewBlockInstanceClient(cfg),

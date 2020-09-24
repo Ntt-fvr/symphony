@@ -45,7 +45,6 @@ type HandlerConfig struct {
 	ReceiverFactory ev.ReceiverFactory
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
-	Orc8rClient     *http.Client
 }
 
 func init() {
@@ -73,9 +72,6 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 				ActionFactory:  cfg.ActionFactory,
 			},
 		},
-		resolver.WithOrc8rClient(
-			cfg.Orc8rClient,
-		),
 	)
 
 	views := append(

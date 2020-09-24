@@ -66,6 +66,7 @@ require (
 	google.golang.org/grpc v1.32.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
+	gotest.tools/gotestsum v0.5.3 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.5 // indirect
 )
 
