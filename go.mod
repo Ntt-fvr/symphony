@@ -6,7 +6,7 @@ require (
 	contrib.go.opencensus.io/exporter/jaeger v0.2.1
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
 	contrib.go.opencensus.io/integrations/ocsql v0.1.6
-	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.0
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1
 	github.com/99designs/gqlgen v0.13.0
 	github.com/AlekSi/pointer v1.1.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0
@@ -45,8 +45,7 @@ require (
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
 	gocloud.dev/pubsub/natspubsub v0.20.0
-	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
-	golang.org/x/net v0.0.0-20200822124328-c89045814202
+	golang.org/x/net v0.0.0-20200904194848-62affa334b73
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/sys v0.0.0-20200814200057-3d37ad5750ed // indirect
 	golang.org/x/text v0.3.3
