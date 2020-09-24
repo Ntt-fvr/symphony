@@ -29,21 +29,12 @@ type SingleWo struct {
 }
 
 var (
-<<<<<<< HEAD
 	Columns            = []string{"A", "B", "C", "D", "E"}
 	SingleWoDataHeader = []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Created", "Closed", "Location", "Assignee", "Owner"}
 	ChecklistHeader    = []string{"Checklist Item", "Is Mandatory", "Response", "Additional Instructions"}
 	CellScanHeader     = []string{"Created at", "Updated at", "Network Type", "Signal Strength", "Timestamp", "Latitude", "Longitude"}
 	WifiScanHeader     = []string{"Created at", "Updated at", "Band", "BSSID", "SSID", "Capabilities", "Channel", "Channel Width", "Frequency", "RSSI", "Strength", "Latitude", "Longitude"}
 	ActivityHeader     = []string{"Author", "Activity/Comment", "Created", "Updated"}
-=======
-	columns            = []string{"A", "B", "C", "D", "E"}
-	singleWoDataHeader = []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Created", "Closed", "Location", "Assignee", "Owner"}
-	checklistHeader    = []string{"Checklist Item", "Is Mandatory", "Response", "Additional instructions"}
-	cellScanHeader     = []string{"Created at", "Updated at", "Network Type", "Signal Strength", "Timestamp", "Latitude", "Longitude"}
-	wifiScanHeader     = []string{"Created at", "Updated at", "Band", "BSSID", "SSID", "Capabilities", "Channel", "Channel Width", "Frequency", "RSSI", "Strength", "Latitude", "Longitude"}
-	activityHeader     = []string{"Author", "Activity/Comment", "Created", "Updated"}
->>>>>>> 9f5f8012... Refactored to fix lint
 )
 
 const (
