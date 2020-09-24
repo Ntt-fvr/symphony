@@ -136,14 +136,16 @@ func (m *MySQLTenancy) ClientFor(_ context.Context, name string) (*ent.Client, e
 	), nil
 }
 
+const dbPrefix = "tenant_"
+
 // DBName returns the prefixed database name in order to avoid collision with MySQL internal databases.
 func DBName(name string) string {
-	return "tenant_" + name
+	return dbPrefix + name
 }
 
 // FromDBName returns the source name of the tenant.
 func FromDBName(name string) string {
-	return strings.TrimPrefix(name, "tenant_")
+	return strings.TrimPrefix(name, dbPrefix)
 }
 
 type tenancyCtxKey struct{}

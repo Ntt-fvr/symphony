@@ -45,20 +45,24 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 			exec.Config{
 				Resolvers: resolver.New(
 					resolver.Config{
-						Logger:  cfg.Logger,
-						Tenancy: cfg.Tenancy,
+						Logger: cfg.Logger,
 					},
 				),
 				Directives: directive.New(),
 			},
 		),
 	)
+	srv.Use(gqlutil.DBInjector{DB: cfg.DB})
 	srv.AroundOperations(
 		func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 			return next(privacy.DecisionContext(ctx, privacy.Allow))
 		},
 	)
-	srv.Use(gqlutil.DBInjector{DB: cfg.DB})
+	srv.AroundOperations(
+		func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+			return next(viewer.NewTenancyContext(ctx, cfg.Tenancy))
+		},
+	)
 	srv.SetRecoverFunc(gqlutil.RecoverFunc(cfg.Logger))
 
 	router := mux.NewRouter()

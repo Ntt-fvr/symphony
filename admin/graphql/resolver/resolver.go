@@ -23,23 +23,18 @@ import (
 
 // resolver is a graphql resolver root.
 type resolver struct {
-	tenancy  viewer.Tenancy
 	log      log.Logger
 	migrator Migrator
 }
 
 // Config configures resolver root.
 type Config struct {
-	Tenancy  viewer.Tenancy
 	Logger   log.Logger
 	Migrator Migrator
 }
 
 // New creates a resolver root from config.
 func New(cfg Config) exec.ResolverRoot {
-	if cfg.Tenancy == nil {
-		panic("tenancy is nil")
-	}
 	if cfg.Logger == nil {
 		cfg.Logger = log.NewNopLogger()
 	}
@@ -51,7 +46,6 @@ func New(cfg Config) exec.ResolverRoot {
 		)
 	}
 	return &resolver{
-		tenancy:  cfg.Tenancy,
 		log:      cfg.Logger,
 		migrator: cfg.Migrator,
 	}
@@ -134,4 +128,11 @@ func (r *mutationResolver) withTx(ctx context.Context, client *ent.Client, fn fu
 		return fmt.Errorf(msg+": %w", err)
 	}
 	return nil
+}
+
+// ClientFor implements viewer.Tenancy interface by forwarding
+// the call to the tenancy stored in context.
+func (resolver) ClientFor(ctx context.Context, name string) (*ent.Client, error) {
+	tenancy := viewer.TenancyFromContext(ctx)
+	return tenancy.ClientFor(ctx, name)
 }

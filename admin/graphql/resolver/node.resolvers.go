@@ -24,7 +24,7 @@ func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, erro
 		}
 		return model.NewTenant(id.Tenant), nil
 	}
-	client, err := r.tenancy.ClientFor(ctx, id.Tenant)
+	client, err := r.ClientFor(ctx, id.Tenant)
 	if err != nil {
 		return nil, r.err(ctx, err, "cannot get ent client")
 	}

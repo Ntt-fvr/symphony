@@ -36,6 +36,7 @@ type testSuite struct {
 
 func (s *testSuite) SetupTest() {
 	s.ec = viewertest.NewTestClient(s.T())
+	tenancy := viewer.NewFixedTenancy(s.ec)
 	db, mock, err := sqlmock.New()
 	s.Require().NoError(err)
 	s.migrator = &mocks.Migrator{}
@@ -46,7 +47,6 @@ func (s *testSuite) SetupTest() {
 					resolver.Config{
 						Logger:   logtest.NewTestLogger(s.T()),
 						Migrator: s.migrator,
-						Tenancy:  viewer.NewFixedTenancy(s.ec),
 					},
 				),
 				Directives: directive.New(),
@@ -54,12 +54,14 @@ func (s *testSuite) SetupTest() {
 		),
 	)
 	server.AddTransport(transport.POST{})
+	server.Use(gqlutil.DBInjector{DB: db})
 	server.AroundOperations(
 		func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
-			return next(privacy.DecisionContext(ctx, privacy.Allow))
+			ctx = privacy.DecisionContext(ctx, privacy.Allow)
+			ctx = viewer.NewTenancyContext(ctx, tenancy)
+			return next(ctx)
 		},
 	)
-	server.Use(gqlutil.DBInjector{DB: db})
 	s.client = client.New(server)
 	s.mock = mock
 }
