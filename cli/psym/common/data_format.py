@@ -9,8 +9,10 @@ from typing import List, Sequence, cast
 from psym.graphql.fragment.equipment_port_type import EquipmentPortTypeFragment
 from psym.graphql.fragment.equipment_type import EquipmentTypeFragment
 from psym.graphql.fragment.location_type import LocationTypeFragment
+from psym.graphql.fragment.project import ProjectFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
+from psym.graphql.fragment.work_order import WorkOrderFragment
 from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
@@ -18,8 +20,10 @@ from .data_class import (
     EquipmentPortType,
     EquipmentType,
     LocationType,
+    Project,
     ProjectType,
     PropertyDefinition,
+    WorkOrder,
     WorkOrderDefinition,
     WorkOrderType,
 )
@@ -183,7 +187,7 @@ def format_to_project_type(project_type_fragment: ProjectTypeFragment) -> Projec
     """This function gets `psym.graphql.fragment.project_type.ProjectTypeFragment` object as argument
     and formats it to `psym.common.data_class.ProjectType` object
 
-        :param project_type_fragment: Existing property type fragment object
+        :param project_type_fragment: Existing project type fragment object
         :type project_type_fragment: :class:`~psym.graphql.fragment.project_type.ProjectTypeFragment`
 
         :return: ProjectType object
@@ -213,13 +217,47 @@ def format_to_project_type(project_type_fragment: ProjectTypeFragment) -> Projec
     )
 
 
+def format_to_project(project_fragment: ProjectFragment) -> Project:
+    """This function gets `psym.graphql.fragment.project.ProjectFragment` object as argument
+    and formats it to `psym.common.data_class.Project` object
+
+        :param project_fragment: Existing project fragment object
+        :type project_fragment: :class:`~psym.graphql.fragment.project_type.ProjectFragment`
+
+        :return: Project object
+        :rtype: :class:`~psym.common.data_class.Project`
+
+        **Example**
+
+        .. code-block:: python
+
+            project = format_to_project(
+                project_fragment=project_fragment,
+            )
+    """
+    work_orders = []
+    if project_fragment.workOrders:
+        work_orders = [format_to_work_order(wo) for wo in project_fragment.workOrders]
+    return Project(
+        id=project_fragment.id,
+        name=project_fragment.name,
+        description=project_fragment.description,
+        priority=project_fragment.priority,
+        created_by=project_fragment.createdBy if project_fragment.createdBy else None,
+        project_type_name=project_fragment.type.name,
+        location_id=project_fragment.location.id if project_fragment.location else None,
+        work_orders=work_orders,
+        properties=project_fragment.properties,
+    )
+
+
 def format_to_equipment_port_type(
     equipment_port_type_fragment: EquipmentPortTypeFragment,
 ) -> EquipmentPortType:
     """This function gets `psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment` object as argument
     and formats it to `psym.common.data_class.EquipmentPortType` object
 
-        :param project_type_fragment: Existing property type fragment object
+        :param project_type_fragment: Existing equipment port type fragment object
         :type project_type_fragment: :class:`~psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment`
 
         :return: EquipmentPortType object
@@ -272,6 +310,45 @@ def format_to_work_order_type(
         property_types=format_to_property_definitions(
             work_order_type_fragment.propertyTypes
         ),
+    )
+
+
+def format_to_work_order(work_order_fragment: WorkOrderFragment) -> WorkOrder:
+    """This function gets `psym.graphql.fragment.work_order.WorkOrderFragment` object as argument
+    and formats it to `psym.common.data_class.WorkOrder` object
+
+        :param work_order_fragment: Existing work order fragment object
+        :type work_order_fragment: :class:`~psym.graphql.fragment.work_order.WorkOrderFragment`
+
+        :return: WorkOrder object
+        :rtype: :class:`~psym.common.data_class.WorkOrder`
+
+        **Example**
+
+        .. code-block:: python
+
+            work_order = format_to_work_order(
+                work_order_fragment=work_order_fragment,
+            )
+    """
+    return WorkOrder(
+        id=work_order_fragment.id,
+        name=work_order_fragment.name,
+        description=work_order_fragment.description,
+        work_order_type_name=work_order_fragment.workOrderType.name,
+        location_id=work_order_fragment.location.id
+        if work_order_fragment.location
+        else None,
+        project_id=work_order_fragment.project.id
+        if work_order_fragment.project
+        else None,
+        properties=work_order_fragment.properties,
+        owner_id=work_order_fragment.owner.id,
+        assignee_id=work_order_fragment.assignedTo.id
+        if work_order_fragment.assignedTo
+        else None,
+        status=work_order_fragment.status,
+        priority=work_order_fragment.priority,
     )
 
 

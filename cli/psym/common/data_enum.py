@@ -27,3 +27,4 @@ class Entity(Enum):
     WorkOrder = "WorkOrder"
     WorkOrderType = "WorkOrderType"
     ProjectType = "ProjectType"
+    Project = "Project"

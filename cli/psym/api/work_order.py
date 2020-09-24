@@ -10,6 +10,7 @@ from psym.client import SymphonyClient
 from psym.common.cache import WORK_ORDER_TYPES
 from psym.common.data_class import PropertyValue, WorkOrder, WorkOrderType
 from psym.common.data_enum import Entity
+from psym.common.data_format import format_to_work_order
 from psym.exceptions import EntityNotFoundError
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
@@ -81,7 +82,7 @@ def add_work_order(
                 )
             ],
         )
-        client.add_work_order_type(
+        client.add_work_order(
             name="new work order",
             work_order_type=work_order_type,
             description="Work order description",
@@ -120,19 +121,7 @@ def add_work_order(
             checkListCategories=[],
         ),
     )
-    return WorkOrder(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        work_order_type_name=result.workOrderType.name,
-        location_id=result.location.id if result.location else None,
-        project_id=result.project.id if result.project else None,
-        properties=result.properties,
-        owner_id=result.owner.id,
-        assignee_id=result.assignedTo.id if result.assignedTo else None,
-        status=result.status,
-        priority=result.priority,
-    )
+    return format_to_work_order(work_order_fragment=result)
 
 
 def get_work_orders(client: SymphonyClient) -> Iterator[WorkOrder]:
@@ -158,19 +147,7 @@ def get_work_orders(client: SymphonyClient) -> Iterator[WorkOrder]:
     for edge in result.edges:
         node = edge.node
         if node is not None:
-            yield WorkOrder(
-                id=node.id,
-                name=node.name,
-                description=node.description,
-                work_order_type_name=node.workOrderType.name,
-                location_id=node.location.id if node.location else None,
-                project_id=node.project.id if node.project else None,
-                properties=node.properties,
-                owner_id=node.owner.id,
-                assignee_id=node.assignedTo.id if node.assignedTo else None,
-                status=node.status,
-                priority=node.priority,
-            )
+            yield format_to_work_order(work_order_fragment=node)
 
 
 def get_work_order_by_id(client: SymphonyClient, id: str) -> WorkOrder:
@@ -199,19 +176,7 @@ def get_work_order_by_id(client: SymphonyClient, id: str) -> WorkOrder:
     if result is None:
         raise EntityNotFoundError(entity=Entity.WorkOrder, entity_id=id)
 
-    return WorkOrder(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        work_order_type_name=result.workOrderType.name,
-        location_id=result.location.id if result.location else None,
-        project_id=result.project.id if result.project else None,
-        properties=result.properties,
-        owner_id=result.owner.id,
-        assignee_id=result.assignedTo.id if result.assignedTo else None,
-        status=result.status,
-        priority=result.priority,
-    )
+    return format_to_work_order(work_order_fragment=result)
 
 
 def edit_work_order(
@@ -311,19 +276,7 @@ def edit_work_order(
         checkListCategories=[],
     )
     result = EditWorkOrderMutation.execute(client, edit_work_order_input)
-    return WorkOrder(
-        id=result.id,
-        name=result.name,
-        description=result.description,
-        work_order_type_name=result.workOrderType.name,
-        location_id=result.location.id if result.location else None,
-        project_id=result.project.id if result.project else None,
-        properties=result.properties,
-        owner_id=result.owner.id,
-        assignee_id=result.assignedTo.id if result.assignedTo else None,
-        status=result.status,
-        priority=result.priority,
-    )
+    return format_to_work_order(work_order_fragment=result)
 
 
 def delete_work_order(client: SymphonyClient, id: str) -> None:

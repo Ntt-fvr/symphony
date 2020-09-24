@@ -18,6 +18,7 @@ from typing import (
     Union,
 )
 
+from psym.graphql.enum.project_priority import ProjectPriority
 from psym.graphql.enum.property_kind import PropertyKind
 from psym.graphql.enum.user_role import UserRole
 from psym.graphql.enum.user_status import UserStatus
@@ -540,3 +541,36 @@ class ProjectType(NamedTuple):
     description: Optional[str]
     property_types: Sequence[PropertyDefinition]
     work_order_definitions: List[WorkOrderDefinition]
+
+
+class Project(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Project name
+    :type name: str
+    :param description: Project description
+    :type description: str, optional
+    :param priority: Project priority
+    :type priority: :class:`~psym.graphql.enum.project_priority.ProjectPriority`
+    :param created_by: Existing user ID, project creator
+    :type created_by: str, optional
+    :param project_type_name: Existing project type name
+    :type project_type_name: str
+    :param location_id: Existing location ID
+    :type location_id: str, optional
+    :param work_orders: WorkOrders list
+    :type work_orders: List[ :class:`~psym.common.data_class.WorkOrder` ]
+    :param properties: PropertyFragment sequence
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ])
+    """
+
+    id: str
+    name: str
+    description: Optional[str]
+    priority: ProjectPriority
+    created_by: Optional[str]
+    project_type_name: str
+    location_id: Optional[str]
+    work_orders: List[WorkOrder]
+    properties: Sequence[PropertyFragment]

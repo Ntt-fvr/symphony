@@ -27,6 +27,7 @@ def load_tests(
     from .test_site_survey import TestSiteSurvey
     from .test_work_order_subscription import TestWorkOrderSubscription
     from .test_project_type import TestProjectType
+    from .test_project import TestProject
     from .test_location_type import TestLocationType
 
     TESTS = [
@@ -44,6 +45,7 @@ def load_tests(
         TestSiteSurvey,
         TestWorkOrderSubscription,
         TestProjectType,
+        TestProject,
     ]
 
     print("Waiting for symphony to be ready")
