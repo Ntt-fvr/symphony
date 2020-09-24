@@ -32,7 +32,7 @@ require (
 	github.com/pelletier/go-toml v1.8.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.7.1
-	github.com/prometheus/common v0.13.0
+	github.com/prometheus/common v0.14.0
 	github.com/prometheus/statsd_exporter v0.17.0 // indirect
 	github.com/scylladb/go-set v1.0.2
 	github.com/shurcooL/graphql v0.0.0-20181231061246-d48a9a75455f
