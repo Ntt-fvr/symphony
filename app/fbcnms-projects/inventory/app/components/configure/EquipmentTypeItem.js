@@ -22,6 +22,7 @@ import PositionDefinitionsTable from './PositionDefinitionsTable';
 import React from 'react';
 import RemoveEquipmentTypeMutation from '../../mutations/RemoveEquipmentTypeMutation';
 import RouterIcon from '@material-ui/icons/Router';
+import {ConnectionHandler} from 'relay-runtime';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
 
@@ -105,7 +106,17 @@ class EquipmentTypeItem extends React.Component<Props> {
                 this.props.alert('Error: ' + error.source?.errors[0]?.message);
               },
             },
-            store => store.delete(this.props.equipmentType.id),
+            store => {
+              const id = this.props.equipmentType.id;
+              const types = ConnectionHandler.getConnection(
+                store.getRoot(),
+                'EquipmentTypes_equipmentTypes',
+              );
+              if (types != null) {
+                ConnectionHandler.deleteNode(types, id);
+              }
+              store.delete(id);
+            },
           );
         }
       });
