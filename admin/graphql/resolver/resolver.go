@@ -98,15 +98,15 @@ func (r *resolver) tenant(ctx context.Context, name string) (*model.Tenant, erro
 	return model.NewTenant(name), nil
 }
 
-// clientFor returns an ent client for tenant name.
-func (resolver) clientFor(ctx context.Context, name string) (*ent.Client, func(), error) {
+// withClient calls fn with ent client of tenant name passed in.
+func (resolver) withClient(ctx context.Context, tenant string, fn func(*ent.Client) error) error {
 	tenancy := viewer.TenancyFromContext(ctx)
-	client, err := tenancy.ClientFor(ctx, name)
+	client, err := tenancy.ClientFor(ctx, tenant)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 	if releaser, ok := tenancy.(interface{ Release() }); ok {
-		return client, releaser.Release, nil
+		defer releaser.Release()
 	}
-	return client, func() {}, nil
+	return fn(client)
 }

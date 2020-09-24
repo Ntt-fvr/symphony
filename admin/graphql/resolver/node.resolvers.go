@@ -24,24 +24,26 @@ func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, erro
 		}
 		return model.NewTenant(id.Tenant), nil
 	}
-	client, release, err := r.clientFor(ctx, id.Tenant)
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot get ent client")
+	var node model.Node
+	if err := r.withClient(ctx, id.Tenant, func(client *ent.Client) error {
+		noder, err := client.Noder(ctx, id.ID)
+		if err != nil {
+			r.log.For(ctx).Error("cannot get node",
+				zap.Int("id", id.ID), zap.Error(err),
+			)
+			return entgql.ErrNodeNotFound(id)
+		}
+		switch noder := noder.(type) {
+		case *ent.User:
+			node = model.NewUser(id.Tenant, noder)
+		default:
+			return entgql.ErrNodeNotFound(id)
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
-	defer release()
-	noder, err := client.Noder(ctx, id.ID)
-	if err != nil {
-		r.log.For(ctx).Error("cannot get node",
-			zap.Int("id", id.ID), zap.Error(err),
-		)
-		return nil, entgql.ErrNodeNotFound(id)
-	}
-	switch noder := noder.(type) {
-	case *ent.User:
-		return model.NewUser(id.Tenant, noder), nil
-	default:
-		return nil, entgql.ErrNodeNotFound(id)
-	}
+	return node, nil
 }
 
 // Query returns exec.QueryResolver implementation.

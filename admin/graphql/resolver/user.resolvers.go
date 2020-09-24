@@ -18,27 +18,26 @@ import (
 
 func (r *mutationResolver) UpsertUser(ctx context.Context, input model.UpsertUserInput) (*model.UpsertUserPayload, error) {
 	tenant := input.TenantID.Tenant
-	client, release, err := r.clientFor(ctx, tenant)
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot get ent client")
-	}
-	defer release()
-	u, err := client.User.Query().
-		Where(user.AuthID(input.AuthID)).
-		Only(ctx)
-	if err == nil {
-		u, err = u.Update().
-			SetNillableRole(input.Role).
-			SetNillableStatus(input.Status).
-			Save(ctx)
-	} else if ent.IsNotFound(err) {
-		u, err = client.User.Create().
-			SetAuthID(input.AuthID).
-			SetNillableRole(input.Role).
-			SetNillableStatus(input.Status).
-			Save(ctx)
-	}
-	if err != nil {
+	var u *ent.User
+	if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
+		var err error
+		u, err = client.User.Query().
+			Where(user.AuthID(input.AuthID)).
+			Only(ctx)
+		if err == nil {
+			u, err = u.Update().
+				SetNillableRole(input.Role).
+				SetNillableStatus(input.Status).
+				Save(ctx)
+		} else if ent.IsNotFound(err) {
+			u, err = client.User.Create().
+				SetAuthID(input.AuthID).
+				SetNillableRole(input.Role).
+				SetNillableStatus(input.Status).
+				Save(ctx)
+		}
+		return err
+	}); err != nil {
 		r.log.For(ctx).Error("cannot upsert user",
 			zap.String("tenant", tenant),
 			zap.String("auth_id", input.AuthID),
@@ -53,14 +52,16 @@ func (r *mutationResolver) UpsertUser(ctx context.Context, input model.UpsertUse
 }
 
 func (r *tenantResolver) Users(ctx context.Context, obj *model.Tenant, after *ent.Cursor, before *ent.Cursor, first *int, last *int) (*model.UserConnection, error) {
-	client, release, err := r.clientFor(ctx, obj.Name)
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot get ent client")
-	}
-	defer release()
-	page, err := client.User.Query().Paginate(ctx, after, first, before, last)
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot paginate users")
+	var page *ent.UserConnection
+	if err := r.withClient(ctx, obj.Name, func(client *ent.Client) error {
+		var err error
+		if page, err = client.User.Query().
+			Paginate(ctx, after, first, before, last); err != nil {
+			return r.err(ctx, err, "cannot paginate users")
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
 	conn := &model.UserConnection{
 		Edges:      make([]*model.UserEdge, 0, len(page.Edges)),
