@@ -17,10 +17,10 @@ type User struct {
 // IsNode implements graphql Node interface.
 func (User) IsNode() {}
 
-// NewUser creates a user given a tenant and user entity.
-func NewUser(tenant *Tenant, user *ent.User) *User {
+// NewUser creates a user given a tenant name and user entity.
+func NewUser(tenant string, user *ent.User) *User {
 	return &User{
-		ID:   ID{Tenant: tenant.Name, ID: user.ID},
+		ID:   ID{Tenant: tenant, ID: user.ID},
 		User: user,
 	}
 }

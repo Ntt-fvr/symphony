@@ -14,7 +14,7 @@ import (
 
 func TestNewUser(t *testing.T) {
 	user := model.NewUser(
-		model.NewTenant(t.Name()),
+		t.Name(),
 		&ent.User{ID: 42},
 	)
 	require.NotNil(t, user)

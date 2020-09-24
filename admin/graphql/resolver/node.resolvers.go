@@ -18,12 +18,11 @@ import (
 )
 
 func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, error) {
-	tenant := model.NewTenant(id.Tenant)
 	if id.ID == 0 {
 		if _, err := r.tenant(ctx, id.Tenant); err != nil {
 			return nil, entgql.ErrNodeNotFound(id)
 		}
-		return tenant, nil
+		return model.NewTenant(id.Tenant), nil
 	}
 	client, err := r.tenancy.ClientFor(ctx, id.Tenant)
 	if err != nil {
@@ -38,7 +37,7 @@ func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, erro
 	}
 	switch noder := noder.(type) {
 	case *ent.User:
-		return model.NewUser(tenant, noder), nil
+		return model.NewUser(id.Tenant, noder), nil
 	default:
 		return nil, entgql.ErrNodeNotFound(id)
 	}
