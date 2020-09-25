@@ -5,7 +5,7 @@ resource helm_release nats {
   create_namespace = true
   repository       = local.helm_repository.bitnami
   chart            = "nats"
-  version          = "4.5.4"
+  version          = "4.5.5"
 
   values = [yamlencode({
     replicaCount = 3

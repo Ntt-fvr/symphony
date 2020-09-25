@@ -1,17 +1,17 @@
-# iam role for alb ingress controller
-module alb_ingress_controller_role {
+# iam role for aws load balancer controller
+module aws_load_balancer_controller {
   source                    = "../modules/irsa"
-  role_name_prefix          = "ALBIngressControllerRole"
+  role_name_prefix          = "AWSLoadBalancerControllerRole"
   role_path                 = local.eks_sa_role_path
-  role_policy               = data.aws_iam_policy_document.alb_ingress_controller.json
-  service_account_name      = "aws-alb-ingress-controller"
+  role_policy               = data.aws_iam_policy_document.aws_load_balancer_controller.json
+  service_account_name      = "aws-load-balancer-controller"
   service_account_namespace = "kube-system"
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
 
-# policy required by alb ingress controller
-data aws_iam_policy_document alb_ingress_controller {
+# policy required by aws load balancer controller
+data aws_iam_policy_document aws_load_balancer_controller {
   statement {
     actions = [
       "acm:DescribeCertificate",
@@ -158,24 +158,20 @@ data aws_iam_policy_document alb_ingress_controller {
   }
 }
 
-# alb ingress controller exposes ingress resources
-resource helm_release alb_ingress_controller {
-  chart      = "aws-alb-ingress-controller"
-  name       = module.alb_ingress_controller_role.service_account_name
-  repository = local.helm_repository.incubator
-  version    = "1.0.2"
-  namespace  = module.alb_ingress_controller_role.service_account_namespace
+# AWS Load Balancer Controller
+resource helm_release aws_load_balancer_controller {
+  chart      = "aws-load-balancer-controller"
+  name       = module.aws_load_balancer_controller.service_account_name
+  repository = local.helm_repository.eks
+  version    = "0.1.0"
+  namespace  = module.aws_load_balancer_controller.service_account_namespace
 
   values = [yamlencode({
     clusterName = module.eks.cluster_id
-    awsRegion   = data.aws_region.current.id
-    awsVpcID    = module.vpc.vpc_id
-    rbac = {
-      serviceAccount = {
-        name = module.alb_ingress_controller_role.service_account_name
-        annotations = {
-          "eks.amazonaws.com/role-arn" = module.alb_ingress_controller_role.role_arn
-        }
+    serviceAccount = {
+      name = module.aws_load_balancer_controller.service_account_name
+      annotations = {
+        "eks.amazonaws.com/role-arn" = module.aws_load_balancer_controller.role_arn
       }
     }
   })]
@@ -211,8 +207,7 @@ resource helm_release nginx_ingress {
   repository = local.helm_repository.stable
   name       = "nginx-ingress"
   namespace  = "kube-system"
-  version    = "1.41.2"
-  keyring    = ""
+  version    = "1.41.3"
 
   values = [<<VALUES
   controller:
@@ -286,16 +281,17 @@ resource kubernetes_ingress gateway {
     namespace = helm_release.nginx_ingress.namespace
 
     annotations = {
-      "kubernetes.io/ingress.class"                    = "alb"
-      "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
-      "alb.ingress.kubernetes.io/target-type"          = "ip"
-      "alb.ingress.kubernetes.io/healthcheck-path"     = "/healthz"
-      "alb.ingress.kubernetes.io/certificate-arn"      = aws_acm_certificate.symphony.arn
-      "alb.ingress.kubernetes.io/ssl-policy"           = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
-      "alb.ingress.kubernetes.io/waf-acl-id"           = each.value.waf_acl_id
-      "alb.ingress.kubernetes.io/listen-ports"         = jsonencode([{ HTTP = 80 }, { HTTPS = 443 }])
-      "alb.ingress.kubernetes.io/actions.ssl-redirect" = jsonencode({ Type = "redirect", RedirectConfig = { Protocol = "HTTPS", Port = "443", StatusCode = "HTTP_301" } })
-      "external-dns.alpha.kubernetes.io/hostname"      = join(",", each.value.hostnames)
+      "kubernetes.io/ingress.class"                        = "alb"
+      "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
+      "alb.ingress.kubernetes.io/target-type"              = "ip"
+      "alb.ingress.kubernetes.io/healthcheck-path"         = "/healthz"
+      "alb.ingress.kubernetes.io/load-balancer-attributes" = "deletion_protection.enabled=true"
+      "alb.ingress.kubernetes.io/certificate-arn"          = aws_acm_certificate.symphony.arn
+      "alb.ingress.kubernetes.io/ssl-policy"               = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+      "alb.ingress.kubernetes.io/waf-acl-id"               = each.value.waf_acl_id
+      "alb.ingress.kubernetes.io/listen-ports"             = jsonencode([{ HTTP = 80 }, { HTTPS = 443 }])
+      "alb.ingress.kubernetes.io/actions.ssl-redirect"     = jsonencode({ Type = "redirect", RedirectConfig = { Protocol = "HTTPS", Port = "443", StatusCode = "HTTP_301" } })
+      "external-dns.alpha.kubernetes.io/hostname"          = join(",", each.value.hostnames)
     }
   }
 
@@ -374,7 +370,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.0"
+  version    = "3.4.1"
   namespace  = "kube-system"
 
   values = [yamlencode({
@@ -447,7 +443,7 @@ resource helm_release cert_manager {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"
-  version          = "1.0.1"
+  version          = "1.0.2"
   namespace        = "cert-manager"
   create_namespace = true
 

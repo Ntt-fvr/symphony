@@ -51,7 +51,7 @@ resource helm_release keycloak {
   namespace  = kubernetes_namespace.symphony.id
   chart      = "keycloak"
   repository = local.helm_repository.codecentric
-  version    = "9.0.6"
+  version    = "9.1.0"
 
   values = [yamlencode({
     replicas            = 2
