@@ -189,7 +189,8 @@ func (v *AutomationViewer) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-func traceAttrs(v Viewer) []trace.Attribute {
+// TraceAttrs returns a set of trace attributes of viewer.
+func TraceAttrs(v Viewer) []trace.Attribute {
 	return []trace.Attribute{
 		trace.StringAttribute(TenantAttribute, v.Tenant()),
 		trace.StringAttribute(UserAttribute, v.Name()),
@@ -330,7 +331,7 @@ func TenancyHandler(h http.Handler, tenancy Tenancy, logger log.Logger) http.Han
 		}
 
 		ctx = log.NewFieldsContext(ctx, zap.Object("viewer", v))
-		trace.FromContext(ctx).AddAttributes(traceAttrs(v)...)
+		trace.FromContext(ctx).AddAttributes(TraceAttrs(v)...)
 		ctx, _ = tag.New(ctx, tags(r, v)...)
 		ctx = NewContext(ctx, v)
 		h.ServeHTTP(w, r.WithContext(ctx))

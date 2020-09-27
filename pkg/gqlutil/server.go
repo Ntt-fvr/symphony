@@ -5,12 +5,16 @@
 package gqlutil
 
 import (
+	"context"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
+	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/trace"
 )
 
 // NewServer creates a default graphql server.
@@ -22,6 +26,13 @@ func NewServer(es graphql.ExecutableSchema) *handler.Server {
 	srv.SetQueryCache(lru.New(1000))
 	srv.Use(extension.Introspection{})
 	srv.Use(ocgql.Metrics{})
-	srv.Use(ocgql.Tracer{})
+	srv.Use(&ocgql.Tracer{
+		GetOpAttrs: func(ctx context.Context) []trace.Attribute {
+			if v := viewer.FromContext(ctx); v != nil {
+				return viewer.TraceAttrs(v)
+			}
+			return nil
+		},
+	})
 	return srv
 }

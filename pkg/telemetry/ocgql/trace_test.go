@@ -36,9 +36,14 @@ func (s *tracerTestSuite) SetupSuite() {
 	srv.AddTransport(transport.Websocket{})
 	srv.Use(extension.FixedComplexityLimit(1000))
 	srv.SetCalculatedComplexity(100)
-	srv.Use(ocgql.Tracer{
+	srv.Use(&ocgql.Tracer{
 		AllowRoot: true,
-		Field:     true,
+		GetOpAttrs: func(context.Context) []trace.Attribute {
+			return []trace.Attribute{
+				trace.StringAttribute("username", "tester"),
+			}
+		},
+		Field: true,
 		Sampler: func(trace.SamplingParameters) trace.SamplingDecision {
 			return trace.SamplingDecision{Sample: s.sample}
 		},
@@ -95,6 +100,7 @@ func (s *tracerTestSuite) TestOperation() {
 
 	span := s.GetSpan("query")
 	s.Require().NotNil(span)
+	s.Require().Equal("tester", span.Attributes["username"])
 	s.Require().Equal(query, span.Attributes["graphql.query"])
 	s.Require().Equal(id, span.Attributes["graphql.vars.id"])
 	s.Require().EqualValues(100, span.Attributes["graphql.complexity.value"])

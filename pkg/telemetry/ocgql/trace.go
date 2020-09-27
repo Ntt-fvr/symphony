@@ -22,6 +22,9 @@ type Tracer struct {
 	// Default is to not trace calls if no existing parent span is found.
 	AllowRoot bool
 
+	// GetOpAttrs allows to add additional attributes per operation.
+	GetOpAttrs func(context.Context) []trace.Attribute
+
 	// Field, if set to true, will enable recording of field spans.
 	Field bool
 
@@ -34,7 +37,7 @@ var _ interface {
 	graphql.OperationInterceptor
 	graphql.ResponseInterceptor
 	graphql.FieldInterceptor
-} = Tracer{}
+} = &Tracer{}
 
 // ExtensionName returns the metrics extension name.
 func (Tracer) ExtensionName() string {
@@ -46,7 +49,7 @@ func (Tracer) Validate(graphql.ExecutableSchema) error {
 	return nil
 }
 
-func (t Tracer) InterceptOperation(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
+func (t *Tracer) InterceptOperation(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
@@ -56,7 +59,7 @@ func (t Tracer) InterceptOperation(ctx context.Context, next graphql.OperationHa
 	}
 
 	ctx, span := t.startSpan(ctx, spanNameFromOperation(oc))
-	span.AddAttributes(operationAttrs(ctx, oc)...)
+	span.AddAttributes(t.operationAttrs(ctx, oc)...)
 	go func() {
 		<-ctx.Done()
 		span.End()
@@ -64,7 +67,7 @@ func (t Tracer) InterceptOperation(ctx context.Context, next graphql.OperationHa
 	return next(ctx)
 }
 
-func (t Tracer) startSpan(ctx context.Context, name string) (context.Context, *trace.Span) {
+func (t *Tracer) startSpan(ctx context.Context, name string) (context.Context, *trace.Span) {
 	return trace.StartSpan(ctx, name, trace.WithSampler(t.Sampler))
 }
 
@@ -86,7 +89,7 @@ func isSubscription(oc *graphql.OperationContext) bool {
 }
 
 // InterceptResponse traces graphql response execution.
-func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+func (t *Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
 	if !t.AllowRoot && trace.FromContext(ctx) == nil {
 		return next(ctx)
 	}
@@ -101,7 +104,7 @@ func (t Tracer) InterceptResponse(ctx context.Context, next graphql.ResponseHand
 	if isSubscription(oc) {
 		span.SetName(name + ".response")
 	} else {
-		span.AddAttributes(operationAttrs(ctx, oc)...)
+		span.AddAttributes(t.operationAttrs(ctx, oc)...)
 	}
 	defer setSpanStatus(ctx, span, graphql.GetErrors)
 
@@ -117,8 +120,11 @@ func setSpanStatus(ctx context.Context, span *trace.Span, getErrors func(context
 	}
 }
 
-func operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.Attribute {
-	attrs := make([]trace.Attribute, 0, 4+len(oc.Variables))
+func (t *Tracer) operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.Attribute {
+	var attrs []trace.Attribute
+	if t.GetOpAttrs != nil {
+		attrs = append(attrs, t.GetOpAttrs(ctx)...)
+	}
 	if op := oc.Operation; op != nil {
 		attrs = append(attrs,
 			trace.StringAttribute("graphql.operation", string(op.Operation)),
@@ -142,7 +148,7 @@ func operationAttrs(ctx context.Context, oc *graphql.OperationContext) []trace.A
 }
 
 // InterceptField traces graphql field execution.
-func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (interface{}, error) {
+func (t *Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (interface{}, error) {
 	if !t.Field || (!t.AllowRoot && trace.FromContext(ctx) == nil) {
 		return next(ctx)
 	}
@@ -153,7 +159,7 @@ func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (inte
 		return next(ctx)
 	}
 
-	span.AddAttributes(fieldAttrs(fc)...)
+	span.AddAttributes(fieldAttrs(ctx)...)
 	defer setSpanStatus(ctx, span, func(ctx context.Context) gqlerror.List {
 		return graphql.GetFieldErrors(ctx, fc)
 	})
@@ -161,13 +167,13 @@ func (t Tracer) InterceptField(ctx context.Context, next graphql.Resolver) (inte
 	return next(ctx)
 }
 
-func fieldAttrs(fc *graphql.FieldContext) []trace.Attribute {
-	attrs := make([]trace.Attribute, 0, 4+len(fc.Field.Arguments))
-	attrs = append(attrs,
-		trace.StringAttribute("graphql.field.path", fc.Path().String()),
+func fieldAttrs(ctx context.Context) []trace.Attribute {
+	fc := graphql.GetFieldContext(ctx)
+	attrs := []trace.Attribute{
+		trace.StringAttribute("graphql.field.path", graphql.GetPath(ctx).String()),
 		trace.StringAttribute("graphql.field.name", fc.Field.Name),
 		trace.StringAttribute("graphql.field.alias", fc.Field.Alias),
-	)
+	}
 	if object := fc.Field.ObjectDefinition; object != nil {
 		attrs = append(attrs,
 			trace.StringAttribute("graphql.field.object", object.Name),
