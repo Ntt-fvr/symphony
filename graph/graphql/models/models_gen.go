@@ -450,13 +450,19 @@ type EndBlockInput struct {
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+type EquipmentPortConnectionInput struct {
+	ID   *int    `json:"id"`
+	Name *string `json:"name"`
+}
+
 type EquipmentPortInput struct {
-	ID           *int    `json:"id"`
-	Name         string  `json:"name"`
-	Index        *int    `json:"index"`
-	VisibleLabel *string `json:"visibleLabel"`
-	PortTypeID   *int    `json:"portTypeID"`
-	Bandwidth    *string `json:"bandwidth"`
+	ID             *int                            `json:"id"`
+	Name           string                          `json:"name"`
+	Index          *int                            `json:"index"`
+	VisibleLabel   *string                         `json:"visibleLabel"`
+	PortTypeID     *int                            `json:"portTypeID"`
+	Bandwidth      *string                         `json:"bandwidth"`
+	ConnectedPorts []*EquipmentPortConnectionInput `json:"connectedPorts"`
 }
 
 type EquipmentPositionInput struct {

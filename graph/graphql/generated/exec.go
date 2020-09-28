@@ -9100,6 +9100,11 @@ type EquipmentPort implements Node {
   services: [Service]!
 }
 
+input EquipmentPortConnectionInput {
+  id: ID
+  name: String
+}
+
 input EquipmentPortInput {
   id: ID
   name: String!
@@ -9107,6 +9112,7 @@ input EquipmentPortInput {
   visibleLabel: String
   portTypeID: ID
   bandwidth: String
+  connectedPorts: [EquipmentPortConnectionInput!]
 }
 
 type SearchEntry {
@@ -49907,6 +49913,34 @@ func (ec *executionContext) unmarshalInputEquipmentOrder(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEquipmentPortConnectionInput(ctx context.Context, obj interface{}) (models.EquipmentPortConnectionInput, error) {
+	var it models.EquipmentPortConnectionInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEquipmentPortInput(ctx context.Context, obj interface{}) (models.EquipmentPortInput, error) {
 	var it models.EquipmentPortInput
 	var asMap = obj.(map[string]interface{})
@@ -52046,6 +52080,14 @@ func (ec *executionContext) unmarshalInputSurveyCreateData(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("surveyResponses"))
 			it.SurveyResponses, err = ec.unmarshalNSurveyQuestionResponse2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyQuestionResponseᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "connectedPorts":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectedPorts"))
+			it.ConnectedPorts, err = ec.unmarshalOEquipmentPortConnectionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -63563,6 +63605,11 @@ func (ec *executionContext) marshalNEquipmentPortConnection2ᚖgithubᚗcomᚋfa
 	return ec._EquipmentPortConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNEquipmentPortConnectionInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInput(ctx context.Context, v interface{}) (*models.EquipmentPortConnectionInput, error) {
+	res, err := ec.unmarshalInputEquipmentPortConnectionInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNEquipmentPortDefinition2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinition(ctx context.Context, sel ast.SelectionSet, v ent.EquipmentPortDefinition) graphql.Marshaler {
 	return ec._EquipmentPortDefinition(ctx, sel, &v)
 }
@@ -68644,6 +68691,30 @@ func (ec *executionContext) marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._EquipmentPort(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOEquipmentPortConnectionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInputᚄ(ctx context.Context, v interface{}) ([]*models.EquipmentPortConnectionInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.EquipmentPortConnectionInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNEquipmentPortConnectionInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOEquipmentPortDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPortDefinition) graphql.Marshaler {

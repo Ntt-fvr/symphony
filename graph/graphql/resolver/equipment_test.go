@@ -1233,3 +1233,96 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 	assert.Equal(t, linkA.ID, createdLink.ID)
 	assert.Equal(t, linkZ.ID, createdLink.ID)
 }
+
+func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portNameConnection1 := "Port1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: "Port1",
+			},
+			{
+				Name: "Port2",
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portNameConnection1,
+					},
+				},
+			},
+		},
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	assert.NoError(t, err)
+	assert.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+}
+
+func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portNameConnection1 := "Port1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: "Port1",
+			},
+			{
+				Name: "Port2",
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portNameConnection1,
+					},
+				},
+			},
+		},
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	assert.NoError(t, err)
+	assert.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+
+	editedEquipmentType, err := mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
+		ID:   createdEquipment.ID,
+		Name: createdEquipment.Name,
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: definitions[0].Name,
+				ID:   &definitions[0].ID,
+			},
+			{
+				Name:           definitions[1].Name,
+				ID:             &definitions[1].ID,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{}, // clear connections
+			},
+		},
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, createdEquipment)
+	definitions, err = editedEquipmentType.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	assert.NoError(t, err)
+	assert.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 0, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 0, len(definitions[1].Edges.ConnectedPorts))
+}
