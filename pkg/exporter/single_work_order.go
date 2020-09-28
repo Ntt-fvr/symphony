@@ -162,7 +162,11 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	}
 	currRow++
 	for _, item := range items {
-		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
+		itemString, err := getItemString(ctx, item)
+		if err != nil {
+			return err
+		}
+		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), itemString} {
 			_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
 			fmt.Fprintf(os.Stderr, "sheet %s, writing cell: %s, value: %s\n", sheetName, Columns[j]+strconv.Itoa(currRow), data)
 
@@ -175,39 +179,39 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	return nil
 }
 
-func getItemString(ctx context.Context, item *ent.CheckListItem) string {
+func getItemString(ctx context.Context, item *ent.CheckListItem) (string, error) {
 	switch item.Type {
 	case enum.CheckListItemTypeEnum:
-		return item.SelectedEnumValues
+		return item.SelectedEnumValues, nil
 	case enum.CheckListItemTypeSimple:
-		return strconv.FormatBool(item.Checked)
+		return strconv.FormatBool(item.Checked), nil
 	case enum.CheckListItemTypeString:
-		return item.StringVal
+		return item.StringVal, nil
 	case enum.CheckListItemTypeYesNo:
 		if item.YesNoVal != nil {
-			return item.YesNoVal.String()
+			return item.YesNoVal.String(), nil
 		}
-		return "N/A"
+		return "N/A", nil
 	case enum.CheckListItemTypeCellScan:
 		data, err := getCellScanData(ctx, item)
 		if err != nil {
-			return ""
+			return "", err
 		}
-		return data
+		return data, nil
 	case enum.CheckListItemTypeFiles:
 		data, err := getFileData(ctx, item)
 		if err != nil {
-			return ""
+			return "", err
 		}
-		return data
+		return data, nil
 	case enum.CheckListItemTypeWifiScan:
 		data, err := getWifiScanData(ctx, item)
 		if err != nil {
-			return ""
+			return "", err
 		}
-		return data
+		return data, nil
 	}
-	return ""
+	return "", nil
 }
 
 func getCellScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
