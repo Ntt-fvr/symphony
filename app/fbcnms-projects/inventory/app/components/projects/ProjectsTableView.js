@@ -105,6 +105,7 @@ const ProjectsTableView = (props: Props) => {
         {
           key: 'createTime',
           title: 'Creation Time',
+          getSortingValue: row => new Date(row.createTime).getTime(),
           render: row => DateTimeFormat.dateTime(row.createTime),
         },
       ]}
