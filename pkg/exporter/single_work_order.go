@@ -169,7 +169,6 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), itemString} {
 			_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
 			fmt.Fprintf(os.Stderr, "sheet %s, writing cell: %s, value: %s\n", sheetName, Columns[j]+strconv.Itoa(currRow), data)
-
 		}
 		if item.HelpText != nil {
 			_ = f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), *item.HelpText)
