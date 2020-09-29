@@ -8,7 +8,6 @@ import json
 import sys
 from typing import Any, Dict, List
 
-from partnerscripts.utils import add_base_args
 from psym import PsymClient
 from psym.api.equipment_type import add_equipment_type
 from psym.api.location_type import add_location_type
@@ -62,7 +61,7 @@ def upload_equipment_types(client: PsymClient) -> None:
                 EquipmentPortDefinition(
                     name=port["name"],
                     visible_label=port["visible_label"],
-                    port_definition_index=port["port_definition_index"],
+                    port_definition_index=port["index"],
                     port_type_name=port["port_type_name"],
                 )
                 for port in equipment_type["ports"]
@@ -119,7 +118,10 @@ def upload_service_types(client: PsymClient) -> None:
 
 
 if __name__ == "__main__":
-    parser = add_base_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("email", help="email to connect to symphony with", type=str)
+    parser.add_argument("password", help="symphony connection password", type=str)
+    parser.add_argument("tenant", help="Tenant name", type=str)
     parser.add_argument(
         "entity_type",
         help="entity type",

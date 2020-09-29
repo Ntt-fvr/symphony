@@ -9,7 +9,6 @@ import sys
 from datetime import datetime
 from typing import Any, Dict, List, Sequence
 
-from partnerscripts.utils import add_base_args
 from psym import PsymClient
 from psym.common.cache import EQUIPMENT_TYPES, LOCATION_TYPES, PORT_TYPES, SERVICE_TYPES
 from psym.common.data_class import PropertyDefinition
@@ -144,7 +143,10 @@ def export_service_types(client: PsymClient) -> None:
 
 
 if __name__ == "__main__":
-    parser = add_base_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("email", help="email to connect to symphony with", type=str)
+    parser.add_argument("password", help="symphony connection password", type=str)
+    parser.add_argument("tenant", help="Tenant name", type=str)
     parser.add_argument(
         "entity_type",
         help="entity type",
