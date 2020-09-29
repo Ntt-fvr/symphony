@@ -17,4 +17,10 @@ export default {
   textField: {
     width: '100%',
   },
+  loadingContainer: {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 };
