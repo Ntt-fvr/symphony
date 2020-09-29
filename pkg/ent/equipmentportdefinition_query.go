@@ -35,6 +35,7 @@ type EquipmentPortDefinitionQuery struct {
 	withEquipmentPortType *EquipmentPortTypeQuery
 	withPorts             *EquipmentPortQuery
 	withEquipmentType     *EquipmentTypeQuery
+	withConnectedPorts    *EquipmentPortDefinitionQuery
 	withFKs               bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -124,6 +125,28 @@ func (epdq *EquipmentPortDefinitionQuery) QueryEquipmentType() *EquipmentTypeQue
 			sqlgraph.From(equipmentportdefinition.Table, equipmentportdefinition.FieldID, selector),
 			sqlgraph.To(equipmenttype.Table, equipmenttype.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, equipmentportdefinition.EquipmentTypeTable, equipmentportdefinition.EquipmentTypeColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(epdq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryConnectedPorts chains the current query on the connected_ports edge.
+func (epdq *EquipmentPortDefinitionQuery) QueryConnectedPorts() *EquipmentPortDefinitionQuery {
+	query := &EquipmentPortDefinitionQuery{config: epdq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := epdq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := epdq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(equipmentportdefinition.Table, equipmentportdefinition.FieldID, selector),
+			sqlgraph.To(equipmentportdefinition.Table, equipmentportdefinition.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, equipmentportdefinition.ConnectedPortsTable, equipmentportdefinition.ConnectedPortsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(epdq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,6 +366,17 @@ func (epdq *EquipmentPortDefinitionQuery) WithEquipmentType(opts ...func(*Equipm
 	return epdq
 }
 
+//  WithConnectedPorts tells the query-builder to eager-loads the nodes that are connected to
+// the "connected_ports" edge. The optional arguments used to configure the query builder of the edge.
+func (epdq *EquipmentPortDefinitionQuery) WithConnectedPorts(opts ...func(*EquipmentPortDefinitionQuery)) *EquipmentPortDefinitionQuery {
+	query := &EquipmentPortDefinitionQuery{config: epdq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	epdq.withConnectedPorts = query
+	return epdq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -413,10 +447,11 @@ func (epdq *EquipmentPortDefinitionQuery) sqlAll(ctx context.Context) ([]*Equipm
 		nodes       = []*EquipmentPortDefinition{}
 		withFKs     = epdq.withFKs
 		_spec       = epdq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			epdq.withEquipmentPortType != nil,
 			epdq.withPorts != nil,
 			epdq.withEquipmentType != nil,
+			epdq.withConnectedPorts != nil,
 		}
 	)
 	if epdq.withEquipmentPortType != nil || epdq.withEquipmentType != nil {
@@ -524,6 +559,70 @@ func (epdq *EquipmentPortDefinitionQuery) sqlAll(ctx context.Context) ([]*Equipm
 			}
 			for i := range nodes {
 				nodes[i].Edges.EquipmentType = n
+			}
+		}
+	}
+
+	if query := epdq.withConnectedPorts; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		ids := make(map[int]*EquipmentPortDefinition, len(nodes))
+		for _, node := range nodes {
+			ids[node.ID] = node
+			fks = append(fks, node.ID)
+			node.Edges.ConnectedPorts = []*EquipmentPortDefinition{}
+		}
+		var (
+			edgeids []int
+			edges   = make(map[int][]*EquipmentPortDefinition)
+		)
+		_spec := &sqlgraph.EdgeQuerySpec{
+			Edge: &sqlgraph.EdgeSpec{
+				Inverse: false,
+				Table:   equipmentportdefinition.ConnectedPortsTable,
+				Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			},
+			Predicate: func(s *sql.Selector) {
+				s.Where(sql.InValues(equipmentportdefinition.ConnectedPortsPrimaryKey[0], fks...))
+			},
+
+			ScanValues: func() [2]interface{} {
+				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
+			},
+			Assign: func(out, in interface{}) error {
+				eout, ok := out.(*sql.NullInt64)
+				if !ok || eout == nil {
+					return fmt.Errorf("unexpected id value for edge-out")
+				}
+				ein, ok := in.(*sql.NullInt64)
+				if !ok || ein == nil {
+					return fmt.Errorf("unexpected id value for edge-in")
+				}
+				outValue := int(eout.Int64)
+				inValue := int(ein.Int64)
+				node, ok := ids[outValue]
+				if !ok {
+					return fmt.Errorf("unexpected node id in edges: %v", outValue)
+				}
+				edgeids = append(edgeids, inValue)
+				edges[inValue] = append(edges[inValue], node)
+				return nil
+			},
+		}
+		if err := sqlgraph.QueryEdges(ctx, epdq.driver, _spec); err != nil {
+			return nil, fmt.Errorf(`query edges "connected_ports": %v`, err)
+		}
+		query.Where(equipmentportdefinition.IDIn(edgeids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := edges[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected "connected_ports" node returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.ConnectedPorts = append(nodes[i].Edges.ConnectedPorts, n)
 			}
 		}
 	}

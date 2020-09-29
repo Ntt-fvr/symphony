@@ -156,6 +156,21 @@ func (epdc *EquipmentPortDefinitionCreate) SetEquipmentType(e *EquipmentType) *E
 	return epdc.SetEquipmentTypeID(e.ID)
 }
 
+// AddConnectedPortIDs adds the connected_ports edge to EquipmentPortDefinition by ids.
+func (epdc *EquipmentPortDefinitionCreate) AddConnectedPortIDs(ids ...int) *EquipmentPortDefinitionCreate {
+	epdc.mutation.AddConnectedPortIDs(ids...)
+	return epdc
+}
+
+// AddConnectedPorts adds the connected_ports edges to EquipmentPortDefinition.
+func (epdc *EquipmentPortDefinitionCreate) AddConnectedPorts(e ...*EquipmentPortDefinition) *EquipmentPortDefinitionCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return epdc.AddConnectedPortIDs(ids...)
+}
+
 // Mutation returns the EquipmentPortDefinitionMutation object of the builder.
 func (epdc *EquipmentPortDefinitionCreate) Mutation() *EquipmentPortDefinitionMutation {
 	return epdc.mutation
@@ -353,6 +368,25 @@ func (epdc *EquipmentPortDefinitionCreate) createSpec() (*EquipmentPortDefinitio
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: equipmenttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := epdc.mutation.ConnectedPortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
 				},
 			},
 		}

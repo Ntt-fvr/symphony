@@ -2088,6 +2088,33 @@ var (
 			},
 		},
 	}
+	// EquipmentPortDefinitionConnectedPortsColumns holds the columns for the "equipment_port_definition_connected_ports" table.
+	EquipmentPortDefinitionConnectedPortsColumns = []*schema.Column{
+		{Name: "equipment_port_definition_id", Type: field.TypeInt},
+		{Name: "connected_port_id", Type: field.TypeInt},
+	}
+	// EquipmentPortDefinitionConnectedPortsTable holds the schema information for the "equipment_port_definition_connected_ports" table.
+	EquipmentPortDefinitionConnectedPortsTable = &schema.Table{
+		Name:       "equipment_port_definition_connected_ports",
+		Columns:    EquipmentPortDefinitionConnectedPortsColumns,
+		PrimaryKey: []*schema.Column{EquipmentPortDefinitionConnectedPortsColumns[0], EquipmentPortDefinitionConnectedPortsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "equipment_port_definition_connected_ports_equipment_port_definition_id",
+				Columns: []*schema.Column{EquipmentPortDefinitionConnectedPortsColumns[0]},
+
+				RefColumns: []*schema.Column{EquipmentPortDefinitionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "equipment_port_definition_connected_ports_connected_port_id",
+				Columns: []*schema.Column{EquipmentPortDefinitionConnectedPortsColumns[1]},
+
+				RefColumns: []*schema.Column{EquipmentPortDefinitionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// ServiceUpstreamColumns holds the columns for the "service_upstream" table.
 	ServiceUpstreamColumns = []*schema.Column{
 		{Name: "service_id", Type: field.TypeInt},
@@ -2362,6 +2389,7 @@ var (
 		WorkOrderTemplatesTable,
 		WorkOrderTypesTable,
 		BlockNextBlocksTable,
+		EquipmentPortDefinitionConnectedPortsTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -2482,6 +2510,8 @@ func init() {
 	WorkOrderTemplatesTable.ForeignKeys[0].RefTable = WorkOrderTypesTable
 	BlockNextBlocksTable.ForeignKeys[0].RefTable = BlocksTable
 	BlockNextBlocksTable.ForeignKeys[1].RefTable = BlocksTable
+	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[0].RefTable = EquipmentPortDefinitionsTable
+	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[1].RefTable = EquipmentPortDefinitionsTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

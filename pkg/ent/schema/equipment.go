@@ -82,6 +82,7 @@ func (EquipmentPortDefinition) Edges() []ent.Edge {
 		edge.From("equipment_type", EquipmentType.Type).
 			Ref("port_definitions").
 			Unique(),
+		edge.To("connected_ports", EquipmentPortDefinition.Type),
 	}
 }
 

@@ -11418,6 +11418,9 @@ type EquipmentPortDefinitionMutation struct {
 	clearedports               bool
 	equipment_type             *int
 	clearedequipment_type      bool
+	connected_ports            map[int]struct{}
+	removedconnected_ports     map[int]struct{}
+	clearedconnected_ports     bool
 	done                       bool
 	oldValue                   func(context.Context) (*EquipmentPortDefinition, error)
 }
@@ -11914,6 +11917,59 @@ func (m *EquipmentPortDefinitionMutation) ResetEquipmentType() {
 	m.clearedequipment_type = false
 }
 
+// AddConnectedPortIDs adds the connected_ports edge to EquipmentPortDefinition by ids.
+func (m *EquipmentPortDefinitionMutation) AddConnectedPortIDs(ids ...int) {
+	if m.connected_ports == nil {
+		m.connected_ports = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.connected_ports[ids[i]] = struct{}{}
+	}
+}
+
+// ClearConnectedPorts clears the connected_ports edge to EquipmentPortDefinition.
+func (m *EquipmentPortDefinitionMutation) ClearConnectedPorts() {
+	m.clearedconnected_ports = true
+}
+
+// ConnectedPortsCleared returns if the edge connected_ports was cleared.
+func (m *EquipmentPortDefinitionMutation) ConnectedPortsCleared() bool {
+	return m.clearedconnected_ports
+}
+
+// RemoveConnectedPortIDs removes the connected_ports edge to EquipmentPortDefinition by ids.
+func (m *EquipmentPortDefinitionMutation) RemoveConnectedPortIDs(ids ...int) {
+	if m.removedconnected_ports == nil {
+		m.removedconnected_ports = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedconnected_ports[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedConnectedPorts returns the removed ids of connected_ports.
+func (m *EquipmentPortDefinitionMutation) RemovedConnectedPortsIDs() (ids []int) {
+	for id := range m.removedconnected_ports {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ConnectedPortsIDs returns the connected_ports ids in the mutation.
+func (m *EquipmentPortDefinitionMutation) ConnectedPortsIDs() (ids []int) {
+	for id := range m.connected_ports {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetConnectedPorts reset all changes of the "connected_ports" edge.
+func (m *EquipmentPortDefinitionMutation) ResetConnectedPorts() {
+	m.connected_ports = nil
+	m.clearedconnected_ports = false
+	m.removedconnected_ports = nil
+}
+
 // Op returns the operation name.
 func (m *EquipmentPortDefinitionMutation) Op() Op {
 	return m.op
@@ -12150,7 +12206,7 @@ func (m *EquipmentPortDefinitionMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *EquipmentPortDefinitionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.equipment_port_type != nil {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentPortType)
 	}
@@ -12159,6 +12215,9 @@ func (m *EquipmentPortDefinitionMutation) AddedEdges() []string {
 	}
 	if m.equipment_type != nil {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentType)
+	}
+	if m.connected_ports != nil {
+		edges = append(edges, equipmentportdefinition.EdgeConnectedPorts)
 	}
 	return edges
 }
@@ -12181,6 +12240,12 @@ func (m *EquipmentPortDefinitionMutation) AddedIDs(name string) []ent.Value {
 		if id := m.equipment_type; id != nil {
 			return []ent.Value{*id}
 		}
+	case equipmentportdefinition.EdgeConnectedPorts:
+		ids := make([]ent.Value, 0, len(m.connected_ports))
+		for id := range m.connected_ports {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -12188,9 +12253,12 @@ func (m *EquipmentPortDefinitionMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *EquipmentPortDefinitionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedports != nil {
 		edges = append(edges, equipmentportdefinition.EdgePorts)
+	}
+	if m.removedconnected_ports != nil {
+		edges = append(edges, equipmentportdefinition.EdgeConnectedPorts)
 	}
 	return edges
 }
@@ -12205,6 +12273,12 @@ func (m *EquipmentPortDefinitionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case equipmentportdefinition.EdgeConnectedPorts:
+		ids := make([]ent.Value, 0, len(m.removedconnected_ports))
+		for id := range m.removedconnected_ports {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -12212,7 +12286,7 @@ func (m *EquipmentPortDefinitionMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *EquipmentPortDefinitionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedequipment_port_type {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentPortType)
 	}
@@ -12221,6 +12295,9 @@ func (m *EquipmentPortDefinitionMutation) ClearedEdges() []string {
 	}
 	if m.clearedequipment_type {
 		edges = append(edges, equipmentportdefinition.EdgeEquipmentType)
+	}
+	if m.clearedconnected_ports {
+		edges = append(edges, equipmentportdefinition.EdgeConnectedPorts)
 	}
 	return edges
 }
@@ -12235,6 +12312,8 @@ func (m *EquipmentPortDefinitionMutation) EdgeCleared(name string) bool {
 		return m.clearedports
 	case equipmentportdefinition.EdgeEquipmentType:
 		return m.clearedequipment_type
+	case equipmentportdefinition.EdgeConnectedPorts:
+		return m.clearedconnected_ports
 	}
 	return false
 }
@@ -12266,6 +12345,9 @@ func (m *EquipmentPortDefinitionMutation) ResetEdge(name string) error {
 		return nil
 	case equipmentportdefinition.EdgeEquipmentType:
 		m.ResetEquipmentType()
+		return nil
+	case equipmentportdefinition.EdgeConnectedPorts:
+		m.ResetConnectedPorts()
 		return nil
 	}
 	return fmt.Errorf("unknown EquipmentPortDefinition edge %s", name)

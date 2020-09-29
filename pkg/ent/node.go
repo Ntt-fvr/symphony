@@ -1366,7 +1366,7 @@ func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err e
 		ID:     epd.ID,
 		Type:   "EquipmentPortDefinition",
 		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 3),
+		Edges:  make([]*Edge, 4),
 	}
 	var buf []byte
 	if buf, err = json.Marshal(epd.CreateTime); err != nil {
@@ -1450,6 +1450,17 @@ func (epd *EquipmentPortDefinition) Node(ctx context.Context) (node *Node, err e
 		IDs:  ids,
 		Type: "EquipmentType",
 		Name: "equipment_type",
+	}
+	ids, err = epd.QueryConnectedPorts().
+		Select(equipmentportdefinition.FieldID).
+		Ints(ctx)
+	if err != nil {
+		return nil, err
+	}
+	node.Edges[3] = &Edge{
+		IDs:  ids,
+		Type: "EquipmentPortDefinition",
+		Name: "connected_ports",
 	}
 	return node, nil
 }

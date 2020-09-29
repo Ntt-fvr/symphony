@@ -36,6 +36,8 @@ const (
 	EdgePorts = "ports"
 	// EdgeEquipmentType holds the string denoting the equipment_type edge name in mutations.
 	EdgeEquipmentType = "equipment_type"
+	// EdgeConnectedPorts holds the string denoting the connected_ports edge name in mutations.
+	EdgeConnectedPorts = "connected_ports"
 
 	// Table holds the table name of the equipmentportdefinition in the database.
 	Table = "equipment_port_definitions"
@@ -60,6 +62,8 @@ const (
 	EquipmentTypeInverseTable = "equipment_types"
 	// EquipmentTypeColumn is the table column denoting the equipment_type relation/edge.
 	EquipmentTypeColumn = "equipment_type_port_definitions"
+	// ConnectedPortsTable is the table the holds the connected_ports relation/edge. The primary key declared below.
+	ConnectedPortsTable = "equipment_port_definition_connected_ports"
 )
 
 // Columns holds all SQL columns for equipmentportdefinition fields.
@@ -78,6 +82,12 @@ var ForeignKeys = []string{
 	"equipment_port_definition_equipment_port_type",
 	"equipment_type_port_definitions",
 }
+
+var (
+	// ConnectedPortsPrimaryKey and ConnectedPortsColumn2 are the table columns denoting the
+	// primary key for the connected_ports relation (M2M).
+	ConnectedPortsPrimaryKey = []string{"equipment_port_definition_id", "connected_port_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {

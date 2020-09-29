@@ -826,6 +826,34 @@ func HasEquipmentTypeWith(preds ...predicate.EquipmentType) predicate.EquipmentP
 	})
 }
 
+// HasConnectedPorts applies the HasEdge predicate on the "connected_ports" edge.
+func HasConnectedPorts() predicate.EquipmentPortDefinition {
+	return predicate.EquipmentPortDefinition(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(ConnectedPortsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, ConnectedPortsTable, ConnectedPortsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasConnectedPortsWith applies the HasEdge predicate on the "connected_ports" edge with a given conditions (other predicates).
+func HasConnectedPortsWith(preds ...predicate.EquipmentPortDefinition) predicate.EquipmentPortDefinition {
+	return predicate.EquipmentPortDefinition(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, ConnectedPortsTable, ConnectedPortsPrimaryKey...),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.EquipmentPortDefinition) predicate.EquipmentPortDefinition {
 	return predicate.EquipmentPortDefinition(func(s *sql.Selector) {

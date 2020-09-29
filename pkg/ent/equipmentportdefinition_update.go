@@ -160,6 +160,21 @@ func (epdu *EquipmentPortDefinitionUpdate) SetEquipmentType(e *EquipmentType) *E
 	return epdu.SetEquipmentTypeID(e.ID)
 }
 
+// AddConnectedPortIDs adds the connected_ports edge to EquipmentPortDefinition by ids.
+func (epdu *EquipmentPortDefinitionUpdate) AddConnectedPortIDs(ids ...int) *EquipmentPortDefinitionUpdate {
+	epdu.mutation.AddConnectedPortIDs(ids...)
+	return epdu
+}
+
+// AddConnectedPorts adds the connected_ports edges to EquipmentPortDefinition.
+func (epdu *EquipmentPortDefinitionUpdate) AddConnectedPorts(e ...*EquipmentPortDefinition) *EquipmentPortDefinitionUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return epdu.AddConnectedPortIDs(ids...)
+}
+
 // Mutation returns the EquipmentPortDefinitionMutation object of the builder.
 func (epdu *EquipmentPortDefinitionUpdate) Mutation() *EquipmentPortDefinitionMutation {
 	return epdu.mutation
@@ -196,6 +211,27 @@ func (epdu *EquipmentPortDefinitionUpdate) RemovePorts(e ...*EquipmentPort) *Equ
 func (epdu *EquipmentPortDefinitionUpdate) ClearEquipmentType() *EquipmentPortDefinitionUpdate {
 	epdu.mutation.ClearEquipmentType()
 	return epdu
+}
+
+// ClearConnectedPorts clears all "connected_ports" edges to type EquipmentPortDefinition.
+func (epdu *EquipmentPortDefinitionUpdate) ClearConnectedPorts() *EquipmentPortDefinitionUpdate {
+	epdu.mutation.ClearConnectedPorts()
+	return epdu
+}
+
+// RemoveConnectedPortIDs removes the connected_ports edge to EquipmentPortDefinition by ids.
+func (epdu *EquipmentPortDefinitionUpdate) RemoveConnectedPortIDs(ids ...int) *EquipmentPortDefinitionUpdate {
+	epdu.mutation.RemoveConnectedPortIDs(ids...)
+	return epdu
+}
+
+// RemoveConnectedPorts removes connected_ports edges to EquipmentPortDefinition.
+func (epdu *EquipmentPortDefinitionUpdate) RemoveConnectedPorts(e ...*EquipmentPortDefinition) *EquipmentPortDefinitionUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return epdu.RemoveConnectedPortIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -460,6 +496,60 @@ func (epdu *EquipmentPortDefinitionUpdate) sqlSave(ctx context.Context) (n int, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if epdu.mutation.ConnectedPortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epdu.mutation.RemovedConnectedPortsIDs(); len(nodes) > 0 && !epdu.mutation.ConnectedPortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epdu.mutation.ConnectedPortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, epdu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{equipmentportdefinition.Label}
@@ -604,6 +694,21 @@ func (epduo *EquipmentPortDefinitionUpdateOne) SetEquipmentType(e *EquipmentType
 	return epduo.SetEquipmentTypeID(e.ID)
 }
 
+// AddConnectedPortIDs adds the connected_ports edge to EquipmentPortDefinition by ids.
+func (epduo *EquipmentPortDefinitionUpdateOne) AddConnectedPortIDs(ids ...int) *EquipmentPortDefinitionUpdateOne {
+	epduo.mutation.AddConnectedPortIDs(ids...)
+	return epduo
+}
+
+// AddConnectedPorts adds the connected_ports edges to EquipmentPortDefinition.
+func (epduo *EquipmentPortDefinitionUpdateOne) AddConnectedPorts(e ...*EquipmentPortDefinition) *EquipmentPortDefinitionUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return epduo.AddConnectedPortIDs(ids...)
+}
+
 // Mutation returns the EquipmentPortDefinitionMutation object of the builder.
 func (epduo *EquipmentPortDefinitionUpdateOne) Mutation() *EquipmentPortDefinitionMutation {
 	return epduo.mutation
@@ -640,6 +745,27 @@ func (epduo *EquipmentPortDefinitionUpdateOne) RemovePorts(e ...*EquipmentPort) 
 func (epduo *EquipmentPortDefinitionUpdateOne) ClearEquipmentType() *EquipmentPortDefinitionUpdateOne {
 	epduo.mutation.ClearEquipmentType()
 	return epduo
+}
+
+// ClearConnectedPorts clears all "connected_ports" edges to type EquipmentPortDefinition.
+func (epduo *EquipmentPortDefinitionUpdateOne) ClearConnectedPorts() *EquipmentPortDefinitionUpdateOne {
+	epduo.mutation.ClearConnectedPorts()
+	return epduo
+}
+
+// RemoveConnectedPortIDs removes the connected_ports edge to EquipmentPortDefinition by ids.
+func (epduo *EquipmentPortDefinitionUpdateOne) RemoveConnectedPortIDs(ids ...int) *EquipmentPortDefinitionUpdateOne {
+	epduo.mutation.RemoveConnectedPortIDs(ids...)
+	return epduo
+}
+
+// RemoveConnectedPorts removes connected_ports edges to EquipmentPortDefinition.
+func (epduo *EquipmentPortDefinitionUpdateOne) RemoveConnectedPorts(e ...*EquipmentPortDefinition) *EquipmentPortDefinitionUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return epduo.RemoveConnectedPortIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -894,6 +1020,60 @@ func (epduo *EquipmentPortDefinitionUpdateOne) sqlSave(ctx context.Context) (_no
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: equipmenttype.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if epduo.mutation.ConnectedPortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epduo.mutation.RemovedConnectedPortsIDs(); len(nodes) > 0 && !epduo.mutation.ConnectedPortsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := epduo.mutation.ConnectedPortsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   equipmentportdefinition.ConnectedPortsTable,
+			Columns: equipmentportdefinition.ConnectedPortsPrimaryKey,
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: equipmentportdefinition.FieldID,
 				},
 			},
 		}

@@ -49,9 +49,11 @@ type EquipmentPortDefinitionEdges struct {
 	Ports []*EquipmentPort
 	// EquipmentType holds the value of the equipment_type edge.
 	EquipmentType *EquipmentType
+	// ConnectedPorts holds the value of the connected_ports edge.
+	ConnectedPorts []*EquipmentPortDefinition
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // EquipmentPortTypeOrErr returns the EquipmentPortType value or an error if the edge
@@ -89,6 +91,15 @@ func (e EquipmentPortDefinitionEdges) EquipmentTypeOrErr() (*EquipmentType, erro
 		return e.EquipmentType, nil
 	}
 	return nil, &NotLoadedError{edge: "equipment_type"}
+}
+
+// ConnectedPortsOrErr returns the ConnectedPorts value or an error if the edge
+// was not loaded in eager-loading.
+func (e EquipmentPortDefinitionEdges) ConnectedPortsOrErr() ([]*EquipmentPortDefinition, error) {
+	if e.loadedTypes[3] {
+		return e.ConnectedPorts, nil
+	}
+	return nil, &NotLoadedError{edge: "connected_ports"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,6 +196,11 @@ func (epd *EquipmentPortDefinition) QueryPorts() *EquipmentPortQuery {
 // QueryEquipmentType queries the equipment_type edge of the EquipmentPortDefinition.
 func (epd *EquipmentPortDefinition) QueryEquipmentType() *EquipmentTypeQuery {
 	return (&EquipmentPortDefinitionClient{config: epd.config}).QueryEquipmentType(epd)
+}
+
+// QueryConnectedPorts queries the connected_ports edge of the EquipmentPortDefinition.
+func (epd *EquipmentPortDefinition) QueryConnectedPorts() *EquipmentPortDefinitionQuery {
+	return (&EquipmentPortDefinitionClient{config: epd.config}).QueryConnectedPorts(epd)
 }
 
 // Update returns a builder for updating this EquipmentPortDefinition.

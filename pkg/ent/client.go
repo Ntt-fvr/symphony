@@ -2510,6 +2510,22 @@ func (c *EquipmentPortDefinitionClient) QueryEquipmentType(epd *EquipmentPortDef
 	return query
 }
 
+// QueryConnectedPorts queries the connected_ports edge of a EquipmentPortDefinition.
+func (c *EquipmentPortDefinitionClient) QueryConnectedPorts(epd *EquipmentPortDefinition) *EquipmentPortDefinitionQuery {
+	query := &EquipmentPortDefinitionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := epd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(equipmentportdefinition.Table, equipmentportdefinition.FieldID, id),
+			sqlgraph.To(equipmentportdefinition.Table, equipmentportdefinition.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, equipmentportdefinition.ConnectedPortsTable, equipmentportdefinition.ConnectedPortsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(epd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *EquipmentPortDefinitionClient) Hooks() []Hook {
 	hooks := c.hooks.EquipmentPortDefinition
