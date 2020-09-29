@@ -8,7 +8,7 @@
  * @format
  */
 
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import React from 'react';
 import axios from 'axios';

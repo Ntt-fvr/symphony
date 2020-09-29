@@ -17,7 +17,7 @@ import React, {useCallback, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 
 import AddFlowDraftMutation from '../../../../mutations/AddFlowDraftMutation';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../../../common/NameDescriptionSection';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';

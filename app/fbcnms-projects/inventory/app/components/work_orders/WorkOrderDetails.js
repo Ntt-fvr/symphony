@@ -37,7 +37,7 @@ import LinkIcon from '@symphony/design-system/icons/Actions/LinkIcon';
 import LocationBreadcrumbsTitle from '../location/LocationBreadcrumbsTitle';
 import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useContext, useMemo, useReducer, useState} from 'react';

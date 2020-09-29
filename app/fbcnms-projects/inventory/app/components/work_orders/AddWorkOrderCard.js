@@ -32,7 +32,7 @@ import FormField from '@symphony/design-system/components/FormField/FormField';
 import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSaveCancelPanel';
 import Grid from '@material-ui/core/Grid';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeahead from '../typeahead/ProjectTypeahead';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React, {useCallback, useContext, useReducer, useState} from 'react';

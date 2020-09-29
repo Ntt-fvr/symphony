@@ -50,19 +50,24 @@ const NameInput = (props: Props) => {
     value: value,
     required: true,
   });
+  const solidValue = value || '';
   return (
     <FormField
       label={title}
       required={true}
       hasError={!!errorText}
       errorText={errorText}
+      validation={{
+        id: fieldId,
+        value: solidValue,
+      }}
       hasSpacer={hasSpacer ?? true}>
       <TextInput
         name={fieldId}
         autoFocus={true}
         type="string"
         className={inputClass}
-        value={value || ''}
+        value={solidValue}
         placeholder={placeholder}
         onChange={onNameChanded}
         disabled={disabled}

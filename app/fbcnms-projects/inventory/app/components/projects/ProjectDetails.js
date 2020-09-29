@@ -33,7 +33,7 @@ import LocationBreadcrumbsTitle from '../location/LocationBreadcrumbsTitle';
 import LocationMapSnippet from '../location/LocationMapSnippet';
 import LocationTypeahead from '../typeahead/LocationTypeahead';
 import MainContext from '../MainContext';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectWorkOrdersList from './ProjectWorkOrdersList';
 import PropertyValueInput from '../form/PropertyValueInput';
 import React from 'react';

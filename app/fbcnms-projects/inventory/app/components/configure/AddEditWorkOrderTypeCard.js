@@ -25,7 +25,7 @@ import ExperimentalPropertyTypesTable from '../form/ExperimentalPropertyTypesTab
 import FormAction from '@symphony/design-system/components/Form/FormAction';
 import FormActionWithPermissions from '../../common/FormActionWithPermissions';
 import FormField from '@symphony/design-system/components/FormField/FormField';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../common/NameDescriptionSection';
 import PropertyTypesTableDispatcher from '../form/context/property_types/PropertyTypesTableDispatcher';
 import React, {useCallback, useReducer, useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';

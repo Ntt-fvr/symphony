@@ -20,7 +20,7 @@ import CreateProjectTypeMutation from './mutations/CreateProjectTypeMutation';
 import EditProjectTypeMutation from './mutations/EditProjectTypeMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
-import NameDescriptionSection from '@fbcnms/ui/components/NameDescriptionSection';
+import NameDescriptionSection from '../../common/NameDescriptionSection';
 import ProjectTypeWorkOrderTemplatesPanel from './ProjectTypeWorkOrderTemplatesPanel';
 import PropertyTypeTable from '../form/PropertyTypeTable';
 import React, {useCallback, useMemo, useState} from 'react';

@@ -11,7 +11,7 @@ import type {EquipmentPort, Link} from '../../common/Equipment';
 import type {PowerSearchLinkFirstEquipmentResultsTable_equipment} from './__generated__/PowerSearchLinkFirstEquipmentResultsTable_equipment.graphql';
 
 import AvailableLinksAndPortsTable from './AvailableLinksAndPortsTable';
-import Button from '@fbcnms/ui/components/design-system/Button';
+import Button from '@symphony/design-system/components/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -21,7 +21,7 @@ import PortsConnectedStateDialog from '../equipment/PortsConnectedStateDialog';
 import PowerSearchLinkFirstEquipmentResultsTable from './PowerSearchLinkFirstEquipmentResultsTable';
 import React, {useState} from 'react';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
-import Text from '@fbcnms/ui/components/design-system/Text';
+import Text from '@symphony/design-system/components/Text';
 import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
 import {WizardContextProvider} from '@symphony/design-system/components/Wizard/WizardContext';
