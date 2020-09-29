@@ -74,6 +74,34 @@ func (fc *FeatureCreate) SetNillableGlobal(b *bool) *FeatureCreate {
 	return fc
 }
 
+// SetEnabled sets the enabled field.
+func (fc *FeatureCreate) SetEnabled(b bool) *FeatureCreate {
+	fc.mutation.SetEnabled(b)
+	return fc
+}
+
+// SetNillableEnabled sets the enabled field if the given value is not nil.
+func (fc *FeatureCreate) SetNillableEnabled(b *bool) *FeatureCreate {
+	if b != nil {
+		fc.SetEnabled(*b)
+	}
+	return fc
+}
+
+// SetDescription sets the description field.
+func (fc *FeatureCreate) SetDescription(s string) *FeatureCreate {
+	fc.mutation.SetDescription(s)
+	return fc
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (fc *FeatureCreate) SetNillableDescription(s *string) *FeatureCreate {
+	if s != nil {
+		fc.SetDescription(*s)
+	}
+	return fc
+}
+
 // AddUserIDs adds the users edge to User by ids.
 func (fc *FeatureCreate) AddUserIDs(ids ...int) *FeatureCreate {
 	fc.mutation.AddUserIDs(ids...)
@@ -164,6 +192,14 @@ func (fc *FeatureCreate) defaults() {
 		v := feature.DefaultUpdateTime()
 		fc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := fc.mutation.Global(); !ok {
+		v := feature.DefaultGlobal
+		fc.mutation.SetGlobal(v)
+	}
+	if _, ok := fc.mutation.Enabled(); !ok {
+		v := feature.DefaultEnabled
+		fc.mutation.SetEnabled(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -181,6 +217,12 @@ func (fc *FeatureCreate) check() error {
 		if err := feature.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := fc.mutation.Global(); !ok {
+		return &ValidationError{Name: "global", err: errors.New("ent: missing required field \"global\"")}
+	}
+	if _, ok := fc.mutation.Enabled(); !ok {
+		return &ValidationError{Name: "enabled", err: errors.New("ent: missing required field \"enabled\"")}
 	}
 	return nil
 }
@@ -240,6 +282,22 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			Column: feature.FieldGlobal,
 		})
 		_node.Global = value
+	}
+	if value, ok := fc.mutation.Enabled(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: feature.FieldEnabled,
+		})
+		_node.Enabled = value
+	}
+	if value, ok := fc.mutation.Description(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: feature.FieldDescription,
+		})
+		_node.Description = &value
 	}
 	if nodes := fc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

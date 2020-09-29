@@ -61,14 +61,16 @@ func (s *userSuite) upsertUser(input upsertUserInput) userData {
 	return rsp.UpsertUser.User
 }
 
-func (s *userSuite) createUsers(tenant string, names ...string) {
+func (s *userSuite) createUsers(tenant string, names ...string) (ids []string) {
 	input := upsertUserInput{
 		TenantID: model.NewTenant(tenant).ID.String(),
 	}
 	for _, name := range names {
 		input.AuthID = name
-		s.upsertUser(input)
+		data := s.upsertUser(input)
+		ids = append(ids, data.ID)
 	}
+	return ids
 }
 
 func (s *userSuite) TestUpsertUser() {
@@ -155,4 +157,26 @@ func (s *userSuite) TestQueryTenantUsers() {
 	s.Require().NoError(err)
 	s.Require().Len(rsp.Tenant.Users.Edges, 1)
 	s.Require().Equal(users[2], rsp.Tenant.Users.Edges[0].Node.AuthID)
+}
+
+func (s *userSuite) TestQueryUserTenant() {
+	tenant := s.T().Name()
+	ids := s.createUsers(tenant, "foo")
+	var rsp struct {
+		User struct{ Tenant struct{ Name string } }
+	}
+	err := s.client.Post(
+		`query($id: ID!) {
+			user: node(id: $id) {
+				... on User {
+					tenant {
+						name
+					}
+				}
+			}
+		}`,
+		&rsp, client.Var("id", ids[0]),
+	)
+	s.Require().NoError(err)
+	s.Require().Equal(tenant, rsp.User.Tenant.Name)
 }

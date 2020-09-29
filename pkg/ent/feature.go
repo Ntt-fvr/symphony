@@ -28,6 +28,10 @@ type Feature struct {
 	Name string `json:"name,omitempty"`
 	// Global holds the value of the "global" field.
 	Global bool `json:"global,omitempty"`
+	// Enabled holds the value of the "enabled" field.
+	Enabled bool `json:"enabled,omitempty"`
+	// Description holds the value of the "description" field.
+	Description *string `json:"description,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FeatureQuery when eager-loading is set.
 	Edges FeatureEdges `json:"edges"`
@@ -70,6 +74,8 @@ func (*Feature) scanValues() []interface{} {
 		&sql.NullTime{},   // update_time
 		&sql.NullString{}, // name
 		&sql.NullBool{},   // global
+		&sql.NullBool{},   // enabled
+		&sql.NullString{}, // description
 	}
 }
 
@@ -104,6 +110,17 @@ func (f *Feature) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field global", values[3])
 	} else if value.Valid {
 		f.Global = value.Bool
+	}
+	if value, ok := values[4].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field enabled", values[4])
+	} else if value.Valid {
+		f.Enabled = value.Bool
+	}
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field description", values[5])
+	} else if value.Valid {
+		f.Description = new(string)
+		*f.Description = value.String
 	}
 	return nil
 }
@@ -149,6 +166,12 @@ func (f *Feature) String() string {
 	builder.WriteString(f.Name)
 	builder.WriteString(", global=")
 	builder.WriteString(fmt.Sprintf("%v", f.Global))
+	builder.WriteString(", enabled=")
+	builder.WriteString(fmt.Sprintf("%v", f.Enabled))
+	if v := f.Description; v != nil {
+		builder.WriteString(", description=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

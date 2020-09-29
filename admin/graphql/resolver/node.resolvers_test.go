@@ -20,7 +20,7 @@ func TestNode(t *testing.T) {
 }
 
 func (s *nodeSuite) TestQueryTenantNode() {
-	const tenant = "foo"
+	tenant := s.T().Name()
 	s.expectTenant(tenant)
 	id := model.ID{Tenant: tenant}.String()
 	var rsp struct{ Node struct{ ID, Name string } }
@@ -68,7 +68,7 @@ func (s *nodeSuite) TestQueryUserNode() {
 }
 
 func (s *nodeSuite) TestQueryNodeNotFound() {
-	const tenant = "bar"
+	tenant := s.T().Name()
 	s.expectNoTenant(tenant)
 	id := model.ID{Tenant: tenant}.String()
 	var rsp struct{ Node struct{ Name string } }

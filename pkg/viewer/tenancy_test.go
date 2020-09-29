@@ -16,6 +16,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/facebookincubator/symphony/pkg/viewer/mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"gocloud.dev/server/health"
@@ -36,18 +37,8 @@ func TestFixedTenancy(t *testing.T) {
 	})
 }
 
-type testTenancy struct {
-	mock.Mock
-}
-
-func (t *testTenancy) ClientFor(ctx context.Context, name string) (*ent.Client, error) {
-	args := t.Called(ctx, name)
-	client, _ := args.Get(0).(*ent.Client)
-	return client, args.Error(1)
-}
-
 func TestCacheTenancy(t *testing.T) {
-	var m testTenancy
+	var m mocks.Tenancy
 	m.On("ClientFor", mock.Anything, "bar").
 		Return(&ent.Client{}, nil).
 		Once()
@@ -128,7 +119,7 @@ func TestMySQLTenancy(t *testing.T) {
 
 func TestTenancyContext(t *testing.T) {
 	want := &ent.Client{}
-	var m testTenancy
+	var m mocks.Tenancy
 	m.On("ClientFor", mock.Anything, t.Name()).
 		Return(want, nil).
 		Once()

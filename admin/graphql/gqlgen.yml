@@ -22,22 +22,3 @@ models:
   ID:
     model:
       - github.com/facebookincubator/symphony/admin/graphql/model.ID
-  User:
-    model:
-      - github.com/facebookincubator/symphony/admin/graphql/model.User
-  UserStatus:
-    model:
-      - github.com/facebookincubator/symphony/pkg/ent/user.Status
-  UserRole:
-    model:
-      - github.com/facebookincubator/symphony/pkg/ent/user.Role
-  Tenant:
-    fields:
-      users:
-        resolver: true
-  Cursor:
-    model:
-      - github.com/facebookincubator/symphony/pkg/ent.Cursor
-  PageInfo:
-    model:
-      - github.com/facebookincubator/symphony/pkg/ent.PageInfo

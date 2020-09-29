@@ -15753,6 +15753,8 @@ type FeatureMutation struct {
 	update_time   *time.Time
 	name          *string
 	global        *bool
+	enabled       *bool
+	description   *string
 	clearedFields map[string]struct{}
 	users         map[int]struct{}
 	removedusers  map[int]struct{}
@@ -15986,22 +15988,96 @@ func (m *FeatureMutation) OldGlobal(ctx context.Context) (v bool, err error) {
 	return oldValue.Global, nil
 }
 
-// ClearGlobal clears the value of global.
-func (m *FeatureMutation) ClearGlobal() {
-	m.global = nil
-	m.clearedFields[feature.FieldGlobal] = struct{}{}
-}
-
-// GlobalCleared returns if the field global was cleared in this mutation.
-func (m *FeatureMutation) GlobalCleared() bool {
-	_, ok := m.clearedFields[feature.FieldGlobal]
-	return ok
-}
-
 // ResetGlobal reset all changes of the "global" field.
 func (m *FeatureMutation) ResetGlobal() {
 	m.global = nil
-	delete(m.clearedFields, feature.FieldGlobal)
+}
+
+// SetEnabled sets the enabled field.
+func (m *FeatureMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the enabled value in the mutation.
+func (m *FeatureMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old enabled value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnabled is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled reset all changes of the "enabled" field.
+func (m *FeatureMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// SetDescription sets the description field.
+func (m *FeatureMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the description value in the mutation.
+func (m *FeatureMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old description value of the Feature.
+// If the Feature object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FeatureMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDescription is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of description.
+func (m *FeatureMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[feature.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the field description was cleared in this mutation.
+func (m *FeatureMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[feature.FieldDescription]
+	return ok
+}
+
+// ResetDescription reset all changes of the "description" field.
+func (m *FeatureMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, feature.FieldDescription)
 }
 
 // AddUserIDs adds the users edge to User by ids.
@@ -16124,7 +16200,7 @@ func (m *FeatureMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FeatureMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, feature.FieldCreateTime)
 	}
@@ -16136,6 +16212,12 @@ func (m *FeatureMutation) Fields() []string {
 	}
 	if m.global != nil {
 		fields = append(fields, feature.FieldGlobal)
+	}
+	if m.enabled != nil {
+		fields = append(fields, feature.FieldEnabled)
+	}
+	if m.description != nil {
+		fields = append(fields, feature.FieldDescription)
 	}
 	return fields
 }
@@ -16153,6 +16235,10 @@ func (m *FeatureMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case feature.FieldGlobal:
 		return m.Global()
+	case feature.FieldEnabled:
+		return m.Enabled()
+	case feature.FieldDescription:
+		return m.Description()
 	}
 	return nil, false
 }
@@ -16170,6 +16256,10 @@ func (m *FeatureMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case feature.FieldGlobal:
 		return m.OldGlobal(ctx)
+	case feature.FieldEnabled:
+		return m.OldEnabled(ctx)
+	case feature.FieldDescription:
+		return m.OldDescription(ctx)
 	}
 	return nil, fmt.Errorf("unknown Feature field %s", name)
 }
@@ -16207,6 +16297,20 @@ func (m *FeatureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetGlobal(v)
 		return nil
+	case feature.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	case feature.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Feature field %s", name)
 }
@@ -16237,8 +16341,8 @@ func (m *FeatureMutation) AddField(name string, value ent.Value) error {
 // during this mutation.
 func (m *FeatureMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(feature.FieldGlobal) {
-		fields = append(fields, feature.FieldGlobal)
+	if m.FieldCleared(feature.FieldDescription) {
+		fields = append(fields, feature.FieldDescription)
 	}
 	return fields
 }
@@ -16254,8 +16358,8 @@ func (m *FeatureMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *FeatureMutation) ClearField(name string) error {
 	switch name {
-	case feature.FieldGlobal:
-		m.ClearGlobal()
+	case feature.FieldDescription:
+		m.ClearDescription()
 		return nil
 	}
 	return fmt.Errorf("unknown Feature nullable field %s", name)
@@ -16277,6 +16381,12 @@ func (m *FeatureMutation) ResetField(name string) error {
 		return nil
 	case feature.FieldGlobal:
 		m.ResetGlobal()
+		return nil
+	case feature.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	case feature.FieldDescription:
+		m.ResetDescription()
 		return nil
 	}
 	return fmt.Errorf("unknown Feature field %s", name)

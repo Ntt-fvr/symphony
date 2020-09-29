@@ -1826,7 +1826,7 @@ func (f *Feature) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Feature",
-		Fields: make([]*Field, 4),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -1860,6 +1860,22 @@ func (f *Feature) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[3] = &Field{
 		Type:  "bool",
 		Name:  "global",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Enabled); err != nil {
+		return nil, err
+	}
+	node.Fields[4] = &Field{
+		Type:  "bool",
+		Name:  "enabled",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.Description); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "string",
+		Name:  "description",
 		Value: string(buf),
 	}
 	var ids []int

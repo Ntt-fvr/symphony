@@ -15,7 +15,6 @@ import (
 	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	pkgmysql "github.com/facebookincubator/symphony/pkg/mysql"
-
 	"github.com/go-sql-driver/mysql"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"

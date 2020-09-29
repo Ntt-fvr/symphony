@@ -627,7 +627,9 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "global", Type: field.TypeBool, Nullable: true},
+		{Name: "global", Type: field.TypeBool, Default: true},
+		{Name: "enabled", Type: field.TypeBool},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 	}
 	// FeaturesTable holds the schema information for the "features" table.
 	FeaturesTable = &schema.Table{
