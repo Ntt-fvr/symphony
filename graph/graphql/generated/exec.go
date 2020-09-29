@@ -401,6 +401,7 @@ type ComplexityRoot struct {
 
 	EquipmentPortDefinition struct {
 		Bandwidth       func(childComplexity int) int
+		ConnectedPorts  func(childComplexity int) int
 		ID              func(childComplexity int) int
 		Index           func(childComplexity int) int
 		Name            func(childComplexity int) int
@@ -1509,6 +1510,8 @@ type EquipmentPortResolver interface {
 }
 type EquipmentPortDefinitionResolver interface {
 	PortType(ctx context.Context, obj *ent.EquipmentPortDefinition) (*ent.EquipmentPortType, error)
+
+	ConnectedPorts(ctx context.Context, obj *ent.EquipmentPortDefinition) ([]*ent.EquipmentPortDefinition, error)
 }
 type EquipmentPortTypeResolver interface {
 	PropertyTypes(ctx context.Context, obj *ent.EquipmentPortType) ([]*ent.PropertyType, error)
@@ -3023,6 +3026,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.EquipmentPortDefinition.Bandwidth(childComplexity), true
+
+	case "EquipmentPortDefinition.connectedPorts":
+		if e.complexity.EquipmentPortDefinition.ConnectedPorts == nil {
+			break
+		}
+
+		return e.complexity.EquipmentPortDefinition.ConnectedPorts(childComplexity), true
 
 	case "EquipmentPortDefinition.id":
 		if e.complexity.EquipmentPortDefinition.ID == nil {
@@ -9449,6 +9459,7 @@ type EquipmentPortDefinition implements Node {
   visibleLabel: String
   portType: EquipmentPortType
   bandwidth: String
+  connectedPorts: [EquipmentPortDefinition!]
 }
 
 type EquipmentPort implements Node {
@@ -22917,6 +22928,38 @@ func (ec *executionContext) _EquipmentPortDefinition_bandwidth(ctx context.Conte
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _EquipmentPortDefinition_connectedPorts(ctx context.Context, field graphql.CollectedField, obj *ent.EquipmentPortDefinition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "EquipmentPortDefinition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.EquipmentPortDefinition().ConnectedPorts(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.EquipmentPortDefinition)
+	fc.Result = res
+	return ec.marshalOEquipmentPortDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinitionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _EquipmentPortDefinitionConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.EquipmentPortDefinitionConnection) (ret graphql.Marshaler) {
@@ -57468,6 +57511,17 @@ func (ec *executionContext) _EquipmentPortDefinition(ctx context.Context, sel as
 			})
 		case "bandwidth":
 			out.Values[i] = ec._EquipmentPortDefinition_bandwidth(ctx, field, obj)
+		case "connectedPorts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._EquipmentPortDefinition_connectedPorts(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -71399,6 +71453,46 @@ func (ec *executionContext) marshalOEquipmentPort2ᚖgithubᚗcomᚋfacebookincu
 		return graphql.Null
 	}
 	return ec._EquipmentPort(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOEquipmentPortDefinition2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.EquipmentPortDefinition) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNEquipmentPortDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinition(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOEquipmentPortDefinition2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐEquipmentPortDefinition(ctx context.Context, sel ast.SelectionSet, v *ent.EquipmentPortDefinition) graphql.Marshaler {

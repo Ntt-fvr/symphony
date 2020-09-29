@@ -810,6 +810,7 @@ type EquipmentPortDefinition implements Node {
   visibleLabel: String
   portType: EquipmentPortType
   bandwidth: String
+  connectedPorts: [EquipmentPortDefinition!]
 }
 
 type EquipmentPort implements Node {
