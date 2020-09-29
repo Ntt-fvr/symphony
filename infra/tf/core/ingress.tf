@@ -1,17 +1,17 @@
-# iam role for aws load balancer controller
-module aws_load_balancer_controller {
+# iam role for alb ingress controller
+module alb_ingress_controller_role {
   source                    = "../modules/irsa"
-  role_name_prefix          = "AWSLoadBalancerControllerRole"
+  role_name_prefix          = "ALBIngressControllerRole"
   role_path                 = local.eks_sa_role_path
-  role_policy               = data.aws_iam_policy_document.aws_load_balancer_controller.json
-  service_account_name      = "aws-load-balancer-controller"
+  role_policy               = data.aws_iam_policy_document.alb_ingress_controller.json
+  service_account_name      = "aws-alb-ingress-controller"
   service_account_namespace = "kube-system"
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
 
-# policy required by aws load balancer controller
-data aws_iam_policy_document aws_load_balancer_controller {
+# policy required by alb ingress controller
+data aws_iam_policy_document alb_ingress_controller {
   statement {
     actions = [
       "acm:DescribeCertificate",
@@ -158,20 +158,24 @@ data aws_iam_policy_document aws_load_balancer_controller {
   }
 }
 
-# AWS Load Balancer Controller
-resource helm_release aws_load_balancer_controller {
-  chart      = "aws-load-balancer-controller"
-  name       = module.aws_load_balancer_controller.service_account_name
-  repository = local.helm_repository.eks
-  version    = "0.1.0"
-  namespace  = module.aws_load_balancer_controller.service_account_namespace
+# alb ingress controller exposes ingress resources
+resource helm_release alb_ingress_controller {
+  chart      = "aws-alb-ingress-controller"
+  name       = module.alb_ingress_controller_role.service_account_name
+  repository = local.helm_repository.incubator
+  version    = "1.0.2"
+  namespace  = module.alb_ingress_controller_role.service_account_namespace
 
   values = [yamlencode({
     clusterName = module.eks.cluster_id
-    serviceAccount = {
-      name = module.aws_load_balancer_controller.service_account_name
-      annotations = {
-        "eks.amazonaws.com/role-arn" = module.aws_load_balancer_controller.role_arn
+    awsRegion   = data.aws_region.current.id
+    awsVpcID    = module.vpc.vpc_id
+    rbac = {
+      serviceAccount = {
+        name = module.alb_ingress_controller_role.service_account_name
+        annotations = {
+          "eks.amazonaws.com/role-arn" = module.alb_ingress_controller_role.role_arn
+        }
       }
     }
   })]
