@@ -177,7 +177,7 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateStatus() {
 			SetStatus(workorder.StatusPending).
 			Save(s.ctx)
 		s.Require().NoError(err)
-		s.Equal(workorder.StatusInProgress, order.Status)
+		s.Equal(workorder.StatusPlanned, order.Status)
 
 		order, err = order.Update().
 			SetStatus(workorder.StatusDone).
@@ -222,7 +222,7 @@ func (s *workOrderTestSuite) TestWorkOrderUpdateStatus() {
 			SetStatus(workorder.StatusInProgress).
 			Save(ctx)
 		s.Require().NoError(err)
-		s.Equal(workorder.StatusPending, order.Status)
+		s.Equal(workorder.StatusPlanned, order.Status)
 
 		order, err = order.Update().
 			SetStatus(workorder.StatusClosed).

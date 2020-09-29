@@ -56,7 +56,7 @@ func TestMigrateWorkOrderStatus(t *testing.T) {
 	err = migrations.MigrateWorkOrderStatus(ctx, logger)
 	require.NoError(t, err)
 
-	expectedStatus := []workorder.Status{workorder.StatusPlanned, workorder.StatusInProgress, workorder.StatusClosed}
+	expectedStatus := []workorder.Status{workorder.StatusPlanned, workorder.StatusPlanned, workorder.StatusClosed}
 	for i, orderID := range ids {
 		order, err := client.WorkOrder.Get(ctx, orderID)
 		require.NoError(t, err)

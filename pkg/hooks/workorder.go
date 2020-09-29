@@ -140,14 +140,14 @@ func WorkOrderUpdateStatusHook() ent.Hook {
 				case workorder.StatusDone:
 					mutation.SetStatus(workorder.StatusClosed)
 				case workorder.StatusPending:
-					mutation.SetStatus(workorder.StatusInProgress)
+					mutation.SetStatus(workorder.StatusPlanned)
 				}
 			} else {
 				switch status {
 				case workorder.StatusClosed:
 					mutation.SetStatus(workorder.StatusDone)
 				case workorder.StatusInProgress:
-					mutation.SetStatus(workorder.StatusPending)
+					mutation.SetStatus(workorder.StatusPlanned)
 				}
 			}
 
