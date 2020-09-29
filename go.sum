@@ -216,6 +216,8 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/facebook/ent v0.4.3-0.20200917090002-38e769465c01/go.mod h1:4e/LKv3FFjj/867jPJYCxycZg0aGeEIgkiQ8jv2j6iQ=
 github.com/facebook/ent v0.4.4-0.20200922172230-49101d7d051a h1:8HZHM92Wgw6iWV2yKE7RJjbrXCE3NatTaWreQBkMnmQ=
 github.com/facebook/ent v0.4.4-0.20200922172230-49101d7d051a/go.mod h1:4e/LKv3FFjj/867jPJYCxycZg0aGeEIgkiQ8jv2j6iQ=
+github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4 h1:5jGTTlQdt20g0M87QupMWa2Q8cp4PasK/kug1WAmWZw=
+github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4/go.mod h1:4e/LKv3FFjj/867jPJYCxycZg0aGeEIgkiQ8jv2j6iQ=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d h1:7zgmPfZyCNOIC3S+ny4hM05G/rIXrVdjY1i3Ma3gh1Q=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d/go.mod h1:ThhJ88ry5MEB39ewXi4fOZPOZOyGq5WMWWQsjDIqgcI=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
