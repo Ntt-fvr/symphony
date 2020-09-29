@@ -23,7 +23,11 @@ func (Feature) Fields() []ent.Field {
 			Immutable().
 			Unique(),
 		field.Bool("global").
-			Default(true).
+			Default(true),
+		field.Bool("enabled").
+			Default(false),
+		field.String("description").
+			Nillable().
 			Optional(),
 	}
 }

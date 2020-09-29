@@ -561,6 +561,10 @@ func init() {
 	featureDescGlobal := featureFields[1].Descriptor()
 	// feature.DefaultGlobal holds the default value on creation for the global field.
 	feature.DefaultGlobal = featureDescGlobal.Default.(bool)
+	// featureDescEnabled is the schema descriptor for enabled field.
+	featureDescEnabled := featureFields[2].Descriptor()
+	// feature.DefaultEnabled holds the default value on creation for the enabled field.
+	feature.DefaultEnabled = featureDescEnabled.Default.(bool)
 	fileMixin := schema.File{}.Mixin()
 	file.Policy = schema.File{}.Policy()
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {

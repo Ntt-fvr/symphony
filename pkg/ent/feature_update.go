@@ -47,9 +47,37 @@ func (fu *FeatureUpdate) SetNillableGlobal(b *bool) *FeatureUpdate {
 	return fu
 }
 
-// ClearGlobal clears the value of global.
-func (fu *FeatureUpdate) ClearGlobal() *FeatureUpdate {
-	fu.mutation.ClearGlobal()
+// SetEnabled sets the enabled field.
+func (fu *FeatureUpdate) SetEnabled(b bool) *FeatureUpdate {
+	fu.mutation.SetEnabled(b)
+	return fu
+}
+
+// SetNillableEnabled sets the enabled field if the given value is not nil.
+func (fu *FeatureUpdate) SetNillableEnabled(b *bool) *FeatureUpdate {
+	if b != nil {
+		fu.SetEnabled(*b)
+	}
+	return fu
+}
+
+// SetDescription sets the description field.
+func (fu *FeatureUpdate) SetDescription(s string) *FeatureUpdate {
+	fu.mutation.SetDescription(s)
+	return fu
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (fu *FeatureUpdate) SetNillableDescription(s *string) *FeatureUpdate {
+	if s != nil {
+		fu.SetDescription(*s)
+	}
+	return fu
+}
+
+// ClearDescription clears the value of description.
+func (fu *FeatureUpdate) ClearDescription() *FeatureUpdate {
+	fu.mutation.ClearDescription()
 	return fu
 }
 
@@ -222,10 +250,24 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: feature.FieldGlobal,
 		})
 	}
-	if fu.mutation.GlobalCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+	if value, ok := fu.mutation.Enabled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: feature.FieldGlobal,
+			Value:  value,
+			Column: feature.FieldEnabled,
+		})
+	}
+	if value, ok := fu.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: feature.FieldDescription,
+		})
+	}
+	if fu.mutation.DescriptionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: feature.FieldDescription,
 		})
 	}
 	if fu.mutation.UsersCleared() {
@@ -368,9 +410,37 @@ func (fuo *FeatureUpdateOne) SetNillableGlobal(b *bool) *FeatureUpdateOne {
 	return fuo
 }
 
-// ClearGlobal clears the value of global.
-func (fuo *FeatureUpdateOne) ClearGlobal() *FeatureUpdateOne {
-	fuo.mutation.ClearGlobal()
+// SetEnabled sets the enabled field.
+func (fuo *FeatureUpdateOne) SetEnabled(b bool) *FeatureUpdateOne {
+	fuo.mutation.SetEnabled(b)
+	return fuo
+}
+
+// SetNillableEnabled sets the enabled field if the given value is not nil.
+func (fuo *FeatureUpdateOne) SetNillableEnabled(b *bool) *FeatureUpdateOne {
+	if b != nil {
+		fuo.SetEnabled(*b)
+	}
+	return fuo
+}
+
+// SetDescription sets the description field.
+func (fuo *FeatureUpdateOne) SetDescription(s string) *FeatureUpdateOne {
+	fuo.mutation.SetDescription(s)
+	return fuo
+}
+
+// SetNillableDescription sets the description field if the given value is not nil.
+func (fuo *FeatureUpdateOne) SetNillableDescription(s *string) *FeatureUpdateOne {
+	if s != nil {
+		fuo.SetDescription(*s)
+	}
+	return fuo
+}
+
+// ClearDescription clears the value of description.
+func (fuo *FeatureUpdateOne) ClearDescription() *FeatureUpdateOne {
+	fuo.mutation.ClearDescription()
 	return fuo
 }
 
@@ -541,10 +611,24 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err e
 			Column: feature.FieldGlobal,
 		})
 	}
-	if fuo.mutation.GlobalCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+	if value, ok := fuo.mutation.Enabled(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
-			Column: feature.FieldGlobal,
+			Value:  value,
+			Column: feature.FieldEnabled,
+		})
+	}
+	if value, ok := fuo.mutation.Description(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: feature.FieldDescription,
+		})
+	}
+	if fuo.mutation.DescriptionCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: feature.FieldDescription,
 		})
 	}
 	if fuo.mutation.UsersCleared() {

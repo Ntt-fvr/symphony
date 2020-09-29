@@ -25,6 +25,10 @@ const (
 	FieldName = "name"
 	// FieldGlobal holds the string denoting the global field in the database.
 	FieldGlobal = "global"
+	// FieldEnabled holds the string denoting the enabled field in the database.
+	FieldEnabled = "enabled"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
 
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
@@ -52,6 +56,8 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldGlobal,
+	FieldEnabled,
+	FieldDescription,
 }
 
 var (
@@ -92,4 +98,6 @@ var (
 	NameValidator func(string) error
 	// DefaultGlobal holds the default value on creation for the global field.
 	DefaultGlobal bool
+	// DefaultEnabled holds the default value on creation for the enabled field.
+	DefaultEnabled bool
 )

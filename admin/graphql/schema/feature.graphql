@@ -16,6 +16,16 @@ type Feature implements Node
   name: String!
 
   """
+  The state of the feature.
+  """
+  enabled: Boolean!
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
   The tenant of the feature.
   """
   tenant: Tenant
@@ -29,6 +39,11 @@ input FeatureFilters {
   A List of names to filter the features by.
   """
   names: [String!]
+
+  """
+  The state to filter the features by.
+  """
+  enabled: Boolean
 }
 
 extend type Tenant {
@@ -58,6 +73,16 @@ input CreateFeatureInput {
   name: String!
 
   """
+  The state of the feature.
+  """
+  enabled: Boolean! = false
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
   A list of tenants to create the feature for, defaults to all tenants.
   """
   tenants: [ID!] @tenantType
@@ -79,6 +104,46 @@ type CreateFeaturePayload {
 }
 
 """
+Input type of updateFeature.
+"""
+input UpdateFeatureInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The id of the feature.
+  """
+  id: ID!
+
+  """
+  The state of the feature.
+  """
+  enabled: Boolean
+
+  """
+  The description of the feature.
+  """
+  description: String
+}
+
+"""
+Output type of updateFeature.
+"""
+type UpdateFeaturePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The updated feature.
+  """
+  feature: Feature
+}
+
+"""
 Input type of deleteFeature.
 """
 input DeleteFeatureInput {
@@ -88,14 +153,9 @@ input DeleteFeatureInput {
   clientMutationId: String
 
   """
-  The name of the feature.
+  The id of the feature.
   """
-  name: String!
-
-  """
-  A list of tenants to delete the feature for, defaults to all tenants.
-  """
-  tenants: [ID!] @tenantType
+  id: ID!
 }
 
 """
@@ -113,6 +173,11 @@ extend type Mutation {
   Create a new feature.
   """
   createFeature(input: CreateFeatureInput!): CreateFeaturePayload
+
+  """
+  Update a feature.
+  """
+  updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload
 
   """
   Delete a feature.

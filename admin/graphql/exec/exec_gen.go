@@ -69,9 +69,11 @@ type ComplexityRoot struct {
 	}
 
 	Feature struct {
-		ID     func(childComplexity int) int
-		Name   func(childComplexity int) int
-		Tenant func(childComplexity int) int
+		Description func(childComplexity int) int
+		Enabled     func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Tenant      func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -80,6 +82,7 @@ type ComplexityRoot struct {
 		DeleteFeature  func(childComplexity int, input model.DeleteFeatureInput) int
 		DeleteTenant   func(childComplexity int, input model.DeleteTenantInput) int
 		TruncateTenant func(childComplexity int, input model.TruncateTenantInput) int
+		UpdateFeature  func(childComplexity int, input model.UpdateFeatureInput) int
 		UpsertUser     func(childComplexity int, input model.UpsertUserInput) int
 	}
 
@@ -106,6 +109,11 @@ type ComplexityRoot struct {
 	TruncateTenantPayload struct {
 		ClientMutationID func(childComplexity int) int
 		Tenant           func(childComplexity int) int
+	}
+
+	UpdateFeaturePayload struct {
+		ClientMutationID func(childComplexity int) int
+		Feature          func(childComplexity int) int
 	}
 
 	UpsertUserPayload struct {
@@ -141,6 +149,7 @@ type MutationResolver interface {
 	TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (*model.TruncateTenantPayload, error)
 	DeleteTenant(ctx context.Context, input model.DeleteTenantInput) (*model.DeleteTenantPayload, error)
 	CreateFeature(ctx context.Context, input model.CreateFeatureInput) (*model.CreateFeaturePayload, error)
+	UpdateFeature(ctx context.Context, input model.UpdateFeatureInput) (*model.UpdateFeaturePayload, error)
 	DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error)
 	UpsertUser(ctx context.Context, input model.UpsertUserInput) (*model.UpsertUserPayload, error)
 }
@@ -213,6 +222,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DeleteTenantPayload.ClientMutationID(childComplexity), true
+
+	case "Feature.description":
+		if e.complexity.Feature.Description == nil {
+			break
+		}
+
+		return e.complexity.Feature.Description(childComplexity), true
+
+	case "Feature.enabled":
+		if e.complexity.Feature.Enabled == nil {
+			break
+		}
+
+		return e.complexity.Feature.Enabled(childComplexity), true
 
 	case "Feature.id":
 		if e.complexity.Feature.ID == nil {
@@ -294,6 +317,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.TruncateTenant(childComplexity, args["input"].(model.TruncateTenantInput)), true
+
+	case "Mutation.updateFeature":
+		if e.complexity.Mutation.UpdateFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateFeature(childComplexity, args["input"].(model.UpdateFeatureInput)), true
 
 	case "Mutation.upsertUser":
 		if e.complexity.Mutation.UpsertUser == nil {
@@ -417,6 +452,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TruncateTenantPayload.Tenant(childComplexity), true
+
+	case "UpdateFeaturePayload.clientMutationId":
+		if e.complexity.UpdateFeaturePayload.ClientMutationID == nil {
+			break
+		}
+
+		return e.complexity.UpdateFeaturePayload.ClientMutationID(childComplexity), true
+
+	case "UpdateFeaturePayload.feature":
+		if e.complexity.UpdateFeaturePayload.Feature == nil {
+			break
+		}
+
+		return e.complexity.UpdateFeaturePayload.Feature(childComplexity), true
 
 	case "UpsertUserPayload.clientMutationId":
 		if e.complexity.UpsertUserPayload.ClientMutationID == nil {
@@ -597,7 +646,6 @@ type PageInfo
   """
   endCursor: Cursor
 }
-
 `, BuiltIn: false},
 	{Name: "schema/feature.graphql", Input: `"""
 A feature is a gatekeeper of a functionality.
@@ -617,6 +665,16 @@ type Feature implements Node
   name: String!
 
   """
+  The state of the feature.
+  """
+  enabled: Boolean!
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
   The tenant of the feature.
   """
   tenant: Tenant
@@ -630,6 +688,11 @@ input FeatureFilters {
   A List of names to filter the features by.
   """
   names: [String!]
+
+  """
+  The state to filter the features by.
+  """
+  enabled: Boolean
 }
 
 extend type Tenant {
@@ -659,6 +722,16 @@ input CreateFeatureInput {
   name: String!
 
   """
+  The state of the feature.
+  """
+  enabled: Boolean! = false
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
   A list of tenants to create the feature for, defaults to all tenants.
   """
   tenants: [ID!] @tenantType
@@ -680,6 +753,46 @@ type CreateFeaturePayload {
 }
 
 """
+Input type of updateFeature.
+"""
+input UpdateFeatureInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The id of the feature.
+  """
+  id: ID!
+
+  """
+  The state of the feature.
+  """
+  enabled: Boolean
+
+  """
+  The description of the feature.
+  """
+  description: String
+}
+
+"""
+Output type of updateFeature.
+"""
+type UpdateFeaturePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The updated feature.
+  """
+  feature: Feature
+}
+
+"""
 Input type of deleteFeature.
 """
 input DeleteFeatureInput {
@@ -689,14 +802,9 @@ input DeleteFeatureInput {
   clientMutationId: String
 
   """
-  The name of the feature.
+  The id of the feature.
   """
-  name: String!
-
-  """
-  A list of tenants to delete the feature for, defaults to all tenants.
-  """
-  tenants: [ID!] @tenantType
+  id: ID!
 }
 
 """
@@ -716,24 +824,28 @@ extend type Mutation {
   createFeature(input: CreateFeatureInput!): CreateFeaturePayload
 
   """
+  Update a feature.
+  """
+  updateFeature(input: UpdateFeatureInput!): UpdateFeaturePayload
+
+  """
   Delete a feature.
   """
   deleteFeature(input: DeleteFeatureInput!): DeleteFeaturePayload
 }
-
 `, BuiltIn: false},
 	{Name: "schema/gqlgen.graphql", Input: `# maps graphql type to go type.
 # ref: https://gqlgen.com/config
 directive @goModel(
-    model: String
-    models: [String!]
+  model: String
+  models: [String!]
 ) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 # customizes go fields
 # ref: https://gqlgen.com/config
 directive @goField(
-    forceResolver: Boolean
-    name: String
+  forceResolver: Boolean
+  name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
 	{Name: "schema/node.graphql", Input: `"""
@@ -1067,7 +1179,6 @@ extend type Mutation {
   """
   upsertUser(input: UpsertUserInput!): UpsertUserPayload
 }
-
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -1143,6 +1254,21 @@ func (ec *executionContext) field_Mutation_truncateTenant_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNTruncateTenantInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐTruncateTenantInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateFeatureInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeatureInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1571,6 +1697,73 @@ func (ec *executionContext) _Feature_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Feature_enabled(ctx context.Context, field graphql.CollectedField, obj *model.Feature) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Feature_description(ctx context.Context, field graphql.CollectedField, obj *model.Feature) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Feature",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Feature_tenant(ctx context.Context, field graphql.CollectedField, obj *model.Feature) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1757,6 +1950,45 @@ func (ec *executionContext) _Mutation_createFeature(ctx context.Context, field g
 	res := resTmp.(*model.CreateFeaturePayload)
 	fc.Result = res
 	return ec.marshalOCreateFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐCreateFeaturePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_updateFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updateFeature_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateFeature(rctx, args["input"].(model.UpdateFeatureInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.UpdateFeaturePayload)
+	fc.Result = res
+	return ec.marshalOUpdateFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeaturePayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_deleteFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2368,6 +2600,70 @@ func (ec *executionContext) _TruncateTenantPayload_tenant(ctx context.Context, f
 	res := resTmp.(*model.Tenant)
 	fc.Result = res
 	return ec.marshalOTenant2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐTenant(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UpdateFeaturePayload_clientMutationId(ctx context.Context, field graphql.CollectedField, obj *model.UpdateFeaturePayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UpdateFeaturePayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClientMutationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UpdateFeaturePayload_feature(ctx context.Context, field graphql.CollectedField, obj *model.UpdateFeaturePayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UpdateFeaturePayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Feature, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Feature)
+	fc.Result = res
+	return ec.marshalOFeature2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐFeature(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _UpsertUserPayload_clientMutationId(ctx context.Context, field graphql.CollectedField, obj *model.UpsertUserPayload) (ret graphql.Marshaler) {
@@ -3887,6 +4183,22 @@ func (ec *executionContext) unmarshalInputCreateFeatureInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			it.Enabled, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "tenants":
 			var err error
 
@@ -3961,39 +4273,13 @@ func (ec *executionContext) unmarshalInputDeleteFeatureInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "name":
+		case "id":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
-			}
-		case "tenants":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tenants"))
-			directive0 := func(ctx context.Context) (interface{}, error) {
-				return ec.unmarshalOID2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐIDᚄ(ctx, v)
-			}
-			directive1 := func(ctx context.Context) (interface{}, error) {
-				if ec.directives.TenantType == nil {
-					return nil, errors.New("directive tenantType is not implemented")
-				}
-				return ec.directives.TenantType(ctx, obj, directive0)
-			}
-
-			tmp, err := directive1(ctx)
-			if err != nil {
-				return it, graphql.ErrorOnPath(ctx, err)
-			}
-			if data, ok := tmp.([]*model.ID); ok {
-				it.Tenants = data
-			} else if tmp == nil {
-				it.Tenants = nil
-			} else {
-				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/admin/graphql/model.ID`, tmp)
-				return it, graphql.ErrorOnPath(ctx, err)
 			}
 		}
 	}
@@ -4059,6 +4345,14 @@ func (ec *executionContext) unmarshalInputFeatureFilters(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			it.Enabled, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -4084,6 +4378,50 @@ func (ec *executionContext) unmarshalInputTruncateTenantInput(ctx context.Contex
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateFeatureInput(ctx context.Context, obj interface{}) (model.UpdateFeatureInput, error) {
+	var it model.UpdateFeatureInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "clientMutationId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientMutationId"))
+			it.ClientMutationID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			it.Enabled, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4323,6 +4661,13 @@ func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "enabled":
+			out.Values[i] = ec._Feature_enabled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "description":
+			out.Values[i] = ec._Feature_description(ctx, field, obj)
 		case "tenant":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -4368,6 +4713,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_deleteTenant(ctx, field)
 		case "createFeature":
 			out.Values[i] = ec._Mutation_createFeature(ctx, field)
+		case "updateFeature":
+			out.Values[i] = ec._Mutation_updateFeature(ctx, field)
 		case "deleteFeature":
 			out.Values[i] = ec._Mutation_deleteFeature(ctx, field)
 		case "upsertUser":
@@ -4557,6 +4904,32 @@ func (ec *executionContext) _TruncateTenantPayload(ctx context.Context, sel ast.
 			out.Values[i] = ec._TruncateTenantPayload_clientMutationId(ctx, field, obj)
 		case "tenant":
 			out.Values[i] = ec._TruncateTenantPayload_tenant(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var updateFeaturePayloadImplementors = []string{"UpdateFeaturePayload"}
+
+func (ec *executionContext) _UpdateFeaturePayload(ctx context.Context, sel ast.SelectionSet, obj *model.UpdateFeaturePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateFeaturePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateFeaturePayload")
+		case "clientMutationId":
+			out.Values[i] = ec._UpdateFeaturePayload_clientMutationId(ctx, field, obj)
+		case "feature":
+			out.Values[i] = ec._UpdateFeaturePayload_feature(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5131,6 +5504,11 @@ func (ec *executionContext) unmarshalNTruncateTenantInput2githubᚗcomᚋfaceboo
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeatureInput(ctx context.Context, v interface{}) (model.UpdateFeatureInput, error) {
+	res, err := ec.unmarshalInputUpdateFeatureInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpsertUserInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertUserInput(ctx context.Context, v interface{}) (model.UpsertUserInput, error) {
 	res, err := ec.unmarshalInputUpsertUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5514,6 +5892,13 @@ func (ec *executionContext) marshalODeleteTenantPayload2ᚖgithubᚗcomᚋfacebo
 	return ec._DeleteTenantPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOFeature2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐFeature(ctx context.Context, sel ast.SelectionSet, v *model.Feature) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Feature(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOFeatureFilters2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐFeatureFilters(ctx context.Context, v interface{}) (*model.FeatureFilters, error) {
 	if v == nil {
 		return nil, nil
@@ -5692,6 +6077,13 @@ func (ec *executionContext) marshalOTruncateTenantPayload2ᚖgithubᚗcomᚋface
 		return graphql.Null
 	}
 	return ec._TruncateTenantPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUpdateFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeaturePayload(ctx context.Context, sel ast.SelectionSet, v *model.UpdateFeaturePayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UpdateFeaturePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpsertUserPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.UpsertUserPayload) graphql.Marshaler {

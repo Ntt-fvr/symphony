@@ -18,6 +18,10 @@ type CreateFeatureInput struct {
 	ClientMutationID *string `json:"clientMutationId"`
 	// The name of the feature.
 	Name string `json:"name"`
+	// The state of the feature.
+	Enabled bool `json:"enabled"`
+	// The description of the feature.
+	Description *string `json:"description"`
 	// A list of tenants to create the feature for, defaults to all tenants.
 	Tenants []*ID `json:"tenants"`
 }
@@ -50,10 +54,8 @@ type CreateTenantPayload struct {
 type DeleteFeatureInput struct {
 	// A unique identifier for the client performing the mutation.
 	ClientMutationID *string `json:"clientMutationId"`
-	// The name of the feature.
-	Name string `json:"name"`
-	// A list of tenants to delete the feature for, defaults to all tenants.
-	Tenants []*ID `json:"tenants"`
+	// The id of the feature.
+	ID ID `json:"id"`
 }
 
 // Output type of deleteFeature.
@@ -80,6 +82,8 @@ type DeleteTenantPayload struct {
 type FeatureFilters struct {
 	// A List of names to filter the features by.
 	Names []string `json:"names"`
+	// The state to filter the features by.
+	Enabled *bool `json:"enabled"`
 }
 
 // A tenant encapsulates a set of resources.
@@ -110,6 +114,26 @@ type TruncateTenantPayload struct {
 	ClientMutationID *string `json:"clientMutationId"`
 	// The truncated tenant.
 	Tenant *Tenant `json:"tenant"`
+}
+
+// Input type of updateFeature.
+type UpdateFeatureInput struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// The id of the feature.
+	ID ID `json:"id"`
+	// The state of the feature.
+	Enabled *bool `json:"enabled"`
+	// The description of the feature.
+	Description *string `json:"description"`
+}
+
+// Output type of updateFeature.
+type UpdateFeaturePayload struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// The updated feature.
+	Feature *Feature `json:"feature"`
 }
 
 // Input type of upsertUser.

@@ -99,6 +99,60 @@ func (s *featureSuite) TestCreateFeature() {
 	}
 }
 
+func (s *featureSuite) TestUpdateFeature() {
+	const tenant = "foobar"
+	name := s.T().Name()
+	id := s.createFeatures(name, tenant)[0]
+	const query = `query($tenant: String!, $enabled: Boolean!) {
+		tenant(name: $tenant) {
+			features(filterBy: {enabled: $enabled}) {
+				name
+				description
+			}
+		}
+	}`
+	var rsp struct {
+		Tenant struct {
+			Features []struct {
+				Name        string
+				Description *string
+			}
+		}
+	}
+	s.expectTenant(tenant)
+	err := s.client.Post(query, &rsp,
+		client.Var("tenant", tenant),
+		client.Var("enabled", true),
+	)
+	s.Require().NoError(err)
+	s.Require().Empty(rsp.Tenant.Features)
+
+	const desc = "testing feature update"
+	s.expectBeginCommit()
+	err = s.client.Post(`mutation($id: ID!, $desc: String!) {
+		updateFeature(input: { id: $id, enabled: true, description: $desc }) {
+			clientMutationId
+		}
+	}`, &struct {
+		UpdateFeature struct{ ClientMutationID string }
+	}{},
+		client.Var("id", id),
+		client.Var("desc", desc),
+	)
+	s.Require().NoError(err)
+
+	s.expectTenant(tenant)
+	err = s.client.Post(query, &rsp,
+		client.Var("tenant", tenant),
+		client.Var("enabled", true),
+	)
+	s.Require().NoError(err)
+	s.Require().Len(rsp.Tenant.Features, 1)
+	s.Require().Equal(name, rsp.Tenant.Features[0].Name)
+	s.Require().NotNil(rsp.Tenant.Features[0].Description)
+	s.Require().Equal(desc, *rsp.Tenant.Features[0].Description)
+}
+
 func (s *featureSuite) TestDeleteFeature() {
 	tenants := []string{"foo", "bar", "baz"}
 	s.createFeatures(s.T().Name(), tenants...)
@@ -106,6 +160,7 @@ func (s *featureSuite) TestDeleteFeature() {
 	var rsp struct {
 		Tenants []struct {
 			Features []struct {
+				ID   string
 				Name string
 			}
 		}
@@ -113,6 +168,7 @@ func (s *featureSuite) TestDeleteFeature() {
 	const tenantsQuery = `query {
 		tenants {
 			features {
+				id
 				name
 			}
 		}
@@ -125,20 +181,20 @@ func (s *featureSuite) TestDeleteFeature() {
 		s.Require().Equal(s.T().Name(), tenant.Features[0].Name)
 	}
 
-	s.mock.ExpectBegin()
-	s.expectTenants(tenants...)
-	s.mock.ExpectCommit()
-	err = s.client.Post(`mutation($name: String!) {
-		deleteFeature(input: { name: $name }) {
-			clientMutationId
-		}
-	}`,
-		&struct {
-			DeleteFeature struct{ ClientMutationID string }
-		}{},
-		client.Var("name", s.T().Name()),
-	)
-	s.Require().NoError(err)
+	for _, tenant := range rsp.Tenants {
+		s.expectBeginCommit()
+		err = s.client.Post(`mutation($id: ID!) {
+			deleteFeature(input: { id: $id }) {
+				clientMutationId
+			}
+		}`,
+			&struct {
+				DeleteFeature struct{ ClientMutationID string }
+			}{},
+			client.Var("id", tenant.Features[0].ID),
+		)
+		s.Require().NoError(err)
+	}
 
 	s.expectTenants(tenants...)
 	err = s.client.Post(tenantsQuery, &rsp)

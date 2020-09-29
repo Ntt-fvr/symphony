@@ -37,6 +37,8 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input model.Create
 		if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
 			feat, err := client.Feature.Create().
 				SetName(input.Name).
+				SetEnabled(input.Enabled).
+				SetNillableDescription(input.Description).
 				Save(ctx)
 			if err != nil {
 				return r.errf(
@@ -54,33 +56,41 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input model.Create
 	return payload, nil
 }
 
-func (r *mutationResolver) DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error) {
-	if input.Tenants == nil {
-		ids, err := r.tenantIDs(ctx)
-		if err != nil {
-			return nil, r.err(ctx, err, "cannot get tenant ids")
+func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.UpdateFeatureInput) (*model.UpdateFeaturePayload, error) {
+	tenant := input.ID.Tenant
+	var feat *ent.Feature
+	if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
+		var err error
+		if feat, err = client.Feature.UpdateOneID(input.ID.ID).
+			SetNillableEnabled(input.Enabled).
+			SetNillableDescription(input.Description).
+			Save(ctx); err != nil {
+			return r.errf(ctx, err, "cannot update feature %s for tenant %s",
+				input.ID, tenant,
+			)
 		}
-		input.Tenants = ids
+		return nil
+	}); err != nil {
+		return nil, err
 	}
-	for i := range input.Tenants {
-		tenant := input.Tenants[i].Tenant
-		if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
-			if _, err := client.Feature.Delete().
-				Where(feature.And(
-					feature.Name(input.Name),
-					feature.Global(true),
-				)).
-				Exec(ctx); err != nil {
-				return r.errf(
-					ctx, err,
-					"cannot delete feature %s for tenant %s",
-					input.Name, tenant,
-				)
-			}
-			return nil
-		}); err != nil {
-			return nil, err
+	return &model.UpdateFeaturePayload{
+		ClientMutationID: input.ClientMutationID,
+		Feature:          model.NewFeature(tenant, feat),
+	}, nil
+}
+
+func (r *mutationResolver) DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error) {
+	if err := r.withClient(ctx, input.ID.Tenant, func(client *ent.Client) error {
+		if err := client.Feature.DeleteOneID(input.ID.ID).Exec(ctx); err != nil {
+			return r.errf(
+				ctx, err,
+				"cannot delete feature %s for tenant %s",
+				input.ID, input.ID.Tenant,
+			)
 		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
 	return &model.DeleteFeaturePayload{
 		ClientMutationID: input.ClientMutationID,
@@ -92,8 +102,13 @@ func (r *tenantResolver) Features(ctx context.Context, obj *model.Tenant, filter
 	if err := r.withClient(ctx, obj.Name, func(client *ent.Client) error {
 		var err error
 		query := client.Feature.Query().Where(feature.Global(true))
-		if filterBy != nil && len(filterBy.Names) > 0 {
-			query = query.Where(feature.NameIn(filterBy.Names...))
+		if filterBy != nil {
+			if filterBy.Names != nil {
+				query = query.Where(feature.NameIn(filterBy.Names...))
+			}
+			if filterBy.Enabled != nil {
+				query = query.Where(feature.Enabled(*filterBy.Enabled))
+			}
 		}
 		if features, err = query.Order(ent.Asc(feature.FieldName)).All(ctx); err != nil {
 			return r.err(ctx, err, "cannot query features")
