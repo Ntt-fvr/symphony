@@ -99,25 +99,13 @@ func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant,
 }
 
 func (r *queryResolver) Tenants(ctx context.Context) ([]*model.Tenant, error) {
-	rows, err := r.db(ctx).QueryContext(ctx,
-		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?", viewer.DBName("%"),
-	)
+	names, err := viewer.GetTenantNames(ctx, r.db(ctx))
 	if err != nil {
-		return nil, r.err(ctx, err, "cannot query information schema")
+		return nil, r.err(ctx, err, "cannot get tenant names")
 	}
-	defer rows.Close()
-
-	var tenants []*model.Tenant
-	for rows.Next() {
-		var dbname string
-		if err := rows.Scan(&dbname); err != nil {
-			return nil, r.err(ctx, err, "cannot read row")
-		}
-		name := viewer.FromDBName(dbname)
+	tenants := make([]*model.Tenant, 0, len(names))
+	for _, name := range names {
 		tenants = append(tenants, model.NewTenant(name))
-	}
-	if err := rows.Err(); err != nil {
-		return nil, r.err(ctx, err, "cannot read rows")
 	}
 	return tenants, nil
 }

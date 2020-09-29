@@ -765,6 +765,13 @@ workflows:
           requires: *dpreq
           <<: *onlymaster
       - docker-publish:
+          name: migrate/publish
+          context: symphony
+          path: migrate
+          image: migrate
+          requires: *dpreq
+          <<: *onlymaster
+      - docker-publish:
           name: docs/publish
           context: symphony
           docker-context: docs
@@ -813,6 +820,7 @@ workflows:
             - store/publish
             - front/publish
             - async/publish
+            - migrate/publish
           <<: *onlymaster
       - promote-images: &promote
           context: symphony

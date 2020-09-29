@@ -9,10 +9,12 @@ import (
 	"database/sql"
 	"errors"
 	"os"
+	"regexp"
 	"strconv"
 	"testing"
 	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/cenkalti/backoff/v4"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -115,6 +117,26 @@ func TestMySQLTenancy(t *testing.T) {
 	c2, err := tenancy.ClientFor(context.Background(), n2)
 	require.NoError(t, err)
 	require.True(t, c1 != c2)
+}
+
+func TestGetTenantNames(t *testing.T) {
+	db, sqlMock, err := sqlmock.New()
+	require.NoError(t, err)
+	sqlMock.ExpectQuery(regexp.QuoteMeta(
+		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?",
+	)).
+		WithArgs("tenant_%").
+		WillReturnRows(
+			sqlmock.NewRows([]string{"SCHEMA_NAME"}).
+				AddRow("tenant_foo").
+				AddRow("tenant_bar"),
+		).
+		RowsWillBeClosed()
+	tenants, err := viewer.GetTenantNames(context.Background(), db)
+	require.NoError(t, err)
+	require.Equal(t, []string{"foo", "bar"}, tenants)
+	err = sqlMock.ExpectationsWereMet()
+	require.NoError(t, err)
 }
 
 func TestTenancyContext(t *testing.T) {

@@ -6,6 +6,7 @@ package viewer
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"runtime"
 	"strings"
@@ -145,6 +146,34 @@ func DBName(name string) string {
 // FromDBName returns the source name of the tenant.
 func FromDBName(name string) string {
 	return strings.TrimPrefix(name, dbPrefix)
+}
+
+type queryer interface {
+	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
+}
+
+// GetTenantNames returns a list of tenants that have a backing database.
+func GetTenantNames(ctx context.Context, queryer queryer) ([]string, error) {
+	rows, err := queryer.QueryContext(ctx,
+		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?", DBName("%"),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("cannot query information schema: %w", err)
+	}
+	defer rows.Close()
+
+	var names []string
+	for rows.Next() {
+		var dbname string
+		if err := rows.Scan(&dbname); err != nil {
+			return nil, fmt.Errorf("cannot read row: %w", err)
+		}
+		names = append(names, FromDBName(dbname))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("cannot read rows: %w", err)
+	}
+	return names, nil
 }
 
 type tenancyCtxKey struct{}

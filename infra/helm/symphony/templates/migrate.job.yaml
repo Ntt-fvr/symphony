@@ -17,25 +17,14 @@ spec:
       name: {{ template "symphony.migrate.fullname" . }}
       labels: {{- include "symphony.migrate.metaLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.graph.securityContext }}
+      {{- with .Values.migrate.securityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.graph.nodeSelector }}
-      nodeSelector: {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.graph.tolerations }}
-      tolerations: {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.graph.affinity }}
-      affinity: {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "symphony.imagePullSecrets" . | indent 6 }}
       containers:
         - name: migrate
-          image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
-          imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
-          command:
-            - /bin/migrate
+          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
+          imagePullPolicy: {{ .Values.migrate.image.pullPolicy }}
           args:
             - --db-driver=mysql
             - --db-dsn=$(MYSQL_DSN)
@@ -45,6 +34,7 @@ spec:
                 secretKeyRef:
                   name: {{ template "symphony.migrate.secretName" . }}
                   key: MYSQL_DSN
+            {{- include "symphony.loggingEnv" .Values.migrate | nindent 12 }}
       restartPolicy: OnFailure
 ---
 apiVersion: v1

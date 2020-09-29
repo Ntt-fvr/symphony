@@ -13,14 +13,13 @@ import (
 	"github.com/facebook/ent/dialect"
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
-	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	entmigrate "github.com/facebookincubator/symphony/pkg/ent/migrate"
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/migrate"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/golang/protobuf/ptypes/empty"
 	"go.uber.org/zap"
 )
 
@@ -67,15 +66,8 @@ func main() {
 
 	var names []string
 	if cli.Tenant == "" {
-		tenants, err := graphgrpc.NewTenantService(
-			graphgrpc.FixedDBProvider(driver.DB()),
-		).List(ctx, &empty.Empty{})
-		if err != nil {
+		if names, err = viewer.GetTenantNames(ctx, db); err != nil {
 			logger.Background().Fatal("listing tenants", zap.Error(err))
-		}
-		names = make([]string, 0, len(tenants.Tenants))
-		for _, tenant := range tenants.Tenants {
-			names = append(names, tenant.Name)
 		}
 	} else {
 		names = append(names, cli.Tenant)

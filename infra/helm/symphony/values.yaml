@@ -561,6 +561,29 @@ async:
     # Additional key/value pairs to be used as environment variables
     extraEnvVars: []
 
+# Configuration for migrate job
+migrate:
+  # Migrate image
+  image:
+    repository: facebookconnectivity-symphony-docker.jfrog.io/migrate
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # SecurityContext holds pod-level security attributes and common container settings.
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  securityContext:
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+
+  # Settings affecting migrate job
+  spec:
+    # Log configuration
+    log:
+      level: info
+      format: json
+
 # Configuration for store application
 store:
   # Annotations to be added to store deployment

@@ -6,6 +6,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -14,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/alecthomas/kong"
-	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -77,14 +77,13 @@ func main() { // nolint: funlen
 
 	var tenants []string
 	if cli.AllTenants {
-		driver, err := sql.Open("mysql", cli.DSN)
+		db, err := sql.Open("mysql", cli.DSN)
 		if err != nil {
-			logger.Fatal("cannot connect sql database",
+			logger.Fatal("cannot connect to mysql database",
 				zap.Error(err),
 			)
 		}
-
-		if tenants, err = getTenantList(ctx, driver); err != nil {
+		if tenants, err = viewer.GetTenantNames(ctx, db); err != nil {
 			logger.Fatal("cannot list tenants",
 				zap.Error(err),
 			)
@@ -161,24 +160,4 @@ func main() { // nolint: funlen
 			}
 		}()
 	}
-}
-
-func getTenantList(ctx context.Context, driver *sql.Driver) ([]string, error) {
-	rows, err := driver.DB().QueryContext(ctx,
-		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?", viewer.DBName("%"),
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var tenants []string
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			return nil, err
-		}
-		name = viewer.FromDBName(name)
-		tenants = append(tenants, name)
-	}
-	return tenants, nil
 }

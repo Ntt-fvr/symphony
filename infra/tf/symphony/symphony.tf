@@ -64,13 +64,13 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.2.0"
+  version             = "1.3.0"
   timeout             = 600
   max_history         = 100
 
   values = concat([
     yamlencode({
-      for s in toset(["front", "admin", "graph", "async", "store", "jobrunner", "docs"]) :
+      for s in toset(["front", "admin", "graph", "async", "store", "migrate", "jobrunner", "docs"]) :
       s => {
         image = {
           repository = "${module.artifactory_secret.data.docker_registry}/${s}"
@@ -79,7 +79,7 @@ resource helm_release symphony {
       }
     }),
     yamlencode({
-      for s in toset(["admin", "graph", "async", "store"]) :
+      for s in toset(["admin", "graph", "async", "store", "migrate"]) :
       s => {
         spec = {
           log = {
