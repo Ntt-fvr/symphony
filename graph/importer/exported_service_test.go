@@ -38,7 +38,7 @@ var endpointHeader = [...]string{"Endpoint Definition 1", "Location 1", "Equipme
 	"Endpoint Definition 4", "Location 4", "Equipment 4", "Endpoint Definition 5", "Location 5", "Equipment 5",
 }
 
-func prepareServiceTypeData(ctx context.Context, t *testing.T, r TestImporterResolver) serviceIds {
+func prepareServiceTypeData(ctx context.Context, t *testing.T, r testImporterResolver) serviceIds {
 	mr := r.importer.r.Mutation()
 
 	strDefVal := propDefValue

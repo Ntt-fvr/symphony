@@ -32,7 +32,7 @@ import (
 
 var locStruct map[string]*ent.Location
 
-func importEquipmentExportedData(ctx context.Context, t *testing.T, r *TestImporterResolver) int {
+func importEquipmentExportedData(ctx context.Context, t *testing.T, r *testImporterResolver) int {
 	var buf bytes.Buffer
 	bw := multipart.NewWriter(&buf)
 	err := bw.WriteField("skip_lines", "[5,6]")
@@ -70,7 +70,7 @@ func importEquipmentExportedData(ctx context.Context, t *testing.T, r *TestImpor
 	return code
 }
 
-func createLocationTypes(ctx context.Context, t *testing.T, r *TestImporterResolver) {
+func createLocationTypes(ctx context.Context, t *testing.T, r *testImporterResolver) {
 	cnt := r.client.LocationType.Create().SetName("Country").SaveX(ctx)
 	cty := r.client.LocationType.Create().SetName("City").SaveX(ctx)
 	bld := r.client.LocationType.Create().SetName("Building").SaveX(ctx)
@@ -91,7 +91,7 @@ func createLocationTypes(ctx context.Context, t *testing.T, r *TestImporterResol
 	require.NoError(t, err)
 }
 
-func createEquipmentTypes(ctx context.Context, r *TestImporterResolver) {
+func createEquipmentTypes(ctx context.Context, r *testImporterResolver) {
 	proptypes := []*pkgmodels.PropertyTypeInput{{
 		Name: "prop1Str",
 		Type: "string",
@@ -121,7 +121,7 @@ func createEquipmentTypes(ctx context.Context, r *TestImporterResolver) {
 	})
 }
 
-func verifyLocationsStructure(ctx context.Context, t *testing.T, r TestImporterResolver) {
+func verifyLocationsStructure(ctx context.Context, t *testing.T, r testImporterResolver) {
 	locs, err := r.importer.r.Query().Locations(ctx, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 	require.NoError(t, err)
 	require.Len(t, locs.Edges, 6)

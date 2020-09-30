@@ -17,7 +17,7 @@ import (
 func TestExportAndEditLinks(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
@@ -56,7 +56,7 @@ func TestExportAndEditLinks(t *testing.T) {
 func TestExportAndAddLinks(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LinksRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
@@ -94,7 +94,7 @@ func TestExportAndAddLinks(t *testing.T) {
 	}
 }
 
-func deleteLinkAndEquipmentForReImport(ctx context.Context, t *testing.T, r *TestExporterResolver) {
+func deleteLinkAndEquipmentForReImport(ctx context.Context, t *testing.T, r *testExporterResolver) {
 	l := r.Client.Link.Query().OnlyX(ctx)
 	equipToDelete := l.QueryPorts().QueryParent().Where(equipment.Name(currEquip)).OnlyX(ctx)
 	_, err := r.Mutation().RemoveLink(ctx, l.ID, nil)

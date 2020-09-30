@@ -56,27 +56,27 @@ const (
 
 var debug = flag.Bool("debug", false, "run database driver on debug mode")
 
-type TestImporterResolver struct {
+type testImporterResolver struct {
 	drv      dialect.Driver
 	client   *ent.Client
 	importer importer
 }
 
-type TestExporterResolver struct {
+type testExporterResolver struct {
 	generated.ResolverRoot
 	Drv      dialect.Driver
 	Client   *ent.Client
 	Exporter pkgexporter.Exporter
 }
 
-func newImporterTestResolver(t *testing.T) *TestImporterResolver {
+func newImporterTestResolver(t *testing.T) *testImporterResolver {
 	db, name, err := testdb.Open()
 	require.NoError(t, err)
 	db.SetMaxOpenConns(1)
 	return newImporterResolver(t, sql.OpenDB(name, db))
 }
 
-func newImporterResolver(t *testing.T, drv dialect.Driver) *TestImporterResolver {
+func newImporterResolver(t *testing.T, drv dialect.Driver) *testImporterResolver {
 	client := enttest.NewClient(t,
 		enttest.WithOptions(ent.Driver(drv)),
 		enttest.WithMigrateOptions(migrate.WithGlobalUniqueID(true)),
@@ -85,7 +85,7 @@ func newImporterResolver(t *testing.T, drv dialect.Driver) *TestImporterResolver
 		Logger:          logtest.NewTestLogger(t),
 		ReceiverFactory: ev.ErrFactory{},
 	})
-	return &TestImporterResolver{
+	return &testImporterResolver{
 		drv:    drv,
 		client: client,
 		importer: importer{
@@ -95,7 +95,7 @@ func newImporterResolver(t *testing.T, drv dialect.Driver) *TestImporterResolver
 	}
 }
 
-func prepareSvcData(ctx context.Context, t *testing.T, r TestImporterResolver) {
+func prepareSvcData(ctx context.Context, t *testing.T, r testImporterResolver) {
 	mr := r.importer.r.Mutation()
 	serviceType, _ := mr.AddServiceType(ctx, models.ServiceTypeCreateData{Name: "L2 Service", HasCustomer: false})
 	_, err := mr.AddService(ctx, models.ServiceCreateData{
@@ -118,14 +118,14 @@ func prepareSvcData(ctx context.Context, t *testing.T, r TestImporterResolver) {
 	require.NoError(t, err)
 }
 
-func NewExporterTestResolver(t *testing.T) *TestExporterResolver {
+func newExporterTestResolver(t *testing.T) *testExporterResolver {
 	db, name, err := testdb.Open()
 	require.NoError(t, err)
 	db.SetMaxOpenConns(1)
 	return newExporterResolver(t, sql.OpenDB(name, db))
 }
 
-func newExporterResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver {
+func newExporterResolver(t *testing.T, drv dialect.Driver) *testExporterResolver {
 	if *debug {
 		drv = dialect.Debug(drv)
 	}
@@ -139,10 +139,10 @@ func newExporterResolver(t *testing.T, drv dialect.Driver) *TestExporterResolver
 		ReceiverFactory: ev.ErrFactory{},
 	})
 	e := pkgexporter.Exporter{Log: logger, Rower: pkgexporter.EquipmentRower{Log: logger}}
-	return &TestExporterResolver{r, drv, client, e}
+	return &testExporterResolver{r, drv, client, e}
 }
 
-func prepareHandlerAndExport(t *testing.T, r *TestExporterResolver, e http.Handler) (context.Context, *http.Response) {
+func prepareHandlerAndExport(t *testing.T, r *testExporterResolver, e http.Handler) (context.Context, *http.Response) {
 	th := viewertest.TestHandler(t, e, r.Client)
 	server := httptest.NewServer(th)
 	defer server.Close()

@@ -111,7 +111,7 @@ func writeModifiedCSV(t *testing.T, r *csv.Reader, method pkgexporter.Method, wi
 	return &buf, ct
 }
 
-func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) {
+func prepareServiceData(ctx context.Context, t *testing.T, r *testImporterResolver) {
 	mr := r.importer.r.Mutation()
 	strDefVal := propDefValue
 	propDefInput1 := pkgmodels.PropertyTypeInput{
@@ -195,7 +195,7 @@ func prepareServiceData(ctx context.Context, t *testing.T, r *TestImporterResolv
 	require.NoError(t, err)
 }
 
-func deleteServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) {
+func deleteServiceData(ctx context.Context, t *testing.T, r *testImporterResolver) {
 	id := r.client.Service.Query().Where(service.Name(serviceName)).OnlyIDX(ctx)
 	_, err := r.importer.r.Mutation().RemoveService(ctx, id)
 	require.NoError(t, err)
@@ -205,7 +205,7 @@ func deleteServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 	require.NoError(t, err)
 }
 
-func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver, withVerify bool) {
+func verifyServiceData(ctx context.Context, t *testing.T, r *testImporterResolver, withVerify bool) {
 	s1, err := r.client.Service.Query().Where(service.Name("newName")).Only(ctx)
 	if withVerify {
 		require.Error(t, err)
@@ -248,7 +248,7 @@ func verifyServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 	require.Equal(t, service.StatusPending, s3.Status)
 }
 
-func exportServiceData(ctx context.Context, t *testing.T, r *TestImporterResolver) bytes.Buffer {
+func exportServiceData(ctx context.Context, t *testing.T, r *testImporterResolver) bytes.Buffer {
 	var buf bytes.Buffer
 	handler, err := pkgexporter.NewHandler(logtest.NewTestLogger(t))
 	require.NoError(t, err)
@@ -274,7 +274,7 @@ func exportServiceData(ctx context.Context, t *testing.T, r *TestImporterResolve
 	return buf
 }
 
-func importServiceExportedData(ctx context.Context, t *testing.T, buf bytes.Buffer, contentType string, r *TestImporterResolver) int {
+func importServiceExportedData(ctx context.Context, t *testing.T, buf bytes.Buffer, contentType string, r *testImporterResolver) int {
 	th := viewer.TenancyHandler(
 		http.HandlerFunc(r.importer.processExportedService),
 		viewer.NewFixedTenancy(r.client),

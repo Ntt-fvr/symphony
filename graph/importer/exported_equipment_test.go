@@ -51,7 +51,7 @@ type ids struct {
 	equipTypeID3 int
 }
 
-func prepareEquipmentTypeData(ctx context.Context, t *testing.T, r TestImporterResolver) ids {
+func prepareEquipmentTypeData(ctx context.Context, t *testing.T, r testImporterResolver) ids {
 	lids := prepareBasicData(ctx, t, r)
 	mr := r.importer.r.Mutation()
 
@@ -107,7 +107,7 @@ func prepareEquipmentTypeData(ctx context.Context, t *testing.T, r TestImporterR
 	}
 }
 
-func prepareBasicData(ctx context.Context, t *testing.T, r TestImporterResolver) locTypeIDs {
+func prepareBasicData(ctx context.Context, t *testing.T, r testImporterResolver) locTypeIDs {
 	mr := r.importer.r.Mutation()
 
 	l, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{Name: locTypeNameL})

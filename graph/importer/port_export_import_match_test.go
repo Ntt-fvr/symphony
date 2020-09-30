@@ -17,7 +17,7 @@ import (
 func TestImportAndEditPorts(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.PortsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)

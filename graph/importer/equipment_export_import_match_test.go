@@ -121,7 +121,7 @@ func importEquipmentFile(t *testing.T, client *ent.Client, r io.Reader, method p
 	require.NoError(t, err)
 }
 
-func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResolver) {
+func deleteEquipmentData(ctx context.Context, t *testing.T, r *testExporterResolver) {
 	id := r.Client.Equipment.Query().Where(equipment.Name(currEquip)).OnlyIDX(ctx)
 	_, err := r.Mutation().RemoveEquipment(ctx, id, nil)
 	require.NoError(t, err)
@@ -143,7 +143,7 @@ func deleteEquipmentData(ctx context.Context, t *testing.T, r *TestExporterResol
 	require.NoError(t, err)
 }
 
-func prepareEquipmentAndExport(t *testing.T, r *TestExporterResolver) (context.Context, *http.Response) {
+func prepareEquipmentAndExport(t *testing.T, r *testExporterResolver) (context.Context, *http.Response) {
 	log := r.Exporter.Log
 	var h http.Handler = &pkgexporter.Exporter{Log: log, Rower: pkgexporter.EquipmentRower{Log: log}}
 	th := viewertest.TestHandler(t, h, r.Client)
@@ -168,7 +168,7 @@ func TestEquipmentExportAndImportMatch(t *testing.T) {
 	for _, verify := range []bool{true, false} {
 		verify := verify
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
 			defer res.Body.Close()
 			deleteEquipmentData(ctx, t, r)
@@ -232,7 +232,7 @@ func TestEquipmentImportAndEdit(t *testing.T) {
 	for _, verify := range []bool{true, false} {
 		verify := verify
 		t.Run("Verify/"+strconv.FormatBool(verify), func(t *testing.T) {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			ctx, res := prepareEquipmentAndExport(t, r)
 			defer res.Body.Close()
 

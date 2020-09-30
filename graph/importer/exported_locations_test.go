@@ -24,7 +24,7 @@ var (
 	locationIDHeader        = []string{"Location ID"}
 )
 
-func prepareLocationTypesWithProperties(ctx context.Context, t *testing.T, r TestImporterResolver) locTypeIDs {
+func prepareLocationTypesWithProperties(ctx context.Context, t *testing.T, r testImporterResolver) locTypeIDs {
 	mr := r.importer.r.Mutation()
 	strDefVal := propDefValue
 	propDefInput1 := pkgmodels.PropertyTypeInput{

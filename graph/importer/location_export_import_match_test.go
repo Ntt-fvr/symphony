@@ -113,7 +113,7 @@ func importLocationsFile(t *testing.T, client *ent.Client, r io.Reader, method p
 func TestExportAndEditLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
@@ -162,7 +162,7 @@ func TestExportAndEditLocations(t *testing.T) {
 func TestExportAndAddLocations(t *testing.T) {
 	for _, withVerify := range []bool{true, false} {
 		for _, skipLines := range []bool{true, false} {
-			r := NewExporterTestResolver(t)
+			r := newExporterTestResolver(t)
 			log := r.Exporter.Log
 			e := &pkgexporter.Exporter{Log: log, Rower: pkgexporter.LocationsRower{Log: log}}
 			ctx, res := prepareHandlerAndExport(t, r, e)
@@ -206,7 +206,7 @@ func TestExportAndAddLocations(t *testing.T) {
 	}
 }
 
-func deleteLocationsForReImport(ctx context.Context, t *testing.T, r *TestExporterResolver) {
+func deleteLocationsForReImport(ctx context.Context, t *testing.T, r *testExporterResolver) {
 	locs := r.Client.Location.Query().AllX(ctx)
 	for _, loc := range locs {
 		err := r.Client.Location.DeleteOne(loc).Exec(ctx)

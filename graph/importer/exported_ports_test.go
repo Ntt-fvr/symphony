@@ -52,7 +52,7 @@ type portData struct {
 	linkID          int
 }
 
-func preparePortTypeData(ctx context.Context, t *testing.T, r TestImporterResolver) portData {
+func preparePortTypeData(ctx context.Context, t *testing.T, r testImporterResolver) portData {
 	ids := prepareEquipmentTypeData(ctx, t, r)
 	mr := r.importer.r.Mutation()
 
