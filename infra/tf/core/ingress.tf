@@ -360,7 +360,6 @@ resource aws_s3_bucket_public_access_block access_logs {
   restrict_public_buckets = true
 }
 
-
 locals {
   // access logs resource path where logs are placed.
   access_logs_put_object_resources = formatlist(
