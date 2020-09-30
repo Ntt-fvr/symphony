@@ -20,10 +20,6 @@ declare export opaque type AutomationFlowCard_flowDraft$fragmentType: Automation
 export type AutomationFlowCard_flowDraft = {|
   +id: string,
   +name: string,
-  +blocks: $ReadOnlyArray<{|
-    +id: string,
-    +name: string,
-  |}>,
   +$refType: AutomationFlowCard_flowDraft$ref,
 |};
 export type AutomationFlowCard_flowDraft$data = AutomationFlowCard_flowDraft;
@@ -35,48 +31,31 @@ export type AutomationFlowCard_flowDraft$key = {
 */
 
 
-const node/*: ReaderFragment*/ = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
-return {
+const node/*: ReaderFragment*/ = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "AutomationFlowCard_flowDraft",
   "selections": [
-    (v0/*: any*/),
-    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
-      "concreteType": "Block",
-      "kind": "LinkedField",
-      "name": "blocks",
-      "plural": true,
-      "selections": [
-        (v0/*: any*/),
-        (v1/*: any*/)
-      ],
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
       "storageKey": null
     }
   ],
   "type": "FlowDraft",
   "abstractKey": null
 };
-})();
 // prettier-ignore
-(node/*: any*/).hash = '75bb99e8838f3144249dc69d76f62754';
+(node/*: any*/).hash = '5aa63c690f5b97dd1881c3d8631cd7df';
 
 module.exports = node;
