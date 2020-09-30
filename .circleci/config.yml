@@ -720,7 +720,9 @@ workflows:
   version: 2.1
   all:
     when:
-      not: << pipeline.parameters.deploy >>
+      and:
+        - not: << pipeline.parameters.deploy >>
+        - not: << pipeline.parameters.pypi_release >>
     jobs:
       - lint
       - validate-gql-test
