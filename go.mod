@@ -42,7 +42,7 @@ require (
 	github.com/vektra/mockery v1.1.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
 	go.opencensus.io v0.22.4
-	go.uber.org/multierr v1.5.0
+	go.uber.org/multierr v1.6.0
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
 	gocloud.dev/pubsub/natspubsub v0.20.0
