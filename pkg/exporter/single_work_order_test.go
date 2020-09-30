@@ -176,7 +176,7 @@ func TestWoWithInvalidId(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWoRower{Log: log}}
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
 	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
@@ -200,7 +200,7 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	ctx := viewertest.NewContext(context.Background(), client)
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWoRower{Log: log}}
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
 	th := viewertest.TestHandler(t, e, client)
 	server := httptest.NewServer(th)
 	defer server.Close()
