@@ -85,3 +85,6 @@ data aws_caller_identity current {}
 
 # expose current region data
 data aws_region current {}
+
+# expose elb service account
+data aws_elb_service_account main {}

@@ -289,7 +289,7 @@ resource kubernetes_ingress gateway {
       "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
       "alb.ingress.kubernetes.io/target-type"              = "ip"
       "alb.ingress.kubernetes.io/healthcheck-path"         = "/healthz"
-      "alb.ingress.kubernetes.io/load-balancer-attributes" = "deletion_protection.enabled=true"
+      "alb.ingress.kubernetes.io/load-balancer-attributes" = "deletion_protection.enabled=true,access_logs.s3.enabled=true,access_logs.s3.bucket=${aws_s3_bucket.access_logs.id},access_logs.s3.prefix=${each.key}"
       "alb.ingress.kubernetes.io/certificate-arn"          = aws_acm_certificate.symphony.arn
       "alb.ingress.kubernetes.io/ssl-policy"               = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
       "alb.ingress.kubernetes.io/waf-acl-id"               = each.value.waf_acl_id
@@ -322,6 +322,94 @@ resource kubernetes_ingress gateway {
       }
     }
   }
+}
+
+# s3 bucket storing load balancers access logs
+resource aws_s3_bucket access_logs {
+  bucket = "symphony.${local.environment}.access-logs"
+
+  lifecycle_rule {
+    enabled = true
+
+    expiration {
+      days = 30
+    }
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  tags = {
+    Project   = "core"
+    PartOf    = "symphony"
+    Workspace = terraform.workspace
+  }
+}
+
+# block public access to access logs bucket
+resource aws_s3_bucket_public_access_block access_logs {
+  bucket                  = aws_s3_bucket.access_logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+
+locals {
+  // access logs resource path where logs are placed.
+  access_logs_put_object_resources = formatlist(
+    "arn:aws:s3:::%s/*/AWSLogs/%s/*",
+    aws_s3_bucket.access_logs.id,
+    data.aws_caller_identity.current.account_id,
+  )
+}
+
+# define access logs bucket policy
+# ref: https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-access-logs.html#attach-bucket-policy
+data aws_iam_policy_document access_logs {
+  statement {
+    principals {
+      identifiers = [data.aws_elb_service_account.main.arn]
+      type        = "AWS"
+    }
+    actions   = ["s3:PutObject"]
+    resources = local.access_logs_put_object_resources
+  }
+
+  statement {
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+      type        = "Service"
+    }
+    actions   = ["s3:PutObject"]
+    resources = local.access_logs_put_object_resources
+    condition {
+      test     = "StringEquals"
+      values   = ["bucket-owner-full-control"]
+      variable = "s3:x-amz-acl"
+    }
+  }
+
+  statement {
+    principals {
+      identifiers = ["delivery.logs.amazonaws.com"]
+      type        = "Service"
+    }
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.access_logs.arn]
+  }
+}
+
+# attach access logs bucket policy
+resource aws_s3_bucket_policy access_logs {
+  bucket = aws_s3_bucket.access_logs.id
+  policy = data.aws_iam_policy_document.access_logs.json
 }
 
 # iam role for external dns
