@@ -102,6 +102,8 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		return &models.EndBlock{
 			Params: obj.InputParams,
 		}, nil
+	case block.TypeDecision:
+		return &models.DecisionBlock{}, nil
 	case block.TypeSubFlow:
 		flow, err := obj.QuerySubFlow().
 			Only(ctx)
@@ -215,6 +217,11 @@ func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, inpu
 	return b.Update().
 		SetInputParams(blockVariables).
 		Save(ctx)
+}
+
+func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int, input models.DecisionBlockInput) (*ent.Block, error) {
+	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeDecision, flowDraftID, input.UIRepresentation)
+	return mutation.Save(ctx)
 }
 
 func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error) {

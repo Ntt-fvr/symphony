@@ -3329,6 +3329,10 @@ type EndBlock {
   params: [VariableExpression!]!
 }
 
+type DecisionBlock {
+  tempDummy: String,
+}
+
 type SubflowBlock {
   flow: Flow
   params: [VariableExpression!]!
@@ -3348,7 +3352,7 @@ type ActionBlock {
   params: [VariableExpression!]!
 }
 
-union BlockDetails = StartBlock | EndBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
+union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
 
 input StartBlockInput {
   cid: String!
@@ -3361,6 +3365,12 @@ input EndBlockInput {
   cid: String!
   name: String!
   params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input DecisionBlockInput {
+  cid: String!
+  name: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -3414,6 +3424,7 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
+  decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
   subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
@@ -4050,6 +4061,9 @@ type Mutation {
   addEndBlock(
     flowDraftId: ID!
     input: EndBlockInput!): Block!
+  addDecisionBlock(
+    flowDraftId: ID!
+    input: DecisionBlockInput!): Block!
   addGotoBlock(
     flowDraftId: ID!
     input: GotoBlockInput!): Block!

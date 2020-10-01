@@ -343,6 +343,18 @@ type Coordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
+type DecisionBlock struct {
+	TempDummy *string `json:"tempDummy"`
+}
+
+func (DecisionBlock) IsBlockDetails() {}
+
+type DecisionBlockInput struct {
+	Cid              string                            `json:"cid"`
+	Name             string                            `json:"name"`
+	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
 type Device struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -569,6 +581,7 @@ type ImportFlowDraftInput struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"endParamDefinitions"`
 	StartBlock          *StartBlockInput                 `json:"startBlock"`
 	EndBlocks           []*EndBlockInput                 `json:"endBlocks"`
+	DecisionBlocks      []*DecisionBlockInput            `json:"decisionBlocks"`
 	GotoBlocks          []*GotoBlockInput                `json:"gotoBlocks"`
 	SubflowBlocks       []*SubflowBlockInput             `json:"subflowBlocks"`
 	TriggerBlocks       []*TriggerBlockInput             `json:"triggerBlocks"`

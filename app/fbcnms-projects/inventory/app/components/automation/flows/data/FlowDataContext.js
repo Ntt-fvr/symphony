@@ -10,6 +10,7 @@
 
 import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
 import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
+import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
 import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 
@@ -30,6 +31,7 @@ import {graphql} from 'react-relay';
 import {
   mapActionBlocksForSave,
   mapConnectorsForSave,
+  mapDecisionBlockForSave,
   mapEndBlockForSave,
   mapStartBlockForSave,
   saveFlowDraft,
@@ -43,6 +45,7 @@ import {useLazyLoadQuery} from 'react-relay/hooks';
 const BLOCK_TYPES = {
   StartBlock: ManualStartType,
   ActionBlock: CreateWorkorderType,
+  DecisionBlock: DecisionType,
   EndBlock: EndType,
 };
 
@@ -197,7 +200,7 @@ function FlowDataContextProviderComponent(props: Props) {
           if (source == null || target == null) {
             return;
           }
-          flow.addConnector({source, target});
+          flow.addConnector(source, target);
         });
       });
     },
@@ -231,6 +234,9 @@ function FlowDataContextProviderComponent(props: Props) {
     const startBlocks = flow
       .getBlocksByType(ManualStartType)
       .map(mapStartBlockForSave);
+    const decisionBlocks = flow
+      .getBlocksByType(DecisionType)
+      .map(mapDecisionBlockForSave);
     const actionBlocks = flow
       .getBlocksByType(CreateWorkorderType)
       .map(mapActionBlocksForSave);
@@ -238,6 +244,10 @@ function FlowDataContextProviderComponent(props: Props) {
 
     if (startBlocks.length > 0) {
       flowData.startBlock = startBlocks[0];
+    }
+
+    if (decisionBlocks.length > 0) {
+      flowData.decisionBlocks = decisionBlocks;
     }
 
     if (endBlocks.length > 0) {

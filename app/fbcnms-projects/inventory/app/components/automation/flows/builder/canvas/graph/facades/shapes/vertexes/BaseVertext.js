@@ -88,7 +88,7 @@ export interface IVertexModel extends IShape {
   +attributes: IVertexModelAttributes;
   +position: (number, number) => void;
   +resize: (number, number) => void;
-  +attr: KeyValuePair => void;
+  +attr: (KeyValuePair | string, ?Primitive) => ?Primitive;
   +addTo: Graph => void;
   +remove: () => void;
   +getEmbeddedCells: () => $ReadOnlyArray<IVertexModel>;

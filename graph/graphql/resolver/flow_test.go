@@ -347,7 +347,15 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 		{
 			SourceBlockCid: "wo",
+			TargetBlockCid: "decision1",
+		},
+		{
+			SourceBlockCid: "decision1",
 			TargetBlockCid: "end",
+		},
+		{
+			SourceBlockCid: "decision1",
+			TargetBlockCid: "shortcut",
 		},
 		{
 			SourceBlockCid: "trig",
@@ -380,6 +388,12 @@ func TestImportEmptyFlow(t *testing.T) {
 						},
 					},
 				},
+			},
+		},
+		DecisionBlocks: []*models.DecisionBlockInput{
+			{
+				Cid:  "decision1",
+				Name: "Decision 1",
 			},
 		},
 		ActionBlocks: []*models.ActionBlockInput{
@@ -427,13 +441,16 @@ func TestImportEmptyFlow(t *testing.T) {
 	require.Equal(t, paramDefinitions, newDraft.EndParamDefinitions)
 	blocks, err := fdr.Blocks(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, blocks, 5)
+	require.Len(t, blocks, 6)
 	for _, blk := range blocks {
 		switch blk.Type {
 		case block.TypeStart:
 			require.Equal(t, "start", blk.Cid)
 			require.Equal(t, "Start point", blk.Name)
 			require.Equal(t, paramDefinitions, blk.StartParamDefinitions)
+		case block.TypeDecision:
+			require.Equal(t, "decision1", blk.Cid)
+			require.Equal(t, "Decision 1", blk.Name)
 		case block.TypeAction:
 			require.Equal(t, "wo", blk.Cid)
 			require.Equal(t, "Run work order", blk.Name)
@@ -460,7 +477,7 @@ func TestImportEmptyFlow(t *testing.T) {
 	}
 	connectors, err := fdr.Connectors(ctx, newDraft)
 	require.NoError(t, err)
-	require.Len(t, connectors, 3)
+	require.Len(t, connectors, 5)
 	for _, connector := range connectors {
 		require.NotNil(t, connector.FlowDraftID)
 		require.Equal(t, draft.ID, *connector.FlowDraftID)

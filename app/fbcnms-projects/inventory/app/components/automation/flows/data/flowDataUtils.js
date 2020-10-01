@@ -13,6 +13,7 @@ import {getGraphError} from '../../../../common/EntUtils';
 import type {
   ActionBlockInput,
   ConnectorInput,
+  DecisionBlockInput,
   EndBlockInput,
   ImportFlowDraftInput,
   StartBlockInput,
@@ -45,6 +46,12 @@ export function mapStartBlockForSave(block: IBlock): StartBlockInput {
   return {
     ...mapBlockForSave(block),
     paramDefinitions: [],
+  };
+}
+
+export function mapDecisionBlockForSave(block: IBlock): DecisionBlockInput {
+  return {
+    ...mapBlockForSave(block),
   };
 }
 
