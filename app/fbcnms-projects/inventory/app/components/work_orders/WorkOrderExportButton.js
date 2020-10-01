@@ -51,12 +51,10 @@ const WorkOrderExportButton = (props: Props) => {
       })
       .then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        if (!isAsyncExportEnabled) {
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', fileName);
-          link.click();
-        }
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        link.click();
       })
       .catch(handleError);
   };
