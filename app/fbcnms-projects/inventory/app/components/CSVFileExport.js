@@ -125,7 +125,11 @@ const CSVFileExport = (props: Props) => {
       ) {
         clearInterval(intervalId);
         setIsAsyncTaskInProgress(false);
-        props.alert('Failed to export file');
+        props.alert(
+          polls === EXPORT_TASK_MAX_POLLS
+            ? 'Failed to export file: Your data is too large'
+            : 'Failed to export file: File creation error',
+        );
         return;
       } else if (response.task.status === 'SUCCEEDED') {
         clearInterval(intervalId);
