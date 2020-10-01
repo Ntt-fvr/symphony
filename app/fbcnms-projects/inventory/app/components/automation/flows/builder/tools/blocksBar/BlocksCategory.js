@@ -9,7 +9,7 @@
  */
 
 import type {IBlockType} from '../../canvas/graph/shapes/blocks/blockTypes/BaseBlockType';
-import type {MouseEventHandler} from '@symphony/design-system/components/Button';
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
 
 import Button from '@symphony/design-system/components/Button';
 import React from 'react';
