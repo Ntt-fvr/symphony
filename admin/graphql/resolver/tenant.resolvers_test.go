@@ -159,11 +159,16 @@ func (s *tenantSuite) TestQueryTenants() {
 		WillReturnRows(
 			sqlmock.NewRows([]string{"SCHEMA_NAME"}).
 				AddRow("tenant_bar").
+				AddRow("tenant_baz").
 				AddRow("tenant_foo"),
 		).
 		RowsWillBeClosed()
 	var rsp struct{ Tenants []model.Tenant }
-	err := s.client.Post(tenantsGQLQuery, &rsp)
+	err := s.client.Post(`query {
+		tenants(filterBy: { names: ["foo", "bar"] }) {
+			name
+		}
+	}`, &rsp)
 	s.Require().NoError(err)
 	s.Require().Equal([]model.Tenant{{Name: "bar"}, {Name: "foo"}}, rsp.Tenants)
 }

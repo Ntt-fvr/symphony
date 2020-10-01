@@ -96,7 +96,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Node    func(childComplexity int, id model.ID) int
 		Tenant  func(childComplexity int, name string) int
-		Tenants func(childComplexity int) int
+		Tenants func(childComplexity int, filterBy *model.TenantFilters) int
 	}
 
 	Tenant struct {
@@ -156,7 +156,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Node(ctx context.Context, id model.ID) (model.Node, error)
 	Tenant(ctx context.Context, name string) (*model.Tenant, error)
-	Tenants(ctx context.Context) ([]*model.Tenant, error)
+	Tenants(ctx context.Context, filterBy *model.TenantFilters) ([]*model.Tenant, error)
 }
 type TenantResolver interface {
 	Features(ctx context.Context, obj *model.Tenant, filterBy *model.FeatureFilters) ([]*model.Feature, error)
@@ -399,7 +399,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Tenants(childComplexity), true
+		args, err := ec.field_Query_tenants_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tenants(childComplexity, args["filterBy"].(*model.TenantFilters)), true
 
 	case "Tenant.features":
 		if e.complexity.Tenant.Features == nil {
@@ -893,6 +898,16 @@ type Tenant implements Node {
   name: String!
 }
 
+"""
+Ways in which to filter list of tenants.
+"""
+input TenantFilters {
+  """
+  A List of names to filter the tenants by.
+  """
+  names: [String!]
+}
+
 extend type Query {
   """
   Lookup a tenant by name.
@@ -907,7 +922,7 @@ extend type Query {
   """
   Get alphabetically sorted list of tenants.
   """
-  tenants: [Tenant!]
+  tenants(filterBy: TenantFilters): [Tenant!]
 }
 
 """
@@ -1334,6 +1349,21 @@ func (ec *executionContext) field_Query_tenant_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tenants_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.TenantFilters
+	if tmp, ok := rawArgs["filterBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterBy"))
+		arg0, err = ec.unmarshalOTenantFilters2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐTenantFilters(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["filterBy"] = arg0
 	return args, nil
 }
 
@@ -2297,9 +2327,16 @@ func (ec *executionContext) _Query_tenants(ctx context.Context, field graphql.Co
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_tenants_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Tenants(rctx)
+		return ec.resolvers.Query().Tenants(rctx, args["filterBy"].(*model.TenantFilters))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4359,6 +4396,26 @@ func (ec *executionContext) unmarshalInputFeatureFilters(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTenantFilters(ctx context.Context, obj interface{}) (model.TenantFilters, error) {
+	var it model.TenantFilters
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "names":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
+			it.Names, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTruncateTenantInput(ctx context.Context, obj interface{}) (model.TruncateTenantInput, error) {
 	var it model.TruncateTenantInput
 	var asMap = obj.(map[string]interface{})
@@ -6070,6 +6127,14 @@ func (ec *executionContext) marshalOTenant2ᚖgithubᚗcomᚋfacebookincubator�
 		return graphql.Null
 	}
 	return ec._Tenant(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTenantFilters2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐTenantFilters(ctx context.Context, v interface{}) (*model.TenantFilters, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTenantFilters(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOTruncateTenantPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐTruncateTenantPayload(ctx context.Context, sel ast.SelectionSet, v *model.TruncateTenantPayload) graphql.Marshaler {

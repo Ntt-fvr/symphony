@@ -19,7 +19,7 @@ import (
 
 func (r *queryResolver) Node(ctx context.Context, id model.ID) (model.Node, error) {
 	if id.ID == 0 {
-		if _, err := r.tenant(ctx, id.Tenant); err != nil {
+		if _, err := r.Tenant(ctx, id.Tenant); err != nil {
 			return nil, entgql.ErrNodeNotFound(id)
 		}
 		return model.NewTenant(id.Tenant), nil

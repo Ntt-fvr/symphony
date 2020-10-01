@@ -100,6 +100,12 @@ type Tenant struct {
 
 func (Tenant) IsNode() {}
 
+// Ways in which to filter list of tenants.
+type TenantFilters struct {
+	// A List of names to filter the tenants by.
+	Names []string `json:"names"`
+}
+
 // Input type of truncateTenant.
 type TruncateTenantInput struct {
 	// A unique identifier for the client performing the mutation.
