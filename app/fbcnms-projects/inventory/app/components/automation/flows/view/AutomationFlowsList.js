@@ -19,7 +19,6 @@ const useStyles = makeStyles(() => ({
     display: 'grid',
     gridGap: '16px',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    width: '1680px', // TODO: remove when container width is set
   },
 }));
 
