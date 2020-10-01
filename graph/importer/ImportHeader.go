@@ -21,7 +21,7 @@ func NewImportHeader(line []string, entity ImportEntity) (ImportHeader, error) {
 	prnt3Idx := findStringContainsIndex(line, "Parent Equipment (3)")
 
 	switch entity {
-	case ImportEntityService, ImportEntityLocation:
+	case ImportEntityService, ImportEntityLocation, ImportEntityProject:
 	default:
 		if prnt3Idx == -1 {
 			return ImportHeader{}, errors.New("couldn't find Parent Equipment headers")
@@ -44,6 +44,14 @@ func (l ImportHeader) NameIdx() int {
 		return 0
 	}
 	return 1
+}
+
+func (l ImportHeader) DescriptionIdx() int {
+	return findIndex(l.line, "Description")
+}
+
+func (l ImportHeader) PriorityIdx() int {
+	return findIndex(l.line, "Priority")
 }
 
 func (l ImportHeader) PortEquipmentNameIdx() int {
@@ -140,6 +148,8 @@ func (l ImportHeader) LocationsRangeIdx() (int, int) {
 		return 3, l.prnt3Idx
 	case ImportEntityLocation:
 		return 1, l.ExternalIDIdx()
+	case ImportEntityProject:
+		return l.DescriptionIdx() + 1, l.PriorityIdx()
 	}
 	return -1, -1
 }
@@ -161,6 +171,8 @@ func (l ImportHeader) PropertyStartIdx() int {
 		return l.LinkSecondPortStartIdx() * 2
 	case ImportEntityLocation:
 		return l.ExternalIDIdx() + 3
+	case ImportEntityProject:
+		return l.PriorityIdx() + 1
 	}
 	return -1
 }

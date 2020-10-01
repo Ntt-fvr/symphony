@@ -16,16 +16,19 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import ProjectTypesList from './ProjectTypesList';
 import React, {useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
+import fbt from 'fbt';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
+
+import CSVUploadDialog from '../CSVUploadDialog';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 
 import nullthrows from '@fbcnms/util/nullthrows';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    position: 'relative',
-  },
-  avatar: {
-    backgroundColor: '#e4f2ff',
+  dialogPaper: {
+    minHeight: 550,
   },
   dialogTitle: {
     padding: '24px',
@@ -37,10 +40,16 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.blueGrayDark,
     fontWeight: 500,
   },
+  avatar: {
+    backgroundColor: '#e4f2ff',
+  },
+  tab: {
+    fontSize: '14px',
+    fontWeight: 500,
+  },
   dialogContent: {
     padding: 0,
-    height: '400px',
-    overflowY: 'scroll',
+    overflowY: 'auto',
   },
   dialogActions: {
     padding: '24px',
@@ -62,33 +71,64 @@ type Props = {
 const AddProjectDialog = (props: Props) => {
   const [selectedProjectTypeId, setSelectedProjectTypeId] = useState(null);
   const classes = useStyles();
+
+  const [value, setValue] = useState(0);
+  const [mode, setMode] = useState('projects');
+
+  const useBulkUpload = useFeatureFlag('projects_bulk_upload');
+
+  const handleTabChange = (event: SyntheticEvent<*>, tabIndex: number) => {
+    const tabContent = tabIndex == 0 ? 'projects' : 'upload';
+    setValue(tabIndex);
+    setMode(tabContent);
+  };
+
   return (
     <Dialog
       maxWidth="sm"
       open={props.open}
       onClose={props.onClose}
       fullWidth={true}
-      className={classes.root}>
+      classes={{paper: classes.dialogPaper}}>
+      <Tabs
+        value={value}
+        onChange={handleTabChange}
+        indicatorColor="primary"
+        textColor="primary">
+        <Tab className={classes.tab} label="Projects" />
+        {useBulkUpload && <Tab className={classes.tab} label="Bulk Upload" />}
+      </Tabs>
       <DialogTitle className={classes.dialogTitle}>
         <Text className={classes.dialogTitleText}>
-          Select a template for this project
+          {mode === 'projects'
+            ? fbt(
+                'Select a template for this project',
+                'project template selection',
+              )
+            : ''}
         </Text>
       </DialogTitle>
       <DialogContent className={classes.dialogContent}>
-        <ProjectTypesList onSelect={type => setSelectedProjectTypeId(type)} />
+        {mode === 'projects' ? (
+          <ProjectTypesList onSelect={type => setSelectedProjectTypeId(type)} />
+        ) : (
+          <CSVUploadDialog mode="projects" />
+        )}
       </DialogContent>
-      <DialogActions className={classes.dialogActions}>
-        <Button onClick={props.onClose} skin="regular">
-          Cancel
-        </Button>
-        <Button
-          disabled={selectedProjectTypeId === null}
-          onClick={() => {
-            props.onProjectTypeSelected(nullthrows(selectedProjectTypeId));
-          }}>
-          OK
-        </Button>
-      </DialogActions>
+      {mode === 'projects' && (
+        <DialogActions className={classes.dialogActions}>
+          <Button onClick={props.onClose} skin="regular">
+            Cancel
+          </Button>
+          <Button
+            disabled={selectedProjectTypeId === null}
+            onClick={() => {
+              props.onProjectTypeSelected(nullthrows(selectedProjectTypeId));
+            }}>
+            OK
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

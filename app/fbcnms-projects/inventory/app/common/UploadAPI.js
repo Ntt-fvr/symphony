@@ -15,6 +15,7 @@ export const UploadAPIUrls = {
   port_definition: () => '/graph/import/port_def',
   position_definition: () => '/graph/import/position_def',
   exported_equipment: () => '/graph/import/export_equipment',
+  exported_projects: () => '/graph/import/export_projects',
   exported_ports: () => '/graph/import/export_ports',
   exported_links: () => '/graph/import/export_links',
   exported_locations: () => '/graph/import/export_locations',

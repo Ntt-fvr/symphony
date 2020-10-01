@@ -28,7 +28,7 @@ import {UploadAPIUrls} from '../common/UploadAPI';
 import {useContext, useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 
-type Props = {} & WithStyles<typeof styles>;
+type Props = {mode?: string} & WithStyles<typeof styles>;
 
 const styles = _ => ({
   uploadContent: {
@@ -102,6 +102,14 @@ const uploadParams = [
   },
 ];
 
+const uploadProjects = [
+  {
+    text: 'Projects upload',
+    uploadPath: UploadAPIUrls.exported_projects(),
+    entity: 'exportedProjects',
+  },
+];
+
 type MessageType = {|
   text: ?string,
   type: ?'success' | 'error' | 'warning',
@@ -109,6 +117,8 @@ type MessageType = {|
 
 const CSVUploadDialog = (props: Props) => {
   const {classes} = props;
+
+  const {mode} = props;
 
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -180,17 +190,16 @@ const CSVUploadDialog = (props: Props) => {
   };
 
   const getImportScripts = context => {
-    const deprecatedImportsEnabled = context.isFeatureEnabled(
-      'deprecated_imports',
-    );
-    const importScripts = deprecatedImportsEnabled
+    const deprecatedImportsEnabled =
+      context && context.isFeatureEnabled('deprecated_imports');
+    return deprecatedImportsEnabled
       ? deprecatedUploadsParams.concat(uploadParams)
       : uploadParams;
-    return importScripts;
   };
 
   const getUploadPath = currentEntity => {
-    const importScripts = deprecatedUploadsParams.concat(uploadParams);
+    const importScripts =
+      mode === 'projects' ? uploadProjects : getImportScripts();
     const path = importScripts
       .filter(obj => obj.entity == currentEntity)
       .map(obj => obj.uploadPath);
@@ -335,7 +344,21 @@ const CSVUploadDialog = (props: Props) => {
           <UploadAnywayDialog onAbort={onAbort} onUpload={onContinueAnyway} />
         </>
       )}
-      {['success', 'warning'].includes(messageToDisplay?.type) ? null : (
+      {['success', 'warning'].includes(messageToDisplay?.type) ? null : mode &&
+        mode === 'projects' ? (
+        <div className={classes.uploadContent}>
+          {uploadProjects.map(entity => (
+            <CSVFileUpload
+              key={entity.uploadPath}
+              button={<Button variant="text">{entity.text}</Button>}
+              onProgress={() => setIsLoading(true)}
+              entity={entity.entity}
+              onFileChanged={(e, entity) => onFilePicked(e, entity)}
+              uploadPath={entity.uploadPath}
+            />
+          ))}
+        </div>
+      ) : (
         <div className={classes.uploadContent}>
           {importScripts.map(entity => (
             <CSVFileUpload

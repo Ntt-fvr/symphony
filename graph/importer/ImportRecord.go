@@ -86,6 +86,10 @@ func (l ImportRecord) validatePropertiesMismatch(ctx context.Context, typs []int
 		typ := typs[0].(*ent.ServiceType)
 		typName = typ.Name
 		q = typ.QueryPropertyTypes()
+	case ImportEntityProject:
+		typ := typs[0].(*ent.ProjectType)
+		typName = typ.Name
+		q = typ.QueryProperties()
 	default:
 		return fmt.Errorf("entity is not supported %s", l.entity())
 	}
@@ -151,6 +155,9 @@ func (l ImportRecord) GetPropertyInput(ctx context.Context, typ interface{}, pro
 	case ImportEntityLocation:
 		typ := typ.(*ent.LocationType)
 		pTyp, err = typ.QueryPropertyTypes().Where(propertytype.Name(proptypeName)).Only(ctx)
+	case ImportEntityProject:
+		typ := typ.(*ent.ProjectType)
+		pTyp, err = typ.QueryProperties().Where(propertytype.Name(proptypeName)).Only(ctx)
 	default:
 		return nil, errors.Wrapf(err, "entity is not supported %s", l.entity())
 	}
@@ -177,6 +184,14 @@ func (l ImportRecord) ID() int {
 
 func (l ImportRecord) Name() string {
 	return l.line[l.Header().NameIdx()]
+}
+
+func (l ImportRecord) Description() string {
+	return l.line[l.Header().DescriptionIdx()]
+}
+
+func (l ImportRecord) Priority() string {
+	return l.line[l.Header().PriorityIdx()]
 }
 
 func (l ImportRecord) TypeName() string {
