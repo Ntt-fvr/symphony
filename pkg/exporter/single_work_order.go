@@ -9,34 +9,36 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"go.uber.org/zap"
 )
 
-type SingleWoRower struct {
+type SingleWo struct {
 	Log log.Logger
 }
 
 var (
-	columns            = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "N", "M"}
-	singleWoDataHeader = []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Creation date", "Close date", "Location", "Assignee", "Owner"}
-	checklistHeader    = []string{"Description", "Type", "Is Mandatory", "Checked", "Additional instructions"}
-	cellScanHeader     = []string{"Created at", "Updated at", "Network Type", "Signal Strength", "Timestamp", "Latitude", "Longitude"}
-	fileHeader         = []string{"Name", "Type", "Created at", "Modified at", "Uploaded at", "Size", "Category", "Content-type", "Annotation"}
-	activityHeader     = []string{"Author", "Activity/Comment", "Created at", "Updated at"}
+	Columns            = []string{"A", "B", "C", "D", "E"}
+	SingleWoDataHeader = []string{"ID", "Name", "Description", "Project", "Type", "Priority", "Status", "Created", "Closed", "Location", "Assignee", "Owner"}
+	ChecklistHeader    = []string{"Checklist Item", "Is Mandatory", "Response", "Additional instructions"}
+	CellScanHeader     = []string{"Created at", "Updated at", "Network Type", "Signal Strength", "Timestamp", "Latitude", "Longitude"}
+	WifiScanHeader     = []string{"Created at", "Updated at", "Band", "BSSID", "SSID", "Capabilities", "Channel", "Channel Width", "Frequency", "RSSI", "Strength", "Latitude", "Longitude"}
+	ActivityHeader     = []string{"Author", "Activity/Comment", "Created", "Updated"}
 )
 
 const (
-	timeLayout       = "Mon, 02 Jan 2006 15:04:05"
-	summarySheetName = "Summary"
+	TimeLayout       = "Mon, 02 Jan 2006 15:04:05"
+	SummarySheetName = "Summary"
 )
 
-func (er SingleWoRower) CreateExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
+func (er SingleWo) CreateExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
 	logger := er.Log.For(ctx)
 	f := excelize.NewFile()
 	id, err := strconv.Atoi(url.Query().Get("id"))
@@ -59,8 +61,8 @@ func (er SingleWoRower) CreateExcelFile(ctx context.Context, url *url.URL) (*exc
 		logger.Error("cannot query checklist categories", zap.Error(err))
 		return nil, fmt.Errorf("cannot query checklist categories: %w", err)
 	}
-	for i, checklist := range checklists {
-		sheetName := "CheckList" + strconv.Itoa(i+1)
+	for _, checklist := range checklists {
+		sheetName := checklist.Title
 		f.NewSheet(sheetName)
 		items, err := checklist.QueryCheckListItems().All(ctx)
 		if err != nil {
@@ -68,7 +70,7 @@ func (er SingleWoRower) CreateExcelFile(ctx context.Context, url *url.URL) (*exc
 			return nil, fmt.Errorf("cannot query checklist items: %w", err)
 		}
 
-		if err := generateChecklistItems(ctx, items, sheetName, f); err != nil {
+		if err := er.generateChecklistItems(ctx, items, sheetName, f); err != nil {
 			logger.Error("cannot generate checklist items", zap.Error(err))
 			return nil, fmt.Errorf("cannot generate checklist items: %w", err)
 		}
@@ -77,8 +79,8 @@ func (er SingleWoRower) CreateExcelFile(ctx context.Context, url *url.URL) (*exc
 }
 
 func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder) error {
-	f.SetSheetName("Sheet1", summarySheetName)
-	_ = f.SetColWidth(summarySheetName, "A", "D", 80)
+	f.SetSheetName("Sheet1", SummarySheetName)
+	_ = f.SetColWidth(SummarySheetName, "A", "D", 40)
 	currRow := 1
 	data, err := getSummaryData(ctx, wo)
 	if err != nil {
@@ -87,9 +89,9 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 	for i, value := range data {
 		headerCell := "A" + strconv.Itoa(currRow)
 		valueCell := "B" + strconv.Itoa(currRow)
-		_ = f.SetCellValue(summarySheetName, headerCell, singleWoDataHeader[i])
-		_ = f.SetCellValue(summarySheetName, valueCell, value)
-		setHeaderStyle(f, summarySheetName, headerCell)
+		_ = f.SetCellValue(SummarySheetName, headerCell, SingleWoDataHeader[i])
+		_ = f.SetCellValue(SummarySheetName, valueCell, value)
+		setHeaderStyle(f, SummarySheetName, headerCell)
 		currRow++
 	}
 
@@ -103,10 +105,10 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 	}
 	currRow++
 
-	for i, header := range activityHeader {
-		cell := columns[i] + strconv.Itoa(currRow)
-		_ = f.SetCellValue(summarySheetName, cell, header)
-		setHeaderStyle(f, summarySheetName, cell)
+	for i, header := range ActivityHeader {
+		cell := Columns[i] + strconv.Itoa(currRow)
+		_ = f.SetCellValue(SummarySheetName, cell, header)
+		setHeaderStyle(f, SummarySheetName, cell)
 	}
 
 	for _, comment := range comments {
@@ -116,9 +118,9 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		if err != nil {
 			return err
 		}
-		for j, data := range []string{author.Email, comment.Text, comment.CreateTime.Format(timeLayout), comment.UpdateTime.Format(timeLayout)} {
-			cell := columns[j] + row
-			_ = f.SetCellValue(summarySheetName, cell, data)
+		for j, data := range []string{author.Email, comment.Text, comment.CreateTime.Format(TimeLayout), comment.UpdateTime.Format(TimeLayout)} {
+			cell := Columns[j] + row
+			_ = f.SetCellValue(SummarySheetName, cell, data)
 		}
 	}
 	for _, activity := range activities {
@@ -136,73 +138,110 @@ func generateWoSummary(ctx context.Context, f *excelize.File, wo *ent.WorkOrder)
 		if activity.IsCreate {
 			activityVal = activity.ActivityType.String() + " set to " + activity.NewValue
 		}
-		for j, data := range []string{authorEmail, activityVal, activity.CreateTime.Format(timeLayout), activity.UpdateTime.Format(timeLayout)} {
-			cell := columns[j] + row
-			_ = f.SetCellValue(summarySheetName, cell, data)
+		for j, data := range []string{authorEmail, activityVal, activity.CreateTime.Format(TimeLayout), activity.UpdateTime.Format(TimeLayout)} {
+			cell := Columns[j] + row
+			_ = f.SetCellValue(SummarySheetName, cell, data)
 		}
 	}
 	return nil
 }
 
-func generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, sheetName string, f *excelize.File) error {
-	_ = f.SetColWidth(sheetName, "A", "I", 30)
+func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.CheckListItem, sheetName string, f *excelize.File) error {
+	_ = f.SetColWidth(sheetName, "A", "D", 40)
+	_ = f.SetColWidth(sheetName, "B", "B", 11) // Is Mandatory column
 	currRow := 1
 
-	for i, header := range checklistHeader {
-		cell := columns[i] + strconv.Itoa(currRow)
+	for i, header := range ChecklistHeader {
+		cell := Columns[i] + strconv.Itoa(currRow)
 		_ = f.SetCellValue(sheetName, cell, header)
-		setHeaderStyle(f, summarySheetName, cell)
+		setHeaderStyle(f, sheetName, cell)
 	}
 	currRow++
-
 	for _, item := range items {
-		for j, data := range []string{item.Title, item.Type.String(), strconv.FormatBool(item.IsMandatory), strconv.FormatBool(item.Checked)} {
-			_ = f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
+		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
+			_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
 		}
 		if item.HelpText != nil {
-			_ = f.SetCellValue(sheetName, "E"+strconv.Itoa(currRow), *item.HelpText)
+			_ = f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), *item.HelpText)
 		}
 		currRow++
-
-		if item.Type == enum.CheckListItemTypeCellScan {
-			cellScans, err := item.QueryCellScan().All(ctx)
-			if err != nil {
-				return err
-			}
-			for i, header := range cellScanHeader {
-				cell := columns[i] + strconv.Itoa(currRow)
-				_ = f.SetCellValue(sheetName, cell, header)
-				setHeaderStyle(f, summarySheetName, cell)
-			}
-			currRow++
-			for _, cellScan := range cellScans {
-				for j, value := range []string{cellScan.CreateTime.Format(timeLayout), cellScan.UpdateTime.Format(timeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(timeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)} {
-					_ = f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), value)
-				}
-				currRow++
-			}
-		}
-
-		if item.Type == enum.CheckListItemTypeFiles {
-			files, err := item.QueryFiles().All(ctx)
-			if err != nil {
-				return err
-			}
-			for i, header := range fileHeader {
-				cell := columns[i] + strconv.Itoa(currRow)
-				_ = f.SetCellValue(sheetName, cell, header)
-				setHeaderStyle(f, summarySheetName, cell)
-			}
-			currRow++
-			for _, file := range files {
-				for j, data := range []string{file.Name, file.Type.String(), file.CreateTime.Format(timeLayout), file.ModifiedAt.Format(timeLayout), file.UploadedAt.Format(timeLayout), strconv.Itoa(file.Size), file.Category, file.ContentType, file.Annotation} {
-					_ = f.SetCellValue(sheetName, columns[j]+strconv.Itoa(currRow), data)
-				}
-				currRow++
-			}
-		}
 	}
 	return nil
+}
+
+func getItemString(ctx context.Context, item *ent.CheckListItem) string {
+	switch item.Type {
+	case enum.CheckListItemTypeEnum:
+		return item.SelectedEnumValues
+	case enum.CheckListItemTypeSimple:
+		return strconv.FormatBool(item.Checked)
+	case enum.CheckListItemTypeString:
+		return item.StringVal
+	case enum.CheckListItemTypeYesNo:
+		if item.YesNoVal != nil {
+			return item.YesNoVal.String()
+		}
+		return "N/A"
+	case enum.CheckListItemTypeCellScan:
+		data, err := getCellScanData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
+	case enum.CheckListItemTypeFiles:
+		data, err := getFileData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
+	case enum.CheckListItemTypeWifiScan:
+		data, err := getWifiScanData(ctx, item)
+		if err != nil {
+			return ""
+		}
+		return data
+	}
+	return ""
+}
+
+func getCellScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
+	cellScans, err := item.QueryCellScan().All(ctx)
+	if err != nil {
+		return "", err
+	}
+	var data strings.Builder
+	data.WriteString(strings.Join(CellScanHeader, ", "))
+	data.WriteString("\n\r")
+	for _, cellScan := range cellScans {
+		fields := []string{cellScan.CreateTime.Format(TimeLayout), cellScan.UpdateTime.Format(TimeLayout), cellScan.NetworkType.String(), strconv.Itoa(cellScan.SignalStrength), cellScan.Timestamp.Format(TimeLayout), fmt.Sprintf("%f", *cellScan.Latitude), fmt.Sprintf("%f", *cellScan.Longitude)}
+		data.WriteString(strings.Join(fields, ", "))
+		data.WriteString("\n\r")
+	}
+	return data.String(), nil
+}
+
+func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
+	wifiScans, err := item.QueryWifiScan().All(ctx)
+	if err != nil {
+		return "", err
+	}
+	var data strings.Builder
+	data.WriteString(strings.Join(WifiScanHeader, ", "))
+	data.WriteString("\n\r")
+	for _, wifiScan := range wifiScans {
+		fields := []string{wifiScan.CreateTime.Format(TimeLayout), wifiScan.UpdateTime.Format(TimeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
+		data.WriteString(strings.Join(fields, ", "))
+		data.WriteString("\n\r")
+	}
+	return data.String(), nil
+}
+
+func getFileData(ctx context.Context, item *ent.CheckListItem) (string, error) {
+	files, err := item.QueryFiles().Select(file.FieldName).Strings(ctx)
+	if err != nil {
+		return "", err
+	}
+	return strings.Join(files, ", "), nil
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
@@ -243,13 +282,13 @@ func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
 	}
 	woType = wType.Name
 	if wo.Status == workorder.StatusDone || wo.Status == workorder.StatusClosed {
-		closedDate = wo.CloseDate.Format(timeLayout)
+		closedDate = wo.CloseDate.Format(TimeLayout)
 	}
 	if wo.Description != nil {
 		woDescription = *wo.Description
 	}
 
-	return []string{strconv.Itoa(wo.ID), wo.Name, woDescription, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.Format(timeLayout), closedDate, locName, assigneeEmail, ownerEmail}, err
+	return []string{strconv.Itoa(wo.ID), wo.Name, woDescription, projName, woType, wo.Priority.String(), wo.Status.String(), wo.CreationDate.Format(TimeLayout), closedDate, locName, assigneeEmail, ownerEmail}, err
 }
 
 func setHeaderStyle(f *excelize.File, sheetName string, cell string) {
@@ -260,7 +299,6 @@ func setHeaderStyle(f *excelize.File, sheetName string, cell string) {
 		},
 		"alignment":
 		{
-			"horizontal": "center",
 			"wrap_text": true
 		}
 	}`)
