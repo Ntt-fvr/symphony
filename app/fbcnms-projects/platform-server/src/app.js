@@ -34,7 +34,12 @@ const passport = require('passport');
 const path = require('path');
 const fbcPassport = require('@fbcnms/auth/passport').default;
 const session = require('express-session');
-const {sequelize, Organization, User} = require('@fbcnms/sequelize-models');
+const {
+  sequelize,
+  Organization,
+  User,
+  FeatureFlag,
+} = require('@fbcnms/sequelize-models');
 const OrganizationBasicLocalStrategy = require('@fbcnms/auth/strategies/OrganizationBasicLocalStrategy')
   .default;
 const OrganizationLocalStrategy = require('@fbcnms/auth/strategies/OrganizationLocalStrategy')
@@ -48,6 +53,11 @@ const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
 
 const {createTenant, deleteTenant} = require('./admin/tenant');
 const {createUser, deactivateUsers} = require('./admin/user');
+const {
+  createFeature,
+  updateFeature,
+  deleteFeature,
+} = require('./admin/feature');
 const {access, configureAccess} = require('@fbcnms/auth/access');
 const {
   AccessRoles: {SUPERUSER, USER},
@@ -68,14 +78,13 @@ Organization.afterDestroy(async (org: any) => {
 });
 
 // add hooks to User model
-User.beforeCreate(async user => {
+User.beforeCreate(async (user: any) => {
   await createUser(
-    user.getDataValue('organization'),
-    user.getDataValue('email'),
-    user.getDataValue('role') === SUPERUSER,
+    user.organization,
+    user.email,
+    user.role === SUPERUSER,
   ).catch(err => console.error(err));
 });
-
 User.beforeBulkDestroy(async options => {
   const {where, model, transaction, logging, benchmark} = options;
   const emails = await model
@@ -84,6 +93,17 @@ User.beforeBulkDestroy(async options => {
   await deactivateUsers(where.organization, emails).catch(err =>
     console.error(err),
   );
+});
+
+// add hooks to FeatureFlag model
+FeatureFlag.beforeCreate(async (flag: any) => {
+  await createFeature(flag.featureId, flag.organization, flag.enabled);
+});
+FeatureFlag.beforeUpdate(async (flag: any) => {
+  await updateFeature(flag.featureId, flag.organization, flag.enabled);
+});
+FeatureFlag.beforeDestroy(async (flag: any) => {
+  await deleteFeature(flag.featureId, flag.organization);
 });
 
 // FBC express initialization
