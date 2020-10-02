@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import List, Mapping, Optional
+from typing import Iterator, List, Mapping, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import SERVICE_TYPES
@@ -15,8 +15,8 @@ from psym.common.data_class import (
 )
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
-    format_to_property_definitions,
     format_to_property_type_inputs,
+    format_to_service_type,
 )
 
 from .._utils import get_graphql_property_type_inputs
@@ -42,24 +42,8 @@ def _populate_service_types(client: SymphonyClient) -> None:
     for edge in edges:
         node = edge.node
         if node is not None:
-            definitions = []
-            if node.endpointDefinitions:
-                definitions = [
-                    ServiceEndpointDefinition(
-                        id=definition.id,
-                        name=definition.name,
-                        endpoint_definition_index=definition.index,
-                        role=definition.role,
-                        equipment_type_id=definition.equipmentType.id,
-                    )
-                    for definition in node.endpointDefinitions
-                ]
-            SERVICE_TYPES[node.name] = ServiceType(
-                id=node.id,
-                name=node.name,
-                has_customer=node.hasCustomer,
-                property_types=format_to_property_definitions(node.propertyTypes),
-                endpoint_definitions=definitions,
+            SERVICE_TYPES[node.name] = format_to_service_type(
+                service_type_fragment=node
             )
 
 
@@ -135,27 +119,35 @@ def add_service_type(
             endpoints=definition_inputs,
         ),
     )
-    definitions = []
-    if result.endpointDefinitions:
-        definitions = [
-            ServiceEndpointDefinition(
-                id=definition.id,
-                name=definition.name,
-                endpoint_definition_index=definition.index,
-                role=definition.role,
-                equipment_type_id=definition.equipmentType.id,
-            )
-            for definition in result.endpointDefinitions
-        ]
-    service_type = ServiceType(
-        id=result.id,
-        name=result.name,
-        has_customer=result.hasCustomer,
-        property_types=format_to_property_definitions(result.propertyTypes),
-        endpoint_definitions=definitions,
-    )
+    service_type = format_to_service_type(service_type_fragment=result)
     SERVICE_TYPES[name] = service_type
     return service_type
+
+
+def get_service_types(client: SymphonyClient) -> Iterator[ServiceType]:
+    """Get the iterator of service types
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: ServiceType Iterator
+    :rtype: Iterator[ :class:`~psym.common.data_class.ServiceType` ]
+
+    **Example**
+
+    .. code-block:: python
+
+        service_types = client.get_service_types()
+        for service_type in service_types:
+            print(service_type.name, service_type.description)
+    """
+    result = ServiceTypesQuery.execute(client)
+    if result is None:
+        return
+    for edge in result.edges:
+        node = edge.node
+        if node is not None:
+            yield format_to_service_type(service_type_fragment=result)
 
 
 def get_service_type(client: SymphonyClient, service_type_id: str) -> ServiceType:
@@ -264,25 +256,7 @@ def edit_service_type(
             endpoints=new_endpoints_definition_inputs,
         ),
     )
-    definitions = []
-    if result.endpointDefinitions is not None:
-        definitions = [
-            ServiceEndpointDefinition(
-                id=definition.id,
-                name=definition.name,
-                endpoint_definition_index=definition.index,
-                role=definition.role,
-                equipment_type_id=definition.equipmentType.id,
-            )
-            for definition in result.endpointDefinitions
-        ]
-    service_type = ServiceType(
-        id=result.id,
-        name=result.name,
-        has_customer=result.hasCustomer,
-        property_types=format_to_property_definitions(result.propertyTypes),
-        endpoint_definitions=definitions,
-    )
+    service_type = format_to_service_type(service_type_fragment=result)
     SERVICE_TYPES[service_type.name] = service_type
     return service_type
 
