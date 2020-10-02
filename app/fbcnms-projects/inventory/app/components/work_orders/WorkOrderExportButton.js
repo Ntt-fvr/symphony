@@ -12,7 +12,6 @@ import Button from '@symphony/design-system/components/Button';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import React from 'react';
 import axios from 'axios';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {UploadAPIUrls} from '../../common/UploadAPI';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -35,7 +34,6 @@ const WorkOrderExportButton = (props: Props) => {
   const {id} = props;
   const classes = useStyles();
   const enqueueSnackbar = useEnqueueSnackbar();
-  const isAsyncExportEnabled = useFeatureFlag('async_export');
 
   const handleError = error =>
     enqueueSnackbar(error.response?.data?.error || error, {variant: 'error'});
@@ -51,12 +49,10 @@ const WorkOrderExportButton = (props: Props) => {
       })
       .then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        if (!isAsyncExportEnabled) {
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', fileName);
-          link.click();
-        }
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        link.click();
       })
       .catch(handleError);
   };
