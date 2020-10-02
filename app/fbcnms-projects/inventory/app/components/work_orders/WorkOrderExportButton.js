@@ -12,7 +12,6 @@ import Button from '@symphony/design-system/components/Button';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import React from 'react';
 import axios from 'axios';
-import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {UploadAPIUrls} from '../../common/UploadAPI';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
