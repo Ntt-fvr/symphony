@@ -3175,9 +3175,9 @@ func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int
 		return nil, gqlerror.Errorf("could not be executed in automation")
 	}
 	if wo, err = wo.Update().
-		SetStatus(workorder.StatusPending).
+		SetStatus(workorder.StatusInProgress).
 		Save(ctx); err != nil {
-		return nil, fmt.Errorf("updating work order %q status to pending: %w", id, err)
+		return nil, fmt.Errorf("updating work order %q status to in-progress: %w", id, err)
 	}
 
 	activityMutator := client.Activity.Create().
