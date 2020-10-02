@@ -35,7 +35,6 @@ const WorkOrderExportButton = (props: Props) => {
   const {id} = props;
   const classes = useStyles();
   const enqueueSnackbar = useEnqueueSnackbar();
-  const isAsyncExportEnabled = useFeatureFlag('async_export');
 
   const handleError = error =>
     enqueueSnackbar(error.response?.data?.error || error, {variant: 'error'});
