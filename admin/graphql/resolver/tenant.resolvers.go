@@ -9,11 +9,11 @@ package resolver
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
 	"github.com/99designs/gqlgen/graphql/errcode"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/VividCortex/mysqlerr"
 	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
@@ -22,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/go-sql-driver/mysql"
 	"github.com/hashicorp/go-multierror"
-	"github.com/scylladb/go-set/strset"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -66,9 +65,9 @@ func (r *mutationResolver) TruncateTenant(ctx context.Context, input model.Trunc
 		}()
 		dbName := viewer.DBName(input.Name)
 		for _, table := range migrate.Tables {
-			query := fmt.Sprintf("DELETE FROM `%s`.`%s`", dbName, table.Name)
-			if _, err := db.ExecContext(ctx, query); err != nil {
-				return r.errf(ctx, err, "cannot drop data from %q table", table.Name)
+			tableName := fmt.Sprintf("`%s`.`%s`", dbName, table.Name)
+			if _, err := sq.ExecContextWith(ctx, db, sq.Delete(tableName)); err != nil {
+				return r.errf(ctx, err, "cannot drop data from %q table", tableName)
 			}
 		}
 		return nil
@@ -97,47 +96,61 @@ func (r *mutationResolver) DeleteTenant(ctx context.Context, input model.DeleteT
 }
 
 func (r *queryResolver) Tenant(ctx context.Context, name string) (*model.Tenant, error) {
-	rows, err := r.db(ctx).QueryContext(ctx,
-		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", viewer.DBName(name),
-	)
+	query, args, err := sq.Select("COUNT(*)").
+		From("INFORMATION_SCHEMA.SCHEMATA").
+		Where(sq.Eq{"SCHEMA_NAME": viewer.DBName(name)}).
+		Limit(1).
+		ToSql()
 	if err != nil {
-		return nil, r.err(ctx, err, "cannot query information schema")
+		return nil, r.err(ctx, err, "cannot build tenant count query")
 	}
-	defer rows.Close()
-	if !rows.Next() {
-		return nil, r.err(ctx, sql.ErrNoRows, "cannot prepare count row")
-	}
-	var n int
-	if err := rows.Scan(&n); err != nil {
-		return nil, r.err(ctx, err, "cannot scan count row")
-	}
-	if err := rows.Err(); err != nil {
-		return nil, r.err(ctx, err, "cannot read rows")
-	}
-	if n == 0 {
+
+	var count int
+	switch err := r.db(ctx).QueryRowContext(ctx, query, args...).Scan(&count); {
+	case err != nil:
+		return nil, r.err(ctx, err, "cannot scan tenant count")
+	case count == 0:
 		err := gqlerror.Errorf(
 			"Could not find a tenant with name '%s'", name,
 		)
 		errcode.Set(err, "NOT_FOUND")
 		return nil, err
+	default:
+		return model.NewTenant(name), nil
 	}
-	return model.NewTenant(name), nil
 }
 
 func (r *queryResolver) Tenants(ctx context.Context, filterBy *model.TenantFilters) ([]*model.Tenant, error) {
-	names, err := viewer.GetTenantNames(ctx, r.db(ctx))
-	if err != nil {
-		return nil, r.err(ctx, err, "cannot get tenant names")
-	}
-	var filter *strset.Set
+	sb := sq.Select("SCHEMA_NAME").
+		From("INFORMATION_SCHEMA.SCHEMATA")
 	if filterBy != nil && filterBy.Names != nil {
-		filter = strset.New(filterBy.Names...)
-	}
-	tenants := make([]*model.Tenant, 0, len(names))
-	for _, name := range names {
-		if filter == nil || filter.Has(name) {
-			tenants = append(tenants, model.NewTenant(name))
+		names := make([]string, 0, len(filterBy.Names))
+		for _, name := range filterBy.Names {
+			names = append(names, viewer.DBName(name))
 		}
+		sb = sb.Where(sq.Eq{"SCHEMA_NAME": names}).
+			Limit(uint64(len(names)))
+	} else {
+		sb = sb.Where(sq.Like{"SCHEMA_NAME": viewer.DBName("%")})
+	}
+
+	rows, err := sq.QueryContextWith(ctx, r.db(ctx), sb)
+	if err != nil {
+		return nil, r.err(ctx, err, "cannot query tenant names")
+	}
+	defer rows.Close()
+
+	var tenants []*model.Tenant
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, r.err(ctx, err, "cannot scan tenant row")
+		}
+		name = viewer.FromDBName(name)
+		tenants = append(tenants, model.NewTenant(name))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, r.err(ctx, err, "cannot scan tenant rows")
 	}
 	return tenants, nil
 }

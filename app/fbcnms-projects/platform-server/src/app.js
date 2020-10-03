@@ -97,13 +97,23 @@ User.beforeBulkDestroy(async options => {
 
 // add hooks to FeatureFlag model
 FeatureFlag.beforeCreate(async (flag: any) => {
-  await createFeature(flag.featureId, flag.organization, flag.enabled);
+  await createFeature(
+    flag.featureId,
+    flag.organization,
+    flag.enabled,
+  ).catch(err => console.error(err));
 });
 FeatureFlag.beforeUpdate(async (flag: any) => {
-  await updateFeature(flag.featureId, flag.organization, flag.enabled);
+  await updateFeature(
+    flag.featureId,
+    flag.organization,
+    flag.enabled,
+  ).catch(err => console.error(err));
 });
 FeatureFlag.beforeDestroy(async (flag: any) => {
-  await deleteFeature(flag.featureId, flag.organization);
+  await deleteFeature(flag.featureId, flag.organization).catch(err =>
+    console.error(err),
+  );
 });
 
 // FBC express initialization

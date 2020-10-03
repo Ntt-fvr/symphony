@@ -119,7 +119,7 @@ func (s *featureSuite) TestUpdateFeature() {
 			}
 		}
 	}
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err := s.client.Post(query, &rsp,
 		client.Var("tenant", tenant),
 		client.Var("enabled", true),
@@ -141,7 +141,7 @@ func (s *featureSuite) TestUpdateFeature() {
 	)
 	s.Require().NoError(err)
 
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err = s.client.Post(query, &rsp,
 		client.Var("tenant", tenant),
 		client.Var("enabled", true),
@@ -156,7 +156,8 @@ func (s *featureSuite) TestUpdateFeature() {
 func (s *featureSuite) TestDeleteFeature() {
 	tenants := []string{"foo", "bar", "baz"}
 	s.createFeatures(s.T().Name(), tenants...)
-	s.expectTenants(tenants...)
+	s.expectTenantsLikeQuery(tenants...).
+		RowsWillBeClosed()
 	var rsp struct {
 		Tenants []struct {
 			Features []struct {
@@ -196,7 +197,8 @@ func (s *featureSuite) TestDeleteFeature() {
 		s.Require().NoError(err)
 	}
 
-	s.expectTenants(tenants...)
+	s.expectTenantsLikeQuery(tenants...).
+		RowsWillBeClosed()
 	err = s.client.Post(tenantsQuery, &rsp)
 	s.Require().NoError(err)
 	s.Require().Len(rsp.Tenants, len(tenants))

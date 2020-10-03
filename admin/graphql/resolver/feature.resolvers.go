@@ -10,10 +10,13 @@ package resolver
 import (
 	"context"
 
+	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func (r *featureResolver) Tenant(ctx context.Context, obj *model.Feature) (*model.Tenant, error) {
@@ -41,6 +44,11 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input model.Create
 				SetNillableDescription(input.Description).
 				Save(ctx)
 			if err != nil {
+				if ent.IsConstraintError(err) {
+					err := gqlerror.Errorf("Feature '%s' exists for tenant '%s'", input.Name, tenant)
+					errcode.Set(err, "EXIST")
+					return err
+				}
 				return r.errf(
 					ctx, err,
 					"cannot create feature %s for tenant %s",
@@ -65,6 +73,9 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.Update
 			SetNillableEnabled(input.Enabled).
 			SetNillableDescription(input.Description).
 			Save(ctx); err != nil {
+			if ent.IsNotFound(err) {
+				return entgql.ErrNodeNotFound(input.ID)
+			}
 			return r.errf(ctx, err, "cannot update feature %s for tenant %s",
 				input.ID, tenant,
 			)
@@ -82,6 +93,9 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.Update
 func (r *mutationResolver) DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error) {
 	if err := r.withClient(ctx, input.ID.Tenant, func(client *ent.Client) error {
 		if err := client.Feature.DeleteOneID(input.ID.ID).Exec(ctx); err != nil {
+			if ent.IsNotFound(err) {
+				return entgql.ErrNodeNotFound(input.ID)
+			}
 			return r.errf(
 				ctx, err,
 				"cannot delete feature %s for tenant %s",

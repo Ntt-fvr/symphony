@@ -6,7 +6,11 @@ package resolver_test
 
 import (
 	"context"
+	"database/sql/driver"
+	"fmt"
 	"regexp"
+	"sort"
+	"strings"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql"
@@ -72,35 +76,52 @@ func (s *testSuite) TearDownTest() {
 	s.Require().NoError(err)
 }
 
-func (s *testSuite) expectTenantCount(name string, count int) {
+func (s *testSuite) expectTenantCountQuery(name string, count int) {
 	s.mock.ExpectQuery(regexp.QuoteMeta(
-		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
+		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1",
 	)).
 		WithArgs("tenant_" + name).
 		WillReturnRows(
-			sqlmock.NewRows([]string{"COUNT"}).
+			s.mock.NewRows([]string{"COUNT"}).
 				AddRow(count),
 		).
 		RowsWillBeClosed()
 }
 
-func (s *testSuite) expectTenant(name string) {
-	s.expectTenantCount(name, 1)
-}
-
-func (s *testSuite) expectNoTenant(name string) {
-	s.expectTenantCount(name, 0)
-}
-
-func (s *testSuite) expectTenants(names ...string) {
-	rows := sqlmock.NewRows([]string{"SCHEMA_NAME"})
-	for _, name := range names {
-		rows = rows.AddRow("tenant_" + name)
+func (s *testSuite) newTenantRows(tenants ...string) *sqlmock.Rows {
+	sort.Strings(tenants)
+	rows := s.mock.NewRows([]string{"SCHEMA_NAME"})
+	for _, tenant := range tenants {
+		rows = rows.AddRow("tenant_" + tenant)
 	}
-	s.mock.ExpectQuery(tenantsSQLQuery).
-		WithArgs("tenant_%").
+	return rows
+}
+
+func (s *testSuite) expectTenantsInQuery(tenants ...string) *sqlmock.ExpectedQuery {
+	args := make([]driver.Value, 0, len(tenants)+1)
+	for _, tenant := range tenants {
+		args = append(args, "tenant_"+tenant)
+	}
+	rows := s.newTenantRows(tenants...)
+	return s.mock.ExpectQuery(regexp.QuoteMeta(
+		fmt.Sprintf("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME IN (%s) LIMIT %d",
+			strings.Repeat(",?", len(args))[1:], len(tenants),
+		),
+	)).
+		WithArgs(args...).
 		WillReturnRows(rows).
 		RowsWillBeClosed()
+}
+
+func (s *testSuite) expectTenantsLikeQuery(tenants ...string) *sqlmock.ExpectedQuery {
+	query := s.mock.ExpectQuery(regexp.QuoteMeta(
+		"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?",
+	)).
+		WithArgs("tenant_%")
+	if len(tenants) > 0 {
+		query = query.WillReturnRows(s.newTenantRows(tenants...))
+	}
+	return query
 }
 
 func (s *testSuite) expectBeginCommit() {

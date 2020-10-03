@@ -115,7 +115,7 @@ func (s *userSuite) TestQueryTenantUsers() {
 			}
 		}
 	}
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err := s.client.Post(`query($tenant: String!) {
 		tenant(name: $tenant) {
 			users(first: 2) {
@@ -138,7 +138,7 @@ func (s *userSuite) TestQueryTenantUsers() {
 	s.Require().Equal(users[0], rsp.Tenant.Users.Edges[0].Node.AuthID)
 	s.Require().Equal(users[1], rsp.Tenant.Users.Edges[1].Node.AuthID)
 
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err = s.client.Post(`query($tenant: String!, $after: Cursor) {
 		tenant(name: $tenant) {
 			users(after: $after) {

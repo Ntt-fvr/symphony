@@ -21,7 +21,7 @@ func TestNode(t *testing.T) {
 
 func (s *nodeSuite) TestQueryTenantNode() {
 	tenant := s.T().Name()
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	id := model.ID{Tenant: tenant}.String()
 	var rsp struct{ Node struct{ ID, Name string } }
 	err := s.client.Post(
@@ -69,7 +69,7 @@ func (s *nodeSuite) TestQueryUserNode() {
 
 func (s *nodeSuite) TestQueryNodeNotFound() {
 	tenant := s.T().Name()
-	s.expectNoTenant(tenant)
+	s.expectTenantCountQuery(tenant, 0)
 	id := model.ID{Tenant: tenant}.String()
 	var rsp struct{ Node struct{ Name string } }
 	err := s.client.Post(
