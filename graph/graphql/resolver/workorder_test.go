@@ -1550,7 +1550,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 		addWorkOrderType(input: {
 			name: "example_type"
 			properties: [{
-				name: "lat_long_prop"	
+				name: "lat_long_prop"
 				type: gps_location
 				isMandatory: true
 				isInstanceProperty: true
@@ -1569,7 +1569,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 	err = c.Post(`mutation($type: ID!) {
 		addWorkOrder(input: {
 			name: "should_fail"
-			workOrderTypeId: $type	
+			workOrderTypeId: $type
 			status: CLOSED
 		}) {
 			id
@@ -1615,7 +1615,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 			status: CLOSED
 			properties: [{
 				propertyTypeID: $ptype
-				latitudeValue: 32.6	
+				latitudeValue: 32.6
 				longitudeValue: 34.7
 			}]
 		}) {
@@ -1636,7 +1636,7 @@ func TestAddWorkOrderWithInvalidProperties(t *testing.T) {
 			properties: [
 				{
 					propertyTypeID: $ptype1
-					latitudeValue: 32.6	
+					latitudeValue: 32.6
 					longitudeValue: 34.7
 				},
 				{
@@ -1903,7 +1903,7 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	assert.Equal(t, w.Status, workorder.StatusPlanned)
+	assert.Equal(t, w.Status, workorder.StatusInProgress)
 
 	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)
