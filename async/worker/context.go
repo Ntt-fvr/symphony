@@ -1,3 +1,7 @@
+// Copyright (c) 2004-present Facebook All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package worker
 
 import (
@@ -130,11 +134,12 @@ func (contextPropagator) InjectFromWorkflow(ctx workflow.Context, hw workflow.He
 		return fmt.Errorf("workflow viewer not found in context")
 	}
 	hw.Set(viewer.TenantHeader, []byte(wfv.Tenant))
-	if wfv.UserName != nil {
+	switch {
+	case wfv.UserName != nil:
 		hw.Set(viewer.UserHeader, []byte(*wfv.UserName))
-	} else if wfv.AutomationName != nil {
+	case wfv.AutomationName != nil:
 		hw.Set(viewer.AutomationHeader, []byte(*wfv.AutomationName))
-	} else {
+	default:
 		return fmt.Errorf("no user or automation viewer found")
 	}
 	hw.Set(viewer.RoleHeader, []byte(wfv.Role))

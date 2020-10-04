@@ -74,8 +74,6 @@ services:
       - 7935:7935
       - 7939:7939
       - 9090:9090
-    networks:
-      - private
     environment:
       - "DB=mysql"
       - "MYSQL_USER=root"

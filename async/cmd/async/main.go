@@ -69,7 +69,10 @@ func main() {
 	defer cleanup()
 
 	app.logger.Info("starting application")
-	err = app.run(ctx)
+	if err = app.waitOnHealthyChecks(ctx); err == nil {
+		app.logger.Info("running application")
+		err = app.run(ctx)
+	}
 	app.logger.Info("terminating application", zap.Error(err))
 }
 
@@ -115,30 +118,27 @@ func (app *application) waitOnHealthyChecks(ctx context.Context) error {
 func (app *application) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
-	if err := app.waitOnHealthyChecks(ctx); err == nil {
-		app.logger.Info("start serving")
-		g.Go(func(context.Context) error {
-			err := app.http.ListenAndServe(app.http.addr)
-			app.logger.Debug("http server terminated", zap.Error(err))
-			return err
-		})
-		g.Go(func(ctx context.Context) error {
-			err := app.server.Serve(ctx)
-			app.logger.Debug("event server terminated", zap.Error(err))
-			return err
-		})
-		g.Go(func(ctx context.Context) error {
-			err := app.cadenceClient.Run(ctx)
-			app.logger.Debug("cadence client terminated", zap.Error(err))
-			return err
-		})
-		g.Go(func(ctx context.Context) error {
-			defer cancel()
-			<-ctx.Done()
-			return nil
-		})
+	g.Go(func(context.Context) error {
+		err := app.http.ListenAndServe(app.http.addr)
+		app.logger.Debug("http server terminated", zap.Error(err))
+		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		err := app.server.Serve(ctx)
+		app.logger.Debug("event server terminated", zap.Error(err))
+		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		err := app.cadenceClient.Run(ctx)
+		app.logger.Debug("cadence client terminated", zap.Error(err))
+		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		defer cancel()
 		<-ctx.Done()
-	}
+		return nil
+	})
+	<-ctx.Done()
 
 	app.logger.Warn("start application termination",
 		zap.NamedError("reason", ctx.Err()),

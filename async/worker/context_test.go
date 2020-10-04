@@ -7,6 +7,7 @@ package worker_test
 import (
 	"context"
 	"fmt"
+	"testing"
 
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -14,24 +15,25 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/cadence/activity"
 	"go.uber.org/cadence/testsuite"
 	"go.uber.org/cadence/workflow"
 )
 
-type UnitTestSuite struct {
+type ContextTestSuite struct {
 	suite.Suite
 	testsuite.WorkflowTestSuite
-	entClient *ent.Client
-	ctx       context.Context
-	env       *testsuite.TestWorkflowEnvironment
+	ctx  context.Context
+	env  *testsuite.TestWorkflowEnvironment
+	flow func(ctx workflow.Context) error
 }
 
-func (s *UnitTestSuite) SetupTest() {
-	s.entClient = viewertest.NewTestClient(s.T())
-	s.ctx = viewertest.NewContext(context.Background(), s.entClient)
+func (s *ContextTestSuite) SetupTest() {
+	client := viewertest.NewTestClient(s.T())
+	s.ctx = viewertest.NewContext(context.Background(), client)
 	tenancy := viewer.TenancyFunc(func(ctx context.Context, tenant string) (*ent.Client, error) {
 		if tenant == viewertest.DefaultTenant {
-			return s.entClient, nil
+			return client, nil
 		}
 		return nil, fmt.Errorf("tenant %s not found", tenant)
 	})
@@ -39,27 +41,34 @@ func (s *UnitTestSuite) SetupTest() {
 		worker.NewContextPropagator(tenancy),
 	})
 	s.env = s.NewTestWorkflowEnvironment()
-	s.env.RegisterActivity(func(ctx context.Context) error {
+	s.env.RegisterActivityWithOptions(func(ctx context.Context) error {
 		v := viewer.FromContext(ctx)
 		s.Equal(viewertest.DefaultTenant, v.Tenant())
 		return nil
+	}, activity.RegisterOptions{
+		Name: "Activity",
+	})
+	s.flow = func(ctx workflow.Context) error {
+		workflow.ExecuteActivity(ctx, "Activity")
+		return nil
+	}
+	s.env.RegisterWorkflowWithOptions(s.flow, workflow.RegisterOptions{
+		Name: "Flow",
 	})
 }
 
-func (s *UnitTestSuite) AfterTest(suiteName, testName string) {
+func (s *ContextTestSuite) AfterTest(suiteName, testName string) {
 	s.env.AssertExpectations(s.T())
 }
 
-func (s *UnitTestSuite) addViewerToWorkflow(v viewer.Viewer, flow func(ctx workflow.Context) error) {
+func (s *ContextTestSuite) addViewerToWorkflow(v viewer.Viewer) {
 	s.env.OnWorkflow("Flow", mock.Anything, mock.Anything).Return(func(ctx workflow.Context) error {
-		return flow(worker.NewWorkflowContext(ctx, v))
+		return s.flow(worker.NewWorkflowContext(ctx, v))
 	})
 }
 
-func (s *UnitTestSuite) TestRunFlow() {
-	s.addViewerToWorkflow(viewer.FromContext(s.ctx), func(ctx workflow.Context) error {
-		return nil
-	})
+func (s *ContextTestSuite) TestRunFlow() {
+	s.addViewerToWorkflow(viewer.FromContext(s.ctx))
 	s.env.ExecuteWorkflow("Flow")
 	s.True(s.env.IsWorkflowCompleted())
 	s.NoError(s.env.GetWorkflowError())
@@ -104,8 +113,8 @@ func (s *UnitTestSuite) TestRunIncompleteFlow() {
 	s.True(s.env.IsWorkflowCompleted())
 	s.Error(s.env.GetWorkflowError())
 }
-
-func TestUnitTestSuite(t *testing.T) {
-	suite.Run(t, new(UnitTestSuite))
-}
 */
+
+func TestContextTestSuite(t *testing.T) {
+	suite.Run(t, new(ContextTestSuite))
+}
