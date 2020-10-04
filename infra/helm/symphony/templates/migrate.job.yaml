@@ -3,39 +3,53 @@ Copyright (c) 2004-present Facebook All rights reserved.
 Use of this source code is governed by a BSD-style
 license that can be found in the LICENSE file.
 */ -}}
+{{- range $name, $configuration := .Values.migrate.spec.migrations }}
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "symphony.migrate.fullname" . }}
+  name: {{ template "symphony.migrate.fullname" $ }}-{{ $name }}
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-  labels: {{- include "symphony.migrate.metaLabels" . | nindent 4 }}
+  labels: {{- include "symphony.migrate.metaLabels" $ | nindent 4 }}
 spec:
   template:
     metadata:
-      name: {{ template "symphony.migrate.fullname" . }}
-      labels: {{- include "symphony.migrate.metaLabels" . | nindent 8 }}
+      name: {{ template "symphony.migrate.fullname" $ }}-{{ $name }}
+      labels: {{- include "symphony.migrate.metaLabels" $ | nindent 8 }}
     spec:
-      {{- with .Values.migrate.securityContext }}
+      {{- with $.Values.migrate.securityContext }}
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- include "symphony.imagePullSecrets" . | indent 6 }}
+      {{- include "symphony.imagePullSecrets" $ | indent 6 }}
       containers:
         - name: migrate
-          image: {{ .Values.migrate.image.repository }}:{{ .Values.migrate.image.tag }}
-          imagePullPolicy: {{ .Values.migrate.image.pullPolicy }}
+          image: {{ $.Values.migrate.image.repository }}:{{ $.Values.migrate.image.tag }}
+          imagePullPolicy: {{ $.Values.migrate.image.pullPolicy }}
           args:
-            - --db-driver=mysql
-            - --db-dsn=$(MYSQL_DSN)
+            - {{ $name }}
+            {{- if eq $name "ent" }}
+            - --ent.db-driver=mysql
+            - --ent.db-dsn=$(MYSQL_DSN)
+            {{- else if eq $name "cadence" }}
+            - --cadence.addr={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
+            - --cadence.domain={{ required ".Values.migrate.spec.migrations.cadence.domain is required" $.Values.migrate.spec.migrations.cadence.domain }}
+            {{- end }}
           env:
+            {{- if eq $name "ent" }}
             - name: MYSQL_DSN
               valueFrom:
                 secretKeyRef:
-                  name: {{ template "symphony.migrate.secretName" . }}
+                  name: {{ template "symphony.migrate.secretName" $ }}
                   key: MYSQL_DSN
-            {{- include "symphony.loggingEnv" .Values.migrate | nindent 12 }}
+            {{- end }}
+            {{- include "symphony.loggingEnv" $.Values.migrate | nindent 12 }}
+            {{- with $configuration.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       restartPolicy: OnFailure
+{{- end }}
 ---
 apiVersion: v1
 kind: Secret

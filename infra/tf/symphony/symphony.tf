@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.3.0"
+  version             = "1.4.0"
   timeout             = 600
   max_history         = 100
 
@@ -190,6 +190,18 @@ resource helm_release symphony {
           extraEnvVars = [
             local.nats_server_envar
           ]
+        }
+      }
+      migrate = {
+        spec = {
+          migrations = {
+            cadence = {
+              address = "${local.cadence.frontend_name}:${local.cadence.frontend_port}",
+              extraEnvVars = [
+                local.cadence.env_var
+              ]
+            }
+          }
         }
       }
       async = {
