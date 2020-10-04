@@ -142,6 +142,28 @@ type UpdateFeaturePayload struct {
 	Feature *Feature `json:"feature"`
 }
 
+// Input type of upsertFeature.
+type UpsertFeatureInput struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// The name of the feature.
+	Name string `json:"name"`
+	// The state of the feature.
+	Enabled *bool `json:"enabled"`
+	// The description of the feature.
+	Description *string `json:"description"`
+	// A list of tenants to upsert the feature for, defaults to all tenants.
+	Tenants []*ID `json:"tenants"`
+}
+
+// Output type of upsertFeature.
+type UpsertFeaturePayload struct {
+	// A unique identifier for the client performing the mutation.
+	ClientMutationID *string `json:"clientMutationId"`
+	// A list of upserted features.
+	Features []*Feature `json:"features"`
+}
+
 // Input type of upsertUser.
 type UpsertUserInput struct {
 	// A unique identifier for the client performing the mutation.

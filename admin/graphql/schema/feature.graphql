@@ -104,6 +104,51 @@ type CreateFeaturePayload {
 }
 
 """
+Input type of upsertFeature.
+"""
+input UpsertFeatureInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The name of the feature.
+  """
+  name: String!
+
+  """
+  The state of the feature.
+  """
+  enabled: Boolean
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
+  A list of tenants to upsert the feature for, defaults to all tenants.
+  """
+  tenants: [ID!] @tenantType
+}
+
+"""
+Output type of upsertFeature.
+"""
+type UpsertFeaturePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  A list of upserted features.
+  """
+  features: [Feature!]!
+}
+
+"""
 Input type of updateFeature.
 """
 input UpdateFeatureInput {
@@ -173,6 +218,11 @@ extend type Mutation {
   Create a new feature.
   """
   createFeature(input: CreateFeatureInput!): CreateFeaturePayload
+
+  """
+  Upsert a feature.
+  """
+  upsertFeature(input: UpsertFeatureInput!): UpsertFeaturePayload
 
   """
   Update a feature.

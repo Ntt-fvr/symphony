@@ -83,6 +83,7 @@ type ComplexityRoot struct {
 		DeleteTenant   func(childComplexity int, input model.DeleteTenantInput) int
 		TruncateTenant func(childComplexity int, input model.TruncateTenantInput) int
 		UpdateFeature  func(childComplexity int, input model.UpdateFeatureInput) int
+		UpsertFeature  func(childComplexity int, input model.UpsertFeatureInput) int
 		UpsertUser     func(childComplexity int, input model.UpsertUserInput) int
 	}
 
@@ -114,6 +115,11 @@ type ComplexityRoot struct {
 	UpdateFeaturePayload struct {
 		ClientMutationID func(childComplexity int) int
 		Feature          func(childComplexity int) int
+	}
+
+	UpsertFeaturePayload struct {
+		ClientMutationID func(childComplexity int) int
+		Features         func(childComplexity int) int
 	}
 
 	UpsertUserPayload struct {
@@ -149,6 +155,7 @@ type MutationResolver interface {
 	TruncateTenant(ctx context.Context, input model.TruncateTenantInput) (*model.TruncateTenantPayload, error)
 	DeleteTenant(ctx context.Context, input model.DeleteTenantInput) (*model.DeleteTenantPayload, error)
 	CreateFeature(ctx context.Context, input model.CreateFeatureInput) (*model.CreateFeaturePayload, error)
+	UpsertFeature(ctx context.Context, input model.UpsertFeatureInput) (*model.UpsertFeaturePayload, error)
 	UpdateFeature(ctx context.Context, input model.UpdateFeatureInput) (*model.UpdateFeaturePayload, error)
 	DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error)
 	UpsertUser(ctx context.Context, input model.UpsertUserInput) (*model.UpsertUserPayload, error)
@@ -330,6 +337,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateFeature(childComplexity, args["input"].(model.UpdateFeatureInput)), true
 
+	case "Mutation.upsertFeature":
+		if e.complexity.Mutation.UpsertFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertFeature(childComplexity, args["input"].(model.UpsertFeatureInput)), true
+
 	case "Mutation.upsertUser":
 		if e.complexity.Mutation.UpsertUser == nil {
 			break
@@ -471,6 +490,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UpdateFeaturePayload.Feature(childComplexity), true
+
+	case "UpsertFeaturePayload.clientMutationId":
+		if e.complexity.UpsertFeaturePayload.ClientMutationID == nil {
+			break
+		}
+
+		return e.complexity.UpsertFeaturePayload.ClientMutationID(childComplexity), true
+
+	case "UpsertFeaturePayload.features":
+		if e.complexity.UpsertFeaturePayload.Features == nil {
+			break
+		}
+
+		return e.complexity.UpsertFeaturePayload.Features(childComplexity), true
 
 	case "UpsertUserPayload.clientMutationId":
 		if e.complexity.UpsertUserPayload.ClientMutationID == nil {
@@ -758,6 +791,51 @@ type CreateFeaturePayload {
 }
 
 """
+Input type of upsertFeature.
+"""
+input UpsertFeatureInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  The name of the feature.
+  """
+  name: String!
+
+  """
+  The state of the feature.
+  """
+  enabled: Boolean
+
+  """
+  The description of the feature.
+  """
+  description: String
+
+  """
+  A list of tenants to upsert the feature for, defaults to all tenants.
+  """
+  tenants: [ID!] @tenantType
+}
+
+"""
+Output type of upsertFeature.
+"""
+type UpsertFeaturePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  A list of upserted features.
+  """
+  features: [Feature!]!
+}
+
+"""
 Input type of updateFeature.
 """
 input UpdateFeatureInput {
@@ -827,6 +905,11 @@ extend type Mutation {
   Create a new feature.
   """
   createFeature(input: CreateFeatureInput!): CreateFeaturePayload
+
+  """
+  Upsert a feature.
+  """
+  upsertFeature(input: UpsertFeatureInput!): UpsertFeaturePayload
 
   """
   Update a feature.
@@ -1284,6 +1367,21 @@ func (ec *executionContext) field_Mutation_updateFeature_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUpdateFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeatureInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_upsertFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpsertFeatureInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpsertFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertFeatureInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1980,6 +2078,45 @@ func (ec *executionContext) _Mutation_createFeature(ctx context.Context, field g
 	res := resTmp.(*model.CreateFeaturePayload)
 	fc.Result = res
 	return ec.marshalOCreateFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐCreateFeaturePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_upsertFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_upsertFeature_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertFeature(rctx, args["input"].(model.UpsertFeatureInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.UpsertFeaturePayload)
+	fc.Result = res
+	return ec.marshalOUpsertFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertFeaturePayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_updateFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2701,6 +2838,73 @@ func (ec *executionContext) _UpdateFeaturePayload_feature(ctx context.Context, f
 	res := resTmp.(*model.Feature)
 	fc.Result = res
 	return ec.marshalOFeature2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐFeature(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UpsertFeaturePayload_clientMutationId(ctx context.Context, field graphql.CollectedField, obj *model.UpsertFeaturePayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UpsertFeaturePayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClientMutationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _UpsertFeaturePayload_features(ctx context.Context, field graphql.CollectedField, obj *model.UpsertFeaturePayload) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UpsertFeaturePayload",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Features, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐFeatureᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _UpsertUserPayload_clientMutationId(ctx context.Context, field graphql.CollectedField, obj *model.UpsertUserPayload) (ret graphql.Marshaler) {
@@ -4488,6 +4692,76 @@ func (ec *executionContext) unmarshalInputUpdateFeatureInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpsertFeatureInput(ctx context.Context, obj interface{}) (model.UpsertFeatureInput, error) {
+	var it model.UpsertFeatureInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "clientMutationId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientMutationId"))
+			it.ClientMutationID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			it.Enabled, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tenants":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tenants"))
+			directive0 := func(ctx context.Context) (interface{}, error) {
+				return ec.unmarshalOID2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐIDᚄ(ctx, v)
+			}
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				if ec.directives.TenantType == nil {
+					return nil, errors.New("directive tenantType is not implemented")
+				}
+				return ec.directives.TenantType(ctx, obj, directive0)
+			}
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.([]*model.ID); ok {
+				it.Tenants = data
+			} else if tmp == nil {
+				it.Tenants = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be []*github.com/facebookincubator/symphony/admin/graphql/model.ID`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpsertUserInput(ctx context.Context, obj interface{}) (model.UpsertUserInput, error) {
 	var it model.UpsertUserInput
 	var asMap = obj.(map[string]interface{})
@@ -4770,6 +5044,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_deleteTenant(ctx, field)
 		case "createFeature":
 			out.Values[i] = ec._Mutation_createFeature(ctx, field)
+		case "upsertFeature":
+			out.Values[i] = ec._Mutation_upsertFeature(ctx, field)
 		case "updateFeature":
 			out.Values[i] = ec._Mutation_updateFeature(ctx, field)
 		case "deleteFeature":
@@ -4987,6 +5263,35 @@ func (ec *executionContext) _UpdateFeaturePayload(ctx context.Context, sel ast.S
 			out.Values[i] = ec._UpdateFeaturePayload_clientMutationId(ctx, field, obj)
 		case "feature":
 			out.Values[i] = ec._UpdateFeaturePayload_feature(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var upsertFeaturePayloadImplementors = []string{"UpsertFeaturePayload"}
+
+func (ec *executionContext) _UpsertFeaturePayload(ctx context.Context, sel ast.SelectionSet, obj *model.UpsertFeaturePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, upsertFeaturePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpsertFeaturePayload")
+		case "clientMutationId":
+			out.Values[i] = ec._UpsertFeaturePayload_clientMutationId(ctx, field, obj)
+		case "features":
+			out.Values[i] = ec._UpsertFeaturePayload_features(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5563,6 +5868,11 @@ func (ec *executionContext) unmarshalNTruncateTenantInput2githubᚗcomᚋfaceboo
 
 func (ec *executionContext) unmarshalNUpdateFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpdateFeatureInput(ctx context.Context, v interface{}) (model.UpdateFeatureInput, error) {
 	res, err := ec.unmarshalInputUpdateFeatureInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpsertFeatureInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertFeatureInput(ctx context.Context, v interface{}) (model.UpsertFeatureInput, error) {
+	res, err := ec.unmarshalInputUpsertFeatureInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -6149,6 +6459,13 @@ func (ec *executionContext) marshalOUpdateFeaturePayload2ᚖgithubᚗcomᚋfaceb
 		return graphql.Null
 	}
 	return ec._UpdateFeaturePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUpsertFeaturePayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertFeaturePayload(ctx context.Context, sel ast.SelectionSet, v *model.UpsertFeaturePayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UpsertFeaturePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpsertUserPayload2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋadminᚋgraphqlᚋmodelᚐUpsertUserPayload(ctx context.Context, sel ast.SelectionSet, v *model.UpsertUserPayload) graphql.Marshaler {

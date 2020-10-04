@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/stretchr/testify/suite"
 )
@@ -97,6 +98,49 @@ func (s *featureSuite) TestCreateFeature() {
 		s.Require().Len(rsp.Feature.Tenant.Features, 1)
 		s.Require().Equal(s.T().Name(), rsp.Feature.Tenant.Features[0].Name)
 	}
+}
+
+func (s *featureSuite) TestUpsertFeature() {
+	var input struct {
+		model.UpsertFeatureInput
+		Tenants []string `json:"tenants"`
+	}
+	input.Name = s.T().Name()
+	input.Tenants = append(input.Tenants,
+		model.NewTenant("foobar").ID.String(),
+	)
+	input.Enabled = pointer.ToBool(false)
+
+	var rsp struct {
+		UpsertFeature struct {
+			Features []struct {
+				ID      string
+				Enabled bool
+			}
+		}
+	}
+	const mutation = `mutation($input: UpsertFeatureInput!) {
+		upsertFeature(input: $input) {
+			features {
+				id
+				enabled
+			}
+		}
+	}`
+	s.expectBeginCommit()
+	err := s.client.Post(mutation, &rsp, client.Var("input", input))
+	s.Require().NoError(err)
+	s.Require().Len(rsp.UpsertFeature.Features, 1)
+	s.Require().False(rsp.UpsertFeature.Features[0].Enabled)
+
+	id := rsp.UpsertFeature.Features[0].ID
+	input.Enabled = pointer.ToBool(true)
+	s.expectBeginCommit()
+	err = s.client.Post(mutation, &rsp, client.Var("input", input))
+	s.Require().NoError(err)
+	s.Require().Len(rsp.UpsertFeature.Features, 1)
+	s.Require().Equal(id, rsp.UpsertFeature.Features[0].ID)
+	s.Require().True(rsp.UpsertFeature.Features[0].Enabled)
 }
 
 func (s *featureSuite) TestUpdateFeature() {

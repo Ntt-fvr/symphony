@@ -64,6 +64,53 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input model.Create
 	return payload, nil
 }
 
+func (r *mutationResolver) UpsertFeature(ctx context.Context, input model.UpsertFeatureInput) (*model.UpsertFeaturePayload, error) {
+	if input.Tenants == nil {
+		ids, err := r.tenantIDs(ctx)
+		if err != nil {
+			return nil, r.err(ctx, err, "cannot get tenant ids")
+		}
+		input.Tenants = ids
+	}
+	payload := &model.UpsertFeaturePayload{
+		ClientMutationID: input.ClientMutationID,
+		Features:         make([]*model.Feature, len(input.Tenants)),
+	}
+	for i := range input.Tenants {
+		tenant := input.Tenants[i].Tenant
+		if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
+			id, err := client.Feature.Query().
+				Where(feature.Name(input.Name)).
+				OnlyID(ctx)
+			var feat *ent.Feature
+			if err == nil {
+				feat, err = client.Feature.UpdateOneID(id).
+					SetNillableEnabled(input.Enabled).
+					SetNillableDescription(input.Description).
+					Save(ctx)
+			} else if ent.IsNotFound(err) {
+				feat, err = client.Feature.Create().
+					SetName(input.Name).
+					SetNillableEnabled(input.Enabled).
+					SetNillableDescription(input.Description).
+					Save(ctx)
+			}
+			if err != nil {
+				return r.errf(
+					ctx, err,
+					"cannot upsert feature %s for tenant %s",
+					input.Name, tenant,
+				)
+			}
+			payload.Features[i] = model.NewFeature(tenant, feat)
+			return nil
+		}); err != nil {
+			return nil, err
+		}
+	}
+	return payload, nil
+}
+
 func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.UpdateFeatureInput) (*model.UpdateFeaturePayload, error) {
 	tenant := input.ID.Tenant
 	var feat *ent.Feature
