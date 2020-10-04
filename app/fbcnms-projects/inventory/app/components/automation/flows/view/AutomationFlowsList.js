@@ -16,6 +16,7 @@ import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   flowsList: {
+    width: '100%',
     display: 'grid',
     gridGap: '16px',
     gridTemplateColumns: 'repeat(3, 1fr)',
