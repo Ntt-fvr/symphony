@@ -8,9 +8,12 @@
  * @format
  */
 
-import type {LocationWorkOrdersTabQuery} from './__generated__/LocationWorkOrdersTabQuery.graphql';
+import type {
+  LocationWorkOrdersTabQuery,
+  WorkOrderOrder,
+} from './__generated__/LocationWorkOrdersTabQuery.graphql';
 
-import React from 'react';
+import React, {useState} from 'react';
 import WorkOrdersView, {
   WORK_ORDERS_PAGE_SIZE,
 } from '../work_orders/WorkOrdersView';
@@ -35,14 +38,15 @@ type Props = $ReadOnly<{|
 export default function LocationWorkOrdersTab(props: Props) {
   const {locationId} = props;
 
-  const orderBy = {
+  const [orderBy, setOrderBy] = useState<WorkOrderOrder>({
     direction: 'DESC',
     field: 'UPDATED_AT',
-  };
+  });
 
   const response = useLazyLoadQuery<LocationWorkOrdersTabQuery>(
     workOrderSearchQuery,
     {
+      limit: WORK_ORDERS_PAGE_SIZE,
       filters: [
         {
           filterType: 'LOCATION_INST',
@@ -63,7 +67,8 @@ export default function LocationWorkOrdersTab(props: Props) {
       workOrders={response}
       onWorkOrderSelected={() => {}}
       orderBy={orderBy}
-      onOrderChanged={() => {}}
+      onOrderChanged={setOrderBy}
+      isWorkOrderTable={false}
     />
   );
 }

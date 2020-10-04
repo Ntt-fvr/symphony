@@ -42,10 +42,16 @@ type Props = $ReadOnly<{|
   onWorkOrderSelected: string => void,
   orderBy: WorkOrderOrder,
   onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
+  isWorkOrderTable: boolean,
 |}>;
 
 const WorkOrdersView = (props: Props) => {
-  const {onWorkOrderSelected, onOrderChanged, orderBy} = props;
+  const {
+    onWorkOrderSelected,
+    onOrderChanged,
+    orderBy,
+    isWorkOrderTable,
+  } = props;
   const classes = useStyles();
   const {statusValues} = useStatusValues();
 
@@ -117,6 +123,93 @@ const WorkOrdersView = (props: Props) => {
     return <div />;
   }
 
+  const tableColumns = [
+    {
+      key: 'name',
+      title: 'Name',
+      getSortingValue: row => row.name,
+      render: row => (
+        <Button variant="text" onClick={() => onWorkOrderSelected(row.id)}>
+          {row.name}
+        </Button>
+      ),
+    },
+    {
+      key: 'type',
+      title: `${fbt('Template', '')}`,
+      render: row => row.workOrderType?.name ?? '',
+    },
+    {
+      key: 'project',
+      title: 'Project',
+      render: row =>
+        row.project ? (
+          <Button
+            variant="text"
+            onClick={() =>
+              history.push(InventoryAPIUrls.project(nullthrows(row.project).id))
+            }>
+            {row.project?.name ?? ''}
+          </Button>
+        ) : null,
+    },
+    {
+      key: 'owner',
+      title: 'Owner',
+      render: row => row.owner.email ?? '',
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      render: row =>
+        formatMultiSelectValue(
+          statusValues.map(({value, label}) => ({value, label})),
+          row.status,
+        ) ?? '',
+    },
+    {
+      key: 'creationDate',
+      title: 'Creation Time',
+      render: row => DateTimeFormat.dateTime(row.creationDate),
+    },
+    {
+      key: 'dueDate',
+      title: 'Due Date',
+      render: row => DateTimeFormat.dateOnly(row.installDate),
+    },
+    ...(isWorkOrderTable
+      ? [
+          {
+            key: 'location',
+            title: 'Location',
+            render: row =>
+              row.location ? (
+                <LocationLink
+                  title={row.location.name}
+                  id={row.location.id}
+                  newTab={true}
+                />
+              ) : null,
+          },
+        ]
+      : []),
+    {
+      key: 'assignee',
+      title: 'Assignee',
+      render: row => row.assignedTo?.email || null,
+    },
+    {
+      key: 'priority',
+      title: 'Priority',
+      render: row => <PriorityTag priority={row.priority} />,
+    },
+    {
+      key: 'closeDate',
+      title: 'Close Time',
+      render: row => DateTimeFormat.dateTime(row.closeDate),
+    },
+  ];
+
   return (
     <Table
       className={classes.table}
@@ -152,90 +245,7 @@ const WorkOrdersView = (props: Props) => {
             }
           : undefined
       }
-      columns={[
-        {
-          key: 'name',
-          title: 'Name',
-          getSortingValue: row => row.name,
-          render: row => (
-            <Button variant="text" onClick={() => onWorkOrderSelected(row.id)}>
-              {row.name}
-            </Button>
-          ),
-        },
-        {
-          key: 'type',
-          title: `${fbt('Template', '')}`,
-          render: row => row.workOrderType?.name ?? '',
-        },
-        {
-          key: 'project',
-          title: 'Project',
-          render: row =>
-            row.project ? (
-              <Button
-                variant="text"
-                onClick={() =>
-                  history.push(
-                    InventoryAPIUrls.project(nullthrows(row.project).id),
-                  )
-                }>
-                {row.project?.name ?? ''}
-              </Button>
-            ) : null,
-        },
-        {
-          key: 'owner',
-          title: 'Owner',
-          render: row => row.owner.email ?? '',
-        },
-        {
-          key: 'status',
-          title: 'Status',
-          render: row =>
-            formatMultiSelectValue(
-              statusValues.map(({value, label}) => ({value, label})),
-              row.status,
-            ) ?? '',
-        },
-        {
-          key: 'creationDate',
-          title: 'Creation Time',
-          render: row => DateTimeFormat.dateTime(row.creationDate),
-        },
-        {
-          key: 'dueDate',
-          title: 'Due Date',
-          render: row => DateTimeFormat.dateOnly(row.installDate),
-        },
-        {
-          key: 'location',
-          title: 'Location',
-          render: row =>
-            row.location ? (
-              <LocationLink
-                title={row.location.name}
-                id={row.location.id}
-                newTab={true}
-              />
-            ) : null,
-        },
-        {
-          key: 'assignee',
-          title: 'Assignee',
-          render: row => row.assignedTo?.email || null,
-        },
-        {
-          key: 'priority',
-          title: 'Priority',
-          render: row => <PriorityTag priority={row.priority} />,
-        },
-        {
-          key: 'closeDate',
-          title: 'Close Time',
-          render: row => DateTimeFormat.dateTime(row.closeDate),
-        },
-      ]}
+      columns={tableColumns}
     />
   );
 };
