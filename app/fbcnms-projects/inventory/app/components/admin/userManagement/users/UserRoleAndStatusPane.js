@@ -65,7 +65,7 @@ const STATUS_OPT: RadioOption = {
   value: USER_STATUSES.DEACTIVATED.key,
   label: fbt('Deactivate', ''),
   details: fbt(
-    'Temporarely remove all access and permissions for this user',
+    'Temporarily remove all access and permissions for this user',
     '',
   ),
 };
