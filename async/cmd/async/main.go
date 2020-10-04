@@ -6,13 +6,16 @@ package main
 
 import (
 	"context"
+	"fmt"
 	stdlog "log"
 	"net/url"
 	"os"
 	"syscall"
+	"time"
 
 	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -23,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
+	"gocloud.dev/server/health"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "github.com/go-sql-driver/mysql"
@@ -39,6 +43,8 @@ type cliFlags struct {
 	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
 	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
+	CadenceAddr        string           `name:"cadence.addr" env:"CADENCE_ADDR" required:"" help:"Cadence server address."`
+	CadenceDomain      string           `name:"cadence.domain" env:"CADENCE_DOMAIN" required:"" help:"Cadence domain name."`
 	LogConfig          log.Config       `embed:""`
 	TelemetryConfig    telemetry.Config `embed:""`
 	TenancyConfig      viewer.Config    `embed:""`
@@ -73,28 +79,66 @@ type application struct {
 		*server.Server
 		addr string
 	}
-	server *handler.Server
+	server        *handler.Server
+	cadenceClient *worker.CadenceClient
+	healthChecks  []health.Checker
+}
+
+func (app *application) waitToBeHealthy(ctx context.Context, healthCheck health.Checker) error {
+	ticker := time.NewTicker(250 * time.Millisecond)
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("waiting for health check interrupted: %w", ctx.Err())
+		case <-ticker.C:
+			err := healthCheck.CheckHealth()
+			if err == nil {
+				ticker.Stop()
+				return nil
+			}
+			app.logger.Warn("health check failed: %w", zap.Error(err))
+		}
+	}
+}
+
+func (app *application) waitOnHealthyChecks(ctx context.Context) error {
+	g := ctxgroup.WithContext(ctx)
+	app.logger.Info("waiting for health checks")
+	for _, healthCheck := range app.healthChecks {
+		g.Go(func(ctx context.Context) error {
+			return app.waitToBeHealthy(ctx, healthCheck)
+		})
+	}
+	return g.Wait()
 }
 
 func (app *application) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
-	g.Go(func(context.Context) error {
-		err := app.http.ListenAndServe(app.http.addr)
-		app.logger.Debug("http server terminated", zap.Error(err))
-		return err
-	})
-	g.Go(func(ctx context.Context) error {
-		err := app.server.Serve(ctx)
-		app.logger.Debug("event server terminated", zap.Error(err))
-		return err
-	})
-	g.Go(func(ctx context.Context) error {
-		defer cancel()
+	if err := app.waitOnHealthyChecks(ctx); err == nil {
+		app.logger.Info("start serving")
+		g.Go(func(context.Context) error {
+			err := app.http.ListenAndServe(app.http.addr)
+			app.logger.Debug("http server terminated", zap.Error(err))
+			return err
+		})
+		g.Go(func(ctx context.Context) error {
+			err := app.server.Serve(ctx)
+			app.logger.Debug("event server terminated", zap.Error(err))
+			return err
+		})
+		g.Go(func(ctx context.Context) error {
+			err := app.cadenceClient.Run(ctx, app.workersClient.Register)
+			app.logger.Debug("cadence client terminated", zap.Error(err))
+			return err
+		})
+		g.Go(func(ctx context.Context) error {
+			defer cancel()
+			<-ctx.Done()
+			return nil
+		})
 		<-ctx.Done()
-		return nil
-	})
-	<-ctx.Done()
+	}
 
 	app.logger.Warn("start application termination",
 		zap.NamedError("reason", ctx.Err()),
@@ -112,6 +156,12 @@ func (app *application) run(ctx context.Context) error {
 		err := app.server.Shutdown(context.Background())
 		app.logger.Debug("end event server termination", zap.Error(err))
 		return err
+	})
+	g.Go(func(context.Context) error {
+		app.logger.Debug("start cadence client termination")
+		app.cadenceClient.Shutdown()
+		app.logger.Debug("end cadence client termination")
+		return nil
 	})
 	return g.Wait()
 }

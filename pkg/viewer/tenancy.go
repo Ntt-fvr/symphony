@@ -26,6 +26,15 @@ type Tenancy interface {
 	ClientFor(context.Context, string) (*ent.Client, error)
 }
 
+// The Func type is an adapter to allow the use of
+// ordinary functions as tenancy.
+type TenancyFunc func(context.Context, string) (*ent.Client, error)
+
+// Handle returns f(ctx, tenant).
+func (f TenancyFunc) ClientFor(ctx context.Context, tenant string) (*ent.Client, error) {
+	return f(ctx, tenant)
+}
+
 // FixedTenancy returns a fixed client.
 type FixedTenancy struct {
 	client *ent.Client

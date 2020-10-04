@@ -26,8 +26,8 @@ func main() {
 			Tenant     string `name:"ent.tenant" placeholder:"<tenant>" help:"Target specific tenant."`
 		} `cmd:"ent" help:"Ent migrate."`
 		Cadence struct {
-			Address         string `name:"cadence.addr" placeholder:"<address>" required:"" help:"Cadence server address."`
-			Domain          string `name:"cadence.domain" placeholder:"<domain>" required:"" help:"Cadence domain name."`
+			Address         string `name:"cadence.addr" placeholder:"<address>" required:"" env:"CADENCE_ADDR"  help:"Cadence server address."`
+			Domain          string `name:"cadence.domain" placeholder:"<domain>" required:"" env:"CADENCE_DOMAIN" help:"Cadence domain name."`
 			RetentionInDays int32  `name:"cadence.retention-in-days" placeholder:"<number-of-days>" env:"CADENCE_RETENTION_IN_DAYS" help:"Cadence retention in days."`
 		} `cmd:"cadence" help:"Cadence migrate."`
 		LogConfig log.Config `embed:""`

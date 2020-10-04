@@ -32,7 +32,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/kisielk/errcheck v1.4.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.1
 	github.com/pkg/errors v0.9.1
@@ -45,6 +45,7 @@ require (
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/uber-go/tally v3.3.17+incompatible // indirect
+	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/tchannel-go v1.20.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
