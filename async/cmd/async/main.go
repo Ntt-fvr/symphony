@@ -128,7 +128,7 @@ func (app *application) run(ctx context.Context) error {
 			return err
 		})
 		g.Go(func(ctx context.Context) error {
-			err := app.cadenceClient.Run(ctx, app.workersClient.Register)
+			err := app.cadenceClient.Run(ctx)
 			app.logger.Debug("cadence client terminated", zap.Error(err))
 			return err
 		})

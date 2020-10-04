@@ -76,7 +76,7 @@ func (cc CadenceClient) CheckHealth() error {
 }
 
 // Run starts the workers polling.
-func (cc *CadenceClient) Run(ctx context.Context, registerWorker func(worker.Worker)) error {
+func (cc *CadenceClient) Run(ctx context.Context) error {
 	workerOptions := worker.Options{
 		Logger: cc.logger.For(ctx),
 		Tracer: cc.tracer,

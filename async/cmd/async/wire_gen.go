@@ -26,8 +26,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/cadence/client"
-	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
@@ -93,6 +91,16 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	v := newHandlers(bucket, flags)
+	handlerConfig := handler.Config{
+		Tenancy:  tenancy,
+		Features: variable,
+		Receiver: receiver,
+		Logger:   logger,
+		Handlers: v,
+	}
+	handlerServer := handler.NewServer(handlerConfig)
+	router := mux.NewRouter()
+	zapLogger := xserver.NewRequestLogger(logger)
 	telemetryConfig := &flags.TelemetryConfig
 	tracer, cleanup6, err := telemetry.ProvideJaegerTracer(telemetryConfig)
 	if err != nil {
@@ -114,16 +122,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	handlerConfig := handler.Config{
-		Tenancy:  tenancy,
-		Features: variable,
-		Receiver: receiver,
-		Logger:   logger,
-		Handlers: v,
-	}
-	handlerServer := handler.NewServer(handlerConfig)
-	router := mux.NewRouter()
-	zapLogger := xserver.NewRequestLogger(logger)
 	v2 := newHealthChecks(mySQLTenancy, cadenceClient)
 	v3 := provideViews()
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
@@ -165,7 +163,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(router, options)
 	logger2 := log.ProvideZapLogger(logger)
-	mainApplication := newApplication(handlerServer, serverServer, client, cadenceClient, logger2, v2, flags)
+	mainApplication := newApplication(handlerServer, serverServer, cadenceClient, logger2, v2, flags)
 	return mainApplication, func() {
 		cleanup8()
 		cleanup7()
@@ -186,7 +184,7 @@ var (
 
 // wire.go:
 
-func newApplication(server2 *handler.Server, http *server.Server, client *worker.Client, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthChecks []health.Checker, flags *cliFlags) *application {
+func newApplication(server2 *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthChecks []health.Checker, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server2

@@ -30,8 +30,6 @@ import (
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/cadence/client"
-	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
@@ -89,7 +87,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	return nil, nil, nil
 }
 
-func newApplication(server *handler.Server, http *server.Server, client *worker.Client, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthChecks []health.Checker, flags *cliFlags) *application {
+func newApplication(server *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthChecks []health.Checker, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server
