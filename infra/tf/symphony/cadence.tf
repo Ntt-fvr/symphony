@@ -56,17 +56,17 @@ module cadence_db {
 
 resource kubernetes_job "create-cadence-db" {
   metadata {
-    name = "create-cadence-db"
+    name      = "create-cadence-db"
     namespace = kubernetes_namespace.symphony.id
   }
   spec {
-    completions = 1
+    completions             = 1
     active_deadline_seconds = 60
     template {
       metadata {}
       spec {
         container {
-          name = "create-cadence-db"
+          name  = "create-cadence-db"
           image = "mysql"
           command = [
             "mysql",
@@ -96,10 +96,10 @@ locals {
 
 # cadence is a distributed, scalable, durable, and highly available orchestration engine to execute asynchronous long-running business logic in a scalable and resilient way
 resource helm_release cadence {
-  name = "cadence"
-  namespace = kubernetes_namespace.symphony.id
+  name       = "cadence"
+  namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.banzaicloud
-  chart = "cadence"
+  chart      = "cadence"
   version    = "0.11.1"
   depends_on = [kubernetes_job.create-cadence-db]
 
@@ -115,10 +115,10 @@ resource helm_release cadence {
             driver = "sql"
             sql = {
               pluginName = "mysql"
-              host = module.cadence_db.this_db_instance_address
-              port = module.cadence_db.this_db_instance_port
-              database = s.database
-              user = module.cadence_db.this_db_instance_username
+              host       = module.cadence_db.this_db_instance_address
+              port       = module.cadence_db.this_db_instance_port
+              database   = s.database
+              user       = module.cadence_db.this_db_instance_username
             }
           }
         },
