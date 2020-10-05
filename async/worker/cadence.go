@@ -25,6 +25,7 @@ const (
 	TaskListName           = "async"
 )
 
+// CadenceClientConfig is the configuration for the cadence client
 type CadenceClientConfig struct {
 	CadenceAddr string
 	Domain      string
@@ -33,6 +34,7 @@ type CadenceClientConfig struct {
 	Logger      log.Logger
 }
 
+// CadenceClient is responsible to connect to cadence and create workers that handle available tasks
 type CadenceClient struct {
 	client       workflowserviceclient.Interface
 	domain       string
@@ -42,6 +44,7 @@ type CadenceClient struct {
 	domainWorker worker.Worker
 }
 
+// ProvideCadenceClient returns back cadence client based on given configuration
 func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), error) {
 	ch, err := tchannel.NewChannelTransport(
 		tchannel.ServiceName(cadenceClientName))
@@ -75,7 +78,7 @@ func (cc CadenceClient) CheckHealth() error {
 	return nil
 }
 
-// Run starts the workers polling.
+// Run makes the worker to start polling.
 func (cc *CadenceClient) Run(ctx context.Context) error {
 	workerOptions := worker.Options{
 		Logger: cc.logger.For(ctx),
@@ -91,7 +94,7 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 	return nil
 }
 
-// Shutdown terminates the server.
+// Shutdown terminates the worker polling.
 func (cc *CadenceClient) Shutdown() {
 	cc.domainWorker.Stop()
 }

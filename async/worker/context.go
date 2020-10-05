@@ -54,6 +54,7 @@ func NewWorkflowContext(ctx workflow.Context, v viewer.Viewer) workflow.Context 
 	return workflow.WithValue(ctx, ctxKey{}, wfv)
 }
 
+// NewContextPropagator returns context propagator based on given tenancy
 func NewContextPropagator(tenancy viewer.Tenancy) workflow.ContextPropagator {
 	return contextPropagator{tenancy: tenancy}
 }
