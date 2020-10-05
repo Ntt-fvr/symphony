@@ -8,9 +8,10 @@
  * @format
  */
 
+import type {Service} from '../../common/Service';
+
 import DynamicPropertiesGrid from '../DynamicPropertiesGrid';
 import React from 'react';
-import type {Service} from '../../common/Service';
 
 type Props = {
   className?: string,

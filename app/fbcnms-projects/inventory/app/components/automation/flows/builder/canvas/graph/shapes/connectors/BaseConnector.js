@@ -9,12 +9,12 @@
  */
 'use strict';
 
-import Link from '../../facades/shapes/edges/Link';
 import type {IBlock} from '../blocks/BaseBlock';
 import type {ILink} from '../../facades/shapes/edges/Link';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
+import Link from '../../facades/shapes/edges/Link';
 import symphony from '@symphony/design-system/theme/symphony';
 
 export const STROKE = {

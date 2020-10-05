@@ -8,13 +8,6 @@
  * @format
  */
 
-import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
-import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
-import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
-import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
-
-import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {
   FlowDataContext_FlowDraftQuery,
   FlowDataContext_FlowDraftQueryResponse,
@@ -24,9 +17,15 @@ import type {ImportFlowDraftInput} from '../../../../mutations/__generated__/Imp
 import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 
 import * as React from 'react';
+import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
 import fbt from 'fbt';
+import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
+import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
+import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
+import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
+import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {graphql} from 'react-relay';
 import {
   mapActionBlocksForSave,

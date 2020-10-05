@@ -8,10 +8,11 @@
  * @format
  */
 
+import type {ChangeLinkSelectionFunc} from './GraphSelectionContext';
+
 import {Events} from '../../canvas/graph/facades/Helpers';
 import {useCallback, useEffect} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
-import type {ChangeLinkSelectionFunc} from './GraphSelectionContext';
 
 export default function useLinkSelection(
   changeLinkSelection: ChangeLinkSelectionFunc,

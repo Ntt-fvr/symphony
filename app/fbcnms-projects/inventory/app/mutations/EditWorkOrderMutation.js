@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   EditWorkOrderMutation,
   EditWorkOrderMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/EditWorkOrderMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation EditWorkOrderMutation($input: EditWorkOrderInput!) {

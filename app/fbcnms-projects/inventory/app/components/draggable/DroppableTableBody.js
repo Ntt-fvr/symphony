@@ -7,10 +7,11 @@
  * @flow
  * @format
  */
+import type {DropResult, ResponderProvided} from 'react-beautiful-dnd';
+
 import * as React from 'react';
 import TableBody from '@material-ui/core/TableBody';
 import {DragDropContext, Droppable} from 'react-beautiful-dnd';
-import type {DropResult, ResponderProvided} from 'react-beautiful-dnd';
 
 type Props = {
   className?: string,

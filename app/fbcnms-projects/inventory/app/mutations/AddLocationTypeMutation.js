@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   AddLocationTypeMutation,
   AddLocationTypeMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/AddLocationTypeMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation AddLocationTypeMutation($input: AddLocationTypeInput!) {

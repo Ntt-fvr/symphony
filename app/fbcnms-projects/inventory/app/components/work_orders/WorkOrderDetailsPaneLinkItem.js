@@ -8,14 +8,15 @@
  * @format
  */
 
+import type {FutureState} from '../../common/WorkOrder';
+import type {WithStyles} from '@material-ui/core';
+import type {WorkOrderDetailsPaneLinkItem_link} from './__generated__/WorkOrderDetailsPaneLinkItem_link.graphql.js';
+
 import React from 'react';
 import WorkOrderDetailsPaneItem from './WorkOrderDetailsPaneItem';
 import nullthrows from '@fbcnms/util/nullthrows';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
-import type {FutureState} from '../../common/WorkOrder';
-import type {WithStyles} from '@material-ui/core';
-import type {WorkOrderDetailsPaneLinkItem_link} from './__generated__/WorkOrderDetailsPaneLinkItem_link.graphql.js';
 
 type Props = WithStyles<typeof styles> & {
   link: WorkOrderDetailsPaneLinkItem_link,

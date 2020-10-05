@@ -8,9 +8,10 @@
  * @format
  */
 
+import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
+
 import fbt from 'fbt';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
-import type {WorkOrderStatus as GraphQLStatusType} from '../components/work_orders/__generated__/WorkOrderDetails_workOrder.graphql.js';
 
 export type PriorityType = 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
 

@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../../../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   EditProjectTypeMutation,
   EditProjectTypeMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/EditProjectTypeMutation.graphql';
 import type {MutationCallbacks} from '../../../mutations/MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../../../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation EditProjectTypeMutation($input: EditProjectTypeInput!) {

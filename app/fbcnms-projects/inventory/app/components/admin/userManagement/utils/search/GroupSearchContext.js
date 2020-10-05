@@ -9,11 +9,12 @@
  * @format
  */
 
+import type {GroupSearchContextQuery} from './__generated__/GroupSearchContextQuery.graphql';
+import type {UsersGroup} from '../../data/UsersGroups';
+
 import RelayEnvironment from '../../../../../common/RelayEnvironment';
 import createSearchContext from './SearchContext';
 import {fetchQuery, graphql} from 'relay-runtime';
-import type {GroupSearchContextQuery} from './__generated__/GroupSearchContextQuery.graphql';
-import type {UsersGroup} from '../../data/UsersGroups';
 
 const groupSearchQuery = graphql`
   query GroupSearchContextQuery($filters: [UsersGroupFilterInput!]!) {

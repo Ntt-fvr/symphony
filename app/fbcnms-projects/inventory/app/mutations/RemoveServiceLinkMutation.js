@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
   RemoveServiceLinkMutation,
@@ -17,6 +15,9 @@ import type {
   RemoveServiceLinkMutationVariables,
 } from './__generated__/RemoveServiceLinkMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation RemoveServiceLinkMutation($id: ID!, $linkId: ID!) {

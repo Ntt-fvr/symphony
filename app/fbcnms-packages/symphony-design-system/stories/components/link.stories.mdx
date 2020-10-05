@@ -9,8 +9,8 @@ import {STORY_CATEGORIES} from '../storybookUtils';
 ```js
 import Link from '@symphony/design-system/components/Link';
 ```
-Link is an `anchor` tag, wrapping a `Text` component.
 
+Link is an `anchor` tag, wrapping a `Text` component.
 
 props affecting anchor:
 
@@ -19,7 +19,6 @@ props affecting anchor:
 `href`
 
 `className`
-
 
 props affecting Text:
 
@@ -34,20 +33,22 @@ props affecting Text:
 ### Default values
 
 <Preview>
-    <Story name="Default">
-        <Link href="www.fb.com">
-            fb.com link with default colors
-        </Link>
-    </Story>
+  <Story name="Default">
+    <Link href="www.fb.com">fb.com link with default colors</Link>
+  </Story>
 </Preview>
 
 ### Setting Styles
 
 <Preview>
-    <Story name="Other colors">
-        <Link variant="h4" color="error" hoverColor="warning" href="www.fb.com" inNewTab={true}>
-            fb.com link with variant, color and hoverColor
-        </Link>
-    </Story>
+  <Story name="Other colors">
+    <Link
+      variant="h4"
+      color="error"
+      hoverColor="warning"
+      href="www.fb.com"
+      inNewTab={true}>
+      fb.com link with variant, color and hoverColor
+    </Link>
+  </Story>
 </Preview>
-

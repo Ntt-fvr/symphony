@@ -47,6 +47,8 @@ if (Object.keys(schemaObject).length > 0) {
   ];
 }
 
+require('eslint-plugin-lint').load(path.join(__dirname, 'scripts/lint/rules'));
+
 module.exports.overrides = [
   {
     files: ['*'],
@@ -61,6 +63,14 @@ module.exports.overrides = [
           parser: 'flow',
         },
       ],
+      'flowtype/require-valid-file-annotation': 'off',
+    },
+  },
+  {
+    files: ['*.js'],
+    excludedFiles: ['**/__generated__/*', '**/flow-typed/*'],
+    rules: {
+      'lint/type-imports-block': 'error',
     },
   },
   {

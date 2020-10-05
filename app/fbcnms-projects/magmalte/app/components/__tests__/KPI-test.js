@@ -7,6 +7,8 @@
  * @flow strict-local
  * @format
  */
+import type {enodeb, enodeb_state, lte_gateway} from '@fbcnms/magma-api';
+
 import 'jest-dom/extend-expect';
 import EnodebKPIs from '../EnodebKPIs';
 import GatewayKPIs from '../GatewayKPIs';
@@ -18,7 +20,6 @@ import defaultTheme from '../../theme/default';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import {cleanup, render, wait} from '@testing-library/react';
-import type {enodeb, enodeb_state, lte_gateway} from '@fbcnms/magma-api';
 
 afterEach(cleanup);
 

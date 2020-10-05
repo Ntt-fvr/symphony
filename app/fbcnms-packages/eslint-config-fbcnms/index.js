@@ -191,6 +191,7 @@ const eslintMap = {
       'ignoreCase': false,
       'ignoreMemberSort': false,
       'memberSyntaxSortOrder': ['none', 'all', 'single', 'multiple'],
+      'typeSortStrategy': 'before',
     }],
 
 
@@ -229,6 +230,7 @@ const eslintMap = {
      ],
      'rules': {
        'flowtype/no-weak-types': [0],
+       'sort-imports-es6-autofix/sort-imports-es6': [0],
      },
    }],
    'extends': [

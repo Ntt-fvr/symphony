@@ -7,6 +7,8 @@
  * @flow strict-local
  * @format
  */
+import type {promql_return_object} from '@fbcnms/magma-api';
+
 import 'jest-dom/extend-expect';
 import EventAlertChart from '../EventAlertChart';
 import MagmaAPIBindings from '@fbcnms/magma-api';
@@ -15,7 +17,6 @@ import axiosMock from 'axios';
 import moment from 'moment';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {cleanup, render, wait} from '@testing-library/react';
-import type {promql_return_object} from '@fbcnms/magma-api';
 
 afterEach(cleanup);
 

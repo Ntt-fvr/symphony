@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
   RemoveSiteSurveyMutation,
@@ -17,6 +15,9 @@ import type {
   RemoveSiteSurveyMutationVariables,
 } from './__generated__/RemoveSiteSurveyMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation RemoveSiteSurveyMutation($id: ID!) {

@@ -7,6 +7,8 @@
  * @flow strict-local
  * @format
  */
+import type {lte_gateway, promql_return_object} from '@fbcnms/magma-api';
+
 import 'jest-dom/extend-expect';
 import Gateway from '../EquipmentGateway';
 import MagmaAPIBindings from '@fbcnms/magma-api';
@@ -17,7 +19,6 @@ import defaultTheme from '@fbcnms/ui/theme/default';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import {cleanup, fireEvent, render, wait} from '@testing-library/react';
-import type {lte_gateway, promql_return_object} from '@fbcnms/magma-api';
 
 jest.mock('axios');
 jest.mock('@fbcnms/magma-api');

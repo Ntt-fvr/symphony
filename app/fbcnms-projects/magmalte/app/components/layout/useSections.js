@@ -8,6 +8,10 @@
  * @format
  */
 
+import type {NetworkContextType} from '../context/NetworkContext';
+import type {NetworkType} from '@fbcnms/types/network';
+import type {SectionsConfigs} from '../layout/Section';
+
 import NetworkContext from '../context/NetworkContext';
 import {
   CWF,
@@ -19,9 +23,6 @@ import {
   WIFI,
   coalesceNetworkType,
 } from '@fbcnms/types/network';
-import type {NetworkContextType} from '../context/NetworkContext';
-import type {NetworkType} from '@fbcnms/types/network';
-import type {SectionsConfigs} from '../layout/Section';
 
 import AppContext from '@fbcnms/ui/context/AppContext';
 import {useContext, useEffect, useState} from 'react';

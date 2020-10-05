@@ -7,6 +7,8 @@
  * @flow strict-local
  * @format
  */
+import type {ChartStyle} from '@fbcnms/ui/insights/AsyncMetric';
+
 import AsyncMetric from '@fbcnms/ui/insights/AsyncMetric';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -14,7 +16,6 @@ import Grid from '@material-ui/core/Grid';
 import React from 'react';
 import Text from '../theme/design-system/Text';
 import moment from 'moment';
-import type {ChartStyle} from '@fbcnms/ui/insights/AsyncMetric';
 
 type Props = {
   startEnd: [moment, moment],

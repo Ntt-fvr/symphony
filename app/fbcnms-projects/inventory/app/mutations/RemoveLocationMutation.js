@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
   RemoveLocationMutation,
@@ -17,6 +15,9 @@ import type {
   RemoveLocationMutationVariables,
 } from './__generated__/RemoveLocationMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 import {getGraphError} from '../common/EntUtils';
 import {removeLocationFromStore} from './utils/LocationStoreUtils';

@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   AddActionsRuleMutation,
   AddActionsRuleMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/AddActionsRuleMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation AddActionsRuleMutation($input: AddActionsRuleInput!) {
