@@ -77,9 +77,11 @@ func (s *ContextTestSuite) AfterTest(_, _ string) {
 	s.env.AssertExpectations(s.T())
 }
 
-func (s *ContextTestSuite) registerActivity(f func(ctx context.Context) context.Context) {
+func (s *ContextTestSuite) registerActivity(f func(ctx context.Context)) {
 	s.env.RegisterActivityWithOptions(func(ctx context.Context) error {
-		ctx = f(ctx)
+		if f != nil {
+			f(ctx)
+		}
 		return nil
 	}, activity.RegisterOptions{
 		Name: activityName,
@@ -88,7 +90,9 @@ func (s *ContextTestSuite) registerActivity(f func(ctx context.Context) context.
 
 func (s *ContextTestSuite) registerWorkflow(f func(ctx workflow.Context) workflow.Context) {
 	s.env.RegisterWorkflowWithOptions(func(ctx workflow.Context) error {
-		ctx = f(ctx)
+		if f != nil {
+			ctx = f(ctx)
+		}
 		ao := workflow.ActivityOptions{
 			ScheduleToStartTimeout: 10 * time.Second,
 			StartToCloseTimeout:    5 * time.Second,
@@ -104,7 +108,7 @@ func (s *ContextTestSuite) registerWorkflow(f func(ctx workflow.Context) workflo
 }
 
 func (s *ContextTestSuite) TestRunWorkflow() {
-	s.registerActivity(func(ctx context.Context) context.Context {
+	s.registerActivity(func(ctx context.Context) {
 		v := viewer.FromContext(ctx)
 		s.Equal(viewertest.DefaultTenant, v.Tenant())
 		s.Equal(viewertest.DefaultUser, v.Name())
@@ -118,7 +122,6 @@ func (s *ContextTestSuite) TestRunWorkflow() {
 		s.NotNil(ent.FromContext(ctx))
 		permissions := authz.FromContext(ctx)
 		s.EqualValues(authz.EmptyPermissions(), permissions)
-		return ctx
 	})
 	ctx := viewertest.NewContext(context.Background(), s.client)
 	v := viewer.FromContext(ctx)
@@ -137,7 +140,7 @@ func (s *ContextTestSuite) TestAdminUserViewer() {
 		SetAuthID(adminName).
 		SetRole(user.RoleAdmin).
 		SaveX(ctx)
-	s.registerActivity(func(ctx context.Context) context.Context {
+	s.registerActivity(func(ctx context.Context) {
 		v := viewer.FromContext(ctx)
 		s.Equal(viewertest.DefaultTenant, v.Tenant())
 		s.Equal(adminName, v.Name())
@@ -151,7 +154,6 @@ func (s *ContextTestSuite) TestAdminUserViewer() {
 		s.NotNil(ent.FromContext(ctx))
 		permissions := authz.FromContext(ctx)
 		s.EqualValues(authz.FullPermissions(), permissions)
-		return ctx
 	})
 	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
 		return worker.NewWorkflowContext(ctx,
@@ -165,9 +167,7 @@ func (s *ContextTestSuite) TestAdminUserViewer() {
 func (s *ContextTestSuite) TestBadTenant() {
 	ctx := viewertest.NewContext(context.Background(), s.client)
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
-	s.registerActivity(func(ctx context.Context) context.Context {
-		return ctx
-	})
+	s.registerActivity(nil)
 	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
 		return worker.NewWorkflowContext(ctx, viewer.NewUser("bad_tenant", u))
 	})
@@ -178,7 +178,7 @@ func (s *ContextTestSuite) TestBadTenant() {
 
 func (s *ContextTestSuite) TestAutomationViewer() {
 	automationName := "flow-engine"
-	s.registerActivity(func(ctx context.Context) context.Context {
+	s.registerActivity(func(ctx context.Context) {
 		v := viewer.FromContext(ctx)
 		s.Equal(viewertest.DefaultTenant, v.Tenant())
 		s.Equal(automationName, v.Name())
@@ -190,7 +190,6 @@ func (s *ContextTestSuite) TestAutomationViewer() {
 		s.NotNil(ent.FromContext(ctx))
 		permissions := authz.FromContext(ctx)
 		s.EqualValues(authz.EmptyPermissions(), permissions)
-		return ctx
 	})
 	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
 		return worker.NewWorkflowContext(ctx,
@@ -202,13 +201,10 @@ func (s *ContextTestSuite) TestAutomationViewer() {
 }
 
 func (s *ContextTestSuite) TestViewerNotExist() {
-	s.registerActivity(func(ctx context.Context) context.Context {
+	s.registerActivity(func(ctx context.Context) {
 		s.Fail("you should not get here")
-		return ctx
 	})
-	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
-		return ctx
-	})
+	s.registerWorkflow(nil)
 	s.env.ExecuteWorkflow(WorkflowName)
 	s.True(s.env.IsWorkflowCompleted())
 	s.Error(s.env.GetWorkflowError())
@@ -246,7 +242,7 @@ func (s *ContextTestSuite) TestInjectionAndExtraction() {
 	propagator := worker.NewContextPropagator(tenancy)
 	err := propagator.Inject(ctx, &hw)
 	s.NoError(err)
-	s.registerActivity(func(ctx context.Context) context.Context {
+	s.registerActivity(func(ctx context.Context) {
 		v := viewer.FromContext(ctx)
 		s.Equal(viewertest.DefaultTenant, v.Tenant())
 		s.Equal(viewertest.DefaultUser, v.Name())
@@ -260,7 +256,6 @@ func (s *ContextTestSuite) TestInjectionAndExtraction() {
 		s.NotNil(ent.FromContext(ctx))
 		permissions := authz.FromContext(ctx)
 		s.EqualValues(authz.EmptyPermissions(), permissions)
-		return ctx
 	})
 	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
 		ctx, err := propagator.ExtractToWorkflow(ctx, &hr)
