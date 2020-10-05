@@ -27,6 +27,7 @@ func (ExportTask) Fields() []ent.Field {
 				"Link", "LINK",
 				"Service", "SERVICE",
 				"WorkOrder", "WORK_ORDER",
+				"SingleWorkOrder", "SINGLE_WORK_ORDER",
 			),
 		field.Enum("status").
 			NamedValues(
@@ -41,6 +42,9 @@ func (ExportTask) Fields() []ent.Field {
 		field.Text("filters").
 			Default("[]"),
 		field.String("store_key").
+			Nillable().
+			Optional(),
+		field.Int("wo_id_to_export").
 			Nillable().
 			Optional(),
 	}

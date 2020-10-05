@@ -29,6 +29,8 @@ const (
 	FieldFilters = "filters"
 	// FieldStoreKey holds the string denoting the store_key field in the database.
 	FieldStoreKey = "store_key"
+	// FieldWoIDToExport holds the string denoting the wo_id_to_export field in the database.
+	FieldWoIDToExport = "wo_id_to_export"
 
 	// Table holds the table name of the exporttask in the database.
 	Table = "export_tasks"
@@ -42,6 +44,7 @@ var Columns = []string{
 	FieldProgress,
 	FieldFilters,
 	FieldStoreKey,
+	FieldWoIDToExport,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -76,12 +79,13 @@ type Type string
 
 // Type values.
 const (
-	TypeEquipment Type = "EQUIPMENT"
-	TypeLocation  Type = "LOCATION"
-	TypePort      Type = "PORT"
-	TypeLink      Type = "LINK"
-	TypeService   Type = "SERVICE"
-	TypeWorkOrder Type = "WORK_ORDER"
+	TypeEquipment       Type = "EQUIPMENT"
+	TypeLocation        Type = "LOCATION"
+	TypePort            Type = "PORT"
+	TypeLink            Type = "LINK"
+	TypeService         Type = "SERVICE"
+	TypeWorkOrder       Type = "WORK_ORDER"
+	TypeSingleWorkOrder Type = "SINGLE_WORK_ORDER"
 )
 
 func (_type Type) String() string {
@@ -91,7 +95,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeEquipment, TypeLocation, TypePort, TypeLink, TypeService, TypeWorkOrder:
+	case TypeEquipment, TypeLocation, TypePort, TypeLink, TypeService, TypeWorkOrder, TypeSingleWorkOrder:
 		return nil
 	default:
 		return fmt.Errorf("exporttask: invalid enum value for type field: %q", _type)
