@@ -209,9 +209,6 @@ front:
       user: root
       pass: root
 
-    grafana:
-      address: ""
-
 # Configuration for graph database
 graphDB:
   # MySQL database configuration
@@ -780,17 +777,6 @@ docs:
 
   # Number of docs replicas desired
   replicas: 1
-
-# Integrations with external services
-integrations:
-  # Magma orc8r service
-  # ref: https://github.com/facebookincubator/magma/tree/master/orc8r
-  orc8r:
-    enabled: false
-    host: ""
-    tls:
-      cert: ""
-      key: ""
 
 # Configuration for jobrunner application
 jobrunner:

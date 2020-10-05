@@ -55,14 +55,6 @@ spec:
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}
             {{- end }}
-            {{- if .Values.integrations.orc8r.enabled }}
-            - name: ORC8R_HOST
-              value: {{ required ".Values.integrations.orc8r.host is required" .Values.integrations.orc8r.host | quote }}
-            - name: ORC8R_CERT
-              value: "/certs/orc8r/tls.cert"
-            - name: ORC8R_PKEY
-              value: "/certs/orc8r/tls.key"
-            {{- end }}
             {{- include "symphony.loggingEnv" .Values.graph | nindent 12 }}
             {{- include "symphony.tracingEnv" . | nindent 12 }}
             {{- with .Values.graph.spec.extraEnvVars }}
@@ -76,12 +68,6 @@ spec:
               containerPort: {{ .Values.graph.service.port.http.targetPort }}
             - name: grpc
               containerPort: {{ .Values.graph.service.port.grpc.targetPort }}
-          {{- if .Values.integrations.orc8r.enabled }}
-          volumeMounts:
-            - mountPath: /certs/orc8r
-              name: orc8r-certs
-              readOnly: true
-          {{- end }}
           {{- if .Values.graph.probes.liveness }}
           livenessProbe:
             httpGet:
@@ -97,9 +83,3 @@ spec:
             {{- toYaml .Values.graph.probes.readiness | nindent 12 }}
           {{- end }}
           resources: {{- toYaml .Values.graph.resources | nindent 12 }}
-      {{- if .Values.integrations.orc8r.enabled }}
-      volumes:
-        - name: orc8r-certs
-          secret:
-            secretName: {{ template  "symphony.integrations.orc8r.certsSecretName" . }}
-      {{- end }}
