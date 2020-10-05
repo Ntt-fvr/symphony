@@ -37,7 +37,7 @@ const useStyles = makeStyles(() => ({
   },
   actionButtons: {
     marginTop: '24px',
-    '& > button': {
+    '& > [data-is-clickable]': {
       marginRight: '8px',
     },
   },
