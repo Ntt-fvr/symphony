@@ -33,20 +33,23 @@ type workflowViewer struct {
 	UserName       *string
 	AutomationName *string
 	Role           string
-	Features       string
+	Features       *string
 }
 
 // NewContext returns a new context with the given Viewer attached.
 func NewWorkflowContext(ctx workflow.Context, v viewer.Viewer) workflow.Context {
 	wfv := workflowViewer{
-		Tenant:   v.Tenant(),
-		Role:     v.Role().String(),
-		Features: v.Features().String(),
+		Tenant: v.Tenant(),
+		Role:   v.Role().String(),
 	}
 	if _, ok := v.(*viewer.UserViewer); ok {
 		wfv.UserName = pointer.ToString(v.Name())
 	} else {
 		wfv.AutomationName = pointer.ToString(v.Name())
+	}
+	features := v.Features()
+	if len(features) != 0 {
+		wfv.Features = pointer.ToString(features.String())
 	}
 	return workflow.WithValue(ctx, ctxKey{}, wfv)
 }
@@ -58,6 +61,9 @@ func NewContextPropagator(tenancy viewer.Tenancy) workflow.ContextPropagator {
 // Inject injects information from a Go Context into headers
 func (contextPropagator) Inject(ctx context.Context, hw workflow.HeaderWriter) error {
 	v := viewer.FromContext(ctx)
+	if v == nil {
+		return fmt.Errorf("viewer is nil")
+	}
 	hw.Set(viewer.TenantHeader, []byte(v.Tenant()))
 	if _, ok := v.(*viewer.UserViewer); ok {
 		hw.Set(viewer.UserHeader, []byte(v.Name()))
@@ -65,7 +71,10 @@ func (contextPropagator) Inject(ctx context.Context, hw workflow.HeaderWriter) e
 		hw.Set(viewer.AutomationHeader, []byte(v.Name()))
 	}
 	hw.Set(viewer.RoleHeader, []byte(v.Role().String()))
-	hw.Set(viewer.FeaturesHeader, []byte(v.Features().String()))
+	features := v.Features()
+	if len(features) != 0 {
+		hw.Set(viewer.FeaturesHeader, []byte(features.String()))
+	}
 	return nil
 }
 
@@ -143,7 +152,9 @@ func (contextPropagator) InjectFromWorkflow(ctx workflow.Context, hw workflow.He
 		return fmt.Errorf("no user or automation viewer found")
 	}
 	hw.Set(viewer.RoleHeader, []byte(wfv.Role))
-	hw.Set(viewer.FeaturesHeader, []byte(wfv.Features))
+	if wfv.Features != nil {
+		hw.Set(viewer.FeaturesHeader, []byte(*wfv.Features))
+	}
 	return nil
 }
 
@@ -162,7 +173,7 @@ func (contextPropagator) ExtractToWorkflow(ctx workflow.Context, hr workflow.Hea
 		case viewer.RoleHeader:
 			wfv.Role = string(bytes)
 		case viewer.FeaturesHeader:
-			wfv.Features = string(bytes)
+			wfv.Features = pointer.ToString(string(bytes))
 		}
 		return nil
 	}); err != nil {
