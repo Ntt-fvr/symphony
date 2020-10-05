@@ -4,7 +4,7 @@ resource helm_release prometheus_operator {
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "9.4.5"
+  version    = "9.4.7"
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
