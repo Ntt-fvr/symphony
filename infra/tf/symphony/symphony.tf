@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "1.4.0"
+  version             = "2.0.0"
   timeout             = 600
   max_history         = 100
 
@@ -257,24 +257,8 @@ resource helm_release symphony {
           }
         }
       }
-    })],
-    var.with_orc8r ? [
-      yamlencode({
-        front = {
-          spec = {
-            grafana = {
-              address = "orc8r-user-grafana.orc8r.svc.cluster.local:3000"
-            }
-          }
-        }
-        integrations = {
-          orc8r = {
-            enabled = true
-            host    = "orc8r-nginx-proxy.orc8r.svc.cluster.local"
-          }
-        }
-      })
-  ] : [])
+    }),
+  ])
 
   set_sensitive {
     name  = "front.spec.session_token"
@@ -291,14 +275,6 @@ resource helm_release symphony {
   set_sensitive {
     name  = "graphDB.mysql.pass"
     value = module.graph_db.this_db_instance_password
-  }
-  set_sensitive {
-    name  = "integrations.orc8r.tls.cert"
-    value = module.orc8r_secret.data.cert
-  }
-  set_sensitive {
-    name  = "integrations.orc8r.tls.key"
-    value = module.orc8r_secret.data.pkey
   }
 
   lifecycle {

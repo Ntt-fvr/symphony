@@ -54,7 +54,7 @@ module cadence_db {
   tags = local.tags
 }
 
-resource kubernetes_job "create-cadence-db" {
+resource kubernetes_job create-cadence-db {
   metadata {
     name      = "create-cadence-db"
     namespace = kubernetes_namespace.symphony.id
