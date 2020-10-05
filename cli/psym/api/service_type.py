@@ -177,6 +177,58 @@ def get_service_type(client: SymphonyClient, service_type_id: str) -> ServiceTyp
     raise EntityNotFoundError(entity=Entity.ServiceType, entity_id=service_type_id)
 
 
+def add_property_types_to_service_type(
+    client: SymphonyClient,
+    service_type_id: str,
+    new_properties: List[PropertyDefinition],
+) -> ServiceType:
+    """This function adds new property types to existing service type.
+
+    :param service_type_id: Existing service type ID
+    :type service_type_id: str
+    :param new_properties: List of property definitions
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: LocationType object
+    :rtype: :class:`~psym.common.data_class.LocationType`
+
+    **Example**
+
+    .. code-block:: python
+
+        service_type = client.add_property_types_to_service_type(
+            service_type_id="12345678",
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
+    """
+    service_type = get_service_type(client=client, service_type_id=service_type_id)
+    new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+    result = EditServiceTypeMutation.execute(
+        client,
+        ServiceTypeEditData(
+            id=service_type.id,
+            name=service_type.name,
+            hasCustomer=service_type.has_customer,
+            properties=new_property_type_inputs,
+            endpoints=[],
+        ),
+    )
+    edited = format_to_service_type(service_type_fragment=result)
+    SERVICE_TYPES.pop(service_type.name)
+    SERVICE_TYPES[edited.name] = edited
+    return edited
+
+
 def edit_service_type(
     client: SymphonyClient,
     service_type: ServiceType,

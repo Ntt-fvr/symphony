@@ -67,9 +67,11 @@ class PsymClient(SymphonyClient):
     from .api.file import add_location_image, delete_document, add_file, add_files
     from .api.location_type import (
         add_location_type,
+        add_property_types_to_location_type,
         delete_location_type,
         get_location_types,
         get_location_type_by_id,
+        edit_location_type,
         delete_locations_by_location_type,
         delete_location_type_with_locations,
     )
@@ -89,6 +91,7 @@ class PsymClient(SymphonyClient):
         delete_equipment_type_with_equipments,
         _add_equipment_type,
         add_equipment_type,
+        add_property_types_to_equipment_type,
         get_or_create_equipment_type,
         _edit_equipment_type,
         edit_equipment_type,
@@ -133,6 +136,7 @@ class PsymClient(SymphonyClient):
     )
     from .api.service_type import (
         add_service_type,
+        add_property_types_to_service_type,
         get_service_type,
         get_service_types,
         edit_service_type,
@@ -179,6 +183,7 @@ class PsymClient(SymphonyClient):
         get_work_order_type_by_id,
         get_work_order_types,
         add_work_order_type,
+        add_property_types_to_work_order_type,
         delete_work_order_type,
     )
     from .api.work_order import (
@@ -190,6 +195,7 @@ class PsymClient(SymphonyClient):
     )
     from .api.project_type import (
         add_project_type,
+        add_property_types_to_project_type,
         delete_project_type,
         edit_project_type,
         get_project_type_by_id,

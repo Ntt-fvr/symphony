@@ -3,11 +3,17 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Mapping, Optional
 
+from psym._utils import get_graphql_property_type_inputs
 from psym.client import SymphonyClient
 from psym.common.cache import LOCATION_TYPES
-from psym.common.data_class import Location, LocationType, PropertyDefinition
+from psym.common.data_class import (
+    Location,
+    LocationType,
+    PropertyDefinition,
+    PropertyValue,
+)
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
     format_to_location_type,
@@ -16,7 +22,9 @@ from psym.common.data_format import (
 
 from ..exceptions import EntityNotFoundError
 from ..graphql.input.add_location_type import AddLocationTypeInput
+from ..graphql.input.edit_location_type import EditLocationTypeInput
 from ..graphql.mutation.add_location_type import AddLocationTypeMutation
+from ..graphql.mutation.edit_location_type import EditLocationTypeMutation
 from ..graphql.mutation.remove_location_type import RemoveLocationTypeMutation
 from ..graphql.query.location_type_details import LocationTypeDetailsQuery
 from ..graphql.query.location_type_locations import LocationTypeLocationsQuery
@@ -51,8 +59,12 @@ def add_location_type(
     :type name: str
     :param properties: List of property definitions
     :type properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+    :param map_type: Map type
+    :type map_type: str, optional
     :param map_zoom_level: Map zoom level
     :type map_zoom_level: int
+    :param is_site: Is site flag
+    :type is_site: bool
 
     :raises:
         FailedOperationException: Internal symphony error
@@ -93,6 +105,130 @@ def add_location_type(
     location_type = format_to_location_type(location_type_fragment=result)
     LOCATION_TYPES[result.name] = location_type
     return location_type
+
+
+def add_property_types_to_location_type(
+    client: SymphonyClient,
+    location_type_id: str,
+    new_properties: List[PropertyDefinition],
+) -> LocationType:
+    """This function adds new property types to existing location type.
+
+    :param location_type_id: Existing location type ID
+    :type location_type_id: str
+    :param new_properties: List of property definitions
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: LocationType object
+    :rtype: :class:`~psym.common.data_class.LocationType`
+
+    **Example**
+
+    .. code-block:: python
+
+        location_type = client.add_property_types_to_location_type(
+            location_type_id="12345678",
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
+    """
+    location_type = get_location_type_by_id(client=client, id=location_type_id)
+    new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+    result = EditLocationTypeMutation.execute(
+        client,
+        EditLocationTypeInput(
+            id=location_type.id,
+            name=location_type.name,
+            mapType=location_type.map_type,
+            mapZoomLevel=location_type.map_zoom_level,
+            isSite=location_type.is_site,
+            properties=new_property_type_inputs,
+        ),
+    )
+    edited = format_to_location_type(location_type_fragment=result)
+    LOCATION_TYPES.pop(location_type.name)
+    LOCATION_TYPES[edited.name] = edited
+    return edited
+
+
+def edit_location_type(
+    client: SymphonyClient,
+    location_type_id: str,
+    new_name: Optional[str] = None,
+    new_properties_defaults: Optional[Mapping[str, PropertyValue]] = None,
+    new_map_type: Optional[str] = None,
+    new_map_zoom_level: Optional[int] = 8,
+    new_is_site: Optional[bool] = False,
+) -> LocationType:
+    """This function edits existing LocationType.
+
+    :param location_type_id: Existing location type ID
+    :type location_type_id: str
+    :param new_name: Location type new name
+    :type new_name: str, optional
+    :param new_properties_defaults: Mapping of property name to property default value
+
+        * str - property name
+        * PropertyValue - new default value of the same type for this property
+
+    :type new_properties_defaults: Mapping[str, PropertyValue], optional
+    :param map_type: New map type
+    :type map_type: str, optional
+    :param map_zoom_level: New map zoom level
+    :type map_zoom_level: int, optional
+    :param new_is_site: New is site flag
+    :type new_is_site: bool, optional
+
+    :raises:
+        * FailedOperationException: Internal symphony error
+        * :class:`~psym.exceptions.EntityNotFoundError`: Location type does not exist
+
+    :return: LocationType
+    :rtype: :class:`~psym.common.data_class.LocationType`
+
+    **Example**
+
+    .. code-block:: python
+
+        edited_location_type = client.edit_location_type(
+            location_type_id="12345678,
+            new_name="New name",
+            new_description="New description",
+        )
+    """
+    location_type = get_location_type_by_id(client=client, id=location_type_id)
+    new_name = location_type.name if new_name is None else new_name
+
+    new_property_type_inputs = []
+    if new_properties_defaults:
+        property_types = location_type.property_types
+        new_property_type_inputs = get_graphql_property_type_inputs(
+            property_types, new_properties_defaults
+        )
+    result = EditLocationTypeMutation.execute(
+        client,
+        EditLocationTypeInput(
+            id=location_type.id,
+            name=new_name,
+            mapType=new_map_type,
+            mapZoomLevel=new_map_zoom_level,
+            isSite=new_is_site,
+            properties=new_property_type_inputs,
+        ),
+    )
+    edited = format_to_location_type(location_type_fragment=result)
+    LOCATION_TYPES.pop(location_type.name)
+    LOCATION_TYPES[edited.name] = edited
+    return edited
 
 
 def get_location_types(client: SymphonyClient) -> Iterator[LocationType]:

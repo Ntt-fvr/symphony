@@ -8,6 +8,7 @@ from typing import Dict, List, Tuple
 from psym.client import SymphonyClient
 from psym.common.data_class import Equipment, Location
 from psym.common.data_enum import Entity
+from psym.common.data_format import format_to_equipment
 
 from ..exceptions import EntityNotFoundError
 from ..graphql.query.equipment_positions import EquipmentPositionsQuery
@@ -29,12 +30,7 @@ def _get_one_level_attachments_of_equipment(
             attachments.append(
                 (
                     position.definition.id,
-                    Equipment(
-                        id=attached_equipment.id,
-                        external_id=attached_equipment.externalId,
-                        name=attached_equipment.name,
-                        equipment_type_name=attached_equipment.equipmentType.name,
-                    ),
+                    format_to_equipment(equipment_fragment=attached_equipment),
                 )
             )
 
@@ -102,12 +98,7 @@ def apply_location_template_to_location(
             entity=Entity.Location, entity_id=template_location.id
         )
     equipments = [
-        Equipment(
-            id=equipment.id,
-            external_id=equipment.externalId,
-            name=equipment.name,
-            equipment_type_name=equipment.equipmentType.name,
-        )
+        format_to_equipment(equipment_fragment=equipment)
         for equipment in location_with_equipments.equipments
     ]
     equipments_to_new_equipments = {}

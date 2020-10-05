@@ -19,7 +19,10 @@ from psym.api.location import (
     get_location_documents,
     move_location,
 )
-from psym.api.location_type import add_location_type
+from psym.api.location_type import (
+    add_location_type,
+    add_property_types_to_location_type,
+)
 from psym.common.data_class import PropertyDefinition
 from psym.exceptions import LocationCannotBeDeletedWithDependency
 from psym.graphql.enum.property_kind import PropertyKind
@@ -30,7 +33,7 @@ from ..utils.base_test import BaseTest
 class TestLocation(BaseTest):
     def setUp(self) -> None:
         super().setUp()
-        add_location_type(
+        self.location_type = add_location_type(
             client=self.client,
             name="City",
             properties=[
@@ -43,6 +46,18 @@ class TestLocation(BaseTest):
                 PropertyDefinition(
                     property_name="Contact",
                     property_kind=PropertyKind.email,
+                    default_raw_value=None,
+                    is_fixed=False,
+                ),
+            ],
+        )
+        add_location_type(
+            client=self.client,
+            name="Town",
+            properties=[
+                PropertyDefinition(
+                    property_name="Address",
+                    property_kind=PropertyKind.string,
                     default_raw_value=None,
                     is_fixed=False,
                 ),
@@ -133,6 +148,18 @@ class TestLocation(BaseTest):
         self.assertEqual(self.location_with_ext_id, fetch_location)
 
     def test_location_edited(self) -> None:
+        add_property_types_to_location_type(
+            client=self.client,
+            location_type_id=self.location_type.id,
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Address",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=False,
+                ),
+            ],
+        )
         edit_location(
             client=self.client,
             location=self.location_1,
@@ -140,13 +167,20 @@ class TestLocation(BaseTest):
             new_lat=10,
             new_long=20,
             new_external_id=None,
-            new_properties={"Contact": "new_limacity@peru.pe"},
+            new_properties={
+                "Contact": "new_limacity@mail.com",
+                "Address": "test address",
+            },
         )
         edited_location = get_location(
             client=self.client, location_hirerchy=[("City", "Lima4")]
         )
-        # TODO(T63055774): update test to check updated properties
+        properties = {p.propertyType.name: p for p in edited_location.properties}
         self.assertEqual(self.location_1.id, edited_location.id)
+        self.assertTrue("Contact" in properties)
+        self.assertEquals("new_limacity@mail.com", properties["Contact"].stringValue)
+        self.assertTrue("Address" in properties)
+        self.assertEquals("test address", properties["Address"].stringValue)
 
     def test_location_add_file(self) -> None:
         temp_file_path = os.path.join(self.tmpdir, ".".join(["temp_file", "txt"]))

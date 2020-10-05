@@ -6,4 +6,7 @@ fragment EquipmentFragment on Equipment {
     id
     name
   }
+  properties {
+    ...PropertyFragment
+  }
 }
