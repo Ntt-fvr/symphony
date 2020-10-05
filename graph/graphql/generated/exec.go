@@ -333,6 +333,10 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	DecisionBlock struct {
+		TempDummy func(childComplexity int) int
+	}
+
 	Device struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
@@ -719,6 +723,7 @@ type ComplexityRoot struct {
 		AddComment                               func(childComplexity int, input models.CommentInput) int
 		AddConnector                             func(childComplexity int, flowDraftID int, input models.ConnectorInput) int
 		AddCustomer                              func(childComplexity int, input models.AddCustomerInput) int
+		AddDecisionBlock                         func(childComplexity int, flowDraftID int, input models.DecisionBlockInput) int
 		AddEndBlock                              func(childComplexity int, flowDraftID int, input models.EndBlockInput) int
 		AddEquipment                             func(childComplexity int, input models.AddEquipmentInput) int
 		AddEquipmentPortType                     func(childComplexity int, input models.AddEquipmentPortTypeInput) int
@@ -1666,6 +1671,7 @@ type MutationResolver interface {
 	DeletePermissionsPolicy(ctx context.Context, id int) (bool, error)
 	AddStartBlock(ctx context.Context, flowDraftID int, input models.StartBlockInput) (*ent.Block, error)
 	AddEndBlock(ctx context.Context, flowDraftID int, input models.EndBlockInput) (*ent.Block, error)
+	AddDecisionBlock(ctx context.Context, flowDraftID int, input models.DecisionBlockInput) (*ent.Block, error)
 	AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error)
 	AddSubflowBlock(ctx context.Context, flowDraftID int, input models.SubflowBlockInput) (*ent.Block, error)
 	AddTriggerBlock(ctx context.Context, flowDraftID int, input models.TriggerBlockInput) (*ent.Block, error)
@@ -2720,6 +2726,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CustomerEdge.Node(childComplexity), true
+
+	case "DecisionBlock.tempDummy":
+		if e.complexity.DecisionBlock.TempDummy == nil {
+			break
+		}
+
+		return e.complexity.DecisionBlock.TempDummy(childComplexity), true
 
 	case "Device.id":
 		if e.complexity.Device.ID == nil {
@@ -4415,6 +4428,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AddCustomer(childComplexity, args["input"].(models.AddCustomerInput)), true
+
+	case "Mutation.addDecisionBlock":
+		if e.complexity.Mutation.AddDecisionBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addDecisionBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddDecisionBlock(childComplexity, args["flowDraftId"].(int), args["input"].(models.DecisionBlockInput)), true
 
 	case "Mutation.addEndBlock":
 		if e.complexity.Mutation.AddEndBlock == nil {
@@ -11978,6 +12003,10 @@ type EndBlock {
   params: [VariableExpression!]!
 }
 
+type DecisionBlock {
+  tempDummy: String,
+}
+
 type SubflowBlock {
   flow: Flow
   params: [VariableExpression!]!
@@ -11997,7 +12026,7 @@ type ActionBlock {
   params: [VariableExpression!]!
 }
 
-union BlockDetails = StartBlock | EndBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
+union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
 
 input StartBlockInput {
   cid: String!
@@ -12010,6 +12039,12 @@ input EndBlockInput {
   cid: String!
   name: String!
   params: [VariableExpressionInput!]!
+  uiRepresentation: BlockUIRepresentationInput
+}
+
+input DecisionBlockInput {
+  cid: String!
+  name: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -12063,6 +12098,7 @@ input ImportFlowDraftInput {
   endParamDefinitions: [VariableDefinitionInput!]!
   startBlock: StartBlockInput
   endBlocks: [EndBlockInput!]
+  decisionBlocks: [DecisionBlockInput!]
   gotoBlocks: [GotoBlockInput!]
   subflowBlocks: [SubflowBlockInput!]
   triggerBlocks: [TriggerBlockInput!]
@@ -12699,6 +12735,9 @@ type Mutation {
   addEndBlock(
     flowDraftId: ID!
     input: EndBlockInput!): Block!
+  addDecisionBlock(
+    flowDraftId: ID!
+    input: DecisionBlockInput!): Block!
   addGotoBlock(
     flowDraftId: ID!
     input: GotoBlockInput!): Block!
@@ -13191,6 +13230,30 @@ func (ec *executionContext) field_Mutation_addCustomer_args(ctx context.Context,
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addDecisionBlock_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["flowDraftId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("flowDraftId"))
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["flowDraftId"] = arg0
+	var arg1 models.DecisionBlockInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNDecisionBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -21280,6 +21343,38 @@ func (ec *executionContext) _CustomerEdge_cursor(ctx context.Context, field grap
 	res := resTmp.(ent.Cursor)
 	fc.Result = res
 	return ec.marshalNCursor2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DecisionBlock_tempDummy(ctx context.Context, field graphql.CollectedField, obj *models.DecisionBlock) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DecisionBlock",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TempDummy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Device_id(ctx context.Context, field graphql.CollectedField, obj *models.Device) (ret graphql.Marshaler) {
@@ -32564,6 +32659,48 @@ func (ec *executionContext) _Mutation_addEndBlock(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().AddEndBlock(rctx, args["flowDraftId"].(int), args["input"].(models.EndBlockInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Block)
+	fc.Result = res
+	return ec.marshalNBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addDecisionBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addDecisionBlock_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddDecisionBlock(rctx, args["flowDraftId"].(int), args["input"].(models.DecisionBlockInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -50588,6 +50725,42 @@ func (ec *executionContext) unmarshalInputConnectorInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputDecisionBlockInput(ctx context.Context, obj interface{}) (models.DecisionBlockInput, error) {
+	var it models.DecisionBlockInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "cid":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
+			it.Cid, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "uiRepresentation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uiRepresentation"))
+			it.UIRepresentation, err = ec.unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditBlockInput(ctx context.Context, obj interface{}) (models.EditBlockInput, error) {
 	var it models.EditBlockInput
 	var asMap = obj.(map[string]interface{})
@@ -52187,6 +52360,14 @@ func (ec *executionContext) unmarshalInputImportFlowDraftInput(ctx context.Conte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endBlocks"))
 			it.EndBlocks, err = ec.unmarshalOEndBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEndBlockInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "decisionBlocks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("decisionBlocks"))
+			it.DecisionBlocks, err = ec.unmarshalODecisionBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55212,6 +55393,13 @@ func (ec *executionContext) _BlockDetails(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._EndBlock(ctx, sel, obj)
+	case models.DecisionBlock:
+		return ec._DecisionBlock(ctx, sel, &obj)
+	case *models.DecisionBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._DecisionBlock(ctx, sel, obj)
 	case models.GotoBlock:
 		return ec._GotoBlock(ctx, sel, &obj)
 	case *models.GotoBlock:
@@ -56905,6 +57093,30 @@ func (ec *executionContext) _CustomerEdge(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var decisionBlockImplementors = []string{"DecisionBlock", "BlockDetails"}
+
+func (ec *executionContext) _DecisionBlock(ctx context.Context, sel ast.SelectionSet, obj *models.DecisionBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, decisionBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DecisionBlock")
+		case "tempDummy":
+			out.Values[i] = ec._DecisionBlock_tempDummy(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60033,6 +60245,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "addEndBlock":
 			out.Values[i] = ec._Mutation_addEndBlock(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addDecisionBlock":
+			out.Values[i] = ec._Mutation_addDecisionBlock(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -65897,6 +66114,16 @@ func (ec *executionContext) marshalNCustomerEdge2ᚖgithubᚗcomᚋfacebookincub
 	return ec._CustomerEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNDecisionBlockInput2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInput(ctx context.Context, v interface{}) (models.DecisionBlockInput, error) {
+	res, err := ec.unmarshalInputDecisionBlockInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNDecisionBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInput(ctx context.Context, v interface{}) (*models.DecisionBlockInput, error) {
+	res, err := ec.unmarshalInputDecisionBlockInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNDiscoveryMethod2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋservicetypeᚐDiscoveryMethod(ctx context.Context, v interface{}) (servicetype.DiscoveryMethod, error) {
 	var res servicetype.DiscoveryMethod
 	err := res.UnmarshalGQL(v)
@@ -71318,6 +71545,30 @@ func (ec *executionContext) marshalOCustomerConnection2ᚖgithubᚗcomᚋfaceboo
 		return graphql.Null
 	}
 	return ec._CustomerConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODecisionBlockInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInputᚄ(ctx context.Context, v interface{}) ([]*models.DecisionBlockInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*models.DecisionBlockInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNDecisionBlockInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDecisionBlockInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalODevice2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐDevice(ctx context.Context, sel ast.SelectionSet, v *models.Device) graphql.Marshaler {

@@ -6,5 +6,6 @@ locals {
       password = module.artifactory_secret.data.password
     }
     codecentric = "https://codecentric.github.io/helm-charts"
+    banzaicloud = "https://kubernetes-charts.banzaicloud.com"
   }
 }

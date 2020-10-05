@@ -18,10 +18,11 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-// ExecQueryer wraps QueryContext and ExecContext methods.
+// ExecQueryer wraps ExecContext, QueryContext and QueryRowContext methods.
 type ExecQueryer interface {
-	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
 	ExecContext(context.Context, string, ...interface{}) (sql.Result, error)
+	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
+	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
 }
 
 // BeginTxExecQueryer adds BeginTx method to ExecQueryer interface.

@@ -60,7 +60,7 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 			}
 		}
 		switch newBlock.Type {
-		case block.TypeEnd, block.TypeSubFlow, block.TypeTrigger, block.TypeAction:
+		case block.TypeEnd, block.TypeDecision, block.TypeSubFlow, block.TypeTrigger, block.TypeAction:
 			var newInputParams []*flowschema.VariableExpression
 			for _, param := range blk.InputParams {
 				newParam := &flowschema.VariableExpression{

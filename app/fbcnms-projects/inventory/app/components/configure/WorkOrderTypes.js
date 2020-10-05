@@ -130,7 +130,6 @@ const WorkOrderTypes = () => {
             <Button onClick={() => showAddEditWorkOrderTypeCard(null)}>
               <fbt desc="">Create Work Order Template</fbt>
             </Button>
-            ,
           </FormActionWithPermissions>,
         ],
       }}

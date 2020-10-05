@@ -3,6 +3,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 from gql.gql.reporter import DUMMY_REPORTER, Reporter
+
 from psym.common.constant import __version__
 
 from .api.equipment_type import _populate_equipment_types
@@ -133,6 +134,7 @@ class PsymClient(SymphonyClient):
     from .api.service_type import (
         add_service_type,
         get_service_type,
+        get_service_types,
         edit_service_type,
         delete_service_type,
         delete_service_type_with_services,

@@ -8,6 +8,8 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/facebookincubator/symphony/pkg/ent/project"
+
 	"github.com/AlekSi/pointer"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
@@ -200,6 +202,35 @@ func (m *importer) getOrCreateEquipment(
 		zap.Int("equip.ID", equip.ID),
 	)
 	return equip, true, nil
+}
+
+func (m *importer) createProject(
+	ctx context.Context, mr generated.MutationResolver, name string,
+	projectType *ent.ProjectType, description *string, priority *project.Priority,
+	creatorID *int, locID *int,
+	props []*models.PropertyInput,
+) (*ent.Project, error) {
+	log := m.logger.For(ctx)
+
+	proj, err := mr.CreateProject(ctx, models.AddProjectInput{
+		Name:        name,
+		Description: description,
+		Priority:    priority,
+		CreatorID:   creatorID,
+		Type:        projectType.ID,
+		Location:    locID,
+		Properties:  props,
+	})
+
+	if err != nil {
+		log.Error("add project", zap.String("name", name), zap.Error(err))
+		return nil, err
+	}
+	log.Debug("Creating new project",
+		zap.String("proj.Name", proj.Name),
+		zap.Int("proj.ID", proj.ID),
+	)
+	return proj, nil
 }
 
 func (m *importer) getServiceIfExist(ctx context.Context, name string, serviceType *ent.ServiceType) (*ent.Service, error) {

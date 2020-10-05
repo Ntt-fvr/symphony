@@ -18,6 +18,16 @@ type Tenant implements Node {
   name: String!
 }
 
+"""
+Ways in which to filter list of tenants.
+"""
+input TenantFilters {
+  """
+  A List of names to filter the tenants by.
+  """
+  names: [String!]
+}
+
 extend type Query {
   """
   Lookup a tenant by name.
@@ -32,7 +42,7 @@ extend type Query {
   """
   Get alphabetically sorted list of tenants.
   """
-  tenants: [Tenant!]
+  tenants(filterBy: TenantFilters): [Tenant!]
 }
 
 """

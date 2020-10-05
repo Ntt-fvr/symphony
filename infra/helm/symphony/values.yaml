@@ -209,9 +209,6 @@ front:
       user: root
       pass: root
 
-    grafana:
-      address: ""
-
 # Configuration for graph database
 graphDB:
   # MySQL database configuration
@@ -584,6 +581,20 @@ migrate:
       level: info
       format: json
 
+    # Migrations configuration
+    migrations:
+      # Ent configuration
+      ent:
+        # Additional key/value pairs to be used as environment variables
+        extraEnvVars: [ ]
+
+      # Cadence configuration
+      cadence:
+        address: ""
+        domain: "flow"
+        # Additional key/value pairs to be used as environment variables
+        extraEnvVars: [ ]
+
 # Configuration for store application
 store:
   # Annotations to be added to store deployment
@@ -766,17 +777,6 @@ docs:
 
   # Number of docs replicas desired
   replicas: 1
-
-# Integrations with external services
-integrations:
-  # Magma orc8r service
-  # ref: https://github.com/facebookincubator/magma/tree/master/orc8r
-  orc8r:
-    enabled: false
-    host: ""
-    tls:
-      cert: ""
-      key: ""
 
 # Configuration for jobrunner application
 jobrunner:

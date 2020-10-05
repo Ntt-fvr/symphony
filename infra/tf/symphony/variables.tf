@@ -36,9 +36,3 @@ variable front_secret {
   })
   default = null
 }
-
-variable with_orc8r {
-  description = "Enable orchestrator integration"
-  type        = bool
-  default     = true
-}

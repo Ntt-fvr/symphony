@@ -100,6 +100,12 @@ resource aws_iam_group ctf {
   count = local.ctf_iam_count
 }
 
+# IAM group for CTF team.
+data aws_iam_group ctf {
+  group_name = "CTF"
+  count      = 1 - length(aws_iam_group.ctf)
+}
+
 # aws iam role for admins in ctf namespace.
 resource aws_iam_role ctf_admin {
   name               = "CTFAdmin"
@@ -230,4 +236,86 @@ resource kubernetes_secret ctf_db {
     password = module.ctf_db.this_db_instance_password
     database = module.ctf_db.this_db_instance_name
   }
+}
+
+# datastore bucket for ctf
+resource aws_s3_bucket ctf_datastore {
+  bucket = format("ctf%s-datastore",
+    local.environment != "production" ? "-${local.environment}" : "",
+  )
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  tags = {
+    Project   = "ctf"
+    Workspace = terraform.workspace
+  }
+}
+
+
+# block public access to ctf bucket
+resource aws_s3_bucket_public_access_block ctf_datastore {
+  bucket                  = aws_s3_bucket.ctf_datastore.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# IAM policy for ctf admins.
+data aws_iam_policy_document ctf_admin {
+  statement {
+    actions = ["s3:*"]
+    resources = [
+      aws_s3_bucket.ctf_datastore.arn,
+      "${aws_s3_bucket.ctf_datastore.arn}/*",
+    ]
+  }
+}
+
+# Create a policy from the above document.
+resource aws_iam_policy ctf_admin {
+  policy = data.aws_iam_policy_document.ctf_admin.json
+}
+
+# Attach datastore admin policy to ctf admin group
+resource aws_iam_group_policy_attachment ctf_admin {
+  group = try(
+    aws_iam_group.ctf[0].name,
+    data.aws_iam_group.ctf[0].group_name,
+  )
+  policy_arn = aws_iam_policy.ctf_admin.arn
+}
+
+# IAM policy for fileserver
+data aws_iam_policy_document ctf_fileserver {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.ctf_datastore.arn}/*",
+    ]
+  }
+}
+
+# IAM role for ctf fileserver.
+module ctf_fileserver_role {
+  source                    = "../modules/irsa"
+  role_name_prefix          = "CTFFileServerRole"
+  role_path                 = local.eks_sa_role_path
+  role_policy               = data.aws_iam_policy_document.ctf_fileserver.json
+  service_account_name      = "fileserver"
+  service_account_namespace = kubernetes_namespace.ctf.id
+  oidc_provider_arn         = module.eks.oidc_provider_arn
+  tags                      = { Workspace = terraform.workspace }
 }

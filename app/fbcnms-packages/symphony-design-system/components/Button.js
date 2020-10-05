@@ -8,9 +8,11 @@
  * @format
  */
 
+import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
 import type {TRefFor} from '../types/TRefFor.flow';
 
 import * as React from 'react';
+import Clickable from './Core/Clickable';
 import Text from './Text';
 import classNames from 'classnames';
 import symphony from '@symphony/design-system/theme/symphony';
@@ -22,7 +24,6 @@ import {useMemo} from 'react';
 const useStyles = makeStyles(_theme => ({
   root: {
     border: 0,
-    cursor: 'pointer',
     '&:focus': {
       outline: 'none',
     },
@@ -231,7 +232,6 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     '&$disabled': {
-      cursor: 'default',
       backgroundColor: symphony.palette.disabled,
       '& $buttonText, $icon': {
         color: symphony.palette.white,
@@ -382,7 +382,6 @@ const useStyles = makeStyles(_theme => ({
       },
     },
     '&$disabled': {
-      cursor: 'default',
       '& $buttonText, $icon': {
         color: symphony.palette.disabled,
         fill: symphony.palette.disabled,
@@ -412,10 +411,6 @@ export type ButtonProps = $ReadOnly<{|
   tooltip?: string,
 |}>;
 
-export type MouseEventHandler = (
-  SyntheticMouseEvent<HTMLElement>,
-) => void | Promise<void>;
-
 export type Props = $ReadOnly<{|
   className?: string,
   children: React.Node,
@@ -428,7 +423,7 @@ export type Props = $ReadOnly<{|
   ...ButtonProps,
 |}>;
 
-const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
+const Button = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
   const {
     className,
     children,
@@ -462,7 +457,7 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
   );
 
   return (
-    <button
+    <Clickable
       className={classNames(
         classes.root,
         classes[`${skin}Skin`],
@@ -475,7 +470,6 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
         },
         className,
       )}
-      type="button"
       title={tooltip}
       disabled={disabled}
       onClick={onClick}
@@ -506,8 +500,8 @@ const Button = (props: Props, forwardedRef: TRefFor<HTMLButtonElement>) => {
           color="inherit"
         />
       ) : null}
-    </button>
+    </Clickable>
   );
 };
 
-export default React.forwardRef<Props, HTMLButtonElement>(Button);
+export default React.forwardRef<Props, HTMLElement>(Button);

@@ -10,7 +10,7 @@
 import type {AutomationFlowsViewQuery} from './__generated__/AutomationFlowsViewQuery.graphql';
 
 import * as React from 'react';
-import AutomationFlowCard from './AutomationFlowCard';
+import AutomationFlowsList from './AutomationFlowsList';
 import Button from '@symphony/design-system/components/Button';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
 import fbt from 'fbt';
@@ -32,7 +32,7 @@ const flowDraftsQuery = graphql`
     flowDrafts(first: 500) @connection(key: "AutomationFlowsView_flowDrafts") {
       edges {
         node {
-          ...AutomationFlowCard_flowDraft
+          ...AutomationFlowsList_flows
         }
       }
     }
@@ -56,7 +56,7 @@ export default function AutomationFlowsView(_props: Props) {
   const header = useMemo(
     () => ({
       title: AUTOMATION_FLOWS_VIEW_HEADER,
-      subtitle: <fbt desc="">List of all automation flows in the system</fbt>,
+      subtitle: <fbt desc="">Create and manage Automation Flows</fbt>,
       actionButtons: [
         <Button
           key="1"
@@ -79,13 +79,7 @@ export default function AutomationFlowsView(_props: Props) {
 
   return (
     <ViewContainer header={header} className={classes.root}>
-      <div>
-        {flowDrafts.map(flowDraft => (
-          <div>
-            <AutomationFlowCard flowDraft={flowDraft} />
-          </div>
-        ))}
-      </div>
+      <AutomationFlowsList flows={flowDrafts} />
     </ViewContainer>
   );
 }

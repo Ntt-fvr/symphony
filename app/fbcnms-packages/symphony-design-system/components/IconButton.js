@@ -8,7 +8,8 @@
  * @format
  */
 
-import type {ButtonSkin, MouseEventHandler} from './Button';
+import type {ButtonSkin} from './Button';
+import type {MouseEventHandler} from './Core/Clickable';
 import type {SvgIconStyleProps} from '../icons/SvgIcon';
 
 import * as React from 'react';

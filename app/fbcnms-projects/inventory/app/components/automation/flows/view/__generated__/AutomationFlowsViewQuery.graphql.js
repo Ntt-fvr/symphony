@@ -14,13 +14,13 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-type AutomationFlowCard_flowDraft$ref = any;
+type AutomationFlowsList_flows$ref = any;
 export type AutomationFlowsViewQueryVariables = {||};
 export type AutomationFlowsViewQueryResponse = {|
   +flowDrafts: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?{|
-        +$fragmentRefs: AutomationFlowCard_flowDraft$ref
+        +$fragmentRefs: AutomationFlowsList_flows$ref
       |}
     |}>
   |}
@@ -37,7 +37,7 @@ query AutomationFlowsViewQuery {
   flowDrafts(first: 500) {
     edges {
       node {
-        ...AutomationFlowCard_flowDraft
+        ...AutomationFlowsList_flows
         id
         __typename
       }
@@ -53,10 +53,11 @@ query AutomationFlowsViewQuery {
 fragment AutomationFlowCard_flowDraft on FlowDraft {
   id
   name
-  blocks {
-    id
-    name
-  }
+}
+
+fragment AutomationFlowsList_flows on FlowDraft {
+  id
+  ...AutomationFlowCard_flowDraft
 }
 */
 
@@ -106,21 +107,7 @@ v3 = [
     "name": "first",
     "value": 500
   }
-],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -156,7 +143,7 @@ return {
                   {
                     "args": null,
                     "kind": "FragmentSpread",
-                    "name": "AutomationFlowCard_flowDraft"
+                    "name": "AutomationFlowsList_flows"
                   }
                 ],
                 "storageKey": null
@@ -203,19 +190,18 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Block",
-                    "kind": "LinkedField",
-                    "name": "blocks",
-                    "plural": true,
-                    "selections": [
-                      (v4/*: any*/),
-                      (v5/*: any*/)
-                    ],
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
                     "storageKey": null
                   },
                   (v0/*: any*/)
@@ -242,7 +228,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f10527880625312932f5f979f955ab0c",
+    "cacheID": "2fdb4587f5973a41f183b433f9abff8c",
     "id": null,
     "metadata": {
       "connection": [
@@ -258,11 +244,11 @@ return {
     },
     "name": "AutomationFlowsViewQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowsViewQuery {\n  flowDrafts(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowCard_flowDraft\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flowDraft on FlowDraft {\n  id\n  name\n  blocks {\n    id\n    name\n  }\n}\n"
+    "text": "query AutomationFlowsViewQuery {\n  flowDrafts(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flowDraft on FlowDraft {\n  id\n  name\n}\n\nfragment AutomationFlowsList_flows on FlowDraft {\n  id\n  ...AutomationFlowCard_flowDraft\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'efaf0284c8fabad1925b348aa4eb04cd';
+(node/*: any*/).hash = '82fa48721d6e1c127c375d0ce805e52d';
 
 module.exports = node;

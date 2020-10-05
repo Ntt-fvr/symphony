@@ -24,6 +24,7 @@ export type ImportFlowDraftInput = {|
   endParamDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
   startBlock?: ?StartBlockInput,
   endBlocks?: ?$ReadOnlyArray<EndBlockInput>,
+  decisionBlocks?: ?$ReadOnlyArray<DecisionBlockInput>,
   gotoBlocks?: ?$ReadOnlyArray<GotoBlockInput>,
   subflowBlocks?: ?$ReadOnlyArray<SubflowBlockInput>,
   triggerBlocks?: ?$ReadOnlyArray<TriggerBlockInput>,
@@ -62,6 +63,11 @@ export type VariableExpressionInput = {|
 export type BlockVariableInput = {|
   blockCid: string,
   variableDefinitionKey: string,
+|};
+export type DecisionBlockInput = {|
+  cid: string,
+  name: string,
+  uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type GotoBlockInput = {|
   cid: string,

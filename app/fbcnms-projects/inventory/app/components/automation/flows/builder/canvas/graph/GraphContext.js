@@ -72,10 +72,7 @@ type AddBlockFunctionType = (
   },
 ) => ?IBlock;
 
-type AddConnectorFunctionType = (options: {
-  source: IBlock,
-  target: IBlock,
-}) => ?IConnector;
+type AddConnectorFunctionType = (source: IBlock, target: IBlock) => ?IConnector;
 
 export type BlockEventCallback = (IBlock, MouseEvent, number, number) => void;
 export type BlockPortEventCallback = (
@@ -208,11 +205,7 @@ function graphAddBlock(
   const newBlock = shapesFactory.createBlock(type, options?.id ?? '');
   newBlock.model.position(position.x, position.y);
   if (options?.text) {
-    newBlock.model.attr({
-      label: {
-        text: options.text,
-      },
-    });
+    newBlock.setName(options.text);
   }
 
   blocksMap.set(newBlock.id, newBlock);
@@ -257,20 +250,14 @@ function graphRemoveConnector(connector: IConnector) {
   connector.model.remove();
 }
 
-function graphAddConnector(options: {source: IBlock, target: IBlock}) {
-  if (this.current == null) {
+function graphAddConnector(source: IBlock, target: IBlock) {
+  const connector = source.addConnector(null, target);
+
+  if (connector == null || this.current == null) {
     return;
   }
 
-  const shapesFactory = this.current.shapesFactory;
-  const connectorsMap = this.current.connectors;
-
-  const connector = shapesFactory.createNewConnector(
-    options.source,
-    options.target,
-  );
-
-  connectorsMap.set(connector.id, connector);
+  this.current.connectors.set(connector.id, connector);
 
   return connector;
 }
@@ -537,10 +524,7 @@ function graphDeserialize(json: string) {
     if (blockSource == null || blockTarget == null) {
       return;
     }
-    graphAddConnector.call(this, {
-      source: blockSource,
-      target: blockTarget,
-    });
+    graphAddConnector.call(this, blockSource, blockTarget);
   });
 }
 

@@ -13,7 +13,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/migrate"
-	"go.uber.org/multierr"
+	"github.com/hashicorp/go-multierror"
 
 	// register sqlite3 for testing
 	_ "github.com/mattn/go-sqlite3"
@@ -54,10 +54,10 @@ func (t *Tenancy) ClientFor(ctx context.Context, name string) (*ent.Client, erro
 func (t *Tenancy) Close() error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	var err error
+	err := &multierror.Error{}
 	for _, client := range t.clients {
-		err = multierr.Append(err, client.Close())
+		err = multierror.Append(err, client.Close())
 	}
 	t.clients = nil
-	return err
+	return err.ErrorOrNil()
 }

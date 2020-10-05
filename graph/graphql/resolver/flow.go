@@ -208,10 +208,7 @@ func (r mutationResolver) paramsHaveDependencies(params []*models.VariableExpres
 }
 
 func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportFlowDraftInput) error {
-	var (
-		blockInputs    []interface{}
-		newBlockInputs []interface{}
-	)
+	var newBlockInputs []interface{}
 	createdBlockCIDs := make(map[string]struct{})
 	if input.StartBlock != nil {
 		if _, err := r.AddStartBlock(ctx, input.ID, *input.StartBlock); err != nil {
@@ -219,21 +216,7 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 		}
 		createdBlockCIDs[input.StartBlock.Cid] = struct{}{}
 	}
-	for _, blk := range input.EndBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
-	for _, blk := range input.GotoBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
-	for _, blk := range input.SubflowBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
-	for _, blk := range input.TriggerBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
-	for _, blk := range input.ActionBlocks {
-		blockInputs = append(blockInputs, blk)
-	}
+	blockInputs := r.collectBlocksInputs(ctx, input)
 	for len(blockInputs) > 0 {
 		for _, blk := range blockInputs {
 			switch blkInput := blk.(type) {
@@ -246,6 +229,11 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 				} else {
 					newBlockInputs = append(newBlockInputs, blkInput)
 				}
+			case *models.DecisionBlockInput:
+				if _, err := r.AddDecisionBlock(ctx, input.ID, *blkInput); err != nil {
+					return err
+				}
+				createdBlockCIDs[blkInput.Cid] = struct{}{}
 			case *models.GotoBlockInput:
 				if _, ok := createdBlockCIDs[blkInput.TargetBlockCid]; ok {
 					if _, err := r.AddGotoBlock(ctx, input.ID, *blkInput); err != nil {
@@ -290,6 +278,29 @@ func (r mutationResolver) importBlocks(ctx context.Context, input models.ImportF
 		blockInputs = newBlockInputs
 	}
 	return nil
+}
+
+func (r mutationResolver) collectBlocksInputs(ctx context.Context, input models.ImportFlowDraftInput) []interface{} {
+	var blockInputs []interface{}
+	for _, blk := range input.EndBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.DecisionBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.GotoBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.SubflowBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.TriggerBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	for _, blk := range input.ActionBlocks {
+		blockInputs = append(blockInputs, blk)
+	}
+	return blockInputs
 }
 
 func (r mutationResolver) ImportFlowDraft(ctx context.Context, input models.ImportFlowDraftInput) (*ent.FlowDraft, error) {

@@ -29,11 +29,11 @@ func TestHandler(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	mock.ExpectQuery(regexp.QuoteMeta(
-		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?",
-	) + "$").
+		"SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1",
+	)).
 		WithArgs("tenant_foo").
 		WillReturnRows(
-			sqlmock.NewRows([]string{"COUNT"}).
+			mock.NewRows([]string{"COUNT"}).
 				AddRow(1),
 		).
 		RowsWillBeClosed()

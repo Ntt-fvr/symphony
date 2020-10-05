@@ -12,6 +12,7 @@ from psym.graphql.fragment.location_type import LocationTypeFragment
 from psym.graphql.fragment.project import ProjectFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
 from psym.graphql.fragment.property_type import PropertyTypeFragment
+from psym.graphql.fragment.service_type import ServiceTypeFragment
 from psym.graphql.fragment.work_order import WorkOrderFragment
 from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
@@ -23,6 +24,8 @@ from .data_class import (
     Project,
     ProjectType,
     PropertyDefinition,
+    ServiceEndpointDefinition,
+    ServiceType,
     WorkOrder,
     WorkOrderDefinition,
     WorkOrderType,
@@ -416,4 +419,45 @@ def format_to_equipment_type(
         ),
         position_definitions=equipment_type_fragment.positionDefinitions,
         port_definitions=equipment_type_fragment.portDefinitions,
+    )
+
+
+def format_to_service_type(service_type_fragment: ServiceTypeFragment) -> ServiceType:
+    """This function gets `psym.graphql.fragment.equipment_type.ServiceTypeFragment` object as argument
+    and formats it to `psym.common.data_class.ServiceType` object
+
+        :param service_type_fragment: Existing service type fragment object
+        :type service_type_fragment: :class:`~psym.graphql.fragment.equipment_type.ServiceTypeFragment`
+
+        :return: ServiceType object
+        :rtype: :class:`~psym.common.data_class.ServiceType`
+
+        **Example**
+
+        .. code-block:: python
+
+            service_type = format_to_service_type(
+                service_type_fragment=service_type_fragment,
+            )
+    """
+    definitions = []
+    if service_type_fragment.endpointDefinitions:
+        definitions = [
+            ServiceEndpointDefinition(
+                id=definition.id,
+                name=definition.name,
+                endpoint_definition_index=definition.index,
+                role=definition.role,
+                equipment_type_id=definition.equipmentType.id,
+            )
+            for definition in service_type_fragment.endpointDefinitions
+        ]
+    return ServiceType(
+        id=service_type_fragment.id,
+        name=service_type_fragment.name,
+        has_customer=service_type_fragment.hasCustomer,
+        property_types=format_to_property_definitions(
+            service_type_fragment.propertyTypes
+        ),
+        endpoint_definitions=definitions,
     )

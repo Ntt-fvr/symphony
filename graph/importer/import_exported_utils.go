@@ -38,6 +38,8 @@ const (
 	ImportEntityService ImportEntity = "SERVICE"
 	// ImportEntityLocation specifies a location for import
 	ImportEntityLocation ImportEntity = "LOCATION"
+	// ImportEntityProject specifies a project for import
+	ImportEntityProject ImportEntity = "PROJECT"
 )
 
 // SuccessMessage is the type returns to client on success import

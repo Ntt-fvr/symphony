@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/99designs/gqlgen/client"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/stretchr/testify/suite"
 )
@@ -99,6 +100,49 @@ func (s *featureSuite) TestCreateFeature() {
 	}
 }
 
+func (s *featureSuite) TestUpsertFeature() {
+	var input struct {
+		model.UpsertFeatureInput
+		Tenants []string `json:"tenants"`
+	}
+	input.Name = s.T().Name()
+	input.Tenants = append(input.Tenants,
+		model.NewTenant("foobar").ID.String(),
+	)
+	input.Enabled = pointer.ToBool(false)
+
+	var rsp struct {
+		UpsertFeature struct {
+			Features []struct {
+				ID      string
+				Enabled bool
+			}
+		}
+	}
+	const mutation = `mutation($input: UpsertFeatureInput!) {
+		upsertFeature(input: $input) {
+			features {
+				id
+				enabled
+			}
+		}
+	}`
+	s.expectBeginCommit()
+	err := s.client.Post(mutation, &rsp, client.Var("input", input))
+	s.Require().NoError(err)
+	s.Require().Len(rsp.UpsertFeature.Features, 1)
+	s.Require().False(rsp.UpsertFeature.Features[0].Enabled)
+
+	id := rsp.UpsertFeature.Features[0].ID
+	input.Enabled = pointer.ToBool(true)
+	s.expectBeginCommit()
+	err = s.client.Post(mutation, &rsp, client.Var("input", input))
+	s.Require().NoError(err)
+	s.Require().Len(rsp.UpsertFeature.Features, 1)
+	s.Require().Equal(id, rsp.UpsertFeature.Features[0].ID)
+	s.Require().True(rsp.UpsertFeature.Features[0].Enabled)
+}
+
 func (s *featureSuite) TestUpdateFeature() {
 	const tenant = "foobar"
 	name := s.T().Name()
@@ -119,7 +163,7 @@ func (s *featureSuite) TestUpdateFeature() {
 			}
 		}
 	}
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err := s.client.Post(query, &rsp,
 		client.Var("tenant", tenant),
 		client.Var("enabled", true),
@@ -141,7 +185,7 @@ func (s *featureSuite) TestUpdateFeature() {
 	)
 	s.Require().NoError(err)
 
-	s.expectTenant(tenant)
+	s.expectTenantCountQuery(tenant, 1)
 	err = s.client.Post(query, &rsp,
 		client.Var("tenant", tenant),
 		client.Var("enabled", true),
@@ -156,7 +200,8 @@ func (s *featureSuite) TestUpdateFeature() {
 func (s *featureSuite) TestDeleteFeature() {
 	tenants := []string{"foo", "bar", "baz"}
 	s.createFeatures(s.T().Name(), tenants...)
-	s.expectTenants(tenants...)
+	s.expectTenantsLikeQuery(tenants...).
+		RowsWillBeClosed()
 	var rsp struct {
 		Tenants []struct {
 			Features []struct {
@@ -196,7 +241,8 @@ func (s *featureSuite) TestDeleteFeature() {
 		s.Require().NoError(err)
 	}
 
-	s.expectTenants(tenants...)
+	s.expectTenantsLikeQuery(tenants...).
+		RowsWillBeClosed()
 	err = s.client.Post(tenantsQuery, &rsp)
 	s.Require().NoError(err)
 	s.Require().Len(rsp.Tenants, len(tenants))

@@ -16,7 +16,7 @@ import useCombinedRefs from '../../hooks/useCombinedRefs';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef, useState} from 'react';
 
-const paddingRight = 24;
+export const SIDE_PADDING = 24;
 const scrollWidth = 12;
 const useStyles = makeStyles(() => ({
   viewWrapper: {
@@ -25,9 +25,9 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto',
     display: 'flex',
     '&:not($plain)': {
-      padding: `8px ${paddingRight}px 4px 24px`,
+      padding: `8px ${SIDE_PADDING}px 4px 24px`,
       '&$withScrollY': {
-        paddingRight: `${paddingRight - scrollWidth}px`,
+        paddingRight: `${SIDE_PADDING - scrollWidth}px`,
       },
     },
   },
@@ -45,11 +45,12 @@ export type Variant = $Keys<typeof VARIANTS>;
 
 type Props = $ReadOnly<{|
   children: React.Node,
+  className?: ?string,
   variant?: ?Variant,
 |}>;
 
 const ViewBody = React.forwardRef<Props, HTMLElement>((props, ref) => {
-  const {children, variant = VARIANTS.idented} = props;
+  const {children, className, variant = VARIANTS.idented} = props;
   const classes = useStyles();
   const refs: CombinedRefs = [useRef(null), ref];
   const combinedRef = useCombinedRefs(refs);
@@ -71,6 +72,7 @@ const ViewBody = React.forwardRef<Props, HTMLElement>((props, ref) => {
         },
         variant ? classes[variant] : null,
         classes.viewWrapper,
+        className,
       )}>
       {children}
     </div>

@@ -12,9 +12,10 @@ import type {FullViewHeaderProps} from './ViewHeader';
 import type {Variant} from './ViewBody';
 
 import * as React from 'react';
-import ViewBody from './ViewBody';
+import ViewBody, {SIDE_PADDING, VARIANTS} from './ViewBody';
 import ViewHeader from './ViewHeader';
 import classNames from 'classnames';
+import symphony from '../../theme/symphony';
 import useVerticalScrollingEffect from '../../hooks/useVerticalScrollingEffect';
 import {makeStyles} from '@material-ui/styles';
 import {useRef, useState} from 'react';
@@ -25,6 +26,11 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     maxHeight: '100%',
+  },
+  limitedWidth: {
+    width: '100%',
+    alignSelf: 'center',
+    maxWidth: `${symphony.layout.maximalWidth + 2 * SIDE_PADDING}px`,
   },
 }));
 
@@ -68,12 +74,16 @@ export default function ViewContainer(props: ViewContainerProps) {
     <div className={classNames(classes.viewPanel, className)}>
       {!!header && (
         <ViewHeader
+          className={classes.limitedWidth}
           ref={headerElement}
           {...header}
           showMinimal={bodyIsScrolled}
         />
       )}
-      <ViewBody ref={bodyElement} variant={bodyVariant}>
+      <ViewBody
+        className={bodyVariant === VARIANTS.plain ? null : classes.limitedWidth}
+        ref={bodyElement}
+        variant={bodyVariant}>
         {children}
       </ViewBody>
     </div>

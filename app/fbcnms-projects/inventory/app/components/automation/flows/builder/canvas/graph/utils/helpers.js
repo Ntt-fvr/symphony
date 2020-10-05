@@ -40,15 +40,19 @@ export function handleNewConnections(flow: ?FlowWrapper) {
     }
 
     const targetBlock = getLinkEndpointBlock(flow, newLink, 'target');
-    if (targetBlock == null) {
+    if (targetBlock == null || newLink.attributes.source.port == null) {
       return;
     }
 
-    const connector = flow.shapesFactory.createNewConnector(
-      sourceBlock,
+    const connector = sourceBlock.addConnector(
+      newLink.attributes.source.port,
       targetBlock,
-      newLink,
     );
+
+    if (connector == null) {
+      return;
+    }
+
     flow.connectors.set(connector.id, connector);
   };
   flow.paper.on(Events.Connector.MouseUp, handler);
@@ -142,7 +146,7 @@ export function buildPaperConnectionValidation(flowWrapper: {
       }
 
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
-      const targetInputPort = targetBlock?.getPortByGroup(PORTS_GROUPS.INPUT);
+      const targetInputPort = targetBlock?.getInputPort();
 
       if (targetInputPort == null) {
         return false;

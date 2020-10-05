@@ -233,11 +233,6 @@ app.kubernetes.io/component: docs
 {{ include "symphony.admin.clientLabel" . }}
 {{- end }}
 
-{{/* Create the name for orc8r certs secret */}}
-{{- define "symphony.integrations.orc8r.certsSecretName" -}}
-{{- print (include "symphony.fullname" .) "-orc8r-certs" -}}
-{{- end }}
-
 {{/* Create the name for graph database secret */}}
 {{- define "symphony.graphDB.secretName" -}}
 {{- print (include "symphony.fullname" .) "-graph-db" -}}

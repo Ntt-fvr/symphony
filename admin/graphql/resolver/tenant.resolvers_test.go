@@ -58,7 +58,7 @@ func (s *tenantSuite) TestCreateTenant() {
 
 func (s *tenantSuite) TestTruncateTenant() {
 	s.mock.ExpectBegin()
-	s.expectTenant("bar")
+	s.expectTenantCountQuery("bar", 1)
 	result := sqlmock.NewResult(0, 0)
 	s.mock.ExpectExec("SET FOREIGN_KEY_CHECKS=0").
 		WillReturnResult(result)
@@ -134,57 +134,46 @@ func (s *tenantSuite) TestDeleteBadTenant() {
 
 func (s *tenantSuite) TestQueryTenant() {
 	const tenant = "foo"
-	s.expectTenant(tenant)
-	const gqlQuery = `query { tenant(name: "foo") { name } }`
+	s.expectTenantCountQuery(tenant, 1)
+	const query = `query { tenant(name: "foo") { name } }`
 	var rsp struct{ Tenant model.Tenant }
-	err := s.client.Post(gqlQuery, &rsp)
+	err := s.client.Post(query, &rsp)
 	s.Require().NoError(err)
 	s.Require().Equal(tenant, rsp.Tenant.Name)
 
-	s.expectNoTenant(tenant)
-	err = s.client.Post(gqlQuery, &rsp)
+	s.expectTenantCountQuery(tenant, 0)
+	err = s.client.Post(query, &rsp)
 	s.Require().Error(err)
 	s.Require().Contains(err.Error(), "NOT_FOUND")
 }
 
-var tenantsSQLQuery = regexp.QuoteMeta(
-	"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE ?",
-)
-
-const tenantsGQLQuery = `query { tenants { name } }`
-
 func (s *tenantSuite) TestQueryTenants() {
-	s.mock.ExpectQuery(tenantsSQLQuery).
-		WithArgs("tenant_%").
-		WillReturnRows(
-			sqlmock.NewRows([]string{"SCHEMA_NAME"}).
-				AddRow("tenant_bar").
-				AddRow("tenant_foo"),
-		).
-		RowsWillBeClosed()
+	s.expectTenantsInQuery("foo", "bar")
 	var rsp struct{ Tenants []model.Tenant }
-	err := s.client.Post(tenantsGQLQuery, &rsp)
+	err := s.client.Post(`query {
+		tenants(filterBy: { names: ["foo", "bar"] }) {
+			name
+		}
+	}`, &rsp)
 	s.Require().NoError(err)
 	s.Require().Equal([]model.Tenant{{Name: "bar"}, {Name: "foo"}}, rsp.Tenants)
 }
 
 func (s *tenantSuite) TestQueryTenantsNoSchemata() {
-	s.mock.ExpectQuery(tenantsSQLQuery).
-		WillReturnError(sql.ErrConnDone)
-	err := s.client.Post(tenantsGQLQuery, &struct{ Tenants []model.Tenant }{})
+	s.expectTenantsLikeQuery().WillReturnError(sql.ErrConnDone)
+	err := s.client.Post(`query { tenants { name } }`, &struct{ Tenants []model.Tenant }{})
 	s.Require().Error(err)
-	s.Require().Contains(err.Error(), "cannot query information schema")
+	s.Require().Contains(err.Error(), "cannot query tenant names")
 }
 
 func (s *tenantSuite) TestQueryTenantsRowErr() {
-	s.mock.ExpectQuery(tenantsSQLQuery).
+	s.expectTenantsLikeQuery().
 		WillReturnRows(
-			sqlmock.NewRows([]string{"SCHEMA_NAME"}).
-				AddRow("tenant_test").
+			s.newTenantRows("test").
 				RowError(0, sql.ErrConnDone),
 		).
 		RowsWillBeClosed()
-	err := s.client.Post(tenantsGQLQuery, &struct{ Tenants []model.Tenant }{})
+	err := s.client.Post(`query { tenants { name } }`, &struct{ Tenants []model.Tenant }{})
 	s.Require().Error(err)
 	s.Require().Contains(err.Error(), sql.ErrConnDone.Error())
 }

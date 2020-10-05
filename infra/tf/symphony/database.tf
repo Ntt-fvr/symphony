@@ -50,7 +50,7 @@ resource random_password graph_db {
   special = false
 }
 
-module "graph_db" {
+module graph_db {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.0"
 

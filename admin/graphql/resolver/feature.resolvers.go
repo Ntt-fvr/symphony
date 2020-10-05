@@ -10,10 +10,13 @@ package resolver
 import (
 	"context"
 
+	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/facebookincubator/ent-contrib/entgql"
 	"github.com/facebookincubator/symphony/admin/graphql/exec"
 	"github.com/facebookincubator/symphony/admin/graphql/model"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func (r *featureResolver) Tenant(ctx context.Context, obj *model.Feature) (*model.Tenant, error) {
@@ -41,9 +44,61 @@ func (r *mutationResolver) CreateFeature(ctx context.Context, input model.Create
 				SetNillableDescription(input.Description).
 				Save(ctx)
 			if err != nil {
+				if ent.IsConstraintError(err) {
+					err := gqlerror.Errorf("Feature '%s' exists for tenant '%s'", input.Name, tenant)
+					errcode.Set(err, "EXIST")
+					return err
+				}
 				return r.errf(
 					ctx, err,
 					"cannot create feature %s for tenant %s",
+					input.Name, tenant,
+				)
+			}
+			payload.Features[i] = model.NewFeature(tenant, feat)
+			return nil
+		}); err != nil {
+			return nil, err
+		}
+	}
+	return payload, nil
+}
+
+func (r *mutationResolver) UpsertFeature(ctx context.Context, input model.UpsertFeatureInput) (*model.UpsertFeaturePayload, error) {
+	if input.Tenants == nil {
+		ids, err := r.tenantIDs(ctx)
+		if err != nil {
+			return nil, r.err(ctx, err, "cannot get tenant ids")
+		}
+		input.Tenants = ids
+	}
+	payload := &model.UpsertFeaturePayload{
+		ClientMutationID: input.ClientMutationID,
+		Features:         make([]*model.Feature, len(input.Tenants)),
+	}
+	for i := range input.Tenants {
+		tenant := input.Tenants[i].Tenant
+		if err := r.withClient(ctx, tenant, func(client *ent.Client) error {
+			id, err := client.Feature.Query().
+				Where(feature.Name(input.Name)).
+				OnlyID(ctx)
+			var feat *ent.Feature
+			if err == nil {
+				feat, err = client.Feature.UpdateOneID(id).
+					SetNillableEnabled(input.Enabled).
+					SetNillableDescription(input.Description).
+					Save(ctx)
+			} else if ent.IsNotFound(err) {
+				feat, err = client.Feature.Create().
+					SetName(input.Name).
+					SetNillableEnabled(input.Enabled).
+					SetNillableDescription(input.Description).
+					Save(ctx)
+			}
+			if err != nil {
+				return r.errf(
+					ctx, err,
+					"cannot upsert feature %s for tenant %s",
 					input.Name, tenant,
 				)
 			}
@@ -65,6 +120,9 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.Update
 			SetNillableEnabled(input.Enabled).
 			SetNillableDescription(input.Description).
 			Save(ctx); err != nil {
+			if ent.IsNotFound(err) {
+				return entgql.ErrNodeNotFound(input.ID)
+			}
 			return r.errf(ctx, err, "cannot update feature %s for tenant %s",
 				input.ID, tenant,
 			)
@@ -82,6 +140,9 @@ func (r *mutationResolver) UpdateFeature(ctx context.Context, input model.Update
 func (r *mutationResolver) DeleteFeature(ctx context.Context, input model.DeleteFeatureInput) (*model.DeleteFeaturePayload, error) {
 	if err := r.withClient(ctx, input.ID.Tenant, func(client *ent.Client) error {
 		if err := client.Feature.DeleteOneID(input.ID.ID).Exec(ctx); err != nil {
+			if ent.IsNotFound(err) {
+				return entgql.ErrNodeNotFound(input.ID)
+			}
 			return r.errf(
 				ctx, err,
 				"cannot delete feature %s for tenant %s",

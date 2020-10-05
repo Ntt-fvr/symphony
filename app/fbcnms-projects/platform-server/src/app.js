@@ -34,7 +34,12 @@ const passport = require('passport');
 const path = require('path');
 const fbcPassport = require('@fbcnms/auth/passport').default;
 const session = require('express-session');
-const {sequelize, Organization, User} = require('@fbcnms/sequelize-models');
+const {
+  sequelize,
+  Organization,
+  User,
+  FeatureFlag,
+} = require('@fbcnms/sequelize-models');
 const OrganizationBasicLocalStrategy = require('@fbcnms/auth/strategies/OrganizationBasicLocalStrategy')
   .default;
 const OrganizationLocalStrategy = require('@fbcnms/auth/strategies/OrganizationLocalStrategy')
@@ -48,6 +53,11 @@ const BearerStrategy = require('@fbcnms/auth/strategies/BearerStrategy')
 
 const {createTenant, deleteTenant} = require('./admin/tenant');
 const {createUser, deactivateUsers} = require('./admin/user');
+const {
+  createFeature,
+  updateFeature,
+  deleteFeature,
+} = require('./admin/feature');
 const {access, configureAccess} = require('@fbcnms/auth/access');
 const {
   AccessRoles: {SUPERUSER, USER},
@@ -68,20 +78,40 @@ Organization.afterDestroy(async (org: any) => {
 });
 
 // add hooks to User model
-User.beforeCreate(async user => {
+User.beforeCreate(async (user: any) => {
   await createUser(
-    user.getDataValue('organization'),
-    user.getDataValue('email'),
-    user.getDataValue('role') === SUPERUSER,
+    user.organization,
+    user.email,
+    user.role === SUPERUSER,
   ).catch(err => console.error(err));
 });
-
 User.beforeBulkDestroy(async options => {
   const {where, model, transaction, logging, benchmark} = options;
   const emails = await model
     .findAll({where, transaction, logging, benchmark})
     .map(el => el.get('email'));
   await deactivateUsers(where.organization, emails).catch(err =>
+    console.error(err),
+  );
+});
+
+// add hooks to FeatureFlag model
+FeatureFlag.beforeCreate(async (flag: any) => {
+  await createFeature(
+    flag.featureId,
+    flag.organization,
+    flag.enabled,
+  ).catch(err => console.error(err));
+});
+FeatureFlag.beforeUpdate(async (flag: any) => {
+  await updateFeature(
+    flag.featureId,
+    flag.organization,
+    flag.enabled,
+  ).catch(err => console.error(err));
+});
+FeatureFlag.beforeDestroy(async (flag: any) => {
+  await deleteFeature(flag.featureId, flag.organization).catch(err =>
     console.error(err),
   );
 });
@@ -160,15 +190,6 @@ app.use(
   passport.authenticate(['basic_local', 'session'], {session: false}),
   access(SUPERUSER),
   require('./features/routes').default,
-);
-
-// Grafana uses its own CSRF, so we don't need to handle it on our side.
-// Grafana can access all metrics of an org, so it must be restricted
-// to superusers
-app.use(
-  '/grafana',
-  access(SUPERUSER),
-  require('@fbcnms/platform-server/grafana/routes').default,
 );
 
 app.use('/', csrfMiddleware(), access(USER), require('./main/routes').default);

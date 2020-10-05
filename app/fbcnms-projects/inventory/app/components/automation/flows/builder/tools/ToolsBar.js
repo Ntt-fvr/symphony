@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
     background: 'transparent',
     pointerEvents: 'none',
     flexGrow: 1,
-    '& button': {
+    '& [data-is-clickable]': {
       marginLeft: '8px',
       pointerEvents: 'auto',
     },

@@ -127,7 +127,7 @@ resource helm_release aws_vpc_cni {
   repository = local.helm_repository.eks
   chart      = "aws-vpc-cni"
   namespace  = "kube-system"
-  version    = "1.0.9"
+  version    = "1.1.0"
 
   values = [yamlencode({
     serviceAccount = {
@@ -144,5 +144,5 @@ resource helm_release aws_calico {
   repository = local.helm_repository.eks
   chart      = "aws-calico"
   namespace  = "kube-system"
-  version    = "0.3.1"
+  version    = "0.3.2"
 }

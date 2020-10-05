@@ -6,93 +6,61 @@ package main
 
 import (
 	"context"
-	"os"
-	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/facebook/ent/dialect"
-	"github.com/facebook/ent/dialect/sql"
-	"github.com/facebook/ent/dialect/sql/schema"
-	"github.com/facebookincubator/symphony/pkg/ctxutil"
-	entmigrate "github.com/facebookincubator/symphony/pkg/ent/migrate"
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/migrate"
-	"github.com/facebookincubator/symphony/pkg/viewer"
 	_ "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 )
 
 func main() {
 	var cli struct {
-		Driver     string     `name:"db-driver" default:"mysql" help:"Database driver name."`
-		DSN        string     `name:"db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
-		WaitForDB  bool       `name:"wait-for-db" help:"Wait for database to be ready."`
-		DropColumn bool       `help:"Enable column drop."`
-		DropIndex  bool       `help:"Enable index drop."`
-		DryRun     bool       `help:"Run in dry run mode."`
-		Tenant     string     `placeholder:"<tenant>" help:"Target specific tenant."`
-		LogConfig  log.Config `embed:""`
+		Ent struct {
+			Driver     string `name:"ent.db-driver" default:"mysql" help:"Database driver name."`
+			DSN        string `name:"ent.db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
+			WaitForDB  bool   `name:"ent.wait-for-db" help:"Wait for database to be ready."`
+			DropColumn bool   `name:"ent.drop-column" help:"Enable column drop."`
+			DropIndex  bool   `name:"ent.drop-index" help:"Enable index drop."`
+			DryRun     bool   `name:"ent.dry-run" help:"Run in dry run mode."`
+			Tenant     string `name:"ent.tenant" placeholder:"<tenant>" help:"Target specific tenant."`
+		} `cmd:"ent" help:"Ent migrate."`
+		Cadence struct {
+			Address         string `name:"cadence.addr" placeholder:"<address>" required:"" help:"Cadence server address."`
+			Domain          string `name:"cadence.domain" placeholder:"<domain>" required:"" help:"Cadence domain name."`
+			RetentionInDays int32  `name:"cadence.retention-in-days" placeholder:"<number-of-days>" env:"CADENCE_RETENTION_IN_DAYS" help:"Cadence retention in days."`
+		} `cmd:"cadence" help:"Cadence migrate."`
+		LogConfig log.Config `embed:""`
 	}
-	kong.Parse(&cli)
-
+	ctx := kong.Parse(&cli)
 	logger, _, _ := log.ProvideLogger(cli.LogConfig)
-	driver, err := sql.Open(cli.Driver, cli.DSN)
-	if err != nil {
-		logger.Background().Fatal("opening database", zap.Error(err))
-	}
 
-	ctx := ctxutil.WithSignal(context.Background(), os.Interrupt)
-	db := driver.DB()
-
-	if cli.WaitForDB {
-		logger := logger.For(ctx)
-		logger.Info("waiting for database")
-		ticker := time.NewTicker(250 * time.Millisecond)
-	loop:
-		for {
-			select {
-			case <-ctx.Done():
-				logger.Fatal("database wait interrupted", zap.Error(ctx.Err()))
-			case <-ticker.C:
-				if err := db.PingContext(ctx); err == nil {
-					ticker.Stop()
-					logger.Info("database is ready")
-					break loop
-				}
-			}
+	switch ctx.Command() {
+	case "ent":
+		migrator := entMigrator{
+			logger:     logger,
+			driver:     cli.Ent.Driver,
+			DSN:        cli.Ent.DSN,
+			waitForDB:  cli.Ent.WaitForDB,
+			dropColumn: cli.Ent.DropColumn,
+			dropIndex:  cli.Ent.DropIndex,
+			dryRun:     cli.Ent.DryRun,
+			tenant:     cli.Ent.Tenant,
 		}
-	}
-
-	var names []string
-	if cli.Tenant == "" {
-		if names, err = viewer.GetTenantNames(ctx, db); err != nil {
-			logger.Background().Fatal("listing tenants", zap.Error(err))
+		if err := migrator.migrate(); err != nil {
+			logger.For(context.Background()).Fatal("ent migration failed", zap.Error(err))
 		}
-	} else {
-		names = append(names, cli.Tenant)
-	}
-
-	cfg := migrate.MigratorConfig{
-		Logger: logger,
-		Driver: dialect.Debug(driver,
-			logger.For(ctx).Sugar().Info,
-		),
-		Options: []schema.MigrateOption{
-			schema.WithDropColumn(cli.DropColumn),
-			schema.WithDropIndex(cli.DropIndex),
-		},
-	}
-	if cli.DryRun {
-		cfg.Creator = func(driver dialect.Driver) migrate.Creator {
-			entSchema := entmigrate.NewSchema(driver)
-			return migrate.CreatorFunc(func(ctx context.Context, opts ...schema.MigrateOption) error {
-				return entSchema.WriteTo(ctx, os.Stdout, opts...)
-			})
+	case "cadence":
+		migrator := cadenceMigrator{
+			logger:          logger,
+			address:         cli.Cadence.Address,
+			domain:          cli.Cadence.Domain,
+			retentionInDays: cli.Cadence.RetentionInDays,
 		}
-	}
-
-	if err := migrate.NewMigrator(cfg).Migrate(ctx, names...); err != nil {
-		logger.For(ctx).Fatal("migration terminated", zap.Error(err))
+		if err := migrator.migrate(context.Background()); err != nil {
+			logger.For(context.Background()).Fatal("cadence migration failed", zap.Error(err))
+		}
+	default:
+		logger.For(context.Background()).Fatal("command not found", zap.String("command", ctx.Command()))
 	}
 }

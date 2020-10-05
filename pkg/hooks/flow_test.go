@@ -605,13 +605,21 @@ func TestFlowInstanceCreation(t *testing.T) {
 		AddPrevBlocks(startBlock).
 		Save(ctx)
 	require.NoError(t, err)
+	decisionBlock, err := client.Block.Create().
+		SetName("Decision").
+		SetCid("decision").
+		SetType(block.TypeDecision).
+		SetFlow(flw).
+		AddPrevBlocks(actionBlock).
+		Save(ctx)
+	require.NoError(t, err)
 	_, err = client.Block.Create().
 		SetName("The End").
 		SetCid("the_end").
 		SetType(block.TypeEnd).
 		SetFlow(flw).
 		SetInputParams(endInputParams).
-		AddPrevBlocks(actionBlock).
+		AddPrevBlocks(decisionBlock).
 		Save(ctx)
 	require.NoError(t, err)
 	_, err = client.FlowInstance.Create().
@@ -636,7 +644,7 @@ func TestFlowInstanceCreation(t *testing.T) {
 		WithNextBlocks().
 		All(ctx)
 	require.NoError(t, err)
-	require.Len(t, blocks, 3)
+	require.Len(t, blocks, 4)
 
 	var newActionInputParams []*flowschema.VariableExpression
 	var startBlockID int
@@ -648,6 +656,9 @@ func TestFlowInstanceCreation(t *testing.T) {
 			require.Equal(t, startParamDefinitions, blk.StartParamDefinitions)
 			require.NotNil(t, blk.Edges.NextBlocks)
 			startBlockID = blk.ID
+		case block.TypeDecision:
+			require.Equal(t, "Decision", blk.Name)
+			require.NotNil(t, blk.Edges.NextBlocks)
 		case block.TypeAction:
 			require.Equal(t, "Action", blk.Name)
 			require.Equal(t, actionName, *blk.ActionType)

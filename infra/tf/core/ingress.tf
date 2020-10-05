@@ -360,7 +360,6 @@ resource aws_s3_bucket_public_access_block access_logs {
   restrict_public_buckets = true
 }
 
-
 locals {
   // access logs resource path where logs are placed.
   access_logs_put_object_resources = formatlist(
@@ -462,7 +461,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.1"
+  version    = "3.4.3"
   namespace  = "kube-system"
 
   values = [yamlencode({

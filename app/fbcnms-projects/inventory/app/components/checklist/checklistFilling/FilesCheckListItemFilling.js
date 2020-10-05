@@ -72,6 +72,7 @@ const FilesCheckListItemFilling = ({
     <div className={classes.root}>
       {item.files?.map(file => (
         <FilePreview
+          key={file.storeKey}
           className={classes.filePreview}
           file={{
             id: file.id ?? tempId,

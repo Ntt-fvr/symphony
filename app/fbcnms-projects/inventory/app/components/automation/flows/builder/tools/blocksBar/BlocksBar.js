@@ -14,6 +14,7 @@ import type {WithFlowData} from '../../../data/FlowDataContext';
 import BlocksCategory from './BlocksCategory';
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
+import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
 import React from 'react';
@@ -60,13 +61,13 @@ function BlocksBar(props: Props) {
     flow,
   ]);
 
+  const logicTypes = useMemo(() => [new DecisionBlockType(flow)], [flow]);
+
   return (
     <SideBar header={title}>
-      <BlocksCategory
-        header="Administrative"
-        blockTypes={administrativeTypes}
-      />
+      <BlocksCategory header="Events" blockTypes={administrativeTypes} />
       <BlocksCategory header="Actions" blockTypes={actionTypes} />
+      <BlocksCategory header="Logic" blockTypes={logicTypes} />
     </SideBar>
   );
 }

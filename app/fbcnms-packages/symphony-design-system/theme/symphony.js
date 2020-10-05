@@ -71,6 +71,9 @@ export type TextVariant =
   | 'overline';
 
 export default {
+  layout: {
+    maximalWidth: 1680,
+  },
   palette: {
     primary: BLUE.B600,
     secondary: DARK.D900,

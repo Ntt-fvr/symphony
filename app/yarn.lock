@@ -1622,10 +1622,10 @@
   dependencies:
     qrcode "^1.4.2"
 
-"@fbcnms/platform-server@^0.1.15":
-  version "0.1.15"
-  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.15.tgz#7f367c1afe710720d550d16905ab41995f5a8e00"
-  integrity sha512-ZWTziNXeNJTIy5/ojn4IWi70B708gsVUzQTjlXTIq9cb4g4QaOuLwptKnE3nS6H5tq75aH8w1if3q5N8TYH7cg==
+"@fbcnms/platform-server@^0.1.18":
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/@fbcnms/platform-server/-/platform-server-0.1.18.tgz#20a5253bcc2e46f98a8d298bb740b294c6d3da2f"
+  integrity sha512-NWBbk5kJgnq80cJK0gmVP5HrzWK/EmOH26AHfjctLj+Kh8eVof33mYma3VKORUsJP+2J3WS8SKVO/6bkG53fUQ==
   dependencies:
     "@fbcnms/auth" "^0.1.0"
     "@fbcnms/babel-register" "^0.1.0"
@@ -1679,10 +1679,15 @@
   resolved "https://registry.yarnpkg.com/@fbcnms/strings/-/strings-0.1.0.tgz#50dae22b4cb7cb7d1a30c013d0b40c96b741a1f1"
   integrity sha512-w1Z12YAhufVCsKL1lcO4+wwfwnQPwaLZyE5jjt36yg/2fcCRrpv55r3V+7M/VDc8wDOK4yRgJwiwEuOPrrwfKw==
 
-"@fbcnms/types@^0.1.2", "@fbcnms/types@^0.1.5":
+"@fbcnms/types@^0.1.2":
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/@fbcnms/types/-/types-0.1.5.tgz#57a472935c717fae191957ccd820efeaca484018"
   integrity sha512-4ERRyRUMNrDCEC4tbgzNJmuu/q/0182Aw9OjLThsGiewVK8mTvvQ28CtkcJVhkbXxi1m+kXihTzh+/y+2BPVHQ==
+
+"@fbcnms/types@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@fbcnms/types/-/types-0.1.7.tgz#374ef95cb266d465bade247c201f3ea48ae8df32"
+  integrity sha512-RZcWS+IwHn2DSxd8MDRdvxn5GvkK76V/J00II96lG5pqv11zjrLyHU+SjAoweg3Wj8jr2KZ/nGRUtkTgFmSFiA==
 
 "@fbcnms/ui@^0.1.4":
   version "0.1.4"
