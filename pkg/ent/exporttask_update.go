@@ -98,6 +98,33 @@ func (etu *ExportTaskUpdate) ClearStoreKey() *ExportTaskUpdate {
 	return etu
 }
 
+// SetWoIDToExport sets the wo_id_to_export field.
+func (etu *ExportTaskUpdate) SetWoIDToExport(i int) *ExportTaskUpdate {
+	etu.mutation.ResetWoIDToExport()
+	etu.mutation.SetWoIDToExport(i)
+	return etu
+}
+
+// SetNillableWoIDToExport sets the wo_id_to_export field if the given value is not nil.
+func (etu *ExportTaskUpdate) SetNillableWoIDToExport(i *int) *ExportTaskUpdate {
+	if i != nil {
+		etu.SetWoIDToExport(*i)
+	}
+	return etu
+}
+
+// AddWoIDToExport adds i to wo_id_to_export.
+func (etu *ExportTaskUpdate) AddWoIDToExport(i int) *ExportTaskUpdate {
+	etu.mutation.AddWoIDToExport(i)
+	return etu
+}
+
+// ClearWoIDToExport clears the value of wo_id_to_export.
+func (etu *ExportTaskUpdate) ClearWoIDToExport() *ExportTaskUpdate {
+	etu.mutation.ClearWoIDToExport()
+	return etu
+}
+
 // Mutation returns the ExportTaskMutation object of the builder.
 func (etu *ExportTaskUpdate) Mutation() *ExportTaskMutation {
 	return etu.mutation
@@ -246,6 +273,26 @@ func (etu *ExportTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: exporttask.FieldStoreKey,
 		})
 	}
+	if value, ok := etu.mutation.WoIDToExport(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exporttask.FieldWoIDToExport,
+		})
+	}
+	if value, ok := etu.mutation.AddedWoIDToExport(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exporttask.FieldWoIDToExport,
+		})
+	}
+	if etu.mutation.WoIDToExportCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exporttask.FieldWoIDToExport,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, etu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{exporttask.Label}
@@ -328,6 +375,33 @@ func (etuo *ExportTaskUpdateOne) SetNillableStoreKey(s *string) *ExportTaskUpdat
 // ClearStoreKey clears the value of store_key.
 func (etuo *ExportTaskUpdateOne) ClearStoreKey() *ExportTaskUpdateOne {
 	etuo.mutation.ClearStoreKey()
+	return etuo
+}
+
+// SetWoIDToExport sets the wo_id_to_export field.
+func (etuo *ExportTaskUpdateOne) SetWoIDToExport(i int) *ExportTaskUpdateOne {
+	etuo.mutation.ResetWoIDToExport()
+	etuo.mutation.SetWoIDToExport(i)
+	return etuo
+}
+
+// SetNillableWoIDToExport sets the wo_id_to_export field if the given value is not nil.
+func (etuo *ExportTaskUpdateOne) SetNillableWoIDToExport(i *int) *ExportTaskUpdateOne {
+	if i != nil {
+		etuo.SetWoIDToExport(*i)
+	}
+	return etuo
+}
+
+// AddWoIDToExport adds i to wo_id_to_export.
+func (etuo *ExportTaskUpdateOne) AddWoIDToExport(i int) *ExportTaskUpdateOne {
+	etuo.mutation.AddWoIDToExport(i)
+	return etuo
+}
+
+// ClearWoIDToExport clears the value of wo_id_to_export.
+func (etuo *ExportTaskUpdateOne) ClearWoIDToExport() *ExportTaskUpdateOne {
+	etuo.mutation.ClearWoIDToExport()
 	return etuo
 }
 
@@ -475,6 +549,26 @@ func (etuo *ExportTaskUpdateOne) sqlSave(ctx context.Context) (_node *ExportTask
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Column: exporttask.FieldStoreKey,
+		})
+	}
+	if value, ok := etuo.mutation.WoIDToExport(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exporttask.FieldWoIDToExport,
+		})
+	}
+	if value, ok := etuo.mutation.AddedWoIDToExport(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exporttask.FieldWoIDToExport,
+		})
+	}
+	if etuo.mutation.WoIDToExportCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: exporttask.FieldWoIDToExport,
 		})
 	}
 	_node = &ExportTask{config: etuo.config}

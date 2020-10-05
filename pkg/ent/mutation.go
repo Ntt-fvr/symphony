@@ -15175,18 +15175,20 @@ func (m *EquipmentTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ExportTaskMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	_type         *exporttask.Type
-	status        *exporttask.Status
-	progress      *float64
-	addprogress   *float64
-	filters       *string
-	store_key     *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*ExportTask, error)
+	op                 Op
+	typ                string
+	id                 *int
+	_type              *exporttask.Type
+	status             *exporttask.Status
+	progress           *float64
+	addprogress        *float64
+	filters            *string
+	store_key          *string
+	wo_id_to_export    *int
+	addwo_id_to_export *int
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*ExportTask, error)
 }
 
 var _ ent.Mutation = (*ExportTaskMutation)(nil)
@@ -15486,6 +15488,77 @@ func (m *ExportTaskMutation) ResetStoreKey() {
 	delete(m.clearedFields, exporttask.FieldStoreKey)
 }
 
+// SetWoIDToExport sets the wo_id_to_export field.
+func (m *ExportTaskMutation) SetWoIDToExport(i int) {
+	m.wo_id_to_export = &i
+	m.addwo_id_to_export = nil
+}
+
+// WoIDToExport returns the wo_id_to_export value in the mutation.
+func (m *ExportTaskMutation) WoIDToExport() (r int, exists bool) {
+	v := m.wo_id_to_export
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWoIDToExport returns the old wo_id_to_export value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldWoIDToExport(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldWoIDToExport is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldWoIDToExport requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWoIDToExport: %w", err)
+	}
+	return oldValue.WoIDToExport, nil
+}
+
+// AddWoIDToExport adds i to wo_id_to_export.
+func (m *ExportTaskMutation) AddWoIDToExport(i int) {
+	if m.addwo_id_to_export != nil {
+		*m.addwo_id_to_export += i
+	} else {
+		m.addwo_id_to_export = &i
+	}
+}
+
+// AddedWoIDToExport returns the value that was added to the wo_id_to_export field in this mutation.
+func (m *ExportTaskMutation) AddedWoIDToExport() (r int, exists bool) {
+	v := m.addwo_id_to_export
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearWoIDToExport clears the value of wo_id_to_export.
+func (m *ExportTaskMutation) ClearWoIDToExport() {
+	m.wo_id_to_export = nil
+	m.addwo_id_to_export = nil
+	m.clearedFields[exporttask.FieldWoIDToExport] = struct{}{}
+}
+
+// WoIDToExportCleared returns if the field wo_id_to_export was cleared in this mutation.
+func (m *ExportTaskMutation) WoIDToExportCleared() bool {
+	_, ok := m.clearedFields[exporttask.FieldWoIDToExport]
+	return ok
+}
+
+// ResetWoIDToExport reset all changes of the "wo_id_to_export" field.
+func (m *ExportTaskMutation) ResetWoIDToExport() {
+	m.wo_id_to_export = nil
+	m.addwo_id_to_export = nil
+	delete(m.clearedFields, exporttask.FieldWoIDToExport)
+}
+
 // Op returns the operation name.
 func (m *ExportTaskMutation) Op() Op {
 	return m.op
@@ -15500,7 +15573,7 @@ func (m *ExportTaskMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ExportTaskMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m._type != nil {
 		fields = append(fields, exporttask.FieldType)
 	}
@@ -15515,6 +15588,9 @@ func (m *ExportTaskMutation) Fields() []string {
 	}
 	if m.store_key != nil {
 		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	if m.wo_id_to_export != nil {
+		fields = append(fields, exporttask.FieldWoIDToExport)
 	}
 	return fields
 }
@@ -15534,6 +15610,8 @@ func (m *ExportTaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Filters()
 	case exporttask.FieldStoreKey:
 		return m.StoreKey()
+	case exporttask.FieldWoIDToExport:
+		return m.WoIDToExport()
 	}
 	return nil, false
 }
@@ -15553,6 +15631,8 @@ func (m *ExportTaskMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldFilters(ctx)
 	case exporttask.FieldStoreKey:
 		return m.OldStoreKey(ctx)
+	case exporttask.FieldWoIDToExport:
+		return m.OldWoIDToExport(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExportTask field %s", name)
 }
@@ -15597,6 +15677,13 @@ func (m *ExportTaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStoreKey(v)
 		return nil
+	case exporttask.FieldWoIDToExport:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWoIDToExport(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExportTask field %s", name)
 }
@@ -15608,6 +15695,9 @@ func (m *ExportTaskMutation) AddedFields() []string {
 	if m.addprogress != nil {
 		fields = append(fields, exporttask.FieldProgress)
 	}
+	if m.addwo_id_to_export != nil {
+		fields = append(fields, exporttask.FieldWoIDToExport)
+	}
 	return fields
 }
 
@@ -15618,6 +15708,8 @@ func (m *ExportTaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case exporttask.FieldProgress:
 		return m.AddedProgress()
+	case exporttask.FieldWoIDToExport:
+		return m.AddedWoIDToExport()
 	}
 	return nil, false
 }
@@ -15634,6 +15726,13 @@ func (m *ExportTaskMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddProgress(v)
 		return nil
+	case exporttask.FieldWoIDToExport:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWoIDToExport(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExportTask numeric field %s", name)
 }
@@ -15644,6 +15743,9 @@ func (m *ExportTaskMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(exporttask.FieldStoreKey) {
 		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	if m.FieldCleared(exporttask.FieldWoIDToExport) {
+		fields = append(fields, exporttask.FieldWoIDToExport)
 	}
 	return fields
 }
@@ -15661,6 +15763,9 @@ func (m *ExportTaskMutation) ClearField(name string) error {
 	switch name {
 	case exporttask.FieldStoreKey:
 		m.ClearStoreKey()
+		return nil
+	case exporttask.FieldWoIDToExport:
+		m.ClearWoIDToExport()
 		return nil
 	}
 	return fmt.Errorf("unknown ExportTask nullable field %s", name)
@@ -15685,6 +15790,9 @@ func (m *ExportTaskMutation) ResetField(name string) error {
 		return nil
 	case exporttask.FieldStoreKey:
 		m.ResetStoreKey()
+		return nil
+	case exporttask.FieldWoIDToExport:
+		m.ResetWoIDToExport()
 		return nil
 	}
 	return fmt.Errorf("unknown ExportTask field %s", name)

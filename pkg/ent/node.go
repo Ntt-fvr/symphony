@@ -1775,7 +1775,7 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     et.ID,
 		Type:   "ExportTask",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 0),
 	}
 	var buf []byte
@@ -1817,6 +1817,14 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "string",
 		Name:  "store_key",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.WoIDToExport); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "wo_id_to_export",
 		Value: string(buf),
 	}
 	return node, nil

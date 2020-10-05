@@ -29,6 +29,8 @@ type ExportTask struct {
 	Filters string `json:"filters,omitempty"`
 	// StoreKey holds the value of the "store_key" field.
 	StoreKey *string `json:"store_key,omitempty"`
+	// WoIDToExport holds the value of the "wo_id_to_export" field.
+	WoIDToExport *int `json:"wo_id_to_export,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -40,6 +42,7 @@ func (*ExportTask) scanValues() []interface{} {
 		&sql.NullFloat64{}, // progress
 		&sql.NullString{},  // filters
 		&sql.NullString{},  // store_key
+		&sql.NullInt64{},   // wo_id_to_export
 	}
 }
 
@@ -81,6 +84,12 @@ func (et *ExportTask) assignValues(values ...interface{}) error {
 		et.StoreKey = new(string)
 		*et.StoreKey = value.String
 	}
+	if value, ok := values[5].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field wo_id_to_export", values[5])
+	} else if value.Valid {
+		et.WoIDToExport = new(int)
+		*et.WoIDToExport = int(value.Int64)
+	}
 	return nil
 }
 
@@ -118,6 +127,10 @@ func (et *ExportTask) String() string {
 	if v := et.StoreKey; v != nil {
 		builder.WriteString(", store_key=")
 		builder.WriteString(*v)
+	}
+	if v := et.WoIDToExport; v != nil {
+		builder.WriteString(", wo_id_to_export=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')
 	return builder.String()

@@ -85,7 +85,7 @@ resource helm_release metrics_server {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.3.2"
+  version    = "4.5.0"
   namespace  = "kube-system"
 
   values = [yamlencode({
@@ -101,7 +101,7 @@ resource helm_release node_problem_detector {
   repository = local.helm_repository.stable
   name       = "node-problem-detector"
   namespace  = "kube-system"
-  version    = "1.7.6"
+  version    = "1.8.0"
 
   set {
     name  = "metrics.serviceMonitor.enabled"

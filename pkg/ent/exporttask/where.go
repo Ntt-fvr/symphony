@@ -115,6 +115,13 @@ func StoreKey(v string) predicate.ExportTask {
 	})
 }
 
+// WoIDToExport applies equality check predicate on the "wo_id_to_export" field. It's identical to WoIDToExportEQ.
+func WoIDToExport(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWoIDToExport), v))
+	})
+}
+
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v Type) predicate.ExportTask {
 	return predicate.ExportTask(func(s *sql.Selector) {
@@ -520,6 +527,96 @@ func StoreKeyEqualFold(v string) predicate.ExportTask {
 func StoreKeyContainsFold(v string) predicate.ExportTask {
 	return predicate.ExportTask(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldStoreKey), v))
+	})
+}
+
+// WoIDToExportEQ applies the EQ predicate on the "wo_id_to_export" field.
+func WoIDToExportEQ(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportNEQ applies the NEQ predicate on the "wo_id_to_export" field.
+func WoIDToExportNEQ(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportIn applies the In predicate on the "wo_id_to_export" field.
+func WoIDToExportIn(vs ...int) predicate.ExportTask {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExportTask(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldWoIDToExport), v...))
+	})
+}
+
+// WoIDToExportNotIn applies the NotIn predicate on the "wo_id_to_export" field.
+func WoIDToExportNotIn(vs ...int) predicate.ExportTask {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.ExportTask(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldWoIDToExport), v...))
+	})
+}
+
+// WoIDToExportGT applies the GT predicate on the "wo_id_to_export" field.
+func WoIDToExportGT(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportGTE applies the GTE predicate on the "wo_id_to_export" field.
+func WoIDToExportGTE(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportLT applies the LT predicate on the "wo_id_to_export" field.
+func WoIDToExportLT(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportLTE applies the LTE predicate on the "wo_id_to_export" field.
+func WoIDToExportLTE(v int) predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldWoIDToExport), v))
+	})
+}
+
+// WoIDToExportIsNil applies the IsNil predicate on the "wo_id_to_export" field.
+func WoIDToExportIsNil() predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldWoIDToExport)))
+	})
+}
+
+// WoIDToExportNotNil applies the NotNil predicate on the "wo_id_to_export" field.
+func WoIDToExportNotNil() predicate.ExportTask {
+	return predicate.ExportTask(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldWoIDToExport)))
 	})
 }
 

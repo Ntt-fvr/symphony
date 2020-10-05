@@ -51,6 +51,7 @@ const Clickable = (props: Props, forwardedRef: TRefFor<HTMLElement>) => {
   const classes = useStyles();
   return (
     <div
+      data-is-clickable
       className={classNames(
         classes.root,
         {[classes.disabled]: disabled},
