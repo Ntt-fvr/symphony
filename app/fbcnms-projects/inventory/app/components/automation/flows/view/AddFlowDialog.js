@@ -16,6 +16,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import React, {useCallback, useState} from 'react';
 import Text from '@symphony/design-system/components/Text';
 
+import type {
+  AddFlowDraftMutationResponse,
+  AddFlowDraftMutationVariables,
+} from '../../../../mutations/__generated__/AddFlowDraftMutation.graphql';
+import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
+
 import AddFlowDraftMutation from '../../../../mutations/AddFlowDraftMutation';
 import NameDescriptionSection from '../../../../common/NameDescriptionSection';
 import SnackbarItem from '@fbcnms/ui/components/SnackbarItem';
@@ -26,11 +32,6 @@ import {fbt} from 'fbt';
 import {getGraphError} from '../../../../common/EntUtils';
 import {makeStyles} from '@material-ui/styles';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
-import type {
-  AddFlowDraftMutationResponse,
-  AddFlowDraftMutationVariables,
-} from '../../../../mutations/__generated__/AddFlowDraftMutation.graphql';
-import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
 
 const useStyles = makeStyles(theme => ({
   root: {

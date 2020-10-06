@@ -9,10 +9,11 @@
  */
 
 const querystring = require('querystring');
-import {accessRoleToString} from '@fbcnms/auth/roles';
-import {oidcAccessToken} from '@fbcnms/auth/oidc/middleware';
 import type {ClientRequest} from 'http';
 import type {FBCNMSRequest} from '@fbcnms/auth/access';
+
+import {accessRoleToString} from '@fbcnms/auth/roles';
+import {oidcAccessToken} from '@fbcnms/auth/oidc/middleware';
 
 const onProxyReq = (proxyReq: ClientRequest, req: FBCNMSRequest): void => {
   if (req.user.organization) {

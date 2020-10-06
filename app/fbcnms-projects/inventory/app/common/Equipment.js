@@ -31,7 +31,6 @@ export type Equipment = {
   properties: Array<Property>,
   futureState: ?FutureState,
   workOrder: ?WorkOrder,
-  device: ?Device,
   locationHierarchy: Array<Location>,
   positionHierarchy: Array<EquipmentPosition>,
   services: Array<Service>,
@@ -60,12 +59,6 @@ export type Link = {
   workOrder: ?WorkOrder,
   properties: Array<Property>,
   services: Array<Service>,
-};
-
-type Device = {
-  id: string,
-  up: ?boolean,
-  name: string,
 };
 
 export const getInitialPortFromDefinition = (

@@ -164,6 +164,63 @@ def get_project_type_by_id(client: SymphonyClient, id: str) -> ProjectType:
     return format_to_project_type(project_type_fragment=result)
 
 
+def add_property_types_to_project_type(
+    client: SymphonyClient,
+    project_type_id: str,
+    new_properties: List[PropertyDefinition],
+) -> ProjectType:
+    """This function adds new property types to existing project type.
+
+    :param project_type_id: Existing project type ID
+    :type project_type_id: str
+    :param new_properties: List of property definitions
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: LocationType object
+    :rtype: :class:`~psym.common.data_class.LocationType`
+
+    **Example**
+
+    .. code-block:: python
+
+        project_type = client.add_property_types_to_project_type(
+            project_type_id="12345678",
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
+    """
+    project_type = get_project_type_by_id(client=client, id=project_type_id)
+    new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+    result = EditProjectTypeMutation.execute(
+        client,
+        EditProjectTypeInput(
+            id=project_type.id,
+            name=project_type.name,
+            description=project_type.description,
+            properties=new_property_type_inputs,
+            workOrders=[
+                WorkOrderDefinitionInput(
+                    index=wod.definition_index, type=wod.work_order_type_id
+                )
+                for wod in project_type.work_order_definitions
+            ],
+        ),
+    )
+    edited = format_to_project_type(project_type_fragment=result)
+    PROJECT_TYPES.pop(project_type.name)
+    PROJECT_TYPES[edited.name] = edited
+    return edited
+
+
 def edit_project_type(
     client: SymphonyClient,
     project_type_id: str,

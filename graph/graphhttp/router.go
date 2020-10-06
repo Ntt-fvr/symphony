@@ -11,8 +11,6 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/graph/jobs"
-	"github.com/facebookincubator/symphony/pkg/actions"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -35,8 +33,6 @@ type routerConfig struct {
 		triggerFactory triggers.Factory
 		actionFactory  flowactions.Factory
 	}
-	orc8r   struct{ client *http.Client }
-	actions struct{ registry *executor.Registry }
 }
 
 func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
@@ -53,9 +49,6 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		},
 		func(h http.Handler) http.Handler {
 			return authz.Handler(h, cfg.logger)
-		},
-		func(h http.Handler) http.Handler {
-			return actions.Handler(h, cfg.logger, cfg.actions.registry)
 		},
 	)
 	handler, err := importer.NewHandler(importer.Config{
@@ -93,7 +86,6 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 			ReceiverFactory: cfg.events.ReceiverFactory,
 			TriggerFactory:  cfg.flow.triggerFactory,
 			ActionFactory:   cfg.flow.actionFactory,
-			Orc8rClient:     cfg.orc8r.client,
 		},
 	)
 	if err != nil {

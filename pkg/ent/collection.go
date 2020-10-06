@@ -13,18 +13,6 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ar *ActionsRuleQuery) CollectFields(ctx context.Context, satisfies ...string) *ActionsRuleQuery {
-	if fc := graphql.GetFieldContext(ctx); fc != nil {
-		ar = ar.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)
-	}
-	return ar
-}
-
-func (ar *ActionsRuleQuery) collectField(ctx *graphql.OperationContext, field graphql.CollectedField, satisfies ...string) *ActionsRuleQuery {
-	return ar
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (a *ActivityQuery) CollectFields(ctx context.Context, satisfies ...string) *ActivityQuery {
 	if fc := graphql.GetFieldContext(ctx); fc != nil {
 		a = a.collectField(graphql.GetOperationContext(ctx), fc.Field, satisfies...)

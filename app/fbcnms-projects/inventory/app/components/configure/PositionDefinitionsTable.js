@@ -8,8 +8,9 @@
  * @format
  */
 
-import {makeStyles} from '@material-ui/styles';
 import type {PositionDefinitionsTable_positionDefinitions} from './__generated__/PositionDefinitionsTable_positionDefinitions.graphql';
+
+import {makeStyles} from '@material-ui/styles';
 
 import CardSection from '../CardSection';
 import React from 'react';

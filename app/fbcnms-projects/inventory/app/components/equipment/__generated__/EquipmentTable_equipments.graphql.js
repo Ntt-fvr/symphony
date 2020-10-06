@@ -31,9 +31,6 @@ export type EquipmentTable_equipments = $ReadOnlyArray<{|
     +id: string,
     +status: WorkOrderStatus,
   |},
-  +device: ?{|
-    +up: ?boolean
-  |},
   +services: $ReadOnlyArray<?{|
     +id: string
   |}>,
@@ -115,24 +112,6 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "Device",
-      "kind": "LinkedField",
-      "name": "device",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "up",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "concreteType": "Service",
       "kind": "LinkedField",
       "name": "services",
@@ -148,6 +127,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ad1708fe40398b5cab77735cbd8a6417';
+(node/*: any*/).hash = 'bb379a6425ea4fcf61db3a20f1e8d96a';
 
 module.exports = node;

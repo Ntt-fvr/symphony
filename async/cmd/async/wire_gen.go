@@ -66,7 +66,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	factory := triggers.NewFactory()
 	actionsFactory := actions.NewFactory()
-	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
+	flower := &hooks.Flower{
+		TriggerFactory: factory,
+		ActionFactory:  actionsFactory,
+	}
+	tenancy := newTenancy(mySQLTenancy, eventer, flower)
 	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
 	if err != nil {
 		cleanup2()
@@ -127,7 +131,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	v2 := newHealthChecks(mySQLTenancy, cadenceClient)
 	v3 := provideViews()
-	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	config2 := flags.TelemetryConfig
+	exporter, err := telemetry.ProvideViewExporter(config2)
 	if err != nil {
 		cleanup7()
 		cleanup6()
@@ -138,7 +143,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup8, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	traceExporter, cleanup8, err := telemetry.ProvideTraceExporter(config2)
 	if err != nil {
 		cleanup7()
 		cleanup6()
@@ -150,7 +155,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	profilingEnabler := _wireProfilingEnablerValue
-	sampler := telemetry.ProvideTraceSampler(telemetryConfig)
+	sampler := telemetry.ProvideTraceSampler(config2)
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
@@ -207,14 +212,10 @@ func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentr
 	}
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 

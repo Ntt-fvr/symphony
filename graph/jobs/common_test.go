@@ -5,8 +5,6 @@
 package jobs
 
 import (
-	"bytes"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -50,27 +48,18 @@ func newResolver(t *testing.T, drv dialect.Driver) *TestJobsResolver {
 	}
 }
 
-func syncServicesRequest(t *testing.T, r *TestJobsResolver) *http.Response {
+func syncServicesRequest(t *testing.T, r *TestJobsResolver) {
 	h, _ := NewHandler(
 		Config{
 			Logger:          logtest.NewTestLogger(t),
 			ReceiverFactory: ev.ErrFactory{},
 		},
 	)
-
 	th := viewertest.TestHandler(t, h, r.client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-	url := server.URL + "/sync_services"
-	req, err := http.NewRequest(http.MethodGet, url, ioutil.NopCloser(new(bytes.Buffer)))
-	require.Nil(t, err)
-
+	req := httptest.NewRequest(http.MethodPost, "/sync_services", nil)
 	viewertest.SetDefaultViewerHeaders(req)
 	req.Header.Set("Content-Length", "100000")
-
-	resp, err := http.DefaultClient.Do(req)
-	require.Nil(t, err)
-	require.Equal(t, http.StatusOK, resp.StatusCode)
-	_ = resp.Body.Close()
-	return resp
+	rec := httptest.NewRecorder()
+	th.ServeHTTP(rec, req)
+	require.Equal(t, http.StatusOK, rec.Code)
 }

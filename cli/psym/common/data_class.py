@@ -220,12 +220,15 @@ class Equipment(NamedTuple):
     :type name: str
     :param equipment_type_name: Equipment type name
     :type equipment_type_name: str
+    :param properties: PropertyFragment sequence
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ])
     """
 
     id: str
     external_id: Optional[str]
     name: str
     equipment_type_name: str
+    properties: Sequence[PropertyFragment]
 
 
 class Link(NamedTuple):

@@ -19,16 +19,14 @@ require (
 	github.com/aws/aws-sdk-go v1.35.1
 	github.com/badoux/checkmail v1.2.1
 	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4
+	github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b
 	github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/golang/mock v1.4.4 // indirect
-	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
-	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/kisielk/errcheck v1.4.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
@@ -64,8 +62,7 @@ require (
 	golang.org/x/tools v0.0.0-20200929210017-bce87a7896cc // indirect
 	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/genproto v0.0.0-20200929141702-51c3e5b607fe // indirect
-	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/grpc v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.5 // indirect
 )

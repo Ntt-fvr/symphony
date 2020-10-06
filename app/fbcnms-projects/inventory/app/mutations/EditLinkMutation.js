@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   EditLinkMutation,
   EditLinkMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/EditLinkMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 export const mutation = graphql`
   mutation EditLinkMutation($input: EditLinkInput!) {

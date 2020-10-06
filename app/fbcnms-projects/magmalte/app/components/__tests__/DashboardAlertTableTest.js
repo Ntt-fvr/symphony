@@ -7,6 +7,8 @@
  * @flow strict-local
  * @format
  */
+import type {gettable_alert, prom_firing_alert} from '@fbcnms/magma-api';
+
 import 'jest-dom/extend-expect';
 import DashboardAlertTable from '../DashboardAlertTable';
 import MagmaAPIBindings from '@fbcnms/magma-api';
@@ -17,7 +19,6 @@ import defaultTheme from '../../theme/default';
 import {MemoryRouter, Route} from 'react-router-dom';
 import {MuiThemeProvider} from '@material-ui/core/styles';
 import {cleanup, fireEvent, render, wait} from '@testing-library/react';
-import type {gettable_alert, prom_firing_alert} from '@fbcnms/magma-api';
 
 afterEach(cleanup);
 

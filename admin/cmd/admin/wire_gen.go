@@ -35,7 +35,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	mysqlConfig := &flags.MySQLConfig
+	mysqlConfig := flags.MySQLConfig
 	db, cleanup2 := provideDB(mysqlConfig)
 	stringer := _wireStringerValue
 	tenancy, err := provideTenancy(mysqlConfig, logger)
@@ -59,7 +59,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := provideHealthCheckers(db)
 	v2 := provideViews()
-	telemetryConfig := &flags.TelemetryConfig
+	telemetryConfig := flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
 		cleanup3()
@@ -112,13 +112,13 @@ var (
 
 // wire.go:
 
-func provideDB(cfg *mysql.Config) (*sql.DB, func()) {
+func provideDB(cfg mysql.Config) (*sql.DB, func()) {
 	db, cleanup := mysql.Provider(cfg)
 	db.SetMaxOpenConns(1)
 	return db, cleanup
 }
 
-func provideTenancy(cfg *mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
+func provideTenancy(cfg mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
 	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 5)
 	if err != nil {
 		return nil, err

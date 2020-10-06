@@ -8,13 +8,6 @@
  * @format
  */
 
-import {
-  closedStatus,
-  doneStatus,
-  inProgressStatus,
-  pendingStatus,
-} from '../../common/FilterTypes';
-import {getStatusColor} from '../work_orders/StatusTag';
 import type {BasicLocation} from '../../common/Location';
 import type {CustomGeoJSONFeature} from './MapView';
 import type {GeoJSONFeatureCollection} from '@mapbox/geojson-types';
@@ -26,6 +19,14 @@ import type {
   WorkOrderPriority,
   WorkOrderStatus,
 } from '../../mutations/__generated__/EditWorkOrderMutation.graphql';
+
+import {
+  closedStatus,
+  doneStatus,
+  inProgressStatus,
+  pendingStatus,
+} from '../../common/FilterTypes';
+import {getStatusColor} from '../work_orders/StatusTag';
 
 export type CoordProps = {|
   color: string,

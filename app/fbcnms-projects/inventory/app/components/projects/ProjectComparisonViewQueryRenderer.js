@@ -18,9 +18,10 @@ import {DisplayOptions} from '../InventoryViewContainer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 
-import classNames from 'classnames';
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
 import type {FilterValue} from '../comparison_view/ComparisonViewTypes';
+
+import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
   root: {

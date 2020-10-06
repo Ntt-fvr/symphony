@@ -88,7 +88,7 @@ locals {
     frontend_name = "cadence-frontend"
     frontend_port = "7933"
     env_var = {
-      name  = "CADENCE_RETENTION_IN_DAYS"
+      name  = "CADENCE_RETENTION"
       value = "3"
     }
   }

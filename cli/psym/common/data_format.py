@@ -6,8 +6,10 @@
 from numbers import Number
 from typing import List, Sequence, cast
 
+from psym.graphql.fragment.equipment import EquipmentFragment
 from psym.graphql.fragment.equipment_port_type import EquipmentPortTypeFragment
 from psym.graphql.fragment.equipment_type import EquipmentTypeFragment
+from psym.graphql.fragment.location import LocationFragment
 from psym.graphql.fragment.location_type import LocationTypeFragment
 from psym.graphql.fragment.project import ProjectFragment
 from psym.graphql.fragment.project_type import ProjectTypeFragment
@@ -18,8 +20,10 @@ from psym.graphql.fragment.work_order_type import WorkOrderTypeFragment
 from psym.graphql.input.property_type import PropertyTypeInput
 
 from .data_class import (
+    Equipment,
     EquipmentPortType,
     EquipmentType,
+    Location,
     LocationType,
     Project,
     ProjectType,
@@ -390,6 +394,35 @@ def format_to_location_type(
     )
 
 
+def format_to_location(location_fragment: LocationFragment) -> Location:
+    """This function gets `psym.graphql.fragment.location.LocationFragment` object as argument
+    and formats it to `psym.common.data_class.Location` object
+
+        :param location_fragment: Existing location fragment object
+        :type location_fragment: :class:`~psym.graphql.fragment.location.LocationFragment`
+
+        :return: Location object
+        :rtype: :class:`~psym.common.data_class.Location`
+
+        **Example**
+
+        .. code-block:: python
+
+            location = format_to_location(
+                location_fragment=location_fragment,
+            )
+    """
+    return Location(
+        id=location_fragment.id,
+        name=location_fragment.name,
+        latitude=location_fragment.latitude,
+        longitude=location_fragment.longitude,
+        external_id=location_fragment.externalId,
+        location_type_name=location_fragment.locationType.name,
+        properties=location_fragment.properties,
+    )
+
+
 def format_to_equipment_type(
     equipment_type_fragment: EquipmentTypeFragment,
 ) -> EquipmentType:
@@ -419,6 +452,33 @@ def format_to_equipment_type(
         ),
         position_definitions=equipment_type_fragment.positionDefinitions,
         port_definitions=equipment_type_fragment.portDefinitions,
+    )
+
+
+def format_to_equipment(equipment_fragment: EquipmentFragment) -> Equipment:
+    """This function gets `psym.graphql.fragment.equipment.EquipmentFragment` object as argument
+    and formats it to `psym.common.data_class.Equipment` object
+
+        :param equipment_fragment: Existing equipment type fragment object
+        :type equipment_fragment: :class:`~psym.graphql.fragment.equipment.EquipmentFragment`
+
+        :return: Equipment object
+        :rtype: :class:`~psym.common.data_class.Equipment`
+
+        **Example**
+
+        .. code-block:: python
+
+            equipment = format_to_equipment(
+                equipment_fragment=equipment_fragment,
+            )
+    """
+    return Equipment(
+        id=equipment_fragment.id,
+        external_id=equipment_fragment.externalId,
+        name=equipment_fragment.name,
+        equipment_type_name=equipment_fragment.equipmentType.name,
+        properties=equipment_fragment.properties,
     )
 
 

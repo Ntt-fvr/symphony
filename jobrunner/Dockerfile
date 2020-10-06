@@ -13,10 +13,6 @@ WORKDIR /src/symphony
 COPY go.* ./
 RUN go mod download
 
-# Copy shared components
-COPY pkg /src/symphony/pkg
-COPY graph /src/symphony/graph
-
 # Build services
 WORKDIR /src/symphony/jobrunner
 COPY jobrunner .
@@ -26,9 +22,10 @@ RUN mkdir /build && go build -o /build ./cmd/...
 FROM alpine
 
 # Install runtime requirements
-RUN apk add --no-cache musl curl
+RUN apk add --no-cache musl
 
 # Copy artifacts from builder
 COPY --from=builder /build/* /bin/
 
-ENTRYPOINT ["/bin/cmd"]
+# Set entrypoint
+ENTRYPOINT ["/bin/jobrunner"]

@@ -254,7 +254,7 @@
 
 <dl class="py class">
 <dt id="psym.common.data_class.Equipment">
-<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">Equipment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">external_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">equipment_type_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.Equipment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">psym.common.data_class.</code><code class="sig-name descname">Equipment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">external_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">equipment_type_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">properties</span><span class="p">:</span> <span class="n">Sequence<span class="p">[</span>psym.graphql.fragment.property.PropertyFragment<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psym.common.data_class.Equipment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -263,6 +263,7 @@
 <li><p><strong>external_id</strong> (<em>str</em><em>, </em><em>optional</em>) – External ID</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name</p></li>
 <li><p><strong>equipment_type_name</strong> (<em>str</em>) – Equipment type name</p></li>
+<li><p><strong>properties</strong> (Sequence[ <code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyFragment</span></code> ])) – PropertyFragment sequence</p></li>
 </ul>
 </dd>
 </dl>
@@ -288,6 +289,12 @@
 <dt id="psym.common.data_class.Equipment.name">
 <em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#psym.common.data_class.Equipment.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.common.data_class.Equipment.properties">
+<em class="property">property </em><code class="sig-name descname">properties</code><a class="headerlink" href="#psym.common.data_class.Equipment.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
 </dd></dl>
 
 </dd></dl>
@@ -1406,6 +1413,35 @@
 <div class="section" id="module-psym.common.data_format">
 <span id="psym-common-data-format-module"></span><h2>psym.common.data_format module<a class="headerlink" href="#module-psym.common.data_format" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="psym.common.data_format.format_to_equipment">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_equipment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.equipment.EquipmentFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.Equipment" title="psym.common.data_class.Equipment">psym.common.data_class.Equipment</a><a class="headerlink" href="#psym.common.data_format.format_to_equipment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.equipment.EquipmentFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.Equipment</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param equipment_fragment</dt>
+<dd class="field-odd"><p>Existing equipment type fragment object</p>
+</dd>
+<dt class="field-even">type equipment_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Equipment object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.Equipment" title="psym.common.data_class.Equipment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Equipment</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment</span> <span class="o">=</span> <span class="n">format_to_equipment</span><span class="p">(</span>
+    <span class="n">equipment_fragment</span><span class="o">=</span><span class="n">equipment_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt id="psym.common.data_format.format_to_equipment_port_type">
 <code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_equipment_port_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_port_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.EquipmentPortType" title="psym.common.data_class.EquipmentPortType">psym.common.data_class.EquipmentPortType</a><a class="headerlink" href="#psym.common.data_format.format_to_equipment_port_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function gets <cite>psym.graphql.fragment.equipment_port_type.EquipmentPortTypeFragment</cite> object as argument
@@ -1457,6 +1493,35 @@ and formats it to <cite>psym.common.data_class.EquipmentType</cite> object</p>
 <p><strong>Example</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_type</span> <span class="o">=</span> <span class="n">format_to_equipment_type</span><span class="p">(</span>
     <span class="n">equipment_type_fragment</span><span class="o">=</span><span class="n">equipment_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_location">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_location</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.location.LocationFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.Location" title="psym.common.data_class.Location">psym.common.data_class.Location</a><a class="headerlink" href="#psym.common.data_format.format_to_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.location.LocationFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.Location</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param location_fragment</dt>
+<dd class="field-odd"><p>Existing location fragment object</p>
+</dd>
+<dt class="field-even">type location_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>Location object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.Location" title="psym.common.data_class.Location"><code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location</span> <span class="o">=</span> <span class="n">format_to_location</span><span class="p">(</span>
+    <span class="n">location_fragment</span><span class="o">=</span><span class="n">location_fragment</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1649,6 +1714,35 @@ and formats it to <cite>psym.common.data_class.PropertyDefinition</cite> object<
 <span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="psym.common.data_format.format_to_service_type">
+<code class="sig-prename descclassname">psym.common.data_format.</code><code class="sig-name descname">format_to_service_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service_type_fragment</span><span class="p">:</span> <span class="n">psym.graphql.fragment.service_type.ServiceTypeFragment</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType">psym.common.data_class.ServiceType</a><a class="headerlink" href="#psym.common.data_format.format_to_service_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets <cite>psym.graphql.fragment.equipment_type.ServiceTypeFragment</cite> object as argument
+and formats it to <cite>psym.common.data_class.ServiceType</cite> object</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param service_type_fragment</dt>
+<dd class="field-odd"><p>Existing service type fragment object</p>
+</dd>
+<dt class="field-even">type service_type_fragment</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceTypeFragment</span></code></p>
+</dd>
+<dt class="field-odd">return</dt>
+<dd class="field-odd"><p>ServiceType object</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p><a class="reference internal" href="#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service_type</span> <span class="o">=</span> <span class="n">format_to_service_type</span><span class="p">(</span>
+    <span class="n">service_type_fragment</span><span class="o">=</span><span class="n">service_type_fragment</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">

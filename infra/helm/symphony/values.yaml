@@ -358,13 +358,10 @@ graph:
 
   # Configuration for graph service
   service:
-    port:
-      http:
-        port: 80
-        targetPort: 8080
-      grpc:
-        port: 443
-        targetPort: 8443
+    # Service external port
+    port: 80
+    # Service target port
+    targetPort: 8080
 
   # Configuration for graph service account
   serviceAccount:
@@ -588,17 +585,13 @@ migrate:
 
     # Migrations configuration
     migrations:
-      # Ent configuration
-      ent:
-        # Additional key/value pairs to be used as environment variables
-        extraEnvVars: [ ]
+      graph:
+        extraEnvVars: []
 
-      # Cadence configuration
       cadence:
         address: ""
         domain: "flow"
-        # Additional key/value pairs to be used as environment variables
-        extraEnvVars: [ ]
+        extraEnvVars: []
 
 # Configuration for store application
 store:
@@ -812,8 +805,6 @@ jobrunner:
   # job.name should consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character
   jobs:
     - name: gc
-      url: gc
       schedule: "0 * * * *"
     - name: syncservices
-      url: sync_services
       schedule: "0 * * * *"

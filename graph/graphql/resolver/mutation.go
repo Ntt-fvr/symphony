@@ -13,8 +13,6 @@ import (
 
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/graph/resolverutil"
-	"github.com/facebookincubator/symphony/pkg/actions"
-	"github.com/facebookincubator/symphony/pkg/actions/core"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
@@ -3023,63 +3021,6 @@ func (r mutationResolver) RemoveCustomer(ctx context.Context, id int) (int, erro
 	return id, nil
 }
 
-func actionsInputToSchema(ctx context.Context, inputActions []*models.ActionsRuleActionInput) ([]*core.ActionsRuleAction, error) {
-	ac := actions.FromContext(ctx)
-	ruleActions := make([]*core.ActionsRuleAction, 0, len(inputActions))
-	for _, ruleAction := range inputActions {
-		_, err := ac.ActionForID(ruleAction.ActionID)
-		if err != nil {
-			return nil, errors.Wrap(err, "validating action")
-		}
-
-		ruleActions = append(ruleActions, &core.ActionsRuleAction{
-			ActionID: ruleAction.ActionID,
-			Data:     ruleAction.Data,
-		})
-	}
-	return ruleActions, nil
-}
-
-func filtersInputToSchema(inputFilters []*models.ActionsRuleFilterInput) []*core.ActionsRuleFilter {
-	ruleFilters := make([]*core.ActionsRuleFilter, 0, len(inputFilters))
-	for _, ruleFilter := range inputFilters {
-		ruleFilters = append(ruleFilters, &core.ActionsRuleFilter{
-			FilterID:   ruleFilter.FilterID,
-			OperatorID: ruleFilter.OperatorID,
-			Data:       ruleFilter.Data,
-		})
-	}
-	return ruleFilters
-}
-
-func (r mutationResolver) AddActionsRule(ctx context.Context, input models.AddActionsRuleInput) (*ent.ActionsRule, error) {
-	ac := actions.FromContext(ctx)
-
-	_, err := ac.TriggerForID(input.TriggerID)
-	if err != nil {
-		return nil, errors.Wrap(err, "validating trigger")
-	}
-
-	ruleActions, err := actionsInputToSchema(ctx, input.RuleActions)
-	if err != nil {
-		return nil, errors.Wrap(err, "validating action")
-	}
-
-	ruleFilters := filtersInputToSchema(input.RuleFilters)
-
-	actionsRule, err := r.ClientFrom(ctx).
-		ActionsRule.Create().
-		SetName(input.Name).
-		SetTriggerID(string(input.TriggerID)).
-		SetRuleActions(ruleActions).
-		SetRuleFilters(ruleFilters).
-		Save(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "creating actionsrule")
-	}
-	return actionsRule, nil
-}
-
 func (r mutationResolver) AddFloorPlan(ctx context.Context, input models.AddFloorPlanInput) (*ent.FloorPlan, error) {
 	client := r.ClientFrom(ctx)
 	referencePoint, err := client.FloorPlanReferencePoint.Create().
@@ -3120,41 +3061,6 @@ func (r mutationResolver) AddFloorPlan(ctx context.Context, input models.AddFloo
 	}
 
 	return floorPlan, nil
-}
-
-func (r mutationResolver) EditActionsRule(ctx context.Context, id int, input models.AddActionsRuleInput) (*ent.ActionsRule, error) {
-	ac := actions.FromContext(ctx)
-
-	_, err := ac.TriggerForID(input.TriggerID)
-	if err != nil {
-		return nil, errors.Wrap(err, "validating trigger")
-	}
-
-	ruleActions, err := actionsInputToSchema(ctx, input.RuleActions)
-	if err != nil {
-		return nil, errors.Wrap(err, "validating action")
-	}
-
-	ruleFilters := filtersInputToSchema(input.RuleFilters)
-
-	actionsRule, err := r.ClientFrom(ctx).
-		ActionsRule.UpdateOneID(id).
-		SetName(input.Name).
-		SetTriggerID(string(input.TriggerID)).
-		SetRuleActions(ruleActions).
-		SetRuleFilters(ruleFilters).
-		Save(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "updating actionsrule")
-	}
-	return actionsRule, nil
-}
-
-func (r mutationResolver) RemoveActionsRule(ctx context.Context, id int) (_ bool, err error) {
-	if err = r.ClientFrom(ctx).ActionsRule.DeleteOneID(id).Exec(ctx); err != nil {
-		err = fmt.Errorf("removing actions rule: %w", err)
-	}
-	return err == nil, err
 }
 
 func (r mutationResolver) DeleteFloorPlan(ctx context.Context, id int) (_ bool, err error) {

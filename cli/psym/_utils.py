@@ -83,6 +83,16 @@ def get_graphql_input_field(
     return {formated_type.graphql_field_name[0]: cast(PropertyValue, value)}
 
 
+def update_property_input_ids(
+    existing_properties: Dict[str, PropertyFragment],
+    property_inputs: List[PropertyInput],
+) -> List[PropertyInput]:
+    for p in property_inputs:
+        if p.propertyTypeID in existing_properties:
+            p.id = existing_properties[p.propertyTypeID].id
+    return property_inputs
+
+
 def get_graphql_property_type_inputs(
     property_types: Sequence[PropertyDefinition],
     properties_dict: Mapping[str, PropertyValue],

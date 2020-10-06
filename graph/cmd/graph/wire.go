@@ -10,7 +10,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -20,27 +19,28 @@ import (
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/google/wire"
 	"gocloud.dev/server/health"
-	"google.golang.org/grpc"
 )
 
 func newApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
+			"ListenAddress",
 			"MySQLConfig",
 			"AuthURL",
 			"EventPubsubURL",
 			"LogConfig",
 			"TelemetryConfig",
-			"Orc8rConfig",
 			"TenancyConfig",
 		),
 		log.Provider,
-		newApp,
+		wire.Struct(
+			new(application),
+			"*",
+		),
 		newTenancy,
 		wire.Struct(
 			new(event.Eventer),
@@ -48,7 +48,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		newHealthChecks,
 		newMySQLTenancy,
-		mysql.Provider,
 		ev.ProvideEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
@@ -60,36 +59,22 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		triggers.NewFactory,
 		actions.NewFactory,
+		wire.Struct(
+			new(hooks.Flower),
+			"*",
+		),
 		graphhttp.NewServer,
 		wire.Struct(
 			new(graphhttp.Config), "*",
-		),
-		graphgrpc.NewServer,
-		wire.Struct(
-			new(graphgrpc.Config), "*",
 		),
 	)
 	return nil, nil, nil
 }
 
-func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Server, flags *cliFlags) *application {
-	var app application
-	app.Logger = logger.Background()
-	app.http.Server = httpServer
-	app.http.addr = flags.HTTPAddress
-	app.grpc.Server = grpcServer
-	app.grpc.addr = flags.GRPCAddress
-	return &app
-}
-
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 

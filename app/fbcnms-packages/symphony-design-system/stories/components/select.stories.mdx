@@ -99,27 +99,21 @@ export const OPTIONS = [
 ### Skins
 
 export const SelectWithSkin = ({skin}) => {
-  return (
-    <Select
-      label="Project"
-      options={OPTIONS}
-      skin={skin}
-    />
-  );
-}
+  return <Select label="Project" options={OPTIONS} skin={skin} />;
+};
 
 <Preview>
   <Story name="Skins">
     <StoryFrame>
-      <SelectWithSkin skin='primary' />
-      <SelectWithSkin skin='regular' />
-      <SelectWithSkin skin='red' />
-      <SelectWithSkin skin='gray' />
-      <SelectWithSkin skin='secondaryGray' />
-      <SelectWithSkin skin='darkGray' />
-      <SelectWithSkin skin='brightGray' />
-      <SelectWithSkin skin='orange' />
-      <SelectWithSkin skin='green' />
+      <SelectWithSkin skin="primary" />
+      <SelectWithSkin skin="regular" />
+      <SelectWithSkin skin="red" />
+      <SelectWithSkin skin="gray" />
+      <SelectWithSkin skin="secondaryGray" />
+      <SelectWithSkin skin="darkGray" />
+      <SelectWithSkin skin="brightGray" />
+      <SelectWithSkin skin="orange" />
+      <SelectWithSkin skin="green" />
     </StoryFrame>
   </Story>
 </Preview>

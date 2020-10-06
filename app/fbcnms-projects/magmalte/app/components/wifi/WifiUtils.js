@@ -14,12 +14,13 @@ import type {
   wifi_gateway,
 } from '@fbcnms/magma-api';
 
-import nullthrows from '@fbcnms/util/nullthrows';
 import type {
   MagmaConnectionFeature,
   MagmaFeatureCollection,
   MagmaGatewayFeature,
 } from '@fbcnms/ui/insights/map/GeoJSON';
+
+import nullthrows from '@fbcnms/util/nullthrows';
 
 import {assign, flatMap, flatten, groupBy, partition} from 'lodash';
 

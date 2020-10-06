@@ -5,14 +5,21 @@
 
 from typing import Dict, Iterator, Mapping, Optional, Tuple, cast
 
+from tqdm import tqdm
+
 from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES
 from psym.common.constant import EQUIPMENTS_TO_SEARCH, PAGINATION_STEP
 from psym.common.data_class import Equipment, EquipmentType, Location
 from psym.common.data_enum import Entity
-from tqdm import tqdm
+from psym.common.data_format import format_to_equipment
 
-from .._utils import PropertyValue, _get_property_value, get_graphql_property_inputs
+from .._utils import (
+    PropertyValue,
+    _get_property_value,
+    get_graphql_property_inputs,
+    update_property_input_ids,
+)
 from ..exceptions import (
     EntityNotFoundError,
     EquipmentIsNotUniqueException,
@@ -56,12 +63,7 @@ def _get_equipment_if_exists(
 
     if len(equipments) == 0:
         return None
-    return Equipment(
-        id=equipments[0].id,
-        external_id=equipments[0].externalId,
-        name=equipments[0].name,
-        equipment_type_name=equipments[0].equipmentType.name,
-    )
+    return format_to_equipment(equipment_fragment=equipments[0])
 
 
 def get_equipment(client: SymphonyClient, name: str, location: Location) -> Equipment:
@@ -124,12 +126,7 @@ def get_equipments(client: SymphonyClient) -> Iterator[Equipment]:
     for edge in edges:
         node = edge.node
         if node is not None:
-            yield Equipment(
-                id=node.id,
-                external_id=node.externalId,
-                name=node.name,
-                equipment_type_name=node.equipmentType.name,
-            )
+            yield format_to_equipment(equipment_fragment=node)
 
 
 def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Equipment:
@@ -174,12 +171,7 @@ def get_equipment_by_external_id(client: SymphonyClient, external_id: str) -> Eq
     for edge in res.edges:
         node = edge.node
         if node is not None:
-            return Equipment(
-                id=node.id,
-                external_id=node.externalId,
-                name=node.name,
-                equipment_type_name=node.equipmentType.name,
-            )
+            return format_to_equipment(equipment_fragment=node)
     raise EntityNotFoundError(entity=Entity.Equipment, msg=f"external_id={external_id}")
 
 
@@ -246,12 +238,7 @@ def get_equipments_by_type(
             entity=Entity.EquipmentType, entity_id=equipment_type_id
         )
     for equipment in equipment_type_with_equipments.equipments:
-        yield Equipment(
-            id=equipment.id,
-            external_id=equipment.externalId,
-            name=equipment.name,
-            equipment_type_name=equipment.equipmentType.name,
-        )
+        yield format_to_equipment(equipment_fragment=equipment)
 
 
 def get_equipments_by_location(
@@ -279,12 +266,7 @@ def get_equipments_by_location(
         raise EntityNotFoundError(entity=Entity.Location, entity_id=location_id)
 
     for equipment in location_details.equipments:
-        yield Equipment(
-            id=equipment.id,
-            external_id=equipment.externalId,
-            name=equipment.name,
-            equipment_type_name=equipment.equipmentType.name,
-        )
+        yield format_to_equipment(equipment_fragment=equipment)
 
 
 def _get_equipment_in_position_if_exists(
@@ -413,12 +395,7 @@ def add_equipment(
     )
     equipment = AddEquipmentMutation.execute(client, add_equipment_input)
 
-    return Equipment(
-        id=equipment.id,
-        external_id=equipment.externalId,
-        name=equipment.name,
-        equipment_type_name=equipment.equipmentType.name,
-    )
+    return format_to_equipment(equipment_fragment=equipment)
 
 
 def edit_equipment(
@@ -466,9 +443,12 @@ def edit_equipment(
         )
     """
     properties = []
-    property_types = EQUIPMENT_TYPES[equipment.equipment_type_name].property_types
     if new_properties:
-        properties = get_graphql_property_inputs(property_types, new_properties)
+        property_types = EQUIPMENT_TYPES[equipment.equipment_type_name].property_types
+        existing_properties = {p.propertyType.id: p for p in equipment.properties}
+        property_inputs = get_graphql_property_inputs(property_types, new_properties)
+        properties = update_property_input_ids(existing_properties, property_inputs)
+
     edit_equipment_input = EditEquipmentInput(
         id=equipment.id,
         name=new_name if new_name else equipment.name,
@@ -476,12 +456,7 @@ def edit_equipment(
     )
     result = EditEquipmentMutation.execute(client, edit_equipment_input)
 
-    return Equipment(
-        id=result.id,
-        external_id=result.externalId,
-        name=result.name,
-        equipment_type_name=result.equipmentType.name,
-    )
+    return format_to_equipment(equipment_fragment=result)
 
 
 def _find_position_definition_id(
@@ -517,12 +492,7 @@ def _find_position_definition_id(
         if attached_equipment is not None:
             return (
                 position.id,
-                Equipment(
-                    id=attached_equipment.id,
-                    external_id=attached_equipment.externalId,
-                    name=attached_equipment.name,
-                    equipment_type_name=attached_equipment.equipmentType.name,
-                ),
+                format_to_equipment(equipment_fragment=attached_equipment),
             )
     return position.id, None
 
@@ -610,12 +580,7 @@ def add_equipment_to_position(
     )
     equipment = AddEquipmentMutation.execute(client, add_equipment_input)
 
-    return Equipment(
-        id=equipment.id,
-        external_id=equipment.externalId,
-        name=equipment.name,
-        equipment_type_name=equipment.equipmentType.name,
-    )
+    return format_to_equipment(equipment_fragment=equipment)
 
 
 def delete_equipment(client: SymphonyClient, equipment: Equipment) -> None:
@@ -669,12 +634,7 @@ def search_for_equipments(
         for edge in data.edges:
             node = edge.node
             if node is not None:
-                yield Equipment(
-                    id=node.id,
-                    external_id=node.externalId,
-                    name=node.name,
-                    equipment_type_name=node.equipmentType.name,
-                )
+                yield format_to_equipment(equipment_fragment=node)
 
     equipments_result = EquipmentSearchQuery.execute(client, filters=[], limit=limit)
     total_count = equipments_result.totalCount

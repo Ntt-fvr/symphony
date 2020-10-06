@@ -9,13 +9,14 @@
  * @format
  */
 
+import type {UsersGroup} from '../../data/UsersGroups';
+
 import * as React from 'react';
 import GroupSearchBox from './GroupSearchBox';
 import Text from '@symphony/design-system/components/Text';
 import fbt from 'fbt';
 import {makeStyles} from '@material-ui/styles';
 import {useGroupSearchContext} from './GroupSearchContext';
-import type {UsersGroup} from '../../data/UsersGroups';
 
 const useStyles = makeStyles(() => ({
   groupsSearch: {

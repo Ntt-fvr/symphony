@@ -7,6 +7,7 @@
 package tests
 
 import (
+	"context"
 	"testing"
 
 	"github.com/AlekSi/pointer"
@@ -41,7 +42,12 @@ func TestJobRun(t *testing.T) {
 		config.client = c
 		config.locationTypeID = typ.ID
 	}
-	jobrunner.RunJobOnAllTenants("gc")
+	err := (&jobrunner.Cmd{
+		GraphHost: "graph",
+		AdminHost: "admin",
+		Jobs:      []string{"gc"},
+	}).Run(context.Background())
+	require.NoError(t, err)
 	for _, config := range configs {
 		typ, err := config.client.queryLocationType(config.locationTypeID)
 		require.NoError(t, err)

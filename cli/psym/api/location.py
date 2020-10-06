@@ -11,8 +11,9 @@ from psym.common.cache import LOCATION_TYPES
 from psym.common.constant import LOCATIONS_TO_SEARCH, PAGINATION_STEP
 from psym.common.data_class import Document, ImageEntity, Location, PropertyValue
 from psym.common.data_enum import Entity
+from psym.common.data_format import format_to_location
 
-from .._utils import get_graphql_property_inputs
+from .._utils import get_graphql_property_inputs, update_property_input_ids
 from ..exceptions import (
     EntityNotFoundError,
     LocationCannotBeDeletedWithDependency,
@@ -206,15 +207,7 @@ def add_location(
             entity=Entity.Location, msg=f"<location_hierarchy: {location_hirerchy}>"
         )
 
-    return Location(
-        id=last_location.id,
-        name=last_location.name,
-        latitude=last_location.latitude,
-        longitude=last_location.longitude,
-        external_id=last_location.externalId,
-        location_type_name=last_location.locationType.name,
-        properties=last_location.properties,
-    )
+    return format_to_location(location_fragment=last_location)
 
 
 def get_location(
@@ -283,15 +276,7 @@ def get_location(
         raise EntityNotFoundError(
             entity=Entity.Location, msg=f"<location_hierarchy: {location_hirerchy}>"
         )
-    return Location(
-        id=last_location.id,
-        name=last_location.name,
-        latitude=last_location.latitude,
-        longitude=last_location.longitude,
-        external_id=last_location.externalId,
-        location_type_name=last_location.locationType.name,
-        properties=last_location.properties,
-    )
+    return format_to_location(location_fragment=last_location)
 
 
 def get_locations(client: SymphonyClient) -> Iterator[Location]:
@@ -324,15 +309,7 @@ def get_locations(client: SymphonyClient) -> Iterator[Location]:
         for edge in page.edges:
             node = edge.node
             if node is not None:
-                yield Location(
-                    name=node.name,
-                    id=node.id,
-                    latitude=node.latitude,
-                    longitude=node.longitude,
-                    external_id=node.externalId,
-                    location_type_name=node.locationType.name,
-                    properties=node.properties,
-                )
+                yield format_to_location(location_fragment=node)
 
 
 def get_location_children(
@@ -380,15 +357,7 @@ def get_location_children(
         raise EntityNotFoundError(entity=Entity.Location, entity_id=location_id)
 
     for location in location_with_children.children:
-        yield Location(
-            name=location.name,
-            id=location.id,
-            latitude=location.latitude,
-            longitude=location.longitude,
-            external_id=location.externalId,
-            location_type_name=location.locationType.name,
-            properties=location.properties,
-        )
+        yield format_to_location(location_fragment=location)
 
 
 def edit_location(
@@ -442,9 +411,12 @@ def edit_location(
     """
     properties = []
     location_type = location.location_type_name
-    property_types = LOCATION_TYPES[location_type].property_types
     if new_properties:
-        properties = get_graphql_property_inputs(property_types, new_properties)
+        property_types = LOCATION_TYPES[location_type].property_types
+        existing_properties = {p.propertyType.id: p for p in location.properties}
+        property_inputs = get_graphql_property_inputs(property_types, new_properties)
+        properties = update_property_input_ids(existing_properties, property_inputs)
+
     if new_external_id is None:
         new_external_id = location.external_id
     edit_location_input = EditLocationInput(
@@ -458,15 +430,7 @@ def edit_location(
         externalID=new_external_id,
     )
     result = EditLocationMutation.execute(client, edit_location_input)
-    return Location(
-        name=result.name,
-        id=result.id,
-        latitude=result.latitude,
-        longitude=result.longitude,
-        external_id=result.externalId,
-        location_type_name=result.locationType.name,
-        properties=result.properties,
-    )
+    return format_to_location(location_fragment=result)
 
 
 def delete_location(client: SymphonyClient, location: Location) -> None:
@@ -536,15 +500,7 @@ def move_location(
     result = MoveLocationMutation.execute(
         client, locationID=location_id, parentLocationID=new_parent_id
     )
-    return Location(
-        name=result.name,
-        id=result.id,
-        latitude=result.latitude,
-        longitude=result.longitude,
-        external_id=result.externalId,
-        location_type_name=result.locationType.name,
-        properties=result.properties,
-    )
+    return format_to_location(location_fragment=result)
 
 
 def get_location_by_external_id(client: SymphonyClient, external_id: str) -> Location:
@@ -589,15 +545,7 @@ def get_location_by_external_id(client: SymphonyClient, external_id: str) -> Loc
     for edge in location_search_result.edges:
         node = edge.node
         if node is not None:
-            return Location(
-                name=node.name,
-                id=node.id,
-                latitude=node.latitude,
-                longitude=node.longitude,
-                external_id=node.externalId,
-                location_type_name=node.locationType.name,
-                properties=node.properties,
-            )
+            return format_to_location(location_fragment=node)
     raise EntityNotFoundError(
         entity=Entity.Location, msg=f"<external_id: {external_id}"
     )

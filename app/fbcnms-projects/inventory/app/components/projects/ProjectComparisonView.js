@@ -9,6 +9,8 @@
  */
 import useRouter from '@fbcnms/ui/hooks/useRouter';
 
+import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
+
 import AddProjectCard from './AddProjectCard';
 import AddProjectDialog from './AddProjectDialog';
 import Button from '@symphony/design-system/components/Button';
@@ -26,7 +28,6 @@ import {ProjectSearchConfig} from './ProjectsSearchConfig';
 import {extractEntityIdFromUrl} from '../../common/RouterUtils';
 import {getInitialFilterValue} from '../comparison_view/FilterUtils';
 import {makeStyles} from '@material-ui/styles';
-import type {FilterConfig} from '../comparison_view/ComparisonViewTypes';
 
 const QUERY_LIMIT = 1000;
 

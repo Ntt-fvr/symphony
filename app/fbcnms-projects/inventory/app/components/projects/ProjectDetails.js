@@ -8,7 +8,6 @@
  * @format
  */
 
-import ProjectMoreActionsButton from './ProjectMoreActionsButton';
 import type {ContextRouter} from 'react-router-dom';
 import type {
   EditProjectMutationResponse,
@@ -20,6 +19,8 @@ import type {Property} from '../../common/Property';
 import type {Theme, WithStyles} from '@material-ui/core';
 import type {WithAlert} from '@fbcnms/ui/components/Alert/withAlert';
 import type {WithSnackbarProps} from 'notistack';
+
+import ProjectMoreActionsButton from './ProjectMoreActionsButton';
 
 import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import CommentsActivitiesBox from '../comments/CommentsActivitiesBox';

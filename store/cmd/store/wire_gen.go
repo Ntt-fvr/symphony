@@ -43,7 +43,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := _wireValue
 	v2 := xserver.DefaultViews()
-	telemetryConfig := &flags.TelemetryConfig
+	telemetryConfig := flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
 		cleanup2()

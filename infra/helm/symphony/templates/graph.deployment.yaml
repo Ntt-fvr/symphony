@@ -44,8 +44,7 @@ spec:
           image: {{ .Values.graph.image.repository }}:{{ .Values.graph.image.tag }}
           imagePullPolicy: {{ .Values.graph.image.pullPolicy }}
           args:
-            - --web.listen-address={{ printf ":%d" (int .Values.graph.service.port.http.targetPort) }}
-            - --grpc.listen-address={{ printf ":%d" (int .Values.graph.service.port.grpc.targetPort) }}
+            - --web.listen-address={{ printf ":%d" (int .Values.graph.service.targetPort) }}
           env:
             - name: WS_AUTH_URL
               value: {{ printf "http://%s:%d/user/me" (include "symphony.front.fullname" .) (int .Values.front.service.port) | quote }}
@@ -65,9 +64,7 @@ spec:
                 name: {{ template "symphony.graphDB.secretName" . }}
           ports:
             - name: http
-              containerPort: {{ .Values.graph.service.port.http.targetPort }}
-            - name: grpc
-              containerPort: {{ .Values.graph.service.port.grpc.targetPort }}
+              containerPort: {{ .Values.graph.service.targetPort }}
           {{- if .Values.graph.probes.liveness }}
           livenessProbe:
             httpGet:

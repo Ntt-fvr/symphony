@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
 import type {
@@ -17,6 +15,9 @@ import type {
   UpdateUserGroupsMutationResponse,
   UpdateUserGroupsMutationVariables,
 } from './__generated__/UpdateUserGroupsMutation.graphql';
+
+import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation UpdateUserGroupsMutation($input: UpdateUserGroupsInput!) {
