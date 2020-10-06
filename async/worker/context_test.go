@@ -15,7 +15,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/facebookincubator/symphony/pkg/viewer/mocks"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/cadence/.gen/go/shared"
 	"go.uber.org/cadence/activity"
@@ -31,8 +33,9 @@ const (
 type ContextTestSuite struct {
 	suite.Suite
 	testsuite.WorkflowTestSuite
-	client *ent.Client
-	env    *testsuite.TestWorkflowEnvironment
+	client     *ent.Client
+	env        *testsuite.TestWorkflowEnvironment
+	propagator workflow.ContextPropagator
 }
 
 type headerWriter struct {
@@ -60,16 +63,14 @@ func (hr *headerReader) ForEachKey(handler func(string, []byte) error) error {
 }
 
 func (s *ContextTestSuite) SetupTest() {
+	var m mocks.Tenancy
 	s.client = viewertest.NewTestClient(s.T())
-	tenancy := viewer.TenancyFunc(func(ctx context.Context, tenant string) (*ent.Client, error) {
-		if tenant == viewertest.DefaultTenant {
-			return s.client, nil
-		}
-		return nil, fmt.Errorf("tenant %s not found", tenant)
-	})
-	s.SetContextPropagators([]workflow.ContextPropagator{
-		worker.NewContextPropagator(tenancy),
-	})
+	m.On("ClientFor", mock.Anything, viewertest.DefaultTenant).
+		Return(s.client, nil)
+	m.On("ClientFor", mock.Anything, mock.MatchedBy(func(tenant string) bool { return tenant != viewertest.DefaultTenant })).
+		Return(nil, fmt.Errorf("tenant not found"))
+	s.propagator = worker.NewContextPropagator(&m)
+	s.SetContextPropagators([]workflow.ContextPropagator{s.propagator})
 	s.env = s.NewTestWorkflowEnvironment()
 }
 
@@ -215,14 +216,7 @@ func (s *ContextTestSuite) TestInjectingContextHasMissingViewer() {
 		Fields: make(map[string][]byte),
 	}
 	hw := headerWriter{header}
-	tenancy := viewer.TenancyFunc(func(ctx context.Context, tenant string) (*ent.Client, error) {
-		if tenant == viewertest.DefaultTenant {
-			return s.client, nil
-		}
-		return nil, fmt.Errorf("tenant %s not found", tenant)
-	})
-	propagator := worker.NewContextPropagator(tenancy)
-	err := propagator.Inject(context.Background(), &hw)
+	err := s.propagator.Inject(context.Background(), &hw)
 	s.Error(err)
 }
 
@@ -232,15 +226,8 @@ func (s *ContextTestSuite) TestInjectionAndExtraction() {
 	}
 	hw := headerWriter{header}
 	hr := headerReader{header}
-	tenancy := viewer.TenancyFunc(func(ctx context.Context, tenant string) (*ent.Client, error) {
-		if tenant == viewertest.DefaultTenant {
-			return s.client, nil
-		}
-		return nil, fmt.Errorf("tenant %s not found", tenant)
-	})
 	ctx := viewertest.NewContext(context.Background(), s.client)
-	propagator := worker.NewContextPropagator(tenancy)
-	err := propagator.Inject(ctx, &hw)
+	err := s.propagator.Inject(ctx, &hw)
 	s.NoError(err)
 	s.registerActivity(func(ctx context.Context) {
 		v := viewer.FromContext(ctx)
@@ -258,7 +245,7 @@ func (s *ContextTestSuite) TestInjectionAndExtraction() {
 		s.EqualValues(authz.EmptyPermissions(), permissions)
 	})
 	s.registerWorkflow(func(ctx workflow.Context) workflow.Context {
-		ctx, err := propagator.ExtractToWorkflow(ctx, &hr)
+		ctx, err := s.propagator.ExtractToWorkflow(ctx, &hr)
 		s.NoError(err)
 		return ctx
 	})

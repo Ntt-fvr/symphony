@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/facebookincubator/symphony/pkg/cadence"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -17,14 +18,10 @@ import (
 	"go.uber.org/cadence/client"
 	"go.uber.org/cadence/worker"
 	"go.uber.org/cadence/workflow"
-	"go.uber.org/yarpc"
-	"go.uber.org/yarpc/transport/tchannel"
 )
 
 const (
-	cadenceClientName      = "cadence-client"
-	cadenceFrontendService = "cadence-frontend"
-	TaskListName           = "async"
+	TaskListName = "async"
 )
 
 // CadenceClientConfig is the configuration for the cadence client
@@ -86,30 +83,19 @@ func newChecker(c workflowserviceclient.Interface, domain string) *checker {
 
 // ProvideCadenceClient returns back cadence client based on given configuration
 func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), error) {
-	ch, err := tchannel.NewChannelTransport(
-		tchannel.ServiceName(cadenceClientName))
+	cc, cleanup, err := cadence.ProvideClient(cfg.Logger.Background(), cfg.CadenceAddr)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to create transport channel: %w", err)
+		return nil, nil, err
 	}
-	dispatcher := yarpc.NewDispatcher(yarpc.Config{
-		Name: cadenceClientName,
-		Outbounds: yarpc.Outbounds{
-			cadenceFrontendService: {Unary: ch.NewSingleOutbound(cfg.CadenceAddr)},
-		},
-	})
-	if err := dispatcher.Start(); err != nil {
-		return nil, nil, fmt.Errorf("failed to create outbound transport channel: %w", err)
-	}
-	client := workflowserviceclient.New(dispatcher.ClientConfig(cadenceFrontendService))
 	return &CadenceClient{
-		client:       client,
+		client:       cc,
 		domain:       cfg.Domain,
 		tenancy:      cfg.Tenancy,
 		tracer:       cfg.Tracer,
 		logger:       cfg.Logger,
 		healthPoller: cfg.HealthPoller,
-		checker:      newChecker(client, cfg.Domain),
-	}, func() { _ = dispatcher.Stop() }, nil
+		checker:      newChecker(cc, cfg.Domain),
+	}, cleanup, nil
 }
 
 func (cc CadenceClient) CheckHealth() error {
