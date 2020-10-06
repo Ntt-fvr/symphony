@@ -115,7 +115,7 @@ services:
       - conf/log.env
     command:
       - "graph"
-      - "--db-dsn=root:root@tcp(mysql:3306)/?charset=utf8&parseTime=true"
+      - "--db-url=mysql://root:root@mysql:3306/?charset=utf8&parseTime=true&interpolateParams=true"
       - "--wait-for-db"
       - "--tenant=fb-test"
     networks:

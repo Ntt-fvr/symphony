@@ -219,6 +219,16 @@ graphDB:
     pass: "root"
     param: ""
 
+# Persistence configuration.
+persistence:
+  database:
+    scheme: "mysql"
+    host: ""
+    port: 3306
+    user: ""
+    pass: ""
+    params: {}
+
 # Configuration for admin application
 admin:
   # Annotations to be added to admin deployment

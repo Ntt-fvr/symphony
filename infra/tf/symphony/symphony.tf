@@ -156,6 +156,19 @@ resource helm_release symphony {
           param = "charset=utf8&parseTime=true&interpolateParams=true"
         }
       }
+      persistence = {
+        database = {
+          scheme = "awsmysql"
+          host   = module.graph_db.this_db_instance_address
+          port   = module.graph_db.this_db_instance_port
+          user   = module.graph_db.this_db_instance_username
+          params = {
+            charset           = "utf8"
+            parseTime         = "true"
+            interpolateParams = "true"
+          }
+        }
+      }
       front = {
         spec = {
           proxy = {
@@ -277,6 +290,10 @@ resource helm_release symphony {
   }
   set_sensitive {
     name  = "graphDB.mysql.pass"
+    value = module.graph_db.this_db_instance_password
+  }
+  set_sensitive {
+    name  = "persistence.database.pass"
     value = module.graph_db.this_db_instance_password
   }
 

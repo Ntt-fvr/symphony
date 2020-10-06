@@ -7,12 +7,14 @@ package cmd
 import (
 	"context"
 	"database/sql"
+	"net/url"
 	"os"
 	"time"
 
 	"github.com/facebook/ent/dialect"
 	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	entmigrate "github.com/facebookincubator/symphony/pkg/ent/migrate"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/migrate"
@@ -22,25 +24,23 @@ import (
 
 // GraphCmd implements migrate graph command.
 type GraphCmd struct {
-	Driver     string `name:"db-driver" default:"mysql" help:"Database driver name."`
-	DSN        string `name:"db-dsn" placeholder:"<dsn>" required:"" help:"Data source name."`
-	WaitForDB  bool   `name:"wait-for-db" help:"Wait for database to be ready."`
-	DropColumn bool   `name:"drop-column" help:"Enable column drop."`
-	DropIndex  bool   `name:"drop-index" help:"Enable index drop."`
-	DryRun     bool   `name:"dry-run" help:"Run in dry run mode."`
-	Tenant     string `name:"tenant" placeholder:"<tenant>" help:"Target specific tenant."`
+	Database   *url.URL `name:"db-url" env:"DB_URL" placeholder:"<url>" required:"" help:"Database URL."`
+	WaitForDB  bool     `name:"wait-for-db" help:"Wait for database to be ready."`
+	DropColumn bool     `name:"drop-column" help:"Enable column drop."`
+	DropIndex  bool     `name:"drop-index" help:"Enable index drop."`
+	DryRun     bool     `name:"dry-run" help:"Run in dry run mode."`
+	Tenant     string   `name:"tenant" placeholder:"<tenant>" help:"Target specific tenant."`
 }
 
 // Run runs the migrate graph command.
 func (c *GraphCmd) Run(ctx *Context) error {
-	drv, err := entsql.Open(c.Driver, c.DSN)
+	db, err := mysql.OpenURL(ctx, c.Database)
 	if err != nil {
 		ctx.Error("cannot open database", zap.Error(err))
 		return err
 	}
-	db := drv.DB()
 	if c.WaitForDB {
-		if err := c.waitForDB(ctx, drv.DB()); err != nil {
+		if err := c.waitForDB(ctx, db); err != nil {
 			return err
 		}
 	}
@@ -48,6 +48,7 @@ func (c *GraphCmd) Run(ctx *Context) error {
 	if err != nil {
 		return err
 	}
+	drv := entsql.OpenDB(dialect.MySQL, db)
 	if err := c.migrator(ctx, drv).Migrate(ctx, names...); err != nil {
 		ctx.Error("cannot run migration", zap.Error(err))
 		return err

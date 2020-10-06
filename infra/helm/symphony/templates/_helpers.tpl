@@ -238,9 +238,32 @@ app.kubernetes.io/component: docs
 {{- print (include "symphony.fullname" .) "-graph-db" -}}
 {{- end }}
 
+{{/* Create the name for database secret */}}
+{{- define "symphony.database.secretName" -}}
+{{- print (include "symphony.fullname" .) "-db" -}}
+{{- end }}
+
 {{/* Create the name for migrate database secret */}}
 {{- define "symphony.migrate.secretName" -}}
 {{- print (include "symphony.fullname" .) "-migrate-db" -}}
+{{- end }}
+
+{{/* Create the value for database secret */}}
+{{- define "symphony.database.stringData" -}}
+{{- with .Values.persistence.database }}
+{{- $params := "" }}
+{{- range $key, $value := .params }}
+	{{- if eq $params "" }}
+		{{- $params = print $params "?" $key }}
+	{{- else }}
+		{{- $params = print $params "&" $key }}
+	{{- end }}
+	{{- if $value -}}
+		{{- $params = print $params "=" $value }}
+	{{- end -}}
+{{- end -}}
+DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.database.user is required" .user) .pass (required ".Values.persistence.database.host is required" .host) (int .port) $params }}"
+{{- end }}
 {{- end }}
 
 {{/* Create the value for graph database secret */}}
