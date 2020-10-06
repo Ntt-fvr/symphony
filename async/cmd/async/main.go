@@ -6,18 +6,17 @@ package main
 
 import (
 	"context"
-	"fmt"
 	stdlog "log"
 	"net/url"
 	"os"
 	"syscall"
-	"time"
 
 	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -25,11 +24,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.uber.org/zap"
-	"gocloud.dev/server/health"
-
-	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "github.com/go-sql-driver/mysql"
+	"go.uber.org/zap"
 	_ "gocloud.dev/blob/s3blob"
 	_ "gocloud.dev/pubsub/mempubsub"
 	_ "gocloud.dev/pubsub/natspubsub"
@@ -69,10 +65,7 @@ func main() {
 	defer cleanup()
 
 	app.logger.Info("starting application")
-	if err = app.waitOnHealthyChecks(ctx); err == nil {
-		app.logger.Info("running application")
-		err = app.run(ctx)
-	}
+	err = app.run(ctx)
 	app.logger.Info("terminating application", zap.Error(err))
 }
 
@@ -84,35 +77,6 @@ type application struct {
 	}
 	server        *handler.Server
 	cadenceClient *worker.CadenceClient
-	healthChecks  []health.Checker
-}
-
-func (app *application) waitToBeHealthy(ctx context.Context, healthCheck health.Checker) error {
-	ticker := time.NewTicker(250 * time.Millisecond)
-	for {
-		select {
-		case <-ctx.Done():
-			return fmt.Errorf("waiting for health check interrupted: %w", ctx.Err())
-		case <-ticker.C:
-			err := healthCheck.CheckHealth()
-			if err == nil {
-				ticker.Stop()
-				return nil
-			}
-			app.logger.Warn("health check failed: %w", zap.Error(err))
-		}
-	}
-}
-
-func (app *application) waitOnHealthyChecks(ctx context.Context) error {
-	g := ctxgroup.WithContext(ctx)
-	app.logger.Info("waiting for health checks")
-	for _, healthCheck := range app.healthChecks {
-		g.Go(func(ctx context.Context) error {
-			return app.waitToBeHealthy(ctx, healthCheck)
-		})
-	}
-	return g.Wait()
 }
 
 func (app *application) run(ctx context.Context) error {

@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
@@ -27,11 +28,12 @@ const (
 
 // CadenceClientConfig is the configuration for the cadence client
 type CadenceClientConfig struct {
-	CadenceAddr string
-	Domain      string
-	Tenancy     viewer.Tenancy
-	Tracer      opentracing.Tracer
-	Logger      log.Logger
+	CadenceAddr  string
+	Domain       string
+	Tenancy      viewer.Tenancy
+	Tracer       opentracing.Tracer
+	Logger       log.Logger
+	HealthPoller server.HealthPoller
 }
 
 // CadenceClient is responsible to connect to cadence and create workers that handle available tasks
@@ -42,6 +44,7 @@ type CadenceClient struct {
 	tracer       opentracing.Tracer
 	logger       log.Logger
 	domainWorker worker.Worker
+	healthPoller server.HealthPoller
 }
 
 // ProvideCadenceClient returns back cadence client based on given configuration
@@ -62,11 +65,12 @@ func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), erro
 	}
 	client := workflowserviceclient.New(dispatcher.ClientConfig(cadenceFrontendService))
 	return &CadenceClient{
-		client:  client,
-		domain:  cfg.Domain,
-		tenancy: cfg.Tenancy,
-		tracer:  cfg.Tracer,
-		logger:  cfg.Logger,
+		client:       client,
+		domain:       cfg.Domain,
+		tenancy:      cfg.Tenancy,
+		tracer:       cfg.Tracer,
+		logger:       cfg.Logger,
+		healthPoller: cfg.HealthPoller,
 	}, func() { _ = dispatcher.Stop() }, nil
 }
 
@@ -80,6 +84,9 @@ func (cc CadenceClient) CheckHealth() error {
 
 // Run makes the worker to start polling.
 func (cc *CadenceClient) Run(ctx context.Context) error {
+	if err := cc.healthPoller.Wait(ctx); err != nil {
+		return fmt.Errorf("failed to wait for health checks: %w", err)
+	}
 	workerOptions := worker.Options{
 		Logger: cc.logger.For(ctx),
 		Tracer: cc.tracer,
