@@ -64,6 +64,10 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		triggers.NewFactory,
 		actions.NewFactory,
+		wire.Struct(
+			new(hooks.Flower),
+			"*",
+		),
 		newHealthChecks,
 		mux.NewRouter,
 		wire.Bind(
@@ -92,14 +96,10 @@ func newApplication(server *handler.Server, http *server.Server, logger *zap.Log
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 

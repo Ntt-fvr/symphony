@@ -5,7 +5,6 @@
   "scripts": {
     "createOrganization": "node -r '@fbcnms/babel-register' scripts/createOrganization.js",
     "enableAllNetworkIDsForOrganization": "node -r '@fbcnms/babel-register' scripts/enableAllNetworkIDsForOrganization.js",
-    "grpc": "cp ../../../../fbcode/fbc/symphony/graph/graphgrpc/rpc.proto server/graphgrpc/graph.proto",
     "start": "yarn run start:prod",
     "start:dev": "nodemon scripts/server",
     "start:prod": "NODE_ENV=production node -r @fbcnms/babel-register scripts/server",
@@ -23,8 +22,6 @@
     "dotenv": "^6.0.0",
     "graphql": "^15.0.0",
     "graphql-request": "^3.1.0",
-    "grpc": "^1.20.2",
-    "grpc-caller": "^0.11.0",
     "http-proxy-middleware": "^0.21.0"
   },
   "devDependencies": {

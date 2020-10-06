@@ -8,7 +8,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/facebookincubator/symphony/graph/graphgrpc"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -18,10 +17,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"gocloud.dev/server/health"
-	"google.golang.org/grpc"
 )
 
 import (
@@ -38,6 +35,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	if err != nil {
 		return nil, nil, err
 	}
+	zapLogger := log.ProvideZapLogger(logger)
 	mysqlConfig := flags.MySQLConfig
 	viewerConfig := flags.TenancyConfig
 	mySQLTenancy, err := newMySQLTenancy(mysqlConfig, viewerConfig, logger)
@@ -57,7 +55,11 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	factory := triggers.NewFactory()
 	actionsFactory := actions.NewFactory()
-	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
+	flower := &hooks.Flower{
+		TriggerFactory: factory,
+		ActionFactory:  actionsFactory,
+	}
+	tenancy := newTenancy(mySQLTenancy, eventer, flower)
 	url := flags.AuthURL
 	telemetryConfig := flags.TelemetryConfig
 	v := newHealthChecks(mySQLTenancy)
@@ -77,24 +79,13 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	db, cleanup4 := mysql.Provider(mysqlConfig)
-	graphgrpcConfig := graphgrpc.Config{
-		DB:      db,
-		Logger:  logger,
-		Tenancy: tenancy,
+	string2 := flags.ListenAddress
+	mainApplication := &application{
+		Logger: zapLogger,
+		server: server,
+		addr:   string2,
 	}
-	grpcServer, cleanup5, err := graphgrpc.NewServer(graphgrpcConfig)
-	if err != nil {
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	mainApplication := newApp(logger, server, grpcServer, flags)
 	return mainApplication, func() {
-		cleanup5()
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -103,24 +94,10 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 
 // wire.go:
 
-func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Server, flags *cliFlags) *application {
-	var app application
-	app.Logger = logger.Background()
-	app.http.Server = httpServer
-	app.http.addr = flags.HTTPAddress
-	app.grpc.Server = grpcServer
-	app.grpc.addr = flags.GRPCAddress
-	return &app
-}
-
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 

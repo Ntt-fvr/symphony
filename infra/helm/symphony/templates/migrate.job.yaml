@@ -34,7 +34,7 @@ spec:
             - --ent.db-dsn=$(MYSQL_DSN)
             {{- else if eq $name "cadence" }}
             - --cadence.addr={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
-            - --cadence.domain={{ required ".Values.migrate.spec.migrations.cadence.domain is required" $.Values.migrate.spec.migrations.cadence.domain }}
+            - --cadence.domain={{ $.Values.migrate.spec.migrations.cadence.domain }}
             {{- end }}
           env:
             {{- if eq $name "ent" }}

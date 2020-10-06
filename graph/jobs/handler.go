@@ -54,7 +54,7 @@ func NewHandler(cfg Config) (http.Handler, error) {
 	}
 	for _, route := range routes {
 		router.Path("/" + route.name).
-			Methods(http.MethodGet).
+			Methods(http.MethodPost).
 			HandlerFunc(route.handler).
 			Name(route.name)
 	}

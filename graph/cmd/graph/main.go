@@ -6,9 +6,7 @@ package main
 
 import (
 	"context"
-	"fmt"
 	stdlog "log"
-	"net"
 	"net/url"
 	"os"
 	"syscall"
@@ -24,7 +22,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "gocloud.dev/pubsub/mempubsub"
@@ -33,8 +30,7 @@ import (
 
 type cliFlags struct {
 	ConfigFile      kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
-	HTTPAddress     string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
-	GRPCAddress     string           `name:"grpc.listen-address" default:":https" help:"GRPC address to listen on."`
+	ListenAddress   string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
 	MySQLConfig     mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
 	AuthURL         *url.URL         `name:"web.ws-auth-url" env:"WS_AUTH_URL" placeholder:"URL" help:"Websocket authentication URL."`
 	EventPubsubURL  ev.TopicFactory  `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
@@ -62,40 +58,26 @@ func main() {
 	defer cleanup()
 
 	app.Info("starting application",
-		zap.String("http", cf.HTTPAddress),
-		zap.String("grpc", cf.GRPCAddress),
+		zap.String("address", cf.ListenAddress),
 	)
 	err = app.run(ctx)
-	app.Info("terminating application", zap.Error(err))
+	app.Info("terminating application",
+		zap.Error(err),
+	)
 }
 
 type application struct {
 	*zap.Logger
-	http struct {
-		*server.Server
-		addr string
-	}
-	grpc struct {
-		*grpc.Server
-		addr string
-	}
+	server *server.Server
+	addr   string
 }
 
 func (app *application) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(context.Context) error {
-		err := app.http.ListenAndServe(app.http.addr)
+		err := app.server.ListenAndServe(app.addr)
 		app.Debug("http server terminated", zap.Error(err))
-		return err
-	})
-	g.Go(func(context.Context) error {
-		lis, err := net.Listen("tcp", app.grpc.addr)
-		if err != nil {
-			return fmt.Errorf("creating grpc listener: %w", err)
-		}
-		err = app.grpc.Serve(lis)
-		app.Debug("grpc server terminated", zap.Error(err))
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
@@ -105,20 +87,9 @@ func (app *application) run(ctx context.Context) error {
 	})
 	<-ctx.Done()
 
-	app.Warn("start application termination",
-		zap.NamedError("reason", ctx.Err()),
-	)
-	defer app.Debug("end application termination")
-
-	g.Go(func(context.Context) error {
-		app.Debug("start grpc server termination")
-		app.grpc.GracefulStop()
-		app.Debug("end grpc server termination")
-		return nil
-	})
 	g.Go(func(context.Context) error {
 		app.Debug("start http server termination")
-		err := app.http.Shutdown(context.Background())
+		err := app.server.Shutdown(context.Background())
 		app.Debug("end http server termination", zap.Error(err))
 		return err
 	})

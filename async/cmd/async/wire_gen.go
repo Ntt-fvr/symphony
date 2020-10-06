@@ -64,7 +64,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	factory := triggers.NewFactory()
 	actionsFactory := actions.NewFactory()
-	tenancy := newTenancy(mySQLTenancy, eventer, factory, actionsFactory)
+	flower := &hooks.Flower{
+		TriggerFactory: factory,
+		ActionFactory:  actionsFactory,
+	}
+	tenancy := newTenancy(mySQLTenancy, eventer, flower)
 	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
 	if err != nil {
 		cleanup2()
@@ -165,14 +169,10 @@ func newApplication(server2 *handler.Server, http *server.Server, logger *zap.Lo
 	return &app
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 
