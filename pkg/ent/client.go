@@ -186,7 +186,6 @@ type Client struct {
 	WorkOrderTemplate *WorkOrderTemplateClient
 	// WorkOrderType is the client for interacting with the WorkOrderType builders.
 	WorkOrderType *WorkOrderTypeClient
-
 	// additional fields for node api
 	tables tables
 }

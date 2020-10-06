@@ -227,6 +227,12 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/facebook/ent v0.4.3-0.20200917090002-38e769465c01/go.mod h1:4e/LKv3FFjj/867jPJYCxycZg0aGeEIgkiQ8jv2j6iQ=
 github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4 h1:5jGTTlQdt20g0M87QupMWa2Q8cp4PasK/kug1WAmWZw=
 github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4/go.mod h1:4e/LKv3FFjj/867jPJYCxycZg0aGeEIgkiQ8jv2j6iQ=
+github.com/facebook/ent v0.4.4-0.20201006073447-0635b04c6f46 h1:rhqXa5DNbsJ853YsC7fz6r2WSDG1wc60dMMOxVpiGuk=
+github.com/facebook/ent v0.4.4-0.20201006073447-0635b04c6f46/go.mod h1:vR40t3AzzxF5WcNZouGjfq1LdzryPiT6GHTfBBwSiiU=
+github.com/facebook/ent v0.4.4-0.20201006075936-d5ae1b018e5f h1:KaZk9q/KEmVb3XhviTkTqK7F3/JlTK9AZZcy2Pum75k=
+github.com/facebook/ent v0.4.4-0.20201006075936-d5ae1b018e5f/go.mod h1:vR40t3AzzxF5WcNZouGjfq1LdzryPiT6GHTfBBwSiiU=
+github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b h1:QVev2PgzArf99btEZ4WX2eYzAndGAoJq5tlN99gKCyQ=
+github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b/go.mod h1:vR40t3AzzxF5WcNZouGjfq1LdzryPiT6GHTfBBwSiiU=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a h1:yDWHCSQ40h88yih2JAcL6Ls/kVkSE8GFACTGVnMPruw=
 github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a/go.mod h1:7Ga40egUymuWXxAe151lTNnCv97MddSOVsjpPPkityA=
 github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d h1:7zgmPfZyCNOIC3S+ny4hM05G/rIXrVdjY1i3Ma3gh1Q=
@@ -497,6 +503,7 @@ github.com/mattn/go-runewidth v0.0.9 h1:Lm995f3rfxdpd6TSmuVCHVb/QhupuXlYr8sCI/Qd
 github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
 github.com/mattn/go-shellwords v1.0.10/go.mod h1:EZzvwXDESEeg03EKmM+RmDnNOPKG4lLtQsUlTZDWQ8Y=
 github.com/mattn/go-sqlite3 v1.14.3/go.mod h1:WVKg1VTActs4Qso6iwGbiFih2UIHo0ENGwNd0Lj+XmI=
+github.com/mattn/go-sqlite3 v1.14.4/go.mod h1:WVKg1VTActs4Qso6iwGbiFih2UIHo0ENGwNd0Lj+XmI=
 github.com/mattn/go-sqlite3 v2.0.3+incompatible h1:gXHsfypPkaMZrKbD5209QV9jbUTJKjyR5WD3HYQSd+U=
 github.com/mattn/go-sqlite3 v2.0.3+incompatible/go.mod h1:FPy6KqzDD04eiIsT53CuJW3U88zkxoIYsOqkbpncsNc=
 github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0jegS5sx/RkqARlsWZ6pIwiU=
