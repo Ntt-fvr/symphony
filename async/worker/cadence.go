@@ -7,6 +7,7 @@ package worker
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
@@ -45,6 +46,42 @@ type CadenceClient struct {
 	logger       log.Logger
 	domainWorker worker.Worker
 	healthPoller server.HealthPoller
+	checker      *checker
+}
+
+type checker struct {
+	cancel  context.CancelFunc
+	stopped <-chan struct{}
+	healthy bool
+}
+
+func newChecker(c workflowserviceclient.Interface, domain string) *checker {
+	ctx, cancel := context.WithCancel(context.Background())
+	stopped := make(chan struct{})
+	hc := &checker{
+		cancel:  cancel,
+		stopped: stopped,
+	}
+	go func() {
+		ticker := time.NewTicker(250 * time.Millisecond)
+		defer func() {
+			ticker.Stop()
+			close(stopped)
+		}()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				domainClient := client.NewDomainClient(c, nil)
+				if _, err := domainClient.Describe(ctx, domain); err == nil {
+					hc.healthy = true
+					return
+				}
+			}
+		}
+	}()
+	return hc
 }
 
 // ProvideCadenceClient returns back cadence client based on given configuration
@@ -71,15 +108,20 @@ func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), erro
 		tracer:       cfg.Tracer,
 		logger:       cfg.Logger,
 		healthPoller: cfg.HealthPoller,
+		checker:      newChecker(client, cfg.Domain),
 	}, func() { _ = dispatcher.Stop() }, nil
 }
 
 func (cc CadenceClient) CheckHealth() error {
-	domainClient := client.NewDomainClient(cc.client, nil)
-	if _, err := domainClient.Describe(context.Background(), cc.domain); err != nil {
-		return fmt.Errorf("failed to find domain: %w", err)
+	select {
+	case <-cc.checker.stopped:
+		if !cc.checker.healthy {
+			return fmt.Errorf("cadence was unreachable before checker has stopped")
+		}
+		return nil
+	default:
+		return fmt.Errorf("still checking if cadence is reachable")
 	}
-	return nil
 }
 
 // Run makes the worker to start polling.
@@ -103,5 +145,6 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 
 // Shutdown terminates the worker polling.
 func (cc *CadenceClient) Shutdown() {
+	cc.checker.cancel()
 	cc.domainWorker.Stop()
 }

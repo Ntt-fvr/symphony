@@ -47,6 +47,9 @@ func (p healthPoller) checkHealthy() error {
 
 func (p healthPoller) Wait(ctx context.Context) error {
 	ticker := time.NewTicker(250 * time.Millisecond)
+	defer func() {
+		ticker.Stop()
+	}()
 	p.logger.Info("waiting for health checks")
 	for {
 		select {
@@ -55,7 +58,6 @@ func (p healthPoller) Wait(ctx context.Context) error {
 		case <-ticker.C:
 			err := p.checkHealthy()
 			if err == nil {
-				ticker.Stop()
 				return nil
 			}
 			p.logger.Warn("health check failed: %w", zap.Error(err))
