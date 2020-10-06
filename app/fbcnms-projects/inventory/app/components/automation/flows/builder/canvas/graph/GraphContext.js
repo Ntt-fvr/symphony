@@ -69,6 +69,7 @@ type AddBlockFunctionType = (
     id?: ?string,
     text?: ?string,
     position?: ?Position,
+    translateClientCoordinates?: ?boolean,
   },
 ) => ?IBlock;
 
@@ -190,6 +191,7 @@ function graphAddBlock(
     id?: ?string,
     text?: ?string,
     position: ?Position,
+    translateClientCoordinates?: ?boolean,
   },
 ) {
   if (this.current == null) {
@@ -198,11 +200,17 @@ function graphAddBlock(
 
   const shapesFactory = this.current.shapesFactory;
   const blocksMap = this.current.blocks;
+  const paper = this.current.paper;
 
   const position =
-    options?.position || getPaperViewPortCenter(this.current.paper);
+    options?.position == null
+      ? getPaperViewPortCenter(this.current.paper)
+      : options?.translateClientCoordinates
+      ? paper.clientToLocalPoint(options.position)
+      : options.position;
 
   const newBlock = shapesFactory.createBlock(type, options?.id ?? '');
+
   newBlock.model.position(position.x, position.y);
   if (options?.text) {
     newBlock.setName(options.text);
