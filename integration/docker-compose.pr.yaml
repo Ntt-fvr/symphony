@@ -91,8 +91,6 @@ services:
       - "--db-dsn=root:root@tcp(mysql:3306)/?charset=utf8&parseTime=true"
       - "--wait-for-db"
       - "--tenant=fb-test"
-    networks:
-      - private
     depends_on:
       - mysql
     restart: on-failure
@@ -107,8 +105,6 @@ services:
       - conf/cadence_client.env
     command:
       - "cadence"
-    networks:
-      - private
     depends_on:
       - cadence
     restart: on-failure
