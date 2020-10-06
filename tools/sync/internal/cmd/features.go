@@ -18,6 +18,9 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	cdkmysql "gocloud.dev/mysql"
+
+	// Enable RDS as source.
+	_ "gocloud.dev/mysql/awsmysql"
 )
 
 // Features implements the sync features command.
@@ -27,52 +30,49 @@ type Features struct {
 }
 
 // Run runs the sync features command.
-func (cmd *Features) Run(ctx context.Context) error {
-	logger := zap.L()
+func (cmd *Features) Run(ctx *Context) error {
 	src, err := newSource(ctx, cmd.From)
 	if err != nil {
-		logger.Error("cannot create source",
-			zap.Error(err),
-		)
+		ctx.Error("cannot create source", zap.Error(err))
 		return err
 	}
 	dst := newDestination(cmd.To)
 
-	logger.Info("getting existing admin tenants")
+	ctx.Info("getting existing admin tenants")
 	tenants, err := dst.tenants(ctx)
 	if err != nil {
-		logger.Error("cannot get existing admin tenants",
+		ctx.Error("cannot get existing admin tenants",
 			zap.Error(err),
 		)
 		return err
 	}
-	logger.Debug("existing admin tenants",
+	ctx.Debug("existing admin tenants",
 		zap.Array("tenants", tenants),
 	)
 
-	logger.Info("getting existing front features")
+	ctx.Info("getting existing front features")
 	features, err := src.features(ctx, tenants.names()...)
 	if err != nil {
-		logger.Error("cannot get existing front features",
+		ctx.Error("cannot get existing front features",
 			zap.Error(err),
 		)
 		return err
 	}
-	logger.Debug("existing front features",
+	ctx.Debug("existing front features",
 		zap.Array("features", features),
 	)
 
-	logger.Info("writing features")
+	ctx.Info("writing features")
 	for _, feature := range features {
 		if err := dst.upsertFeature(ctx, feature); err != nil {
-			logger.Error("cannot create feature",
+			ctx.Error("cannot create feature",
 				zap.Object("feature", feature),
 				zap.Error(err),
 			)
 			return err
 		}
 	}
-	logger.Info("finished writing features")
+	ctx.Info("finished writing features")
 	return nil
 }
 
@@ -181,7 +181,7 @@ func (d *destination) tenants(ctx context.Context) (tenants, error) {
 }
 
 // upsertFeature creates or updates an admin feature.
-func (d *destination) upsertFeature(ctx context.Context, feature feature) error {
+func (d *destination) upsertFeature(ctx *Context, feature feature) error {
 	tenants, err := d.tenants(ctx)
 	if err != nil {
 		return err
@@ -217,9 +217,8 @@ func (d *destination) upsertFeature(ctx context.Context, feature feature) error 
 	if err := d.client.Mutate(ctx, &m, vars); err != nil {
 		return err
 	}
-	logger := zap.L()
 	for _, f := range m.UpsertFeature.Features {
-		logger.Debug("upserted feature",
+		ctx.Debug("upserted feature",
 			zap.String("tenant", f.Tenant.Name),
 			zap.String("name", f.Name),
 			zap.Bool("enabled", f.Enabled),

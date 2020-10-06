@@ -112,10 +112,10 @@ services:
     env_file:
       - conf/log.env
     command:
-      - "ent"
-      - "--ent.db-dsn=root:root@tcp(mysql:3306)/?charset=utf8&parseTime=true"
-      - "--ent.wait-for-db"
-      - "--ent.tenant=fb-test"
+      - "graph"
+      - "--db-dsn=root:root@tcp(mysql:3306)/?charset=utf8&parseTime=true"
+      - "--wait-for-db"
+      - "--tenant=fb-test"
     networks:
       - private
     depends_on:

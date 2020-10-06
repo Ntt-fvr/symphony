@@ -30,14 +30,14 @@ spec:
           args:
             - {{ $name }}
             {{- if eq $name "ent" }}
-            - --ent.db-driver=mysql
-            - --ent.db-dsn=$(MYSQL_DSN)
+            - --db-driver=mysql
+            - --db-dsn=$(MYSQL_DSN)
             {{- else if eq $name "cadence" }}
-            - --cadence.addr={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
-            - --cadence.domain={{ $.Values.migrate.spec.migrations.cadence.domain }}
+            - --address={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
+            - --domain={{ $.Values.migrate.spec.migrations.cadence.domain }}
             {{- end }}
           env:
-            {{- if eq $name "ent" }}
+            {{- if eq $name "graph" }}
             - name: MYSQL_DSN
               valueFrom:
                 secretKeyRef:
