@@ -49,7 +49,6 @@ func NewJaegerExporter(opts TraceExporterOptions) (trace.Exporter, error) {
 
 // ProvideJaegerTracer creates a new opentracing tracer.
 func ProvideJaegerTracer(cfg *Config) (opentracing.Tracer, func(), error) {
-	fmt.Printf(cfg.Trace.ServiceName)
 	config := jaegercfg.Configuration{
 		ServiceName: cfg.Trace.ServiceName,
 		Sampler: &jaegercfg.SamplerConfig{
