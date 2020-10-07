@@ -26,13 +26,12 @@ const (
 
 // CadenceClientConfig is the configuration for the cadence client
 type CadenceClientConfig struct {
-	CadenceAddr  string
-	Domain       string
-	Workers      []Worker
-	Tenancy      viewer.Tenancy
-	Tracer       opentracing.Tracer
-	Logger       log.Logger
-	HealthPoller health.Poller
+	CadenceAddr string
+	Domain      string
+	Workers     []Worker
+	Tenancy     viewer.Tenancy
+	Tracer      opentracing.Tracer
+	Logger      log.Logger
 }
 
 // CadenceClient is responsible to connect to cadence and create workers that handle available tasks
@@ -90,14 +89,13 @@ func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), erro
 		return nil, nil, err
 	}
 	return &CadenceClient{
-		client:       cc,
-		domain:       cfg.Domain,
-		workers:      cfg.Workers,
-		tenancy:      cfg.Tenancy,
-		tracer:       cfg.Tracer,
-		logger:       cfg.Logger,
-		healthPoller: cfg.HealthPoller,
-		checker:      newChecker(cc, cfg.Domain),
+		client:  cc,
+		domain:  cfg.Domain,
+		workers: cfg.Workers,
+		tenancy: cfg.Tenancy,
+		tracer:  cfg.Tracer,
+		logger:  cfg.Logger,
+		checker: newChecker(cc, cfg.Domain),
 	}, cleanup, nil
 }
 
@@ -113,10 +111,17 @@ func (cc CadenceClient) CheckHealth() error {
 	}
 }
 
+// SetHealthPoller sets the health poller
+func (cc *CadenceClient) SetHealthPoller(healthPoller health.Poller) {
+	cc.healthPoller = healthPoller
+}
+
 // Run makes the worker to start polling.
 func (cc *CadenceClient) Run(ctx context.Context) error {
-	if err := cc.healthPoller.Wait(ctx); err != nil {
-		return fmt.Errorf("failed to wait for health checks: %w", err)
+	if cc.healthPoller != nil {
+		if err := cc.healthPoller.Wait(ctx); err != nil {
+			return fmt.Errorf("failed to wait for health checks: %w", err)
+		}
 	}
 	workerOptions := worker.Options{
 		Logger: cc.logger.For(ctx),
