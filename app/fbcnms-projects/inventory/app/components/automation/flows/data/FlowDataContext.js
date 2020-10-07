@@ -53,9 +53,16 @@ type FlowDraftResponse = $ElementType<
   'flowDraft',
 >;
 
+type FlowSettingsUpdateType = ?{
+  name?: ?string,
+  description?: ?string,
+};
+
 export type FlowDataContextType = {
   flowDraft: FlowDraftResponse,
-  save: () => Promise<ImportFlowDraftMutationResponse>,
+  save: (
+    flowSettingsUpdate?: FlowSettingsUpdateType,
+  ) => Promise<ImportFlowDraftMutationResponse>,
 };
 
 const FlowDataContextDefaults = {
@@ -73,6 +80,7 @@ const flowQuery = graphql`
       ... on FlowDraft {
         id
         name
+        description
         blocks {
           cid
           name
@@ -92,7 +100,6 @@ const flowQuery = graphql`
             }
           }
         }
-        ...DetailsView_flowDraft
         ...BlocksBar_flowDraft
       }
     }
@@ -218,51 +225,60 @@ function FlowDataContextProviderComponent(props: Props) {
     loadConnectorsIntoGraph(blocks);
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
-  const save = useCallback(() => {
-    if (flowDraft == null) {
-      return Promise.reject('There was not flowDraftData to save.');
-    }
+  const save = useCallback(
+    (flowSettingsUpdate: FlowSettingsUpdateType) => {
+      if (flowDraft == null) {
+        return Promise.reject('There was not flowDraftData to save.');
+      }
 
-    const flowData: ImportFlowDraftInput = {
-      id: flowDraft.id ?? '',
-      name: flowDraft.name ?? '',
-      endParamDefinitions: [],
-    };
+      const flowData: ImportFlowDraftInput = {
+        id: flowDraft.id ?? '',
+        name:
+          flowSettingsUpdate?.name != null
+            ? flowSettingsUpdate.name
+            : flowDraft.name ?? '',
+        description:
+          flowSettingsUpdate?.description != null
+            ? flowSettingsUpdate.description
+            : flowDraft.description ?? '',
+        endParamDefinitions: [],
+      };
 
-    const connectors = flow.getConnectors().map(mapConnectorsForSave);
-    const startBlocks = flow
-      .getBlocksByType(ManualStartType)
-      .map(mapStartBlockForSave);
-    const decisionBlocks = flow
-      .getBlocksByType(DecisionType)
-      .map(mapDecisionBlockForSave);
-    const actionBlocks = flow
-      .getBlocksByType(CreateWorkorderType)
-      .map(mapActionBlocksForSave);
-    const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
+      const connectors = flow.getConnectors().map(mapConnectorsForSave);
+      const startBlocks = flow
+        .getBlocksByType(ManualStartType)
+        .map(mapStartBlockForSave);
+      const decisionBlocks = flow
+        .getBlocksByType(DecisionType)
+        .map(mapDecisionBlockForSave);
+      const actionBlocks = flow
+        .getBlocksByType(CreateWorkorderType)
+        .map(mapActionBlocksForSave);
+      const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
-    if (startBlocks.length > 0) {
-      flowData.startBlock = startBlocks[0];
-    }
+      if (startBlocks.length > 0) {
+        flowData.startBlock = startBlocks[0];
+      }
 
-    if (decisionBlocks.length > 0) {
-      flowData.decisionBlocks = decisionBlocks;
-    }
+      if (endBlocks.length > 0) {
+        flowData.endBlocks = endBlocks;
+      }
+      if (decisionBlocks.length > 0) {
+        flowData.decisionBlocks = decisionBlocks;
+      }
 
-    if (endBlocks.length > 0) {
-      flowData.endBlocks = endBlocks;
-    }
+      if (actionBlocks.length > 0) {
+        flowData.actionBlocks = actionBlocks;
+      }
 
-    if (actionBlocks.length > 0) {
-      flowData.actionBlocks = actionBlocks;
-    }
+      if (connectors.length > 0) {
+        flowData.connectors = connectors;
+      }
 
-    if (connectors.length > 0) {
-      flowData.connectors = connectors;
-    }
-
-    return saveFlowDraft(flowData);
-  }, [flow, flowDraft]);
+      return saveFlowDraft(flowData);
+    },
+    [flow, flowDraft],
+  );
 
   return (
     <FlowDataContext.Provider value={{flowDraft, save}}>

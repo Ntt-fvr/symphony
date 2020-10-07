@@ -9,6 +9,7 @@
  */
 import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
+import classNames from 'classnames';
 import {FLOW_STATUSES} from './AutomationFlowCard';
 import {makeStyles} from '@material-ui/styles';
 
@@ -25,15 +26,16 @@ type StatusType = 'DISABLED' | 'ENABLED' | 'ARCHIVED';
 
 type StatusTagProps = $ReadOnly<{|
   status: StatusType,
+  className?: string,
 |}>;
 
 const StatusTag = (props: StatusTagProps) => {
-  const {status} = props;
+  const {status, className} = props;
   const classes = useStyles();
   return (
     <Text
       variant="body2"
-      className={classes.statusTag}
+      className={classNames(classes.statusTag, className)}
       style={{
         backgroundColor: FLOW_STATUSES[status].backgroundColor,
         color: FLOW_STATUSES[status].color,

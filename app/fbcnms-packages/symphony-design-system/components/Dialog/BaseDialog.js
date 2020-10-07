@@ -17,6 +17,7 @@ import Text from '../Text';
 import ViewContainer from '../View/ViewContainer';
 import classNames from 'classnames';
 import {CloseIcon} from '../../icons';
+import {DialogShowingContextProvider} from './DialogShowingContext';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
@@ -52,6 +53,7 @@ export type BaseDialogProps = $ReadOnly<{|
   className?: string,
   children: React.Node,
   showCloseButton?: ?boolean,
+  isWizard?: ?boolean,
   onClose?: ?() => void,
 |}>;
 
@@ -68,36 +70,42 @@ function BaseDialog(props: BaseDialogComponentProps) {
     children,
     onClose,
     showCloseButton,
+    isWizard = false,
     ...rootProps
   } = props;
   const classes = useStyles();
 
   const callOnClose = onClose ?? undefined;
 
+  const view = (
+    <ViewContainer
+      header={{
+        title: (
+          <div className={classes.titleContainer}>
+            <Text className={classes.titleText} weight="medium">
+              {title}
+            </Text>
+            {showCloseButton != false && (
+              <IconButton skin="gray" icon={CloseIcon} onClick={callOnClose} />
+            )}
+          </div>
+        ),
+      }}>
+      {children}
+    </ViewContainer>
+  );
+
+  const viewWithWrapper = isWizard ? (
+    view
+  ) : (
+    <DialogShowingContextProvider>{view}</DialogShowingContextProvider>
+  );
   return (
     <DialogFrame
       className={classNames(classes.root, className)}
       onClose={callOnClose}
       {...rootProps}>
-      <ViewContainer
-        header={{
-          title: (
-            <div className={classes.titleContainer}>
-              <Text className={classes.titleText} weight="medium">
-                {title}
-              </Text>
-              {showCloseButton != false && (
-                <IconButton
-                  skin="gray"
-                  icon={CloseIcon}
-                  onClick={callOnClose}
-                />
-              )}
-            </div>
-          ),
-        }}>
-        {children}
-      </ViewContainer>
+      {viewWithWrapper}
     </DialogFrame>
   );
 }

@@ -241,6 +241,7 @@ const useStyles = makeStyles(_theme => ({
   },
   buttonText: {
     maxHeight: '100%',
+    display: 'flex',
   },
   textVariant: {
     display: 'inline-flex',

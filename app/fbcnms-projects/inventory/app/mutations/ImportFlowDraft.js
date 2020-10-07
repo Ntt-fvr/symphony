@@ -24,6 +24,26 @@ const mutation = graphql`
     importFlowDraft(input: $input) {
       id
       name
+      description
+      blocks {
+        cid
+        name
+        details {
+          __typename
+        }
+        uiRepresentation {
+          xPosition
+          yPosition
+        }
+        nextBlocks {
+          cid
+          name
+          uiRepresentation {
+            xPosition
+            yPosition
+          }
+        }
+      }
     }
   }
 `;

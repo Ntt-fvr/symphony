@@ -19,7 +19,7 @@ const SIDE_PANEL_WIDTH = '474px';
 
 const useStyles = makeStyles(() => ({
   dialog: {
-    zIndex: 2,
+    zIndex: 1,
     position: 'fixed',
     display: 'flex',
     backgroundColor: symphony.palette.white,

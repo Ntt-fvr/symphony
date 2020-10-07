@@ -9,9 +9,11 @@
  */
 
 import Button from '@symphony/design-system/components/Button';
+import FlowBuilderButton from '../../utils/FlowBuilderButton';
 import React from 'react';
 import Strings from '@fbcnms/strings/Strings';
 import ToolsBar from './ToolsBar';
+import {SettingsIcon} from '@symphony/design-system/icons';
 import {makeStyles} from '@material-ui/styles';
 import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
@@ -23,7 +25,9 @@ const useStyles = makeStyles(() => ({
   root: {
     top: 0,
   },
-  right: {},
+  right: {
+    display: 'flex',
+  },
   center: {
     flexGrow: 1,
   },
@@ -58,7 +62,7 @@ export default function TopBar() {
       </div>
       <div className={classes.center} />
       <div className={classes.right}>
-        <Button onClick={() => detailsPane.toggle()}>Details</Button>
+        <FlowBuilderButton icon={SettingsIcon} onClick={detailsPane.toggle} />
         <Button
           disabled={!flowData.flowDraft?.id}
           onClick={() =>
