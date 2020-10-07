@@ -15,6 +15,7 @@ import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {makeStyles} from '@material-ui/styles';
 import {useCallback, useContext} from 'react';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
+import {useEffect} from 'react';
 
 export type DetailsPanelContextType = {
   isShown: boolean,
@@ -68,6 +69,13 @@ export function DetailsPanelContextProvider(props: Props) {
       true,
     );
   }, [classes.detailsContainer, dialogShowingContext, dialogDetails, hide]);
+
+  useEffect(() => {
+    if (dialogShowingContext.isShown) {
+      //update only if it's already open
+      show();
+    }
+  }, [dialogDetails, show, dialogShowingContext]);
 
   const toggle = useCallback(
     () => (dialogShowingContext.isShown ? hide() : show()),
