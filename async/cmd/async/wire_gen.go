@@ -15,6 +15,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
@@ -31,7 +32,7 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/runtimevar"
-	"gocloud.dev/server/health"
+	health2 "gocloud.dev/server/health"
 )
 
 import (
@@ -108,9 +109,9 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	healthPoller := server.NewHealthPoller(zapLogger)
+	poller := health.NewHealthPoller(zapLogger)
 	v := newWorkers(tenancy, variable, logger)
-	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, healthPoller, v)
+	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, poller, v)
 	cadenceClient, cleanup7, err := worker.ProvideCadenceClient(cadenceClientConfig)
 	if err != nil {
 		cleanup6()
@@ -128,7 +129,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Receiver:     receiver,
 		Logger:       logger,
 		Handlers:     v2,
-		HealthPoller: healthPoller,
+		HealthPoller: poller,
 	}
 	handlerServer := handler.NewServer(handlerConfig)
 	router := mux.NewRouter()
@@ -205,7 +206,7 @@ func newApplication(server2 *handler.Server, http *server.Server, cadenceClient 
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller server.HealthPoller, workers []worker.Worker) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health.Poller, workers []worker.Worker) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
 		CadenceAddr:  flags.CadenceAddr,
 		Domain:       flags.CadenceDomain,
@@ -224,8 +225,8 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.CadenceClient) []health.Checker {
-	return []health.Checker{tenancy, cadenceClient}
+func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.CadenceClient) []health2.Checker {
+	return []health2.Checker{tenancy, cadenceClient}
 }
 
 func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {

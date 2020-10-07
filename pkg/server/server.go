@@ -24,12 +24,6 @@ import (
 	"gocloud.dev/server/requestlog"
 )
 
-const (
-	healthURI    = "healthz"
-	livenessURI  = "liveness"
-	readinessURI = "readiness"
-)
-
 // Set is a Wire provider set that produces a *Server given the fields of Options.
 var Set = wire.NewSet(
 	New,
@@ -138,10 +132,11 @@ func (srv *Server) ListenAndServe(addr string) error {
 	srv.init()
 
 	// Setup health checks, /healthz route is taken by health checks by default.
+	hr := "/healthz"
 	mux := http.NewServeMux()
-	mux.HandleFunc("/"+healthURI, health.HandleLive)
-	mux.HandleFunc("/"+path.Join(healthURI, livenessURI), health.HandleLive)
-	mux.Handle("/"+path.Join(healthURI, readinessURI), &srv.health)
+	mux.HandleFunc(hr, health.HandleLive)
+	mux.HandleFunc(path.Join(hr, "liveness"), health.HandleLive)
+	mux.Handle(path.Join(hr, "readiness"), &srv.health)
 
 	// Setup metrics endpoint, /metrics route is taken by default.
 	if srv.metrics != nil {

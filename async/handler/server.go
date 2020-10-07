@@ -13,8 +13,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 	"gocloud.dev/runtimevar"
@@ -30,7 +30,7 @@ type Server struct {
 	tenancy      viewer.Tenancy
 	features     *runtimevar.Variable
 	handlers     []Handler
-	healthPoller server.HealthPoller
+	healthPoller health.Poller
 }
 
 // Config defines the async server config.
@@ -40,7 +40,7 @@ type Config struct {
 	Receiver     ev.Receiver
 	Logger       log.Logger
 	Handlers     []Handler
-	HealthPoller server.HealthPoller
+	HealthPoller health.Poller
 }
 
 func NewServer(cfg Config) *Server {
