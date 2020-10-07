@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-func RunWithTransaction(ctx context.Context, f func(ctx context.Context) error) error {
+func RunWithTransaction(ctx context.Context, f func(ctx context.Context, client *Client) error) error {
 	tx, err := FromContext(ctx).Tx(ctx)
 	if err != nil {
 		return fmt.Errorf("creating transaction: %w", err)
@@ -21,8 +21,9 @@ func RunWithTransaction(ctx context.Context, f func(ctx context.Context) error) 
 			panic(r)
 		}
 	}()
-	ctx = NewContext(ctx, tx.Client())
-	if err := f(ctx); err != nil {
+	client := tx.Client()
+	ctx = NewContext(ctx, client)
+	if err := f(ctx, client); err != nil {
 		if r := tx.Rollback(); r != nil {
 			err = fmt.Errorf("rolling back transaction: %v", r)
 		}

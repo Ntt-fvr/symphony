@@ -27,14 +27,15 @@ const (
 	badID               = -1
 )
 
-var defaultLocalActivityOptions = workflow.LocalActivityOptions{
-	ScheduleToCloseTimeout: 5 * time.Second,
-}
-
-var defaultActivityOptions = workflow.ActivityOptions{
-	ScheduleToStartTimeout: 5 * time.Second,
-	StartToCloseTimeout:    5 * time.Second,
-}
+var (
+	defaultLocalActivityOptions = workflow.LocalActivityOptions{
+		ScheduleToCloseTimeout: 5 * time.Second,
+	}
+	defaultActivityOptions = workflow.ActivityOptions{
+		ScheduleToStartTimeout: 5 * time.Second,
+		StartToCloseTimeout:    5 * time.Second,
+	}
+)
 
 // RunFlowInput is the input for the RunFlow workflow
 type RunFlowInput struct {
@@ -101,8 +102,7 @@ func (wc *FlowWorker) RunFlowWorkflow(ctx workflow.Context, input RunFlowInput) 
 func (wc *FlowWorker) CompleteFlowActivity(ctx context.Context, input CompleteFlowInput) error {
 	wc.logger.For(ctx).Info("completing flow instance",
 		zap.Int("instanceID", input.FlowInstanceID))
-	return ent.RunWithTransaction(ctx, func(ctx context.Context) error {
-		client := ent.FromContext(ctx)
+	return ent.RunWithTransaction(ctx, func(ctx context.Context, client *ent.Client) error {
 		if err := client.FlowInstance.UpdateOneID(input.FlowInstanceID).
 			SetStatus(flowinstance.StatusCompleted).
 			Exec(ctx); err != nil {

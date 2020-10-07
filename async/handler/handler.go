@@ -76,7 +76,7 @@ func (h handler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObje
 		)
 	}
 	if h.transactional {
-		return ent.RunWithTransaction(ctx, func(ctx context.Context) error {
+		return ent.RunWithTransaction(ctx, func(ctx context.Context, _ *ent.Client) error {
 			return h.handler.Handle(ctx, logger, evt)
 		})
 	}
