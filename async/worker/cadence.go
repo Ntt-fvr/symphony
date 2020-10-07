@@ -28,6 +28,7 @@ const (
 type CadenceClientConfig struct {
 	CadenceAddr  string
 	Domain       string
+	Workers      []Worker
 	Tenancy      viewer.Tenancy
 	Tracer       opentracing.Tracer
 	Logger       log.Logger
@@ -38,6 +39,7 @@ type CadenceClientConfig struct {
 type CadenceClient struct {
 	client       workflowserviceclient.Interface
 	domain       string
+	workers      []Worker
 	tenancy      viewer.Tenancy
 	tracer       opentracing.Tracer
 	logger       log.Logger
@@ -90,6 +92,7 @@ func ProvideCadenceClient(cfg CadenceClientConfig) (*CadenceClient, func(), erro
 	return &CadenceClient{
 		client:       cc,
 		domain:       cfg.Domain,
+		workers:      cfg.Workers,
 		tenancy:      cfg.Tenancy,
 		tracer:       cfg.Tracer,
 		logger:       cfg.Logger,
@@ -123,6 +126,9 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 		},
 	}
 	cc.domainWorker = worker.New(cc.client, cc.domain, TaskListName, workerOptions)
+	for _, w := range cc.workers {
+		w.Register(cc.domainWorker)
+	}
 	if err := cc.domainWorker.Run(); err != nil {
 		return fmt.Errorf("failed to run workers: %w", err)
 	}
@@ -133,4 +139,9 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 func (cc *CadenceClient) Shutdown() {
 	cc.checker.cancel()
 	cc.domainWorker.Stop()
+}
+
+// GetClient returns the cadence client.
+func (cc *CadenceClient) GetClient(options *client.Options) client.Client {
+	return client.NewClient(cc.client, cc.domain, options)
 }

@@ -26,8 +26,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"go.opencensus.io/stats/view"
+	"go.uber.org/cadence/client"
+	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
+	"gocloud.dev/runtimevar"
 	"gocloud.dev/server/health"
 )
 
@@ -94,20 +97,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	v := newHandlers(bucket, flags)
-	zapLogger := log.ProvideZapLogger(logger)
-	healthPoller := server.NewHealthPoller(zapLogger)
-	handlerConfig := handler.Config{
-		Tenancy:      tenancy,
-		Features:     variable,
-		Receiver:     receiver,
-		Logger:       logger,
-		Handlers:     v,
-		HealthPoller: healthPoller,
-	}
-	handlerServer := handler.NewServer(handlerConfig)
-	router := mux.NewRouter()
-	xserverZapLogger := xserver.NewRequestLogger(logger)
 	telemetryConfig := &flags.TelemetryConfig
 	tracer, cleanup6, err := telemetry.ProvideJaegerTracer(telemetryConfig)
 	if err != nil {
@@ -118,7 +107,10 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, healthPoller)
+	zapLogger := log.ProvideZapLogger(logger)
+	healthPoller := server.NewHealthPoller(zapLogger)
+	v := newWorkers(tenancy, variable, logger)
+	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, healthPoller, v)
 	cadenceClient, cleanup7, err := worker.ProvideCadenceClient(cadenceClientConfig)
 	if err != nil {
 		cleanup6()
@@ -129,8 +121,20 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	v2 := newHealthChecks(mySQLTenancy, cadenceClient)
-	v3 := provideViews()
+	v2 := newHandlers(bucket, flags, cadenceClient, tenancy, tracer)
+	handlerConfig := handler.Config{
+		Tenancy:      tenancy,
+		Features:     variable,
+		Receiver:     receiver,
+		Logger:       logger,
+		Handlers:     v2,
+		HealthPoller: healthPoller,
+	}
+	handlerServer := handler.NewServer(handlerConfig)
+	router := mux.NewRouter()
+	xserverZapLogger := xserver.NewRequestLogger(logger)
+	v3 := newHealthChecks(mySQLTenancy, cadenceClient)
+	v4 := provideViews()
 	config2 := flags.TelemetryConfig
 	exporter, err := telemetry.ProvideViewExporter(config2)
 	if err != nil {
@@ -160,8 +164,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
 		RequestLogger:         xserverZapLogger,
-		HealthChecks:          v2,
-		Views:                 v3,
+		HealthChecks:          v3,
+		Views:                 v4,
 		ViewExporter:          exporter,
 		TraceExporter:         traceExporter,
 		EnableProfiling:       profilingEnabler,
@@ -201,10 +205,11 @@ func newApplication(server2 *handler.Server, http *server.Server, cadenceClient 
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller server.HealthPoller) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller server.HealthPoller, workers []worker.Worker) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
 		CadenceAddr:  flags.CadenceAddr,
 		Domain:       flags.CadenceDomain,
+		Workers:      workers,
 		Tenancy:      tenancy,
 		Tracer:       tracer,
 		Logger:       logger,
@@ -252,13 +257,28 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket, flags *cliFlags) []handler.Handler {
+func newHandlers(bucket *blob.Bucket, flags *cliFlags, cadenceClient *worker.CadenceClient, tenancy viewer.Tenancy, tracer opentracing.Tracer) []handler.Handler {
 	return []handler.Handler{handler.New(handler.HandleConfig{
 		Name:    "activity_log",
 		Handler: handler.Func(handler.HandleActivityLog),
 	}), handler.New(handler.HandleConfig{
 		Name:    "export_task",
 		Handler: handler.NewExportHandler(bucket, flags.ExportBucketPrefix),
+	}, handler.WithTransaction(false)), handler.New(handler.HandleConfig{
+		Name: "flow",
+		Handler: handler.NewFlowHandler(cadenceClient.GetClient(&client.Options{
+			Tracer:             tracer,
+			ContextPropagators: []workflow.ContextPropagator{worker.NewContextPropagator(tenancy)},
+		})),
 	}, handler.WithTransaction(false)),
+	}
+}
+
+func newWorkers(tenancy viewer.Tenancy, features *runtimevar.Variable, logger log.Logger) []worker.Worker {
+	return []worker.Worker{worker.NewFlowWorker(worker.FlowWorkerConfig{
+		Tenancy:  tenancy,
+		Features: features,
+		Logger:   logger,
+	}),
 	}
 }

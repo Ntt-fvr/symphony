@@ -6,7 +6,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -77,32 +76,9 @@ func (h handler) Handle(ctx context.Context, logger log.Logger, evt ev.EventObje
 		)
 	}
 	if h.transactional {
-		return h.runHandlerWithTransaction(ctx, logger, evt)
+		return ent.RunWithTransaction(ctx, func(ctx context.Context) error {
+			return h.handler.Handle(ctx, logger, evt)
+		})
 	}
 	return h.handler.Handle(ctx, logger, evt)
-}
-
-func (h *handler) runHandlerWithTransaction(ctx context.Context, logger log.Logger, evt ev.EventObject) error {
-	tx, err := ent.FromContext(ctx).Tx(ctx)
-	if err != nil {
-		return fmt.Errorf("creating transaction: %w", err)
-	}
-	ctx = ent.NewTxContext(ctx, tx)
-	defer func() {
-		if r := recover(); r != nil {
-			_ = tx.Rollback()
-			panic(r)
-		}
-	}()
-	ctx = ent.NewContext(ctx, tx.Client())
-	if err := h.handler.Handle(ctx, logger, evt); err != nil {
-		if r := tx.Rollback(); r != nil {
-			err = fmt.Errorf("rolling back transaction: %v", r)
-		}
-		return err
-	}
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("committing transaction: %w", err)
-	}
-	return nil
 }
