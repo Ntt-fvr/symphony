@@ -9,16 +9,13 @@
  */
 
 import type {IBlockType} from '../../canvas/graph/shapes/blocks/blockTypes/BaseBlockType';
-import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
 
 import Button from '@symphony/design-system/components/Button';
-import React from 'react';
+import React, {useCallback} from 'react';
 import Text from '@symphony/design-system/components/Text';
 import symphony from '@symphony/design-system/theme/symphony';
+import useDragAndDropHandler from '../../../utils/useDragAndDropHandler';
 import {makeStyles} from '@material-ui/styles';
-
-// import {useEffect, useState} from 'react';
-// import {useGraph} from '../canvas/graph/GraphContext';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -52,12 +49,6 @@ export type BlocksCategoryProps = $ReadOnly<{|
   blockTypes: $ReadOnlyArray<IBlockType>,
 |}>;
 
-function blockTypeClickHanlder(blocType: IBlockType): MouseEventHandler {
-  return () => {
-    blocType.createBlock();
-  };
-}
-
 export default function BlocksCategory(props: BlocksCategoryProps) {
   const {header, blockTypes} = props;
   const classes = useStyles();
@@ -68,18 +59,49 @@ export default function BlocksCategory(props: BlocksCategoryProps) {
         <Text variant="subtitle2">{header}</Text>
       </div>
       <div className={classes.body}>
-        {blockTypes.map(blockType => {
-          const PresentationComponent = blockType.presentationComponent;
-          return (
-            <Button
-              skin="regular"
-              className={classes.blockType}
-              onClick={blockTypeClickHanlder(blockType)}>
-              <PresentationComponent />
-            </Button>
-          );
-        })}
+        {blockTypes.map(blockType => (
+          <Block blockType={blockType} className={classes.blockType} />
+        ))}
       </div>
     </div>
+  );
+}
+
+type BlockProps = $ReadOnly<{|
+  blockType: IBlockType,
+  className: string,
+|}>;
+
+function Block(props: BlockProps) {
+  const {blockType, className} = props;
+  const PresentationComponent = blockType.presentationComponent;
+
+  const onDrop = useCallback(
+    (clientX, clientY) => {
+      const position = {
+        x: clientX,
+        y: clientY,
+      };
+      blockType.createBlock(position, true);
+    },
+    [blockType],
+  );
+  const onClick = useCallback(() => {
+    blockType.createBlock();
+  }, [blockType]);
+
+  const dragAndDropHandler = useDragAndDropHandler(
+    PresentationComponent,
+    onDrop,
+    onClick,
+  );
+
+  return (
+    <Button
+      skin="regular"
+      className={className}
+      onMouseDown={dragAndDropHandler}>
+      <PresentationComponent />
+    </Button>
   );
 }

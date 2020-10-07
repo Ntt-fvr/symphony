@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     display: 'flex',
     flexGrow: 1,
+    userSelect: 'none',
   },
   workspace: {
     position: 'relative',
