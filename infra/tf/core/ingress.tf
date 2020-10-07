@@ -461,7 +461,7 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.4"
+  version    = "3.4.5"
   namespace  = "kube-system"
 
   values = [yamlencode({

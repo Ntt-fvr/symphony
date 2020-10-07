@@ -4,7 +4,7 @@ resource helm_release prometheus_operator {
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "9.4.7"
+  version    = "9.4.9"
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
@@ -125,7 +125,7 @@ resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.prometheus-community
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.6.0"
+  version    = "4.7.0"
   namespace  = "monitoring"
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {

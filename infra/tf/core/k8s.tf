@@ -85,7 +85,7 @@ resource helm_release metrics_server {
   chart      = "metrics-server"
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
-  version    = "4.5.0"
+  version    = "4.5.1"
   namespace  = "kube-system"
 
   values = [yamlencode({

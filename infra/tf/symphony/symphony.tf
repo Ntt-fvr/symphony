@@ -150,10 +150,9 @@ resource helm_release symphony {
       }
       persistence = {
         database = {
-          scheme = "awsmysql"
-          host   = module.graph_db.this_db_instance_address
-          port   = module.graph_db.this_db_instance_port
-          user   = module.graph_db.this_db_instance_username
+          host = module.graph_db.this_db_instance_address
+          port = module.graph_db.this_db_instance_port
+          user = module.graph_db.this_db_instance_username
           params = {
             charset           = "utf8"
             parseTime         = "true"
