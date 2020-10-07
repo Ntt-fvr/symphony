@@ -16,9 +16,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
-	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 	"github.com/stretchr/testify/require"
@@ -34,7 +34,7 @@ func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handl
 		Logger:   logtest.NewTestLogger(t),
 		Receiver: receiver,
 		Handlers: handlers,
-		HealthPoller: server.HealthPollerFunc(func(ctx context.Context) error {
+		HealthPoller: health.PollerFunc(func(ctx context.Context) error {
 			return nil
 		}),
 	})

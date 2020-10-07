@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/cadence"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/opentracing/opentracing-go"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
@@ -31,7 +31,7 @@ type CadenceClientConfig struct {
 	Tenancy      viewer.Tenancy
 	Tracer       opentracing.Tracer
 	Logger       log.Logger
-	HealthPoller server.HealthPoller
+	HealthPoller health.Poller
 }
 
 // CadenceClient is responsible to connect to cadence and create workers that handle available tasks
@@ -42,7 +42,7 @@ type CadenceClient struct {
 	tracer       opentracing.Tracer
 	logger       log.Logger
 	domainWorker worker.Worker
-	healthPoller server.HealthPoller
+	healthPoller health.Poller
 	checker      *checker
 }
 

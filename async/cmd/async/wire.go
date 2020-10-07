@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	health2 "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
@@ -78,7 +79,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		xserver.ServiceSet,
 		provideViews,
-		server.NewHealthPoller,
+		health2.NewHealthPoller,
 		wire.Struct(
 			new(handler.Config), "*",
 		),
@@ -102,7 +103,7 @@ func newApplication(server *handler.Server, http *server.Server, cadenceClient *
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller server.HealthPoller) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health2.Poller) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
 		CadenceAddr:  flags.CadenceAddr,
 		Domain:       flags.CadenceDomain,
