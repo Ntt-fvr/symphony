@@ -6,6 +6,7 @@ package exporter
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +15,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -246,53 +246,16 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 	return wo
 }
 
-func TestWoWithInvalidId(t *testing.T) {
-	core, _ := observer.New(zap.DebugLevel)
-	log := log.NewDefaultLogger(zap.New(core))
-	client := viewertest.NewTestClient(t)
-
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
-	q := req.URL.Query()
-	q.Add("id", "123")
-	req.URL.RawQuery = q.Encode()
-	res, err := http.DefaultClient.Do(req)
-	require.Equal(t, res.StatusCode, http.StatusInternalServerError)
-	require.NoError(t, err)
-	defer res.Body.Close()
-}
-
 func TestSingleWorkOrderExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
 
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
 	ctx := viewertest.NewContext(context.Background(), client)
 	workOrder := prepareSingleWOData(ctx, t)
-	q := req.URL.Query()
-	q.Add("id", strconv.Itoa(workOrder.ID))
-	req.URL.RawQuery = q.Encode()
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
 
-	file, err := excelize.OpenReader(res.Body)
+	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
 
 	// Verify all the Work Order summary data is correct.
@@ -352,24 +315,10 @@ func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
-
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
 	ctx := viewertest.NewContext(context.Background(), client)
 	workOrder := prepareSingleWOData(ctx, t)
-	q := req.URL.Query()
-	q.Add("id", strconv.Itoa(workOrder.ID))
-	req.URL.RawQuery = q.Encode()
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
 
-	file, err := excelize.OpenReader(res.Body)
+	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
 
 	// The activity log beings on row 14 and is tabular
@@ -438,24 +387,11 @@ func TestSingleWorkOrderExportChecklist(t *testing.T) {
 	client := viewertest.NewTestClient(t)
 
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
-	th := viewertest.TestHandler(t, e, client)
-	server := httptest.NewServer(th)
-	defer server.Close()
 
-	req, err := http.NewRequest(http.MethodGet, server.URL, nil)
-	require.NoError(t, err)
-
-	viewertest.SetDefaultViewerHeaders(req)
 	ctx := viewertest.NewContext(context.Background(), client)
 	workOrder := prepareSingleWOData(ctx, t)
-	q := req.URL.Query()
-	q.Add("id", strconv.Itoa(workOrder.ID))
-	req.URL.RawQuery = q.Encode()
-	res, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer res.Body.Close()
 
-	file, err := excelize.OpenReader(res.Body)
+	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
 
 	checklists, err := workOrder.QueryCheckListCategories().All(ctx)
@@ -539,4 +475,39 @@ func checkItemType(ctx context.Context, t *testing.T, item *ent.CheckListItem, v
 		}
 		require.Equal(t, data.String(), value)
 	}
+}
+
+func TestSingleWOAsyncExport(t *testing.T) {
+	core, _ := observer.New(zap.DebugLevel)
+	log := log.NewDefaultLogger(zap.New(core))
+	client := viewertest.NewTestClient(t)
+
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
+	th := viewertest.TestHandler(t, e, client)
+	server := httptest.NewServer(th)
+	defer server.Close()
+
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/single_work_order", nil)
+	require.NoError(t, err)
+
+	viewertest.SetDefaultViewerHeaders(req)
+	ctx := viewertest.NewContext(context.Background(), client)
+	workOrder := prepareSingleWOData(ctx, t)
+	q := req.URL.Query()
+	q.Add("id", strconv.Itoa(workOrder.ID))
+	req.URL.RawQuery = q.Encode()
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	defer res.Body.Close()
+
+	type resStruct struct {
+		TaskID string
+	}
+
+	var response resStruct
+	err = json.NewDecoder(res.Body).Decode(&response)
+	require.NoError(t, err)
+	taskID := response.TaskID
+	require.NotEmpty(t, taskID)
+	require.True(t, len(response.TaskID) > 1)
 }

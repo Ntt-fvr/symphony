@@ -67,6 +67,8 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 	switch task.Type {
 	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink, exporttask.TypeService, exporttask.TypeWorkOrder:
 		key, err = eh.export(ctx, logger, task)
+	case exporttask.TypeSingleWorkOrder:
+		key, err = eh.exportSingleWO(ctx, logger, task)
 	default:
 		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
 			logger.For(ctx).Error("cannot update task status", zap.Error(err))
@@ -85,38 +87,46 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 		logger.For(ctx).Error("cannot update task status", zap.Error(err), zap.Int("id", task.ID))
 		return err
 	}
-
 	return nil
 }
 
 // export queries and writes rows to a file, returning the key.
 func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
-	var rower rower
+	var (
+		exportEntity string
+		rower        rower
+	)
 	switch task.Type {
 	case exporttask.TypeLocation:
 		rower = exporter.LocationsRower{
 			Log: logger,
 		}
+		exportEntity = "locations"
 	case exporttask.TypeEquipment:
 		rower = exporter.EquipmentRower{
 			Log: logger,
 		}
+		exportEntity = "equipment"
 	case exporttask.TypePort:
 		rower = exporter.PortsRower{
 			Log: logger,
 		}
+		exportEntity = "ports"
 	case exporttask.TypeLink:
 		rower = exporter.LinksRower{
 			Log: logger,
 		}
+		exportEntity = "links"
 	case exporttask.TypeService:
 		rower = exporter.ServicesRower{
 			Log: logger,
 		}
+		exportEntity = "services"
 	case exporttask.TypeWorkOrder:
 		rower = exporter.WoRower{
 			Log: logger,
 		}
+		exportEntity = "work-orders"
 	default:
 		logger.For(ctx).Error("unsupported entity type for export", zap.String("type", task.Type.String()))
 		return "", fmt.Errorf("unsupported entity type %s", task.Type)
@@ -129,7 +139,7 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 	tenant := viewer.FromContext(ctx).Tenant()
 	key := eh.bucketPrefix + uuid.New().String()
 	writeKey := tenant + "/" + key
-	if err := eh.writeRows(ctx, writeKey, rows); err != nil {
+	if err := eh.writeRows(ctx, writeKey, rows, exportEntity); err != nil {
 		logger.For(ctx).Error("cannot write rows", zap.Error(err))
 		return "", err
 	}
@@ -138,11 +148,12 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 }
 
 // writeRows writer rows into a blob with key as name.
-func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string) (err error) {
+func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string, exportEntity string) (err error) {
 	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{
 		ContentType: "text/csv",
 		ContentDisposition: fmt.Sprintf(
-			"attachment; filename=export-%s.csv",
+			"attachment; filename=%s-%s.csv",
+			exportEntity,
 			time.Now().Format(time.RFC3339),
 		),
 		BeforeWrite: func(asFunc func(interface{}) bool) error {
@@ -169,4 +180,57 @@ func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]str
 	}
 
 	return nil
+}
+
+func (eh *ExportHandler) exportSingleWO(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
+	excelExporter := exporter.SingleWo{
+		Log: logger,
+	}
+	if task.WoIDToExport == nil {
+		logger.For(ctx).Error("cannot create single work order file, work order id is nil", zap.Int("id", task.ID))
+		return "", fmt.Errorf("cannot create single work order file: work order id is nil")
+	}
+
+	excelFile, err := excelExporter.CreateExcelFile(ctx, *task.WoIDToExport)
+	if err != nil {
+		logger.For(ctx).Error("cannot create single work order file", zap.Error(err), zap.Int("id", task.ID))
+		return "", fmt.Errorf("cannot create single work order file: %w", err)
+	}
+	tenant := viewer.FromContext(ctx).Tenant()
+	key := eh.bucketPrefix + uuid.New().String()
+	writeKey := tenant + "/" + key
+
+	b, err := eh.bucket.NewWriter(ctx, writeKey, &blob.WriterOptions{
+		ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		ContentDisposition: fmt.Sprintf(
+			"attachment; filename=work-order-%d-%s.xlsx",
+			*task.WoIDToExport,
+			time.Now().Format(time.RFC3339),
+		),
+		BeforeWrite: func(asFunc func(interface{}) bool) error {
+			var req *s3manager.UploadInput
+			if asFunc(&req) {
+				req.Tagging = aws.String("autoclean=true")
+			}
+			return nil
+		},
+	})
+	if err != nil {
+		return "", fmt.Errorf("cannot create bucket writer: %w", err)
+	}
+
+	defer func() {
+		if cerr := b.Close(); cerr != nil {
+			cerr = fmt.Errorf("cannot close writer: %w", cerr)
+			err = multierror.Append(err, cerr).ErrorOrNil()
+		}
+	}()
+
+	err = excelFile.Write(b)
+	if err != nil {
+		logger.For(ctx).Error("cannot write file to bucket", zap.Error(err))
+		return "", err
+	}
+
+	return key, nil
 }

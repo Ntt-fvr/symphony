@@ -47,7 +47,7 @@ const styles = {
   hiddenContent: {},
 };
 
-const csvFileExportQuery = graphql`
+export const csvFileExportQuery = graphql`
   query CSVFileExportQuery($taskId: ID!) {
     task: node(id: $taskId) {
       ... on ExportTask {
@@ -59,7 +59,7 @@ const csvFileExportQuery = graphql`
   }
 `;
 
-const csvFileExportKeyQuery = graphql`
+export const csvFileExportKeyQuery = graphql`
   query CSVFileExportKeyQuery($taskId: ID!) {
     task: node(id: $taskId) {
       ... on ExportTask {
@@ -97,17 +97,10 @@ const CSVFileExport = (props: Props) => {
     return f;
   });
 
-  const getFileName = () => {
-    const date = new Date();
-    const localDate = date.toLocaleDateString();
-    const localTime = new Date().toLocaleTimeString();
-    return `export-${localDate}-${localTime}.csv`;
-  };
-
   const downloadFile = (url: string) => {
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', getFileName());
+    link.setAttribute('download', '');
     link.click();
   };
 

@@ -7,7 +7,6 @@ package exporter
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"strconv"
 	"strings"
 
@@ -38,14 +37,9 @@ const (
 	SummarySheetName = "Summary"
 )
 
-func (er SingleWo) CreateExcelFile(ctx context.Context, url *url.URL) (*excelize.File, error) {
+func (er SingleWo) CreateExcelFile(ctx context.Context, id int) (*excelize.File, error) {
 	logger := er.Log.For(ctx)
 	f := excelize.NewFile()
-	id, err := strconv.Atoi(url.Query().Get("id"))
-	if err != nil {
-		logger.Error("work order ID not found", zap.Error(err))
-		return nil, fmt.Errorf("work order ID not found: %w", err)
-	}
 	client := ent.FromContext(ctx)
 	wo, err := client.WorkOrder.Get(ctx, id)
 	if err != nil {

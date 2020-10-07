@@ -7,6 +7,7 @@ package handler_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -69,6 +70,32 @@ func (s *exportTestSuite) TestWorkOrders() {
 	s.testExport(exporttask.TypeWorkOrder)
 }
 
+func (s *exportTestSuite) TestSingleWorkOrder() {
+	wo, err := s.createSingleWO()
+	s.Require().NoError(err)
+
+	task, err := s.client.ExportTask.Create().
+		SetType(exporttask.TypeSingleWorkOrder).
+		SetWoIDToExport(wo.ID).
+		SetStatus(exporttask.StatusPending).
+		Save(s.ctx)
+	s.Require().NoError(err)
+
+	evt := s.createLogEntry(task.ID)
+	err = s.handler.Handle(s.ctx, s.logger, evt)
+	s.Require().NoError(err)
+
+	task, err = s.client.ExportTask.Get(s.ctx, task.ID)
+	s.Require().NoError(err)
+	s.Require().NotNil(task.StoreKey)
+	s.Require().Equal(exporttask.StatusSucceeded, task.Status)
+
+	attrs, err := s.bucket.Attributes(s.ctx, s.tenant+"/"+*task.StoreKey)
+	s.Require().NoError(err)
+	s.Require().Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", attrs.ContentType)
+	s.Require().NotEmpty(attrs.ContentDisposition)
+}
+
 func (s *exportTestSuite) testExport(t exporttask.Type) {
 	task, err := s.createExportTask(s.ctx, s.client, t)
 	s.Require().NoError(err)
@@ -123,4 +150,22 @@ func (s *exportTestSuite) createExportTask(ctx context.Context, client *ent.Clie
 		SetType(taskType).
 		SetStatus(exporttask.StatusPending).
 		Save(ctx)
+}
+
+func (s *exportTestSuite) createSingleWO() (*ent.WorkOrder, error) {
+	wotype, err := s.client.WorkOrderType.Create().
+		SetName("woTemplate").
+		SetDescription("woTemplate = desc").
+		Save(s.ctx)
+	s.Require().NoError(err)
+
+	user := viewer.FromContext(s.ctx).(*viewer.UserViewer).User()
+	return s.client.WorkOrder.
+		Create().
+		SetName("WO").
+		SetDescription("WO - description").
+		SetCreationDate(time.Now()).
+		SetOwner(user).
+		SetType(wotype).
+		Save(s.ctx)
 }
