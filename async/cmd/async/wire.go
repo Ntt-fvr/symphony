@@ -82,7 +82,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		xserver.ServiceSet,
 		provideViews,
-		health2.NewHealthPoller,
+		health2.NewPoller,
 		wire.Struct(
 			new(handler.Config), "*",
 		),
@@ -97,25 +97,26 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	return nil, nil, nil
 }
 
-func newApplication(server *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, flags *cliFlags) *application {
+func newApplication(server *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthPoller health2.Poller, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server
+	app.server.SetHealthPoller(healthPoller)
 	app.http.Server = http
 	app.http.addr = flags.HTTPAddr
 	app.cadenceClient = cadenceClient
+	app.cadenceClient.SetHealthPoller(healthPoller)
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health2.Poller, workers []worker.Worker) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, workers []worker.Worker) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
-		CadenceAddr:  flags.CadenceAddr,
-		Domain:       flags.CadenceDomain,
-		Workers:      workers,
-		Tenancy:      tenancy,
-		Tracer:       tracer,
-		Logger:       logger,
-		HealthPoller: healthPoller,
+		CadenceAddr: flags.CadenceAddr,
+		Domain:      flags.CadenceDomain,
+		Workers:     workers,
+		Tenancy:     tenancy,
+		Tracer:      tracer,
+		Logger:      logger,
 	}
 }
 

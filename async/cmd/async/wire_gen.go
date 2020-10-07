@@ -108,10 +108,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	zapLogger := log.ProvideZapLogger(logger)
-	poller := health.NewHealthPoller(zapLogger)
 	v := newWorkers(tenancy, variable, logger)
-	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, poller, v)
+	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, v)
 	cadenceClient, cleanup7, err := worker.ProvideCadenceClient(cadenceClientConfig)
 	if err != nil {
 		cleanup6()
@@ -124,16 +122,15 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	v2 := newHandlers(bucket, flags, cadenceClient, tenancy, tracer)
 	handlerConfig := handler.Config{
-		Tenancy:      tenancy,
-		Features:     variable,
-		Receiver:     receiver,
-		Logger:       logger,
-		Handlers:     v2,
-		HealthPoller: poller,
+		Tenancy:  tenancy,
+		Features: variable,
+		Receiver: receiver,
+		Logger:   logger,
+		Handlers: v2,
 	}
 	handlerServer := handler.NewServer(handlerConfig)
 	router := mux.NewRouter()
-	xserverZapLogger := xserver.NewRequestLogger(logger)
+	zapLogger := xserver.NewRequestLogger(logger)
 	v3 := newHealthChecks(mySQLTenancy, cadenceClient)
 	v4 := provideViews()
 	config2 := flags.TelemetryConfig
@@ -164,7 +161,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
-		RequestLogger:         xserverZapLogger,
+		RequestLogger:         zapLogger,
 		HealthChecks:          v3,
 		Views:                 v4,
 		ViewExporter:          exporter,
@@ -175,7 +172,9 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Driver:                defaultDriver,
 	}
 	serverServer := server.New(router, options)
-	mainApplication := newApplication(handlerServer, serverServer, cadenceClient, zapLogger, flags)
+	logger2 := log.ProvideZapLogger(logger)
+	poller := health.NewPoller(logger2, v3)
+	mainApplication := newApplication(handlerServer, serverServer, cadenceClient, logger2, poller, flags)
 	return mainApplication, func() {
 		cleanup8()
 		cleanup7()
@@ -196,25 +195,26 @@ var (
 
 // wire.go:
 
-func newApplication(server2 *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, flags *cliFlags) *application {
+func newApplication(server2 *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthPoller health.Poller, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server2
+	app.server.SetHealthPoller(healthPoller)
 	app.http.Server = http
 	app.http.addr = flags.HTTPAddr
 	app.cadenceClient = cadenceClient
+	app.cadenceClient.SetHealthPoller(healthPoller)
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health.Poller, workers []worker.Worker) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, workers []worker.Worker) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
-		CadenceAddr:  flags.CadenceAddr,
-		Domain:       flags.CadenceDomain,
-		Workers:      workers,
-		Tenancy:      tenancy,
-		Tracer:       tracer,
-		Logger:       logger,
-		HealthPoller: healthPoller,
+		CadenceAddr: flags.CadenceAddr,
+		Domain:      flags.CadenceDomain,
+		Workers:     workers,
+		Tenancy:     tenancy,
+		Tracer:      tracer,
+		Logger:      logger,
 	}
 }
 

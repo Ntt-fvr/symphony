@@ -16,7 +16,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
-	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -34,9 +33,6 @@ func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handl
 		Logger:   logtest.NewTestLogger(t),
 		Receiver: receiver,
 		Handlers: handlers,
-		HealthPoller: health.PollerFunc(func(ctx context.Context) error {
-			return nil
-		}),
 	})
 }
 

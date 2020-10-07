@@ -7,10 +7,10 @@ package health
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"time"
 
 	"go.uber.org/zap"
+	"gocloud.dev/server/health"
 )
 
 // poller allows applications that use health checks to wait for the entire service to be ready
@@ -28,21 +28,19 @@ func (f PollerFunc) Wait(ctx context.Context) error {
 }
 
 type poller struct {
-	logger *zap.Logger
+	logger   *zap.Logger
+	checkers []health.Checker
 }
 
-func NewHealthPoller(logger *zap.Logger) Poller {
-	return poller{logger}
+func NewPoller(logger *zap.Logger, checkers []health.Checker) Poller {
+	return poller{logger, checkers}
 }
 
 func (p poller) checkHealthy() error {
-	rsp, err := http.DefaultClient.Get("http://localhost/healthz/readiness")
-	if err != nil {
-		return fmt.Errorf("failed to GET readiness check: %w", err)
-	}
-	defer rsp.Body.Close()
-	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("service is not healthy: %w", err)
+	for _, checker := range p.checkers {
+		if err := checker.CheckHealth(); err != nil {
+			return fmt.Errorf("check health failed: %w", err)
+		}
 	}
 	return nil
 }
