@@ -3331,8 +3331,16 @@ type FlowDraft implements Node {
   connectors: [Connector!]!
 }
 
+enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  CANCELLED
+}
+
 type FlowInstance implements Node {
   id: ID!
+  status: FlowInstanceStatus!
 }
 
 input AddFlowDraftInput {
@@ -3957,4 +3965,5 @@ type Mutation {
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  flowInstanceDone: FlowInstance!
 }

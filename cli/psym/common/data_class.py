@@ -22,6 +22,7 @@ from psym.graphql.enum.project_priority import ProjectPriority
 from psym.graphql.enum.property_kind import PropertyKind
 from psym.graphql.enum.user_role import UserRole
 from psym.graphql.enum.user_status import UserStatus
+from psym.graphql.enum.flow_instance_status import FlowInstanceStatus
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
 from psym.graphql.fragment.equipment_port_definition import (
@@ -580,3 +581,39 @@ class Project(NamedTuple):
     location_id: Optional[str]
     work_orders: List[WorkOrder]
     properties: Sequence[PropertyFragment]
+
+
+class FlowDraft(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Flow draft name
+    :type name: str
+    """
+
+    id: str
+    name: str
+
+
+class Flow(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Flow name
+    :type name: str
+    """
+
+    id: str
+    name: str
+
+
+class FlowInstance(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param status: status
+    :type status: class:`~psym.graphql.enum.flow_instance_status.FlowInstanceStatus`
+    """
+
+    id: str
+    status: FlowInstanceStatus

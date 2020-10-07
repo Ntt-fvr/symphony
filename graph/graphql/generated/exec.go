@@ -23,6 +23,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
@@ -503,7 +504,8 @@ type ComplexityRoot struct {
 	}
 
 	FlowInstance struct {
-		ID func(childComplexity int) int
+		ID     func(childComplexity int) int
+		Status func(childComplexity int) int
 	}
 
 	GeneralFilter struct {
@@ -1046,8 +1048,9 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		WorkOrderAdded func(childComplexity int) int
-		WorkOrderDone  func(childComplexity int) int
+		FlowInstanceDone func(childComplexity int) int
+		WorkOrderAdded   func(childComplexity int) int
+		WorkOrderDone    func(childComplexity int) int
 	}
 
 	Survey struct {
@@ -1707,6 +1710,7 @@ type ServiceTypeResolver interface {
 type SubscriptionResolver interface {
 	WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error)
 	WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error)
+	FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error)
 }
 type SurveyResolver interface {
 	CreationTimestamp(ctx context.Context, obj *ent.Survey) (*int, error)
@@ -3399,6 +3403,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FlowInstance.ID(childComplexity), true
+
+	case "FlowInstance.status":
+		if e.complexity.FlowInstance.Status == nil {
+			break
+		}
+
+		return e.complexity.FlowInstance.Status(childComplexity), true
 
 	case "GeneralFilter.boolValue":
 		if e.complexity.GeneralFilter.BoolValue == nil {
@@ -6734,6 +6745,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SubflowBlock.Params(childComplexity), true
+
+	case "Subscription.flowInstanceDone":
+		if e.complexity.Subscription.FlowInstanceDone == nil {
+			break
+		}
+
+		return e.complexity.Subscription.FlowInstanceDone(childComplexity), true
 
 	case "Subscription.workOrderAdded":
 		if e.complexity.Subscription.WorkOrderAdded == nil {
@@ -11615,8 +11633,16 @@ type FlowDraft implements Node {
   connectors: [Connector!]!
 }
 
+enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  CANCELLED
+}
+
 type FlowInstance implements Node {
   id: ID!
+  status: FlowInstanceStatus!
 }
 
 input AddFlowDraftInput {
@@ -12241,6 +12267,7 @@ type Mutation {
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  flowInstanceDone: FlowInstance!
 }
 `, BuiltIn: false},
 	{Name: "federation/directives.graphql", Input: `
@@ -24486,6 +24513,41 @@ func (ec *executionContext) _FlowInstance_id(ctx context.Context, field graphql.
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _FlowInstance_status(ctx context.Context, field graphql.CollectedField, obj *ent.FlowInstance) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "FlowInstance",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(flowinstance.Status)
+	fc.Result = res
+	return ec.marshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _GeneralFilter_filterType(ctx context.Context, field graphql.CollectedField, obj *models.GeneralFilter) (ret graphql.Marshaler) {
@@ -38652,6 +38714,51 @@ func (ec *executionContext) _Subscription_workOrderDone(ctx context.Context, fie
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
 			ec.marshalOWorkOrder2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐWorkOrder(ctx, field.Selections, res).MarshalGQL(w)
+			w.Write([]byte{'}'})
+		})
+	}
+}
+
+func (ec *executionContext) _Subscription_flowInstanceDone(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().FlowInstanceDone(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func() graphql.Marshaler {
+		res, ok := <-resTmp.(<-chan *ent.FlowInstance)
+		if !ok {
+			return nil
+		}
+		return graphql.WriterFunc(func(w io.Writer) {
+			w.Write([]byte{'{'})
+			graphql.MarshalString(field.Alias).MarshalGQL(w)
+			w.Write([]byte{':'})
+			ec.marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚐFlowInstance(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -56300,6 +56407,11 @@ func (ec *executionContext) _FlowInstance(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "status":
+			out.Values[i] = ec._FlowInstance_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60117,6 +60229,8 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_workOrderAdded(ctx, fields[0])
 	case "workOrderDone":
 		return ec._Subscription_workOrderDone(ctx, fields[0])
+	case "flowInstanceDone":
+		return ec._Subscription_flowInstanceDone(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
@@ -64342,6 +64456,16 @@ func (ec *executionContext) marshalNFlowInstance2ᚖgithubᚗcomᚋfacebookincub
 		return graphql.Null
 	}
 	return ec._FlowInstance(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx context.Context, v interface{}) (flowinstance.Status, error) {
+	var res flowinstance.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFlowInstanceStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowinstanceᚐStatus(ctx context.Context, sel ast.SelectionSet, v flowinstance.Status) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNFlowStatus2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋentᚋflowᚐStatus(ctx context.Context, v interface{}) (flow.Status, error) {

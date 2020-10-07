@@ -129,6 +129,7 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 		ContextPropagators: []workflow.ContextPropagator{
 			NewContextPropagator(cc.tenancy),
 		},
+		DisableStickyExecution: true,
 	}
 	cc.domainWorker = worker.New(cc.client, cc.domain, TaskListName, workerOptions)
 	for _, w := range cc.workers {
