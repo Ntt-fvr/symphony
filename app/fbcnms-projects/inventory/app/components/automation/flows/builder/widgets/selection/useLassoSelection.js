@@ -17,9 +17,14 @@ import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 import type {Position} from '../../canvas/graph/facades/Helpers';
 
 import Lasso from '../../canvas/graph/facades/shapes/vertexes/helpers/Lasso';
+import useKeyboardToggle from '../../../utils/useKeyboardToggle';
+import {COMMON_PREDICATES} from '../../../utils/useKeyboardShortcut';
 import {Events} from '../../canvas/graph/facades/Helpers';
-import {convertPointsToRect} from '../../../utils/helpers';
-import {useCallback, useEffect, useState} from 'react';
+import {
+  convertPointsToRect,
+  useEventRegistrationToggle,
+} from '../../../utils/helpers';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useGraph} from '../../canvas/graph/GraphContext';
 
 function createSelectionMarkup(
@@ -54,6 +59,7 @@ export default function useLassoSelection(
   selectedElements: $ReadOnlyArray<IBlock>,
   changeSelection: ChangeSelectionFunc,
 ): LassoSelectionApi {
+  const [isLassoAvailable, setIsLassoAvailable] = useState(true);
   const [selectionStart, setSelectionStart] = useState<?Position>(null);
   const [selectionEnd, setSelectionEnd] = useState<?Position>(null);
   const [
@@ -158,11 +164,28 @@ export default function useLassoSelection(
     flow,
   ]);
 
-  useEffect(() => {
-    flow.onPaperEvent(Events.Paper.BackdropMouseDown, onDragStartHandler);
-    flow.onPaperEvent(Events.Paper.BackdropMouseDrag, onDragHandler);
-    flow.onPaperEvent(Events.Paper.BackdropMouseUp, onDragDoneHandler);
-  }, [onDragStartHandler, onDragHandler, flow, onDragDoneHandler]);
+  const allowLasso = useCallback(() => setIsLassoAvailable(true), []);
+  const blockLasso = useCallback(() => {
+    stopSelection();
+    setIsLassoAvailable(false);
+  }, [stopSelection]);
+
+  useKeyboardToggle(COMMON_PREDICATES.spaceIsPressed, blockLasso, allowLasso);
+
+  const dragMouseEvents = useMemo(
+    () => [
+      {name: Events.Paper.BackdropMouseDown, handler: onDragStartHandler},
+      {name: Events.Paper.BackdropMouseDrag, handler: onDragHandler},
+      {name: Events.Paper.BackdropMouseUp, handler: onDragDoneHandler},
+    ],
+    [onDragHandler, onDragStartHandler, onDragDoneHandler],
+  );
+  useEventRegistrationToggle(
+    flow.onPaperEvent,
+    flow.offPaperEvent,
+    dragMouseEvents,
+    isLassoAvailable,
+  );
 
   const checkIfElementShouldBeIgnored = useCallback(
     (element: ?IBlock) =>

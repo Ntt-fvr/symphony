@@ -22,9 +22,14 @@ import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
+const defaultAttrProps = {
+  cursor: 'move',
+};
+
 export const VERTEX_COMMON_DISPLAY = {
   attrs: {
     label: {
+      ...defaultAttrProps,
       text: 'manual action',
       textVerticalAnchor: 'middle',
       textAnchor: 'center',
@@ -33,6 +38,7 @@ export const VERTEX_COMMON_DISPLAY = {
       fill: symphony.palette.secondary,
     },
   },
+  defaultAttrProps,
   markup: [
     {
       tagName: 'text',

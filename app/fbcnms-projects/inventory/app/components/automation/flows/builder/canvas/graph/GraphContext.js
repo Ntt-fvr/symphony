@@ -127,6 +127,7 @@ export type GraphContextType = {
   onGraphBlockEvent: (GraphEvent, GraphBlockEventCallback) => void,
   onGraphConnectorEvent: (GraphEvent, GraphConnectorEventCallback) => void,
   onPaperEvent: (PaperEvent, PaperEventCallback) => void,
+  offPaperEvent: (PaperEvent, PaperEventCallback) => void,
   onBlockEvent: (BlockEvent, BlockEventCallback) => void,
   onBlockPortEvent: (BlockEvent, BlockPortEventCallback) => void,
   onConnectorEvent: (ConnectorEvent, ConnectorEventCallback) => void,
@@ -158,6 +159,7 @@ const GraphContextDefaults = {
   onBlockPortEvent: emptyFunction,
   onConnectorEvent: emptyFunction,
   onPaperEvent: emptyFunction,
+  offPaperEvent: emptyFunction,
   onGraphBlockEvent: emptyFunction,
   onGraphConnectorEvent: emptyFunction,
   serialize: () => emptySerialization,
@@ -401,6 +403,13 @@ function paperOnPaperEvent(event: PaperEvent, handler: PaperEventCallback) {
     return;
   }
   this.current.paper.on(event, handler);
+}
+
+function paperOffPaperEvent(event: PaperEvent, handler: PaperEventCallback) {
+  if (this.current == null) {
+    return;
+  }
+  this.current.paper.off(event, handler);
 }
 
 function paperOnConnectorEvent(
@@ -664,6 +673,7 @@ export function GraphContextProvider(props: Props) {
   const onBlockPortEvent = paperOnBlockPortEvent.bind(flowWrapper);
   const onConnectorEvent = paperOnConnectorEvent.bind(flowWrapper);
   const onPaperEvent = paperOnPaperEvent.bind(flowWrapper);
+  const offPaperEvent = paperOffPaperEvent.bind(flowWrapper);
   const onGraphBlockEvent = graphOnGraphBlockEvent.bind(flowWrapper);
   const onGraphConnectorEvent = graphOnGraphConnectorEvent.bind(flowWrapper);
   const serialize = graphSerialize.bind(flowWrapper);
@@ -696,6 +706,7 @@ export function GraphContextProvider(props: Props) {
     onBlockPortEvent,
     onConnectorEvent,
     onPaperEvent,
+    offPaperEvent,
     onGraphBlockEvent,
     onGraphConnectorEvent,
     serialize,

@@ -14,6 +14,7 @@ import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
 import React, {useEffect, useState} from 'react';
 import TopBar from './tools/TopBar';
+import usePaperGrab from './widgets/navigation/usePaperGrab';
 import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FlowDataContextProvider} from '../data/FlowDataContext';
@@ -67,7 +68,6 @@ export default function FlowBuilder() {
   const showDialog = () => setDialogOpen(true);
   const hideDialog = () => setDialogOpen(false);
 
-  const classes = useStyles();
   const location = useLocation();
   const history = useHistory();
   const queryParams = new URLSearchParams(location.search);
@@ -92,14 +92,7 @@ export default function FlowBuilder() {
         <DialogShowingContextProvider>
           <GraphSelectionContextProvider>
             <DetailsPanelContextProvider>
-              <div className={classes.root}>
-                <BlocksBar />
-                <div className={classes.workspace}>
-                  <TopBar />
-                  <Canvas />
-                  <BottomBar />
-                </div>
-              </div>
+              <FlowBuilderLayout />
               <AddFlowDialog
                 open={dialogOpen}
                 onClose={hideDialog}
@@ -113,5 +106,22 @@ export default function FlowBuilder() {
         </DialogShowingContextProvider>
       </FlowDataContextProvider>
     </GraphContextProvider>
+  );
+}
+
+function FlowBuilderLayout() {
+  const classes = useStyles();
+
+  usePaperGrab();
+
+  return (
+    <div className={classes.root}>
+      <BlocksBar />
+      <div className={classes.workspace}>
+        <TopBar />
+        <Canvas />
+        <BottomBar />
+      </div>
+    </div>
   );
 }

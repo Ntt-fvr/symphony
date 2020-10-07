@@ -9,6 +9,8 @@
  */
 import type {Position, Rect} from '../builder/canvas/graph/facades/Helpers';
 
+import {useEffect} from 'react';
+
 export function getRectDiff(rectA: Rect, rectB: Rect): Rect {
   return {
     x: rectB.x - rectA.x,
@@ -37,4 +39,16 @@ export function convertPointsToRect(pt1: Position, pt2: Position): Rect {
     width: maxX - minX,
     height: maxY - minY,
   };
+}
+
+export function useEventRegistrationToggle<E, H>(
+  registerFunc: (E, H) => void,
+  unregisterFunc: (E, H) => void,
+  events: $ReadOnlyArray<{name: E, handler: H}>,
+  toggleFlag: boolean,
+) {
+  useEffect(() => {
+    const eventRegistrationToggle = toggleFlag ? registerFunc : unregisterFunc;
+    events.forEach(event => eventRegistrationToggle(event.name, event.handler));
+  }, [registerFunc, unregisterFunc, events, toggleFlag]);
 }

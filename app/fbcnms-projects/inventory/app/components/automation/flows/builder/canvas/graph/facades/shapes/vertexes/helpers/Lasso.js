@@ -13,12 +13,14 @@ import type {IVertexModel} from '../BaseVertext';
 
 import * as jointJS from 'jointjs';
 import symphony from '@symphony/design-system/theme/symphony';
+import {VERTEX_COMMON_DISPLAY} from '../BaseVertext';
 
 export const TYPE = 'helpers.Lasso';
 
 const defaultProperties = {
   attrs: {
     body: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       refWidth: '100%',
       refHeight: '100%',
       strokeWidth: 1,
