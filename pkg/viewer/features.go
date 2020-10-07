@@ -17,6 +17,7 @@ import (
 const (
 	FeatureMandatoryPropertiesOnWorkOrderClose = "mandatory_properties_on_work_order_close"
 	FeatureNewWorkOrderStatuses                = "workorder_new_status"
+	FeatureExecuteAutomationFlows              = "execute_automation_flows"
 )
 
 // How frequently the features variable is updated by http calls

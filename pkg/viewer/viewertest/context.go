@@ -35,6 +35,7 @@ type Option func(*options)
 var DefaultFeatures = []string{
 	viewer.FeatureMandatoryPropertiesOnWorkOrderClose,
 	viewer.FeatureNewWorkOrderStatuses,
+	viewer.FeatureExecuteAutomationFlows,
 }
 
 // WithTenant overrides default tenant name.

@@ -31,8 +31,11 @@ import (
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
+	"go.uber.org/cadence/client"
+	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
+	"gocloud.dev/runtimevar"
 	"gocloud.dev/server/health"
 )
 
@@ -84,6 +87,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
+		newWorkers,
 		provideCadenceConfig,
 		worker.ProvideCadenceClient,
 		newBucket,
@@ -103,10 +107,11 @@ func newApplication(server *handler.Server, http *server.Server, cadenceClient *
 	return &app
 }
 
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health2.Poller) worker.CadenceClientConfig {
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health2.Poller, workers []worker.Worker) worker.CadenceClientConfig {
 	return worker.CadenceClientConfig{
 		CadenceAddr:  flags.CadenceAddr,
 		Domain:       flags.CadenceDomain,
+		Workers:      workers,
 		Tenancy:      tenancy,
 		Tracer:       tracer,
 		Logger:       logger,
@@ -154,7 +159,7 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket, flags *cliFlags) []handler.Handler {
+func newHandlers(bucket *blob.Bucket, flags *cliFlags, cadenceClient *worker.CadenceClient, tenancy viewer.Tenancy, tracer opentracing.Tracer) []handler.Handler {
 	return []handler.Handler{
 		handler.New(handler.HandleConfig{
 			Name:    "activity_log",
@@ -164,5 +169,24 @@ func newHandlers(bucket *blob.Bucket, flags *cliFlags) []handler.Handler {
 			Name:    "export_task",
 			Handler: handler.NewExportHandler(bucket, flags.ExportBucketPrefix),
 		}, handler.WithTransaction(false)),
+		handler.New(handler.HandleConfig{
+			Name: "flow",
+			Handler: handler.NewFlowHandler(cadenceClient.GetClient(&client.Options{
+				Tracer: tracer,
+				ContextPropagators: []workflow.ContextPropagator{
+					worker.NewContextPropagator(tenancy),
+				},
+			})),
+		}, handler.WithTransaction(false)),
+	}
+}
+
+func newWorkers(tenancy viewer.Tenancy, features *runtimevar.Variable, logger log.Logger) []worker.Worker {
+	return []worker.Worker{
+		worker.NewFlowWorker(worker.FlowWorkerConfig{
+			Tenancy:  tenancy,
+			Features: features,
+			Logger:   logger,
+		}),
 	}
 }
