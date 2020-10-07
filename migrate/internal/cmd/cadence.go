@@ -6,18 +6,17 @@ package cmd
 
 import (
 	"github.com/AlekSi/pointer"
+	"github.com/facebookincubator/symphony/pkg/cadence"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 	"go.uber.org/cadence/.gen/go/shared"
 	"go.uber.org/cadence/client"
-	"go.uber.org/yarpc"
-	"go.uber.org/yarpc/transport/tchannel"
 	"go.uber.org/zap"
 )
 
 // CadenceCmd implements migrate cadence command.
 type CadenceCmd struct {
-	Address   string `name:"address" placeholder:"<address>" required:"" help:"Cadence server address."`
-	Domain    string `name:"domain" placeholder:"<domain>" required:"" help:"Cadence domain name."`
+	Address   string `name:"address" placeholder:"<address>" required:"" env:"CADENCE_ADDR" help:"Cadence server address."`
+	Domain    string `name:"domain" placeholder:"<domain>" required:"" env:"CADENCE_DOMAIN" help:"Cadence domain name."`
 	Retention int32  `name:"retention" placeholder:"<days>" env:"CADENCE_RETENTION" help:"Cadence retention in days."`
 }
 
@@ -26,7 +25,7 @@ func (c *CadenceCmd) Run(ctx *Context) error {
 	ctx.Info("creating cadence client",
 		zap.String("address", c.Address),
 	)
-	cc, cleanup, err := c.client(ctx)
+	cc, cleanup, err := cadence.ProvideClient(ctx.Logger, c.Address)
 	if err != nil {
 		return err
 	}
@@ -39,35 +38,6 @@ func (c *CadenceCmd) Run(ctx *Context) error {
 		return err
 	}
 	return nil
-}
-
-const (
-	cadenceClientName      = "cadence-client"
-	cadenceFrontendService = "cadence-frontend"
-)
-
-func (c *CadenceCmd) client(ctx *Context) (workflowserviceclient.Interface, func(), error) {
-	ch, err := tchannel.NewChannelTransport(
-		tchannel.ServiceName(cadenceClientName))
-	if err != nil {
-		ctx.Error("cannot create transport channel", zap.Error(err))
-		return nil, nil, err
-	}
-	dispatcher := yarpc.NewDispatcher(yarpc.Config{
-		Name: cadenceClientName,
-		Outbounds: yarpc.Outbounds{
-			cadenceFrontendService: {
-				Unary: ch.NewSingleOutbound(c.Address),
-			},
-		},
-	})
-	if err := dispatcher.Start(); err != nil {
-		ctx.Error("cannot start dispatcher", zap.Error(err))
-		return nil, nil, err
-	}
-	return workflowserviceclient.New(dispatcher.ClientConfig(cadenceFrontendService)), func() {
-		_ = dispatcher.Stop()
-	}, nil
 }
 
 func (c *CadenceCmd) register(ctx *Context, cc workflowserviceclient.Interface) error {

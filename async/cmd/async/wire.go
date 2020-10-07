@@ -12,11 +12,13 @@ import (
 	"net/http"
 
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	health2 "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
@@ -24,6 +26,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
@@ -76,10 +79,13 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		xserver.ServiceSet,
 		provideViews,
+		health2.NewHealthPoller,
 		wire.Struct(
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
+		provideCadenceConfig,
+		worker.ProvideCadenceClient,
 		newBucket,
 		newHandlers,
 		newApplication,
@@ -87,13 +93,25 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	return nil, nil, nil
 }
 
-func newApplication(server *handler.Server, http *server.Server, logger *zap.Logger, flags *cliFlags) *application {
+func newApplication(server *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server
 	app.http.Server = http
 	app.http.addr = flags.HTTPAddr
+	app.cadenceClient = cadenceClient
 	return &app
+}
+
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health2.Poller) worker.CadenceClientConfig {
+	return worker.CadenceClientConfig{
+		CadenceAddr:  flags.CadenceAddr,
+		Domain:       flags.CadenceDomain,
+		Tenancy:      tenancy,
+		Tracer:       tracer,
+		Logger:       logger,
+		HealthPoller: healthPoller,
+	}
 }
 
 func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
@@ -103,8 +121,8 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
-	return []health.Checker{tenancy}
+func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.CadenceClient) []health.Checker {
+	return []health.Checker{tenancy, cadenceClient}
 }
 
 func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {

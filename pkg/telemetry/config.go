@@ -80,4 +80,5 @@ var Provider = wire.NewSet(
 	ProvideTraceExporter,
 	ProvideTraceSampler,
 	ProvideViewExporter,
+	ProvideJaegerTracer,
 )

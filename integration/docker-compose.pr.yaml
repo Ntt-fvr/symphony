@@ -59,17 +59,31 @@ services:
     environment:
       - WS_AUTH_URL=http://front/user/me
     depends_on:
-      - migrate
+      - migrate-graph
       - mysql
       - nats
       - async
     healthcheck: *healthcheck
     restart: on-failure
 
-  migrate:
+  cadence:
+    image: ubercadence/server:0.14.1-auto-setup
+    ports:
+      - 7933:7933
+      - 7934:7934
+      - 7935:7935
+      - 7939:7939
+      - 9090:9090
+    env_file:
+      - conf/cadence.env
+    depends_on:
+      - mysql
+
+  migrate-graph:
     build:
       context: ..
       dockerfile: migrate/Dockerfile
+    image: integration_migrate
     env_file:
       - conf/log.env
     command:
@@ -81,6 +95,20 @@ services:
       - mysql
     restart: on-failure
 
+  migrate-cadence:
+    build:
+      context: ..
+      dockerfile: migrate/Dockerfile
+    image: integration_migrate
+    env_file:
+      - conf/log.env
+      - conf/cadence_client.env
+    command:
+      - "cadence"
+    depends_on:
+      - cadence
+    restart: on-failure
+
   async:
     build:
       context: ..
@@ -89,9 +117,12 @@ services:
       - conf/async.env
       - conf/db.env
       - conf/log.env
+      - conf/cadence_client.env
     environment:
       - FEATURES_URL=http://front:1030/features
     depends_on:
+      - migrate-graph
+      - migrate-cadence
       - mysql
       - nats
       - front

@@ -9,11 +9,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/mysql"
@@ -23,10 +25,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
+	"github.com/opentracing/opentracing-go"
 	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
-	"gocloud.dev/server/health"
+	health2 "gocloud.dev/server/health"
 )
 
 import (
@@ -93,20 +96,21 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	v := newHandlers(bucket, flags)
+	zapLogger := log.ProvideZapLogger(logger)
+	poller := health.NewHealthPoller(zapLogger)
 	handlerConfig := handler.Config{
-		Tenancy:  tenancy,
-		Features: variable,
-		Receiver: receiver,
-		Logger:   logger,
-		Handlers: v,
+		Tenancy:      tenancy,
+		Features:     variable,
+		Receiver:     receiver,
+		Logger:       logger,
+		Handlers:     v,
+		HealthPoller: poller,
 	}
 	handlerServer := handler.NewServer(handlerConfig)
 	router := mux.NewRouter()
-	zapLogger := xserver.NewRequestLogger(logger)
-	v2 := newHealthChecks(mySQLTenancy)
-	v3 := provideViews()
-	telemetryConfig := flags.TelemetryConfig
-	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	xserverZapLogger := xserver.NewRequestLogger(logger)
+	telemetryConfig := &flags.TelemetryConfig
+	tracer, cleanup6, err := telemetry.ProvideJaegerTracer(telemetryConfig)
 	if err != nil {
 		cleanup5()
 		cleanup4()
@@ -115,8 +119,35 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup6, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	cadenceClientConfig := provideCadenceConfig(flags, tenancy, tracer, logger, poller)
+	cadenceClient, cleanup7, err := worker.ProvideCadenceClient(cadenceClientConfig)
 	if err != nil {
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := newHealthChecks(mySQLTenancy, cadenceClient)
+	v3 := provideViews()
+	config2 := flags.TelemetryConfig
+	exporter, err := telemetry.ProvideViewExporter(config2)
+	if err != nil {
+		cleanup7()
+		cleanup6()
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	traceExporter, cleanup8, err := telemetry.ProvideTraceExporter(config2)
+	if err != nil {
+		cleanup7()
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -125,11 +156,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	profilingEnabler := _wireProfilingEnablerValue
-	sampler := telemetry.ProvideTraceSampler(telemetryConfig)
+	sampler := telemetry.ProvideTraceSampler(config2)
 	handlerFunc := xserver.NewRecoveryHandler(logger)
 	defaultDriver := _wireDefaultDriverValue
 	options := &server.Options{
-		RequestLogger:         zapLogger,
+		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v2,
 		Views:                 v3,
 		ViewExporter:          exporter,
@@ -140,9 +171,10 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Driver:                defaultDriver,
 	}
 	serverServer := server.New(router, options)
-	logger2 := log.ProvideZapLogger(logger)
-	mainApplication := newApplication(handlerServer, serverServer, logger2, flags)
+	mainApplication := newApplication(handlerServer, serverServer, cadenceClient, zapLogger, flags)
 	return mainApplication, func() {
+		cleanup8()
+		cleanup7()
 		cleanup6()
 		cleanup5()
 		cleanup4()
@@ -160,13 +192,25 @@ var (
 
 // wire.go:
 
-func newApplication(server2 *handler.Server, http *server.Server, logger *zap.Logger, flags *cliFlags) *application {
+func newApplication(server2 *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server2
 	app.http.Server = http
 	app.http.addr = flags.HTTPAddr
+	app.cadenceClient = cadenceClient
 	return &app
+}
+
+func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, healthPoller health.Poller) worker.CadenceClientConfig {
+	return worker.CadenceClientConfig{
+		CadenceAddr:  flags.CadenceAddr,
+		Domain:       flags.CadenceDomain,
+		Tenancy:      tenancy,
+		Tracer:       tracer,
+		Logger:       logger,
+		HealthPoller: healthPoller,
+	}
 }
 
 func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
@@ -176,8 +220,8 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
-	return []health.Checker{tenancy}
+func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.CadenceClient) []health2.Checker {
+	return []health2.Checker{tenancy, cadenceClient}
 }
 
 func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {

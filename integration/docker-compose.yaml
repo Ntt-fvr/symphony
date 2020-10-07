@@ -76,7 +76,7 @@ services:
     volumes:
       - ${HOME}/magma_certs:/magma_certs:ro
     depends_on:
-      - migrate
+      - migrate-graph
       - mysql
       - nats
       - async
@@ -93,18 +93,20 @@ services:
       - conf/db.env
       - conf/log.env
       - conf/telemetry.env
+      - conf/cadence_client.env
     networks:
       - private
       - public
     depends_on:
-      - migrate
+      - migrate-graph
+      - migrate-cadence
       - mysql
       - nats
       - platform-server
     healthcheck: *healthcheck
     restart: on-failure
 
-  migrate:
+  migrate-graph:
     build:
       context: ..
       dockerfile: migrate/Dockerfile
@@ -120,6 +122,22 @@ services:
       - private
     depends_on:
       - mysql
+    restart: on-failure
+
+  migrate-cadence:
+    build:
+      context: ..
+      dockerfile: migrate/Dockerfile
+    image: integration_migrate
+    env_file:
+      - conf/log.env
+      - conf/cadence_client.env
+    command:
+      - "cadence"
+    networks:
+      - private
+    depends_on:
+      - cadence
     restart: on-failure
 
   store:
@@ -214,6 +232,9 @@ services:
     image: prom/prometheus
     networks:
       - private
+      - public
+    ports:
+      - 9090:9090
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     restart: on-failure
@@ -223,6 +244,33 @@ services:
     networks:
       - private
     restart: on-failure
+
+  cadence:
+    image: ubercadence/server:0.14.1-auto-setup
+    ports:
+      - 7933:7933
+      - 7934:7934
+      - 7935:7935
+      - 7939:7939
+      - 9090:9090
+    networks:
+      - private
+    env_file:
+      - conf/cadence.env
+    depends_on:
+      - mysql
+
+  cadence-web:
+    image: ubercadence/web:latest
+    environment:
+      - "CADENCE_TCHANNEL_PEERS=cadence:7933"
+    ports:
+      - 8088:8088
+    networks:
+      - private
+      - public
+    depends_on:
+      - cadence
 
 networks:
   public:

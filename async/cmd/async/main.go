@@ -13,8 +13,10 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ctxgroup"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
+	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
@@ -22,10 +24,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.uber.org/zap"
-
-	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
 	_ "github.com/go-sql-driver/mysql"
+	"go.uber.org/zap"
 	_ "gocloud.dev/blob/s3blob"
 	_ "gocloud.dev/pubsub/mempubsub"
 	_ "gocloud.dev/pubsub/natspubsub"
@@ -39,6 +39,8 @@ type cliFlags struct {
 	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
 	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
+	CadenceAddr        string           `name:"cadence.addr" env:"CADENCE_ADDR" required:"" help:"Cadence server address."`
+	CadenceDomain      string           `name:"cadence.domain" env:"CADENCE_DOMAIN" required:"" help:"Cadence domain name."`
 	LogConfig          log.Config       `embed:""`
 	TelemetryConfig    telemetry.Config `embed:""`
 	TenancyConfig      viewer.Config    `embed:""`
@@ -73,7 +75,8 @@ type application struct {
 		*server.Server
 		addr string
 	}
-	server *handler.Server
+	server        *handler.Server
+	cadenceClient *worker.CadenceClient
 }
 
 func (app *application) run(ctx context.Context) error {
@@ -87,6 +90,11 @@ func (app *application) run(ctx context.Context) error {
 	g.Go(func(ctx context.Context) error {
 		err := app.server.Serve(ctx)
 		app.logger.Debug("event server terminated", zap.Error(err))
+		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		err := app.cadenceClient.Run(ctx)
+		app.logger.Debug("cadence client terminated", zap.Error(err))
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
@@ -112,6 +120,12 @@ func (app *application) run(ctx context.Context) error {
 		err := app.server.Shutdown(context.Background())
 		app.logger.Debug("end event server termination", zap.Error(err))
 		return err
+	})
+	g.Go(func(context.Context) error {
+		app.logger.Debug("start cadence client termination")
+		app.cadenceClient.Shutdown()
+		app.logger.Debug("end cadence client termination")
+		return nil
 	})
 	return g.Wait()
 }
