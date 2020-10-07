@@ -61,7 +61,7 @@ spec:
             {{- end }}
           envFrom:
             - secretRef:
-                name: {{ template "symphony.graphDB.secretName" . }}
+                name: {{ template "symphony.database.secretName" . }}
           ports:
             - name: http
               containerPort: {{ .Values.graph.service.targetPort }}

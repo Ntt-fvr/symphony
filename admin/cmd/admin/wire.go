@@ -10,12 +10,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/url"
 
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -30,11 +32,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
 			"ListenAddress",
-			"MySQLConfig",
+			"DatabaseURL",
 			"LogConfig",
 			"TelemetryConfig",
 		),
-		provideDB,
+		mysql.Provide,
 		provideTenancy,
 		log.Provider,
 		provideHealthCheckers,
@@ -64,18 +66,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	return nil, nil, nil
 }
 
-func provideDB(cfg mysql.Config) (*sql.DB, func()) {
-	db, cleanup := mysql.Provider(cfg)
-	db.SetMaxOpenConns(1)
-	return db, cleanup
-}
-
-func provideTenancy(cfg mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 5)
+func provideTenancy(ctx context.Context, u *url.URL) (viewer.Tenancy, error) {
+	tenancy, err := viewer.NewMySQLTenancy(ctx, u, 5)
 	if err != nil {
 		return nil, err
 	}
-	mysql.SetLogger(logger)
 	return viewer.NewCacheTenancy(tenancy, nil), nil
 }
 
@@ -85,6 +80,6 @@ func provideHealthCheckers(db *sql.DB) []health.Checker {
 
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	return views
 }

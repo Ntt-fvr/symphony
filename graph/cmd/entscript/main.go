@@ -6,7 +6,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -17,10 +16,10 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 
@@ -29,7 +28,7 @@ import (
 
 func main() { // nolint: funlen
 	var cli struct {
-		DSN        string     `name:"db-dsn" env:"MYSQL_DSN" required:"" help:"Data source name."`
+		Database   *url.URL   `name:"db-url" env:"DB_URL" required:"" help:"Database URL."`
 		Tenant     string     `xor:"tenant" help:"Tenant name to target."`
 		AllTenants bool       `xor:"tenant" help:"Target all tenants."`
 		Features   *url.URL   `name:"features-url" help:"Endpoint to fetch features flags from."`
@@ -56,19 +55,18 @@ func main() { // nolint: funlen
 		os.Interrupt,
 	)
 
-	logger := func() *zap.Logger {
-		logger, _, _ := log.ProvideLogger(cli.LogConfig)
-		mysql.SetLogger(logger)
-		return logger.Background()
-	}()
+	logger := log.MustNew(cli.LogConfig).
+		Background()
 	logger.Info("params",
-		zap.String("dsn", cli.DSN),
+		zap.Stringer("dsn", cli.Database),
 		zap.String("tenant", cli.Tenant),
 		zap.Bool("all_tenants", cli.AllTenants),
 		zap.String("user", cli.User),
 	)
 
-	tenancy, err := viewer.NewMySQLTenancy(cli.DSN, 1)
+	tenancy, err := viewer.NewMySQLTenancy(
+		ctx, cli.Database, 1,
+	)
 	if err != nil {
 		logger.Fatal("cannot connect to graph database",
 			zap.Error(err),
@@ -77,9 +75,9 @@ func main() { // nolint: funlen
 
 	var tenants []string
 	if cli.AllTenants {
-		db, err := sql.Open("mysql", cli.DSN)
+		db, err := mysql.OpenURL(ctx, cli.Database)
 		if err != nil {
-			logger.Fatal("cannot connect to mysql database",
+			logger.Fatal("cannot open mysql database",
 				zap.Error(err),
 			)
 		}

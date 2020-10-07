@@ -265,7 +265,7 @@ jobs:
       - run:
           name: Unit tests
           environment:
-            MYSQL_DSN: root:root@tcp(localhost:3306)/circle_test?parseTime=True
+            DB_URL: mysql://root:root@localhost:3306/circle_test?parseTime=True
           command: gotestsum -f short-verbose --junitfile ~/test-results/unit.xml
       - *storetestdir
 

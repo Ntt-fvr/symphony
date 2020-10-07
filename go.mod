@@ -47,7 +47,7 @@ require (
 	github.com/uber/tchannel-go v1.20.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
-	go.opencensus.io v0.22.4
+	go.opencensus.io v0.22.5
 	go.uber.org/cadence v0.13.4
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/yarpc v1.47.2

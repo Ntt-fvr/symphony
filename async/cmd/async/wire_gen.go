@@ -7,6 +7,7 @@ package main
 
 import (
 	"context"
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"fmt"
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
@@ -18,7 +19,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
@@ -46,16 +46,16 @@ import (
 // Injectors from wire.go:
 
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
-	config := flags.MySQLConfig
-	viewerConfig := flags.TenancyConfig
-	logConfig := flags.LogConfig
-	logger, cleanup, err := log.ProvideLogger(logConfig)
+	url := flags.DatabaseURL
+	config := flags.TenancyConfig
+	int2 := config.TenantMaxConn
+	mySQLTenancy, err := viewer.NewMySQLTenancy(ctx, url, int2)
 	if err != nil {
 		return nil, nil, err
 	}
-	mySQLTenancy, err := newMySQLTenancy(config, viewerConfig, logger)
+	logConfig := flags.LogConfig
+	logger, cleanup, err := log.ProvideLogger(logConfig)
 	if err != nil {
-		cleanup()
 		return nil, nil, err
 	}
 	topicFactory := flags.EventPubURL
@@ -75,7 +75,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		ActionFactory:  actionsFactory,
 	}
 	tenancy := newTenancy(mySQLTenancy, eventer, flower)
-	variable, cleanup3, err := viewer.SyncFeatures(viewerConfig)
+	variable, cleanup3, err := viewer.SyncFeatures(config)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -229,18 +229,9 @@ func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.Cadence
 	return []health2.Checker{tenancy, cadenceClient}
 }
 
-func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(mySQLConfig.String(), tenancyConfig.TenantMaxConn)
-	if err != nil {
-		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
-	}
-	mysql.SetLogger(logger)
-	return tenancy, nil
-}
-
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views

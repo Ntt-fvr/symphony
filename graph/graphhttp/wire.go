@@ -10,11 +10,11 @@ import (
 	"net/http"
 	"net/url"
 
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
@@ -63,7 +63,7 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views

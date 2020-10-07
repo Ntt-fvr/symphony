@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -21,7 +22,6 @@ import (
 	health2 "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
@@ -43,7 +43,7 @@ import (
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
-			"MySQLConfig",
+			"DatabaseURL",
 			"LogConfig",
 			"EventPubURL",
 			"TelemetryConfig",
@@ -56,7 +56,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"*",
 		),
 		viewer.SyncFeatures,
-		newMySQLTenancy,
+		viewer.NewMySQLTenancy,
+		wire.FieldsOf(
+			new(viewer.Config),
+			"TenantMaxConn",
+		),
 		ev.ProvideEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
@@ -130,18 +134,9 @@ func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.Cadence
 	return []health.Checker{tenancy, cadenceClient}
 }
 
-func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(mySQLConfig.String(), tenancyConfig.TenantMaxConn)
-	if err != nil {
-		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
-	}
-	mysql.SetLogger(logger)
-	return tenancy, nil
-}
-
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views

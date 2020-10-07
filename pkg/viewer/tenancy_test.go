@@ -8,6 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"net/url"
 	"os"
 	"regexp"
 	"strconv"
@@ -16,6 +17,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/cenkalti/backoff/v4"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/mocks"
@@ -83,20 +85,25 @@ func createMySQLDatabase(db *sql.DB) (string, func() error, error) {
 }
 
 func TestMySQLTenancy(t *testing.T) {
-	dsn, ok := os.LookupEnv("MYSQL_DSN")
+	dburl, ok := os.LookupEnv("DB_URL")
 	if !ok {
-		t.Skip("MYSQL_DSN not provided")
+		t.Skip("provide $DB_URL env to enable this test")
 	}
-
-	db, err := sql.Open("mysql", dsn)
+	u, err := url.Parse(dburl)
 	require.NoError(t, err)
-	tenancy, err := viewer.NewMySQLTenancy(dsn, 10)
+
+	ctx := context.Background()
+	db, err := mysql.OpenURL(ctx, u)
+	require.NoError(t, err)
+	tenancy, err := viewer.NewMySQLTenancy(ctx, u, 1)
 	require.NoError(t, err)
 
 	require.Implements(t, (*health.Checker)(nil), tenancy)
-	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
 	defer cancel()
-	b := backoff.WithContext(backoff.NewConstantBackOff(10*time.Millisecond), ctx)
+	b := backoff.WithContext(
+		backoff.NewConstantBackOff(10*time.Millisecond), ctx,
+	)
 	err = backoff.Retry(tenancy.CheckHealth, b)
 	require.NoError(t, err)
 
@@ -111,10 +118,10 @@ func TestMySQLTenancy(t *testing.T) {
 		require.NoError(t, cleaner())
 	}(cleaner)
 
-	c1, err := tenancy.ClientFor(context.Background(), n1)
+	c1, err := tenancy.ClientFor(ctx, n1)
 	require.NotNil(t, c1)
 	require.NoError(t, err)
-	c2, err := tenancy.ClientFor(context.Background(), n2)
+	c2, err := tenancy.ClientFor(ctx, n2)
 	require.NoError(t, err)
 	require.True(t, c1 != c2)
 }

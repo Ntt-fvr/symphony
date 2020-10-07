@@ -8,7 +8,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
@@ -18,7 +17,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 
 	"github.com/google/wire"
@@ -29,12 +27,10 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
 			"ListenAddress",
-			"MySQLConfig",
 			"AuthURL",
 			"EventPubsubURL",
 			"LogConfig",
 			"TelemetryConfig",
-			"TenancyConfig",
 		),
 		log.Provider,
 		wire.Struct(
@@ -46,8 +42,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(event.Eventer),
 			"*",
 		),
-		newHealthChecks,
 		newMySQLTenancy,
+		newHealthChecks,
 		ev.ProvideEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
@@ -78,15 +74,10 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
-	return []health.Checker{tenancy}
+func newMySQLTenancy(ctx context.Context, flags *cliFlags) (*viewer.MySQLTenancy, error) {
+	return viewer.NewMySQLTenancy(ctx, flags.DatabaseURL, flags.TenancyConfig.TenantMaxConn)
 }
 
-func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(mySQLConfig.String(), tenancyConfig.TenantMaxConn)
-	if err != nil {
-		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
-	}
-	mysql.SetLogger(logger)
-	return tenancy, nil
+func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
+	return []health.Checker{tenancy}
 }

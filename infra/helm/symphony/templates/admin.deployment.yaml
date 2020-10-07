@@ -50,7 +50,7 @@ spec:
           {{- include "symphony.tracingEnv" . | nindent 12 }}
           envFrom:
             - secretRef:
-                name: {{ template "symphony.graphDB.secretName" . }}
+                name: {{ template "symphony.database.secretName" . }}
           ports:
             - containerPort: {{ .Values.admin.service.targetPort }}
               name: http

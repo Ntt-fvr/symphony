@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "2.3.0"
+  version             = "3.0.0"
   timeout             = 600
   max_history         = 100
 
@@ -146,14 +146,6 @@ resource helm_release symphony {
         jaeger = {
           agentEndpoint       = "localhost:6831"
           agentThriftEndpoint = "localhost:6832"
-        }
-      }
-      graphDB = {
-        mysql = {
-          host  = module.graph_db.this_db_instance_address
-          port  = module.graph_db.this_db_instance_port
-          user  = module.graph_db.this_db_instance_username
-          param = "charset=utf8&parseTime=true&interpolateParams=true"
         }
       }
       persistence = {
@@ -268,8 +260,8 @@ resource helm_release symphony {
       jobrunner = {
         resources = {
           limits = {
-            cpu    = "200m"
-            memory = "256Mi"
+            cpu    = "10m"
+            memory = "64Mi"
           }
         }
       }
@@ -287,10 +279,6 @@ resource helm_release symphony {
   set_sensitive {
     name  = "front.spec.mysql.pass"
     value = module.front_db.this_db_instance_password
-  }
-  set_sensitive {
-    name  = "graphDB.mysql.pass"
-    value = module.graph_db.this_db_instance_password
   }
   set_sensitive {
     name  = "persistence.database.pass"

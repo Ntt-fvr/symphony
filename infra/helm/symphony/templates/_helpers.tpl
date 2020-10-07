@@ -233,11 +233,6 @@ app.kubernetes.io/component: docs
 {{ include "symphony.admin.clientLabel" . }}
 {{- end }}
 
-{{/* Create the name for graph database secret */}}
-{{- define "symphony.graphDB.secretName" -}}
-{{- print (include "symphony.fullname" .) "-graph-db" -}}
-{{- end }}
-
 {{/* Create the name for database secret */}}
 {{- define "symphony.database.secretName" -}}
 {{- print (include "symphony.fullname" .) "-db" -}}
@@ -263,13 +258,6 @@ app.kubernetes.io/component: docs
 	{{- end -}}
 {{- end -}}
 DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.database.user is required" .user) .pass (required ".Values.persistence.database.host is required" .host) (int .port) $params }}"
-{{- end }}
-{{- end }}
-
-{{/* Create the value for graph database secret */}}
-{{- define "symphony.graphDB.stringData" -}}
-{{- with .Values.graphDB.mysql }}
-MYSQL_DSN: "{{ .user }}:{{ .pass }}@tcp({{ .host }}:{{ .port }})/{{ if .param }}?{{ .param }}{{ end }}"
 {{- end }}
 {{- end }}
 

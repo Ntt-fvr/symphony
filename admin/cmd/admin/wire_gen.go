@@ -7,11 +7,12 @@ package main
 
 import (
 	"context"
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"database/sql"
 	"github.com/facebook/ent/dialect"
 	"github.com/facebookincubator/symphony/admin/graphql"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/strutil"
@@ -20,6 +21,7 @@ import (
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"
+	"net/url"
 )
 
 import (
@@ -35,10 +37,14 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	zapLogger := log.ProvideZapLogger(logger)
-	mysqlConfig := flags.MySQLConfig
-	db, cleanup2 := provideDB(mysqlConfig)
+	url := flags.DatabaseURL
+	db, cleanup2, err := mysql.Provide(ctx, url)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	stringer := _wireStringerValue
-	tenancy, err := provideTenancy(mysqlConfig, logger)
+	tenancy, err := provideTenancy(ctx, url)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -112,18 +118,11 @@ var (
 
 // wire.go:
 
-func provideDB(cfg mysql.Config) (*sql.DB, func()) {
-	db, cleanup := mysql.Provider(cfg)
-	db.SetMaxOpenConns(1)
-	return db, cleanup
-}
-
-func provideTenancy(cfg mysql.Config, logger log.Logger) (viewer.Tenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(cfg.String(), 5)
+func provideTenancy(ctx context.Context, u *url.URL) (viewer.Tenancy, error) {
+	tenancy, err := viewer.NewMySQLTenancy(ctx, u, 5)
 	if err != nil {
 		return nil, err
 	}
-	mysql.SetLogger(logger)
 	return viewer.NewCacheTenancy(tenancy, nil), nil
 }
 
@@ -133,6 +132,6 @@ func provideHealthCheckers(db *sql.DB) []health.Checker {
 
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	return views
 }

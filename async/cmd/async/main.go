@@ -20,7 +20,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -34,7 +33,7 @@ import (
 type cliFlags struct {
 	ConfigFile         kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
 	HTTPAddr           string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
-	MySQLConfig        mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
+	DatabaseURL        *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
 	EventPubURL        ev.TopicFactory  `name:"event.pub-url" env:"EVENT_PUB_URL" required:"" placeholder:"URL" help:"Event publish URL."`
 	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
