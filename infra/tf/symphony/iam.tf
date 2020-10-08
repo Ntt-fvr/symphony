@@ -21,9 +21,8 @@ module deployer {
   count     = local.production_only_count
 }
 
-resource aws_iam_group_membership deployer {
-  name  = "deployer"
-  group = module.team[count.index].group_name
-  users = [module.deployer[count.index].name]
-  count = local.production_only_count
+resource aws_iam_user_group_membership deployer {
+  user   = module.deployer[count.index].name
+  groups = [module.team[count.index].group_name]
+  count  = local.production_only_count
 }
