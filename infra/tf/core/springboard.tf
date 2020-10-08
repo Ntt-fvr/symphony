@@ -80,3 +80,27 @@ resource kubernetes_secret springboard_db {
     database = module.springboard_db.this_db_instance_name
   }
 }
+
+resource aws_kms_key springboard {
+  description = "Springboard master key"
+  count       = local.production_only_count
+}
+
+data aws_iam_policy_document springboard_key {
+  statement {
+    actions   = ["kms:*"]
+    resources = [aws_kms_key.springboard[0].arn]
+  }
+  count = local.production_only_count
+}
+
+resource aws_iam_policy springboard_key {
+  policy = data.aws_iam_policy_document.springboard_key[0].json
+  count  = local.production_only_count
+}
+
+resource aws_iam_group_policy_attachment springboard_key {
+  group      = module.springboard.group_name
+  policy_arn = aws_iam_policy.springboard_key[0].arn
+  count      = local.production_only_count
+}
