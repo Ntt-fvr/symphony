@@ -1256,11 +1256,11 @@ func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
 			},
 		},
 	})
-	assert.NoError(t, err)
-	assert.NotNil(t, createdEquipment)
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
 	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
-	assert.NoError(t, err)
-	assert.NotNil(t, definitions)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
 	assert.Equal(t, 2, len(definitions))
 	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
 	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
@@ -1290,11 +1290,11 @@ func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
 			},
 		},
 	})
-	assert.NoError(t, err)
-	assert.NotNil(t, createdEquipment)
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
 	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
-	assert.NoError(t, err)
-	assert.NotNil(t, definitions)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
 	assert.Equal(t, 2, len(definitions))
 	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
 	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
@@ -1317,11 +1317,11 @@ func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
 		},
 	})
 
-	assert.NoError(t, err)
-	assert.NotNil(t, createdEquipment)
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
 	definitions, err = editedEquipmentType.QueryPortDefinitions().WithConnectedPorts().All(ctx)
-	assert.NoError(t, err)
-	assert.NotNil(t, definitions)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
 	assert.Equal(t, 2, len(definitions))
 	assert.Equal(t, 0, len(definitions[0].Edges.ConnectedPorts))
 	assert.Equal(t, 0, len(definitions[1].Edges.ConnectedPorts))

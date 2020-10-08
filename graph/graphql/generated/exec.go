@@ -49995,6 +49995,14 @@ func (ec *executionContext) unmarshalInputEquipmentPortInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "connectedPorts":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectedPorts"))
+			it.ConnectedPorts, err = ec.unmarshalOEquipmentPortConnectionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -52080,14 +52088,6 @@ func (ec *executionContext) unmarshalInputSurveyCreateData(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("surveyResponses"))
 			it.SurveyResponses, err = ec.unmarshalNSurveyQuestionResponse2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐSurveyQuestionResponseᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "connectedPorts":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectedPorts"))
-			it.ConnectedPorts, err = ec.unmarshalOEquipmentPortConnectionInput2ᚕᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋgraphᚋgraphqlᚋmodelsᚐEquipmentPortConnectionInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

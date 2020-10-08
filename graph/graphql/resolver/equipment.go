@@ -87,13 +87,11 @@ func (equipmentPositionResolver) AttachedEquipment(ctx context.Context, ep *ent.
 type equipmentPortDefinitionResolver struct{}
 
 func (r equipmentPortDefinitionResolver) ConnectedPorts(ctx context.Context, obj *ent.EquipmentPortDefinition) ([]*ent.EquipmentPortDefinition, error) {
-
 	l, err := obj.Edges.ConnectedPortsOrErr()
 	if ent.IsNotLoaded(err) {
 		l, err = obj.QueryConnectedPorts().All(ctx)
 	}
 	return l, err
-
 }
 
 func (equipmentPortDefinitionResolver) PortType(ctx context.Context, epd *ent.EquipmentPortDefinition) (*ent.EquipmentPortType, error) {
