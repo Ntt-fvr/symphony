@@ -4,7 +4,7 @@ resource helm_release prometheus_operator {
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "9.4.9"
+  version    = "9.4.10"
 
   values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
     region             = data.aws_region.current.id
@@ -46,7 +46,7 @@ locals {
   misc_dashboards = {
     for d in [
       { name = "go-processes", id = 6671, rev = 2 },
-      { name = "nginx-ingress", id = 9789, rev = 5 },
+      { name = "nginx-ingress", id = 9789, rev = 6 },
       { name = "nats-server", id = 2279, rev = 1 },
       { name = "cadence-frontend", id = 10373, rev = 1 },
     ] :

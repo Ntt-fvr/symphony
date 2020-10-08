@@ -1,3 +1,10 @@
+# kube-system exist by default
+data kubernetes_namespace kube_system {
+  metadata {
+    name = "kube-system"
+  }
+}
+
 # iam role for cluster autoscaler
 module cluster_autoscaler_role {
   source                    = "../modules/irsa"
@@ -5,7 +12,7 @@ module cluster_autoscaler_role {
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.cluster_autoscaler.json
   service_account_name      = "cluster-autoscaler"
-  service_account_namespace = "kube-system"
+  service_account_namespace = data.kubernetes_namespace.kube_system.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
@@ -86,7 +93,7 @@ resource helm_release metrics_server {
   repository = local.helm_repository.bitnami
   name       = "metrics-server"
   version    = "4.5.1"
-  namespace  = "kube-system"
+  namespace  = data.kubernetes_namespace.kube_system.id
 
   values = [yamlencode({
     extraArgs = {
@@ -100,7 +107,7 @@ resource helm_release node_problem_detector {
   chart      = "node-problem-detector"
   repository = local.helm_repository.stable
   name       = "node-problem-detector"
-  namespace  = "kube-system"
+  namespace  = data.kubernetes_namespace.kube_system.id
   version    = "1.8.0"
 
   set {
@@ -116,7 +123,7 @@ module aws_node_role {
   role_path                 = local.eks_sa_role_path
   role_policy_arns          = ["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"]
   service_account_name      = "aws-node"
-  service_account_namespace = "kube-system"
+  service_account_namespace = data.kubernetes_namespace.kube_system.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
@@ -126,7 +133,7 @@ resource helm_release aws_vpc_cni {
   name       = "aws-vpc-cni"
   repository = local.helm_repository.eks
   chart      = "aws-vpc-cni"
-  namespace  = "kube-system"
+  namespace  = data.kubernetes_namespace.kube_system.id
   version    = "1.1.0"
 
   values = [yamlencode({
@@ -143,6 +150,6 @@ resource helm_release aws_calico {
   name       = "aws-calico"
   repository = local.helm_repository.eks
   chart      = "aws-calico"
-  namespace  = "kube-system"
+  namespace  = data.kubernetes_namespace.kube_system.id
   version    = "0.3.2"
 }

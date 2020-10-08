@@ -5,7 +5,7 @@ module alb_ingress_controller_role {
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.alb_ingress_controller.json
   service_account_name      = "aws-alb-ingress-controller"
-  service_account_namespace = "kube-system"
+  service_account_namespace = data.kubernetes_namespace.kube_system.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
@@ -205,55 +205,63 @@ resource "aws_security_group" "intern_sg" {
   }
 }
 
-# nginx ingress manages ingress resources
-resource helm_release nginx_ingress {
-  chart      = "nginx-ingress"
-  repository = local.helm_repository.stable
-  name       = "nginx-ingress"
-  namespace  = "kube-system"
-  version    = "1.41.3"
+# ingress controller using nginx as a reverse proxy and load balancer.
+resource helm_release ingress_nginx {
+  name       = "ingress-nginx"
+  namespace  = data.kubernetes_namespace.kube_system.id
+  repository = local.helm_repository.ingress-nginx
+  chart      = "ingress-nginx"
+  version    = "3.4.1"
 
-  values = [<<VALUES
-  controller:
-    replicaCount: 3
-    minAvailable: 2
-    service:
-      annotations:
-        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-        service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
-        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
-        service.beta.kubernetes.io/aws-load-balancer-type: nlb
-        external-dns.alpha.kubernetes.io/hostname: '${local.ctf_domain_name},*.${local.ctf_domain_name}'
-      externalTrafficPolicy: Local
-      internal:
-        enabled: true
-        annotations:
-          service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-          service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
-          service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
-          service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: ${aws_security_group.intern_sg.id}
-    config:
-      proxy-buffer-size: "32k"
-      use-forwarded-headers: "true"
-      log-format-escape-json: "true"
-      log-format-upstream: '{"time": "$time_iso8601", "remote_addr": "$remote_addr", "request_id": "$req_id", "user": "$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status": $status, "host": "$host", "proto": "$server_protocol", "path": "$uri", "request_length": $request_length, "duration": $request_time, "method": "$request_method", "referrer": "$http_referer", "user_agent": "$http_user_agent", "proxy_upstream_name": "$proxy_upstream_name", "upstream_addr": "$upstream_addr", "upstream_response_length": "$upstream_response_length", "upstream_response_time": "$upstream_response_time", "upstream_status": "$upstream_status"}'
-    affinity:
-      podAntiAffinity:
-        preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              topologyKey: kubernetes.io/hostname
-              labelSelector:
-                matchLabels:
-                  app: ingress-nginx
-                  component: controller
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
-        honorLabels: true
-  VALUES
-  ]
+  values = [yamlencode({
+    controller = {
+      replicaCount = 3
+      minAvailable = 2
+      service = {
+        annotations = {
+          "service.beta.kubernetes.io/aws-load-balancer-backend-protocol"                  = "tcp"
+          "service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout"           = "60"
+          "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled" = "true"
+          "service.beta.kubernetes.io/aws-load-balancer-type"                              = "nlb"
+          "external-dns.alpha.kubernetes.io/hostname"                                      = "${local.ctf_domain_name},*.${local.ctf_domain_name}"
+        }
+        externalTrafficPolicy = "Local"
+        internal = {
+          enabled = true
+          annotations = {
+            "service.beta.kubernetes.io/aws-load-balancer-backend-protocol"                  = "tcp"
+            "service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout"           = "60"
+            "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled" = "true"
+            "service.beta.kubernetes.io/aws-load-balancer-extra-security-groups"             = aws_security_group.intern_sg.id
+          }
+        }
+      }
+      config = {
+        "proxy-buffer-size"     = "32k"
+        "use-forwarded-headers" = "true"
+      }
+      affinity = {
+        podAntiAffinity = {
+          requiredDuringSchedulingIgnoredDuringExecution = [{
+            labelSelector = {
+              matchLabels = {
+                "app.kubernetes.io/name"      = "ingress-nginx"
+                "app.kubernetes.io/instance"  = "ingress-nginx"
+                "app.kubernetes.io/component" = "controller"
+              }
+            }
+            topologyKey = "kubernetes.io/hostname"
+          }]
+        }
+      }
+      metrics = {
+        enabled = true
+        serviceMonitor = {
+          enabled = true
+        }
+      }
+    }
+  })]
 }
 
 # alb for ingress gateways
@@ -282,7 +290,7 @@ resource kubernetes_ingress gateway {
 
   metadata {
     name      = format("%s-gateway", each.key)
-    namespace = helm_release.nginx_ingress.namespace
+    namespace = data.kubernetes_namespace.kube_system.id
 
     annotations = {
       "kubernetes.io/ingress.class"                        = "alb"
@@ -315,7 +323,7 @@ resource kubernetes_ingress gateway {
           path = "/*"
 
           backend {
-            service_name = "${helm_release.nginx_ingress.name}-controller"
+            service_name = "${helm_release.ingress_nginx.name}-controller"
             service_port = "80"
           }
         }
@@ -418,7 +426,7 @@ module external_dns_role {
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.external_dns.json
   service_account_name      = "external-dns"
-  service_account_namespace = "kube-system"
+  service_account_namespace = data.kubernetes_namespace.kube_system.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }
@@ -461,8 +469,8 @@ resource helm_release external_dns {
   name       = "external-dns"
   repository = local.helm_repository.bitnami
   chart      = "external-dns"
-  version    = "3.4.5"
-  namespace  = "kube-system"
+  version    = "3.4.6"
+  namespace  = data.kubernetes_namespace.kube_system.id
 
   values = [yamlencode({
     annotationFilter = "kubernetes.io/ingress.class notin (nginx)"
@@ -534,7 +542,7 @@ resource helm_release cert_manager {
   name             = "cert-manager"
   repository       = local.helm_repository.jetstack
   chart            = "cert-manager"
-  version          = "1.0.2"
+  version          = "1.0.3"
   namespace        = "cert-manager"
   create_namespace = true
 
