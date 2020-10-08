@@ -36,6 +36,11 @@ export type EquipmentPortInput = {|
   visibleLabel?: ?string,
   portTypeID?: ?string,
   bandwidth?: ?string,
+  connectedPorts?: ?$ReadOnlyArray<EquipmentPortConnectionInput>,
+|};
+export type EquipmentPortConnectionInput = {|
+  id?: ?string,
+  name?: ?string,
 |};
 export type PropertyTypeInput = {|
   id?: ?string,
