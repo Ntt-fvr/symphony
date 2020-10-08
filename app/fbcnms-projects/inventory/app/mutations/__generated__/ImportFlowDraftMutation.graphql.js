@@ -41,17 +41,16 @@ export type VariableDefinitionInput = {|
 |};
 export type StartBlockInput = {|
   cid: string,
-  name: string,
   paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type BlockUIRepresentationInput = {|
+  name: string,
   xPosition: number,
   yPosition: number,
 |};
 export type EndBlockInput = {|
   cid: string,
-  name: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
@@ -66,32 +65,27 @@ export type BlockVariableInput = {|
 |};
 export type DecisionBlockInput = {|
   cid: string,
-  name: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type GotoBlockInput = {|
   cid: string,
-  name: string,
   targetBlockCid: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type SubflowBlockInput = {|
   cid: string,
-  name: string,
   flowId: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type TriggerBlockInput = {|
   cid: string,
-  name: string,
   triggerType: TriggerTypeId,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ActionBlockInput = {|
   cid: string,
-  name: string,
   actionType: ActionTypeId,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -110,18 +104,18 @@ export type ImportFlowDraftMutationResponse = {|
     +description: ?string,
     +blocks: $ReadOnlyArray<{|
       +cid: string,
-      +name: string,
       +details: {|
         +__typename: string
       |},
       +uiRepresentation: ?{|
+        +name: string,
         +xPosition: number,
         +yPosition: number,
       |},
       +nextBlocks: $ReadOnlyArray<{|
         +cid: string,
-        +name: string,
         +uiRepresentation: ?{|
+          +name: string,
           +xPosition: number,
           +yPosition: number,
         |},
@@ -146,18 +140,18 @@ mutation ImportFlowDraftMutation(
     description
     blocks {
       cid
-      name
       details {
         __typename
       }
       uiRepresentation {
+        name
         xPosition
         yPosition
       }
       nextBlocks {
         cid
-        name
         uiRepresentation {
+          name
           xPosition
           yPosition
         }
@@ -238,6 +232,7 @@ v7 = {
   "name": "uiRepresentation",
   "plural": false,
   "selections": [
+    (v3/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -282,7 +277,6 @@ return {
             "plural": true,
             "selections": [
               (v5/*: any*/),
-              (v3/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
               {
@@ -294,7 +288,6 @@ return {
                 "plural": true,
                 "selections": [
                   (v5/*: any*/),
-                  (v3/*: any*/),
                   (v7/*: any*/)
                 ],
                 "storageKey": null
@@ -335,7 +328,6 @@ return {
             "plural": true,
             "selections": [
               (v5/*: any*/),
-              (v3/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
               {
@@ -347,7 +339,6 @@ return {
                 "plural": true,
                 "selections": [
                   (v5/*: any*/),
-                  (v3/*: any*/),
                   (v7/*: any*/),
                   (v2/*: any*/)
                 ],
@@ -363,16 +354,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6be2253acca410075c9266237dd93284",
+    "cacheID": "d28e64343e27ecf670fe4e5086428f20",
     "id": null,
     "metadata": {},
     "name": "ImportFlowDraftMutation",
     "operationKind": "mutation",
-    "text": "mutation ImportFlowDraftMutation(\n  $input: ImportFlowDraftInput!\n) {\n  importFlowDraft(input: $input) {\n    id\n    name\n    description\n    blocks {\n      cid\n      name\n      details {\n        __typename\n      }\n      uiRepresentation {\n        xPosition\n        yPosition\n      }\n      nextBlocks {\n        cid\n        name\n        uiRepresentation {\n          xPosition\n          yPosition\n        }\n        id\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation ImportFlowDraftMutation(\n  $input: ImportFlowDraftInput!\n) {\n  importFlowDraft(input: $input) {\n    id\n    name\n    description\n    blocks {\n      cid\n      details {\n        __typename\n      }\n      uiRepresentation {\n        name\n        xPosition\n        yPosition\n      }\n      nextBlocks {\n        cid\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ce9ec5b1f73d8d5efa8fc041386003f4';
+(node/*: any*/).hash = '90f6f56a4c3591dacbc2f112b5a59c34';
 
 module.exports = node;

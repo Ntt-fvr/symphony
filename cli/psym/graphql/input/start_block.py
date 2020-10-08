@@ -15,7 +15,6 @@ from ..input.variable_definition import VariableDefinitionInput
 @dataclass
 class StartBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     paramDefinitions: List[VariableDefinitionInput]
     uiRepresentation: Optional[BlockUIRepresentationInput] = None
 

@@ -15,7 +15,6 @@ from ..input.variable_expression import VariableExpressionInput
 @dataclass
 class SubflowBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     flowId: str
     params: List[VariableExpressionInput]
     uiRepresentation: Optional[BlockUIRepresentationInput] = None

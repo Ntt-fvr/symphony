@@ -3180,7 +3180,6 @@ type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flow
 type Block implements Node {
   id: ID!
   cid: String!
-  name: String!
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
   details: BlockDetails!
@@ -3215,6 +3214,7 @@ input VariableExpressionInput {
 type BlockUIRepresentation @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -3222,6 +3222,7 @@ type BlockUIRepresentation @goModel(
 input BlockUIRepresentationInput @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -3261,34 +3262,29 @@ union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | Subflow
 
 input StartBlockInput {
   cid: String!
-  name: String!
   paramDefinitions: [VariableDefinitionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input EndBlockInput {
   cid: String!
-  name: String!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input DecisionBlockInput {
   cid: String!
-  name: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input GotoBlockInput {
   cid: String!
-  name: String!
   targetBlockCid: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input SubflowBlockInput {
   cid: String!
-  name: String!
   flowId: ID!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3296,7 +3292,6 @@ input SubflowBlockInput {
 
 input TriggerBlockInput {
   cid: String!
-  name: String!
   triggerType: TriggerTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3304,7 +3299,6 @@ input TriggerBlockInput {
 
 input ActionBlockInput {
   cid: String!
-  name: String!
   actionType: ActionTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3339,7 +3333,6 @@ input ImportFlowDraftInput {
 
 input EditBlockInput {
   id: ID!
-  name: String
   uiRepresentation: BlockUIRepresentationInput
 }
 

@@ -41,10 +41,7 @@ class TestFlow(BaseTest):
 
         flow_draft = add_flow_draft(self.client, name="Flow Draft")
         flow_draft = import_flow_draft(
-            self.client,
-            id=flow_draft.id,
-            name=flow_draft.name,
-            start_block_name="Start",
+            self.client, id=flow_draft.id, name=flow_draft.name, start_block_cid="start"
         )
         flow = publish_flow(self.client, flow_draft_id=flow_draft.id)
         flow_instance = start_flow(self.client, flow_id=flow.id)

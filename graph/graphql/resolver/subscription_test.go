@@ -209,8 +209,7 @@ func TestSubscriptionFlowInstance(t *testing.T) {
 	})
 	require.NoError(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
-		Cid:  "start",
-		Name: "Start",
+		Cid: "start",
 	})
 	require.NoError(t, err)
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})

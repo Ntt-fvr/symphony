@@ -57,12 +57,6 @@ func (bc *BlockCreate) SetNillableUpdateTime(t *time.Time) *BlockCreate {
 	return bc
 }
 
-// SetName sets the name field.
-func (bc *BlockCreate) SetName(s string) *BlockCreate {
-	bc.mutation.SetName(s)
-	return bc
-}
-
 // SetCid sets the cid field.
 func (bc *BlockCreate) SetCid(s string) *BlockCreate {
 	bc.mutation.SetCid(s)
@@ -116,16 +110,8 @@ func (bc *BlockCreate) SetInputParams(fe []*flowschema.VariableExpression) *Bloc
 }
 
 // SetUIRepresentation sets the ui_representation field.
-func (bc *BlockCreate) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockCreate {
+func (bc *BlockCreate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockCreate {
 	bc.mutation.SetUIRepresentation(fur)
-	return bc
-}
-
-// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
-func (bc *BlockCreate) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockCreate {
-	if fur != nil {
-		bc.SetUIRepresentation(*fur)
-	}
 	return bc
 }
 
@@ -354,14 +340,6 @@ func (bc *BlockCreate) check() error {
 	if _, ok := bc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New("ent: missing required field \"update_time\"")}
 	}
-	if _, ok := bc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New("ent: missing required field \"name\"")}
-	}
-	if v, ok := bc.mutation.Name(); ok {
-		if err := block.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if _, ok := bc.mutation.Cid(); !ok {
 		return &ValidationError{Name: "cid", err: errors.New("ent: missing required field \"cid\"")}
 	}
@@ -430,14 +408,6 @@ func (bc *BlockCreate) createSpec() (*Block, *sqlgraph.CreateSpec) {
 			Column: block.FieldUpdateTime,
 		})
 		_node.UpdateTime = value
-	}
-	if value, ok := bc.mutation.Name(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: block.FieldName,
-		})
-		_node.Name = value
 	}
 	if value, ok := bc.mutation.Cid(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

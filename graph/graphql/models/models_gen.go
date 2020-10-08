@@ -45,7 +45,6 @@ func (ActionBlock) IsBlockDetails() {}
 
 type ActionBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	ActionType       flowschema.ActionTypeID           `json:"actionType"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -297,13 +296,11 @@ func (DecisionBlock) IsBlockDetails() {}
 
 type DecisionBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
 type EditBlockInput struct {
 	ID               int                               `json:"id"`
-	Name             *string                           `json:"name"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -446,7 +443,6 @@ func (EndBlock) IsBlockDetails() {}
 
 type EndBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -515,7 +511,6 @@ func (GotoBlock) IsBlockDetails() {}
 
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	TargetBlockCid   string                            `json:"targetBlockCid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -688,7 +683,6 @@ func (StartBlock) IsBlockDetails() {}
 
 type StartBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	ParamDefinitions []*flowschema.VariableDefinition  `json:"paramDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -707,7 +701,6 @@ func (SubflowBlock) IsBlockDetails() {}
 
 type SubflowBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	FlowID           int                               `json:"flowId"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -849,7 +842,6 @@ func (TriggerBlock) IsBlockDetails() {}
 
 type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`

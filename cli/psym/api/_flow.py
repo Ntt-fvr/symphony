@@ -44,7 +44,7 @@ def add_flow_draft(client: SymphonyClient, name: str) -> FlowDraft:
 
 
 def import_flow_draft(
-    client: SymphonyClient, id: str, name: str, start_block_name: Optional[str]
+    client: SymphonyClient, id: str, name: str, start_block_cid: Optional[str]
 ) -> FlowDraft:
     """This function imports an existing flow draft with draft details and blocks
 
@@ -52,8 +52,8 @@ def import_flow_draft(
     :type id: str
     :param name: New name of the flow draft
     :type name: str
-    :param start_block_name: Name of the start block to create in flow draft
-    :type start_block_name: str, optional
+    :param start_block_cid: Client ID of the start block to create in flow draft
+    :type start_block_cid: str, optional
 
     :raises:
         * FailedOperationException: Internal symphony error
@@ -66,13 +66,11 @@ def import_flow_draft(
     .. code-block:: python
 
         draft = client.add_flow_draft(name="Transport Deployment")
-        new_draft = client.import_flow_draft(id=draft.id, name=draft.name, start_block_name="Start")
+        new_draft = client.import_flow_draft(id=draft.id, name=draft.name, start_block_cid="Start")
     """
     start_block_input = (
-        StartBlockInput(
-            cid=start_block_name, name=start_block_name, paramDefinitions=[]
-        )
-        if start_block_name
+        StartBlockInput(cid=start_block_cid, paramDefinitions=[])
+        if start_block_cid
         else None
     )
     flow_draft = ImportFlowDraftMutation.execute(

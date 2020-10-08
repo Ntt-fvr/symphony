@@ -14,6 +14,5 @@ from ..input.block_u_i_representation import BlockUIRepresentationInput
 @dataclass
 class DecisionBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     uiRepresentation: Optional[BlockUIRepresentationInput] = None
 

@@ -159,7 +159,6 @@ type ComplexityRoot struct {
 		Details                func(childComplexity int) int
 		ID                     func(childComplexity int) int
 		InputParamDefinitions  func(childComplexity int) int
-		Name                   func(childComplexity int) int
 		NextBlocks             func(childComplexity int) int
 		OutputParamDefinitions func(childComplexity int) int
 		PrevBlocks             func(childComplexity int) int
@@ -167,6 +166,7 @@ type ComplexityRoot struct {
 	}
 
 	BlockUIRepresentation struct {
+		Name      func(childComplexity int) int
 		XPosition func(childComplexity int) int
 		YPosition func(childComplexity int) int
 	}
@@ -1978,13 +1978,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Block.InputParamDefinitions(childComplexity), true
 
-	case "Block.name":
-		if e.complexity.Block.Name == nil {
-			break
-		}
-
-		return e.complexity.Block.Name(childComplexity), true
-
 	case "Block.nextBlocks":
 		if e.complexity.Block.NextBlocks == nil {
 			break
@@ -2012,6 +2005,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Block.UIRepresentation(childComplexity), true
+
+	case "BlockUIRepresentation.name":
+		if e.complexity.BlockUIRepresentation.Name == nil {
+			break
+		}
+
+		return e.complexity.BlockUIRepresentation.Name(childComplexity), true
 
 	case "BlockUIRepresentation.xPosition":
 		if e.complexity.BlockUIRepresentation.XPosition == nil {
@@ -11550,7 +11550,6 @@ type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flow
 type Block implements Node {
   id: ID!
   cid: String!
-  name: String!
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
   details: BlockDetails!
@@ -11585,6 +11584,7 @@ input VariableExpressionInput {
 type BlockUIRepresentation @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -11592,6 +11592,7 @@ type BlockUIRepresentation @goModel(
 input BlockUIRepresentationInput @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -11631,34 +11632,29 @@ union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | Subflow
 
 input StartBlockInput {
   cid: String!
-  name: String!
   paramDefinitions: [VariableDefinitionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input EndBlockInput {
   cid: String!
-  name: String!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input DecisionBlockInput {
   cid: String!
-  name: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input GotoBlockInput {
   cid: String!
-  name: String!
   targetBlockCid: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input SubflowBlockInput {
   cid: String!
-  name: String!
   flowId: ID!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -11666,7 +11662,6 @@ input SubflowBlockInput {
 
 input TriggerBlockInput {
   cid: String!
-  name: String!
   triggerType: TriggerTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -11674,7 +11669,6 @@ input TriggerBlockInput {
 
 input ActionBlockInput {
   cid: String!
-  name: String!
   actionType: ActionTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -11709,7 +11703,6 @@ input ImportFlowDraftInput {
 
 input EditBlockInput {
   id: ID!
-  name: String
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -17641,41 +17634,6 @@ func (ec *executionContext) _Block_cid(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Block_name(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Block",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Block_nextBlocks(ctx context.Context, field graphql.CollectedField, obj *ent.Block) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17878,9 +17836,44 @@ func (ec *executionContext) _Block_uiRepresentation(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(flowschema.BlockUIRepresentation)
+	res := resTmp.(*flowschema.BlockUIRepresentation)
 	fc.Result = res
-	return ec.marshalOBlockUIRepresentation2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, field.Selections, res)
+	return ec.marshalOBlockUIRepresentation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _BlockUIRepresentation_name(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockUIRepresentation) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "BlockUIRepresentation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BlockUIRepresentation_xPosition(ctx context.Context, field graphql.CollectedField, obj *flowschema.BlockUIRepresentation) (ret graphql.Marshaler) {
@@ -47305,14 +47298,6 @@ func (ec *executionContext) unmarshalInputActionBlockInput(ctx context.Context, 
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "actionType":
 			var err error
 
@@ -48775,6 +48760,14 @@ func (ec *executionContext) unmarshalInputBlockUIRepresentationInput(ctx context
 
 	for k, v := range asMap {
 		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "xPosition":
 			var err error
 
@@ -49199,14 +49192,6 @@ func (ec *executionContext) unmarshalInputDecisionBlockInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "uiRepresentation":
 			var err error
 
@@ -49232,14 +49217,6 @@ func (ec *executionContext) unmarshalInputEditBlockInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			it.ID, err = ec.unmarshalNID2int(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -50331,14 +50308,6 @@ func (ec *executionContext) unmarshalInputEndBlockInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "params":
 			var err error
 
@@ -50772,14 +50741,6 @@ func (ec *executionContext) unmarshalInputGotoBlockInput(ctx context.Context, ob
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
 			it.Cid, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -52279,14 +52240,6 @@ func (ec *executionContext) unmarshalInputStartBlockInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "paramDefinitions":
 			var err error
 
@@ -52348,14 +52301,6 @@ func (ec *executionContext) unmarshalInputSubflowBlockInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
 			it.Cid, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53278,14 +53223,6 @@ func (ec *executionContext) unmarshalInputTriggerBlockInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cid"))
 			it.Cid, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -54466,11 +54403,6 @@ func (ec *executionContext) _Block(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "name":
-			out.Values[i] = ec._Block_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "nextBlocks":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -54565,6 +54497,11 @@ func (ec *executionContext) _BlockUIRepresentation(ctx context.Context, sel ast.
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("BlockUIRepresentation")
+		case "name":
+			out.Values[i] = ec._BlockUIRepresentation_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "xPosition":
 			out.Values[i] = ec._BlockUIRepresentation_xPosition(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -68954,8 +68891,11 @@ func (ec *executionContext) marshalOBlock2ᚖgithubᚗcomᚋfacebookincubatorᚋ
 	return ec._Block(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOBlockUIRepresentation2githubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx context.Context, sel ast.SelectionSet, v flowschema.BlockUIRepresentation) graphql.Marshaler {
-	return ec._BlockUIRepresentation(ctx, sel, &v)
+func (ec *executionContext) marshalOBlockUIRepresentation2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx context.Context, sel ast.SelectionSet, v *flowschema.BlockUIRepresentation) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._BlockUIRepresentation(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBlockUIRepresentationInput2ᚖgithubᚗcomᚋfacebookincubatorᚋsymphonyᚋpkgᚋflowengineᚋflowschemaᚐBlockUIRepresentation(ctx context.Context, v interface{}) (*flowschema.BlockUIRepresentation, error) {

@@ -12,6 +12,7 @@ from dataclasses_json import DataClassJsonMixin
 
 @dataclass
 class BlockUIRepresentationInput(DataClassJsonMixin):
+    name: str
     xPosition: int
     yPosition: int
 

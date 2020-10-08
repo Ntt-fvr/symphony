@@ -126,12 +126,8 @@ func init() {
 	block.DefaultUpdateTime = blockDescUpdateTime.Default.(func() time.Time)
 	// block.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	block.UpdateDefaultUpdateTime = blockDescUpdateTime.UpdateDefault.(func() time.Time)
-	// blockDescName is the schema descriptor for name field.
-	blockDescName := blockFields[0].Descriptor()
-	// block.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	block.NameValidator = blockDescName.Validators[0].(func(string) error)
 	// blockDescCid is the schema descriptor for cid field.
-	blockDescCid := blockFields[1].Descriptor()
+	blockDescCid := blockFields[0].Descriptor()
 	// block.CidValidator is a validator for the "cid" field. It is called by the builders before save.
 	block.CidValidator = blockDescCid.Validators[0].(func(string) error)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()

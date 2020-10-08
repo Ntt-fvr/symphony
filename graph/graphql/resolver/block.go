@@ -154,16 +154,14 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 func addBlockMutation(
 	ctx context.Context,
 	blockCID string,
-	blockName string,
 	blockType block.Type,
 	flowDraftID int,
 	uiRepresentation *flowschema.BlockUIRepresentation) *ent.BlockCreate {
 	client := ent.FromContext(ctx)
 	return client.Block.Create().
-		SetName(blockName).
 		SetCid(blockCID).
 		SetType(blockType).
-		SetNillableUIRepresentation(uiRepresentation).
+		SetUIRepresentation(uiRepresentation).
 		SetFlowDraftID(flowDraftID)
 }
 
@@ -198,14 +196,14 @@ func getBlockVariables(ctx context.Context, inputVariables []*models.VariableExp
 }
 
 func (r mutationResolver) AddStartBlock(ctx context.Context, flowDraftID int, input models.StartBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeStart, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeStart, flowDraftID, input.UIRepresentation)
 	return mutation.
 		SetStartParamDefinitions(input.ParamDefinitions).
 		Save(ctx)
 }
 
 func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, input models.EndBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeEnd, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeEnd, flowDraftID, input.UIRepresentation)
 	b, err := mutation.Save(ctx)
 	if err != nil {
 		return nil, err
@@ -220,7 +218,7 @@ func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, inpu
 }
 
 func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int, input models.DecisionBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeDecision, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeDecision, flowDraftID, input.UIRepresentation)
 	return mutation.Save(ctx)
 }
 
@@ -229,14 +227,14 @@ func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, inp
 	if err != nil {
 		return nil, err
 	}
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeGoTo, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeGoTo, flowDraftID, input.UIRepresentation)
 	return mutation.
 		SetGotoBlock(targetBlockID).
 		Save(ctx)
 }
 
 func (r mutationResolver) AddSubflowBlock(ctx context.Context, flowDraftID int, input models.SubflowBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeSubFlow, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetSubFlowID(input.FlowID).
 		Save(ctx)
 	if err != nil {
@@ -252,7 +250,7 @@ func (r mutationResolver) AddSubflowBlock(ctx context.Context, flowDraftID int, 
 }
 
 func (r mutationResolver) AddTriggerBlock(ctx context.Context, flowDraftID int, input models.TriggerBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeTrigger, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeTrigger, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetTriggerType(input.TriggerType).
 		Save(ctx)
 	if err != nil {
@@ -268,7 +266,7 @@ func (r mutationResolver) AddTriggerBlock(ctx context.Context, flowDraftID int, 
 }
 
 func (r mutationResolver) AddActionBlock(ctx context.Context, flowDraftID int, input models.ActionBlockInput) (*ent.Block, error) {
-	mutation := addBlockMutation(ctx, input.Cid, input.Name, block.TypeAction, flowDraftID, input.UIRepresentation)
+	mutation := addBlockMutation(ctx, input.Cid, block.TypeAction, flowDraftID, input.UIRepresentation)
 	b, err := mutation.SetActionType(input.ActionType).
 		Save(ctx)
 	if err != nil {
@@ -341,10 +339,7 @@ func (r mutationResolver) DeleteConnector(ctx context.Context, flowDraftID int, 
 
 func (r mutationResolver) EditBlock(ctx context.Context, input models.EditBlockInput) (*ent.Block, error) {
 	client := ent.FromContext(ctx)
-	m := client.Block.UpdateOneID(input.ID).
-		SetNillableUIRepresentation(input.UIRepresentation)
-	if input.Name != nil {
-		m.SetName(*input.Name)
-	}
-	return m.Save(ctx)
+	return client.Block.UpdateOneID(input.ID).
+		SetUIRepresentation(input.UIRepresentation).
+		Save(ctx)
 }

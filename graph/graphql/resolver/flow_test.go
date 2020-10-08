@@ -25,7 +25,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationResolver, name string) *ent.Flow {
+func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationResolver, name string,
+	startUIRepresentation *flowschema.BlockUIRepresentation, endUIRepresentation *flowschema.BlockUIRepresentation) *ent.Flow {
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: name,
 		EndParamDefinitions: []*flowschema.VariableDefinition{
@@ -37,19 +38,18 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 	})
 	require.NoError(t, err)
 	startBlock, err := mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
-		Name: "Start",
-		Cid:  "start",
+		Cid: "start",
 		ParamDefinitions: []*flowschema.VariableDefinition{
 			{
 				Key:  "start_param",
 				Type: enum.VariableTypeString,
 			},
 		},
+		UIRepresentation: startUIRepresentation,
 	})
 	require.NoError(t, err)
 	endBlock, err := mr.AddEndBlock(ctx, draft.ID, models.EndBlockInput{
-		Name: "End",
-		Cid:  "end",
+		Cid: "end",
 		Params: []*models.VariableExpressionInput{
 			{
 				VariableDefinitionKey: "param",
@@ -62,6 +62,7 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 				},
 			},
 		},
+		UIRepresentation: endUIRepresentation,
 	})
 	require.NoError(t, err)
 	_, err = mr.AddConnector(ctx, draft.ID, models.ConnectorInput{
@@ -134,17 +135,14 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	startBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
-		Name: "Start",
-		Cid:  "start",
+		Cid: "start",
 	})
 	require.NoError(t, err)
 	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
-		Name: "End",
-		Cid:  "end",
+		Cid: "end",
 	})
 	require.NoError(t, err)
 	gotoBlock, err := mr.AddGotoBlock(ctx, flowDraft.ID, models.GotoBlockInput{
-		Name:           "Shortcut",
 		Cid:            "shortcut",
 		TargetBlockCid: endBlock.Cid,
 	})
@@ -197,8 +195,18 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	defer r.Close()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	mr, qr, fr, fdr, br, ver, bvr := r.Mutation(), r.Query(), r.Flow(), r.FlowDraft(), r.Block(), r.VariableExpression(), r.BlockVariable()
-	subFlow := prepareBasicFlow(ctx, t, mr, "Subflow")
-	mainFlow := prepareBasicFlow(ctx, t, mr, "Main")
+	subFlow := prepareBasicFlow(ctx, t, mr, "Subflow", nil, nil)
+	mainFlow := prepareBasicFlow(ctx, t, mr, "Main",
+		&flowschema.BlockUIRepresentation{
+			Name:      "Start",
+			XPosition: 20,
+			YPosition: 20,
+		},
+		&flowschema.BlockUIRepresentation{
+			Name:      "End",
+			XPosition: 30,
+			YPosition: 30,
+		})
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name:   "New name",
 		FlowID: pointer.ToInt(mainFlow.ID),
@@ -218,7 +226,6 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "Main", foundFlow.(*ent.Flow).Name)
 	_, err = mr.AddSubflowBlock(ctx, draft.ID, models.SubflowBlockInput{
-		Name:   "Blackbox",
 		Cid:    "blackbox",
 		FlowID: subFlow.ID,
 		Params: []*models.VariableExpressionInput{
@@ -227,11 +234,32 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 				Expression:            "\"Start\"",
 			},
 		},
+		UIRepresentation: &flowschema.BlockUIRepresentation{
+			Name:      "Subflow",
+			XPosition: 40,
+			YPosition: 40,
+		},
 	})
 	require.NoError(t, err)
 	blks, err := fdr.Blocks(ctx, draft)
 	require.NoError(t, err)
 	require.Len(t, blks, 3)
+	for _, blk := range blks {
+		switch blk.Type {
+		case block.TypeStart:
+			require.Equal(t, "Start", blk.UIRepresentation.Name)
+			require.Equal(t, 20, blk.UIRepresentation.XPosition)
+			require.Equal(t, 20, blk.UIRepresentation.YPosition)
+		case block.TypeEnd:
+			require.Equal(t, "End", blk.UIRepresentation.Name)
+			require.Equal(t, 30, blk.UIRepresentation.XPosition)
+			require.Equal(t, 30, blk.UIRepresentation.YPosition)
+		case block.TypeSubFlow:
+			require.Equal(t, "Subflow", blk.UIRepresentation.Name)
+			require.Equal(t, 40, blk.UIRepresentation.XPosition)
+			require.Equal(t, 40, blk.UIRepresentation.YPosition)
+		}
+	}
 	blks, err = fr.Blocks(ctx, mainFlow)
 	require.NoError(t, err)
 	require.Len(t, blks, 2)
@@ -297,8 +325,7 @@ func TestStartFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
-		Name: "Start",
-		Cid:  "start",
+		Cid: "start",
 		ParamDefinitions: []*flowschema.VariableDefinition{
 			{
 				Key:  "param",
@@ -382,13 +409,11 @@ func TestImportEmptyFlow(t *testing.T) {
 		EndParamDefinitions: paramDefinitions,
 		StartBlock: &models.StartBlockInput{
 			Cid:              "start",
-			Name:             "Start point",
 			ParamDefinitions: paramDefinitions,
 		},
 		EndBlocks: []*models.EndBlockInput{
 			{
-				Cid:  "end",
-				Name: "Finale",
+				Cid: "end",
 				Params: []*models.VariableExpressionInput{
 					{
 						VariableDefinitionKey: "param",
@@ -405,14 +430,12 @@ func TestImportEmptyFlow(t *testing.T) {
 		},
 		DecisionBlocks: []*models.DecisionBlockInput{
 			{
-				Cid:  "decision1",
-				Name: "Decision 1",
+				Cid: "decision1",
 			},
 		},
 		ActionBlocks: []*models.ActionBlockInput{
 			{
 				Cid:        "wo",
-				Name:       "Run work order",
 				ActionType: flowschema.ActionTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
@@ -429,7 +452,6 @@ func TestImportEmptyFlow(t *testing.T) {
 		TriggerBlocks: []*models.TriggerBlockInput{
 			{
 				Cid:         "trig",
-				Name:        "Work order created",
 				TriggerType: flowschema.TriggerTypeWorkOrder,
 				Params: []*models.VariableExpressionInput{
 					{
@@ -442,7 +464,6 @@ func TestImportEmptyFlow(t *testing.T) {
 		GotoBlocks: []*models.GotoBlockInput{
 			{
 				Cid:            "shortcut",
-				Name:           "Go to End",
 				TargetBlockCid: "end",
 			},
 		},
@@ -459,30 +480,24 @@ func TestImportEmptyFlow(t *testing.T) {
 		switch blk.Type {
 		case block.TypeStart:
 			require.Equal(t, "start", blk.Cid)
-			require.Equal(t, "Start point", blk.Name)
 			require.Equal(t, paramDefinitions, blk.StartParamDefinitions)
 		case block.TypeDecision:
 			require.Equal(t, "decision1", blk.Cid)
-			require.Equal(t, "Decision 1", blk.Name)
 		case block.TypeAction:
 			require.Equal(t, "wo", blk.Cid)
-			require.Equal(t, "Run work order", blk.Name)
 			require.Equal(t, flowschema.ActionTypeWorkOrder, *blk.ActionType)
 			require.Len(t, blk.InputParams, 2)
 		case block.TypeEnd:
 			require.Equal(t, "end", blk.Cid)
-			require.Equal(t, "Finale", blk.Name)
 			require.Len(t, blk.InputParams, 1)
 			require.Len(t, blk.InputParams[0].BlockVariables, 1)
 			require.Equal(t, draft.QueryBlocks().Where(block.TypeEQ(block.TypeStart)).OnlyIDX(ctx), blk.InputParams[0].BlockVariables[0].BlockID)
 		case block.TypeTrigger:
 			require.Equal(t, "trig", blk.Cid)
-			require.Equal(t, "Work order created", blk.Name)
 			require.Equal(t, flowschema.TriggerTypeWorkOrder, *blk.TriggerType)
 			require.Len(t, blk.InputParams, 1)
 		case block.TypeGoTo:
 			require.Equal(t, "shortcut", blk.Cid)
-			require.Equal(t, "Go to End", blk.Name)
 			require.Equal(t, draft.QueryBlocks().Where(block.TypeEQ(block.TypeEnd)).OnlyIDX(ctx), blk.QueryGotoBlock().OnlyIDX(ctx))
 		default:
 			t.Fatalf("block type not found: %v", blk.Type)
@@ -518,8 +533,7 @@ func TestImportCleanCurrentFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
-		Cid:  "my_start",
-		Name: "My Start",
+		Cid: "my_start",
 		UIRepresentation: &flowschema.BlockUIRepresentation{
 			XPosition: 56,
 			YPosition: 43,
@@ -527,8 +541,7 @@ func TestImportCleanCurrentFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	_, err = mr.AddEndBlock(ctx, draft.ID, models.EndBlockInput{
-		Cid:  "my_end",
-		Name: "My End",
+		Cid: "my_end",
 		UIRepresentation: &flowschema.BlockUIRepresentation{
 			XPosition: 106,
 			YPosition: 43,
@@ -571,8 +584,7 @@ func TestBadImports(t *testing.T) {
 			ID:   draft.ID,
 			Name: "Second version",
 			StartBlock: &models.StartBlockInput{
-				Cid:  "start",
-				Name: "Start point",
+				Cid: "start",
 			},
 			Connectors: []*models.ConnectorInput{
 				{
@@ -590,7 +602,6 @@ func TestBadImports(t *testing.T) {
 			GotoBlocks: []*models.GotoBlockInput{
 				{
 					Cid:            "goto",
-					Name:           "Shortcut",
 					TargetBlockCid: "target",
 				},
 			},
@@ -609,8 +620,7 @@ func TestBadImports(t *testing.T) {
 			},
 			EndBlocks: []*models.EndBlockInput{
 				{
-					Cid:  "final",
-					Name: "Finale",
+					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
 							VariableDefinitionKey: "param",
@@ -640,8 +650,7 @@ func TestBadImports(t *testing.T) {
 			},
 			EndBlocks: []*models.EndBlockInput{
 				{
-					Cid:  "final",
-					Name: "Finale",
+					Cid: "final",
 					Params: []*models.VariableExpressionInput{
 						{
 							VariableDefinitionKey: "param",
@@ -659,7 +668,6 @@ func TestBadImports(t *testing.T) {
 			TriggerBlocks: []*models.TriggerBlockInput{
 				{
 					Cid:         "trig",
-					Name:        "Work order created",
 					TriggerType: flowschema.TriggerTypeWorkOrder,
 					Params: []*models.VariableExpressionInput{
 						{

@@ -958,14 +958,13 @@ type BlockMutation struct {
 	id                      *int
 	create_time             *time.Time
 	update_time             *time.Time
-	name                    *string
 	cid                     *string
 	_type                   *block.Type
 	action_type             *flowschema.ActionTypeID
 	trigger_type            *flowschema.TriggerTypeID
 	start_param_definitions *[]*flowschema.VariableDefinition
 	input_params            *[]*flowschema.VariableExpression
-	ui_representation       *flowschema.BlockUIRepresentation
+	ui_representation       **flowschema.BlockUIRepresentation
 	clearedFields           map[string]struct{}
 	prev_blocks             map[int]struct{}
 	removedprev_blocks      map[int]struct{}
@@ -1144,43 +1143,6 @@ func (m *BlockMutation) OldUpdateTime(ctx context.Context) (v time.Time, err err
 // ResetUpdateTime reset all changes of the "update_time" field.
 func (m *BlockMutation) ResetUpdateTime() {
 	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *BlockMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *BlockMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the Block.
-// If the Block object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *BlockMutation) ResetName() {
-	m.name = nil
 }
 
 // SetCid sets the cid field.
@@ -1458,12 +1420,12 @@ func (m *BlockMutation) ResetInputParams() {
 }
 
 // SetUIRepresentation sets the ui_representation field.
-func (m *BlockMutation) SetUIRepresentation(fur flowschema.BlockUIRepresentation) {
+func (m *BlockMutation) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) {
 	m.ui_representation = &fur
 }
 
 // UIRepresentation returns the ui_representation value in the mutation.
-func (m *BlockMutation) UIRepresentation() (r flowschema.BlockUIRepresentation, exists bool) {
+func (m *BlockMutation) UIRepresentation() (r *flowschema.BlockUIRepresentation, exists bool) {
 	v := m.ui_representation
 	if v == nil {
 		return
@@ -1475,7 +1437,7 @@ func (m *BlockMutation) UIRepresentation() (r flowschema.BlockUIRepresentation, 
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldUIRepresentation(ctx context.Context) (v flowschema.BlockUIRepresentation, err error) {
+func (m *BlockMutation) OldUIRepresentation(ctx context.Context) (v *flowschema.BlockUIRepresentation, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUIRepresentation is allowed only on UpdateOne operations")
 	}
@@ -1928,15 +1890,12 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, block.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, block.FieldName)
 	}
 	if m.cid != nil {
 		fields = append(fields, block.FieldCid)
@@ -1971,8 +1930,6 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case block.FieldUpdateTime:
 		return m.UpdateTime()
-	case block.FieldName:
-		return m.Name()
 	case block.FieldCid:
 		return m.Cid()
 	case block.FieldType:
@@ -2000,8 +1957,6 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreateTime(ctx)
 	case block.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case block.FieldName:
-		return m.OldName(ctx)
 	case block.FieldCid:
 		return m.OldCid(ctx)
 	case block.FieldType:
@@ -2038,13 +1993,6 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
-		return nil
-	case block.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
 		return nil
 	case block.FieldCid:
 		v, ok := value.(string)
@@ -2089,7 +2037,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetInputParams(v)
 		return nil
 	case block.FieldUIRepresentation:
-		v, ok := value.(flowschema.BlockUIRepresentation)
+		v, ok := value.(*flowschema.BlockUIRepresentation)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2183,9 +2131,6 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldUpdateTime:
 		m.ResetUpdateTime()
-		return nil
-	case block.FieldName:
-		m.ResetName()
 		return nil
 	case block.FieldCid:
 		m.ResetCid()

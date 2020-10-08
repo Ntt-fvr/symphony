@@ -72,7 +72,6 @@ func (s *FlowTestSuite) prepareFlow() *ent.Flow {
 	s.entClient.Block.Create().
 		SetType(block.TypeStart).
 		SetCid("start").
-		SetName("Start").
 		SetFlow(flw).
 		SaveX(s.ctx)
 	return flw

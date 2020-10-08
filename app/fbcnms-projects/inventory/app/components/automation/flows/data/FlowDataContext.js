@@ -84,18 +84,18 @@ const flowQuery = graphql`
         description
         blocks {
           cid
-          name
           details {
             __typename
           }
           uiRepresentation {
+            name
             xPosition
             yPosition
           }
           nextBlocks {
             cid
-            name
             uiRepresentation {
+              name
               xPosition
               yPosition
             }
@@ -154,7 +154,7 @@ function FlowDataContextProviderComponent(props: Props) {
           BLOCK_TYPES[block.details.__typename],
           {
             id: block.cid,
-            text: block.name,
+            text: block.uiRepresentation?.name ?? '',
             position: {
               x: block.uiRepresentation?.xPosition ?? 0,
               y: block.uiRepresentation?.yPosition ?? 0,
@@ -164,7 +164,7 @@ function FlowDataContextProviderComponent(props: Props) {
         if (!(createdBlock instanceof BaseBlock)) {
           errors.push({
             id: block.cid,
-            name: block.name,
+            name: block.uiRepresentation?.name ?? '',
           });
         }
       });

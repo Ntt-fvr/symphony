@@ -6,6 +6,7 @@ package flowschema
 
 // BlockUIRepresentation is used for drawing the block in canvas
 type BlockUIRepresentation struct {
+	Name      string
 	XPosition int
 	YPosition int
 }

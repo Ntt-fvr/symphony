@@ -15,7 +15,6 @@ from ..input.variable_expression import VariableExpressionInput
 @dataclass
 class EndBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     params: List[VariableExpressionInput]
     uiRepresentation: Optional[BlockUIRepresentationInput] = None
 

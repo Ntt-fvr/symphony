@@ -73,8 +73,8 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInput {
 
 type BaseBlockInput = $ReadOnly<{|
   cid: string,
-  name: string,
   uiRepresentation: {|
+    name: string,
     xPosition: number,
     yPosition: number,
   |},
@@ -83,8 +83,8 @@ type BaseBlockInput = $ReadOnly<{|
 function mapBlockForSave(block: IBlock): BaseBlockInput {
   return {
     cid: block.id,
-    name: block.name,
     uiRepresentation: {
+      name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },

@@ -18,7 +18,6 @@ from ..input.variable_expression import VariableExpressionInput
 @dataclass
 class ActionBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     params: List[VariableExpressionInput]
     actionType: ActionTypeId = enum_field(ActionTypeId)
     uiRepresentation: Optional[BlockUIRepresentationInput] = None

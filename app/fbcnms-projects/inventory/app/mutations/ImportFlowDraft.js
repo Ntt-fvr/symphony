@@ -27,18 +27,18 @@ const mutation = graphql`
       description
       blocks {
         cid
-        name
         details {
           __typename
         }
         uiRepresentation {
+          name
           xPosition
           yPosition
         }
         nextBlocks {
           cid
-          name
           uiRepresentation {
+            name
             xPosition
             yPosition
           }

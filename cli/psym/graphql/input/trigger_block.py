@@ -18,7 +18,6 @@ from ..input.variable_expression import VariableExpressionInput
 @dataclass
 class TriggerBlockInput(DataClassJsonMixin):
     cid: str
-    name: str
     params: List[VariableExpressionInput]
     triggerType: TriggerTypeId = enum_field(TriggerTypeId)
     uiRepresentation: Optional[BlockUIRepresentationInput] = None

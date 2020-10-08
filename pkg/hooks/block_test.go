@@ -6,7 +6,6 @@ package hooks_test
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"testing"
 	"time"
@@ -225,7 +224,6 @@ func TestEndParamsVerifications(t *testing.T) {
 				SetFlowDraft(flowDraft).
 				SetType(block.TypeEnd).
 				SetCid(strconv.Itoa(i)).
-				SetName(fmt.Sprintf("End_%d", i)).
 				Save(ctx)
 			require.NoError(t, err)
 			for _, input := range tc.inputs {
@@ -250,7 +248,6 @@ func createFlowWithStartBlock(ctx context.Context, t *testing.T, definitions []*
 	require.NoError(t, err)
 	_, err = client.Block.Create().
 		SetType(block.TypeStart).
-		SetName("Start").
 		SetCid("start").
 		SetFlow(flow).
 		SetStartParamDefinitions(definitions).
@@ -320,7 +317,6 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 				SetType(block.TypeSubFlow).
 				SetSubFlow(subFlow).
 				SetCid(strconv.Itoa(i)).
-				SetName(fmt.Sprintf("SubFlow_%d", i)).
 				Save(ctx)
 			require.NoError(t, err)
 			for _, input := range tc.inputs {
