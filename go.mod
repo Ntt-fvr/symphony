@@ -50,7 +50,7 @@ require (
 	go.opencensus.io v0.22.5
 	go.uber.org/cadence v0.14.1
 	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/yarpc v1.47.2
+	go.uber.org/yarpc v1.48.0
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
 	gocloud.dev/pubsub/natspubsub v0.20.0
