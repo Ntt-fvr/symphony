@@ -23,6 +23,10 @@ fragment EquipmentPortDefinitionFragment on EquipmentPortDefinition {
     id
     name
   }
+  connectedPorts {
+    id
+    name
+  }
 }
 
 """]
@@ -34,8 +38,14 @@ class EquipmentPortDefinitionFragment(DataClassJsonMixin):
         id: str
         name: str
 
+    @dataclass
+    class EquipmentPortDefinition(DataClassJsonMixin):
+        id: str
+        name: str
+
     id: str
     name: str
     index: Optional[int]
     visibleLabel: Optional[str]
     portType: Optional[EquipmentPortType]
+    connectedPorts: List[EquipmentPortDefinition]

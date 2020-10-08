@@ -246,6 +246,7 @@ def get_port_definition_input(
         index=port_definition.index,
         visibleLabel=port_definition.visibleLabel,
         portTypeID=port_definition.portType.id if port_definition.portType else None,
+        connectedPorts=port_definition.connectedPorts,
     )
 
 

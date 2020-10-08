@@ -878,7 +878,49 @@ func (r mutationResolver) AddEquipmentPortDefinitions(
 	if err != nil {
 		return nil, fmt.Errorf("creating bulk of equipment port definition: %w", err)
 	}
+	for i, def := range defs {
+		if len(inputs[i].ConnectedPorts) > 0 {
+			defs[i], err = r.SetEquipmentPortConnections(ctx, def, inputs[i].ConnectedPorts)
+			if err != nil {
+				return nil, fmt.Errorf("unable to add port connections: %w", err)
+			}
+		}
+	}
 	return defs, nil
+}
+
+func (r mutationResolver) SetEquipmentPortConnections(
+	ctx context.Context, port *ent.EquipmentPortDefinition, connections []*models.EquipmentPortConnectionInput,
+) (*ent.EquipmentPortDefinition, error) {
+	client := r.ClientFrom(ctx).EquipmentPortDefinition
+	def, err := client.UpdateOne(port).ClearConnectedPorts().Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("attaching connected ports: %w", err)
+	}
+	if len(connections) == 0 {
+		return def, nil
+	}
+	predicates := make([]predicate.EquipmentPortDefinition, len(connections))
+	for i, val := range connections {
+		if val.ID != nil {
+			predicates[i] = equipmentportdefinition.And(equipmentportdefinition.ID(*val.ID),
+				equipmentportdefinition.HasEquipmentTypeWith(equipmenttype.ID(port.QueryEquipmentType().OnlyIDX(ctx))))
+		} else if val.Name != nil {
+			predicates[i] = equipmentportdefinition.And(equipmentportdefinition.Name(*val.Name),
+				equipmentportdefinition.HasEquipmentTypeWith(equipmenttype.ID(port.QueryEquipmentType().OnlyIDX(ctx))))
+		}
+	}
+	definationIds, err := client.Query().
+		Where(predicates...).IDs(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("attaching connected ports: %w", err)
+	}
+	def, err = client.UpdateOne(def).
+		AddConnectedPortIDs(definationIds...).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("attaching connected ports: %w", err)
+	}
+	return def, nil
 }
 
 func (r mutationResolver) AddEquipmentPortType(
@@ -2598,14 +2640,8 @@ func (r mutationResolver) EditEquipmentType(
 			return nil, err
 		}
 		for _, input := range edited {
-			if err := client.EquipmentPortDefinition.
-				UpdateOneID(*input.ID).
-				SetName(input.Name).
-				SetNillableIndex(input.Index).
-				SetNillableBandwidth(input.Bandwidth).
-				SetNillableVisibilityLabel(input.VisibleLabel).
-				Exec(ctx); err != nil {
-				return nil, errors.Wrapf(err, "updating equipment port definition: id=%q", *input.ID)
+			if err = r.updateEquipmentPortDefinition(ctx, client, input); err != nil {
+				return nil, err
 			}
 		}
 	}
@@ -2635,6 +2671,31 @@ func (r mutationResolver) EditEquipmentType(
 		}
 	}
 	return et, nil
+}
+
+func (r mutationResolver) updateEquipmentPortDefinition(ctx context.Context, client *ent.Client, input *models.EquipmentPortInput) error {
+	if err := client.EquipmentPortDefinition.
+		UpdateOneID(*input.ID).
+		SetName(input.Name).
+		SetNillableIndex(input.Index).
+		SetNillableBandwidth(input.Bandwidth).
+		SetNillableVisibilityLabel(input.VisibleLabel).
+		Exec(ctx); err != nil {
+		return errors.Wrapf(err, "updating equipment port definition: id=%q", *input.ID)
+	}
+	if input.ConnectedPorts != nil {
+		if input.ID == nil {
+			return errors.New("equipment port id is required")
+		}
+		portDef, err := client.EquipmentPortDefinition.Get(ctx, *input.ID)
+		if err != nil {
+			return errors.Wrapf(err, "unable to find port definition: id=%d", *input.ID)
+		}
+		if _, err = r.SetEquipmentPortConnections(ctx, portDef, input.ConnectedPorts); err != nil {
+			return errors.Wrapf(err, "unable to find port definition connections: id=%d", *input.ID)
+		}
+	}
+	return nil
 }
 
 func (r mutationResolver) EditEquipmentPortType(

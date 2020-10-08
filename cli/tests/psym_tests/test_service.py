@@ -22,6 +22,7 @@ from psym.api.service_type import add_service_type, edit_service_type
 from psym.common.cache import SERVICE_TYPES
 from psym.common.data_class import (
     EquipmentPortDefinition,
+    EquipmentPortDefinitionAlias,
     PropertyDefinition,
     ServiceEndpointDefinition,
 )
@@ -144,12 +145,14 @@ class TestService(BaseTest):
                     visible_label="Port1",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[EquipmentPortDefinitionAlias(name="Port2")],
                 ),
                 EquipmentPortDefinition(
                     name="Port 2",
                     visible_label="Port2",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[],
                 ),
             ],
             position_list=[],
@@ -256,6 +259,7 @@ class TestService(BaseTest):
                     visible_label="Port1",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[],
                 ),
                 EquipmentPortDefinition(
                     id=None,
@@ -263,6 +267,7 @@ class TestService(BaseTest):
                     visible_label="Port2",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[],
                 ),
             ],
             position_list=[],
