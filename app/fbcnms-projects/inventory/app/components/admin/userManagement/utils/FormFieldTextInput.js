@@ -14,10 +14,13 @@ import TextInput from '@symphony/design-system/components/Input/TextInput';
 import useSideEffectCallback from './useSideEffectCallback';
 import {useEffect, useState} from 'react';
 
-type FormFieldTextInputProps = {
+export type FormFieldTextInputProps = $ReadOnly<{|
   validationId?: string,
   label: string,
+  placeholder?: string,
+  hasSpacer?: boolean,
   type?: string,
+  rows?: number,
   value: string,
   onValueChanged?: ?(string) => void,
   className?: ?string,
@@ -25,7 +28,7 @@ type FormFieldTextInputProps = {
   hasError?: boolean,
   errorText?: ?string,
   immediateUpdate?: boolean,
-};
+|}>;
 
 const FormFieldTextInput = (props: FormFieldTextInputProps) => {
   const {
@@ -33,7 +36,10 @@ const FormFieldTextInput = (props: FormFieldTextInputProps) => {
     onValueChanged,
     validationId,
     label,
+    placeholder,
+    hasSpacer,
     type,
+    rows,
     className,
     hasError,
     errorText,
@@ -64,6 +70,7 @@ const FormFieldTextInput = (props: FormFieldTextInputProps) => {
     <FormField
       className={className || undefined}
       label={label}
+      hasSpacer={hasSpacer}
       required={isRequired}
       validation={
         isRequired
@@ -77,6 +84,8 @@ const FormFieldTextInput = (props: FormFieldTextInputProps) => {
       errorText={errorText}>
       <TextInput
         type={type}
+        rows={rows}
+        placeholder={placeholder}
         value={fieldValue}
         disabled={disabled ?? false}
         onChange={e => {

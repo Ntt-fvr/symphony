@@ -13,9 +13,8 @@ import emptyFunction from '@fbcnms/util/emptyFunction';
 import useSettingsPanel from './useSettingsPanel';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {makeStyles} from '@material-ui/styles';
-import {useCallback, useContext} from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
-import {useEffect} from 'react';
 
 export type DetailsPanelContextType = {
   isShown: boolean,

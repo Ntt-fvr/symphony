@@ -40,6 +40,7 @@ import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useGraph} from '../builder/canvas/graph/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useRef} from 'react';
 
 const BLOCK_TYPES = {
   StartBlock: ManualStartType,
@@ -213,7 +214,12 @@ function FlowDataContextProviderComponent(props: Props) {
     [flow],
   );
 
+  const isLoaded = useRef(false);
   useEffect(() => {
+    if (isLoaded.current) {
+      return;
+    }
+
     flow.clearGraph();
 
     if (flowDraft?.blocks == null) {
@@ -223,6 +229,8 @@ function FlowDataContextProviderComponent(props: Props) {
     const blocks = [...flowDraft.blocks];
     loadBlocksIntoGraph(blocks);
     loadConnectorsIntoGraph(blocks);
+
+    isLoaded.current = true;
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
   const save = useCallback(

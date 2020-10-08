@@ -8,70 +8,28 @@
  * @format
  */
 
-import Button from '@symphony/design-system/components/Button';
-import FormAction from '@symphony/design-system/components/Form/FormAction';
-import NameInput from '@fbcnms/ui/components/design-system/Form/NameInput';
-import React, {useState} from 'react';
-import Strings from '@fbcnms/strings/Strings';
-import {FormContextProvider} from '../../../../../../common/FormContext';
+import FormFieldTextDialog from './FormFieldTextDialog';
+import React from 'react';
 import {fbt} from 'fbt';
-import {makeStyles} from '@material-ui/styles';
+import {useFlowData} from '../../../data/FlowDataContext';
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    width: '480px',
-  },
-  actionButtons: {
-    padding: '24px 0',
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  },
-  actionButton: {
-    '&:not(:last-child)': {
-      marginRight: '8px',
-    },
-  },
-}));
-
-type Props = {
+type Props = $ReadOnly<{|
   onClose: () => void,
   onSave: (newName: string) => void,
-};
+|}>;
 
 function RenameFlowDialog(props: Props) {
-  const [name, setName] = useState('');
-  const classes = useStyles();
-  const {onClose, onSave} = props;
-  const saveFlow = () => {
-    onSave(name);
-  };
+  const flowData = useFlowData();
+  const flowName = flowData.flowDraft?.name || '';
+  const title = `${fbt('Flow Name', '')}`;
 
   return (
-    <FormContextProvider permissions={{adminRightsRequired: true}}>
-      <div className={classes.wrapper}>
-        <NameInput
-          value={name}
-          title={fbt('Flow Name', '')}
-          onChange={event => setName(event.target.value)}
-        />
-        <div className={classes.actionButtons}>
-          <Button
-            className={classes.actionButton}
-            onClick={onClose}
-            skin="gray">
-            {Strings.common.cancelButton}
-          </Button>
-          <FormAction disabled={!name} disableOnFromError={true}>
-            <Button className={classes.actionButton} onClick={saveFlow}>
-              <fbt desc="">Apply</fbt>
-            </Button>
-          </FormAction>
-        </div>
-      </div>
-    </FormContextProvider>
+    <FormFieldTextDialog
+      label={title}
+      validationId="Flow name"
+      value={flowName}
+      {...props}
+    />
   );
 }
 
