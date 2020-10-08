@@ -17,7 +17,7 @@ import type { ConcreteRequest } from 'relay-runtime';
 type AutomationFlowsList_flows$ref = any;
 export type AutomationFlowsViewQueryVariables = {||};
 export type AutomationFlowsViewQueryResponse = {|
-  +flowDrafts: {|
+  +flows: {|
     +edges: ?$ReadOnlyArray<{|
       +node: ?{|
         +$fragmentRefs: AutomationFlowsList_flows$ref
@@ -34,7 +34,7 @@ export type AutomationFlowsViewQuery = {|
 
 /*
 query AutomationFlowsViewQuery {
-  flowDrafts(first: 500) {
+  flows(first: 500) {
     edges {
       node {
         ...AutomationFlowsList_flows
@@ -50,14 +50,20 @@ query AutomationFlowsViewQuery {
   }
 }
 
-fragment AutomationFlowCard_flowDraft on FlowDraft {
+fragment AutomationFlowCard_flow on Flow {
   id
   name
+  description
+  status
+  newInstancesPolicy
+  draft {
+    id
+  }
 }
 
-fragment AutomationFlowsList_flows on FlowDraft {
+fragment AutomationFlowsList_flows on Flow {
   id
-  ...AutomationFlowCard_flowDraft
+  ...AutomationFlowCard_flow
 }
 */
 
@@ -107,7 +113,14 @@ v3 = [
     "name": "first",
     "value": 500
   }
-];
+],
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -116,17 +129,17 @@ return {
     "name": "AutomationFlowsViewQuery",
     "selections": [
       {
-        "alias": "flowDrafts",
+        "alias": "flows",
         "args": null,
-        "concreteType": "FlowDraftConnection",
+        "concreteType": "FlowConnection",
         "kind": "LinkedField",
-        "name": "__AutomationFlowsView_flowDrafts_connection",
+        "name": "__AutomationFlowsView_flows_connection",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "FlowDraftEdge",
+            "concreteType": "FlowEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -134,7 +147,7 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "FlowDraft",
+                "concreteType": "Flow",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
@@ -169,15 +182,15 @@ return {
       {
         "alias": null,
         "args": (v3/*: any*/),
-        "concreteType": "FlowDraftConnection",
+        "concreteType": "FlowConnection",
         "kind": "LinkedField",
-        "name": "flowDrafts",
+        "name": "flows",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "FlowDraftEdge",
+            "concreteType": "FlowEdge",
             "kind": "LinkedField",
             "name": "edges",
             "plural": true,
@@ -185,23 +198,50 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "FlowDraft",
+                "concreteType": "Flow",
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v4/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "id",
+                    "name": "name",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "name",
+                    "name": "description",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "status",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "newInstancesPolicy",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "FlowDraft",
+                    "kind": "LinkedField",
+                    "name": "draft",
+                    "plural": false,
+                    "selections": [
+                      (v4/*: any*/)
+                    ],
                     "storageKey": null
                   },
                   (v0/*: any*/)
@@ -214,21 +254,21 @@ return {
           },
           (v2/*: any*/)
         ],
-        "storageKey": "flowDrafts(first:500)"
+        "storageKey": "flows(first:500)"
       },
       {
         "alias": null,
         "args": (v3/*: any*/),
         "filters": null,
         "handle": "connection",
-        "key": "AutomationFlowsView_flowDrafts",
+        "key": "AutomationFlowsView_flows",
         "kind": "LinkedHandle",
-        "name": "flowDrafts"
+        "name": "flows"
       }
     ]
   },
   "params": {
-    "cacheID": "2fdb4587f5973a41f183b433f9abff8c",
+    "cacheID": "3ccca49530130e3469a1b73055b75c3f",
     "id": null,
     "metadata": {
       "connection": [
@@ -237,18 +277,18 @@ return {
           "cursor": null,
           "direction": "forward",
           "path": [
-            "flowDrafts"
+            "flows"
           ]
         }
       ]
     },
     "name": "AutomationFlowsViewQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowsViewQuery {\n  flowDrafts(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flowDraft on FlowDraft {\n  id\n  name\n}\n\nfragment AutomationFlowsList_flows on FlowDraft {\n  id\n  ...AutomationFlowCard_flowDraft\n}\n"
+    "text": "query AutomationFlowsViewQuery {\n  flows(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flow on Flow {\n  id\n  name\n  description\n  status\n  newInstancesPolicy\n  draft {\n    id\n  }\n}\n\nfragment AutomationFlowsList_flows on Flow {\n  id\n  ...AutomationFlowCard_flow\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '82fa48721d6e1c127c375d0ce805e52d';
+(node/*: any*/).hash = '3df60d6c8a5b5100e28110cb39f3354c';
 
 module.exports = node;

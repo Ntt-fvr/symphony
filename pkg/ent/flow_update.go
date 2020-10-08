@@ -86,6 +86,20 @@ func (fu *FlowUpdate) SetNillableStatus(f *flow.Status) *FlowUpdate {
 	return fu
 }
 
+// SetNewInstancesPolicy sets the newInstancesPolicy field.
+func (fu *FlowUpdate) SetNewInstancesPolicy(fip flow.NewInstancesPolicy) *FlowUpdate {
+	fu.mutation.SetNewInstancesPolicy(fip)
+	return fu
+}
+
+// SetNillableNewInstancesPolicy sets the newInstancesPolicy field if the given value is not nil.
+func (fu *FlowUpdate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy) *FlowUpdate {
+	if fip != nil {
+		fu.SetNewInstancesPolicy(*fip)
+	}
+	return fu
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fu *FlowUpdate) AddBlockIDs(ids ...int) *FlowUpdate {
 	fu.mutation.AddBlockIDs(ids...)
@@ -101,19 +115,23 @@ func (fu *FlowUpdate) AddBlocks(b ...*Block) *FlowUpdate {
 	return fu.AddBlockIDs(ids...)
 }
 
-// AddDraftIDs adds the draft edge to FlowDraft by ids.
-func (fu *FlowUpdate) AddDraftIDs(ids ...int) *FlowUpdate {
-	fu.mutation.AddDraftIDs(ids...)
+// SetDraftID sets the draft edge to FlowDraft by id.
+func (fu *FlowUpdate) SetDraftID(id int) *FlowUpdate {
+	fu.mutation.SetDraftID(id)
 	return fu
 }
 
-// AddDraft adds the draft edges to FlowDraft.
-func (fu *FlowUpdate) AddDraft(f ...*FlowDraft) *FlowUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+// SetNillableDraftID sets the draft edge to FlowDraft by id if the given value is not nil.
+func (fu *FlowUpdate) SetNillableDraftID(id *int) *FlowUpdate {
+	if id != nil {
+		fu = fu.SetDraftID(*id)
 	}
-	return fu.AddDraftIDs(ids...)
+	return fu
+}
+
+// SetDraft sets the draft edge to FlowDraft.
+func (fu *FlowUpdate) SetDraft(f *FlowDraft) *FlowUpdate {
+	return fu.SetDraftID(f.ID)
 }
 
 // Mutation returns the FlowMutation object of the builder.
@@ -142,25 +160,10 @@ func (fu *FlowUpdate) RemoveBlocks(b ...*Block) *FlowUpdate {
 	return fu.RemoveBlockIDs(ids...)
 }
 
-// ClearDraft clears all "draft" edges to type FlowDraft.
+// ClearDraft clears the "draft" edge to type FlowDraft.
 func (fu *FlowUpdate) ClearDraft() *FlowUpdate {
 	fu.mutation.ClearDraft()
 	return fu
-}
-
-// RemoveDraftIDs removes the draft edge to FlowDraft by ids.
-func (fu *FlowUpdate) RemoveDraftIDs(ids ...int) *FlowUpdate {
-	fu.mutation.RemoveDraftIDs(ids...)
-	return fu
-}
-
-// RemoveDraft removes draft edges to FlowDraft.
-func (fu *FlowUpdate) RemoveDraft(f ...*FlowDraft) *FlowUpdate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fu.RemoveDraftIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -241,6 +244,11 @@ func (fu *FlowUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
 	}
+	if v, ok := fu.mutation.NewInstancesPolicy(); ok {
+		if err := flow.NewInstancesPolicyValidator(v); err != nil {
+			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -309,6 +317,13 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: flow.FieldStatus,
 		})
 	}
+	if value, ok := fu.mutation.NewInstancesPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldNewInstancesPolicy,
+		})
+	}
 	if fu.mutation.BlocksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -365,7 +380,7 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if fu.mutation.DraftCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   flow.DraftTable,
 			Columns: []string{flow.DraftColumn},
@@ -376,31 +391,12 @@ func (fu *FlowUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: flowdraft.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fu.mutation.RemovedDraftIDs(); len(nodes) > 0 && !fu.mutation.DraftCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.DraftTable,
-			Columns: []string{flow.DraftColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowdraft.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := fu.mutation.DraftIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   flow.DraftTable,
 			Columns: []string{flow.DraftColumn},
@@ -487,6 +483,20 @@ func (fuo *FlowUpdateOne) SetNillableStatus(f *flow.Status) *FlowUpdateOne {
 	return fuo
 }
 
+// SetNewInstancesPolicy sets the newInstancesPolicy field.
+func (fuo *FlowUpdateOne) SetNewInstancesPolicy(fip flow.NewInstancesPolicy) *FlowUpdateOne {
+	fuo.mutation.SetNewInstancesPolicy(fip)
+	return fuo
+}
+
+// SetNillableNewInstancesPolicy sets the newInstancesPolicy field if the given value is not nil.
+func (fuo *FlowUpdateOne) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy) *FlowUpdateOne {
+	if fip != nil {
+		fuo.SetNewInstancesPolicy(*fip)
+	}
+	return fuo
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fuo *FlowUpdateOne) AddBlockIDs(ids ...int) *FlowUpdateOne {
 	fuo.mutation.AddBlockIDs(ids...)
@@ -502,19 +512,23 @@ func (fuo *FlowUpdateOne) AddBlocks(b ...*Block) *FlowUpdateOne {
 	return fuo.AddBlockIDs(ids...)
 }
 
-// AddDraftIDs adds the draft edge to FlowDraft by ids.
-func (fuo *FlowUpdateOne) AddDraftIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.AddDraftIDs(ids...)
+// SetDraftID sets the draft edge to FlowDraft by id.
+func (fuo *FlowUpdateOne) SetDraftID(id int) *FlowUpdateOne {
+	fuo.mutation.SetDraftID(id)
 	return fuo
 }
 
-// AddDraft adds the draft edges to FlowDraft.
-func (fuo *FlowUpdateOne) AddDraft(f ...*FlowDraft) *FlowUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+// SetNillableDraftID sets the draft edge to FlowDraft by id if the given value is not nil.
+func (fuo *FlowUpdateOne) SetNillableDraftID(id *int) *FlowUpdateOne {
+	if id != nil {
+		fuo = fuo.SetDraftID(*id)
 	}
-	return fuo.AddDraftIDs(ids...)
+	return fuo
+}
+
+// SetDraft sets the draft edge to FlowDraft.
+func (fuo *FlowUpdateOne) SetDraft(f *FlowDraft) *FlowUpdateOne {
+	return fuo.SetDraftID(f.ID)
 }
 
 // Mutation returns the FlowMutation object of the builder.
@@ -543,25 +557,10 @@ func (fuo *FlowUpdateOne) RemoveBlocks(b ...*Block) *FlowUpdateOne {
 	return fuo.RemoveBlockIDs(ids...)
 }
 
-// ClearDraft clears all "draft" edges to type FlowDraft.
+// ClearDraft clears the "draft" edge to type FlowDraft.
 func (fuo *FlowUpdateOne) ClearDraft() *FlowUpdateOne {
 	fuo.mutation.ClearDraft()
 	return fuo
-}
-
-// RemoveDraftIDs removes the draft edge to FlowDraft by ids.
-func (fuo *FlowUpdateOne) RemoveDraftIDs(ids ...int) *FlowUpdateOne {
-	fuo.mutation.RemoveDraftIDs(ids...)
-	return fuo
-}
-
-// RemoveDraft removes draft edges to FlowDraft.
-func (fuo *FlowUpdateOne) RemoveDraft(f ...*FlowDraft) *FlowUpdateOne {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
-	}
-	return fuo.RemoveDraftIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -642,6 +641,11 @@ func (fuo *FlowUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
 		}
 	}
+	if v, ok := fuo.mutation.NewInstancesPolicy(); ok {
+		if err := flow.NewInstancesPolicyValidator(v); err != nil {
+			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
+		}
+	}
 	return nil
 }
 
@@ -708,6 +712,13 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 			Column: flow.FieldStatus,
 		})
 	}
+	if value, ok := fuo.mutation.NewInstancesPolicy(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldNewInstancesPolicy,
+		})
+	}
 	if fuo.mutation.BlocksCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -764,7 +775,7 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 	}
 	if fuo.mutation.DraftCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   flow.DraftTable,
 			Columns: []string{flow.DraftColumn},
@@ -775,31 +786,12 @@ func (fuo *FlowUpdateOne) sqlSave(ctx context.Context) (_node *Flow, err error) 
 					Column: flowdraft.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := fuo.mutation.RemovedDraftIDs(); len(nodes) > 0 && !fuo.mutation.DraftCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   flow.DraftTable,
-			Columns: []string{flow.DraftColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: flowdraft.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := fuo.mutation.DraftIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   flow.DraftTable,
 			Columns: []string{flow.DraftColumn},

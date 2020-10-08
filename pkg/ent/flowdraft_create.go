@@ -102,14 +102,6 @@ func (fdc *FlowDraftCreate) SetFlowID(id int) *FlowDraftCreate {
 	return fdc
 }
 
-// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
-func (fdc *FlowDraftCreate) SetNillableFlowID(id *int) *FlowDraftCreate {
-	if id != nil {
-		fdc = fdc.SetFlowID(*id)
-	}
-	return fdc
-}
-
 // SetFlow sets the flow edge to Flow.
 func (fdc *FlowDraftCreate) SetFlow(f *Flow) *FlowDraftCreate {
 	return fdc.SetFlowID(f.ID)
@@ -192,6 +184,9 @@ func (fdc *FlowDraftCreate) check() error {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := fdc.mutation.FlowID(); !ok {
+		return &ValidationError{Name: "flow", err: errors.New("ent: missing required edge \"flow\"")}
 	}
 	return nil
 }
@@ -281,7 +276,7 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 	}
 	if nodes := fdc.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   flowdraft.FlowTable,
 			Columns: []string{flowdraft.FlowColumn},

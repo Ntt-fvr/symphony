@@ -188,9 +188,14 @@ func TestEndParamDefinitionsVerifications(t *testing.T) {
 
 	for i, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := client.FlowDraft.Create().
+			flowItem, err := client.Flow.Create().
+				SetName(fmt.Sprintf("Flow_%d", i)).
+				Save(ctx)
+			require.NoError(t, err)
+			_, err = client.FlowDraft.Create().
 				SetName(fmt.Sprintf("Flow_%d", i)).
 				SetEndParamDefinitions(tc.inputs).
+				SetFlow(flowItem).
 				Save(ctx)
 			if tc.expectFail {
 				require.Error(t, err)
@@ -238,9 +243,14 @@ func TestMandatoryPropertiesEnforcedInFlowNotInDraft(t *testing.T) {
 		},
 	}
 	err := withTransaction(ctx, t, func(ctx context.Context, client *ent.Client) {
+		flowItem, err := client.Flow.Create().
+			SetName("Flow Draft").
+			Save(ctx)
+		require.NoError(t, err)
 		draft, err := client.FlowDraft.Create().
 			SetName("Flow Draft").
 			SetEndParamDefinitions(endParamDefinitions).
+			SetFlow(flowItem).
 			Save(ctx)
 		require.NoError(t, err)
 		_, err = client.Block.Create().
@@ -568,7 +578,6 @@ func TestFlowInstanceCreation(t *testing.T) {
 	}
 	flw, err := client.Flow.Create().
 		SetName(flowName).
-		SetStatus(flow.StatusDisabled).
 		SetDescription(flowDescription).
 		SetEndParamDefinitions(endParamDefinitions).
 		Save(ctx)
@@ -627,7 +636,8 @@ func TestFlowInstanceCreation(t *testing.T) {
 		Save(ctx)
 	require.Error(t, err)
 	err = client.Flow.UpdateOne(flw).
-		SetStatus(flow.StatusEnabled).
+		SetStatus(flow.StatusPublished).
+		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
 		Exec(ctx)
 	require.NoError(t, err)
 	flowInstance, err := client.FlowInstance.Create().

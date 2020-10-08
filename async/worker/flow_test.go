@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
+
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
@@ -64,6 +66,8 @@ func (s *FlowTestSuite) SetupTest() {
 func (s *FlowTestSuite) prepareFlow() *ent.Flow {
 	flw := s.entClient.Flow.Create().
 		SetName("Flow").
+		SetStatus(flow.StatusPublished).
+		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
 		SaveX(s.ctx)
 	s.entClient.Block.Create().
 		SetType(block.TypeStart).

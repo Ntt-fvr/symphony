@@ -13,6 +13,7 @@ import (
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	evmocks "github.com/facebookincubator/symphony/pkg/ev/mocks"
@@ -212,7 +213,7 @@ func TestSubscriptionFlowInstance(t *testing.T) {
 		Name: "Start",
 	})
 	require.NoError(t, err)
-	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	flowInstance, err := mr.StartFlow(ctx, models.StartFlowInput{
 		FlowID: flw.ID,

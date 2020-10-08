@@ -95,6 +95,20 @@ func (fc *FlowCreate) SetNillableStatus(f *flow.Status) *FlowCreate {
 	return fc
 }
 
+// SetNewInstancesPolicy sets the newInstancesPolicy field.
+func (fc *FlowCreate) SetNewInstancesPolicy(fip flow.NewInstancesPolicy) *FlowCreate {
+	fc.mutation.SetNewInstancesPolicy(fip)
+	return fc
+}
+
+// SetNillableNewInstancesPolicy sets the newInstancesPolicy field if the given value is not nil.
+func (fc *FlowCreate) SetNillableNewInstancesPolicy(fip *flow.NewInstancesPolicy) *FlowCreate {
+	if fip != nil {
+		fc.SetNewInstancesPolicy(*fip)
+	}
+	return fc
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fc *FlowCreate) AddBlockIDs(ids ...int) *FlowCreate {
 	fc.mutation.AddBlockIDs(ids...)
@@ -110,19 +124,23 @@ func (fc *FlowCreate) AddBlocks(b ...*Block) *FlowCreate {
 	return fc.AddBlockIDs(ids...)
 }
 
-// AddDraftIDs adds the draft edge to FlowDraft by ids.
-func (fc *FlowCreate) AddDraftIDs(ids ...int) *FlowCreate {
-	fc.mutation.AddDraftIDs(ids...)
+// SetDraftID sets the draft edge to FlowDraft by id.
+func (fc *FlowCreate) SetDraftID(id int) *FlowCreate {
+	fc.mutation.SetDraftID(id)
 	return fc
 }
 
-// AddDraft adds the draft edges to FlowDraft.
-func (fc *FlowCreate) AddDraft(f ...*FlowDraft) *FlowCreate {
-	ids := make([]int, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+// SetNillableDraftID sets the draft edge to FlowDraft by id if the given value is not nil.
+func (fc *FlowCreate) SetNillableDraftID(id *int) *FlowCreate {
+	if id != nil {
+		fc = fc.SetDraftID(*id)
 	}
-	return fc.AddDraftIDs(ids...)
+	return fc
+}
+
+// SetDraft sets the draft edge to FlowDraft.
+func (fc *FlowCreate) SetDraft(f *FlowDraft) *FlowCreate {
+	return fc.SetDraftID(f.ID)
 }
 
 // Mutation returns the FlowMutation object of the builder.
@@ -189,6 +207,10 @@ func (fc *FlowCreate) defaults() {
 		v := flow.DefaultStatus
 		fc.mutation.SetStatus(v)
 	}
+	if _, ok := fc.mutation.NewInstancesPolicy(); !ok {
+		v := flow.DefaultNewInstancesPolicy
+		fc.mutation.SetNewInstancesPolicy(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -213,6 +235,14 @@ func (fc *FlowCreate) check() error {
 	if v, ok := fc.mutation.Status(); ok {
 		if err := flow.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf("ent: validator failed for field \"status\": %w", err)}
+		}
+	}
+	if _, ok := fc.mutation.NewInstancesPolicy(); !ok {
+		return &ValidationError{Name: "newInstancesPolicy", err: errors.New("ent: missing required field \"newInstancesPolicy\"")}
+	}
+	if v, ok := fc.mutation.NewInstancesPolicy(); ok {
+		if err := flow.NewInstancesPolicyValidator(v); err != nil {
+			return &ValidationError{Name: "newInstancesPolicy", err: fmt.Errorf("ent: validator failed for field \"newInstancesPolicy\": %w", err)}
 		}
 	}
 	return nil
@@ -290,6 +320,14 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 		})
 		_node.Status = value
 	}
+	if value, ok := fc.mutation.NewInstancesPolicy(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: flow.FieldNewInstancesPolicy,
+		})
+		_node.NewInstancesPolicy = value
+	}
 	if nodes := fc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -311,7 +349,7 @@ func (fc *FlowCreate) createSpec() (*Flow, *sqlgraph.CreateSpec) {
 	}
 	if nodes := fc.mutation.DraftIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   flow.DraftTable,
 			Columns: []string{flow.DraftColumn},

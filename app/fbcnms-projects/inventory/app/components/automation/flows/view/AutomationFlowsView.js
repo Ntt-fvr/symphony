@@ -24,12 +24,11 @@ import {useRouter} from '@fbcnms/ui/hooks';
 
 const useStyles = makeStyles(_theme => ({
   root: {},
-  flowDraftCardContainer: {},
 }));
 
-const flowDraftsQuery = graphql`
+const flowsQuery = graphql`
   query AutomationFlowsViewQuery {
-    flowDrafts(first: 500) @connection(key: "AutomationFlowsView_flowDrafts") {
+    flows(first: 500) @connection(key: "AutomationFlowsView_flows") {
       edges {
         node {
           ...AutomationFlowsList_flows
@@ -47,10 +46,10 @@ export default function AutomationFlowsView(_props: Props) {
   const classes = useStyles();
   const {history} = useRouter();
 
-  const data = useLazyLoadQuery<AutomationFlowsViewQuery>(flowDraftsQuery, {});
-  const flowDrafts = useMemo(() => {
-    const flowDraftsData = data.flowDrafts?.edges || [];
-    return flowDraftsData.map(p => p.node).filter(Boolean);
+  const data = useLazyLoadQuery<AutomationFlowsViewQuery>(flowsQuery, {});
+  const flows = useMemo(() => {
+    const flowsData = data.flows?.edges || [];
+    return flowsData.map(p => p.node).filter(Boolean);
   }, [data]);
 
   const header = useMemo(
@@ -79,7 +78,7 @@ export default function AutomationFlowsView(_props: Props) {
 
   return (
     <ViewContainer header={header} className={classes.root}>
-      <AutomationFlowsList flows={flowDrafts} />
+      <AutomationFlowsList flows={flows} />
     </ViewContainer>
   );
 }

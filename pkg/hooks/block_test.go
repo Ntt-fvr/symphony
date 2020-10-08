@@ -14,6 +14,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -72,8 +73,13 @@ func TestEndParamsVerifications(t *testing.T) {
 	param5 := "Int Parameter"
 	param6 := "Work Order Parameter"
 	param7 := "Work Order Type Parameter"
+	flowItem, err := client.Flow.Create().
+		SetName("Name").
+		Save(ctx)
+	require.NoError(t, err)
 	flowDraft, err := client.FlowDraft.Create().
 		SetName("Name").
+		SetFlow(flowItem).
 		SetEndParamDefinitions([]*flowschema.VariableDefinition{
 			{
 				Key:  param1,
@@ -238,6 +244,8 @@ func createFlowWithStartBlock(ctx context.Context, t *testing.T, definitions []*
 	client := ent.FromContext(ctx)
 	flow, err := client.Flow.Create().
 		SetName("Name").
+		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
+		SetStatus(flow.StatusPublished).
 		Save(ctx)
 	require.NoError(t, err)
 	_, err = client.Block.Create().
@@ -267,8 +275,13 @@ func TestSimpleSubFlowParamsVerifications(t *testing.T) {
 		},
 	})
 
+	flowItem, err := client.Flow.Create().
+		SetName("Flow1").
+		Save(ctx)
+	require.NoError(t, err)
 	flowDraft, err := client.FlowDraft.Create().
-		SetName("Name").
+		SetName("Flow1").
+		SetFlow(flowItem).
 		Save(ctx)
 	require.NoError(t, err)
 
@@ -335,7 +348,7 @@ func TestInstanceParamsVerifications(t *testing.T) {
 		ActionFactory:  actions.NewFactory(),
 	}
 	flowHooker.HookTo(client)
-	flow := createFlowWithStartBlock(ctx, t, []*flowschema.VariableDefinition{
+	flowItem := createFlowWithStartBlock(ctx, t, []*flowschema.VariableDefinition{
 		{
 			Key:       "start1",
 			Type:      enum.VariableTypeString,
@@ -353,7 +366,7 @@ func TestInstanceParamsVerifications(t *testing.T) {
 		},
 	})
 	flowInstance, err := client.FlowInstance.Create().
-		SetFlow(flow).
+		SetFlow(flowItem).
 		Save(ctx)
 	require.NoError(t, err)
 	blockStart, err := flowInstance.QueryTemplate().

@@ -896,6 +896,39 @@ type FlowDraftConnection {
   """
   pageInfo: PageInfo!
 }
+
+"""
+A flow edge in a connection.
+"""
+type FlowEdge {
+  """
+  The Flow type at the end of the edge.
+  """
+  node: Flow
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Flows.
+"""
+type FlowConnection {
+  """
+  Total count of Flows in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Flow edges.
+  """
+  edges: [FlowEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
 """
 A connection to a list of equipment port types.
 """
@@ -3307,6 +3340,12 @@ input EditBlockInput {
 # Flow Definitions
 
 enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+  PUBLISHED
+  UNPUBLISHED
+  ARCHIVED
+}
+
+enum FlowNewInstancesPolicy @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy") {
   ENABLED
   DISABLED
 }
@@ -3317,6 +3356,7 @@ type Flow implements Node {
   description: String
   endParamDefinitions: [VariableDefinition!]!
   status: FlowStatus!
+  newInstancesPolicy: FlowNewInstancesPolicy!
   blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
@@ -3352,6 +3392,7 @@ input AddFlowDraftInput {
 
 input PublishFlowInput {
   flowDraftID: ID!
+  flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
 input VariableValue @goModel(
@@ -3732,6 +3773,12 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): FlowDraftConnection!
+  flows(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowConnection!
 }
 
 type Mutation {

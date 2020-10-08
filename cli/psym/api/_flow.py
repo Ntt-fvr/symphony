@@ -7,6 +7,7 @@ from typing import Optional
 
 from psym.client import SymphonyClient
 from psym.common.data_class import Flow, FlowDraft, FlowInstance
+from psym.graphql.enum.flow_new_instances_policy import FlowNewInstancesPolicy
 from psym.graphql.input.add_flow_draft import AddFlowDraftInput
 from psym.graphql.input.import_flow_draft import ImportFlowDraftInput
 from psym.graphql.input.publish_flow import PublishFlowInput
@@ -111,10 +112,14 @@ def publish_flow(client: SymphonyClient, flow_draft_id: str) -> Flow:
 
         draft = client.add_flow_draft(name="Transport Deployment")
         new_draft = client.import_flow_draft(id=draft.id, name=draft.name, start_block_name="Start")
-        flow = client.publish_flow(flow_draft_id=new_draft.id)
+        flow = client.publish_flow(flow_draft_id=new_draft.id, flowInstancesPolicy.ENABLED)
     """
     flow = PublishFlowMutation.execute(
-        client, PublishFlowInput(flowDraftID=flow_draft_id)
+        client,
+        PublishFlowInput(
+            flowDraftID=flow_draft_id,
+            flowInstancesPolicy=FlowNewInstancesPolicy.ENABLED,
+        ),
     )
     return Flow(id=flow.id, name=flow.name)
 

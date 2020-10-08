@@ -65,16 +65,23 @@ func (Flow) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("status").
 			NamedValues(
+				"Published", "PUBLISHED",
+				"Unpublished", "UNPUBLISHED",
+				"Archived", "ARCHIVED",
+			).Default("UNPUBLISHED"),
+		field.Enum("newInstancesPolicy").
+			NamedValues(
 				"Enabled", "ENABLED",
 				"Disabled", "DISABLED",
-			).Default("ENABLED"),
+			).Default("DISABLED"),
 	}
 }
 
 // Edges returns flow edges.
 func (Flow) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("draft", FlowDraft.Type),
+		edge.To("draft", FlowDraft.Type).
+			Unique(),
 	}
 }
 
@@ -129,6 +136,7 @@ func (FlowDraft) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("flow", Flow.Type).
 			Unique().
+			Required().
 			Ref("draft"),
 	}
 }

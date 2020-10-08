@@ -70,7 +70,8 @@ func prepareBasicFlow(ctx context.Context, t *testing.T, mr generated.MutationRe
 	})
 	require.NoError(t, err)
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{
-		FlowDraftID: draft.ID,
+		FlowDraftID:         draft.ID,
+		FlowInstancesPolicy: flow.NewInstancesPolicyEnabled,
 	})
 	require.NoError(t, err)
 	return flw
@@ -91,6 +92,13 @@ func TestAddDeleteFlowDraft(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, name, flowDraft.Name)
 	require.Equal(t, description, *flowDraft.Description)
+
+	flowEdge, err := flowDraft.QueryFlow().Only(ctx)
+	require.NoError(t, err)
+	require.Equal(t, flowEdge.Name, flowDraft.Name)
+	require.Equal(t, *flowEdge.Description, *flowDraft.Description)
+	require.Equal(t, flow.StatusUnpublished, flowEdge.Status)
+	require.Equal(t, flow.NewInstancesPolicyDisabled, flowEdge.NewInstancesPolicy)
 
 	node, err := qr.Node(ctx, flowDraft.ID)
 	require.NoError(t, err)
@@ -147,13 +155,15 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	})
 	require.NoError(t, err)
 	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{
-		FlowDraftID: flowDraft.ID,
+		FlowDraftID:         flowDraft.ID,
+		FlowInstancesPolicy: flow.NewInstancesPolicyEnabled,
 	})
 	require.NoError(t, err)
 	require.Equal(t, name, flw.Name)
 	require.Equal(t, description, *flw.Description)
 	require.Equal(t, endParamDefinitions, flw.EndParamDefinitions)
-	require.Equal(t, flow.StatusEnabled, flw.Status)
+	require.Equal(t, flow.StatusPublished, flw.Status)
+	require.Equal(t, flow.NewInstancesPolicyEnabled, flw.NewInstancesPolicy)
 	draft, err := fr.Draft(ctx, flw)
 	require.NoError(t, err)
 	require.Nil(t, draft)
@@ -251,7 +261,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, startWithNext.ID, refBlock.ID)
 
-	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	require.Equal(t, mainFlow.ID, flw.ID)
 	require.Equal(t, "New name", flw.Name)
@@ -272,7 +282,10 @@ func TestStartFlow(t *testing.T) {
 		Name: "Flow with no start",
 	})
 	require.NoError(t, err)
-	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	_, err = draft.QueryFlow().Only(ctx)
+	require.NoError(t, err)
+
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	_, err = mr.StartFlow(ctx, models.StartFlowInput{
 		FlowID: flw.ID,
@@ -294,7 +307,7 @@ func TestStartFlow(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	_, err = mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	_, err = mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	inputParams := []*flowschema.VariableValue{
 		{

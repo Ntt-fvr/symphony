@@ -96,6 +96,7 @@ func New() (complexity generated.ComplexityRoot) {
 		return PaginationComplexity(childComplexity, after, first, before, last)
 	}
 	complexity.Query.FlowDrafts = PaginationComplexity
+	complexity.Query.Flows = PaginationComplexity
 	complexity.WorkOrder.Activities = func(childComplexity int, filter *models.ActivityFilterInput) int {
 		var limit *int
 		if filter != nil {

@@ -10,7 +10,11 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
+from gql.gql.enum_utils import enum_field
+from ..enum.flow_new_instances_policy import FlowNewInstancesPolicy
+
 @dataclass
 class PublishFlowInput(DataClassJsonMixin):
     flowDraftID: str
+    flowInstancesPolicy: FlowNewInstancesPolicy = enum_field(FlowNewInstancesPolicy)
 

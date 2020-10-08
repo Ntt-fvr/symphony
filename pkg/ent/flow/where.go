@@ -575,6 +575,54 @@ func StatusNotIn(vs ...Status) predicate.Flow {
 	})
 }
 
+// NewInstancesPolicyEQ applies the EQ predicate on the "newInstancesPolicy" field.
+func NewInstancesPolicyEQ(v NewInstancesPolicy) predicate.Flow {
+	return predicate.Flow(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldNewInstancesPolicy), v))
+	})
+}
+
+// NewInstancesPolicyNEQ applies the NEQ predicate on the "newInstancesPolicy" field.
+func NewInstancesPolicyNEQ(v NewInstancesPolicy) predicate.Flow {
+	return predicate.Flow(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldNewInstancesPolicy), v))
+	})
+}
+
+// NewInstancesPolicyIn applies the In predicate on the "newInstancesPolicy" field.
+func NewInstancesPolicyIn(vs ...NewInstancesPolicy) predicate.Flow {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Flow(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldNewInstancesPolicy), v...))
+	})
+}
+
+// NewInstancesPolicyNotIn applies the NotIn predicate on the "newInstancesPolicy" field.
+func NewInstancesPolicyNotIn(vs ...NewInstancesPolicy) predicate.Flow {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Flow(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldNewInstancesPolicy), v...))
+	})
+}
+
 // HasBlocks applies the HasEdge predicate on the "blocks" edge.
 func HasBlocks() predicate.Flow {
 	return predicate.Flow(func(s *sql.Selector) {
@@ -609,7 +657,7 @@ func HasDraft() predicate.Flow {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DraftTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DraftTable, DraftColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, DraftTable, DraftColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -621,7 +669,7 @@ func HasDraftWith(preds ...predicate.FlowDraft) predicate.Flow {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DraftInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DraftTable, DraftColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, DraftTable, DraftColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

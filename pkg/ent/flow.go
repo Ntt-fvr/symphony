@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
 )
 
@@ -34,6 +35,8 @@ type Flow struct {
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"end_param_definitions,omitempty"`
 	// Status holds the value of the "status" field.
 	Status flow.Status `json:"status,omitempty"`
+	// NewInstancesPolicy holds the value of the "newInstancesPolicy" field.
+	NewInstancesPolicy flow.NewInstancesPolicy `json:"newInstancesPolicy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FlowQuery when eager-loading is set.
 	Edges FlowEdges `json:"edges"`
@@ -44,7 +47,7 @@ type FlowEdges struct {
 	// Blocks holds the value of the blocks edge.
 	Blocks []*Block
 	// Draft holds the value of the draft edge.
-	Draft []*FlowDraft
+	Draft *FlowDraft
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -60,9 +63,14 @@ func (e FlowEdges) BlocksOrErr() ([]*Block, error) {
 }
 
 // DraftOrErr returns the Draft value or an error if the edge
-// was not loaded in eager-loading.
-func (e FlowEdges) DraftOrErr() ([]*FlowDraft, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FlowEdges) DraftOrErr() (*FlowDraft, error) {
 	if e.loadedTypes[1] {
+		if e.Draft == nil {
+			// The edge draft was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: flowdraft.Label}
+		}
 		return e.Draft, nil
 	}
 	return nil, &NotLoadedError{edge: "draft"}
@@ -78,6 +86,7 @@ func (*Flow) scanValues() []interface{} {
 		&sql.NullString{}, // description
 		&[]byte{},         // end_param_definitions
 		&sql.NullString{}, // status
+		&sql.NullString{}, // newInstancesPolicy
 	}
 }
 
@@ -126,6 +135,11 @@ func (f *Flow) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field status", values[5])
 	} else if value.Valid {
 		f.Status = flow.Status(value.String)
+	}
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field newInstancesPolicy", values[6])
+	} else if value.Valid {
+		f.NewInstancesPolicy = flow.NewInstancesPolicy(value.String)
 	}
 	return nil
 }
@@ -177,6 +191,8 @@ func (f *Flow) String() string {
 	builder.WriteString(fmt.Sprintf("%v", f.EndParamDefinitions))
 	builder.WriteString(", status=")
 	builder.WriteString(fmt.Sprintf("%v", f.Status))
+	builder.WriteString(", newInstancesPolicy=")
+	builder.WriteString(fmt.Sprintf("%v", f.NewInstancesPolicy))
 	builder.WriteByte(')')
 	return builder.String()
 }

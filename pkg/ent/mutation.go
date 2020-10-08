@@ -19718,12 +19718,12 @@ type FlowMutation struct {
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
 	status                *flow.Status
+	newInstancesPolicy    *flow.NewInstancesPolicy
 	clearedFields         map[string]struct{}
 	blocks                map[int]struct{}
 	removedblocks         map[int]struct{}
 	clearedblocks         bool
-	draft                 map[int]struct{}
-	removeddraft          map[int]struct{}
+	draft                 *int
 	cleareddraft          bool
 	done                  bool
 	oldValue              func(context.Context) (*Flow, error)
@@ -20056,6 +20056,43 @@ func (m *FlowMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetNewInstancesPolicy sets the newInstancesPolicy field.
+func (m *FlowMutation) SetNewInstancesPolicy(fip flow.NewInstancesPolicy) {
+	m.newInstancesPolicy = &fip
+}
+
+// NewInstancesPolicy returns the newInstancesPolicy value in the mutation.
+func (m *FlowMutation) NewInstancesPolicy() (r flow.NewInstancesPolicy, exists bool) {
+	v := m.newInstancesPolicy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNewInstancesPolicy returns the old newInstancesPolicy value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldNewInstancesPolicy(ctx context.Context) (v flow.NewInstancesPolicy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldNewInstancesPolicy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldNewInstancesPolicy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNewInstancesPolicy: %w", err)
+	}
+	return oldValue.NewInstancesPolicy, nil
+}
+
+// ResetNewInstancesPolicy reset all changes of the "newInstancesPolicy" field.
+func (m *FlowMutation) ResetNewInstancesPolicy() {
+	m.newInstancesPolicy = nil
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (m *FlowMutation) AddBlockIDs(ids ...int) {
 	if m.blocks == nil {
@@ -20109,14 +20146,9 @@ func (m *FlowMutation) ResetBlocks() {
 	m.removedblocks = nil
 }
 
-// AddDraftIDs adds the draft edge to FlowDraft by ids.
-func (m *FlowMutation) AddDraftIDs(ids ...int) {
-	if m.draft == nil {
-		m.draft = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.draft[ids[i]] = struct{}{}
-	}
+// SetDraftID sets the draft edge to FlowDraft by id.
+func (m *FlowMutation) SetDraftID(id int) {
+	m.draft = &id
 }
 
 // ClearDraft clears the draft edge to FlowDraft.
@@ -20129,28 +20161,20 @@ func (m *FlowMutation) DraftCleared() bool {
 	return m.cleareddraft
 }
 
-// RemoveDraftIDs removes the draft edge to FlowDraft by ids.
-func (m *FlowMutation) RemoveDraftIDs(ids ...int) {
-	if m.removeddraft == nil {
-		m.removeddraft = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removeddraft[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedDraft returns the removed ids of draft.
-func (m *FlowMutation) RemovedDraftIDs() (ids []int) {
-	for id := range m.removeddraft {
-		ids = append(ids, id)
+// DraftID returns the draft id in the mutation.
+func (m *FlowMutation) DraftID() (id int, exists bool) {
+	if m.draft != nil {
+		return *m.draft, true
 	}
 	return
 }
 
 // DraftIDs returns the draft ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DraftID instead. It exists only for internal usage by the builders.
 func (m *FlowMutation) DraftIDs() (ids []int) {
-	for id := range m.draft {
-		ids = append(ids, id)
+	if id := m.draft; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -20159,7 +20183,6 @@ func (m *FlowMutation) DraftIDs() (ids []int) {
 func (m *FlowMutation) ResetDraft() {
 	m.draft = nil
 	m.cleareddraft = false
-	m.removeddraft = nil
 }
 
 // Op returns the operation name.
@@ -20176,7 +20199,7 @@ func (m *FlowMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, flow.FieldCreateTime)
 	}
@@ -20194,6 +20217,9 @@ func (m *FlowMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, flow.FieldStatus)
+	}
+	if m.newInstancesPolicy != nil {
+		fields = append(fields, flow.FieldNewInstancesPolicy)
 	}
 	return fields
 }
@@ -20215,6 +20241,8 @@ func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 		return m.EndParamDefinitions()
 	case flow.FieldStatus:
 		return m.Status()
+	case flow.FieldNewInstancesPolicy:
+		return m.NewInstancesPolicy()
 	}
 	return nil, false
 }
@@ -20236,6 +20264,8 @@ func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEndParamDefinitions(ctx)
 	case flow.FieldStatus:
 		return m.OldStatus(ctx)
+	case flow.FieldNewInstancesPolicy:
+		return m.OldNewInstancesPolicy(ctx)
 	}
 	return nil, fmt.Errorf("unknown Flow field %s", name)
 }
@@ -20286,6 +20316,13 @@ func (m *FlowMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case flow.FieldNewInstancesPolicy:
+		v, ok := value.(flow.NewInstancesPolicy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNewInstancesPolicy(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
@@ -20370,6 +20407,9 @@ func (m *FlowMutation) ResetField(name string) error {
 	case flow.FieldStatus:
 		m.ResetStatus()
 		return nil
+	case flow.FieldNewInstancesPolicy:
+		m.ResetNewInstancesPolicy()
+		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
 }
@@ -20398,11 +20438,9 @@ func (m *FlowMutation) AddedIDs(name string) []ent.Value {
 		}
 		return ids
 	case flow.EdgeDraft:
-		ids := make([]ent.Value, 0, len(m.draft))
-		for id := range m.draft {
-			ids = append(ids, id)
+		if id := m.draft; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -20414,9 +20452,6 @@ func (m *FlowMutation) RemovedEdges() []string {
 	if m.removedblocks != nil {
 		edges = append(edges, flow.EdgeBlocks)
 	}
-	if m.removeddraft != nil {
-		edges = append(edges, flow.EdgeDraft)
-	}
 	return edges
 }
 
@@ -20427,12 +20462,6 @@ func (m *FlowMutation) RemovedIDs(name string) []ent.Value {
 	case flow.EdgeBlocks:
 		ids := make([]ent.Value, 0, len(m.removedblocks))
 		for id := range m.removedblocks {
-			ids = append(ids, id)
-		}
-		return ids
-	case flow.EdgeDraft:
-		ids := make([]ent.Value, 0, len(m.removeddraft))
-		for id := range m.removeddraft {
 			ids = append(ids, id)
 		}
 		return ids
@@ -20469,6 +20498,9 @@ func (m *FlowMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *FlowMutation) ClearEdge(name string) error {
 	switch name {
+	case flow.EdgeDraft:
+		m.ClearDraft()
+		return nil
 	}
 	return fmt.Errorf("unknown Flow unique edge %s", name)
 }

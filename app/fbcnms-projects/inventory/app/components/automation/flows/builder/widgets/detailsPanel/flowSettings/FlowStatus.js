@@ -45,7 +45,7 @@ export default function FlowStatus(props: Props) {
   const classes = useStyles();
   const {className} = props;
   // TODO: when available get these from the AutomationFlowCard_flowDraft
-  const status = FLOW_STATUSES.DISABLED.key;
+  const status = FLOW_STATUSES.UNPUBLISHED.key;
   const body = (
     <div className={classes.lastSaved}>Last saved on Oct 21, 4:32 PM</div>
   );

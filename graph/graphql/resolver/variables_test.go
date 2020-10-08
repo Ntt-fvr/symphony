@@ -8,6 +8,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
+
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -164,7 +166,7 @@ func TestSubFlowBlockInputParams(t *testing.T) {
 		ParamDefinitions: startParamDefinitions,
 	})
 	require.NoError(t, err)
-	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID})
+	flw, err := mr.PublishFlow(ctx, models.PublishFlowInput{FlowDraftID: draft.ID, FlowInstancesPolicy: flow.NewInstancesPolicyEnabled})
 	require.NoError(t, err)
 	flowDraft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name: "Flow",

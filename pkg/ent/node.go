@@ -2261,7 +2261,7 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Flow",
-		Fields: make([]*Field, 6),
+		Fields: make([]*Field, 7),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -2311,6 +2311,14 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[5] = &Field{
 		Type:  "flow.Status",
 		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.NewInstancesPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "flow.NewInstancesPolicy",
+		Name:  "newInstancesPolicy",
 		Value: string(buf),
 	}
 	var ids []int

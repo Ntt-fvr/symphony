@@ -44,6 +44,7 @@ func (h Flower) mandatoryVariablesOnBlocks(ctx context.Context, client *ent.Clie
 	blocks, err := client.Flow.Query().
 		Where(flow.ID(flowID)).
 		QueryBlocks().
+		Where(block.TypeNEQ(block.TypeStart)).
 		All(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to query blocks: %w", err)
@@ -135,8 +136,11 @@ func DenyCreationOfInstanceOfDisabledFlowHook() ent.Hook {
 			if err != nil {
 				return nil, fmt.Errorf("failed to query flow: %w", err)
 			}
-			if f.Status == flow.StatusDisabled {
-				return nil, errors.New("cannot create flow instance of disabled flow")
+			if f.NewInstancesPolicy != flow.NewInstancesPolicyEnabled {
+				return nil, errors.New("cannot create flow instance while new instances policy not enabled")
+			}
+			if f.Status != flow.StatusPublished {
+				return nil, errors.New("cannot create flow instance of a not published flow")
 			}
 			return next.Mutate(ctx, m)
 		})

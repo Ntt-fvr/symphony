@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -586,7 +587,8 @@ type PropertyInput struct {
 }
 
 type PublishFlowInput struct {
-	FlowDraftID int `json:"flowDraftID"`
+	FlowDraftID         int                     `json:"flowDraftID"`
+	FlowInstancesPolicy flow.NewInstancesPolicy `json:"flowInstancesPolicy"`
 }
 
 type PythonPackage struct {

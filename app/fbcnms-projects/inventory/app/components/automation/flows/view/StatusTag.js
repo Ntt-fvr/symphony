@@ -7,6 +7,8 @@
  * @flow
  * @format
  */
+import type {FlowStatus} from './__generated__/AutomationFlowCard_flow.graphql';
+
 import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
@@ -21,11 +23,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-// TODO: remove this when status becomes available through api i type AutomationFlowCard_flowDraft
-type StatusType = 'DISABLED' | 'ENABLED' | 'ARCHIVED';
-
 type StatusTagProps = $ReadOnly<{|
-  status: StatusType,
+  status: FlowStatus,
   className?: string,
 |}>;
 

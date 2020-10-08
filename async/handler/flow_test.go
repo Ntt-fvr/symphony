@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
+
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/event"
@@ -41,6 +43,8 @@ func TestWorkflowCreated(t *testing.T) {
 	entClient.Use(event.LogHook(flowHandler.Handle, log.NewNopLogger()))
 	flw, err := entClient.Flow.Create().
 		SetName("Flow").
+		SetStatus(flow.StatusPublished).
+		SetNewInstancesPolicy(flow.NewInstancesPolicyEnabled).
 		Save(ctx)
 	require.NoError(t, err)
 	flwInstance, err := entClient.FlowInstance.Create().

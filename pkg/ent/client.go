@@ -3896,7 +3896,7 @@ func (c *FlowClient) QueryDraft(f *Flow) *FlowDraftQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(flow.Table, flow.FieldID, id),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, flow.DraftTable, flow.DraftColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, flow.DraftTable, flow.DraftColumn),
 		)
 		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
 		return fromV, nil
@@ -4017,7 +4017,7 @@ func (c *FlowDraftClient) QueryFlow(fd *FlowDraft) *FlowQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, id),
 			sqlgraph.To(flow.Table, flow.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
 		)
 		fromV = sqlgraph.Neighbors(fd.driver.Dialect(), step)
 		return fromV, nil
