@@ -130,6 +130,7 @@ func (cc *CadenceClient) Run(ctx context.Context) error {
 			NewContextPropagator(cc.tenancy),
 		},
 		DisableStickyExecution: true,
+		WorkerStopTimeout:      5 * time.Second, // graceful shutdown period
 	}
 	cc.domainWorker = worker.New(cc.client, cc.domain, TaskListName, workerOptions)
 	for _, w := range cc.workers {
