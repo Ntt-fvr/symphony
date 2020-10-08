@@ -72,7 +72,6 @@ export const csvFileExportKeyQuery = graphql`
 const PATH_PREFIX = '/graph/export';
 const PATH_SINGLE_WORK_ORDER = '/single_work_order';
 const EXPORT_TASK_REFRESH_INTERVAL_MS = 3000;
-const EXPORT_TASK_MAX_POLLS = 50;
 
 type Props = {
   exportPath: string,
@@ -104,25 +103,18 @@ const CSVFileExport = (props: Props) => {
     link.click();
   };
 
-  let polls = 0;
   const handleAsyncExport = (taskId: string, intervalId: IntervalID) => {
-    polls++;
     fetchQuery<CSVFileExportQuery>(RelayEnvironment, csvFileExportQuery, {
       taskId,
     }).then(response => {
       if (
         response == null ||
         response.task == null ||
-        response.task.status === 'FAILED' ||
-        polls === EXPORT_TASK_MAX_POLLS
+        response.task.status === 'FAILED'
       ) {
         clearInterval(intervalId);
         setIsAsyncTaskInProgress(false);
-        props.alert(
-          polls === EXPORT_TASK_MAX_POLLS
-            ? 'Failed to export file: Your data is too large'
-            : 'Failed to export file: File creation error',
-        );
+        props.alert('Failed to export file: File creation error');
         return;
       } else if (response.task.status === 'SUCCEEDED') {
         clearInterval(intervalId);
