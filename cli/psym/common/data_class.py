@@ -246,6 +246,18 @@ class Link(NamedTuple):
     service_ids: List[str]
 
 
+class EquipmentPortDefinitionAlias(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str, optional
+    """
+
+    name: str
+    id: Optional[str] = None
+
+
 class EquipmentPortDefinition(NamedTuple):
     """
     :param name: Name
@@ -258,9 +270,12 @@ class EquipmentPortDefinition(NamedTuple):
     :type port_definition_index: int, optional
     :param port_type_name: Port type name
     :type port_type_name: str, optional
+    :param connected_ports: ConnectedPorts list
+    :type connected_ports: List [ :class:`~psym.common.data_class.EquipmentPortDefinitionAlias] , optional
     """
 
     name: str
+    connected_ports: List[EquipmentPortDefinitionAlias]
     id: Optional[str] = None
     visible_label: Optional[str] = None
     port_definition_index: Optional[int] = None

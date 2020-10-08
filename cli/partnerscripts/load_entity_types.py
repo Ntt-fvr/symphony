@@ -63,6 +63,7 @@ def upload_equipment_types(client: PsymClient) -> None:
                     visible_label=port["visible_label"],
                     port_definition_index=port["index"],
                     port_type_name=port["port_type_name"],
+                    connected_ports=[],
                 )
                 for port in equipment_type["ports"]
             ],

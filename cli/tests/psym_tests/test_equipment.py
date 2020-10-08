@@ -109,6 +109,7 @@ class TestEquipment(BaseTest):
                     visible_label="TP-Link port",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[],
                 )
             ],
             position_list=[],

@@ -38,6 +38,7 @@ from ..graphql.mutation.remove_equipment_type import RemoveEquipmentTypeMutation
 from ..graphql.query.equipment_type_details import EquipmentTypeDetailsQuery
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
 from ..graphql.query.equipment_types import EquipmentTypesQuery
+from ..graphql.input.equipment_port_connection import EquipmentPortConnectionInput
 from .equipment import delete_equipment
 from .property_type import (
     edit_property_type,
@@ -246,6 +247,10 @@ def add_equipment_type(
             index=pd.port_definition_index,
             visibleLabel=pd.visible_label,
             portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+            connectedPorts=[
+                EquipmentPortConnectionInput(id=cp.id, name=cp.name)
+                for cp in pd.connected_ports
+            ],
         )
         for pd in port_definitions
     ]
@@ -381,6 +386,10 @@ def edit_equipment_type(
             index=pd.port_definition_index,
             visibleLabel=pd.visible_label,
             portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+            connectedPorts=[
+                EquipmentPortConnectionInput(id=cp.id, name=cp.name)
+                for cp in pd.connected_ports
+            ],
         )
         for pd in new_port_definitions
     ]

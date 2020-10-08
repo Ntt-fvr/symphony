@@ -10,14 +10,8 @@ from typing import Any, Callable, List, Mapping, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
-from ..input.equipment_port_connection import EquipmentPortConnectionInput
 @dataclass
-class EquipmentPortInput(DataClassJsonMixin):
-    name: str
-    connectedPorts: List[EquipmentPortConnectionInput]
+class EquipmentPortConnectionInput(DataClassJsonMixin):
     id: Optional[str] = None
-    index: Optional[int] = None
-    visibleLabel: Optional[str] = None
-    portTypeID: Optional[str] = None
-    bandwidth: Optional[str] = None
+    name: Optional[str] = None
 

@@ -7,4 +7,8 @@ fragment EquipmentPortDefinitionFragment on EquipmentPortDefinition {
     id
     name
   }
+  connectedPorts {
+    id
+    name
+  }
 }
