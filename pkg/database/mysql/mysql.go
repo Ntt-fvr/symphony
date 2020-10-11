@@ -25,7 +25,6 @@ func init() {
 		ocsql.WithRowsAffected(true),
 		ocsql.WithLastInsertID(true),
 		ocsql.WithQuery(true),
-		ocsql.WithQueryParams(true),
 		ocsql.WithDisableErrSkip(true),
 	}
 	defaultURLMux.RegisterMySQL(cdkmysql.Scheme, &cdkmysql.URLOpener{
