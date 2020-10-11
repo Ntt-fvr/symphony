@@ -56,7 +56,7 @@ module eks {
     },
   ]
 
-  map_roles = [
+  map_roles = concat([
     {
       rolearn  = aws_iam_role.eks_admin.arn
       username = "admin"
@@ -84,8 +84,14 @@ module eks {
       rolearn  = "arn:aws:iam::495344428215:role/SymphonyAdminRole"
       username = "symphony:master"
       groups   = ["symphony:masters"]
+    }], [
+    for rolearn in module.eks_fargate.eks_fargate_profile_role_arn :
+    {
+      rolearn  = rolearn
+      username = "system:node:{{SessionName}}"
+      groups   = formatlist("system:%s", ["bootstrappers", "nodes", "node-proxier"])
     }
-  ]
+  ])
 
   config_output_path                   = local.output_path
   kubeconfig_name                      = "symphony-${local.environment}"
@@ -103,6 +109,18 @@ module eks {
   write_kubeconfig = false
 
   tags = local.tags
+}
+
+# fargate profile for symphony namespace
+module eks_fargate {
+  source  = "terraform-module/eks-fargate-profile/aws"
+  version = "~> 2.0"
+
+  cluster_name = module.eks.cluster_id
+  subnet_ids   = module.vpc.private_subnets
+  namespaces   = ["symphony"]
+  labels       = { "eks.amazonaws.com/compute-type" = "fargate" }
+  tags         = local.tags
 }
 
 # generates eks access token

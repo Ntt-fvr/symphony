@@ -7,6 +7,8 @@ locals {
   # public domain name.
   ctf_root_domain_name = "openctf.io"
   ctf_domain_name      = terraform.workspace != "default" ? "${terraform.workspace}.${local.ctf_root_domain_name}" : local.ctf_root_domain_name
+  # tags applied to ctf resources
+  ctf_tags = merge(local.tags, { Project : "ctf" })
 }
 
 # hosted zone for ctf records
@@ -219,7 +221,7 @@ module ctf_db {
   skip_final_snapshot     = false
   allocated_storage       = 64
 
-  tags = local.tags
+  tags = local.ctf_tags
 }
 
 # kubernetes secret for ctf database
@@ -252,10 +254,7 @@ resource aws_s3_bucket ctf_datastore {
     }
   }
 
-  tags = {
-    Project   = "ctf"
-    Workspace = terraform.workspace
-  }
+  tags = local.ctf_tags
 }
 
 
@@ -317,5 +316,5 @@ module ctf_fileserver_role {
   service_account_name      = "fileserver"
   service_account_namespace = kubernetes_namespace.ctf.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
-  tags                      = { Workspace = terraform.workspace }
+  tags                      = local.ctf_tags
 }

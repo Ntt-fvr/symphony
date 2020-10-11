@@ -63,7 +63,7 @@ module springboard_db {
   skip_final_snapshot     = false
   allocated_storage       = 64
 
-  tags = local.tags
+  tags = merge(local.tags, { "Project" = "springboard" })
 }
 
 resource kubernetes_secret springboard_db {

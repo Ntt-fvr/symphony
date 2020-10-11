@@ -60,8 +60,9 @@ locals {
 
   # default resource tags
   tags = {
-    Environment = var.project
-    Workspace   = terraform.workspace
+    Project   = "core"
+    PartOf    = "symphony"
+    Workspace = terraform.workspace
   }
 
   # output path for file placement

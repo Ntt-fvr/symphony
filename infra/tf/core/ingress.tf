@@ -352,11 +352,7 @@ resource aws_s3_bucket access_logs {
     }
   }
 
-  tags = {
-    Project   = "core"
-    PartOf    = "symphony"
-    Workspace = terraform.workspace
-  }
+  tags = local.tags
 }
 
 # block public access to access logs bucket
