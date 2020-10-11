@@ -4,6 +4,10 @@
 
 FROM python:3.7
 
+COPY cli/requirements.txt ./
+
+RUN pip install -r /requirements.txt
+
 COPY cli/ ./
 RUN python setup.py -q install
 
