@@ -5,6 +5,8 @@
 package cmd
 
 import (
+	"strings"
+
 	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/cadence"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
@@ -16,7 +18,7 @@ import (
 // CadenceCmd implements migrate cadence command.
 type CadenceCmd struct {
 	Address   string `name:"address" placeholder:"<address>" required:"" env:"CADENCE_ADDR" help:"Cadence server address."`
-	Domain    string `name:"domain" placeholder:"<domain>" required:"" env:"CADENCE_DOMAIN" help:"Cadence domain name."`
+	Domains   string `name:"domains" placeholder:"<domain>,.." required:"" env:"CADENCE_DOMAINS" help:"Cadence domain names."`
 	Retention int32  `name:"retention" placeholder:"<days>" env:"CADENCE_RETENTION" help:"Cadence retention in days."`
 }
 
@@ -31,22 +33,25 @@ func (c *CadenceCmd) Run(ctx *Context) error {
 	}
 	defer cleanup()
 
-	ctx.Info("registering domain",
-		zap.String("domain", c.Domain),
-	)
-	if err := c.register(ctx, cc); err != nil {
-		return err
+	domains := strings.Split(c.Domains, ",")
+	for _, domain := range domains {
+		ctx.Info("registering domain",
+			zap.String("domain", domain),
+		)
+		if err := c.register(ctx, cc, domain); err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func (c *CadenceCmd) register(ctx *Context, cc workflowserviceclient.Interface) error {
+func (c *CadenceCmd) register(ctx *Context, cc workflowserviceclient.Interface, domain string) error {
 	domainClient := client.NewDomainClient(cc, nil)
-	if _, err := domainClient.Describe(ctx, c.Domain); err != nil {
+	if _, err := domainClient.Describe(ctx, domain); err != nil {
 		switch err := err.(type) {
 		case *shared.EntityNotExistsError:
 			if err := domainClient.Register(ctx, &shared.RegisterDomainRequest{
-				Name:                                   &c.Domain,
+				Name:                                   &domain,
 				WorkflowExecutionRetentionPeriodInDays: &c.Retention,
 				EmitMetric:                             pointer.ToBool(true),
 			}); err != nil {
@@ -58,7 +63,7 @@ func (c *CadenceCmd) register(ctx *Context, cc workflowserviceclient.Interface) 
 			return err
 		}
 	} else if err := domainClient.Update(ctx, &shared.UpdateDomainRequest{
-		Name: pointer.ToString(c.Domain),
+		Name: &domain,
 		Configuration: &shared.DomainConfiguration{
 			WorkflowExecutionRetentionPeriodInDays: pointer.ToInt32OrNil(c.Retention),
 			EmitMetric:                             pointer.ToBool(true),

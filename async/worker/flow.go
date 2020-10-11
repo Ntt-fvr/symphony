@@ -14,12 +14,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 	"go.uber.org/cadence/activity"
 	"go.uber.org/cadence/worker"
 	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
-	"gocloud.dev/runtimevar"
 )
 
 const (
@@ -48,47 +47,31 @@ type CompleteFlowInput struct {
 	StartBlockInstanceID int
 }
 
-// FlowWorkerConfig is the config for the flow worker
-type FlowWorkerConfig struct {
-	Tenancy  viewer.Tenancy
-	Features *runtimevar.Variable
-	Logger   log.Logger
+// FlowFactory contains the workflow and all activities required for the flow engine
+type FlowFactory struct {
+	logger log.Logger
 }
 
-// Worker contains all cadence workflows and activities. It exports register function to register them to cadence
-type Worker interface {
-	Register(w worker.Worker)
-}
-
-// FlowWorker contains the workflow and all activities required for the flow engine
-type FlowWorker struct {
-	logger   log.Logger
-	tenancy  viewer.Tenancy
-	features *runtimevar.Variable
-}
-
-// NewFlowWorker return FlowWorker given its configuration
-func NewFlowWorker(cfg FlowWorkerConfig) *FlowWorker {
-	return &FlowWorker{
-		tenancy:  cfg.Tenancy,
-		features: cfg.Features,
-		logger:   cfg.Logger,
+// NewFlowFactory return flow factory given its configuration
+func NewFlowFactory(logger log.Logger) *FlowFactory {
+	return &FlowFactory{
+		logger: logger,
 	}
 }
 
 // RunFlowWorkflow is the workflow that runs the main flow. It is tied to flow instance ent and reads the ent graph
 // database to find the next block that needs to be executed as activity
-func (wc *FlowWorker) RunFlowWorkflow(ctx workflow.Context, input RunFlowInput) error {
+func (ff *FlowFactory) RunFlowWorkflow(ctx workflow.Context, input RunFlowInput) error {
 	var startBlockInstanceID int
 	info := workflow.GetInfo(ctx)
 	workflow.GetLogger(ctx).Info("workflow started", zap.String("name", info.WorkflowExecution.ID))
 	if err := workflow.ExecuteLocalActivity(
-		workflow.WithLocalActivityOptions(ctx, defaultLocalActivityOptions), wc.ReadStartBlockLocalActivity, input).
+		workflow.WithLocalActivityOptions(ctx, defaultLocalActivityOptions), ff.ReadStartBlockLocalActivity, input).
 		Get(ctx, &startBlockInstanceID); err != nil {
 		return err
 	}
 	if err := workflow.ExecuteActivity(
-		workflow.WithActivityOptions(ctx, defaultActivityOptions), wc.CompleteFlowActivity, &CompleteFlowInput{
+		workflow.WithActivityOptions(ctx, defaultActivityOptions), ff.CompleteFlowActivity, &CompleteFlowInput{
 			FlowInstanceID:       input.FlowInstanceID,
 			StartBlockInstanceID: startBlockInstanceID,
 		}).Get(ctx, nil); err != nil {
@@ -99,8 +82,8 @@ func (wc *FlowWorker) RunFlowWorkflow(ctx workflow.Context, input RunFlowInput) 
 }
 
 // CompleteFlowActivity marks the the flow instance as completed. This should be the last activity in the flow workflow
-func (wc *FlowWorker) CompleteFlowActivity(ctx context.Context, input CompleteFlowInput) error {
-	wc.logger.For(ctx).Info("completing flow instance",
+func (ff *FlowFactory) CompleteFlowActivity(ctx context.Context, input CompleteFlowInput) error {
+	ff.logger.For(ctx).Info("completing flow instance",
 		zap.Int("instanceID", input.FlowInstanceID))
 	return ent.RunWithTransaction(ctx, func(ctx context.Context, client *ent.Client) error {
 		if err := client.FlowInstance.UpdateOneID(input.FlowInstanceID).
@@ -123,9 +106,9 @@ func (wc *FlowWorker) CompleteFlowActivity(ctx context.Context, input CompleteFl
 }
 
 // ReadStartBlockLocalActivity reads the start point of the flow instance. This should be the first activity of flow workflow
-func (wc *FlowWorker) ReadStartBlockLocalActivity(ctx context.Context, input RunFlowInput) (int, error) {
+func (ff *FlowFactory) ReadStartBlockLocalActivity(ctx context.Context, input RunFlowInput) (int, error) {
 	client := ent.FromContext(ctx)
-	wc.logger.For(ctx).Info("reading flow start",
+	ff.logger.For(ctx).Info("reading flow start",
 		zap.Int("instanceID", input.FlowInstanceID))
 	startID, err := client.BlockInstance.Query().Where(
 		blockinstance.HasFlowInstanceWith(flowinstance.ID(input.FlowInstanceID)),
@@ -137,10 +120,17 @@ func (wc *FlowWorker) ReadStartBlockLocalActivity(ctx context.Context, input Run
 	return startID, nil
 }
 
-// Register registers the workflow and all activities to the cadence worker
-func (wc *FlowWorker) Register(w worker.Worker) {
-	w.RegisterWorkflowWithOptions(wc.RunFlowWorkflow, workflow.RegisterOptions{
+// NewWorkers registers the workflow and all activities to the cadence worker
+func (ff *FlowFactory) NewWorkers(client workflowserviceclient.Interface, workerOptions worker.Options) []worker.Worker {
+	w := worker.New(client, FlowDomainName.String(), TaskListName, workerOptions)
+	w.RegisterWorkflowWithOptions(ff.RunFlowWorkflow, workflow.RegisterOptions{
 		Name: RunFlowWorkflowName,
 	})
-	w.RegisterActivityWithOptions(wc.CompleteFlowActivity, activity.RegisterOptions{})
+	w.RegisterActivityWithOptions(ff.CompleteFlowActivity, activity.RegisterOptions{})
+	return []worker.Worker{w}
+}
+
+// GetDomain returns the factory domain
+func (FlowFactory) GetDomain() Domain {
+	return FlowDomainName
 }

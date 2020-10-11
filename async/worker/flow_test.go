@@ -5,62 +5,44 @@
 package worker_test
 
 import (
-	"context"
 	"errors"
-	"fmt"
 	"testing"
-
-	"github.com/facebookincubator/symphony/pkg/ent/flow"
 
 	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowinstance"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"github.com/facebookincubator/symphony/pkg/viewer/mocks"
-	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/cadence/testsuite"
 	"go.uber.org/cadence/workflow"
-	"gocloud.dev/runtimevar/constantvar"
 )
 
 type FlowTestSuite struct {
-	suite.Suite
-	testsuite.WorkflowTestSuite
-	entClient *ent.Client
-	client    *worker.FlowWorker
-	ctx       context.Context
-	env       *testsuite.TestWorkflowEnvironment
+	TenancyWorkflowTestSuite
+	factory *worker.FlowFactory
+	env     *testsuite.TestWorkflowEnvironment
 }
 
 func (s *FlowTestSuite) SetupTest() {
-	var m mocks.Tenancy
-	s.entClient = viewertest.NewTestClient(s.T())
-	s.ctx = viewertest.NewContext(context.Background(), s.entClient)
-	m.On("ClientFor", mock.Anything, viewertest.DefaultTenant).
-		Return(s.entClient, nil)
-	m.On("ClientFor", mock.Anything, mock.MatchedBy(func(tenant string) bool { return tenant != viewertest.DefaultTenant })).
-		Return(nil, fmt.Errorf("tenant not found"))
-	s.client = worker.NewFlowWorker(worker.FlowWorkerConfig{
-		Tenancy: &m,
-		Features: constantvar.New(viewer.TenantFeatures{
-			viewertest.DefaultTenant: viewertest.DefaultFeatures,
-		}),
-		Logger: logtest.NewTestLogger(s.T()),
-	})
-	s.SetContextPropagators([]workflow.ContextPropagator{
-		worker.NewContextPropagator(&m),
-	})
+	s.TenancyWorkflowTestSuite.SetupTest()
+	s.factory = worker.NewFlowFactory(logtest.NewTestLogger(s.T()))
 	s.env = s.NewTestWorkflowEnvironment()
-	s.env.RegisterActivity(s.client.CompleteFlowActivity)
+	s.env.RegisterActivity(s.factory.CompleteFlowActivity)
 	v := viewer.FromContext(s.ctx)
-	s.env.OnWorkflow(s.client.RunFlowWorkflow, mock.Anything, mock.Anything).Return(func(ctx workflow.Context, input worker.RunFlowInput) error {
-		return s.client.RunFlowWorkflow(worker.NewWorkflowContext(ctx, v), input)
-	})
+	s.env.OnWorkflow(s.factory.RunFlowWorkflow, mock.Anything, mock.Anything).
+		Return(func(ctx workflow.Context, input worker.RunFlowInput) error {
+			return s.factory.RunFlowWorkflow(worker.NewWorkflowContext(ctx, v), input)
+		})
+}
+
+func (s *FlowTestSuite) AfterTest(_, _ string) {
+	s.env.AssertExpectations(s.T())
 }
 
 func (s *FlowTestSuite) prepareFlow() *ent.Flow {
@@ -92,14 +74,10 @@ func (s *FlowTestSuite) prepareFlowInstance(flw *ent.Flow) *ent.FlowInstance {
 	return flowInstance
 }
 
-func (s *FlowTestSuite) AfterTest(_, _ string) {
-	s.env.AssertExpectations(s.T())
-}
-
 func (s *FlowTestSuite) TestRunFlow() {
 	flw := s.prepareFlow()
 	flowInstance := s.prepareFlowInstance(flw)
-	s.env.ExecuteWorkflow(s.client.RunFlowWorkflow, worker.RunFlowInput{
+	s.env.ExecuteWorkflow(s.factory.RunFlowWorkflow, worker.RunFlowInput{
 		FlowInstanceID: flowInstance.ID,
 	})
 	s.True(s.env.IsWorkflowCompleted())
@@ -113,7 +91,7 @@ func (s *FlowTestSuite) TestRunFlow() {
 }
 
 func (s *FlowTestSuite) TestRunFlowBadInstanceID() {
-	s.env.ExecuteWorkflow(s.client.RunFlowWorkflow, worker.RunFlowInput{
+	s.env.ExecuteWorkflow(s.factory.RunFlowWorkflow, worker.RunFlowInput{
 		FlowInstanceID: 123,
 	})
 	s.True(s.env.IsWorkflowCompleted())
@@ -123,9 +101,9 @@ func (s *FlowTestSuite) TestRunFlowBadInstanceID() {
 func (s *FlowTestSuite) TestRunFlowTimeout() {
 	flw := s.prepareFlow()
 	flowInstance := s.prepareFlowInstance(flw)
-	s.env.OnActivity(s.client.CompleteFlowActivity, mock.Anything, mock.Anything).
+	s.env.OnActivity(s.factory.CompleteFlowActivity, mock.Anything, mock.Anything).
 		Return(errors.New("failed"))
-	s.env.ExecuteWorkflow(s.client.RunFlowWorkflow, worker.RunFlowInput{
+	s.env.ExecuteWorkflow(s.factory.RunFlowWorkflow, worker.RunFlowInput{
 		FlowInstanceID: flowInstance.ID,
 	})
 	s.True(s.env.IsWorkflowCompleted())
@@ -137,7 +115,7 @@ func (s *FlowTestSuite) TestRunIncompleteFlow() {
 	flowInstance := s.entClient.FlowInstance.Create().
 		SetFlow(flw).
 		SaveX(s.ctx)
-	s.env.ExecuteWorkflow(s.client.RunFlowWorkflow, worker.RunFlowInput{
+	s.env.ExecuteWorkflow(s.factory.RunFlowWorkflow, worker.RunFlowInput{
 		FlowInstanceID: flowInstance.ID,
 	})
 	s.True(s.env.IsWorkflowCompleted())

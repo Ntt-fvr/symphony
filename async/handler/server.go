@@ -35,19 +35,21 @@ type Server struct {
 
 // Config defines the async server config.
 type Config struct {
-	Tenancy  viewer.Tenancy
-	Features *runtimevar.Variable
-	Receiver ev.Receiver
-	Logger   log.Logger
-	Handlers []Handler
+	Tenancy      viewer.Tenancy
+	Features     *runtimevar.Variable
+	Receiver     ev.Receiver
+	Logger       log.Logger
+	Handlers     []Handler
+	HealthPoller health.Poller
 }
 
 func NewServer(cfg Config) *Server {
 	srv := &Server{
-		tenancy:  cfg.Tenancy,
-		features: cfg.Features,
-		logger:   cfg.Logger,
-		handlers: cfg.Handlers,
+		tenancy:      cfg.Tenancy,
+		features:     cfg.Features,
+		logger:       cfg.Logger,
+		handlers:     cfg.Handlers,
+		healthPoller: cfg.HealthPoller,
 	}
 	srv.service, _ = ev.NewService(
 		ev.Config{
@@ -59,17 +61,10 @@ func NewServer(cfg Config) *Server {
 	return srv
 }
 
-// SetHealthPoller sets the health poller
-func (s *Server) SetHealthPoller(healthPoller health.Poller) {
-	s.healthPoller = healthPoller
-}
-
 // Serve starts the server.
 func (s *Server) Serve(ctx context.Context) error {
-	if s.healthPoller != nil {
-		if err := s.healthPoller.Wait(ctx); err != nil {
-			return fmt.Errorf("failed to wait for health checks: %w", err)
-		}
+	if err := s.healthPoller.Wait(ctx); err != nil {
+		return fmt.Errorf("failed to wait for health checks: %w", err)
 	}
 	return s.service.Run(ctx)
 }

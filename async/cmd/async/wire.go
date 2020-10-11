@@ -14,6 +14,7 @@ import (
 	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/async/handler"
 	"github.com/facebookincubator/symphony/async/worker"
+	"github.com/facebookincubator/symphony/pkg/cadence"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
@@ -27,15 +28,13 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/opentracing/opentracing-go"
+	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/cadence/client"
-	"go.uber.org/cadence/workflow"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
-	"gocloud.dev/runtimevar"
 	"gocloud.dev/server/health"
 )
 
@@ -91,9 +90,13 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
-		newWorkers,
-		provideCadenceConfig,
-		worker.ProvideCadenceClient,
+		provideCadenceClient,
+		newWorkerFactories,
+		wire.Struct(
+			new(worker.Config), "*",
+		),
+		worker.NewClient,
+		worker.NewHealthChecker,
 		newBucket,
 		newHandlers,
 		newApplication,
@@ -101,27 +104,14 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	return nil, nil, nil
 }
 
-func newApplication(server *handler.Server, http *server.Server, cadenceClient *worker.CadenceClient, logger *zap.Logger, healthPoller health2.Poller, flags *cliFlags) *application {
+func newApplication(server *handler.Server, http *server.Server, client *worker.Client, logger *zap.Logger, healthPoller health2.Poller, flags *cliFlags) *application {
 	var app application
 	app.logger = logger
 	app.server = server
-	app.server.SetHealthPoller(healthPoller)
 	app.http.Server = http
 	app.http.addr = flags.HTTPAddr
-	app.cadenceClient = cadenceClient
-	app.cadenceClient.SetHealthPoller(healthPoller)
+	app.client = client
 	return &app
-}
-
-func provideCadenceConfig(flags *cliFlags, tenancy viewer.Tenancy, tracer opentracing.Tracer, logger log.Logger, workers []worker.Worker) worker.CadenceClientConfig {
-	return worker.CadenceClientConfig{
-		CadenceAddr: flags.CadenceAddr,
-		Domain:      flags.CadenceDomain,
-		Workers:     workers,
-		Tenancy:     tenancy,
-		Tracer:      tracer,
-		Logger:      logger,
-	}
 }
 
 func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
@@ -131,8 +121,8 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceClient *worker.CadenceClient) []health.Checker {
-	return []health.Checker{tenancy, cadenceClient}
+func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceHealthChecker *worker.HealthChecker) []health.Checker {
+	return []health.Checker{tenancy, cadenceHealthChecker}
 }
 
 func provideViews() []*view.View {
@@ -155,34 +145,31 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket, flags *cliFlags, cadenceClient *worker.CadenceClient, tenancy viewer.Tenancy, tracer opentracing.Tracer) []handler.Handler {
+func provideCadenceClient(logger log.Logger, flags *cliFlags) (workflowserviceclient.Interface, func(), error) {
+	return cadence.ProvideClient(logger.Background(), flags.CadenceAddr)
+}
+
+func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, tenancy viewer.Tenancy, tracer opentracing.Tracer) []handler.Handler {
 	return []handler.Handler{
 		handler.New(handler.HandleConfig{
 			Name:    "activity_log",
 			Handler: handler.Func(handler.HandleActivityLog),
 		}),
 		handler.New(handler.HandleConfig{
-			Name:    "export_task",
-			Handler: handler.NewExportHandler(bucket, flags.ExportBucketPrefix),
+			Name: "export_task",
+			Handler: handler.NewExportHandler(
+				bucket, flags.ExportBucketPrefix, client.GetCadenceClient(worker.ExportDomainName.String())),
 		}, handler.WithTransaction(false)),
 		handler.New(handler.HandleConfig{
-			Name: "flow",
-			Handler: handler.NewFlowHandler(cadenceClient.GetClient(&client.Options{
-				Tracer: tracer,
-				ContextPropagators: []workflow.ContextPropagator{
-					worker.NewContextPropagator(tenancy),
-				},
-			})),
+			Name:    "flow",
+			Handler: handler.NewFlowHandler(client.GetCadenceClient(worker.FlowDomainName.String())),
 		}, handler.WithTransaction(false)),
 	}
 }
 
-func newWorkers(tenancy viewer.Tenancy, features *runtimevar.Variable, logger log.Logger) []worker.Worker {
-	return []worker.Worker{
-		worker.NewFlowWorker(worker.FlowWorkerConfig{
-			Tenancy:  tenancy,
-			Features: features,
-			Logger:   logger,
-		}),
+func newWorkerFactories(logger log.Logger, bucket *blob.Bucket, flags *cliFlags) []worker.DomainFactory {
+	return []worker.DomainFactory{
+		worker.NewFlowFactory(logger),
+		worker.NewExportFactory(logger, bucket, flags.ExportBucketPrefix),
 	}
 }

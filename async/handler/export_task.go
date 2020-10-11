@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -21,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
+	"go.uber.org/cadence/client"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 )
@@ -29,6 +31,7 @@ import (
 type ExportHandler struct {
 	bucket       *blob.Bucket
 	bucketPrefix string
+	client       client.Client
 }
 
 // Interface for getting data rows.
@@ -37,10 +40,11 @@ type rower interface {
 }
 
 // NewExportHandler returns an ExportHandler object with a bucket.
-func NewExportHandler(bucket *blob.Bucket, bucketPrefix string) *ExportHandler {
+func NewExportHandler(bucket *blob.Bucket, bucketPrefix string, client client.Client) *ExportHandler {
 	return &ExportHandler{
 		bucket:       bucket,
 		bucketPrefix: bucketPrefix,
+		client:       client,
 	}
 }
 
@@ -68,7 +72,15 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink, exporttask.TypeService, exporttask.TypeWorkOrder:
 		key, err = eh.export(ctx, logger, task)
 	case exporttask.TypeSingleWorkOrder:
-		key, err = eh.exportSingleWO(ctx, logger, task)
+		_, err := eh.client.StartWorkflow(ctx, client.StartWorkflowOptions{
+			ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
+			TaskList:                     worker.TaskListName,
+			ExecutionStartToCloseTimeout: 90 * time.Minute,
+		}, worker.ExportWorkOrderWorkflowName,
+			worker.ExportSingleWOInput{
+				ExportTaskID: entry.CurrState.ID,
+			})
+		return err
 	default:
 		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
 			logger.For(ctx).Error("cannot update task status", zap.Error(err))
@@ -180,57 +192,4 @@ func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]str
 	}
 
 	return nil
-}
-
-func (eh *ExportHandler) exportSingleWO(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
-	excelExporter := exporter.SingleWo{
-		Log: logger,
-	}
-	if task.WoIDToExport == nil {
-		logger.For(ctx).Error("cannot create single work order file, work order id is nil", zap.Int("id", task.ID))
-		return "", fmt.Errorf("cannot create single work order file: work order id is nil")
-	}
-
-	excelFile, err := excelExporter.CreateExcelFile(ctx, *task.WoIDToExport)
-	if err != nil {
-		logger.For(ctx).Error("cannot create single work order file", zap.Error(err), zap.Int("id", task.ID))
-		return "", fmt.Errorf("cannot create single work order file: %w", err)
-	}
-	tenant := viewer.FromContext(ctx).Tenant()
-	key := eh.bucketPrefix + uuid.New().String()
-	writeKey := tenant + "/" + key
-
-	b, err := eh.bucket.NewWriter(ctx, writeKey, &blob.WriterOptions{
-		ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-		ContentDisposition: fmt.Sprintf(
-			"attachment; filename=work-order-%d-%s.xlsx",
-			*task.WoIDToExport,
-			time.Now().Format(time.RFC3339),
-		),
-		BeforeWrite: func(asFunc func(interface{}) bool) error {
-			var req *s3manager.UploadInput
-			if asFunc(&req) {
-				req.Tagging = aws.String("autoclean=true")
-			}
-			return nil
-		},
-	})
-	if err != nil {
-		return "", fmt.Errorf("cannot create bucket writer: %w", err)
-	}
-
-	defer func() {
-		if cerr := b.Close(); cerr != nil {
-			cerr = fmt.Errorf("cannot close writer: %w", cerr)
-			err = multierror.Append(err, cerr).ErrorOrNil()
-		}
-	}()
-
-	err = excelFile.Write(b)
-	if err != nil {
-		logger.For(ctx).Error("cannot write file to bucket", zap.Error(err))
-		return "", err
-	}
-
-	return key, nil
 }

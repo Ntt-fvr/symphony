@@ -555,7 +555,6 @@ async:
     # Cadence configuration
     cadence:
       address: ""
-      domain: "flow"
 
     # Additional key/value pairs to be used as environment variables
     extraEnvVars: []
@@ -590,7 +589,7 @@ migrate:
 
       cadence:
         address: ""
-        domain: "flow"
+        domains: "flow,export"
         extraEnvVars: []
 
 # Configuration for store application

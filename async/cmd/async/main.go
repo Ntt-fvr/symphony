@@ -39,7 +39,6 @@ type cliFlags struct {
 	ExportBucketURL    *url.URL         `name:"export.bucket-url" env:"EXPORT_BUCKET_URL" required:"" placeholder:"URL" help:"Export bucket URL."`
 	ExportBucketPrefix string           `name:"export.bucket-prefix" env:"EXPORT_BUCKET_PREFIX" default:"exports/" help:"Export bucket prefix."`
 	CadenceAddr        string           `name:"cadence.addr" env:"CADENCE_ADDR" required:"" help:"Cadence server address."`
-	CadenceDomain      string           `name:"cadence.domain" env:"CADENCE_DOMAIN" required:"" help:"Cadence domain name."`
 	LogConfig          log.Config       `embed:""`
 	TelemetryConfig    telemetry.Config `embed:""`
 	TenancyConfig      viewer.Config    `embed:""`
@@ -74,8 +73,8 @@ type application struct {
 		*server.Server
 		addr string
 	}
-	server        *handler.Server
-	cadenceClient *worker.CadenceClient
+	server *handler.Server
+	client *worker.Client
 }
 
 func (app *application) run(ctx context.Context) error {
@@ -92,7 +91,7 @@ func (app *application) run(ctx context.Context) error {
 		return err
 	})
 	g.Go(func(ctx context.Context) error {
-		err := app.cadenceClient.Run(ctx)
+		err := app.client.Run(ctx)
 		app.logger.Debug("cadence client terminated", zap.Error(err))
 		return err
 	})
@@ -122,7 +121,7 @@ func (app *application) run(ctx context.Context) error {
 	})
 	g.Go(func(context.Context) error {
 		app.logger.Debug("start cadence client termination")
-		app.cadenceClient.Shutdown()
+		app.client.Shutdown()
 		app.logger.Debug("end cadence client termination")
 		return nil
 	})
