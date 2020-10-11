@@ -20,7 +20,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 
 	_ "github.com/facebookincubator/symphony/pkg/ent/runtime"
@@ -28,13 +30,14 @@ import (
 
 func main() { // nolint: funlen
 	var cli struct {
-		Database   *url.URL   `name:"db-url" env:"DB_URL" required:"" help:"Database URL."`
-		Tenant     string     `xor:"tenant" help:"Tenant name to target."`
-		AllTenants bool       `xor:"tenant" help:"Target all tenants."`
-		Features   *url.URL   `name:"features-url" help:"Endpoint to fetch features flags from."`
-		User       string     `required:"" help:"Who is running the script."`
-		Migration  string     `required:"" help:"Migration script name to run." enum:"${migrations}"`
-		LogConfig  log.Config `embed:""`
+		Database        *url.URL         `name:"db-url" env:"DB_URL" required:"" help:"Database URL."`
+		Tenant          string           `xor:"tenant" help:"Tenant name to target."`
+		AllTenants      bool             `xor:"tenant" help:"Target all tenants."`
+		Features        *url.URL         `name:"features-url" help:"Endpoint to fetch features flags from."`
+		User            string           `required:"" help:"Who is running the script."`
+		Migration       string           `required:"" help:"Migration script name to run." enum:"${migrations}"`
+		TelemetryConfig telemetry.Config `embed:""`
+		LogConfig       log.Config       `embed:""`
 	}
 	kctx := kong.Parse(&cli, kong.Vars{
 		"migrations": func() string {
@@ -45,7 +48,8 @@ func main() { // nolint: funlen
 			sort.Strings(names)
 			return strings.Join(names, ",")
 		}(),
-	})
+	},
+		cli.TelemetryConfig)
 	if cli.Tenant == "" && !cli.AllTenants {
 		kctx.Fatalf("missing flags: --tenant or --all-tenants")
 	}
@@ -63,6 +67,13 @@ func main() { // nolint: funlen
 		zap.Bool("all_tenants", cli.AllTenants),
 		zap.String("user", cli.User),
 	)
+
+	exporter, flush, err := telemetry.ProvideTraceExporter(cli.TelemetryConfig)
+	if err != nil {
+		logger.Fatal("cannot get trace exporter", zap.Error(err))
+	}
+	defer flush()
+	trace.RegisterExporter(exporter)
 
 	tenancy, err := viewer.NewMySQLTenancy(
 		ctx, cli.Database, 1,
@@ -146,6 +157,13 @@ func main() { // nolint: funlen
 				}
 			}()
 			ctx = ent.NewContext(ctx, tx.Client())
+			ctx, span := trace.StartSpan(ctx, "run migration",
+				trace.WithSampler(trace.AlwaysSample()))
+			defer span.End()
+			span.AddAttributes(
+				trace.StringAttribute("tenant", tenant),
+				trace.StringAttribute("mirgation", cli.Migration),
+			)
 			if err := migrationMap[cli.Migration](ctx, logger); err != nil {
 				logger.Error("cannot run migration", zap.Error(err))
 				if err := tx.Rollback(); err != nil {
