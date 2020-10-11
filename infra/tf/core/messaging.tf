@@ -39,6 +39,4 @@ resource helm_release prometheus_nats_exporter {
       enabled = true
     }
   })]
-
-  depends_on = [helm_release.prometheus_operator]
 }

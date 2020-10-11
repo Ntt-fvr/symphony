@@ -211,7 +211,7 @@ resource helm_release ingress_nginx {
   namespace  = data.kubernetes_namespace.kube_system.id
   repository = local.helm_repository.ingress-nginx
   chart      = "ingress-nginx"
-  version    = "3.4.1"
+  version    = "3.6.0"
 
   values = [yamlencode({
     controller = {

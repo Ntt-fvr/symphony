@@ -1,6 +1,6 @@
 output grafana_admin_password {
   description = "Grafana administrator password"
-  value       = random_string.grafana_admin_password.result
+  value       = random_password.grafana_admin_password.result
   sensitive   = true
 }
 

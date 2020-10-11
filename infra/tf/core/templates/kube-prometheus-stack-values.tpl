@@ -1,4 +1,3 @@
-nameOverride: prometheus-operator
 alertmanager:
   ingress:
     enabled: true
@@ -114,8 +113,6 @@ prometheus:
         target_label: severity
         regex: critical
         replacement: major
-prometheusOperator:
-  cleanupCustomResource: true
 kubeControllerManager:
   enabled: false
 kubeScheduler:
