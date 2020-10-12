@@ -15,6 +15,8 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type ActionTypeId = "work_order" | "%future added value";
+export type EntryPointRole = "DEFAULT" | "%future added value";
+export type ExitPointRole = "DECISION" | "DEFAULT" | "%future added value";
 export type TriggerTypeId = "work_order" | "%future added value";
 export type VariableType = "DATE" | "INT" | "LOCATION" | "PROJECT" | "STRING" | "USER" | "WORK_ORDER" | "WORK_ORDER_TYPE" | "%future added value";
 export type ImportFlowDraftInput = {|
@@ -65,7 +67,11 @@ export type BlockVariableInput = {|
 |};
 export type DecisionBlockInput = {|
   cid: string,
+  routes?: ?$ReadOnlyArray<DecisionRouteInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
+|};
+export type DecisionRouteInput = {|
+  pid?: ?string
 |};
 export type GotoBlockInput = {|
   cid: string,
@@ -92,7 +98,17 @@ export type ActionBlockInput = {|
 |};
 export type ConnectorInput = {|
   sourceBlockCid: string,
+  sourcePid?: ?ExitPointId,
   targetBlockCid: string,
+  targetPid?: ?EntryPointId,
+|};
+export type ExitPointId = {|
+  role?: ?ExitPointRole,
+  pid?: ?string,
+|};
+export type EntryPointId = {|
+  role?: ?EntryPointRole,
+  pid?: ?string,
 |};
 export type ImportFlowDraftMutationVariables = {|
   input: ImportFlowDraftInput

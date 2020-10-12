@@ -27,6 +27,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitemdefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/comment"
 	"github.com/facebookincubator/symphony/pkg/ent/customer"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentcategory"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -35,6 +36,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentposition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentpositiondefinition"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmenttype"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ent/feature"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
@@ -2260,6 +2262,225 @@ var DefaultCustomerOrder = &CustomerOrder{
 	},
 }
 
+// EntryPointEdge is the edge representation of EntryPoint.
+type EntryPointEdge struct {
+	Node   *EntryPoint `json:"node"`
+	Cursor Cursor      `json:"cursor"`
+}
+
+// EntryPointConnection is the connection containing edges to EntryPoint.
+type EntryPointConnection struct {
+	Edges      []*EntryPointEdge `json:"edges"`
+	PageInfo   PageInfo          `json:"pageInfo"`
+	TotalCount int               `json:"totalCount"`
+}
+
+// EntryPointPaginateOption enables pagination customization.
+type EntryPointPaginateOption func(*entryPointPager) error
+
+// WithEntryPointOrder configures pagination ordering.
+func WithEntryPointOrder(order *EntryPointOrder) EntryPointPaginateOption {
+	if order == nil {
+		order = DefaultEntryPointOrder
+	}
+	o := *order
+	return func(pager *entryPointPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntryPointOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntryPointFilter configures pagination filter.
+func WithEntryPointFilter(filter func(*EntryPointQuery) (*EntryPointQuery, error)) EntryPointPaginateOption {
+	return func(pager *entryPointPager) error {
+		if filter == nil {
+			return errors.New("EntryPointQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entryPointPager struct {
+	order  *EntryPointOrder
+	filter func(*EntryPointQuery) (*EntryPointQuery, error)
+}
+
+func newEntryPointPager(opts []EntryPointPaginateOption) (*entryPointPager, error) {
+	pager := &entryPointPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntryPointOrder
+	}
+	return pager, nil
+}
+
+func (p *entryPointPager) applyFilter(query *EntryPointQuery) (*EntryPointQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entryPointPager) toCursor(ep *EntryPoint) Cursor {
+	return p.order.Field.toCursor(ep)
+}
+
+func (p *entryPointPager) applyCursors(query *EntryPointQuery, after, before *Cursor) *EntryPointQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultEntryPointOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *entryPointPager) applyOrder(query *EntryPointQuery, reverse bool) *EntryPointQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultEntryPointOrder.Field {
+		query = query.Order(Asc(DefaultEntryPointOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntryPoint.
+func (ep *EntryPointQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntryPointPaginateOption,
+) (*EntryPointConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntryPointPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if ep, err = pager.applyFilter(ep); err != nil {
+		return nil, err
+	}
+
+	conn := &EntryPointConnection{Edges: []*EntryPointEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := ep.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := ep.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	ep = pager.applyCursors(ep, after, before)
+	ep = pager.applyOrder(ep, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		ep = ep.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		ep = ep.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := ep.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *EntryPoint
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntryPoint {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntryPoint {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*EntryPointEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &EntryPointEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// EntryPointOrderField defines the ordering field of EntryPoint.
+type EntryPointOrderField struct {
+	field    string
+	toCursor func(*EntryPoint) Cursor
+}
+
+// EntryPointOrder defines the ordering of EntryPoint.
+type EntryPointOrder struct {
+	Direction OrderDirection        `json:"direction"`
+	Field     *EntryPointOrderField `json:"field"`
+}
+
+// DefaultEntryPointOrder is the default ordering of EntryPoint.
+var DefaultEntryPointOrder = &EntryPointOrder{
+	Direction: OrderDirectionAsc,
+	Field: &EntryPointOrderField{
+		field: entrypoint.FieldID,
+		toCursor: func(ep *EntryPoint) Cursor {
+			return Cursor{ID: ep.ID}
+		},
+	},
+}
+
 // EquipmentEdge is the edge representation of Equipment.
 type EquipmentEdge struct {
 	Node   *Equipment `json:"node"`
@@ -4065,6 +4286,225 @@ var DefaultEquipmentTypeOrder = &EquipmentTypeOrder{
 		field: equipmenttype.FieldID,
 		toCursor: func(et *EquipmentType) Cursor {
 			return Cursor{ID: et.ID}
+		},
+	},
+}
+
+// ExitPointEdge is the edge representation of ExitPoint.
+type ExitPointEdge struct {
+	Node   *ExitPoint `json:"node"`
+	Cursor Cursor     `json:"cursor"`
+}
+
+// ExitPointConnection is the connection containing edges to ExitPoint.
+type ExitPointConnection struct {
+	Edges      []*ExitPointEdge `json:"edges"`
+	PageInfo   PageInfo         `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
+}
+
+// ExitPointPaginateOption enables pagination customization.
+type ExitPointPaginateOption func(*exitPointPager) error
+
+// WithExitPointOrder configures pagination ordering.
+func WithExitPointOrder(order *ExitPointOrder) ExitPointPaginateOption {
+	if order == nil {
+		order = DefaultExitPointOrder
+	}
+	o := *order
+	return func(pager *exitPointPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultExitPointOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithExitPointFilter configures pagination filter.
+func WithExitPointFilter(filter func(*ExitPointQuery) (*ExitPointQuery, error)) ExitPointPaginateOption {
+	return func(pager *exitPointPager) error {
+		if filter == nil {
+			return errors.New("ExitPointQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type exitPointPager struct {
+	order  *ExitPointOrder
+	filter func(*ExitPointQuery) (*ExitPointQuery, error)
+}
+
+func newExitPointPager(opts []ExitPointPaginateOption) (*exitPointPager, error) {
+	pager := &exitPointPager{}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultExitPointOrder
+	}
+	return pager, nil
+}
+
+func (p *exitPointPager) applyFilter(query *ExitPointQuery) (*ExitPointQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *exitPointPager) toCursor(ep *ExitPoint) Cursor {
+	return p.order.Field.toCursor(ep)
+}
+
+func (p *exitPointPager) applyCursors(query *ExitPointQuery, after, before *Cursor) *ExitPointQuery {
+	for _, predicate := range cursorsToPredicates(
+		p.order.Direction, after, before,
+		p.order.Field.field, DefaultExitPointOrder.Field.field,
+	) {
+		query = query.Where(predicate)
+	}
+	return query
+}
+
+func (p *exitPointPager) applyOrder(query *ExitPointQuery, reverse bool) *ExitPointQuery {
+	direction := p.order.Direction
+	if reverse {
+		direction = direction.reverse()
+	}
+	query = query.Order(direction.orderFunc(p.order.Field.field))
+	if p.order.Field != DefaultExitPointOrder.Field {
+		query = query.Order(Asc(DefaultExitPointOrder.Field.field))
+	}
+	return query
+}
+
+// Paginate executes the query and returns a relay based cursor connection to ExitPoint.
+func (ep *ExitPointQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...ExitPointPaginateOption,
+) (*ExitPointConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newExitPointPager(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	if ep, err = pager.applyFilter(ep); err != nil {
+		return nil, err
+	}
+
+	conn := &ExitPointConnection{Edges: []*ExitPointEdge{}}
+	if !hasCollectedField(ctx, edgesField) ||
+		first != nil && *first == 0 ||
+		last != nil && *last == 0 {
+		if hasCollectedField(ctx, totalCountField) ||
+			hasCollectedField(ctx, pageInfoField) {
+			count, err := ep.Count(ctx)
+			if err != nil {
+				return nil, err
+			}
+			conn.TotalCount = count
+			conn.PageInfo.HasNextPage = first != nil && count > 0
+			conn.PageInfo.HasPreviousPage = last != nil && count > 0
+		}
+		return conn, nil
+	}
+
+	if (after != nil || first != nil || before != nil || last != nil) &&
+		hasCollectedField(ctx, totalCountField) {
+		count, err := ep.Clone().Count(ctx)
+		if err != nil {
+			return nil, err
+		}
+		conn.TotalCount = count
+	}
+
+	ep = pager.applyCursors(ep, after, before)
+	ep = pager.applyOrder(ep, last != nil)
+	var limit int
+	if first != nil {
+		limit = *first + 1
+	} else if last != nil {
+		limit = *last + 1
+	}
+	if limit > 0 {
+		ep = ep.Limit(limit)
+	}
+
+	if field := getCollectedField(ctx, edgesField, nodeField); field != nil {
+		ep = ep.collectField(graphql.GetOperationContext(ctx), *field)
+	}
+
+	nodes, err := ep.All(ctx)
+	if err != nil || len(nodes) == 0 {
+		return conn, err
+	}
+
+	if len(nodes) == limit {
+		conn.PageInfo.HasNextPage = first != nil
+		conn.PageInfo.HasPreviousPage = last != nil
+		nodes = nodes[:len(nodes)-1]
+	}
+
+	var nodeAt func(int) *ExitPoint
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *ExitPoint {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *ExitPoint {
+			return nodes[i]
+		}
+	}
+
+	conn.Edges = make([]*ExitPointEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		conn.Edges[i] = &ExitPointEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+
+	conn.PageInfo.StartCursor = &conn.Edges[0].Cursor
+	conn.PageInfo.EndCursor = &conn.Edges[len(conn.Edges)-1].Cursor
+	if conn.TotalCount == 0 {
+		conn.TotalCount = len(nodes)
+	}
+
+	return conn, nil
+}
+
+// ExitPointOrderField defines the ordering field of ExitPoint.
+type ExitPointOrderField struct {
+	field    string
+	toCursor func(*ExitPoint) Cursor
+}
+
+// ExitPointOrder defines the ordering of ExitPoint.
+type ExitPointOrder struct {
+	Direction OrderDirection       `json:"direction"`
+	Field     *ExitPointOrderField `json:"field"`
+}
+
+// DefaultExitPointOrder is the default ordering of ExitPoint.
+var DefaultExitPointOrder = &ExitPointOrder{
+	Direction: OrderDirectionAsc,
+	Field: &ExitPointOrderField{
+		field: exitpoint.FieldID,
+		toCursor: func(ep *ExitPoint) Cursor {
+			return Cursor{ID: ep.ID}
 		},
 	},
 }

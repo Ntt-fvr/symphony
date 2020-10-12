@@ -130,6 +130,19 @@ func (f CustomerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return f(ctx, mv)
 }
 
+// The EntryPointFunc type is an adapter to allow the use of ordinary
+// function as EntryPoint mutator.
+type EntryPointFunc func(context.Context, *ent.EntryPointMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntryPointFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.EntryPointMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntryPointMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The EquipmentFunc type is an adapter to allow the use of ordinary
 // function as Equipment mutator.
 type EquipmentFunc func(context.Context, *ent.EquipmentMutation) (ent.Value, error)
@@ -230,6 +243,19 @@ func (f EquipmentTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	mv, ok := m.(*ent.EquipmentTypeMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EquipmentTypeMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The ExitPointFunc type is an adapter to allow the use of ordinary
+// function as ExitPoint mutator.
+type ExitPointFunc func(context.Context, *ent.ExitPointMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExitPointFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.ExitPointMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExitPointMutation", m)
 	}
 	return f(ctx, mv)
 }

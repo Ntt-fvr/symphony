@@ -330,6 +330,30 @@ var (
 		PrimaryKey:  []*schema.Column{CustomersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// EntryPointsColumns holds the columns for the "entry_points" table.
+	EntryPointsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT"}},
+		{Name: "pid", Type: field.TypeString, Nullable: true},
+		{Name: "block_entry_point", Type: field.TypeInt, Unique: true, Nullable: true},
+	}
+	// EntryPointsTable holds the schema information for the "entry_points" table.
+	EntryPointsTable = &schema.Table{
+		Name:       "entry_points",
+		Columns:    EntryPointsColumns,
+		PrimaryKey: []*schema.Column{EntryPointsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "entry_points_blocks_entry_point",
+				Columns: []*schema.Column{EntryPointsColumns[5]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// EquipmentColumns holds the columns for the "equipment" table.
 	EquipmentColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -569,6 +593,37 @@ var (
 
 				RefColumns: []*schema.Column{EquipmentCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ExitPointsColumns holds the columns for the "exit_points" table.
+	ExitPointsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"DEFAULT", "DECISION"}},
+		{Name: "pid", Type: field.TypeString, Nullable: true},
+		{Name: "block_exit_points", Type: field.TypeInt, Nullable: true},
+	}
+	// ExitPointsTable holds the schema information for the "exit_points" table.
+	ExitPointsTable = &schema.Table{
+		Name:       "exit_points",
+		Columns:    ExitPointsColumns,
+		PrimaryKey: []*schema.Column{ExitPointsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "exit_points_blocks_exit_points",
+				Columns: []*schema.Column{ExitPointsColumns[5]},
+
+				RefColumns: []*schema.Column{BlocksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "exitpoint_pid_block_exit_points",
+				Unique:  true,
+				Columns: []*schema.Column{ExitPointsColumns[4], ExitPointsColumns[5]},
 			},
 		},
 	}
@@ -2032,33 +2087,6 @@ var (
 			},
 		},
 	}
-	// BlockNextBlocksColumns holds the columns for the "block_next_blocks" table.
-	BlockNextBlocksColumns = []*schema.Column{
-		{Name: "block_id", Type: field.TypeInt},
-		{Name: "prev_block_id", Type: field.TypeInt},
-	}
-	// BlockNextBlocksTable holds the schema information for the "block_next_blocks" table.
-	BlockNextBlocksTable = &schema.Table{
-		Name:       "block_next_blocks",
-		Columns:    BlockNextBlocksColumns,
-		PrimaryKey: []*schema.Column{BlockNextBlocksColumns[0], BlockNextBlocksColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:  "block_next_blocks_block_id",
-				Columns: []*schema.Column{BlockNextBlocksColumns[0]},
-
-				RefColumns: []*schema.Column{BlocksColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:  "block_next_blocks_prev_block_id",
-				Columns: []*schema.Column{BlockNextBlocksColumns[1]},
-
-				RefColumns: []*schema.Column{BlocksColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// EquipmentPortDefinitionConnectedPortsColumns holds the columns for the "equipment_port_definition_connected_ports" table.
 	EquipmentPortDefinitionConnectedPortsColumns = []*schema.Column{
 		{Name: "equipment_port_definition_id", Type: field.TypeInt},
@@ -2082,6 +2110,33 @@ var (
 				Columns: []*schema.Column{EquipmentPortDefinitionConnectedPortsColumns[1]},
 
 				RefColumns: []*schema.Column{EquipmentPortDefinitionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// ExitPointNextEntryPointsColumns holds the columns for the "exit_point_next_entry_points" table.
+	ExitPointNextEntryPointsColumns = []*schema.Column{
+		{Name: "exit_point_id", Type: field.TypeInt},
+		{Name: "entry_point_id", Type: field.TypeInt},
+	}
+	// ExitPointNextEntryPointsTable holds the schema information for the "exit_point_next_entry_points" table.
+	ExitPointNextEntryPointsTable = &schema.Table{
+		Name:       "exit_point_next_entry_points",
+		Columns:    ExitPointNextEntryPointsColumns,
+		PrimaryKey: []*schema.Column{ExitPointNextEntryPointsColumns[0], ExitPointNextEntryPointsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "exit_point_next_entry_points_exit_point_id",
+				Columns: []*schema.Column{ExitPointNextEntryPointsColumns[0]},
+
+				RefColumns: []*schema.Column{ExitPointsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:  "exit_point_next_entry_points_entry_point_id",
+				Columns: []*schema.Column{ExitPointNextEntryPointsColumns[1]},
+
+				RefColumns: []*schema.Column{EntryPointsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -2313,6 +2368,7 @@ var (
 		CheckListItemDefinitionsTable,
 		CommentsTable,
 		CustomersTable,
+		EntryPointsTable,
 		EquipmentTable,
 		EquipmentCategoriesTable,
 		EquipmentPortsTable,
@@ -2321,6 +2377,7 @@ var (
 		EquipmentPositionsTable,
 		EquipmentPositionDefinitionsTable,
 		EquipmentTypesTable,
+		ExitPointsTable,
 		ExportTasksTable,
 		FeaturesTable,
 		FilesTable,
@@ -2358,8 +2415,8 @@ var (
 		WorkOrderDefinitionsTable,
 		WorkOrderTemplatesTable,
 		WorkOrderTypesTable,
-		BlockNextBlocksTable,
 		EquipmentPortDefinitionConnectedPortsTable,
+		ExitPointNextEntryPointsTable,
 		ServiceUpstreamTable,
 		ServiceLinksTable,
 		ServicePortsTable,
@@ -2389,6 +2446,7 @@ func init() {
 	CommentsTable.ForeignKeys[0].RefTable = UsersTable
 	CommentsTable.ForeignKeys[1].RefTable = ProjectsTable
 	CommentsTable.ForeignKeys[2].RefTable = WorkOrdersTable
+	EntryPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	EquipmentTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTable.ForeignKeys[1].RefTable = WorkOrdersTable
 	EquipmentTable.ForeignKeys[2].RefTable = EquipmentPositionsTable
@@ -2402,6 +2460,7 @@ func init() {
 	EquipmentPositionsTable.ForeignKeys[1].RefTable = EquipmentPositionDefinitionsTable
 	EquipmentPositionDefinitionsTable.ForeignKeys[0].RefTable = EquipmentTypesTable
 	EquipmentTypesTable.ForeignKeys[0].RefTable = EquipmentCategoriesTable
+	ExitPointsTable.ForeignKeys[0].RefTable = BlocksTable
 	FilesTable.ForeignKeys[0].RefTable = CheckListItemsTable
 	FilesTable.ForeignKeys[1].RefTable = EquipmentTable
 	FilesTable.ForeignKeys[2].RefTable = FloorPlansTable
@@ -2478,10 +2537,10 @@ func init() {
 	WorkOrderDefinitionsTable.ForeignKeys[1].RefTable = ProjectTypesTable
 	WorkOrderDefinitionsTable.ForeignKeys[2].RefTable = WorkOrderTypesTable
 	WorkOrderTemplatesTable.ForeignKeys[0].RefTable = WorkOrderTypesTable
-	BlockNextBlocksTable.ForeignKeys[0].RefTable = BlocksTable
-	BlockNextBlocksTable.ForeignKeys[1].RefTable = BlocksTable
 	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[0].RefTable = EquipmentPortDefinitionsTable
 	EquipmentPortDefinitionConnectedPortsTable.ForeignKeys[1].RefTable = EquipmentPortDefinitionsTable
+	ExitPointNextEntryPointsTable.ForeignKeys[0].RefTable = ExitPointsTable
+	ExitPointNextEntryPointsTable.ForeignKeys[1].RefTable = EntryPointsTable
 	ServiceUpstreamTable.ForeignKeys[0].RefTable = ServicesTable
 	ServiceUpstreamTable.ForeignKeys[1].RefTable = ServicesTable
 	ServiceLinksTable.ForeignKeys[0].RefTable = ServicesTable

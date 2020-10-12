@@ -14,6 +14,7 @@ import (
 
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -55,10 +56,6 @@ type Block struct {
 
 // BlockEdges holds the relations/edges for other nodes in the graph.
 type BlockEdges struct {
-	// PrevBlocks holds the value of the prev_blocks edge.
-	PrevBlocks []*Block
-	// NextBlocks holds the value of the next_blocks edge.
-	NextBlocks []*Block
 	// Flow holds the value of the flow edge.
 	Flow *Flow
 	// FlowTemplate holds the value of the flow_template edge.
@@ -73,33 +70,19 @@ type BlockEdges struct {
 	GotoBlock *Block
 	// Instances holds the value of the instances edge.
 	Instances []*BlockInstance
+	// EntryPoint holds the value of the entry_point edge.
+	EntryPoint *EntryPoint
+	// ExitPoints holds the value of the exit_points edge.
+	ExitPoints []*ExitPoint
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [9]bool
 }
 
-// PrevBlocksOrErr returns the PrevBlocks value or an error if the edge
-// was not loaded in eager-loading.
-func (e BlockEdges) PrevBlocksOrErr() ([]*Block, error) {
-	if e.loadedTypes[0] {
-		return e.PrevBlocks, nil
-	}
-	return nil, &NotLoadedError{edge: "prev_blocks"}
-}
-
-// NextBlocksOrErr returns the NextBlocks value or an error if the edge
-// was not loaded in eager-loading.
-func (e BlockEdges) NextBlocksOrErr() ([]*Block, error) {
-	if e.loadedTypes[1] {
-		return e.NextBlocks, nil
-	}
-	return nil, &NotLoadedError{edge: "next_blocks"}
-}
-
 // FlowOrErr returns the Flow value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) FlowOrErr() (*Flow, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[0] {
 		if e.Flow == nil {
 			// The edge flow was loaded in eager-loading,
 			// but was not found.
@@ -113,7 +96,7 @@ func (e BlockEdges) FlowOrErr() (*Flow, error) {
 // FlowTemplateOrErr returns the FlowTemplate value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) FlowTemplateOrErr() (*FlowExecutionTemplate, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[1] {
 		if e.FlowTemplate == nil {
 			// The edge flow_template was loaded in eager-loading,
 			// but was not found.
@@ -127,7 +110,7 @@ func (e BlockEdges) FlowTemplateOrErr() (*FlowExecutionTemplate, error) {
 // FlowDraftOrErr returns the FlowDraft value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) FlowDraftOrErr() (*FlowDraft, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[2] {
 		if e.FlowDraft == nil {
 			// The edge flow_draft was loaded in eager-loading,
 			// but was not found.
@@ -141,7 +124,7 @@ func (e BlockEdges) FlowDraftOrErr() (*FlowDraft, error) {
 // SubFlowOrErr returns the SubFlow value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) SubFlowOrErr() (*Flow, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[3] {
 		if e.SubFlow == nil {
 			// The edge sub_flow was loaded in eager-loading,
 			// but was not found.
@@ -155,7 +138,7 @@ func (e BlockEdges) SubFlowOrErr() (*Flow, error) {
 // SourceBlockOrErr returns the SourceBlock value or an error if the edge
 // was not loaded in eager-loading.
 func (e BlockEdges) SourceBlockOrErr() ([]*Block, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[4] {
 		return e.SourceBlock, nil
 	}
 	return nil, &NotLoadedError{edge: "source_block"}
@@ -164,7 +147,7 @@ func (e BlockEdges) SourceBlockOrErr() ([]*Block, error) {
 // GotoBlockOrErr returns the GotoBlock value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e BlockEdges) GotoBlockOrErr() (*Block, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[5] {
 		if e.GotoBlock == nil {
 			// The edge goto_block was loaded in eager-loading,
 			// but was not found.
@@ -178,10 +161,33 @@ func (e BlockEdges) GotoBlockOrErr() (*Block, error) {
 // InstancesOrErr returns the Instances value or an error if the edge
 // was not loaded in eager-loading.
 func (e BlockEdges) InstancesOrErr() ([]*BlockInstance, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[6] {
 		return e.Instances, nil
 	}
 	return nil, &NotLoadedError{edge: "instances"}
+}
+
+// EntryPointOrErr returns the EntryPoint value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e BlockEdges) EntryPointOrErr() (*EntryPoint, error) {
+	if e.loadedTypes[7] {
+		if e.EntryPoint == nil {
+			// The edge entry_point was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: entrypoint.Label}
+		}
+		return e.EntryPoint, nil
+	}
+	return nil, &NotLoadedError{edge: "entry_point"}
+}
+
+// ExitPointsOrErr returns the ExitPoints value or an error if the edge
+// was not loaded in eager-loading.
+func (e BlockEdges) ExitPointsOrErr() ([]*ExitPoint, error) {
+	if e.loadedTypes[8] {
+		return e.ExitPoints, nil
+	}
+	return nil, &NotLoadedError{edge: "exit_points"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -315,16 +321,6 @@ func (b *Block) assignValues(values ...interface{}) error {
 	return nil
 }
 
-// QueryPrevBlocks queries the prev_blocks edge of the Block.
-func (b *Block) QueryPrevBlocks() *BlockQuery {
-	return (&BlockClient{config: b.config}).QueryPrevBlocks(b)
-}
-
-// QueryNextBlocks queries the next_blocks edge of the Block.
-func (b *Block) QueryNextBlocks() *BlockQuery {
-	return (&BlockClient{config: b.config}).QueryNextBlocks(b)
-}
-
 // QueryFlow queries the flow edge of the Block.
 func (b *Block) QueryFlow() *FlowQuery {
 	return (&BlockClient{config: b.config}).QueryFlow(b)
@@ -358,6 +354,16 @@ func (b *Block) QueryGotoBlock() *BlockQuery {
 // QueryInstances queries the instances edge of the Block.
 func (b *Block) QueryInstances() *BlockInstanceQuery {
 	return (&BlockClient{config: b.config}).QueryInstances(b)
+}
+
+// QueryEntryPoint queries the entry_point edge of the Block.
+func (b *Block) QueryEntryPoint() *EntryPointQuery {
+	return (&BlockClient{config: b.config}).QueryEntryPoint(b)
+}
+
+// QueryExitPoints queries the exit_points edge of the Block.
+func (b *Block) QueryExitPoints() *ExitPointQuery {
+	return (&BlockClient{config: b.config}).QueryExitPoints(b)
 }
 
 // Update returns a builder for updating this Block.

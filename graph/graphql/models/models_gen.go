@@ -39,6 +39,8 @@ type NamedNode interface {
 type ActionBlock struct {
 	ActionType actions.ActionType               `json:"actionType"`
 	Params     []*flowschema.VariableExpression `json:"params"`
+	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
 }
 
 func (ActionBlock) IsBlockDetails() {}
@@ -278,9 +280,16 @@ type CommentInput struct {
 	Text       string        `json:"text"`
 }
 
+type Connector struct {
+	Source *ent.ExitPoint  `json:"source"`
+	Target *ent.EntryPoint `json:"target"`
+}
+
 type ConnectorInput struct {
-	SourceBlockCid string `json:"sourceBlockCid"`
-	TargetBlockCid string `json:"targetBlockCid"`
+	SourceBlockCid string        `json:"sourceBlockCid"`
+	SourcePid      *ExitPointID  `json:"sourcePid"`
+	TargetBlockCid string        `json:"targetBlockCid"`
+	TargetPid      *EntryPointID `json:"targetPid"`
 }
 
 type Coordinates struct {
@@ -289,14 +298,25 @@ type Coordinates struct {
 }
 
 type DecisionBlock struct {
-	TempDummy *string `json:"tempDummy"`
+	EntryPoint       *ent.EntryPoint  `json:"entryPoint"`
+	DefaultExitPoint *ent.ExitPoint   `json:"defaultExitPoint"`
+	Routes           []*DecisionRoute `json:"routes"`
 }
 
 func (DecisionBlock) IsBlockDetails() {}
 
 type DecisionBlockInput struct {
 	Cid              string                            `json:"cid"`
+	Routes           []*DecisionRouteInput             `json:"routes"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type DecisionRoute struct {
+	ExitPoint *ent.ExitPoint `json:"exitPoint"`
+}
+
+type DecisionRouteInput struct {
+	Pid *string `json:"pid"`
 }
 
 type EditBlockInput struct {
@@ -436,7 +456,8 @@ type EditWorkOrderTypeInput struct {
 }
 
 type EndBlock struct {
-	Params []*flowschema.VariableExpression `json:"params"`
+	Params     []*flowschema.VariableExpression `json:"params"`
+	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
 }
 
 func (EndBlock) IsBlockDetails() {}
@@ -445,6 +466,11 @@ type EndBlockInput struct {
 	Cid              string                            `json:"cid"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
+}
+
+type EntryPointID struct {
+	Role *flowschema.EntryPointRole `json:"role"`
+	Pid  *string                    `json:"pid"`
 }
 
 type EquipmentPortConnectionInput struct {
@@ -467,6 +493,11 @@ type EquipmentPositionInput struct {
 	Name         string  `json:"name"`
 	Index        *int    `json:"index"`
 	VisibleLabel *string `json:"visibleLabel"`
+}
+
+type ExitPointID struct {
+	Role *flowschema.ExitPointRole `json:"role"`
+	Pid  *string                   `json:"pid"`
 }
 
 type FileInput struct {
@@ -504,7 +535,8 @@ type GeneralFilterInput struct {
 }
 
 type GotoBlock struct {
-	Target *ent.Block `json:"target"`
+	Target     *ent.Block      `json:"target"`
+	EntryPoint *ent.EntryPoint `json:"entryPoint"`
 }
 
 func (GotoBlock) IsBlockDetails() {}
@@ -677,6 +709,7 @@ type ServiceTypeEditData struct {
 
 type StartBlock struct {
 	ParamDefinitions []*flowschema.VariableDefinition `json:"paramDefinitions"`
+	ExitPoint        *ent.ExitPoint                   `json:"exitPoint"`
 }
 
 func (StartBlock) IsBlockDetails() {}
@@ -693,8 +726,10 @@ type StartFlowInput struct {
 }
 
 type SubflowBlock struct {
-	Flow   *ent.Flow                        `json:"flow"`
-	Params []*flowschema.VariableExpression `json:"params"`
+	Flow       *ent.Flow                        `json:"flow"`
+	Params     []*flowschema.VariableExpression `json:"params"`
+	EntryPoint *ent.EntryPoint                  `json:"entryPoint"`
+	ExitPoint  *ent.ExitPoint                   `json:"exitPoint"`
 }
 
 func (SubflowBlock) IsBlockDetails() {}
@@ -838,6 +873,7 @@ type TopologyLink struct {
 type TriggerBlock struct {
 	TriggerType triggers.TriggerType             `json:"triggerType"`
 	Params      []*flowschema.VariableExpression `json:"params"`
+	ExitPoint   *ent.ExitPoint                   `json:"exitPoint"`
 }
 
 func (TriggerBlock) IsBlockDetails() {}

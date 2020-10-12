@@ -3228,35 +3228,76 @@ input BlockUIRepresentationInput @goModel(
   yPosition: Int!
 }
 
+enum EntryPointRole @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.EntryPointRole"
+) {
+  DEFAULT
+}
+
+enum ExitPointRole @goModel(
+  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.ExitPointRole"
+) {
+  DEFAULT
+  DECISION
+}
+
+type ExitPoint implements Node {
+  id: ID!
+  parentBlock: Block!
+  pid: String
+  nextEntryPoints: [EntryPoint!]!
+}
+
+type EntryPoint implements Node {
+  id: ID!
+  parentBlock: Block!
+  pid: String
+  prevExitPoints: [ExitPoint!]!
+}
+
 type StartBlock  {
   paramDefinitions: [VariableDefinition!]!
+  exitPoint: ExitPoint!
 }
 
 type EndBlock {
   params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+}
+
+type DecisionRoute {
+  exitPoint: ExitPoint
 }
 
 type DecisionBlock {
-  tempDummy: String,
+  entryPoint: EntryPoint!
+  defaultExitPoint: ExitPoint!
+  routes: [DecisionRoute!]!
 }
 
 type SubflowBlock {
   flow: Flow
   params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
 }
 
 type GotoBlock {
   target: Block
+  entryPoint: EntryPoint!
 }
 
 type TriggerBlock {
   triggerType: TriggerType!
   params: [VariableExpression!]!
+  exitPoint: ExitPoint!
 }
 
 type ActionBlock {
   actionType: ActionType!
   params: [VariableExpression!]!
+  entryPoint: EntryPoint!
+  exitPoint: ExitPoint!
 }
 
 union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | SubflowBlock | TriggerBlock | ActionBlock
@@ -3273,8 +3314,13 @@ input EndBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
+input DecisionRouteInput {
+  pid: String
+}
+
 input DecisionBlockInput {
   cid: String!
+  routes: [DecisionRouteInput!]
   uiRepresentation: BlockUIRepresentationInput
 }
 
@@ -3305,16 +3351,26 @@ input ActionBlockInput {
   uiRepresentation: BlockUIRepresentationInput
 }
 
-input ConnectorInput {
-  sourceBlockCid: String!
-  targetBlockCid: String!
+input ExitPointId {
+  role: ExitPointRole
+  pid: String
 }
 
-type Connector @goModel(
-  model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.Connector"
-) {
-  source: Block!
-  target: Block!
+input EntryPointId {
+  role: EntryPointRole
+  pid: String
+}
+
+input ConnectorInput {
+  sourceBlockCid: String!
+  sourcePid: ExitPointId
+  targetBlockCid: String!
+  targetPid: EntryPointId
+}
+
+type Connector {
+  source: ExitPoint!
+  target: EntryPoint!
 }
 
 input ImportFlowDraftInput {

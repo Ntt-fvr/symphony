@@ -246,10 +246,6 @@ func (r resolver) Block() generated.BlockResolver {
 	return blockResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
 }
 
-func (r resolver) Connector() generated.ConnectorResolver {
-	return connectorResolver{}
-}
-
 func (r resolver) VariableDefinition() generated.VariableDefinitionResolver {
 	return variableDefinitionResolver{}
 }
@@ -260,4 +256,12 @@ func (r resolver) VariableExpression() generated.VariableExpressionResolver {
 
 func (r resolver) BlockVariable() generated.BlockVariableResolver {
 	return blockVariableResolver{triggerFactory: r.flow.triggerFactory, actionFactory: r.flow.actionFactory}
+}
+
+func (r resolver) ExitPoint() generated.ExitPointResolver {
+	return exitPointResolver{}
+}
+
+func (r resolver) EntryPoint() generated.EntryPointResolver {
+	return entryPointResolver{}
 }

@@ -6,15 +6,15 @@ package resolver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
-	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/flowschema"
@@ -26,8 +26,6 @@ type blockResolver struct {
 	actionFactory  actions.Factory
 }
 
-type connectorResolver struct{}
-
 func getDraftBlock(ctx context.Context, flowDraftID int, blockCid string) (*ent.Block, error) {
 	client := ent.FromContext(ctx)
 	return client.Block.Query().
@@ -38,50 +36,18 @@ func getDraftBlock(ctx context.Context, flowDraftID int, blockCid string) (*ent.
 		Only(ctx)
 }
 
-func getFlowBlock(ctx context.Context, flowID int, blockCid string) (*ent.Block, error) {
-	client := ent.FromContext(ctx)
-	return client.Block.Query().
-		Where(
-			block.HasFlowWith(flow.ID(flowID)),
-			block.Cid(blockCid),
-		).
-		Only(ctx)
-}
-
-func (r connectorResolver) Source(ctx context.Context, obj *flowschema.Connector) (*ent.Block, error) {
-	switch {
-	case obj.FlowDraftID != nil:
-		return getDraftBlock(ctx, *obj.FlowDraftID, obj.SourceBlockCid)
-	case obj.FlowID != nil:
-		return getFlowBlock(ctx, *obj.FlowID, obj.SourceBlockCid)
-	default:
-		return nil, errors.New("failed to find flow parent")
-	}
-}
-
-func (r connectorResolver) Target(ctx context.Context, obj *flowschema.Connector) (*ent.Block, error) {
-	switch {
-	case obj.FlowDraftID != nil:
-		return getDraftBlock(ctx, *obj.FlowDraftID, obj.TargetBlockCid)
-	case obj.FlowID != nil:
-		return getFlowBlock(ctx, *obj.FlowID, obj.TargetBlockCid)
-	default:
-		return nil, errors.New("failed to find flow parent")
-	}
-}
-
 func (r blockResolver) NextBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error) {
-	if blocks, err := obj.Edges.NextBlocksOrErr(); !ent.IsNotLoaded(err) {
-		return blocks, err
-	}
-	return obj.QueryNextBlocks().All(ctx)
+	return obj.QueryExitPoints().
+		QueryNextEntryPoints().
+		QueryParentBlock().
+		All(ctx)
 }
 
 func (r blockResolver) PrevBlocks(ctx context.Context, obj *ent.Block) ([]*ent.Block, error) {
-	if blocks, err := obj.Edges.PrevBlocksOrErr(); !ent.IsNotLoaded(err) {
-		return blocks, err
-	}
-	return obj.QueryPrevBlocks().All(ctx)
+	return obj.QueryEntryPoint().
+		QueryPrevExitPoints().
+		QueryParentBlock().
+		All(ctx)
 }
 
 func (r blockResolver) InputParamDefinitions(ctx context.Context, obj *ent.Block) ([]*flowschema.VariableDefinition, error) {
@@ -92,18 +58,88 @@ func (r blockResolver) OutputParamDefinitions(ctx context.Context, obj *ent.Bloc
 	return flowengine.GetOutputVariableDefinitions(ctx, obj, r.triggerFactory, r.actionFactory)
 }
 
+func getDefaultExitPoint(ctx context.Context, obj *ent.Block) (*ent.ExitPoint, error) {
+	exitPoint, err := obj.QueryExitPoints().
+		Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDefault)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query default exit point: %w", err)
+	}
+	return exitPoint, nil
+}
+
+func getDefaultEntryPoint(ctx context.Context, obj *ent.Block) (*ent.EntryPoint, error) {
+	entryPoint, err := obj.QueryEntryPoint().
+		Where(entrypoint.RoleEQ(flowschema.EntryPointRoleDefault)).
+		Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query default entry point: %w", err)
+	}
+	return entryPoint, nil
+}
+
+func getDefaultEntryExitPoints(ctx context.Context, obj *ent.Block) (*ent.EntryPoint, *ent.ExitPoint, error) {
+	var (
+		entryPoint *ent.EntryPoint
+		exitPoint  *ent.ExitPoint
+		err        error
+	)
+	switch obj.Type {
+	case block.TypeStart, block.TypeTrigger:
+		exitPoint, err = getDefaultExitPoint(ctx, obj)
+		if err != nil {
+			return nil, nil, err
+		}
+	case block.TypeEnd, block.TypeGoTo:
+		entryPoint, err = getDefaultEntryPoint(ctx, obj)
+		if err != nil {
+			return nil, nil, err
+		}
+	case block.TypeDecision, block.TypeSubFlow, block.TypeAction:
+		exitPoint, err = getDefaultExitPoint(ctx, obj)
+		if err != nil {
+			return nil, nil, err
+		}
+		entryPoint, err = getDefaultEntryPoint(ctx, obj)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	return entryPoint, exitPoint, nil
+}
+
 func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.BlockDetails, error) {
+	entryPoint, exitPoint, err := getDefaultEntryExitPoints(ctx, obj)
+	if err != nil {
+		return nil, err
+	}
 	switch obj.Type {
 	case block.TypeStart:
 		return &models.StartBlock{
 			ParamDefinitions: obj.StartParamDefinitions,
+			ExitPoint:        exitPoint,
 		}, nil
 	case block.TypeEnd:
 		return &models.EndBlock{
-			Params: obj.InputParams,
+			Params:     obj.InputParams,
+			EntryPoint: entryPoint,
 		}, nil
 	case block.TypeDecision:
-		return &models.DecisionBlock{}, nil
+		var routes []*models.DecisionRoute
+		exitPoints, err := obj.QueryExitPoints().
+			Where(exitpoint.RoleEQ(flowschema.ExitPointRoleDecision)).
+			All(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to query exit points: %w", err)
+		}
+		for _, exitPoint := range exitPoints {
+			routes = append(routes, &models.DecisionRoute{ExitPoint: exitPoint})
+		}
+		return &models.DecisionBlock{
+			EntryPoint:       entryPoint,
+			DefaultExitPoint: exitPoint,
+			Routes:           routes,
+		}, nil
 	case block.TypeSubFlow:
 		flow, err := obj.QuerySubFlow().
 			Only(ctx)
@@ -111,8 +147,10 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			return nil, err
 		}
 		return &models.SubflowBlock{
-			Flow:   flow,
-			Params: obj.InputParams,
+			Flow:       flow,
+			Params:     obj.InputParams,
+			EntryPoint: entryPoint,
+			ExitPoint:  exitPoint,
 		}, nil
 	case block.TypeGoTo:
 		gotoBlock, err := obj.QueryGotoBlock().Only(ctx)
@@ -120,7 +158,8 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 			return nil, err
 		}
 		return &models.GotoBlock{
-			Target: gotoBlock,
+			Target:     gotoBlock,
+			EntryPoint: entryPoint,
 		}, nil
 	case block.TypeTrigger:
 		if obj.TriggerType == nil {
@@ -133,6 +172,7 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		return &models.TriggerBlock{
 			TriggerType: triggerType,
 			Params:      obj.InputParams,
+			ExitPoint:   exitPoint,
 		}, nil
 	case block.TypeAction:
 		if obj.ActionType == nil {
@@ -145,6 +185,8 @@ func (r blockResolver) Details(ctx context.Context, obj *ent.Block) (models.Bloc
 		return &models.ActionBlock{
 			ActionType: actionType,
 			Params:     obj.InputParams,
+			EntryPoint: entryPoint,
+			ExitPoint:  exitPoint,
 		}, nil
 	default:
 		return nil, fmt.Errorf("type %q is unknown", obj.Type)
@@ -219,7 +261,23 @@ func (r mutationResolver) AddEndBlock(ctx context.Context, flowDraftID int, inpu
 
 func (r mutationResolver) AddDecisionBlock(ctx context.Context, flowDraftID int, input models.DecisionBlockInput) (*ent.Block, error) {
 	mutation := addBlockMutation(ctx, input.Cid, block.TypeDecision, flowDraftID, input.UIRepresentation)
-	return mutation.Save(ctx)
+	b, err := mutation.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	client := r.ClientFrom(ctx)
+	for _, route := range input.Routes {
+		if route.Pid != nil {
+			if _, err := client.ExitPoint.Create().
+				SetRole(flowschema.ExitPointRoleDecision).
+				SetPid(*route.Pid).
+				SetParentBlockID(b.ID).
+				Save(ctx); err != nil {
+				return nil, fmt.Errorf("failed to create decision exit points: %w", err)
+			}
+		}
+	}
+	return b, nil
 }
 
 func (r mutationResolver) AddGotoBlock(ctx context.Context, flowDraftID int, input models.GotoBlockInput) (*ent.Block, error) {
@@ -290,49 +348,117 @@ func (r mutationResolver) DeleteBlock(ctx context.Context, id int) (bool, error)
 	return true, nil
 }
 
-func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*flowschema.Connector, error) {
+func getExitPointRoleOrDefault(pid *models.ExitPointID) flowschema.ExitPointRole {
+	if pid == nil || pid.Role == nil {
+		return flowschema.ExitPointRoleDefault
+	}
+	return *pid.Role
+}
+
+func getExitPoint(ctx context.Context, flowDraftID int, blockCid string, pid *models.ExitPointID) (*ent.ExitPoint, error) {
+	exitPointPredicates := []predicate.ExitPoint{
+		exitpoint.HasParentBlockWith(
+			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
+			block.Cid(blockCid),
+		),
+	}
+	if pid != nil && pid.Pid != nil {
+		exitPointPredicates = append(exitPointPredicates, exitpoint.Pid(*pid.Pid))
+	} else {
+		exitPointPredicates = append(exitPointPredicates,
+			exitpoint.RoleEQ(getExitPointRoleOrDefault(pid)))
+	}
 	client := ent.FromContext(ctx)
-	source, err := getDraftBlock(ctx, flowDraftID, input.SourceBlockCid)
+	exitPoint, err := client.ExitPoint.Query().
+		Where(exitPointPredicates...).
+		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find source block: %w", err)
+		return nil, fmt.Errorf("failed to query exit point: %w", err)
 	}
-	target, err := getDraftBlock(ctx, flowDraftID, input.TargetBlockCid)
+	return exitPoint, nil
+}
+
+func getEntryPointRoleOrDefault(pid *models.EntryPointID) flowschema.EntryPointRole {
+	if pid == nil || pid.Role == nil {
+		return flowschema.EntryPointRoleDefault
+	}
+	return *pid.Role
+}
+
+func getEntryPoint(ctx context.Context, flowDraftID int, blockCid string, pid *models.EntryPointID) (*ent.EntryPoint, error) {
+	entryPointPredicates := []predicate.EntryPoint{
+		entrypoint.HasParentBlockWith(
+			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
+			block.Cid(blockCid),
+		),
+	}
+	if pid != nil && pid.Pid != nil {
+		entryPointPredicates = append(entryPointPredicates, entrypoint.Pid(*pid.Pid))
+	} else {
+		entryPointPredicates = append(entryPointPredicates,
+			entrypoint.RoleEQ(getEntryPointRoleOrDefault(pid)))
+	}
+	client := ent.FromContext(ctx)
+	entryPoint, err := client.EntryPoint.Query().
+		Where(entryPointPredicates...).
+		Only(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to find target block: %w", err)
+		return nil, fmt.Errorf("failed to query entry point: %w", err)
 	}
-	if err := client.Block.UpdateOne(source).
-		AddNextBlocks(target).
+	return entryPoint, nil
+}
+
+func (r mutationResolver) AddConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (*models.Connector, error) {
+	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePid)
+	if err != nil {
+		return nil, err
+	}
+	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPid)
+	if err != nil {
+		return nil, err
+	}
+	connectorExists, err := exitPoint.QueryNextEntryPoints().
+		Where(entrypoint.ID(entryPoint.ID)).
+		Exist(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query if connector exists: %w", err)
+	}
+	if connectorExists {
+		return nil, fmt.Errorf("connector already exists")
+	}
+	if err := exitPoint.Update().
+		AddNextEntryPoints(entryPoint).
 		Exec(ctx); err != nil {
 		return nil, err
 	}
-	return &flowschema.Connector{
-		FlowDraftID:    pointer.ToInt(flowDraftID),
-		SourceBlockCid: input.SourceBlockCid,
-		TargetBlockCid: input.TargetBlockCid,
+	return &models.Connector{
+		Source: exitPoint,
+		Target: entryPoint,
 	}, nil
 }
 
 func (r mutationResolver) DeleteConnector(ctx context.Context, flowDraftID int, input models.ConnectorInput) (bool, error) {
-	client := ent.FromContext(ctx)
-	source, err := client.Block.Query().
-		Where(
-			block.HasFlowDraftWith(flowdraft.ID(flowDraftID)),
-			block.Cid(input.SourceBlockCid),
-		).
-		WithNextBlocks(func(query *ent.BlockQuery) {
-			query.Where(block.Cid(input.TargetBlockCid))
-		}).
-		Only(ctx)
+	exitPoint, err := getExitPoint(ctx, flowDraftID, input.SourceBlockCid, input.SourcePid)
 	if err != nil {
-		return false, fmt.Errorf("failed to find source block: %w", err)
+		return false, err
 	}
-	if len(source.Edges.NextBlocks) == 0 {
-		return false, fmt.Errorf("failed to connected target block: %w", err)
+	entryPoint, err := getEntryPoint(ctx, flowDraftID, input.TargetBlockCid, input.TargetPid)
+	if err != nil {
+		return false, err
 	}
-	if err := client.Block.UpdateOneID(source.ID).
-		RemoveNextBlocks(source.Edges.NextBlocks...).
+	connectorExists, err := exitPoint.QueryNextEntryPoints().
+		Where(entrypoint.ID(entryPoint.ID)).
+		Exist(ctx)
+	if err != nil {
+		return false, fmt.Errorf("failed to query if connector exists: %w", err)
+	}
+	if !connectorExists {
+		return false, fmt.Errorf("failed to delete connector")
+	}
+	if err := exitPoint.Update().
+		RemoveNextEntryPoints(entryPoint).
 		Exec(ctx); err != nil {
-		return false, fmt.Errorf("failed to remove connector: %w", err)
+		return false, err
 	}
 	return true, nil
 }

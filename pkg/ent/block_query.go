@@ -18,6 +18,8 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
+	"github.com/facebookincubator/symphony/pkg/ent/entrypoint"
+	"github.com/facebookincubator/symphony/pkg/ent/exitpoint"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/flowexecutiontemplate"
@@ -33,8 +35,6 @@ type BlockQuery struct {
 	unique     []string
 	predicates []predicate.Block
 	// eager-loading edges.
-	withPrevBlocks   *BlockQuery
-	withNextBlocks   *BlockQuery
 	withFlow         *FlowQuery
 	withFlowTemplate *FlowExecutionTemplateQuery
 	withFlowDraft    *FlowDraftQuery
@@ -42,6 +42,8 @@ type BlockQuery struct {
 	withSourceBlock  *BlockQuery
 	withGotoBlock    *BlockQuery
 	withInstances    *BlockInstanceQuery
+	withEntryPoint   *EntryPointQuery
+	withExitPoints   *ExitPointQuery
 	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -70,50 +72,6 @@ func (bq *BlockQuery) Offset(offset int) *BlockQuery {
 func (bq *BlockQuery) Order(o ...OrderFunc) *BlockQuery {
 	bq.order = append(bq.order, o...)
 	return bq
-}
-
-// QueryPrevBlocks chains the current query on the prev_blocks edge.
-func (bq *BlockQuery) QueryPrevBlocks() *BlockQuery {
-	query := &BlockQuery{config: bq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := bq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := bq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, selector),
-			sqlgraph.To(block.Table, block.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, block.PrevBlocksTable, block.PrevBlocksPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryNextBlocks chains the current query on the next_blocks edge.
-func (bq *BlockQuery) QueryNextBlocks() *BlockQuery {
-	query := &BlockQuery{config: bq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := bq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := bq.sqlQuery()
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(block.Table, block.FieldID, selector),
-			sqlgraph.To(block.Table, block.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, block.NextBlocksTable, block.NextBlocksPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryFlow chains the current query on the flow edge.
@@ -263,6 +221,50 @@ func (bq *BlockQuery) QueryInstances() *BlockInstanceQuery {
 			sqlgraph.From(block.Table, block.FieldID, selector),
 			sqlgraph.To(blockinstance.Table, blockinstance.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, true, block.InstancesTable, block.InstancesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntryPoint chains the current query on the entry_point edge.
+func (bq *BlockQuery) QueryEntryPoint() *EntryPointQuery {
+	query := &EntryPointQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, selector),
+			sqlgraph.To(entrypoint.Table, entrypoint.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, block.EntryPointTable, block.EntryPointColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExitPoints chains the current query on the exit_points edge.
+func (bq *BlockQuery) QueryExitPoints() *ExitPointQuery {
+	query := &ExitPointQuery{config: bq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := bq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := bq.sqlQuery()
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(block.Table, block.FieldID, selector),
+			sqlgraph.To(exitpoint.Table, exitpoint.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, block.ExitPointsTable, block.ExitPointsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(bq.driver.Dialect(), step)
 		return fromU, nil
@@ -449,28 +451,6 @@ func (bq *BlockQuery) Clone() *BlockQuery {
 	}
 }
 
-//  WithPrevBlocks tells the query-builder to eager-loads the nodes that are connected to
-// the "prev_blocks" edge. The optional arguments used to configure the query builder of the edge.
-func (bq *BlockQuery) WithPrevBlocks(opts ...func(*BlockQuery)) *BlockQuery {
-	query := &BlockQuery{config: bq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	bq.withPrevBlocks = query
-	return bq
-}
-
-//  WithNextBlocks tells the query-builder to eager-loads the nodes that are connected to
-// the "next_blocks" edge. The optional arguments used to configure the query builder of the edge.
-func (bq *BlockQuery) WithNextBlocks(opts ...func(*BlockQuery)) *BlockQuery {
-	query := &BlockQuery{config: bq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	bq.withNextBlocks = query
-	return bq
-}
-
 //  WithFlow tells the query-builder to eager-loads the nodes that are connected to
 // the "flow" edge. The optional arguments used to configure the query builder of the edge.
 func (bq *BlockQuery) WithFlow(opts ...func(*FlowQuery)) *BlockQuery {
@@ -548,6 +528,28 @@ func (bq *BlockQuery) WithInstances(opts ...func(*BlockInstanceQuery)) *BlockQue
 	return bq
 }
 
+//  WithEntryPoint tells the query-builder to eager-loads the nodes that are connected to
+// the "entry_point" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithEntryPoint(opts ...func(*EntryPointQuery)) *BlockQuery {
+	query := &EntryPointQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withEntryPoint = query
+	return bq
+}
+
+//  WithExitPoints tells the query-builder to eager-loads the nodes that are connected to
+// the "exit_points" edge. The optional arguments used to configure the query builder of the edge.
+func (bq *BlockQuery) WithExitPoints(opts ...func(*ExitPointQuery)) *BlockQuery {
+	query := &ExitPointQuery{config: bq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	bq.withExitPoints = query
+	return bq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -619,8 +621,6 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 		withFKs     = bq.withFKs
 		_spec       = bq.querySpec()
 		loadedTypes = [9]bool{
-			bq.withPrevBlocks != nil,
-			bq.withNextBlocks != nil,
 			bq.withFlow != nil,
 			bq.withFlowTemplate != nil,
 			bq.withFlowDraft != nil,
@@ -628,6 +628,8 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 			bq.withSourceBlock != nil,
 			bq.withGotoBlock != nil,
 			bq.withInstances != nil,
+			bq.withEntryPoint != nil,
+			bq.withExitPoints != nil,
 		}
 	)
 	if bq.withFlow != nil || bq.withFlowTemplate != nil || bq.withFlowDraft != nil || bq.withSubFlow != nil || bq.withGotoBlock != nil {
@@ -658,134 +660,6 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
-	}
-
-	if query := bq.withPrevBlocks; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		ids := make(map[int]*Block, len(nodes))
-		for _, node := range nodes {
-			ids[node.ID] = node
-			fks = append(fks, node.ID)
-			node.Edges.PrevBlocks = []*Block{}
-		}
-		var (
-			edgeids []int
-			edges   = make(map[int][]*Block)
-		)
-		_spec := &sqlgraph.EdgeQuerySpec{
-			Edge: &sqlgraph.EdgeSpec{
-				Inverse: true,
-				Table:   block.PrevBlocksTable,
-				Columns: block.PrevBlocksPrimaryKey,
-			},
-			Predicate: func(s *sql.Selector) {
-				s.Where(sql.InValues(block.PrevBlocksPrimaryKey[1], fks...))
-			},
-
-			ScanValues: func() [2]interface{} {
-				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
-			},
-			Assign: func(out, in interface{}) error {
-				eout, ok := out.(*sql.NullInt64)
-				if !ok || eout == nil {
-					return fmt.Errorf("unexpected id value for edge-out")
-				}
-				ein, ok := in.(*sql.NullInt64)
-				if !ok || ein == nil {
-					return fmt.Errorf("unexpected id value for edge-in")
-				}
-				outValue := int(eout.Int64)
-				inValue := int(ein.Int64)
-				node, ok := ids[outValue]
-				if !ok {
-					return fmt.Errorf("unexpected node id in edges: %v", outValue)
-				}
-				edgeids = append(edgeids, inValue)
-				edges[inValue] = append(edges[inValue], node)
-				return nil
-			},
-		}
-		if err := sqlgraph.QueryEdges(ctx, bq.driver, _spec); err != nil {
-			return nil, fmt.Errorf(`query edges "prev_blocks": %v`, err)
-		}
-		query.Where(block.IDIn(edgeids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := edges[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected "prev_blocks" node returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.PrevBlocks = append(nodes[i].Edges.PrevBlocks, n)
-			}
-		}
-	}
-
-	if query := bq.withNextBlocks; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		ids := make(map[int]*Block, len(nodes))
-		for _, node := range nodes {
-			ids[node.ID] = node
-			fks = append(fks, node.ID)
-			node.Edges.NextBlocks = []*Block{}
-		}
-		var (
-			edgeids []int
-			edges   = make(map[int][]*Block)
-		)
-		_spec := &sqlgraph.EdgeQuerySpec{
-			Edge: &sqlgraph.EdgeSpec{
-				Inverse: false,
-				Table:   block.NextBlocksTable,
-				Columns: block.NextBlocksPrimaryKey,
-			},
-			Predicate: func(s *sql.Selector) {
-				s.Where(sql.InValues(block.NextBlocksPrimaryKey[0], fks...))
-			},
-
-			ScanValues: func() [2]interface{} {
-				return [2]interface{}{&sql.NullInt64{}, &sql.NullInt64{}}
-			},
-			Assign: func(out, in interface{}) error {
-				eout, ok := out.(*sql.NullInt64)
-				if !ok || eout == nil {
-					return fmt.Errorf("unexpected id value for edge-out")
-				}
-				ein, ok := in.(*sql.NullInt64)
-				if !ok || ein == nil {
-					return fmt.Errorf("unexpected id value for edge-in")
-				}
-				outValue := int(eout.Int64)
-				inValue := int(ein.Int64)
-				node, ok := ids[outValue]
-				if !ok {
-					return fmt.Errorf("unexpected node id in edges: %v", outValue)
-				}
-				edgeids = append(edgeids, inValue)
-				edges[inValue] = append(edges[inValue], node)
-				return nil
-			},
-		}
-		if err := sqlgraph.QueryEdges(ctx, bq.driver, _spec); err != nil {
-			return nil, fmt.Errorf(`query edges "next_blocks": %v`, err)
-		}
-		query.Where(block.IDIn(edgeids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := edges[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected "next_blocks" node returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.NextBlocks = append(nodes[i].Edges.NextBlocks, n)
-			}
-		}
 	}
 
 	if query := bq.withFlow; query != nil {
@@ -968,6 +842,63 @@ func (bq *BlockQuery) sqlAll(ctx context.Context) ([]*Block, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "block_instance_block" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Instances = append(node.Edges.Instances, n)
+		}
+	}
+
+	if query := bq.withEntryPoint; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Block)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.EntryPoint(func(s *sql.Selector) {
+			s.Where(sql.InValues(block.EntryPointColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.block_entry_point
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "block_entry_point" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "block_entry_point" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.EntryPoint = n
+		}
+	}
+
+	if query := bq.withExitPoints; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Block)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.ExitPoints = []*ExitPoint{}
+		}
+		query.withFKs = true
+		query.Where(predicate.ExitPoint(func(s *sql.Selector) {
+			s.Where(sql.InValues(block.ExitPointsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.block_exit_points
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "block_exit_points" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "block_exit_points" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.ExitPoints = append(node.Edges.ExitPoints, n)
 		}
 	}
 

@@ -10,7 +10,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 )
 
-// Type is the type of the trigger
+// TriggerTypeID is the identifier of the trigger
 type TriggerTypeID string
 
 const (
@@ -29,7 +29,7 @@ func (t TriggerTypeID) String() string {
 	return string(t)
 }
 
-// Set sets the value stored in check list item type.
+// Set sets the value stored in trigger type id.
 func (t *TriggerTypeID) Set(s string) {
 	*t = TriggerTypeID(s)
 }
