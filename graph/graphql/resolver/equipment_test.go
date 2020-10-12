@@ -1268,6 +1268,61 @@ func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
 	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
 }
 
+func TestAddEquipmentTypeWithMultiplePortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portName1 := "OUT1"
+	portName2 := "OUT2"
+	portName3 := "IN1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: portName1,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName3,
+					},
+				},
+			},
+			{
+				Name: portName2,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName3,
+					},
+				},
+			},
+			{
+				Name: portName3,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName1,
+					},
+					{
+						Name: &portName2,
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
+	assert.Equal(t, 3, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, 2, len(definitions[2].Edges.ConnectedPorts))
+	assert.Equal(t, portName3, definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName3, definitions[1].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName1, definitions[2].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName2, definitions[2].Edges.ConnectedPorts[1].Name)
+}
+
 func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
 	r := newTestResolver(t)
 	defer r.Close()
