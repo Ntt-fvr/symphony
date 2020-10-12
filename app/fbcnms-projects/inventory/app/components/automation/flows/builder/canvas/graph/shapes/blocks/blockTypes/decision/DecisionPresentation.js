@@ -8,14 +8,9 @@
  * @format
  */
 
-import React from 'react';
-import classNames from 'classnames';
+import DecisionIcon from './DecisionIcon';
+import React, {useState} from 'react';
 import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
-const useStyles = makeStyles(() => ({
-  root: {},
-}));
 
 type Props = $ReadOnly<{|
   className?: ?string,
@@ -23,10 +18,14 @@ type Props = $ReadOnly<{|
 
 export default function DecisionPresentation(props: Props) {
   const {className} = props;
-  const classes = useStyles();
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={classNames(classes.root, className)}>
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={className}>
+      <DecisionIcon hovered={isHovered} />
       <fbt desc="">Decision</fbt>
     </div>
   );

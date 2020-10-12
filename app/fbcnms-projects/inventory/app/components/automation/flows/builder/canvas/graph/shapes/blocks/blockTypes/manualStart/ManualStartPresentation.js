@@ -8,14 +8,9 @@
  * @format
  */
 
-import React from 'react';
-import classNames from 'classnames';
+import ManualStartIcon from './ManualStartIcon';
+import React, {useState} from 'react';
 import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
-
-const useStyles = makeStyles(() => ({
-  root: {},
-}));
 
 type Props = $ReadOnly<{|
   className?: ?string,
@@ -23,11 +18,15 @@ type Props = $ReadOnly<{|
 
 export default function ManualStartPresentation(props: Props) {
   const {className} = props;
-  const classes = useStyles();
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className={classNames(classes.root, className)}>
-      <fbt desc="">Manual Start</fbt>
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={className}>
+      <ManualStartIcon hovered={isHovered} />
+      <fbt desc="">Start</fbt>
     </div>
   );
 }

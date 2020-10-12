@@ -13,7 +13,7 @@ import type {IBlockType} from '../../canvas/graph/shapes/blocks/blockTypes/BaseB
 import Button from '@symphony/design-system/components/Button';
 import React, {useCallback} from 'react';
 import Text from '@symphony/design-system/components/Text';
-import symphony from '@symphony/design-system/theme/symphony';
+import classNames from 'classnames';
 import useDragAndDropHandler from '../../../utils/useDragAndDropHandler';
 import {makeStyles} from '@material-ui/styles';
 
@@ -21,46 +21,68 @@ const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '4px',
+    marginBottom: '32px',
   },
   header: {
-    backgroundColor: symphony.palette.background,
-    padding: '2px',
-    textAlign: 'center',
+    textTransform: 'uppercase',
+    minHeight: '20px',
+    marginBottom: '16px',
   },
-  body: {
-    padding: '8px 0',
-  },
+  body: {},
   blockType: {
-    border: `1px solid ${symphony.palette.D50}`,
     width: '100%',
-    height: '80px',
-    '&:hover': {
-      borderColor: symphony.palette.primary,
+    height: '48px',
+    padding: '0',
+    display: 'flex',
+    justifyContent: 'flex-start',
+
+    '& > span': {
+      width: '100%',
     },
     '&:not(:last-child)': {
-      marginBottom: '8px',
+      marginBottom: '16px',
     },
+  },
+  item: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    fontWeight: 'normal',
+  },
+  moveCursor: {
+    cursor: 'move',
   },
 }));
 
 export type BlocksCategoryProps = $ReadOnly<{|
   header: string,
   blockTypes: $ReadOnlyArray<IBlockType>,
+  collapsed: boolean,
 |}>;
 
 export default function BlocksCategory(props: BlocksCategoryProps) {
-  const {header, blockTypes} = props;
+  const {header, blockTypes, collapsed} = props;
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <Text variant="subtitle2">{header}</Text>
+        {!collapsed && (
+          <Text variant="overline" color="gray">
+            {header}
+          </Text>
+        )}
       </div>
       <div className={classes.body}>
-        {blockTypes.map(blockType => (
-          <Block blockType={blockType} className={classes.blockType} />
+        {blockTypes.map((blockType, index) => (
+          <Block
+            key={index}
+            blockType={blockType}
+            className={classNames(
+              classes.blockType,
+              collapsed ? classes.moveCursor : '',
+            )}
+          />
         ))}
       </div>
     </div>
@@ -75,6 +97,7 @@ type BlockProps = $ReadOnly<{|
 function Block(props: BlockProps) {
   const {blockType, className} = props;
   const PresentationComponent = blockType.presentationComponent;
+  const classes = useStyles();
 
   const onDrop = useCallback(
     (clientX, clientY) => {
@@ -101,7 +124,7 @@ function Block(props: BlockProps) {
       skin="regular"
       className={className}
       onMouseDown={dragAndDropHandler}>
-      <PresentationComponent />
+      <PresentationComponent className={classes.item} />
     </Button>
   );
 }

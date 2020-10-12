@@ -77,3 +77,5 @@ export {default as ListViewIcon} from './Navigation/ListViewIcon';
 export {default as MapViewIcon} from './Navigation/MapViewIcon';
 export {default as NextArrowIcon} from './Navigation/NextArrowIcon';
 export {default as NewTabIcon} from './Navigation/NewTabIcon';
+export {default as CollapseIcon} from './Navigation/CollapseIcon';
+export {default as ExpandIcon} from './Navigation/ExpandIcon';
