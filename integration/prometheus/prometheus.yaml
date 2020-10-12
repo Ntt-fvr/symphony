@@ -18,7 +18,7 @@ scrape_configs:
       - targets: ['graph:9464']
   - job_name: store
     static_configs:
-      - targets: ['store']
+      - targets: ['store:9464']
   - job_name: async
     static_configs:
       - targets: ['async']
