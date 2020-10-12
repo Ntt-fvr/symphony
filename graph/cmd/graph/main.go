@@ -18,6 +18,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
@@ -30,6 +31,7 @@ import (
 type cliFlags struct {
 	ConfigFile      kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
 	ListenAddress   string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MetricsAddress  metrics.Addr     `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
 	DatabaseURL     *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
 	AuthURL         *url.URL         `name:"web.ws-auth-url" env:"WS_AUTH_URL" placeholder:"URL" help:"Websocket authentication URL."`
 	EventPubsubURL  ev.TopicFactory  `name:"event.pubsub-url" env:"EVENT_PUBSUB_URL" required:"" placeholder:"URL" help:"Event pubsub URL."`
@@ -67,8 +69,10 @@ func main() {
 
 type application struct {
 	*zap.Logger
-	server *server.Server
-	addr   string
+	server      *server.Server
+	addr        string
+	metrics     *metrics.Metrics
+	metricsAddr metrics.Addr
 }
 
 func (app *application) run(ctx context.Context) error {
@@ -78,6 +82,9 @@ func (app *application) run(ctx context.Context) error {
 		err := app.server.ListenAndServe(app.addr)
 		app.Debug("http server terminated", zap.Error(err))
 		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		return app.metrics.Serve(ctx, app.metricsAddr)
 	})
 	g.Go(func(ctx context.Context) error {
 		defer cancel()

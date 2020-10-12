@@ -7,6 +7,7 @@ package main
 
 import (
 	"context"
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -15,7 +16,12 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
+	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 )
 
@@ -76,10 +82,27 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		return nil, nil, err
 	}
 	string2 := flags.ListenAddress
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := provideViews()
+	metricsConfig := metrics.Config{
+		Log:      zapLogger,
+		Exporter: viewExporter,
+		Views:    v2,
+	}
+	metricsMetrics := metrics.New(metricsConfig)
+	addr := flags.MetricsAddress
 	mainApplication := &application{
-		Logger: zapLogger,
-		server: server,
-		addr:   string2,
+		Logger:      zapLogger,
+		server:      server,
+		addr:        string2,
+		metrics:     metricsMetrics,
+		metricsAddr: addr,
 	}
 	return mainApplication, func() {
 		cleanup3()
@@ -103,4 +126,12 @@ func newMySQLTenancy(ctx context.Context, flags *cliFlags) (*viewer.MySQLTenancy
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
 	return []health.Checker{tenancy}
+}
+
+func provideViews() []*view.View {
+	views := xserver.DefaultViews()
+	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocpubsub.DefaultViews...)
+	views = append(views, ev.OpenCensusViews...)
+	return views
 }

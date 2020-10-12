@@ -9,6 +9,7 @@ package main
 import (
 	"context"
 
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -17,7 +18,12 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
+	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/stats/view"
 
 	"github.com/google/wire"
 	"gocloud.dev/server/health"
@@ -27,6 +33,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
 			"ListenAddress",
+			"MetricsAddress",
 			"AuthURL",
 			"EventPubsubURL",
 			"LogConfig",
@@ -59,6 +66,9 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(hooks.Flower),
 			"*",
 		),
+		metrics.Provider,
+		telemetry.ProvideViewExporter,
+		provideViews,
 		graphhttp.NewServer,
 		wire.Struct(
 			new(graphhttp.Config), "*",
@@ -80,4 +90,12 @@ func newMySQLTenancy(ctx context.Context, flags *cliFlags) (*viewer.MySQLTenancy
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
 	return []health.Checker{tenancy}
+}
+
+func provideViews() []*view.View {
+	views := xserver.DefaultViews()
+	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocpubsub.DefaultViews...)
+	views = append(views, ev.OpenCensusViews...)
+	return views
 }

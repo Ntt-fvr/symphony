@@ -15,7 +15,7 @@ scrape_configs:
       - targets: ['admin:9464']
   - job_name: graph
     static_configs:
-      - targets: ['graph']
+      - targets: ['graph:9464']
   - job_name: store
     static_configs:
       - targets: ['store']
