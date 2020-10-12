@@ -22,6 +22,7 @@ const useStyles = makeStyles(() => ({
     height: '48px',
     marginRight: '16px',
     backgroundColor: symphony.palette.D50,
+    fill: symphony.palette.white,
   },
   circle: {
     borderRadius: '50%',
@@ -32,43 +33,24 @@ const useStyles = makeStyles(() => ({
   square: {
     borderRadius: '11px',
   },
-  square: {
-    borderRadius: '11px',
-  },
   greenBg: {
     backgroundColor: symphony.palette.AUTOMATION.GREEN,
-    '& > $icon': {
-      fill: symphony.palette.white,
-    },
   },
   blueBg: {
     backgroundColor: symphony.palette.AUTOMATION.BLUE,
-    '& > $icon': {
-      fill: symphony.palette.white,
-    },
   },
   orangeBg: {
     backgroundColor: symphony.palette.AUTOMATION.ORANGE,
-    '& > $icon': {
-      fill: symphony.palette.white,
-    },
   },
   redBg: {
     backgroundColor: symphony.palette.AUTOMATION.RED,
-    '& > $icon': {
-      fill: symphony.palette.white,
-    },
   },
   violetBg: {
     backgroundColor: symphony.palette.AUTOMATION.VIOLET,
-    '& > $icon': {
-      fill: symphony.palette.white,
-    },
   },
-  defaultBg: {
-    backgroundColor: symphony.palette.D50,
+  icon: {
+    fill: 'inherit',
   },
-  icon: {},
 }));
 
 export type ShapeVariant = 'circle' | 'rounded' | 'square';
@@ -80,31 +62,28 @@ export type ColorVariant =
   | 'violet'
   | 'default';
 
-type Props = {
-  children: React.Node,
-  className?: string,
-  shape?: ShapeVariant,
-  hoverColor?: ColorVariant,
-  hovered: boolean,
-};
+export type BaseIconProps = $ReadOnly<{|
+  className?: ?string,
+|}>;
 
-const BaseIcon = (props: Props) => {
+type FullProps = $ReadOnly<{|
+  shape: ShapeVariant,
+  color: ColorVariant,
+  children: React.Node,
+  ...BaseIconProps,
+|}>;
+
+const BaseIcon = (props: FullProps) => {
   const classes = useStyles();
-  const {
-    children,
-    className,
-    shape = 'circle',
-    hoverColor = 'default',
-    hovered,
-  } = props;
-  const hoveredClass = hovered ? `${hoverColor}Bg` : 'defaultBg';
+  const {children, className, shape, color} = props;
+  const colorClass = `${color}Bg`;
 
   return (
     <div
       className={classNames(
         classes.wrapper,
         classes[shape],
-        classes[hoveredClass],
+        classes[colorClass],
         className,
       )}>
       <SvgIcon className={classes.icon} variant="large">

@@ -8,25 +8,11 @@
  * @format
  */
 
+import * as React from 'react';
 import ManualStartIcon from './ManualStartIcon';
-import React, {useState} from 'react';
 import fbt from 'fbt';
+import {BasePresentation} from '../BasePresentation';
 
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function ManualStartPresentation(props: Props) {
-  const {className} = props;
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={className}>
-      <ManualStartIcon hovered={isHovered} />
-      <fbt desc="">Start</fbt>
-    </div>
-  );
+export default function DecisionPresentation() {
+  return <BasePresentation icon={ManualStartIcon} text={fbt('Start', '')} />;
 }

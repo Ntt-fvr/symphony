@@ -8,25 +8,11 @@
  * @format
  */
 
+import * as React from 'react';
 import EndIcon from './EndIcon';
-import React, {useState} from 'react';
 import fbt from 'fbt';
+import {BasePresentation} from '../BasePresentation';
 
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function EndPresentation(props: Props) {
-  const {className} = props;
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={className}>
-      <EndIcon hovered={isHovered} />
-      <fbt desc="">End</fbt>
-    </div>
-  );
+export default function DecisionPresentation() {
+  return <BasePresentation icon={EndIcon} text={fbt('End', '')} />;
 }

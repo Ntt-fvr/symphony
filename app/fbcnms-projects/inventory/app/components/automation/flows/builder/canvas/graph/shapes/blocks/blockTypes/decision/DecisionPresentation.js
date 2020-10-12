@@ -8,25 +8,11 @@
  * @format
  */
 
+import * as React from 'react';
 import DecisionIcon from './DecisionIcon';
-import React, {useState} from 'react';
 import fbt from 'fbt';
+import {BasePresentation} from '../BasePresentation';
 
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function DecisionPresentation(props: Props) {
-  const {className} = props;
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={className}>
-      <DecisionIcon hovered={isHovered} />
-      <fbt desc="">Decision</fbt>
-    </div>
-  );
+export default function DecisionPresentation() {
+  return <BasePresentation icon={DecisionIcon} text={fbt('Decision', '')} />;
 }

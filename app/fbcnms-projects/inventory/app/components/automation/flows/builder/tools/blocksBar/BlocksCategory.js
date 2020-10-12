@@ -45,12 +45,6 @@ const useStyles = makeStyles(() => ({
       marginBottom: '16px',
     },
   },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    fontWeight: 'normal',
-  },
 }));
 
 export type BlocksCategoryProps = $ReadOnly<{|
@@ -93,7 +87,6 @@ type BlockProps = $ReadOnly<{|
 function Block(props: BlockProps) {
   const {blockType, className} = props;
   const PresentationComponent = blockType.presentationComponent;
-  const classes = useStyles();
 
   const enqueueSnackbar = useEnqueueSnackbar();
 
@@ -133,7 +126,7 @@ function Block(props: BlockProps) {
       skin="regular"
       className={className}
       onMouseDown={dragAndDropHandler}>
-      <PresentationComponent className={classes.item} />
+      <PresentationComponent />
     </Button>
   );
 }

@@ -8,25 +8,16 @@
  * @format
  */
 
+import * as React from 'react';
 import CreateWorkorderIcon from './CreateWorkorderIcon';
-import React, {useState} from 'react';
 import fbt from 'fbt';
+import {BasePresentation} from '../BasePresentation';
 
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function CreateWorkorderPresentation(props: Props) {
-  const {className} = props;
-  const [isHovered, setIsHovered] = useState(false);
-
+export default function CreateWorkorderPresentation() {
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={className}>
-      <CreateWorkorderIcon hovered={isHovered} />
-      <fbt desc="">Create Work Order</fbt>
-    </div>
+    <BasePresentation
+      icon={CreateWorkorderIcon}
+      text={fbt('Create Work Order', '')}
+    />
   );
 }
