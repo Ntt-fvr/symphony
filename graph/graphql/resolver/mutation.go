@@ -910,13 +910,13 @@ func (r mutationResolver) SetEquipmentPortConnections(
 				equipmentportdefinition.HasEquipmentTypeWith(equipmenttype.ID(port.QueryEquipmentType().OnlyIDX(ctx))))
 		}
 	}
-	definationIds, err := client.Query().
-		Where(predicates...).IDs(ctx)
+	definitionIds, err := client.Query().
+		Where(equipmentportdefinition.Or(predicates...)).IDs(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("attaching connected ports: %w", err)
 	}
 	def, err = client.UpdateOne(def).
-		AddConnectedPortIDs(definationIds...).Save(ctx)
+		AddConnectedPortIDs(definitionIds...).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("attaching connected ports: %w", err)
 	}
