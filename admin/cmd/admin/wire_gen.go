@@ -14,9 +14,11 @@ import (
 	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/strutil"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
@@ -56,26 +58,19 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		Tenancy: tenancy,
 		Logger:  logger,
 	}
-	handler, cleanup3, err := graphql.NewHandler(handlerConfig)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
+	handler := graphql.NewHandler(handlerConfig)
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := provideHealthCheckers(db)
 	v2 := provideViews()
 	telemetryConfig := flags.TelemetryConfig
-	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	traceExporter, cleanup4, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	exporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -88,8 +83,8 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
 		Views:                 v2,
-		ViewExporter:          exporter,
-		TraceExporter:         traceExporter,
+		ViewExporter:          viewExporter,
+		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
@@ -97,13 +92,21 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(handler, options)
 	string2 := flags.ListenAddress
+	metricsConfig := metrics.Config{
+		Log:      zapLogger,
+		Exporter: viewExporter,
+		Views:    v2,
+	}
+	metricsMetrics := metrics.New(metricsConfig)
+	addr := flags.MetricsAddress
 	mainApplication := &application{
-		Logger: zapLogger,
-		server: serverServer,
-		addr:   string2,
+		Logger:      zapLogger,
+		server:      serverServer,
+		addr:        string2,
+		metrics:     metricsMetrics,
+		metricsAddr: addr,
 	}
 	return mainApplication, func() {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -133,5 +136,6 @@ func provideHealthCheckers(db *sql.DB) []health.Checker {
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
 	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocgql.DefaultViews...)
 	return views
 }

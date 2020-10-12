@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
 )
@@ -126,3 +127,9 @@ func (m *Metrics) Serve(ctx context.Context, addr Addr) error {
 	<-ctx.Done()
 	return nil
 }
+
+// Provider is a wire provider of this package.
+var Provider = wire.NewSet(
+	New,
+	wire.Struct(new(Config), "*"),
+)
