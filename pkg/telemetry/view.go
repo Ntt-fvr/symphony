@@ -6,10 +6,17 @@ package telemetry
 
 import (
 	"fmt"
+	"net/http"
 	"sync"
 
 	"go.opencensus.io/stats/view"
 )
+
+// ViewExporter groups view.Exporter and http.Handler interfaces.
+type ViewExporter interface {
+	view.Exporter
+	http.Handler
+}
 
 // ViewExporterOptions defines a set of options shared between view exporters.
 type ViewExporterOptions struct {
@@ -17,7 +24,7 @@ type ViewExporterOptions struct {
 }
 
 // ViewExporterInitFunc is the function that is called to initialize a view exporter.
-type ViewExporterInitFunc func(ViewExporterOptions) (view.Exporter, error)
+type ViewExporterInitFunc func(ViewExporterOptions) (ViewExporter, error)
 
 var viewExporters sync.Map
 
@@ -47,7 +54,7 @@ func AvailableViewExporters() []string {
 }
 
 // GetViewExporter gets the specified view exporter passing in the options to the exporter init function.
-func GetViewExporter(name string, opts ViewExporterOptions) (view.Exporter, error) {
+func GetViewExporter(name string, opts ViewExporterOptions) (ViewExporter, error) {
 	f, ok := viewExporters.Load(name)
 	if !ok {
 		return nil, fmt.Errorf("view exporter %q not found", name)

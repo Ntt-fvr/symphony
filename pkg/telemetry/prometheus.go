@@ -9,7 +9,6 @@ import (
 
 	"contrib.go.opencensus.io/exporter/prometheus"
 	promclient "github.com/prometheus/client_golang/prometheus"
-	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
 )
 
@@ -19,7 +18,7 @@ func init() {
 }
 
 // NewJaegerExporter creates a new opencensus view exporter.
-func NewPrometheusExporter(opts ViewExporterOptions) (view.Exporter, error) {
+func NewPrometheusExporter(opts ViewExporterOptions) (ViewExporter, error) {
 	o := prometheus.Options{
 		Registerer:  promclient.DefaultRegisterer,
 		Gatherer:    promclient.DefaultGatherer,

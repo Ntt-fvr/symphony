@@ -11,16 +11,15 @@ import (
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"go.opencensus.io/stats/view"
 )
 
 type viewIniter struct {
 	mock.Mock
 }
 
-func (vi *viewIniter) Init(opts telemetry.ViewExporterOptions) (view.Exporter, error) {
+func (vi *viewIniter) Init(opts telemetry.ViewExporterOptions) (telemetry.ViewExporter, error) {
 	args := vi.Called(opts)
-	exporter, _ := args.Get(0).(view.Exporter)
+	exporter, _ := args.Get(0).(telemetry.ViewExporter)
 	return exporter, args.Error(1)
 }
 

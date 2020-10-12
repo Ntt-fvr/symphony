@@ -11,7 +11,6 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/google/wire"
-	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 )
 
@@ -68,7 +67,7 @@ func ProvideTraceSampler(config Config) trace.Sampler {
 }
 
 // ProvideViewExporter is a wire provider that produces view exporter from config.
-func ProvideViewExporter(config Config) (view.Exporter, error) {
+func ProvideViewExporter(config Config) (ViewExporter, error) {
 	return GetViewExporter(
 		config.View.ExporterName,
 		config.View.ViewExporterOptions,

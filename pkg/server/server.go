@@ -15,6 +15,7 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/server/driver"
 	"github.com/facebookincubator/symphony/pkg/server/recovery"
+	"github.com/facebookincubator/symphony/pkg/telemetry"
 
 	"github.com/google/wire"
 	"go.opencensus.io/plugin/ochttp"
@@ -38,9 +39,8 @@ type Server struct {
 	reqlog  requestlog.Logger
 	handler http.Handler
 	health  health.Handler
-	metrics http.Handler
 	views   []*view.View
-	ve      view.Exporter
+	ve      telemetry.ViewExporter
 	te      trace.Exporter
 	sampler trace.Sampler
 	profile ProfilingEnabler
@@ -62,7 +62,7 @@ type Options struct {
 	Views []*view.View
 
 	// ViewExporter exports view data.
-	ViewExporter view.Exporter
+	ViewExporter telemetry.ViewExporter
 
 	// TraceExporter exports sampled trace spans.
 	TraceExporter trace.Exporter
@@ -94,7 +94,6 @@ func New(h http.Handler, opts *Options) *Server {
 			srv.health.Add(c)
 		}
 		srv.ve = opts.ViewExporter
-		srv.metrics, _ = opts.ViewExporter.(http.Handler)
 		srv.views = opts.Views
 		srv.te = opts.TraceExporter
 		srv.sampler = opts.DefaultSamplingPolicy
@@ -139,8 +138,8 @@ func (srv *Server) ListenAndServe(addr string) error {
 	mux.Handle(path.Join(hr, "readiness"), &srv.health)
 
 	// Setup metrics endpoint, /metrics route is taken by default.
-	if srv.metrics != nil {
-		mux.Handle("/metrics", srv.metrics)
+	if srv.ve != nil {
+		mux.Handle("/metrics", srv.ve)
 	}
 	// Register metrics views
 	if err := view.Register(srv.views...); err != nil {
