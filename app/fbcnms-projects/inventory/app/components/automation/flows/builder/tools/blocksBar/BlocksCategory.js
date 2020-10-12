@@ -36,6 +36,7 @@ const useStyles = makeStyles(() => ({
     padding: '0',
     display: 'flex',
     justifyContent: 'flex-start',
+    cursor: 'move',
 
     '& > span': {
       width: '100%',
@@ -49,9 +50,6 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     width: '100%',
     fontWeight: 'normal',
-  },
-  moveCursor: {
-    cursor: 'move',
   },
 }));
 
@@ -79,10 +77,7 @@ export default function BlocksCategory(props: BlocksCategoryProps) {
           <Block
             key={index}
             blockType={blockType}
-            className={classNames(
-              classes.blockType,
-              collapsed ? classes.moveCursor : '',
-            )}
+            className={classNames(classes.blockType)}
           />
         ))}
       </div>

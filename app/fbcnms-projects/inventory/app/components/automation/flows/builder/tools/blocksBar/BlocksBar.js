@@ -66,7 +66,7 @@ function BlocksBar(props: Props) {
           <Logo />
         </Link>
         {!collapsed && (
-          <Text className={classes.name} variant="h6">
+          <Text className={classes.name} variant="h6" useEllipsis={true}>
             {flowName}
           </Text>
         )}
