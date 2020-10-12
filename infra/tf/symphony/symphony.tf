@@ -297,6 +297,9 @@ resource kubernetes_cron_job tenant_cleaner {
     fb-test = {
       schedule = "0 0 * * *"
     }
+    ls-test-staging = {
+      schedule = "0 * * * *"
+    }
   } : {}
 
   metadata {
