@@ -10,6 +10,7 @@
 import type {AutomationFlowsViewQuery} from './__generated__/AutomationFlowsViewQuery.graphql';
 
 import * as React from 'react';
+import AutomationFlowsEmptyState from './AutomationFlowsEmptyState';
 import AutomationFlowsList from './AutomationFlowsList';
 import Button from '@symphony/design-system/components/Button';
 import ViewContainer from '@symphony/design-system/components/View/ViewContainer';
@@ -41,6 +42,15 @@ const flowsQuery = graphql`
 type Props = $ReadOnly<{||}>;
 
 export const AUTOMATION_FLOWS_VIEW_HEADER = `${fbt('Automation Flows', '')}`;
+export const CreateNewFlowButton = (
+  <Button
+    key="2"
+    onClick={() => {
+      window.open(InventoryAPIUrls.flow(), '_blank');
+    }}>
+    <fbt desc="">Create New Flow</fbt>
+  </Button>
+);
 
 export default function AutomationFlowsView(_props: Props) {
   const classes = useStyles();
@@ -52,33 +62,34 @@ export default function AutomationFlowsView(_props: Props) {
     return flowsData.map(p => p.node).filter(Boolean);
   }, [data]);
 
+  const hasFlows = flows.length > 0;
   const header = useMemo(
     () => ({
       title: AUTOMATION_FLOWS_VIEW_HEADER,
       subtitle: <fbt desc="">Create and manage Automation Flows</fbt>,
-      actionButtons: [
-        <Button
-          key="1"
-          onClick={() => {
-            history.push(`flow/?flowId=${TESTING_PURPOSES}`);
-          }}>
-          <fbt desc="">Go to Flow Builder</fbt>
-        </Button>,
-        <Button
-          key="2"
-          onClick={() => {
-            window.open(InventoryAPIUrls.flow(), '_blank');
-          }}>
-          <fbt desc="">Create new Flow</fbt>
-        </Button>,
-      ],
+      actionButtons: hasFlows
+        ? [
+            <Button
+              key="1"
+              onClick={() => {
+                history.push(`flow/?flowId=${TESTING_PURPOSES}`);
+              }}>
+              <fbt desc="">Go to Flow Builder</fbt>
+            </Button>,
+            CreateNewFlowButton,
+          ]
+        : [],
     }),
-    [history],
+    [history, hasFlows],
   );
 
   return (
     <ViewContainer header={header} className={classes.root}>
-      <AutomationFlowsList flows={flows} />
+      {hasFlows ? (
+        <AutomationFlowsList flows={flows} />
+      ) : (
+        <AutomationFlowsEmptyState />
+      )}
     </ViewContainer>
   );
 }

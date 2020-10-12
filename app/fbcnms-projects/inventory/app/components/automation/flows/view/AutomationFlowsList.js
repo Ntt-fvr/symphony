@@ -37,9 +37,7 @@ function AutomationFlowsList(props: Props) {
         <AutomationFlowCard key={flow.id} flow={flow} />
       ))}
     </div>
-  ) : (
-    <div>No flows available</div>
-  );
+  ) : null;
 }
 
 export default createFragmentContainer(AutomationFlowsList, {
