@@ -16,6 +16,7 @@ import Text from '@symphony/design-system/components/Text';
 import classNames from 'classnames';
 import useDragAndDropHandler from '../../../utils/useDragAndDropHandler';
 import {makeStyles} from '@material-ui/styles';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -99,19 +100,32 @@ function Block(props: BlockProps) {
   const PresentationComponent = blockType.presentationComponent;
   const classes = useStyles();
 
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const callCreateBlock = useCallback(
+    (position, translateClientCoordinates) => {
+      try {
+        blockType.createBlock(position, translateClientCoordinates);
+      } catch (err) {
+        enqueueSnackbar(err, {variant: 'error'});
+      }
+    },
+    [blockType, enqueueSnackbar],
+  );
+
   const onDrop = useCallback(
     (clientX, clientY) => {
       const position = {
         x: clientX,
         y: clientY,
       };
-      blockType.createBlock(position, true);
+      callCreateBlock(position, true);
     },
-    [blockType],
+    [callCreateBlock],
   );
   const onClick = useCallback(() => {
-    blockType.createBlock();
-  }, [blockType]);
+    callCreateBlock();
+  }, [callCreateBlock]);
 
   const dragAndDropHandler = useDragAndDropHandler(
     PresentationComponent,
