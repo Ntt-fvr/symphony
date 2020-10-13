@@ -9,12 +9,12 @@
  */
 'use strict';
 
-import Link from '../../facades/shapes/edges/Link';
 import type {IBlock} from '../blocks/BaseBlock';
 import type {ILink} from '../../facades/shapes/edges/Link';
 import type {Paper} from '../../facades/Paper';
 import type {Position} from '../../facades/Helpers';
 
+import Link from '../../facades/shapes/edges/Link';
 import symphony from '@symphony/design-system/theme/symphony';
 
 export const STROKE = {
@@ -73,6 +73,7 @@ export interface IConnector {
   +select: () => void;
   +deselect: () => void;
   +isSelected: boolean;
+  +addToGraph: () => void;
 }
 
 export default class BaseConnector implements IConnector {
@@ -84,56 +85,63 @@ export default class BaseConnector implements IConnector {
   target: IBlock;
   targetPortId: string;
   isSelected: boolean;
+  isInGraph: boolean;
 
-  constructor(paper: Paper, args: CtorWithSourceTarget, model?: ?ILink) {
+  constructor(
+    paper: Paper,
+    args: CtorWithSourceTarget,
+    model?: ?ILink,
+    addToGraph?: boolean = true,
+  ) {
     this.paper = paper;
 
     if (model) {
       this.model = model;
       this.source = args.source;
       this.sourcePortId = args.sourcePort;
-      // this.sourcePortId =
-      //   model.attributes.source.port != null
-      //     ? model.attributes.source.port
-      //     : '';
       this.target = args.target;
       this.targetPortId = args.targetPort;
     } else {
       this.model = new Link();
-      this.setSource(args.source, args.sourcePort);
-      this.setTarget(args.target, args.targetPort);
-      this.model.addTo(this.paper.model);
+      this.setSource(args.source, args.sourcePort, addToGraph);
+      this.setTarget(args.target, args.targetPort, addToGraph);
+
+      if (addToGraph) {
+        this.addToGraph();
+      }
     }
 
     this.id = this.model.id;
   }
 
-  setSource(source: IBlock, port: string) {
-    const sourceAttrs =
-      source != null
-        ? {
-            id: source.id,
-            port,
-            // port: nullthrows(source.getOutputPorts()[0]?.id),
-          }
-        : null;
-    this.model.source(sourceAttrs);
+  setSource(source: IBlock, port: string, addToGraph?: boolean = true) {
     this.source = source;
     this.sourcePortId = port;
+
+    if (addToGraph) {
+      this.setSourceInModel();
+    }
   }
 
-  setTarget(target: IBlock, port: string) {
-    const targetAttrs =
-      target != null
-        ? {
-            id: target.id,
-            port,
-            // port: nullthrows(target.getInputPort()?.id),
-          }
-        : null;
-    this.model.target(targetAttrs);
+  setSourceInModel() {
+    this.model.source(
+      buildConnectionEndpointAttrs(this.source, this.sourcePortId),
+    );
+  }
+
+  setTarget(target: IBlock, port: string, addToGraph?: boolean = true) {
     this.target = target;
     this.targetPortId = port;
+
+    if (addToGraph) {
+      this.setTargetInModel();
+    }
+  }
+
+  setTargetInModel() {
+    this.model.target(
+      buildConnectionEndpointAttrs(this.target, this.targetPortId),
+    );
   }
 
   snapTargetToPointer(pointerPosition: Position) {
@@ -158,4 +166,26 @@ export default class BaseConnector implements IConnector {
       },
     });
   }
+
+  addToGraph() {
+    if (this.isInGraph) {
+      return;
+    }
+
+    this.model.addTo(this.paper.model);
+    this.setSourceInModel();
+    this.setTargetInModel();
+  }
+}
+
+function buildConnectionEndpointAttrs(
+  block: IBlock,
+  port: string,
+): ?{id: string, port: string} {
+  return block != null
+    ? {
+        id: block.id,
+        port,
+      }
+    : null;
 }

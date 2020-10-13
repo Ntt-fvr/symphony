@@ -55,6 +55,14 @@ export const YELLOW = {
   Y800: '#FF9600',
 };
 
+export const AUTOMATION = {
+  BLUE: '#4856B0',
+  ORANGE: '#EA8126',
+  GREEN: '#2ABBA7',
+  RED: '#D03346',
+  VIOLET: '#9360F7',
+};
+
 export type TextVariant =
   | 'h1'
   | 'h2'
@@ -86,6 +94,7 @@ export default {
     ...RED,
     ...GREEN,
     ...YELLOW,
+    AUTOMATION,
     separator: 'rgba(0, 0, 0, 0.12)',
     separatorLight: 'rgba(0, 0, 0, 0.06)',
   },

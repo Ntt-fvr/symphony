@@ -9,7 +9,7 @@
  */
 'use strict';
 
-import type {GraphContextType} from '../../../GraphContext';
+import type {GraphContextType} from '../../../graphAPIContext/GraphContext';
 import type {IBlock} from '../BaseBlock';
 import type {Position} from '../../../facades/Helpers';
 
@@ -20,7 +20,10 @@ export type BlockTypeExplanationComponentProps = $ReadOnly<{||}>;
 
 interface IBaseBlockType {
   +type: string;
-  +createBlock: (position?: ?Position) => IBlock;
+  +createBlock: (
+    position?: ?Position,
+    translateClientCoordinates?: ?boolean,
+  ) => IBlock;
   +checkIfFitsSearch: string => boolean;
 }
 
@@ -39,8 +42,12 @@ export class BaseBlockType implements IBaseBlockType {
     this.flow = flow;
   }
 
-  createBlock(position?: ?Position): IBlock {
-    const options = position == null ? null : {position};
+  createBlock(
+    position?: ?Position,
+    translateClientCoordinates?: ?boolean,
+  ): IBlock {
+    const options =
+      position == null ? null : {position, translateClientCoordinates};
     return nullthrows(this.flow.addBlock(this.type, options));
   }
 

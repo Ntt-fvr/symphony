@@ -88,7 +88,7 @@ locals {
     frontend_name = "cadence-frontend"
     frontend_port = "7933"
     env_var = {
-      name  = "CADENCE_RETENTION_IN_DAYS"
+      name  = "CADENCE_RETENTION"
       value = "3"
     }
   }
@@ -100,7 +100,7 @@ resource helm_release cadence {
   namespace  = kubernetes_namespace.symphony.id
   repository = local.helm_repository.banzaicloud
   chart      = "cadence"
-  version    = "0.11.1"
+  version    = "0.12.0"
   depends_on = [kubernetes_job.create-cadence-db]
 
   values = [yamlencode({

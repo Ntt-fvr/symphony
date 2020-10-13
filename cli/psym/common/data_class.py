@@ -22,6 +22,7 @@ from psym.graphql.enum.project_priority import ProjectPriority
 from psym.graphql.enum.property_kind import PropertyKind
 from psym.graphql.enum.user_role import UserRole
 from psym.graphql.enum.user_status import UserStatus
+from psym.graphql.enum.flow_instance_status import FlowInstanceStatus
 from psym.graphql.enum.work_order_priority import WorkOrderPriority
 from psym.graphql.enum.work_order_status import WorkOrderStatus
 from psym.graphql.fragment.equipment_port_definition import (
@@ -220,12 +221,15 @@ class Equipment(NamedTuple):
     :type name: str
     :param equipment_type_name: Equipment type name
     :type equipment_type_name: str
+    :param properties: PropertyFragment sequence
+    :type properties: Sequence[ :class:`~psym.graphql.fragment.property.PropertyFragment` ])
     """
 
     id: str
     external_id: Optional[str]
     name: str
     equipment_type_name: str
+    properties: Sequence[PropertyFragment]
 
 
 class Link(NamedTuple):
@@ -243,6 +247,18 @@ class Link(NamedTuple):
     service_ids: List[str]
 
 
+class EquipmentPortDefinitionAlias(NamedTuple):
+    """
+    :param name: Name
+    :type name: str
+    :param id: ID
+    :type id: str, optional
+    """
+
+    name: str
+    id: Optional[str] = None
+
+
 class EquipmentPortDefinition(NamedTuple):
     """
     :param name: Name
@@ -255,9 +271,12 @@ class EquipmentPortDefinition(NamedTuple):
     :type port_definition_index: int, optional
     :param port_type_name: Port type name
     :type port_type_name: str, optional
+    :param connected_ports: ConnectedPorts list
+    :type connected_ports: List [ :class:`~psym.common.data_class.EquipmentPortDefinitionAlias] , optional
     """
 
     name: str
+    connected_ports: List[EquipmentPortDefinitionAlias]
     id: Optional[str] = None
     visible_label: Optional[str] = None
     port_definition_index: Optional[int] = None
@@ -577,3 +596,39 @@ class Project(NamedTuple):
     location_id: Optional[str]
     work_orders: List[WorkOrder]
     properties: Sequence[PropertyFragment]
+
+
+class FlowDraft(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Flow draft name
+    :type name: str
+    """
+
+    id: str
+    name: str
+
+
+class Flow(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param name: Flow name
+    :type name: str
+    """
+
+    id: str
+    name: str
+
+
+class FlowInstance(NamedTuple):
+    """
+    :param id: ID
+    :type id: str
+    :param status: status
+    :type status: class:`~psym.graphql.enum.flow_instance_status.FlowInstanceStatus`
+    """
+
+    id: str
+    status: FlowInstanceStatus

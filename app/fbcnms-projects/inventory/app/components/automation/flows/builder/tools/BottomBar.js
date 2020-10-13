@@ -12,7 +12,7 @@ import Button from '@symphony/design-system/components/Button';
 import React from 'react';
 import ToolsBar from './ToolsBar';
 import {makeStyles} from '@material-ui/styles';
-import {useGraph} from '../canvas/graph/GraphContext';
+import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
 
 const useStyles = makeStyles(() => ({
   root: {

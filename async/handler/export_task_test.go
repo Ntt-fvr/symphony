@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/event"
@@ -16,19 +17,22 @@ import (
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/cadence/mocks"
 	"gocloud.dev/blob"
 	"gocloud.dev/blob/memblob"
 )
 
 type exportTestSuite struct {
 	suite.Suite
-	client  *ent.Client
-	ctx     context.Context
-	bucket  *blob.Bucket
-	tenant  string
-	logger  log.Logger
-	handler *handler.ExportHandler
+	client        *ent.Client
+	ctx           context.Context
+	bucket        *blob.Bucket
+	tenant        string
+	logger        log.Logger
+	handler       *handler.ExportHandler
+	cadenceClient *mocks.Client
 }
 
 func (s *exportTestSuite) SetupSuite() {
@@ -37,7 +41,8 @@ func (s *exportTestSuite) SetupSuite() {
 	s.bucket = memblob.OpenBucket(nil)
 	s.logger = logtest.NewTestLogger(s.T())
 	s.tenant = viewer.FromContext(s.ctx).Tenant()
-	s.handler = handler.NewExportHandler(s.bucket, "exports/")
+	s.cadenceClient = &mocks.Client{}
+	s.handler = handler.NewExportHandler(s.bucket, "exports/", s.cadenceClient)
 	s.Require().NotNil(s.handler)
 }
 
@@ -67,6 +72,27 @@ func (s *exportTestSuite) TestServices() {
 
 func (s *exportTestSuite) TestWorkOrders() {
 	s.testExport(exporttask.TypeWorkOrder)
+}
+
+func (s *exportTestSuite) TestSingleWorkOrder() {
+	task, err := s.createExportTask(s.ctx, s.client, exporttask.TypeSingleWorkOrder)
+	s.Require().NoError(err)
+	var (
+		workflowName  string
+		workflowInput worker.ExportSingleWOInput
+	)
+	s.cadenceClient.On("StartWorkflow", mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Run(func(args mock.Arguments) {
+			workflowName = args.Get(2).(string)
+			workflowInput = args.Get(3).(worker.ExportSingleWOInput)
+		}).
+		Return(nil, nil).
+		Once()
+	evt := s.createLogEntry(task.ID)
+	err = s.handler.Handle(s.ctx, s.logger, evt)
+	s.Require().NoError(err)
+	s.Equal(worker.ExportWorkOrderWorkflowName, workflowName)
+	s.Equal(task.ID, workflowInput.ExportTaskID)
 }
 
 func (s *exportTestSuite) testExport(t exporttask.Type) {

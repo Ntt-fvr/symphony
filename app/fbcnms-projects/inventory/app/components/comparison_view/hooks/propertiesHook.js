@@ -8,6 +8,7 @@
  * @format
  */
 
+import type {EntityType} from '../ComparisonViewTypes';
 import type {PropertyType} from '../../../common/PropertyType';
 
 import RelayEnvironment from '../../../common/RelayEnvironment';
@@ -15,7 +16,6 @@ import {getPossibleProperties} from '../FilterUtils';
 import {graphql} from 'relay-runtime';
 import {useGraphQL} from '@fbcnms/ui/hooks';
 import {useMemo} from 'react';
-import type {EntityType} from '../ComparisonViewTypes';
 
 const propertiesQuery = graphql`
   query propertiesHookPossiblePropertiesQuery($entityType: PropertyEntity!) {

@@ -32,6 +32,8 @@ const (
 	FieldEndParamDefinitions = "end_param_definitions"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldNewInstancesPolicy holds the string denoting the newinstancespolicy field in the database.
+	FieldNewInstancesPolicy = "new_instances_policy"
 
 	// EdgeBlocks holds the string denoting the blocks edge name in mutations.
 	EdgeBlocks = "blocks"
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldEndParamDefinitions,
 	FieldStatus,
+	FieldNewInstancesPolicy,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -99,13 +102,14 @@ var (
 // Status defines the type for the status enum field.
 type Status string
 
-// StatusEnabled is the default Status.
-const DefaultStatus = StatusEnabled
+// StatusUnpublished is the default Status.
+const DefaultStatus = StatusUnpublished
 
 // Status values.
 const (
-	StatusEnabled  Status = "ENABLED"
-	StatusDisabled Status = "DISABLED"
+	StatusPublished   Status = "PUBLISHED"
+	StatusUnpublished Status = "UNPUBLISHED"
+	StatusArchived    Status = "ARCHIVED"
 )
 
 func (s Status) String() string {
@@ -115,10 +119,36 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusEnabled, StatusDisabled:
+	case StatusPublished, StatusUnpublished, StatusArchived:
 		return nil
 	default:
 		return fmt.Errorf("flow: invalid enum value for status field: %q", s)
+	}
+}
+
+// NewInstancesPolicy defines the type for the newInstancesPolicy enum field.
+type NewInstancesPolicy string
+
+// NewInstancesPolicyDisabled is the default NewInstancesPolicy.
+const DefaultNewInstancesPolicy = NewInstancesPolicyDisabled
+
+// NewInstancesPolicy values.
+const (
+	NewInstancesPolicyEnabled  NewInstancesPolicy = "ENABLED"
+	NewInstancesPolicyDisabled NewInstancesPolicy = "DISABLED"
+)
+
+func (nip NewInstancesPolicy) String() string {
+	return string(nip)
+}
+
+// NewInstancesPolicyValidator is a validator for the "newInstancesPolicy" field enum values. It is called by the builders before save.
+func NewInstancesPolicyValidator(nip NewInstancesPolicy) error {
+	switch nip {
+	case NewInstancesPolicyEnabled, NewInstancesPolicyDisabled:
+		return nil
+	default:
+		return fmt.Errorf("flow: invalid enum value for newInstancesPolicy field: %q", nip)
 	}
 }
 
@@ -136,6 +166,24 @@ func (s *Status) UnmarshalGQL(v interface{}) error {
 	*s = Status(str)
 	if err := StatusValidator(*s); err != nil {
 		return fmt.Errorf("%s is not a valid Status", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (nip NewInstancesPolicy) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(nip.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (nip *NewInstancesPolicy) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", v)
+	}
+	*nip = NewInstancesPolicy(str)
+	if err := NewInstancesPolicyValidator(*nip); err != nil {
+		return fmt.Errorf("%s is not a valid NewInstancesPolicy", str)
 	}
 	return nil
 }

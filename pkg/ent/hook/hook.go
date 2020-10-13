@@ -13,19 +13,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 )
 
-// The ActionsRuleFunc type is an adapter to allow the use of ordinary
-// function as ActionsRule mutator.
-type ActionsRuleFunc func(context.Context, *ent.ActionsRuleMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ActionsRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	mv, ok := m.(*ent.ActionsRuleMutation)
-	if !ok {
-		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ActionsRuleMutation", m)
-	}
-	return f(ctx, mv)
-}
-
 // The ActivityFunc type is an adapter to allow the use of ordinary
 // function as Activity mutator.
 type ActivityFunc func(context.Context, *ent.ActivityMutation) (ent.Value, error)

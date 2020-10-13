@@ -43,8 +43,7 @@ spec:
         - name: async
           image: {{ .Values.async.image.repository }}:{{ .Values.async.image.tag }}
           imagePullPolicy: {{ .Values.async.image.pullPolicy }}
-          args:
-            - --web.listen-address={{ printf ":%d" (int .Values.async.service.targetPort) }}
+          args: {{- include "symphony.listenArgs" .Values.async | nindent 12 }}
           env:
             - name: EVENT_PUB_URL
               value: {{ required ".Values.async.spec.event.pub_url is required" .Values.async.spec.event.pub_url | quote }}
@@ -60,6 +59,8 @@ spec:
             - name: TENANCY_DB_MAX_CONN
               value: {{ . | quote }}
             {{- end }}
+            - name: CADENCE_ADDR
+              value: {{ required ".Values.async.spec.cadence.address is required" .Values.async.spec.cadence.address | quote }}
             - name: FEATURES_URL
               value: "http://{{ template "symphony.front.fullname" . }}:{{ .Values.front.service.internalPort }}/features"
             {{- include "symphony.loggingEnv" .Values.async | nindent 12 }}
@@ -69,22 +70,7 @@ spec:
             {{- end }}
           envFrom:
             - secretRef:
-                name: {{ template "symphony.graphDB.secretName" . }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.async.service.targetPort }}
-          {{- if .Values.async.probes.liveness }}
-          livenessProbe:
-            httpGet:
-              path: /healthz/liveness
-              port: http
-            {{- toYaml .Values.async.probes.liveness | nindent 12 }}
-          {{- end }}
-          {{- if .Values.async.probes.readiness }}
-          readinessProbe:
-            httpGet:
-              path: /healthz/readiness
-              port: http
-            {{- toYaml .Values.async.probes.readiness | nindent 12 }}
-          {{- end }}
+                name: {{ template "symphony.database.secretName" . }}
+          ports: {{- include "symphony.containerPorts" .Values.async | nindent 12 }}
+          {{- include "symphony.probes" .Values.async | indent 10 }}
           resources: {{- toYaml .Values.async.resources | nindent 12 }}

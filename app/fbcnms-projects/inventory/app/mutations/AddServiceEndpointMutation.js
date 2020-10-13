@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironemnt from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {
   AddServiceEndpointMutation,
   AddServiceEndpointMutationResponse,
@@ -17,6 +15,9 @@ import type {
 } from './__generated__/AddServiceEndpointMutation.graphql';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironemnt from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation AddServiceEndpointMutation($input: AddServiceEndpointInput!) {

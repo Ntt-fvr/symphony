@@ -15,11 +15,6 @@ import {MemoryRouter} from 'react-router-dom';
 import {Route} from 'react-router-dom';
 import {cleanup, render} from '@testing-library/react';
 
-jest.mock(
-  '@fbcnms/magmalte/app/components/admin/AdminContextProvider',
-  () => props => <div>{props.children}</div>,
-);
-
 const Wrapper = props => (
   <MemoryRouter initialEntries={[props.path]} initialIndex={1}>
     <Route path="/admin">{props.children}</Route>

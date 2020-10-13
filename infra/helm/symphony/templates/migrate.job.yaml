@@ -29,25 +29,20 @@ spec:
           imagePullPolicy: {{ $.Values.migrate.image.pullPolicy }}
           args:
             - {{ $name }}
-            {{- if eq $name "ent" }}
-            - --ent.db-driver=mysql
-            - --ent.db-dsn=$(MYSQL_DSN)
-            {{- else if eq $name "cadence" }}
-            - --cadence.addr={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
-            - --cadence.domain={{ required ".Values.migrate.spec.migrations.cadence.domain is required" $.Values.migrate.spec.migrations.cadence.domain }}
+            {{- if eq $name "cadence" }}
+            - --address={{ required ".Values.migrate.spec.migrations.cadence.address is required" $.Values.migrate.spec.migrations.cadence.address }}
+            - --domains={{ required ".Values.migrate.spec.migrations.cadence.domains is required" $.Values.migrate.spec.migrations.cadence.domains }}
             {{- end }}
           env:
-            {{- if eq $name "ent" }}
-            - name: MYSQL_DSN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "symphony.migrate.secretName" $ }}
-                  key: MYSQL_DSN
-            {{- end }}
             {{- include "symphony.loggingEnv" $.Values.migrate | nindent 12 }}
             {{- with $spec.extraEnvVars }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- if eq $name "graph" }}
+          envFrom:
+            - secretRef:
+                name: {{ template "symphony.migrate.secretName" $ }}
+          {{- end }}
       restartPolicy: Never
 {{- end }}
 ---
@@ -61,4 +56,4 @@ metadata:
     helm.sh/hook-weight: "-5"
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 type: Opaque
-stringData: {{- include "symphony.graphDB.stringData" . | nindent 2 }}
+stringData: {{- include "symphony.database.stringData" . | nindent 2 }}

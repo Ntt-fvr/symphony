@@ -8,12 +8,15 @@
  * @format
  */
 
-import type {ButtonSkin} from './Button';
+import type {ButtonSkin, ButtonVariant} from './Button';
 import type {MouseEventHandler} from './Core/Clickable';
 import type {SvgIconStyleProps} from '../icons/SvgIcon';
 
+import classNames from 'classnames';
+
 import * as React from 'react';
 import Button from './Button';
+import {makeStyles} from '@material-ui/styles';
 
 export type IconComponent = React.ComponentType<SvgIconStyleProps>;
 
@@ -23,6 +26,7 @@ export type IconButtonProps = $ReadOnly<{|
   skin?: ButtonSkin,
   disabled?: boolean,
   tooltip?: string,
+  variant?: ButtonVariant,
 |}>;
 
 type Props = $ReadOnly<{|
@@ -31,9 +35,28 @@ type Props = $ReadOnly<{|
   ...IconButtonProps,
 |}>;
 
-const IconButton = ({icon: Icon, ...buttonProps}: Props) => {
+const useStyles = makeStyles(() => ({
+  noMinWidth: {
+    minWidth: 'unset',
+  },
+}));
+
+const IconButton = ({
+  icon: Icon,
+  variant = 'text',
+  className,
+  ...buttonProps
+}: Props) => {
+  const classes = useStyles();
+
   return (
-    <Button variant="text" {...buttonProps}>
+    <Button
+      className={classNames(
+        variant === 'contained' ? classes.noMinWidth : '',
+        className,
+      )}
+      variant={variant}
+      {...buttonProps}>
       <Icon color="inherit" />
     </Button>
   );

@@ -19,6 +19,14 @@ import type {
 } from './shapes/vertexes/BaseVertext';
 import type {LinkEventCallback} from './shapes/edges/Link';
 
+type EventRegistration = (
+  string,
+  | PaperEventCallback
+  | VertexEventCallback
+  | VertexPortEventCallback
+  | LinkEventCallback,
+) => void;
+
 export type Paper = $ReadOnly<{|
   el: HTMLElement,
   model: Graph,
@@ -41,13 +49,8 @@ export type Paper = $ReadOnly<{|
         },
   }) => void,
   translate: (tx?: number, ty?: number) => void | {tx: number, ty: number},
-  on: (
-    string,
-    | PaperEventCallback
-    | VertexEventCallback
-    | VertexPortEventCallback
-    | LinkEventCallback,
-  ) => void,
+  on: EventRegistration,
+  off: EventRegistration,
   options: {
     origin: Position,
     validateMagnet: (IVertexView, HTMLElement, ExtendedMouseEvent) => boolean,

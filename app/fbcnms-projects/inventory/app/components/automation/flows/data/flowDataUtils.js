@@ -8,8 +8,6 @@
  * @flow
  * @format
  */
-import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
-import {getGraphError} from '../../../../common/EntUtils';
 import type {
   ActionBlockInput,
   ConnectorInput,
@@ -22,6 +20,9 @@ import type {IBlock} from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../builder/canvas/graph/shapes/connectors/BaseConnector';
 import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 import type {MutationCallbacks} from '../../../../mutations/MutationCallbacks';
+
+import ImportFlowDraftMutation from '../../../../mutations/ImportFlowDraft';
+import {getGraphError} from '../../../../common/EntUtils';
 
 export function saveFlowDraft(
   input: ImportFlowDraftInput,
@@ -72,8 +73,8 @@ export function mapEndBlockForSave(block: IBlock): EndBlockInput {
 
 type BaseBlockInput = $ReadOnly<{|
   cid: string,
-  name: string,
   uiRepresentation: {|
+    name: string,
     xPosition: number,
     yPosition: number,
   |},
@@ -82,8 +83,8 @@ type BaseBlockInput = $ReadOnly<{|
 function mapBlockForSave(block: IBlock): BaseBlockInput {
   return {
     cid: block.id,
-    name: block.name,
     uiRepresentation: {
+      name: block.name,
       xPosition: Math.floor(block.model.attributes.position.x),
       yPosition: Math.floor(block.model.attributes.position.y),
     },

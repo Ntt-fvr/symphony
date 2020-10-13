@@ -6,15 +6,9 @@ package resolver
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"net/http"
-	"strings"
-	"time"
 
 	"github.com/AlekSi/pointer"
-	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipment"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
@@ -351,51 +345,6 @@ func (r equipmentResolver) LocationHierarchy(ctx context.Context, e *ent.Equipme
 		parent = grandparent
 	}
 	return locations, nil
-}
-
-func (r equipmentResolver) Device(ctx context.Context, e *ent.Equipment) (*models.Device, error) {
-	if e.DeviceID == "" {
-		return nil, nil
-	}
-	if r.orc8r.client == nil {
-		return nil, errors.New("unsupported field")
-	}
-	parts := strings.Split(e.DeviceID, ".")
-	if len(parts) < 2 {
-		return nil, errors.New("invalid equipment device id")
-	}
-
-	uri := fmt.Sprintf("/magma/v1/networks/%s/gateways/%s/status", parts[1], parts[0])
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, nil)
-	if err != nil {
-		return nil, fmt.Errorf("cannot create http request: %w", err)
-	}
-	rsp, err := r.orc8r.client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("performing orc8r status request: %w", err)
-	}
-	defer rsp.Body.Close()
-
-	var result struct {
-		CheckinTime int64 `json:"checkin_time"`
-	}
-	if err := json.NewDecoder(rsp.Body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("decoding orc8r response: %w", err)
-	}
-
-	dev := models.Device{ID: e.DeviceID}
-	if result.CheckinTime != 0 {
-		dev.Up = pointer.ToBool(
-			checkinTimeIsUp(result.CheckinTime, 3*time.Minute),
-		)
-	}
-	return &dev, nil
-}
-
-// checkinTime is milliseconds since epoch
-func checkinTimeIsUp(checkinTime int64, duration time.Duration) bool {
-	secs := int64(duration.Seconds()) + checkinTime/1000
-	return time.Now().Before(time.Unix(secs, 0))
 }
 
 func (r equipmentResolver) Services(ctx context.Context, e *ent.Equipment) ([]*ent.Service, error) {

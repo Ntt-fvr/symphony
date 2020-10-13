@@ -6,17 +6,10 @@ package resolver_test
 
 import (
 	"context"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"net/url"
-	"strconv"
 	"testing"
-	"time"
 
 	"github.com/facebookincubator/symphony/graph/graphql/generated"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
-	"github.com/facebookincubator/symphony/graph/graphql/resolver"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentport"
 	"github.com/facebookincubator/symphony/pkg/ent/equipmentportdefinition"
@@ -25,10 +18,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/property"
 	"github.com/facebookincubator/symphony/pkg/ent/propertytype"
 	pkgmodels "github.com/facebookincubator/symphony/pkg/exporter/models"
-	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/viewer/viewertest"
 
-	"github.com/99designs/gqlgen/client"
 	"github.com/AlekSi/pointer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -338,100 +329,6 @@ func TestAddAndDeleteEquipmentHyperlink(t *testing.T) {
 	hyperlinks, err = er.Hyperlinks(ctx, equipment)
 	require.NoError(t, err)
 	require.Len(t, hyperlinks, 0, "verifying no hyperlinks remained")
-}
-
-func TestOrc8rStatusEquipment(t *testing.T) {
-	ts := time.Now().Add(time.Hour/2).Unix() * 1000
-	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := io.WriteString(w, `{"checkin_time": `+strconv.FormatInt(ts, 10)+`}`)
-		assert.NoError(t, err)
-	}))
-	defer srv.Close()
-
-	uri, err := url.Parse(srv.URL)
-	require.NoError(t, err)
-
-	orc8rClient := srv.Client()
-	orc8rClient.Transport = &orc8r.Transport{
-		Base: orc8rClient.Transport,
-		Host: uri.Host,
-	}
-	r := newTestResolver(t, withResolverOptions(
-		resolver.WithOrc8rClient(orc8rClient),
-	))
-	defer r.Close()
-
-	ctx := viewertest.NewContext(context.Background(), r.client)
-	mr := r.Mutation()
-
-	locationType, err := mr.AddLocationType(ctx, models.AddLocationTypeInput{
-		Name: "location_type_name_1",
-	})
-	require.NoError(t, err)
-
-	location, err := mr.AddLocation(ctx, models.AddLocationInput{
-		Name: "location_name_1",
-		Type: locationType.ID,
-	})
-	require.NoError(t, err)
-
-	equipmentType, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
-		Name:      "equipment_type_name_1",
-		Positions: []*models.EquipmentPositionInput{},
-	})
-	require.NoError(t, err)
-
-	equipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
-		Name:     "equipment_name_1",
-		Type:     equipmentType.ID,
-		Location: &location.ID,
-	})
-	require.NoError(t, err)
-
-	equipment, err = mr.EditEquipment(ctx, models.EditEquipmentInput{
-		ID:       equipment.ID,
-		Name:     "equipment_name_1",
-		DeviceID: pointer.ToString("deviceID.networkID"),
-	})
-	require.NoError(t, err)
-	_, err = mr.EditEquipment(ctx, models.EditEquipmentInput{
-		ID:       equipment.ID,
-		Name:     "equipment_name_1",
-		DeviceID: pointer.ToString("networkID"),
-	})
-	require.Error(t, err)
-
-	c := r.GraphClient()
-	const query = `query($id: ID!) {
-		equipment: node(id: $id) {
-			... on Equipment {
-				device {
-					id
-					up
-				}
-			}
-		}
-	}`
-	var (
-		rsp struct {
-			Equipment struct {
-				Device struct {
-					ID string
-					Up bool
-				}
-			}
-		}
-		arg = client.Var("id", equipment.ID)
-	)
-
-	c.MustPost(query, &rsp, arg)
-	assert.Equal(t, equipment.DeviceID, rsp.Equipment.Device.ID)
-	assert.True(t, rsp.Equipment.Device.Up)
-
-	ts = 500
-	c.MustPost(query, &rsp, arg)
-	assert.Equal(t, equipment.DeviceID, rsp.Equipment.Device.ID)
-	assert.False(t, rsp.Equipment.Device.Up)
 }
 
 func TestAddEquipmentWithoutLocation(t *testing.T) {
@@ -1335,4 +1232,152 @@ func TestAddLinkToNewlyAddedPortDefinition(t *testing.T) {
 
 	assert.Equal(t, linkA.ID, createdLink.ID)
 	assert.Equal(t, linkZ.ID, createdLink.ID)
+}
+
+func TestAddEquipmentTypeWithPortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portNameConnection1 := "Port1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: "Port1",
+			},
+			{
+				Name: "Port2",
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portNameConnection1,
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+}
+
+func TestAddEquipmentTypeWithMultiplePortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portName1 := "OUT1"
+	portName2 := "OUT2"
+	portName3 := "IN1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: portName1,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName3,
+					},
+				},
+			},
+			{
+				Name: portName2,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName3,
+					},
+				},
+			},
+			{
+				Name: portName3,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portName1,
+					},
+					{
+						Name: &portName2,
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
+	assert.Equal(t, 3, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, 2, len(definitions[2].Edges.ConnectedPorts))
+	assert.Equal(t, portName3, definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName3, definitions[1].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName1, definitions[2].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, portName2, definitions[2].Edges.ConnectedPorts[1].Name)
+}
+
+func TestEditEquipmentTypeWithPortConnections(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+	portNameConnection1 := "Port1"
+	createdEquipment, err := mr.AddEquipmentType(ctx, models.AddEquipmentTypeInput{
+		Name: "EquipmentType1",
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: "Port1",
+			},
+			{
+				Name: "Port2",
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{
+					{
+						Name: &portNameConnection1,
+					},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
+	definitions, err := createdEquipment.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 1, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 1, len(definitions[1].Edges.ConnectedPorts))
+	assert.Equal(t, "Port2", definitions[0].Edges.ConnectedPorts[0].Name)
+	assert.Equal(t, "Port1", definitions[1].Edges.ConnectedPorts[0].Name)
+
+	editedEquipmentType, err := mr.EditEquipmentType(ctx, models.EditEquipmentTypeInput{
+		ID:   createdEquipment.ID,
+		Name: createdEquipment.Name,
+		Ports: []*models.EquipmentPortInput{
+			{
+				Name: definitions[0].Name,
+				ID:   &definitions[0].ID,
+			},
+			{
+				Name:           definitions[1].Name,
+				ID:             &definitions[1].ID,
+				ConnectedPorts: []*models.EquipmentPortConnectionInput{}, // clear connections
+			},
+		},
+	})
+
+	require.NoError(t, err)
+	require.NotNil(t, createdEquipment)
+	definitions, err = editedEquipmentType.QueryPortDefinitions().WithConnectedPorts().All(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, definitions)
+	assert.Equal(t, 2, len(definitions))
+	assert.Equal(t, 0, len(definitions[0].Edges.ConnectedPorts))
+	assert.Equal(t, 0, len(definitions[1].Edges.ConnectedPorts))
 }

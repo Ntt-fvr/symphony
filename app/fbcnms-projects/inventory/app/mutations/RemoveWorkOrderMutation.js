@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
   RemoveWorkOrderMutation,
@@ -17,6 +15,9 @@ import type {
   RemoveWorkOrderMutationVariables,
 } from './__generated__/RemoveWorkOrderMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation RemoveWorkOrderMutation($id: ID!) {

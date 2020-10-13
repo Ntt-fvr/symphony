@@ -15,7 +15,6 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type BlocksBar_flowDraft$ref = any;
-type DetailsView_flowDraft$ref = any;
 export type FlowDataContext_FlowDraftQueryVariables = {|
   flowId: string
 |};
@@ -23,26 +22,27 @@ export type FlowDataContext_FlowDraftQueryResponse = {|
   +flowDraft: ?{|
     +id?: string,
     +name?: string,
+    +description?: ?string,
     +blocks?: $ReadOnlyArray<{|
       +cid: string,
-      +name: string,
       +details: {|
         +__typename: string
       |},
       +uiRepresentation: ?{|
+        +name: string,
         +xPosition: number,
         +yPosition: number,
       |},
       +nextBlocks: $ReadOnlyArray<{|
         +cid: string,
-        +name: string,
         +uiRepresentation: ?{|
+          +name: string,
           +xPosition: number,
           +yPosition: number,
         |},
       |}>,
     |}>,
-    +$fragmentRefs: DetailsView_flowDraft$ref & BlocksBar_flowDraft$ref,
+    +$fragmentRefs: BlocksBar_flowDraft$ref,
   |}
 |};
 export type FlowDataContext_FlowDraftQuery = {|
@@ -61,20 +61,21 @@ query FlowDataContext_FlowDraftQuery(
     ... on FlowDraft {
       id
       name
+      description
       blocks {
         cid
-        name
         details {
           __typename
         }
         uiRepresentation {
+          name
           xPosition
           yPosition
         }
         nextBlocks {
           cid
-          name
           uiRepresentation {
+            name
             xPosition
             yPosition
           }
@@ -82,7 +83,6 @@ query FlowDataContext_FlowDraftQuery(
         }
         id
       }
-      ...DetailsView_flowDraft
       ...BlocksBar_flowDraft
     }
     id
@@ -90,10 +90,6 @@ query FlowDataContext_FlowDraftQuery(
 }
 
 fragment BlocksBar_flowDraft on FlowDraft {
-  name
-}
-
-fragment DetailsView_flowDraft on FlowDraft {
   name
 }
 */
@@ -131,17 +127,24 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "cid",
+  "name": "description",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "__typename",
+  "name": "cid",
   "storageKey": null
 },
 v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "__typename",
+  "storageKey": null
+},
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": null,
@@ -149,11 +152,11 @@ v6 = {
   "name": "details",
   "plural": false,
   "selections": [
-    (v5/*: any*/)
+    (v6/*: any*/)
   ],
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "BlockUIRepresentation",
@@ -161,6 +164,7 @@ v7 = {
   "name": "uiRepresentation",
   "plural": false,
   "selections": [
+    (v3/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -198,6 +202,7 @@ return {
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -206,10 +211,9 @@ return {
                 "name": "blocks",
                 "plural": true,
                 "selections": [
-                  (v4/*: any*/),
-                  (v3/*: any*/),
-                  (v6/*: any*/),
+                  (v5/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -218,19 +222,13 @@ return {
                     "name": "nextBlocks",
                     "plural": true,
                     "selections": [
-                      (v4/*: any*/),
-                      (v3/*: any*/),
-                      (v7/*: any*/)
+                      (v5/*: any*/),
+                      (v8/*: any*/)
                     ],
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
-              },
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "DetailsView_flowDraft"
               },
               {
                 "args": null,
@@ -262,12 +260,13 @@ return {
         "name": "node",
         "plural": false,
         "selections": [
-          (v5/*: any*/),
+          (v6/*: any*/),
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
             "selections": [
               (v3/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -276,10 +275,9 @@ return {
                 "name": "blocks",
                 "plural": true,
                 "selections": [
-                  (v4/*: any*/),
-                  (v3/*: any*/),
-                  (v6/*: any*/),
+                  (v5/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -288,9 +286,8 @@ return {
                     "name": "nextBlocks",
                     "plural": true,
                     "selections": [
-                      (v4/*: any*/),
-                      (v3/*: any*/),
-                      (v7/*: any*/),
+                      (v5/*: any*/),
+                      (v8/*: any*/),
                       (v2/*: any*/)
                     ],
                     "storageKey": null
@@ -309,16 +306,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "71cba279e37089ff71080e4740924618",
+    "cacheID": "8486abba78477e85937f028cb3240d57",
     "id": null,
     "metadata": {},
     "name": "FlowDataContext_FlowDraftQuery",
     "operationKind": "query",
-    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      blocks {\n        cid\n        name\n        details {\n          __typename\n        }\n        uiRepresentation {\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          name\n          uiRepresentation {\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...DetailsView_flowDraft\n      ...BlocksBar_flowDraft\n    }\n    id\n  }\n}\n\nfragment BlocksBar_flowDraft on FlowDraft {\n  name\n}\n\nfragment DetailsView_flowDraft on FlowDraft {\n  name\n}\n"
+    "text": "query FlowDataContext_FlowDraftQuery(\n  $flowId: ID!\n) {\n  flowDraft: node(id: $flowId) {\n    __typename\n    ... on FlowDraft {\n      id\n      name\n      description\n      blocks {\n        cid\n        details {\n          __typename\n        }\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        nextBlocks {\n          cid\n          uiRepresentation {\n            name\n            xPosition\n            yPosition\n          }\n          id\n        }\n        id\n      }\n      ...BlocksBar_flowDraft\n    }\n    id\n  }\n}\n\nfragment BlocksBar_flowDraft on FlowDraft {\n  name\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '642593effb5f9c1bcd2d73f23450b69f';
+(node/*: any*/).hash = 'bd843a58a5d1c6e673f2250838be6b10';
 
 module.exports = node;

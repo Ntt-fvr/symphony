@@ -99,7 +99,7 @@ func (fdq *FlowDraftQuery) QueryFlow() *FlowQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(flowdraft.Table, flowdraft.FieldID, selector),
 			sqlgraph.To(flow.Table, flow.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, flowdraft.FlowTable, flowdraft.FlowColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fdq.driver.Dialect(), step)
 		return fromU, nil

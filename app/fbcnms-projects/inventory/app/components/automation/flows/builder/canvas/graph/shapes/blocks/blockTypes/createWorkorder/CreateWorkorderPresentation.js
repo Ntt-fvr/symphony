@@ -8,26 +8,16 @@
  * @format
  */
 
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import CreateWorkorderIcon from './CreateWorkorderIcon';
 import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
+import {BasePresentation} from '../BasePresentation';
 
-const useStyles = makeStyles(() => ({
-  root: {},
-}));
-
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function CreateWorkorderPresentation(props: Props) {
-  const {className} = props;
-  const classes = useStyles();
-
+export default function CreateWorkorderPresentation() {
   return (
-    <div className={classNames(classes.root, className)}>
-      <fbt desc="">Create Workorder</fbt>
-    </div>
+    <BasePresentation
+      icon={CreateWorkorderIcon}
+      text={fbt('Create Work Order', '')}
+    />
   );
 }

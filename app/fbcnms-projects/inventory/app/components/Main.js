@@ -22,9 +22,6 @@ import {Route, Switch} from 'react-router-dom';
 const Admin = React.lazy(() => import('./admin/Admin'));
 const IDToolMain = React.lazy(() => import('./id/IDToolMain'));
 const Automation = React.lazy(() => import('./automation/Automation'));
-const MagmaMain = React.lazy(() =>
-  import('@fbcnms/magmalte/app/components/Main'),
-);
 const Inventory = React.lazy(() => import('./Inventory'));
 const Settings = React.lazy(() => import('./settings/Settings'));
 const WorkOrdersMain = React.lazy(() => import('./work_orders/WorkOrdersMain'));
@@ -44,7 +41,6 @@ export default () => (
                     path={DEACTIVATED_PAGE_PATH}
                     component={DeactivatedPage}
                   />
-                  <Route path="/nms" component={MagmaMain} />
                   <Route path="/inventory" component={Inventory} />
                   <Route path="/workorders" component={WorkOrdersMain} />
                   <Route path="/admin/settings" component={Settings} />

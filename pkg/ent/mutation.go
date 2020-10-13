@@ -12,9 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/actions/core"
 	"github.com/facebookincubator/symphony/pkg/authz/models"
-	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -84,7 +82,6 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeActionsRule                 = "ActionsRule"
 	TypeActivity                    = "Activity"
 	TypeBlock                       = "Block"
 	TypeBlockInstance               = "BlockInstance"
@@ -140,574 +137,6 @@ const (
 	TypeWorkOrderTemplate           = "WorkOrderTemplate"
 	TypeWorkOrderType               = "WorkOrderType"
 )
-
-// ActionsRuleMutation represents an operation that mutate the ActionsRules
-// nodes in the graph.
-type ActionsRuleMutation struct {
-	config
-	op            Op
-	typ           string
-	id            *int
-	create_time   *time.Time
-	update_time   *time.Time
-	name          *string
-	triggerID     *string
-	ruleFilters   *[]*core.ActionsRuleFilter
-	ruleActions   *[]*core.ActionsRuleAction
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*ActionsRule, error)
-}
-
-var _ ent.Mutation = (*ActionsRuleMutation)(nil)
-
-// actionsruleOption allows to manage the mutation configuration using functional options.
-type actionsruleOption func(*ActionsRuleMutation)
-
-// newActionsRuleMutation creates new mutation for $n.Name.
-func newActionsRuleMutation(c config, op Op, opts ...actionsruleOption) *ActionsRuleMutation {
-	m := &ActionsRuleMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeActionsRule,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withActionsRuleID sets the id field of the mutation.
-func withActionsRuleID(id int) actionsruleOption {
-	return func(m *ActionsRuleMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *ActionsRule
-		)
-		m.oldValue = func(ctx context.Context) (*ActionsRule, error) {
-			once.Do(func() {
-				if m.done {
-					err = fmt.Errorf("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().ActionsRule.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withActionsRule sets the old ActionsRule of the mutation.
-func withActionsRule(node *ActionsRule) actionsruleOption {
-	return func(m *ActionsRuleMutation) {
-		m.oldValue = func(context.Context) (*ActionsRule, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m ActionsRuleMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m ActionsRuleMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// ID returns the id value in the mutation. Note that, the id
-// is available only if it was provided to the builder.
-func (m *ActionsRuleMutation) ID() (id int, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// SetCreateTime sets the create_time field.
-func (m *ActionsRuleMutation) SetCreateTime(t time.Time) {
-	m.create_time = &t
-}
-
-// CreateTime returns the create_time value in the mutation.
-func (m *ActionsRuleMutation) CreateTime() (r time.Time, exists bool) {
-	v := m.create_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreateTime returns the old create_time value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
-	}
-	return oldValue.CreateTime, nil
-}
-
-// ResetCreateTime reset all changes of the "create_time" field.
-func (m *ActionsRuleMutation) ResetCreateTime() {
-	m.create_time = nil
-}
-
-// SetUpdateTime sets the update_time field.
-func (m *ActionsRuleMutation) SetUpdateTime(t time.Time) {
-	m.update_time = &t
-}
-
-// UpdateTime returns the update_time value in the mutation.
-func (m *ActionsRuleMutation) UpdateTime() (r time.Time, exists bool) {
-	v := m.update_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateTime returns the old update_time value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldUpdateTime is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldUpdateTime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
-	}
-	return oldValue.UpdateTime, nil
-}
-
-// ResetUpdateTime reset all changes of the "update_time" field.
-func (m *ActionsRuleMutation) ResetUpdateTime() {
-	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *ActionsRuleMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *ActionsRuleMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *ActionsRuleMutation) ResetName() {
-	m.name = nil
-}
-
-// SetTriggerID sets the triggerID field.
-func (m *ActionsRuleMutation) SetTriggerID(s string) {
-	m.triggerID = &s
-}
-
-// TriggerID returns the triggerID value in the mutation.
-func (m *ActionsRuleMutation) TriggerID() (r string, exists bool) {
-	v := m.triggerID
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTriggerID returns the old triggerID value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldTriggerID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldTriggerID is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldTriggerID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTriggerID: %w", err)
-	}
-	return oldValue.TriggerID, nil
-}
-
-// ResetTriggerID reset all changes of the "triggerID" field.
-func (m *ActionsRuleMutation) ResetTriggerID() {
-	m.triggerID = nil
-}
-
-// SetRuleFilters sets the ruleFilters field.
-func (m *ActionsRuleMutation) SetRuleFilters(crf []*core.ActionsRuleFilter) {
-	m.ruleFilters = &crf
-}
-
-// RuleFilters returns the ruleFilters value in the mutation.
-func (m *ActionsRuleMutation) RuleFilters() (r []*core.ActionsRuleFilter, exists bool) {
-	v := m.ruleFilters
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRuleFilters returns the old ruleFilters value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldRuleFilters(ctx context.Context) (v []*core.ActionsRuleFilter, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldRuleFilters is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldRuleFilters requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRuleFilters: %w", err)
-	}
-	return oldValue.RuleFilters, nil
-}
-
-// ResetRuleFilters reset all changes of the "ruleFilters" field.
-func (m *ActionsRuleMutation) ResetRuleFilters() {
-	m.ruleFilters = nil
-}
-
-// SetRuleActions sets the ruleActions field.
-func (m *ActionsRuleMutation) SetRuleActions(cra []*core.ActionsRuleAction) {
-	m.ruleActions = &cra
-}
-
-// RuleActions returns the ruleActions value in the mutation.
-func (m *ActionsRuleMutation) RuleActions() (r []*core.ActionsRuleAction, exists bool) {
-	v := m.ruleActions
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRuleActions returns the old ruleActions value of the ActionsRule.
-// If the ActionsRule object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ActionsRuleMutation) OldRuleActions(ctx context.Context) (v []*core.ActionsRuleAction, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldRuleActions is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldRuleActions requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRuleActions: %w", err)
-	}
-	return oldValue.RuleActions, nil
-}
-
-// ResetRuleActions reset all changes of the "ruleActions" field.
-func (m *ActionsRuleMutation) ResetRuleActions() {
-	m.ruleActions = nil
-}
-
-// Op returns the operation name.
-func (m *ActionsRuleMutation) Op() Op {
-	return m.op
-}
-
-// Type returns the node type of this mutation (ActionsRule).
-func (m *ActionsRuleMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during
-// this mutation. Note that, in order to get all numeric
-// fields that were in/decremented, call AddedFields().
-func (m *ActionsRuleMutation) Fields() []string {
-	fields := make([]string, 0, 6)
-	if m.create_time != nil {
-		fields = append(fields, actionsrule.FieldCreateTime)
-	}
-	if m.update_time != nil {
-		fields = append(fields, actionsrule.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, actionsrule.FieldName)
-	}
-	if m.triggerID != nil {
-		fields = append(fields, actionsrule.FieldTriggerID)
-	}
-	if m.ruleFilters != nil {
-		fields = append(fields, actionsrule.FieldRuleFilters)
-	}
-	if m.ruleActions != nil {
-		fields = append(fields, actionsrule.FieldRuleActions)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name.
-// The second boolean value indicates that this field was
-// not set, or was not define in the schema.
-func (m *ActionsRuleMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case actionsrule.FieldCreateTime:
-		return m.CreateTime()
-	case actionsrule.FieldUpdateTime:
-		return m.UpdateTime()
-	case actionsrule.FieldName:
-		return m.Name()
-	case actionsrule.FieldTriggerID:
-		return m.TriggerID()
-	case actionsrule.FieldRuleFilters:
-		return m.RuleFilters()
-	case actionsrule.FieldRuleActions:
-		return m.RuleActions()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database.
-// An error is returned if the mutation operation is not UpdateOne,
-// or the query to the database was failed.
-func (m *ActionsRuleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case actionsrule.FieldCreateTime:
-		return m.OldCreateTime(ctx)
-	case actionsrule.FieldUpdateTime:
-		return m.OldUpdateTime(ctx)
-	case actionsrule.FieldName:
-		return m.OldName(ctx)
-	case actionsrule.FieldTriggerID:
-		return m.OldTriggerID(ctx)
-	case actionsrule.FieldRuleFilters:
-		return m.OldRuleFilters(ctx)
-	case actionsrule.FieldRuleActions:
-		return m.OldRuleActions(ctx)
-	}
-	return nil, fmt.Errorf("unknown ActionsRule field %s", name)
-}
-
-// SetField sets the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ActionsRuleMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case actionsrule.FieldCreateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreateTime(v)
-		return nil
-	case actionsrule.FieldUpdateTime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateTime(v)
-		return nil
-	case actionsrule.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
-		return nil
-	case actionsrule.FieldTriggerID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTriggerID(v)
-		return nil
-	case actionsrule.FieldRuleFilters:
-		v, ok := value.([]*core.ActionsRuleFilter)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRuleFilters(v)
-		return nil
-	case actionsrule.FieldRuleActions:
-		v, ok := value.([]*core.ActionsRuleAction)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRuleActions(v)
-		return nil
-	}
-	return fmt.Errorf("unknown ActionsRule field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented
-// or decremented during this mutation.
-func (m *ActionsRuleMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was in/decremented
-// from a field with the given name. The second value indicates
-// that this field was not set, or was not define in the schema.
-func (m *ActionsRuleMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value for the given name. It returns an
-// error if the field is not defined in the schema, or if the
-// type mismatch the field type.
-func (m *ActionsRuleMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown ActionsRule numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared
-// during this mutation.
-func (m *ActionsRuleMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicates if this field was
-// cleared in this mutation.
-func (m *ActionsRuleMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value for the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *ActionsRuleMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ActionsRule nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation regarding the
-// given field name. It returns an error if the field is not
-// defined in the schema.
-func (m *ActionsRuleMutation) ResetField(name string) error {
-	switch name {
-	case actionsrule.FieldCreateTime:
-		m.ResetCreateTime()
-		return nil
-	case actionsrule.FieldUpdateTime:
-		m.ResetUpdateTime()
-		return nil
-	case actionsrule.FieldName:
-		m.ResetName()
-		return nil
-	case actionsrule.FieldTriggerID:
-		m.ResetTriggerID()
-		return nil
-	case actionsrule.FieldRuleFilters:
-		m.ResetRuleFilters()
-		return nil
-	case actionsrule.FieldRuleActions:
-		m.ResetRuleActions()
-		return nil
-	}
-	return fmt.Errorf("unknown ActionsRule field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this
-// mutation.
-func (m *ActionsRuleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// AddedIDs returns all ids (to other nodes) that were added for
-// the given edge name.
-func (m *ActionsRuleMutation) AddedIDs(name string) []ent.Value {
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this
-// mutation.
-func (m *ActionsRuleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// RemovedIDs returns all ids (to other nodes) that were removed for
-// the given edge name.
-func (m *ActionsRuleMutation) RemovedIDs(name string) []ent.Value {
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this
-// mutation.
-func (m *ActionsRuleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
-	return edges
-}
-
-// EdgeCleared returns a boolean indicates if this edge was
-// cleared in this mutation.
-func (m *ActionsRuleMutation) EdgeCleared(name string) bool {
-	return false
-}
-
-// ClearEdge clears the value for the given name. It returns an
-// error if the edge name is not defined in the schema.
-func (m *ActionsRuleMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown ActionsRule unique edge %s", name)
-}
-
-// ResetEdge resets all changes in the mutation regarding the
-// given edge name. It returns an error if the edge is not
-// defined in the schema.
-func (m *ActionsRuleMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown ActionsRule edge %s", name)
-}
 
 // ActivityMutation represents an operation that mutate the Activities
 // nodes in the graph.
@@ -1529,14 +958,13 @@ type BlockMutation struct {
 	id                      *int
 	create_time             *time.Time
 	update_time             *time.Time
-	name                    *string
 	cid                     *string
 	_type                   *block.Type
 	action_type             *flowschema.ActionTypeID
 	trigger_type            *flowschema.TriggerTypeID
 	start_param_definitions *[]*flowschema.VariableDefinition
 	input_params            *[]*flowschema.VariableExpression
-	ui_representation       *flowschema.BlockUIRepresentation
+	ui_representation       **flowschema.BlockUIRepresentation
 	clearedFields           map[string]struct{}
 	prev_blocks             map[int]struct{}
 	removedprev_blocks      map[int]struct{}
@@ -1715,43 +1143,6 @@ func (m *BlockMutation) OldUpdateTime(ctx context.Context) (v time.Time, err err
 // ResetUpdateTime reset all changes of the "update_time" field.
 func (m *BlockMutation) ResetUpdateTime() {
 	m.update_time = nil
-}
-
-// SetName sets the name field.
-func (m *BlockMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the name value in the mutation.
-func (m *BlockMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old name value of the Block.
-// If the Block object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName reset all changes of the "name" field.
-func (m *BlockMutation) ResetName() {
-	m.name = nil
 }
 
 // SetCid sets the cid field.
@@ -2029,12 +1420,12 @@ func (m *BlockMutation) ResetInputParams() {
 }
 
 // SetUIRepresentation sets the ui_representation field.
-func (m *BlockMutation) SetUIRepresentation(fur flowschema.BlockUIRepresentation) {
+func (m *BlockMutation) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) {
 	m.ui_representation = &fur
 }
 
 // UIRepresentation returns the ui_representation value in the mutation.
-func (m *BlockMutation) UIRepresentation() (r flowschema.BlockUIRepresentation, exists bool) {
+func (m *BlockMutation) UIRepresentation() (r *flowschema.BlockUIRepresentation, exists bool) {
 	v := m.ui_representation
 	if v == nil {
 		return
@@ -2046,7 +1437,7 @@ func (m *BlockMutation) UIRepresentation() (r flowschema.BlockUIRepresentation, 
 // If the Block object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *BlockMutation) OldUIRepresentation(ctx context.Context) (v flowschema.BlockUIRepresentation, err error) {
+func (m *BlockMutation) OldUIRepresentation(ctx context.Context) (v *flowschema.BlockUIRepresentation, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldUIRepresentation is allowed only on UpdateOne operations")
 	}
@@ -2499,15 +1890,12 @@ func (m *BlockMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *BlockMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, block.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, block.FieldUpdateTime)
-	}
-	if m.name != nil {
-		fields = append(fields, block.FieldName)
 	}
 	if m.cid != nil {
 		fields = append(fields, block.FieldCid)
@@ -2542,8 +1930,6 @@ func (m *BlockMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case block.FieldUpdateTime:
 		return m.UpdateTime()
-	case block.FieldName:
-		return m.Name()
 	case block.FieldCid:
 		return m.Cid()
 	case block.FieldType:
@@ -2571,8 +1957,6 @@ func (m *BlockMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreateTime(ctx)
 	case block.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
-	case block.FieldName:
-		return m.OldName(ctx)
 	case block.FieldCid:
 		return m.OldCid(ctx)
 	case block.FieldType:
@@ -2609,13 +1993,6 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
-		return nil
-	case block.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
 		return nil
 	case block.FieldCid:
 		v, ok := value.(string)
@@ -2660,7 +2037,7 @@ func (m *BlockMutation) SetField(name string, value ent.Value) error {
 		m.SetInputParams(v)
 		return nil
 	case block.FieldUIRepresentation:
-		v, ok := value.(flowschema.BlockUIRepresentation)
+		v, ok := value.(*flowschema.BlockUIRepresentation)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2754,9 +2131,6 @@ func (m *BlockMutation) ResetField(name string) error {
 		return nil
 	case block.FieldUpdateTime:
 		m.ResetUpdateTime()
-		return nil
-	case block.FieldName:
-		m.ResetName()
 		return nil
 	case block.FieldCid:
 		m.ResetCid()
@@ -15175,18 +14549,20 @@ func (m *EquipmentTypeMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type ExportTaskMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	_type         *exporttask.Type
-	status        *exporttask.Status
-	progress      *float64
-	addprogress   *float64
-	filters       *string
-	store_key     *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*ExportTask, error)
+	op                 Op
+	typ                string
+	id                 *int
+	_type              *exporttask.Type
+	status             *exporttask.Status
+	progress           *float64
+	addprogress        *float64
+	filters            *string
+	store_key          *string
+	wo_id_to_export    *int
+	addwo_id_to_export *int
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*ExportTask, error)
 }
 
 var _ ent.Mutation = (*ExportTaskMutation)(nil)
@@ -15486,6 +14862,77 @@ func (m *ExportTaskMutation) ResetStoreKey() {
 	delete(m.clearedFields, exporttask.FieldStoreKey)
 }
 
+// SetWoIDToExport sets the wo_id_to_export field.
+func (m *ExportTaskMutation) SetWoIDToExport(i int) {
+	m.wo_id_to_export = &i
+	m.addwo_id_to_export = nil
+}
+
+// WoIDToExport returns the wo_id_to_export value in the mutation.
+func (m *ExportTaskMutation) WoIDToExport() (r int, exists bool) {
+	v := m.wo_id_to_export
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWoIDToExport returns the old wo_id_to_export value of the ExportTask.
+// If the ExportTask object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *ExportTaskMutation) OldWoIDToExport(ctx context.Context) (v *int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldWoIDToExport is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldWoIDToExport requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWoIDToExport: %w", err)
+	}
+	return oldValue.WoIDToExport, nil
+}
+
+// AddWoIDToExport adds i to wo_id_to_export.
+func (m *ExportTaskMutation) AddWoIDToExport(i int) {
+	if m.addwo_id_to_export != nil {
+		*m.addwo_id_to_export += i
+	} else {
+		m.addwo_id_to_export = &i
+	}
+}
+
+// AddedWoIDToExport returns the value that was added to the wo_id_to_export field in this mutation.
+func (m *ExportTaskMutation) AddedWoIDToExport() (r int, exists bool) {
+	v := m.addwo_id_to_export
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearWoIDToExport clears the value of wo_id_to_export.
+func (m *ExportTaskMutation) ClearWoIDToExport() {
+	m.wo_id_to_export = nil
+	m.addwo_id_to_export = nil
+	m.clearedFields[exporttask.FieldWoIDToExport] = struct{}{}
+}
+
+// WoIDToExportCleared returns if the field wo_id_to_export was cleared in this mutation.
+func (m *ExportTaskMutation) WoIDToExportCleared() bool {
+	_, ok := m.clearedFields[exporttask.FieldWoIDToExport]
+	return ok
+}
+
+// ResetWoIDToExport reset all changes of the "wo_id_to_export" field.
+func (m *ExportTaskMutation) ResetWoIDToExport() {
+	m.wo_id_to_export = nil
+	m.addwo_id_to_export = nil
+	delete(m.clearedFields, exporttask.FieldWoIDToExport)
+}
+
 // Op returns the operation name.
 func (m *ExportTaskMutation) Op() Op {
 	return m.op
@@ -15500,7 +14947,7 @@ func (m *ExportTaskMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ExportTaskMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m._type != nil {
 		fields = append(fields, exporttask.FieldType)
 	}
@@ -15515,6 +14962,9 @@ func (m *ExportTaskMutation) Fields() []string {
 	}
 	if m.store_key != nil {
 		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	if m.wo_id_to_export != nil {
+		fields = append(fields, exporttask.FieldWoIDToExport)
 	}
 	return fields
 }
@@ -15534,6 +14984,8 @@ func (m *ExportTaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Filters()
 	case exporttask.FieldStoreKey:
 		return m.StoreKey()
+	case exporttask.FieldWoIDToExport:
+		return m.WoIDToExport()
 	}
 	return nil, false
 }
@@ -15553,6 +15005,8 @@ func (m *ExportTaskMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldFilters(ctx)
 	case exporttask.FieldStoreKey:
 		return m.OldStoreKey(ctx)
+	case exporttask.FieldWoIDToExport:
+		return m.OldWoIDToExport(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExportTask field %s", name)
 }
@@ -15597,6 +15051,13 @@ func (m *ExportTaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStoreKey(v)
 		return nil
+	case exporttask.FieldWoIDToExport:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWoIDToExport(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExportTask field %s", name)
 }
@@ -15608,6 +15069,9 @@ func (m *ExportTaskMutation) AddedFields() []string {
 	if m.addprogress != nil {
 		fields = append(fields, exporttask.FieldProgress)
 	}
+	if m.addwo_id_to_export != nil {
+		fields = append(fields, exporttask.FieldWoIDToExport)
+	}
 	return fields
 }
 
@@ -15618,6 +15082,8 @@ func (m *ExportTaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case exporttask.FieldProgress:
 		return m.AddedProgress()
+	case exporttask.FieldWoIDToExport:
+		return m.AddedWoIDToExport()
 	}
 	return nil, false
 }
@@ -15634,6 +15100,13 @@ func (m *ExportTaskMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddProgress(v)
 		return nil
+	case exporttask.FieldWoIDToExport:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWoIDToExport(v)
+		return nil
 	}
 	return fmt.Errorf("unknown ExportTask numeric field %s", name)
 }
@@ -15644,6 +15117,9 @@ func (m *ExportTaskMutation) ClearedFields() []string {
 	var fields []string
 	if m.FieldCleared(exporttask.FieldStoreKey) {
 		fields = append(fields, exporttask.FieldStoreKey)
+	}
+	if m.FieldCleared(exporttask.FieldWoIDToExport) {
+		fields = append(fields, exporttask.FieldWoIDToExport)
 	}
 	return fields
 }
@@ -15661,6 +15137,9 @@ func (m *ExportTaskMutation) ClearField(name string) error {
 	switch name {
 	case exporttask.FieldStoreKey:
 		m.ClearStoreKey()
+		return nil
+	case exporttask.FieldWoIDToExport:
+		m.ClearWoIDToExport()
 		return nil
 	}
 	return fmt.Errorf("unknown ExportTask nullable field %s", name)
@@ -15685,6 +15164,9 @@ func (m *ExportTaskMutation) ResetField(name string) error {
 		return nil
 	case exporttask.FieldStoreKey:
 		m.ResetStoreKey()
+		return nil
+	case exporttask.FieldWoIDToExport:
+		m.ResetWoIDToExport()
 		return nil
 	}
 	return fmt.Errorf("unknown ExportTask field %s", name)
@@ -20181,12 +19663,12 @@ type FlowMutation struct {
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
 	status                *flow.Status
+	newInstancesPolicy    *flow.NewInstancesPolicy
 	clearedFields         map[string]struct{}
 	blocks                map[int]struct{}
 	removedblocks         map[int]struct{}
 	clearedblocks         bool
-	draft                 map[int]struct{}
-	removeddraft          map[int]struct{}
+	draft                 *int
 	cleareddraft          bool
 	done                  bool
 	oldValue              func(context.Context) (*Flow, error)
@@ -20519,6 +20001,43 @@ func (m *FlowMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetNewInstancesPolicy sets the newInstancesPolicy field.
+func (m *FlowMutation) SetNewInstancesPolicy(fip flow.NewInstancesPolicy) {
+	m.newInstancesPolicy = &fip
+}
+
+// NewInstancesPolicy returns the newInstancesPolicy value in the mutation.
+func (m *FlowMutation) NewInstancesPolicy() (r flow.NewInstancesPolicy, exists bool) {
+	v := m.newInstancesPolicy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNewInstancesPolicy returns the old newInstancesPolicy value of the Flow.
+// If the Flow object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowMutation) OldNewInstancesPolicy(ctx context.Context) (v flow.NewInstancesPolicy, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldNewInstancesPolicy is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldNewInstancesPolicy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNewInstancesPolicy: %w", err)
+	}
+	return oldValue.NewInstancesPolicy, nil
+}
+
+// ResetNewInstancesPolicy reset all changes of the "newInstancesPolicy" field.
+func (m *FlowMutation) ResetNewInstancesPolicy() {
+	m.newInstancesPolicy = nil
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (m *FlowMutation) AddBlockIDs(ids ...int) {
 	if m.blocks == nil {
@@ -20572,14 +20091,9 @@ func (m *FlowMutation) ResetBlocks() {
 	m.removedblocks = nil
 }
 
-// AddDraftIDs adds the draft edge to FlowDraft by ids.
-func (m *FlowMutation) AddDraftIDs(ids ...int) {
-	if m.draft == nil {
-		m.draft = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.draft[ids[i]] = struct{}{}
-	}
+// SetDraftID sets the draft edge to FlowDraft by id.
+func (m *FlowMutation) SetDraftID(id int) {
+	m.draft = &id
 }
 
 // ClearDraft clears the draft edge to FlowDraft.
@@ -20592,28 +20106,20 @@ func (m *FlowMutation) DraftCleared() bool {
 	return m.cleareddraft
 }
 
-// RemoveDraftIDs removes the draft edge to FlowDraft by ids.
-func (m *FlowMutation) RemoveDraftIDs(ids ...int) {
-	if m.removeddraft == nil {
-		m.removeddraft = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.removeddraft[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedDraft returns the removed ids of draft.
-func (m *FlowMutation) RemovedDraftIDs() (ids []int) {
-	for id := range m.removeddraft {
-		ids = append(ids, id)
+// DraftID returns the draft id in the mutation.
+func (m *FlowMutation) DraftID() (id int, exists bool) {
+	if m.draft != nil {
+		return *m.draft, true
 	}
 	return
 }
 
 // DraftIDs returns the draft ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DraftID instead. It exists only for internal usage by the builders.
 func (m *FlowMutation) DraftIDs() (ids []int) {
-	for id := range m.draft {
-		ids = append(ids, id)
+	if id := m.draft; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -20622,7 +20128,6 @@ func (m *FlowMutation) DraftIDs() (ids []int) {
 func (m *FlowMutation) ResetDraft() {
 	m.draft = nil
 	m.cleareddraft = false
-	m.removeddraft = nil
 }
 
 // Op returns the operation name.
@@ -20639,7 +20144,7 @@ func (m *FlowMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, flow.FieldCreateTime)
 	}
@@ -20657,6 +20162,9 @@ func (m *FlowMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, flow.FieldStatus)
+	}
+	if m.newInstancesPolicy != nil {
+		fields = append(fields, flow.FieldNewInstancesPolicy)
 	}
 	return fields
 }
@@ -20678,6 +20186,8 @@ func (m *FlowMutation) Field(name string) (ent.Value, bool) {
 		return m.EndParamDefinitions()
 	case flow.FieldStatus:
 		return m.Status()
+	case flow.FieldNewInstancesPolicy:
+		return m.NewInstancesPolicy()
 	}
 	return nil, false
 }
@@ -20699,6 +20209,8 @@ func (m *FlowMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEndParamDefinitions(ctx)
 	case flow.FieldStatus:
 		return m.OldStatus(ctx)
+	case flow.FieldNewInstancesPolicy:
+		return m.OldNewInstancesPolicy(ctx)
 	}
 	return nil, fmt.Errorf("unknown Flow field %s", name)
 }
@@ -20749,6 +20261,13 @@ func (m *FlowMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case flow.FieldNewInstancesPolicy:
+		v, ok := value.(flow.NewInstancesPolicy)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNewInstancesPolicy(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
@@ -20833,6 +20352,9 @@ func (m *FlowMutation) ResetField(name string) error {
 	case flow.FieldStatus:
 		m.ResetStatus()
 		return nil
+	case flow.FieldNewInstancesPolicy:
+		m.ResetNewInstancesPolicy()
+		return nil
 	}
 	return fmt.Errorf("unknown Flow field %s", name)
 }
@@ -20861,11 +20383,9 @@ func (m *FlowMutation) AddedIDs(name string) []ent.Value {
 		}
 		return ids
 	case flow.EdgeDraft:
-		ids := make([]ent.Value, 0, len(m.draft))
-		for id := range m.draft {
-			ids = append(ids, id)
+		if id := m.draft; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -20877,9 +20397,6 @@ func (m *FlowMutation) RemovedEdges() []string {
 	if m.removedblocks != nil {
 		edges = append(edges, flow.EdgeBlocks)
 	}
-	if m.removeddraft != nil {
-		edges = append(edges, flow.EdgeDraft)
-	}
 	return edges
 }
 
@@ -20890,12 +20407,6 @@ func (m *FlowMutation) RemovedIDs(name string) []ent.Value {
 	case flow.EdgeBlocks:
 		ids := make([]ent.Value, 0, len(m.removedblocks))
 		for id := range m.removedblocks {
-			ids = append(ids, id)
-		}
-		return ids
-	case flow.EdgeDraft:
-		ids := make([]ent.Value, 0, len(m.removeddraft))
-		for id := range m.removeddraft {
 			ids = append(ids, id)
 		}
 		return ids
@@ -20932,6 +20443,9 @@ func (m *FlowMutation) EdgeCleared(name string) bool {
 // error if the edge name is not defined in the schema.
 func (m *FlowMutation) ClearEdge(name string) error {
 	switch name {
+	case flow.EdgeDraft:
+		m.ClearDraft()
+		return nil
 	}
 	return fmt.Errorf("unknown Flow unique edge %s", name)
 }

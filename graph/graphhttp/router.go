@@ -11,8 +11,6 @@ import (
 	"github.com/facebookincubator/symphony/graph/graphql"
 	"github.com/facebookincubator/symphony/graph/importer"
 	"github.com/facebookincubator/symphony/graph/jobs"
-	"github.com/facebookincubator/symphony/pkg/actions"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
 	"github.com/facebookincubator/symphony/pkg/authz"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	pkgexporter "github.com/facebookincubator/symphony/pkg/exporter"
@@ -35,11 +33,9 @@ type routerConfig struct {
 		triggerFactory triggers.Factory
 		actionFactory  flowactions.Factory
 	}
-	orc8r   struct{ client *http.Client }
-	actions struct{ registry *executor.Registry }
 }
 
-func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
+func newRouter(cfg routerConfig) (*mux.Router, error) {
 	router := mux.NewRouter()
 	router.Use(
 		func(h http.Handler) http.Handler {
@@ -54,23 +50,20 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		func(h http.Handler) http.Handler {
 			return authz.Handler(h, cfg.logger)
 		},
-		func(h http.Handler) http.Handler {
-			return actions.Handler(h, cfg.logger, cfg.actions.registry)
-		},
 	)
 	handler, err := importer.NewHandler(importer.Config{
 		Logger:          cfg.logger,
 		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
 	if err != nil {
-		return nil, nil, fmt.Errorf("creating import handler: %w", err)
+		return nil, fmt.Errorf("creating import handler: %w", err)
 	}
 	router.PathPrefix("/import/").
 		Handler(http.StripPrefix("/import", handler)).
 		Name("import")
 
 	if handler, err = pkgexporter.NewHandler(cfg.logger); err != nil {
-		return nil, nil, fmt.Errorf("creating export handler: %w", err)
+		return nil, fmt.Errorf("creating export handler: %w", err)
 	}
 	router.PathPrefix("/export/").
 		Handler(http.StripPrefix("/export", handler)).
@@ -81,27 +74,23 @@ func newRouter(cfg routerConfig) (*mux.Router, func(), error) {
 		ReceiverFactory: cfg.events.ReceiverFactory,
 	})
 	if err != nil {
-		return nil, nil, fmt.Errorf("creating jobs handler: %w", err)
+		return nil, fmt.Errorf("creating jobs handler: %w", err)
 	}
 	router.PathPrefix("/jobs/").
 		Handler(http.StripPrefix("/jobs", handler)).
 		Name("jobs")
 
-	handler, cleanup, err := graphql.NewHandler(
+	handler = graphql.NewHandler(
 		graphql.HandlerConfig{
 			Logger:          cfg.logger,
 			ReceiverFactory: cfg.events.ReceiverFactory,
 			TriggerFactory:  cfg.flow.triggerFactory,
 			ActionFactory:   cfg.flow.actionFactory,
-			Orc8rClient:     cfg.orc8r.client,
 		},
 	)
-	if err != nil {
-		return nil, nil, fmt.Errorf("creating graphql handler: %w", err)
-	}
 	router.PathPrefix("/").
 		Handler(handler).
 		Name("root")
 
-	return router, cleanup, nil
+	return router, nil
 }

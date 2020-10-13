@@ -11,5 +11,6 @@ locals {
     jetstack             = "https://charts.jetstack.io"
     autoscaler           = "https://kubernetes.github.io/autoscaler"
     prometheus-community = "https://prometheus-community.github.io/helm-charts"
+    ingress-nginx        = "https://kubernetes.github.io/ingress-nginx"
   }
 }

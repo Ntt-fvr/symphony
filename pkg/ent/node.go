@@ -17,7 +17,6 @@ import (
 	"github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
 	"github.com/facebookincubator/ent-contrib/entgql"
-	"github.com/facebookincubator/symphony/pkg/ent/actionsrule"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/blockinstance"
@@ -101,65 +100,6 @@ type Edge struct {
 	Type string `json:"type,omitempty"` // edge type.
 	Name string `json:"name,omitempty"` // edge name.
 	IDs  []int  `json:"ids,omitempty"`  // node ids (where this edge point to).
-}
-
-func (ar *ActionsRule) Node(ctx context.Context) (node *Node, err error) {
-	node = &Node{
-		ID:     ar.ID,
-		Type:   "ActionsRule",
-		Fields: make([]*Field, 6),
-		Edges:  make([]*Edge, 0),
-	}
-	var buf []byte
-	if buf, err = json.Marshal(ar.CreateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[0] = &Field{
-		Type:  "time.Time",
-		Name:  "create_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.UpdateTime); err != nil {
-		return nil, err
-	}
-	node.Fields[1] = &Field{
-		Type:  "time.Time",
-		Name:  "update_time",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.TriggerID); err != nil {
-		return nil, err
-	}
-	node.Fields[3] = &Field{
-		Type:  "string",
-		Name:  "triggerID",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.RuleFilters); err != nil {
-		return nil, err
-	}
-	node.Fields[4] = &Field{
-		Type:  "[]*core.ActionsRuleFilter",
-		Name:  "ruleFilters",
-		Value: string(buf),
-	}
-	if buf, err = json.Marshal(ar.RuleActions); err != nil {
-		return nil, err
-	}
-	node.Fields[5] = &Field{
-		Type:  "[]*core.ActionsRuleAction",
-		Name:  "ruleActions",
-		Value: string(buf),
-	}
-	return node, nil
 }
 
 func (a *Activity) Node(ctx context.Context) (node *Node, err error) {
@@ -256,7 +196,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     b.ID,
 		Type:   "Block",
-		Fields: make([]*Field, 10),
+		Fields: make([]*Field, 9),
 		Edges:  make([]*Edge, 9),
 	}
 	var buf []byte
@@ -276,18 +216,10 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 		Name:  "update_time",
 		Value: string(buf),
 	}
-	if buf, err = json.Marshal(b.Name); err != nil {
-		return nil, err
-	}
-	node.Fields[2] = &Field{
-		Type:  "string",
-		Name:  "name",
-		Value: string(buf),
-	}
 	if buf, err = json.Marshal(b.Cid); err != nil {
 		return nil, err
 	}
-	node.Fields[3] = &Field{
+	node.Fields[2] = &Field{
 		Type:  "string",
 		Name:  "cid",
 		Value: string(buf),
@@ -295,7 +227,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.Type); err != nil {
 		return nil, err
 	}
-	node.Fields[4] = &Field{
+	node.Fields[3] = &Field{
 		Type:  "block.Type",
 		Name:  "type",
 		Value: string(buf),
@@ -303,7 +235,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.ActionType); err != nil {
 		return nil, err
 	}
-	node.Fields[5] = &Field{
+	node.Fields[4] = &Field{
 		Type:  "flowschema.ActionTypeID",
 		Name:  "action_type",
 		Value: string(buf),
@@ -311,7 +243,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.TriggerType); err != nil {
 		return nil, err
 	}
-	node.Fields[6] = &Field{
+	node.Fields[5] = &Field{
 		Type:  "flowschema.TriggerTypeID",
 		Name:  "trigger_type",
 		Value: string(buf),
@@ -319,7 +251,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.StartParamDefinitions); err != nil {
 		return nil, err
 	}
-	node.Fields[7] = &Field{
+	node.Fields[6] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "start_param_definitions",
 		Value: string(buf),
@@ -327,7 +259,7 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.InputParams); err != nil {
 		return nil, err
 	}
-	node.Fields[8] = &Field{
+	node.Fields[7] = &Field{
 		Type:  "[]*flowschema.VariableExpression",
 		Name:  "input_params",
 		Value: string(buf),
@@ -335,8 +267,8 @@ func (b *Block) Node(ctx context.Context) (node *Node, err error) {
 	if buf, err = json.Marshal(b.UIRepresentation); err != nil {
 		return nil, err
 	}
-	node.Fields[9] = &Field{
-		Type:  "flowschema.BlockUIRepresentation",
+	node.Fields[8] = &Field{
+		Type:  "*flowschema.BlockUIRepresentation",
 		Name:  "ui_representation",
 		Value: string(buf),
 	}
@@ -1775,7 +1707,7 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     et.ID,
 		Type:   "ExportTask",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 0),
 	}
 	var buf []byte
@@ -1817,6 +1749,14 @@ func (et *ExportTask) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "string",
 		Name:  "store_key",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(et.WoIDToExport); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "int",
+		Name:  "wo_id_to_export",
 		Value: string(buf),
 	}
 	return node, nil
@@ -2313,7 +2253,7 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     f.ID,
 		Type:   "Flow",
-		Fields: make([]*Field, 6),
+		Fields: make([]*Field, 7),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -2363,6 +2303,14 @@ func (f *Flow) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[5] = &Field{
 		Type:  "flow.Status",
 		Name:  "status",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(f.NewInstancesPolicy); err != nil {
+		return nil, err
+	}
+	node.Fields[6] = &Field{
+		Type:  "flow.NewInstancesPolicy",
+		Name:  "newInstancesPolicy",
 		Value: string(buf),
 	}
 	var ids []int
@@ -6045,15 +5993,6 @@ func (c *Client) Noder(ctx context.Context, id int) (_ Noder, err error) {
 
 func (c *Client) noder(ctx context.Context, tbl string, id int) (Noder, error) {
 	switch tbl {
-	case actionsrule.Table:
-		n, err := c.ActionsRule.Query().
-			Where(actionsrule.ID(id)).
-			CollectFields(ctx, "ActionsRule").
-			Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
 	case activity.Table:
 		n, err := c.Activity.Query().
 			Where(activity.ID(id)).

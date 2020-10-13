@@ -125,6 +125,7 @@ func TestMetrics(t *testing.T) {
 			return leftOp <= rightOp
 		})
 		for i := range rows {
+			view.ClearStart(rows[i].Data)
 			require.Equal(t, v.rows[i].Data, rows[i].Data)
 			require.ElementsMatch(t, v.rows[i].Tags, rows[i].Tags)
 		}

@@ -8,6 +8,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/facebook/ent/dialect/sql"
@@ -90,14 +91,6 @@ func (fdu *FlowDraftUpdate) AddBlocks(b ...*Block) *FlowDraftUpdate {
 // SetFlowID sets the flow edge to Flow by id.
 func (fdu *FlowDraftUpdate) SetFlowID(id int) *FlowDraftUpdate {
 	fdu.mutation.SetFlowID(id)
-	return fdu
-}
-
-// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
-func (fdu *FlowDraftUpdate) SetNillableFlowID(id *int) *FlowDraftUpdate {
-	if id != nil {
-		fdu = fdu.SetFlowID(*id)
-	}
 	return fdu
 }
 
@@ -210,6 +203,9 @@ func (fdu *FlowDraftUpdate) check() error {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := fdu.mutation.FlowID(); fdu.mutation.FlowCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"flow\"")
 	}
 	return nil
 }
@@ -328,7 +324,7 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if fdu.mutation.FlowCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   flowdraft.FlowTable,
 			Columns: []string{flowdraft.FlowColumn},
@@ -344,7 +340,7 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := fdu.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   flowdraft.FlowTable,
 			Columns: []string{flowdraft.FlowColumn},
@@ -435,14 +431,6 @@ func (fduo *FlowDraftUpdateOne) AddBlocks(b ...*Block) *FlowDraftUpdateOne {
 // SetFlowID sets the flow edge to Flow by id.
 func (fduo *FlowDraftUpdateOne) SetFlowID(id int) *FlowDraftUpdateOne {
 	fduo.mutation.SetFlowID(id)
-	return fduo
-}
-
-// SetNillableFlowID sets the flow edge to Flow by id if the given value is not nil.
-func (fduo *FlowDraftUpdateOne) SetNillableFlowID(id *int) *FlowDraftUpdateOne {
-	if id != nil {
-		fduo = fduo.SetFlowID(*id)
-	}
 	return fduo
 }
 
@@ -555,6 +543,9 @@ func (fduo *FlowDraftUpdateOne) check() error {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := fduo.mutation.FlowID(); fduo.mutation.FlowCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"flow\"")
 	}
 	return nil
 }
@@ -671,7 +662,7 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (_node *FlowDraft, 
 	}
 	if fduo.mutation.FlowCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   flowdraft.FlowTable,
 			Columns: []string{flowdraft.FlowColumn},
@@ -687,7 +678,7 @@ func (fduo *FlowDraftUpdateOne) sqlSave(ctx context.Context) (_node *FlowDraft, 
 	}
 	if nodes := fduo.mutation.FlowIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   flowdraft.FlowTable,
 			Columns: []string{flowdraft.FlowColumn},

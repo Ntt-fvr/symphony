@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/facebookincubator/symphony/pkg/actions/core"
 	models1 "github.com/facebookincubator/symphony/pkg/authz/models"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
 	"github.com/facebookincubator/symphony/pkg/ent/file"
+	"github.com/facebookincubator/symphony/pkg/ent/flow"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/service"
@@ -45,70 +45,15 @@ func (ActionBlock) IsBlockDetails() {}
 
 type ActionBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	ActionType       flowschema.ActionTypeID           `json:"actionType"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type ActionsAction struct {
-	ActionID    core.ActionID `json:"actionID"`
-	Description string        `json:"description"`
-	DataType    core.DataType `json:"dataType"`
-}
-
-type ActionsFilter struct {
-	FilterID           string             `json:"filterID"`
-	Description        string             `json:"description"`
-	SupportedOperators []*ActionsOperator `json:"supportedOperators"`
-}
-
-type ActionsOperator struct {
-	OperatorID  string        `json:"operatorID"`
-	Description string        `json:"description"`
-	DataType    core.DataType `json:"dataType"`
-}
-
-type ActionsRuleActionInput struct {
-	ActionID core.ActionID `json:"actionID"`
-	Data     string        `json:"data"`
-}
-
-type ActionsRuleFilterInput struct {
-	FilterID   string `json:"filterID"`
-	OperatorID string `json:"operatorID"`
-	Data       string `json:"data"`
-}
-
-type ActionsRulesSearchResult struct {
-	Results []*ent.ActionsRule `json:"results"`
-	Count   int                `json:"count"`
-}
-
-type ActionsTrigger struct {
-	ID               int              `json:"id"`
-	TriggerID        core.TriggerID   `json:"triggerID"`
-	Description      string           `json:"description"`
-	SupportedActions []*ActionsAction `json:"supportedActions"`
-	SupportedFilters []*ActionsFilter `json:"supportedFilters"`
-}
-
-type ActionsTriggersSearchResult struct {
-	Results []*ActionsTrigger `json:"results"`
-	Count   int               `json:"count"`
 }
 
 type ActivityFilterInput struct {
 	Limit          int                   `json:"limit"`
 	OrderDirection ent.OrderDirection    `json:"orderDirection"`
 	ActivityType   activity.ActivityType `json:"activityType"`
-}
-
-type AddActionsRuleInput struct {
-	Name        string                    `json:"name"`
-	TriggerID   core.TriggerID            `json:"triggerID"`
-	RuleActions []*ActionsRuleActionInput `json:"ruleActions"`
-	RuleFilters []*ActionsRuleFilterInput `json:"ruleFilters"`
 }
 
 type AddCustomerInput struct {
@@ -351,19 +296,11 @@ func (DecisionBlock) IsBlockDetails() {}
 
 type DecisionBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
-}
-
-type Device struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Up   *bool  `json:"up"`
 }
 
 type EditBlockInput struct {
 	ID               int                               `json:"id"`
-	Name             *string                           `json:"name"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
@@ -506,18 +443,23 @@ func (EndBlock) IsBlockDetails() {}
 
 type EndBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
 
+type EquipmentPortConnectionInput struct {
+	ID   *int    `json:"id"`
+	Name *string `json:"name"`
+}
+
 type EquipmentPortInput struct {
-	ID           *int    `json:"id"`
-	Name         string  `json:"name"`
-	Index        *int    `json:"index"`
-	VisibleLabel *string `json:"visibleLabel"`
-	PortTypeID   *int    `json:"portTypeID"`
-	Bandwidth    *string `json:"bandwidth"`
+	ID             *int                            `json:"id"`
+	Name           string                          `json:"name"`
+	Index          *int                            `json:"index"`
+	VisibleLabel   *string                         `json:"visibleLabel"`
+	PortTypeID     *int                            `json:"portTypeID"`
+	Bandwidth      *string                         `json:"bandwidth"`
+	ConnectedPorts []*EquipmentPortConnectionInput `json:"connectedPorts"`
 }
 
 type EquipmentPositionInput struct {
@@ -569,7 +511,6 @@ func (GotoBlock) IsBlockDetails() {}
 
 type GotoBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	TargetBlockCid   string                            `json:"targetBlockCid"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -647,7 +588,8 @@ type PropertyInput struct {
 }
 
 type PublishFlowInput struct {
-	FlowDraftID int `json:"flowDraftID"`
+	FlowDraftID         int                     `json:"flowDraftID"`
+	FlowInstancesPolicy flow.NewInstancesPolicy `json:"flowInstancesPolicy"`
 }
 
 type PythonPackage struct {
@@ -741,7 +683,6 @@ func (StartBlock) IsBlockDetails() {}
 
 type StartBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	ParamDefinitions []*flowschema.VariableDefinition  `json:"paramDefinitions"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
 }
@@ -760,7 +701,6 @@ func (SubflowBlock) IsBlockDetails() {}
 
 type SubflowBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	FlowID           int                               `json:"flowId"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`
@@ -902,7 +842,6 @@ func (TriggerBlock) IsBlockDetails() {}
 
 type TriggerBlockInput struct {
 	Cid              string                            `json:"cid"`
-	Name             string                            `json:"name"`
 	TriggerType      flowschema.TriggerTypeID          `json:"triggerType"`
 	Params           []*VariableExpressionInput        `json:"params"`
 	UIRepresentation *flowschema.BlockUIRepresentation `json:"uiRepresentation"`

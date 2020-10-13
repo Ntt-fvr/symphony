@@ -16,7 +16,7 @@ import useCombinedRefs from '../../hooks/useCombinedRefs';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef, useState} from 'react';
 
-export const SIDE_PADDING = 24;
+export const SIDE_PADDING = 32;
 const scrollWidth = 12;
 const useStyles = makeStyles(() => ({
   viewWrapper: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto',
     display: 'flex',
     '&:not($plain)': {
-      padding: `8px ${SIDE_PADDING}px 4px 24px`,
+      padding: `8px ${SIDE_PADDING}px 4px ${SIDE_PADDING}px`,
       '&$withScrollY': {
         paddingRight: `${SIDE_PADDING - scrollWidth}px`,
       },

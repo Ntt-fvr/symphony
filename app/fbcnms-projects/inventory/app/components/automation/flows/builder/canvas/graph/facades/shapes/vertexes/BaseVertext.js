@@ -22,17 +22,23 @@ import type {Paper} from '../../Paper';
 
 import symphony from '@symphony/design-system/theme/symphony';
 
+const defaultAttrProps = {
+  cursor: 'move',
+};
+
 export const VERTEX_COMMON_DISPLAY = {
   attrs: {
     label: {
+      ...defaultAttrProps,
       text: 'manual action',
       textVerticalAnchor: 'middle',
       textAnchor: 'center',
-      refY: '120%',
+      refY: '115%',
       fontSize: 14,
       fill: symphony.palette.secondary,
     },
   },
+  defaultAttrProps,
   markup: [
     {
       tagName: 'text',
@@ -98,6 +104,7 @@ export interface IVertexModel extends IShape {
   +view: Paper => IVertexView;
   +addPort: KeyValuePair => void;
   +getPorts: () => $ReadOnlyArray<Port>;
+  +clone: (options?: ?KeyValuePair) => IVertexModel;
 }
 
 export type IVertexView = $ReadOnly<{|

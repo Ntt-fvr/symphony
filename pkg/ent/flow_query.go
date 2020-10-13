@@ -98,7 +98,7 @@ func (fq *FlowQuery) QueryDraft() *FlowDraftQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(flow.Table, flow.FieldID, selector),
 			sqlgraph.To(flowdraft.Table, flowdraft.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, flow.DraftTable, flow.DraftColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, flow.DraftTable, flow.DraftColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
@@ -437,7 +437,6 @@ func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Draft = []*FlowDraft{}
 		}
 		query.withFKs = true
 		query.Where(predicate.FlowDraft(func(s *sql.Selector) {
@@ -456,7 +455,7 @@ func (fq *FlowQuery) sqlAll(ctx context.Context) ([]*Flow, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "flow_draft" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Draft = append(node.Edges.Draft, n)
+			node.Edges.Draft = n
 		}
 	}
 

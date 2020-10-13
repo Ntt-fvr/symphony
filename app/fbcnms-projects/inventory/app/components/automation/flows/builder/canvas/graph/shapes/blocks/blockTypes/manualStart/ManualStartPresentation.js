@@ -8,26 +8,11 @@
  * @format
  */
 
-import React from 'react';
-import classNames from 'classnames';
+import * as React from 'react';
+import ManualStartIcon from './ManualStartIcon';
 import fbt from 'fbt';
-import {makeStyles} from '@material-ui/styles';
+import {BasePresentation} from '../BasePresentation';
 
-const useStyles = makeStyles(() => ({
-  root: {},
-}));
-
-type Props = $ReadOnly<{|
-  className?: ?string,
-|}>;
-
-export default function ManualStartPresentation(props: Props) {
-  const {className} = props;
-  const classes = useStyles();
-
-  return (
-    <div className={classNames(classes.root, className)}>
-      <fbt desc="">Manual Start</fbt>
-    </div>
-  );
+export default function DecisionPresentation() {
+  return <BasePresentation icon={ManualStartIcon} text={fbt('Start', '')} />;
 }

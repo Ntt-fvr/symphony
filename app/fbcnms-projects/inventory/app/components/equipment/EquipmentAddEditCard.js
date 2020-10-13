@@ -33,7 +33,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import EditEquipmentMutation from '../../mutations/EditEquipmentMutation';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormSaveCancelPanel from '@symphony/design-system/components/Form/FormSaveCancelPanel';
-import LinkedDeviceAddEditSection from '../form/LinkedDeviceAddEditSection';
 import NameInput from '@symphony/design-system/components/Form/NameInput';
 import PropertiesAddEditSection from '../form/PropertiesAddEditSection';
 import React from 'react';
@@ -82,9 +81,6 @@ const equipmentAddEditCardQuery = graphql`
           id
         }
         parentPosition {
-          id
-        }
-        device {
           id
         }
         equipmentType {
@@ -210,9 +206,6 @@ class EquipmentAddEditCard extends React.Component<Props, State> {
         </div>
       );
     }
-    const equipmentLiveStatusEnabled = this.context.isFeatureEnabled(
-      'equipment_live_status',
-    );
     return (
       <Card>
         <FormContextProvider
@@ -238,12 +231,6 @@ class EquipmentAddEditCard extends React.Component<Props, State> {
               <PropertiesAddEditSection
                 properties={editingEquipment.properties}
                 onChange={index => this._propertyChangedHandler(index)}
-              />
-            ) : null}
-            {this.props.editingEquipmentId && equipmentLiveStatusEnabled ? (
-              <LinkedDeviceAddEditSection
-                deviceID={editingEquipment.device?.id ?? ''}
-                onChange={this._deviceIDChangedHandler}
               />
             ) : null}
           </CardContent>
@@ -327,7 +314,6 @@ class EquipmentAddEditCard extends React.Component<Props, State> {
       input: {
         id: editingEquipment.id,
         name: editingEquipment.name,
-        deviceID: editingEquipment.device?.id,
         properties: toPropertyInput(editingEquipment.properties),
       },
     };
@@ -394,7 +380,6 @@ class EquipmentAddEditCard extends React.Component<Props, State> {
       parentLocation: equipment?.parentLocation,
       parentPosition: equipment?.parentPosition,
       futureState: equipment?.futureState,
-      device: equipment?.device,
       workOrder: equipment?.workOrder,
       locationHierarchy: equipment?.locationHierarchy ?? [],
       positionHierarchy: equipment?.positionHierarchy ?? [],
@@ -419,17 +404,6 @@ class EquipmentAddEditCard extends React.Component<Props, State> {
         }),
       };
     });
-
-  _deviceIDChangedHandler = (deviceID: string) => {
-    this.setState(prevState => {
-      return {
-        error: '',
-        editingEquipment: update(prevState.editingEquipment, {
-          device: {$set: {id: deviceID}},
-        }),
-      };
-    });
-  };
 
   _onNameChanged = this._fieldChangedHandler('name');
 }

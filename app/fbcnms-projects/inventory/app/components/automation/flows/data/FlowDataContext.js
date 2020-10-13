@@ -8,13 +8,6 @@
  * @format
  */
 
-import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
-import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
-import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
-import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
-import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
-
-import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock';
 import type {
   FlowDataContext_FlowDraftQuery,
   FlowDataContext_FlowDraftQueryResponse,
@@ -24,9 +17,15 @@ import type {ImportFlowDraftInput} from '../../../../mutations/__generated__/Imp
 import type {ImportFlowDraftMutationResponse} from '../../../../mutations/__generated__/ImportFlowDraftMutation.graphql';
 
 import * as React from 'react';
+import BaseBlock from '../builder/canvas/graph/shapes/blocks/BaseBlock.js';
 import fbt from 'fbt';
+import withInventoryErrorBoundary from '../../../../common/withInventoryErrorBoundary';
+import {TYPE as CreateWorkorderType} from '../builder/canvas/graph/facades/shapes/vertexes/actions/CreateWorkorder';
+import {TYPE as DecisionType} from '../builder/canvas/graph/facades/shapes/vertexes/logic/Decision';
+import {TYPE as EndType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/End';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {LogEvents, ServerLogger} from '../../../../common/LoggingUtils';
+import {TYPE as ManualStartType} from '../builder/canvas/graph/facades/shapes/vertexes/administrative/ManualStart';
 import {graphql} from 'react-relay';
 import {
   mapActionBlocksForSave,
@@ -38,9 +37,10 @@ import {
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
-import {useGraph} from '../builder/canvas/graph/GraphContext';
+import {useGraph} from '../builder/canvas/graph/graphAPIContext/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useLazyLoadQuery} from 'react-relay/hooks';
+import {useRef} from 'react';
 
 const BLOCK_TYPES = {
   StartBlock: ManualStartType,
@@ -54,9 +54,16 @@ type FlowDraftResponse = $ElementType<
   'flowDraft',
 >;
 
+type FlowSettingsUpdateType = ?{
+  name?: ?string,
+  description?: ?string,
+};
+
 export type FlowDataContextType = {
   flowDraft: FlowDraftResponse,
-  save: () => Promise<ImportFlowDraftMutationResponse>,
+  save: (
+    flowSettingsUpdate?: FlowSettingsUpdateType,
+  ) => Promise<ImportFlowDraftMutationResponse>,
 };
 
 const FlowDataContextDefaults = {
@@ -74,26 +81,26 @@ const flowQuery = graphql`
       ... on FlowDraft {
         id
         name
+        description
         blocks {
           cid
-          name
           details {
             __typename
           }
           uiRepresentation {
+            name
             xPosition
             yPosition
           }
           nextBlocks {
             cid
-            name
             uiRepresentation {
+              name
               xPosition
               yPosition
             }
           }
         }
-        ...DetailsView_flowDraft
         ...BlocksBar_flowDraft
       }
     }
@@ -147,7 +154,7 @@ function FlowDataContextProviderComponent(props: Props) {
           BLOCK_TYPES[block.details.__typename],
           {
             id: block.cid,
-            text: block.name,
+            text: block.uiRepresentation?.name ?? '',
             position: {
               x: block.uiRepresentation?.xPosition ?? 0,
               y: block.uiRepresentation?.yPosition ?? 0,
@@ -157,7 +164,7 @@ function FlowDataContextProviderComponent(props: Props) {
         if (!(createdBlock instanceof BaseBlock)) {
           errors.push({
             id: block.cid,
-            name: block.name,
+            name: block.uiRepresentation?.name ?? '',
           });
         }
       });
@@ -207,7 +214,12 @@ function FlowDataContextProviderComponent(props: Props) {
     [flow],
   );
 
+  const isLoaded = useRef(false);
   useEffect(() => {
+    if (isLoaded.current) {
+      return;
+    }
+
     flow.clearGraph();
 
     if (flowDraft?.blocks == null) {
@@ -217,53 +229,64 @@ function FlowDataContextProviderComponent(props: Props) {
     const blocks = [...flowDraft.blocks];
     loadBlocksIntoGraph(blocks);
     loadConnectorsIntoGraph(blocks);
+
+    isLoaded.current = true;
   }, [flow, flowDraft, loadBlocksIntoGraph, loadConnectorsIntoGraph]);
 
-  const save = useCallback(() => {
-    if (flowDraft == null) {
-      return Promise.reject('There was not flowDraftData to save.');
-    }
+  const save = useCallback(
+    (flowSettingsUpdate: FlowSettingsUpdateType) => {
+      if (flowDraft == null) {
+        return Promise.reject('There was not flowDraftData to save.');
+      }
 
-    const flowData: ImportFlowDraftInput = {
-      id: flowDraft.id ?? '',
-      name: flowDraft.name ?? '',
-      endParamDefinitions: [],
-    };
+      const flowData: ImportFlowDraftInput = {
+        id: flowDraft.id ?? '',
+        name:
+          flowSettingsUpdate?.name != null
+            ? flowSettingsUpdate.name
+            : flowDraft.name ?? '',
+        description:
+          flowSettingsUpdate?.description != null
+            ? flowSettingsUpdate.description
+            : flowDraft.description ?? '',
+        endParamDefinitions: [],
+      };
 
-    const connectors = flow.getConnectors().map(mapConnectorsForSave);
-    const startBlocks = flow
-      .getBlocksByType(ManualStartType)
-      .map(mapStartBlockForSave);
-    const decisionBlocks = flow
-      .getBlocksByType(DecisionType)
-      .map(mapDecisionBlockForSave);
-    const actionBlocks = flow
-      .getBlocksByType(CreateWorkorderType)
-      .map(mapActionBlocksForSave);
-    const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
+      const connectors = flow.getConnectors().map(mapConnectorsForSave);
+      const startBlocks = flow
+        .getBlocksByType(ManualStartType)
+        .map(mapStartBlockForSave);
+      const decisionBlocks = flow
+        .getBlocksByType(DecisionType)
+        .map(mapDecisionBlockForSave);
+      const actionBlocks = flow
+        .getBlocksByType(CreateWorkorderType)
+        .map(mapActionBlocksForSave);
+      const endBlocks = flow.getBlocksByType(EndType).map(mapEndBlockForSave);
 
-    if (startBlocks.length > 0) {
-      flowData.startBlock = startBlocks[0];
-    }
+      if (startBlocks.length > 0) {
+        flowData.startBlock = startBlocks[0];
+      }
 
-    if (decisionBlocks.length > 0) {
-      flowData.decisionBlocks = decisionBlocks;
-    }
+      if (endBlocks.length > 0) {
+        flowData.endBlocks = endBlocks;
+      }
+      if (decisionBlocks.length > 0) {
+        flowData.decisionBlocks = decisionBlocks;
+      }
 
-    if (endBlocks.length > 0) {
-      flowData.endBlocks = endBlocks;
-    }
+      if (actionBlocks.length > 0) {
+        flowData.actionBlocks = actionBlocks;
+      }
 
-    if (actionBlocks.length > 0) {
-      flowData.actionBlocks = actionBlocks;
-    }
+      if (connectors.length > 0) {
+        flowData.connectors = connectors;
+      }
 
-    if (connectors.length > 0) {
-      flowData.connectors = connectors;
-    }
-
-    return saveFlowDraft(flowData);
-  }, [flow, flowDraft]);
+      return saveFlowDraft(flowData);
+    },
+    [flow, flowDraft],
+  );
 
   return (
     <FlowDataContext.Provider value={{flowDraft, save}}>

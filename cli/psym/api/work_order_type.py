@@ -169,6 +169,58 @@ def get_work_order_type_by_name(client: SymphonyClient, name: str) -> WorkOrderT
     raise EntityNotFoundError(entity=Entity.WorkOrderType, entity_name=name)
 
 
+def add_property_types_to_work_order_type(
+    client: SymphonyClient,
+    work_order_type_id: str,
+    new_properties: List[PropertyDefinition],
+) -> WorkOrderType:
+    """This function adds new property types to existing work order type.
+
+    :param work_order_type_id: Existing work order type ID
+    :type work_order_type_id: str
+    :param new_properties: List of property definitions
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: WorkOrderType object
+    :rtype: :class:`~psym.common.data_class.WorkOrderType`
+
+    **Example**
+
+    .. code-block:: python
+
+        work_order_type = client.add_property_types_to_work_order_type(
+            work_order_type_id="12345678",
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
+    """
+    work_order_type = get_work_order_type_by_id(client=client, id=work_order_type_id)
+    new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+    result = EditWorkOrderTypeMutation.execute(
+        client,
+        EditWorkOrderTypeInput(
+            id=work_order_type.id,
+            name=work_order_type.name,
+            description=work_order_type.description,
+            properties=new_property_type_inputs,
+            checkListCategories=[],
+        ),
+    )
+    edited = format_to_work_order_type(work_order_type_fragment=result)
+    WORK_ORDER_TYPES.pop(work_order_type.name)
+    WORK_ORDER_TYPES[edited.name] = edited
+    return edited
+
+
 def edit_work_order_type(
     client: SymphonyClient,
     work_order_type_id: str,

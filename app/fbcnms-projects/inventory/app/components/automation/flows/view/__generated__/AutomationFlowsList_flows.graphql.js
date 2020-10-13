@@ -14,13 +14,13 @@
 
 /*::
 import type { ReaderFragment } from 'relay-runtime';
-type AutomationFlowCard_flowDraft$ref = any;
+type AutomationFlowCard_flow$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type AutomationFlowsList_flows$ref: FragmentReference;
 declare export opaque type AutomationFlowsList_flows$fragmentType: AutomationFlowsList_flows$ref;
 export type AutomationFlowsList_flows = $ReadOnlyArray<{|
   +id: string,
-  +$fragmentRefs: AutomationFlowCard_flowDraft$ref,
+  +$fragmentRefs: AutomationFlowCard_flow$ref,
   +$refType: AutomationFlowsList_flows$ref,
 |}>;
 export type AutomationFlowsList_flows$data = AutomationFlowsList_flows;
@@ -50,13 +50,13 @@ const node/*: ReaderFragment*/ = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "AutomationFlowCard_flowDraft"
+      "name": "AutomationFlowCard_flow"
     }
   ],
-  "type": "FlowDraft",
+  "type": "Flow",
   "abstractKey": null
 };
 // prettier-ignore
-(node/*: any*/).hash = 'c1db8c90fd27afff4e2b2c3288d29ad4';
+(node/*: any*/).hash = '0ada389a273fe87c90f4a231cae2021b';
 
 module.exports = node;

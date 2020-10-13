@@ -9,6 +9,9 @@ import (
 	"os"
 
 	"contrib.go.opencensus.io/exporter/jaeger"
+	"github.com/opentracing/opentracing-go"
+	jaggeropentracing "github.com/uber/jaeger-client-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 )
@@ -42,4 +45,34 @@ func NewJaegerExporter(opts TraceExporterOptions) (trace.Exporter, error) {
 		return nil, fmt.Errorf("cannot create jaeger exporter: %w", err)
 	}
 	return exporter, nil
+}
+
+// ProvideJaegerTracer creates a new opentracing tracer.
+func ProvideJaegerTracer(cfg *Config) (opentracing.Tracer, func(), error) {
+	config := jaegercfg.Configuration{
+		ServiceName: cfg.Trace.ServiceName,
+		Sampler: &jaegercfg.SamplerConfig{
+			Type:  jaggeropentracing.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &jaegercfg.ReporterConfig{
+			LogSpans:           true,
+			QueueSize:          16 << 10,
+			LocalAgentHostPort: os.Getenv("JAEGER_AGENT_ENDPOINT"),
+			CollectorEndpoint:  os.Getenv("JAEGER_COLLECTOR_ENDPOINT"),
+			User:               os.Getenv("JAEGER_USER"),
+			Password:           os.Getenv("JAEGER_PASSWORD"),
+		},
+		Tags: make([]opentracing.Tag, 0, len(cfg.Trace.Tags)),
+	}
+	for key, value := range cfg.Trace.Tags {
+		config.Tags = append(config.Tags, opentracing.Tag{
+			Key:   key,
+			Value: value,
+		})
+	}
+	tracer, closer, err := config.NewTracer(jaegercfg.Logger(jaggeropentracing.StdLogger))
+	return tracer, func() {
+		_ = closer.Close()
+	}, err
 }

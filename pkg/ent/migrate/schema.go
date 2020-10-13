@@ -12,23 +12,6 @@ import (
 )
 
 var (
-	// ActionsRulesColumns holds the columns for the "actions_rules" table.
-	ActionsRulesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
-		{Name: "trigger_id", Type: field.TypeString},
-		{Name: "rule_filters", Type: field.TypeJSON},
-		{Name: "rule_actions", Type: field.TypeJSON},
-	}
-	// ActionsRulesTable holds the schema information for the "actions_rules" table.
-	ActionsRulesTable = &schema.Table{
-		Name:        "actions_rules",
-		Columns:     ActionsRulesColumns,
-		PrimaryKey:  []*schema.Column{ActionsRulesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{},
-	}
 	// ActivitiesColumns holds the columns for the "activities" table.
 	ActivitiesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -69,7 +52,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
 		{Name: "cid", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"START", "END", "DECISION", "SUB_FLOW", "GO_TO", "TRIGGER", "ACTION"}},
 		{Name: "action_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"work_order"}},
@@ -91,35 +73,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "blocks_flows_sub_flow",
-				Columns: []*schema.Column{BlocksColumns[11]},
+				Columns: []*schema.Column{BlocksColumns[10]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_blocks_goto_block",
-				Columns: []*schema.Column{BlocksColumns[12]},
+				Columns: []*schema.Column{BlocksColumns[11]},
 
 				RefColumns: []*schema.Column{BlocksColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flows_blocks",
-				Columns: []*schema.Column{BlocksColumns[13]},
+				Columns: []*schema.Column{BlocksColumns[12]},
 
 				RefColumns: []*schema.Column{FlowsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_drafts_blocks",
-				Columns: []*schema.Column{BlocksColumns[14]},
+				Columns: []*schema.Column{BlocksColumns[13]},
 
 				RefColumns: []*schema.Column{FlowDraftsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "blocks_flow_execution_templates_blocks",
-				Columns: []*schema.Column{BlocksColumns[15]},
+				Columns: []*schema.Column{BlocksColumns[14]},
 
 				RefColumns: []*schema.Column{FlowExecutionTemplatesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -127,34 +109,19 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "block_name_flow_draft_blocks",
-				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[14]},
-			},
-			{
-				Name:    "block_name_flow_blocks",
+				Name:    "block_cid_flow_draft_blocks",
 				Unique:  true,
 				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[13]},
 			},
 			{
-				Name:    "block_name_flow_execution_template_blocks",
-				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[15]},
-			},
-			{
-				Name:    "block_cid_flow_draft_blocks",
-				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[14]},
-			},
-			{
 				Name:    "block_cid_flow_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[13]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[12]},
 			},
 			{
 				Name:    "block_cid_flow_execution_template_blocks",
 				Unique:  true,
-				Columns: []*schema.Column{BlocksColumns[4], BlocksColumns[15]},
+				Columns: []*schema.Column{BlocksColumns[3], BlocksColumns[14]},
 			},
 		},
 	}
@@ -608,11 +575,12 @@ var (
 	// ExportTasksColumns holds the columns for the "export_tasks" table.
 	ExportTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION", "PORT", "LINK", "SERVICE", "WORK_ORDER"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"EQUIPMENT", "LOCATION", "PORT", "LINK", "SERVICE", "WORK_ORDER", "SINGLE_WORK_ORDER"}},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PENDING", "IN_PROGRESS", "SUCCEEDED", "FAILED"}},
 		{Name: "progress", Type: field.TypeFloat64},
 		{Name: "filters", Type: field.TypeString, Size: 2147483647, Default: "[]"},
 		{Name: "store_key", Type: field.TypeString, Nullable: true},
+		{Name: "wo_id_to_export", Type: field.TypeInt, Nullable: true},
 	}
 	// ExportTasksTable holds the schema information for the "export_tasks" table.
 	ExportTasksTable = &schema.Table{
@@ -815,7 +783,8 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "ENABLED"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "UNPUBLISHED", "ARCHIVED"}, Default: "UNPUBLISHED"},
+		{Name: "new_instances_policy", Type: field.TypeEnum, Enums: []string{"ENABLED", "DISABLED"}, Default: "DISABLED"},
 	}
 	// FlowsTable holds the schema information for the "flows" table.
 	FlowsTable = &schema.Table{
@@ -839,7 +808,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "end_param_definitions", Type: field.TypeJSON, Nullable: true},
-		{Name: "flow_draft", Type: field.TypeInt, Nullable: true},
+		{Name: "flow_draft", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// FlowDraftsTable holds the schema information for the "flow_drafts" table.
 	FlowDraftsTable = &schema.Table{
@@ -2335,7 +2304,6 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		ActionsRulesTable,
 		ActivitiesTable,
 		BlocksTable,
 		BlockInstancesTable,

@@ -18,21 +18,19 @@ require (
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/aws/aws-sdk-go v1.35.1
 	github.com/badoux/checkmail v1.2.1
-	github.com/cenkalti/backoff/v4 v4.0.2
-	github.com/facebook/ent v0.4.4-0.20200929132250-6cf2271c1bd4
+	github.com/cenkalti/backoff/v4 v4.1.0
+	github.com/facebook/ent v0.4.4-0.20201006091631-3f3debbe973b
 	github.com/facebookincubator/ent-contrib v0.0.0-20200923104127-e6458f838e5d
 	github.com/go-sql-driver/mysql v1.5.1-0.20200311113236-681ffa848bae
 	github.com/golang/mock v1.4.4 // indirect
-	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.2
 	github.com/google/wire v0.4.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
-	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/kisielk/errcheck v1.4.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pborman/uuid v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.8.1
 	github.com/pkg/errors v0.9.1
@@ -45,13 +43,15 @@ require (
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/uber-go/tally v3.3.17+incompatible // indirect
+	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/tchannel-go v1.20.1 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
+	github.com/vektra/mockery v1.1.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.1
-	go.opencensus.io v0.22.4
-	go.uber.org/cadence v0.13.4
+	go.opencensus.io v0.22.5
+	go.uber.org/cadence v0.14.1
 	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/yarpc v1.47.2
+	go.uber.org/yarpc v1.48.0
 	go.uber.org/zap v1.16.0
 	gocloud.dev v0.20.1-0.20200914152856-6be5a462804a
 	gocloud.dev/pubsub/natspubsub v0.20.0
@@ -63,8 +63,7 @@ require (
 	golang.org/x/tools v0.0.0-20200929210017-bce87a7896cc // indirect
 	google.golang.org/api v0.30.0 // indirect
 	google.golang.org/genproto v0.0.0-20200929141702-51c3e5b607fe // indirect
-	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/grpc v1.32.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.5 // indirect
 )

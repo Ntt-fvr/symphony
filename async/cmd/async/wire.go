@@ -11,24 +11,27 @@ import (
 	"fmt"
 	"net/http"
 
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/async/handler"
+	"github.com/facebookincubator/symphony/async/worker"
+	"github.com/facebookincubator/symphony/pkg/cadence"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
+	health2 "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"github.com/opentracing/opentracing-go"
+	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 
 	"github.com/google/wire"
-	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
 )
@@ -37,20 +40,27 @@ import (
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
-			"MySQLConfig",
+			"ListenAddress",
+			"MetricsAddress",
+			"DatabaseURL",
 			"LogConfig",
 			"EventPubURL",
 			"TelemetryConfig",
 			"TenancyConfig",
 		),
 		log.Provider,
+		metrics.Provider,
 		newTenancy,
 		wire.Struct(
 			new(event.Eventer),
 			"*",
 		),
 		viewer.SyncFeatures,
-		newMySQLTenancy,
+		viewer.NewMySQLTenancy,
+		wire.FieldsOf(
+			new(viewer.Config),
+			"TenantMaxConn",
+		),
 		ev.ProvideEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
@@ -64,61 +74,49 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		triggers.NewFactory,
 		actions.NewFactory,
-		newHealthChecks,
-		mux.NewRouter,
-		wire.Bind(
-			new(http.Handler),
-			new(*mux.Router),
+		wire.Struct(
+			new(hooks.Flower),
+			"*",
 		),
+		newHealthChecks,
+		http.NotFoundHandler,
 		xserver.ServiceSet,
 		provideViews,
+		health2.NewPoller,
 		wire.Struct(
 			new(handler.Config), "*",
 		),
 		handler.NewServer,
+		provideCadenceClient,
+		newWorkerFactories,
+		wire.Struct(
+			new(worker.Config), "*",
+		),
+		worker.NewClient,
+		worker.NewHealthChecker,
 		newBucket,
 		newHandlers,
-		newApplication,
+		wire.Struct(
+			new(application), "*",
+		),
 	)
 	return nil, nil, nil
 }
 
-func newApplication(server *handler.Server, http *server.Server, logger *zap.Logger, flags *cliFlags) *application {
-	var app application
-	app.logger = logger
-	app.server = server
-	app.http.Server = http
-	app.http.addr = flags.HTTPAddr
-	return &app
-}
-
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
 	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
 		eventer.HookTo(client)
+		flower.HookTo(client)
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
-	return []health.Checker{tenancy}
-}
-
-func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(mySQLConfig.String(), tenancyConfig.TenantMaxConn)
-	if err != nil {
-		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
-	}
-	mysql.SetLogger(logger)
-	return tenancy, nil
+func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceHealthChecker *worker.HealthChecker) []health.Checker {
+	return []health.Checker{tenancy, cadenceHealthChecker}
 }
 
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
+	views = append(views, ocsql.DefaultViews...)
 	views = append(views, ocpubsub.DefaultViews...)
 	views = append(views, ev.OpenCensusViews...)
 	return views
@@ -136,15 +134,31 @@ func newBucket(ctx context.Context, flags *cliFlags) (*blob.Bucket, func(), erro
 	return bucket, func() { _ = bucket.Close() }, nil
 }
 
-func newHandlers(bucket *blob.Bucket, flags *cliFlags) []handler.Handler {
+func provideCadenceClient(logger log.Logger, flags *cliFlags) (workflowserviceclient.Interface, func(), error) {
+	return cadence.ProvideClient(logger.Background(), flags.CadenceAddr)
+}
+
+func newHandlers(bucket *blob.Bucket, flags *cliFlags, client *worker.Client, tenancy viewer.Tenancy, tracer opentracing.Tracer) []handler.Handler {
 	return []handler.Handler{
 		handler.New(handler.HandleConfig{
 			Name:    "activity_log",
 			Handler: handler.Func(handler.HandleActivityLog),
 		}),
 		handler.New(handler.HandleConfig{
-			Name:    "export_task",
-			Handler: handler.NewExportHandler(bucket, flags.ExportBucketPrefix),
+			Name: "export_task",
+			Handler: handler.NewExportHandler(
+				bucket, flags.ExportBucketPrefix, client.GetCadenceClient(worker.ExportDomainName.String())),
 		}, handler.WithTransaction(false)),
+		handler.New(handler.HandleConfig{
+			Name:    "flow",
+			Handler: handler.NewFlowHandler(client.GetCadenceClient(worker.FlowDomainName.String())),
+		}, handler.WithTransaction(false)),
+	}
+}
+
+func newWorkerFactories(logger log.Logger, bucket *blob.Bucket, flags *cliFlags) []worker.DomainFactory {
+	return []worker.DomainFactory{
+		worker.NewFlowFactory(logger),
+		worker.NewExportFactory(logger, bucket, flags.ExportBucketPrefix),
 	}
 }

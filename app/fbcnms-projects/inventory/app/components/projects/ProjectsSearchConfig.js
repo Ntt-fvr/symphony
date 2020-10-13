@@ -8,11 +8,12 @@
  * @format
  */
 
+import type {EntityConfig} from '../comparison_view/ComparisonViewTypes';
+
 import PowerSearchProjectNameFilter from './PowerSearchProjectNameFilter';
 import PowerSearchProjectOwnerFilter from './PowerSearchProjectOwnerFilter';
 import PowerSearchProjectPriorityFilter from './PowerSearchProjectPriorityFilter';
 import PowerSearchProjectTypeFilter from './PowerSearchProjectTypeFilter';
-import type {EntityConfig} from '../comparison_view/ComparisonViewTypes';
 
 const ProjectSearchConfig: Array<EntityConfig> = [
   {

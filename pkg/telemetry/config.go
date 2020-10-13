@@ -11,7 +11,6 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/google/wire"
-	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 )
 
@@ -46,7 +45,7 @@ func (Config) Apply(k *kong.Kong) error {
 }
 
 // ProvideTraceExporter is a wire provider that produces trace exporter from config.
-func ProvideTraceExporter(config *Config) (trace.Exporter, func(), error) {
+func ProvideTraceExporter(config Config) (trace.Exporter, func(), error) {
 	exporter, err := GetTraceExporter(
 		config.Trace.ExporterName,
 		config.Trace.TraceExporterOptions,
@@ -61,14 +60,14 @@ func ProvideTraceExporter(config *Config) (trace.Exporter, func(), error) {
 }
 
 // ProvideTraceSampler is a wire provider that produces trace sampler from config.
-func ProvideTraceSampler(config *Config) trace.Sampler {
+func ProvideTraceSampler(config Config) trace.Sampler {
 	return trace.ProbabilitySampler(
 		config.Trace.SamplingProbability,
 	)
 }
 
 // ProvideViewExporter is a wire provider that produces view exporter from config.
-func ProvideViewExporter(config *Config) (view.Exporter, error) {
+func ProvideViewExporter(config Config) (ViewExporter, error) {
 	return GetViewExporter(
 		config.View.ExporterName,
 		config.View.ViewExporterOptions,
@@ -80,4 +79,5 @@ var Provider = wire.NewSet(
 	ProvideTraceExporter,
 	ProvideTraceSampler,
 	ProvideViewExporter,
+	ProvideJaegerTracer,
 )

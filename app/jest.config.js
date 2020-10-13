@@ -28,12 +28,8 @@ module.exports = {
       testMatch: [
         '<rootDir>/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/server/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-auth/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-express-middleware/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-platform-server/**/__tests__/*.js',
         '<rootDir>/fbcnms-projects/platform-server/**/__tests__/*.js',
         // run app/server shared tests in both node and jsdom environments
-        '<rootDir>/fbcnms-packages/fbcnms-util/**/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
       ],
       transform: {
@@ -52,11 +48,7 @@ module.exports = {
       testEnvironment: 'jsdom',
       testMatch: [
         '<rootDir>/fbcnms-projects/**/app/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-ui/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-alarms/(components|hooks)/__tests__/*.js',
         // run app/server shared tests in both node and jsdom environments
-        '<rootDir>/fbcnms-packages/fbcnms-util/**/__tests__/*.js',
-        '<rootDir>/fbcnms-packages/fbcnms-mobileapp/**/__tests__/*.js',
         '<rootDir>/fbcnms-projects/**/shared/**/__tests__/*.js',
       ],
       transform: {

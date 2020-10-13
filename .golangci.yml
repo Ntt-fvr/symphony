@@ -69,6 +69,6 @@ issues:
     - path: (^|/)importer($|/)
       linters:
         - funlen
-    - text: "`config` can be `fmt.Stringer`"
+    - text: "can be `fmt.Stringer`"
       linters:
         - interfacer

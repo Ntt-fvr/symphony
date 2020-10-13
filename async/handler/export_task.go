@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/facebookincubator/symphony/async/worker"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/exporttask"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -21,6 +22,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
+	"go.uber.org/cadence/client"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
 )
@@ -29,6 +31,7 @@ import (
 type ExportHandler struct {
 	bucket       *blob.Bucket
 	bucketPrefix string
+	client       client.Client
 }
 
 // Interface for getting data rows.
@@ -37,10 +40,11 @@ type rower interface {
 }
 
 // NewExportHandler returns an ExportHandler object with a bucket.
-func NewExportHandler(bucket *blob.Bucket, bucketPrefix string) *ExportHandler {
+func NewExportHandler(bucket *blob.Bucket, bucketPrefix string, client client.Client) *ExportHandler {
 	return &ExportHandler{
 		bucket:       bucket,
 		bucketPrefix: bucketPrefix,
+		client:       client,
 	}
 }
 
@@ -67,6 +71,16 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 	switch task.Type {
 	case exporttask.TypeLocation, exporttask.TypeEquipment, exporttask.TypePort, exporttask.TypeLink, exporttask.TypeService, exporttask.TypeWorkOrder:
 		key, err = eh.export(ctx, logger, task)
+	case exporttask.TypeSingleWorkOrder:
+		_, err := eh.client.StartWorkflow(ctx, client.StartWorkflowOptions{
+			ID:                           worker.GetGlobalWorkflowID(ctx, entry.CurrState.ID),
+			TaskList:                     worker.TaskListName,
+			ExecutionStartToCloseTimeout: 90 * time.Minute,
+		}, worker.ExportWorkOrderWorkflowName,
+			worker.ExportSingleWOInput{
+				ExportTaskID: entry.CurrState.ID,
+			})
+		return err
 	default:
 		if err = task.Update().SetStatus(exporttask.StatusFailed).Exec(ctx); err != nil {
 			logger.For(ctx).Error("cannot update task status", zap.Error(err))
@@ -85,38 +99,46 @@ func (eh *ExportHandler) Handle(ctx context.Context, logger log.Logger, evt ev.E
 		logger.For(ctx).Error("cannot update task status", zap.Error(err), zap.Int("id", task.ID))
 		return err
 	}
-
 	return nil
 }
 
 // export queries and writes rows to a file, returning the key.
 func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *ent.ExportTask) (string, error) {
-	var rower rower
+	var (
+		exportEntity string
+		rower        rower
+	)
 	switch task.Type {
 	case exporttask.TypeLocation:
 		rower = exporter.LocationsRower{
 			Log: logger,
 		}
+		exportEntity = "locations"
 	case exporttask.TypeEquipment:
 		rower = exporter.EquipmentRower{
 			Log: logger,
 		}
+		exportEntity = "equipment"
 	case exporttask.TypePort:
 		rower = exporter.PortsRower{
 			Log: logger,
 		}
+		exportEntity = "ports"
 	case exporttask.TypeLink:
 		rower = exporter.LinksRower{
 			Log: logger,
 		}
+		exportEntity = "links"
 	case exporttask.TypeService:
 		rower = exporter.ServicesRower{
 			Log: logger,
 		}
+		exportEntity = "services"
 	case exporttask.TypeWorkOrder:
 		rower = exporter.WoRower{
 			Log: logger,
 		}
+		exportEntity = "work-orders"
 	default:
 		logger.For(ctx).Error("unsupported entity type for export", zap.String("type", task.Type.String()))
 		return "", fmt.Errorf("unsupported entity type %s", task.Type)
@@ -129,7 +151,7 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 	tenant := viewer.FromContext(ctx).Tenant()
 	key := eh.bucketPrefix + uuid.New().String()
 	writeKey := tenant + "/" + key
-	if err := eh.writeRows(ctx, writeKey, rows); err != nil {
+	if err := eh.writeRows(ctx, writeKey, rows, exportEntity); err != nil {
 		logger.For(ctx).Error("cannot write rows", zap.Error(err))
 		return "", err
 	}
@@ -138,11 +160,12 @@ func (eh *ExportHandler) export(ctx context.Context, logger log.Logger, task *en
 }
 
 // writeRows writer rows into a blob with key as name.
-func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string) (err error) {
+func (eh *ExportHandler) writeRows(ctx context.Context, key string, rows [][]string, exportEntity string) (err error) {
 	b, err := eh.bucket.NewWriter(ctx, key, &blob.WriterOptions{
 		ContentType: "text/csv",
 		ContentDisposition: fmt.Sprintf(
-			"attachment; filename=export-%s.csv",
+			"attachment; filename=%s-%s.csv",
+			exportEntity,
 			time.Now().Format(time.RFC3339),
 		),
 		BeforeWrite: func(asFunc func(interface{}) bool) error {

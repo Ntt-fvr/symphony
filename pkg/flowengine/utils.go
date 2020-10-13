@@ -26,12 +26,12 @@ func CopyBlocks(ctx context.Context, blocksQuery *ent.BlockQuery, addToFlow func
 	oldToNewBlock := make(map[int]*ent.Block, len(blocks))
 	for _, blk := range blocks {
 		blockCreate := client.Block.Create().
-			SetName(blk.Name).
 			SetCid(blk.Cid).
 			SetType(blk.Type).
 			SetStartParamDefinitions(blk.StartParamDefinitions).
 			SetNillableTriggerType(blk.TriggerType).
-			SetNillableActionType(blk.ActionType)
+			SetNillableActionType(blk.ActionType).
+			SetUIRepresentation(blk.UIRepresentation)
 		addToFlow(blockCreate)
 		if blk.Edges.SubFlow != nil {
 			blockCreate.SetSubFlow(blk.Edges.SubFlow)

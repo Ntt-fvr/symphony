@@ -3,24 +3,29 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Mapping, Optional
 
 from psym.client import SymphonyClient
 from psym.common.cache import EQUIPMENT_TYPES, PORT_TYPES
 from psym.common.data_class import (
-    Equipment,
     EquipmentPortDefinition,
     EquipmentType,
     PropertyDefinition,
+    PropertyValue,
 )
 from psym.common.data_enum import Entity
 from psym.common.data_format import (
+    format_to_equipment,
     format_to_equipment_type,
     format_to_property_type_input,
     format_to_property_type_inputs,
 )
 
-from .._utils import get_port_definition_input, get_position_definition_input
+from .._utils import (
+    get_graphql_property_type_inputs,
+    get_port_definition_input,
+    get_position_definition_input,
+)
 from ..exceptions import EntityNotFoundError
 from ..graphql.input.add_equipment_type import AddEquipmentTypeInput
 from ..graphql.input.edit_equipment_type import EditEquipmentTypeInput
@@ -33,6 +38,7 @@ from ..graphql.mutation.remove_equipment_type import RemoveEquipmentTypeMutation
 from ..graphql.query.equipment_type_details import EquipmentTypeDetailsQuery
 from ..graphql.query.equipment_type_equipments import EquipmentTypeEquipmentQuery
 from ..graphql.query.equipment_types import EquipmentTypesQuery
+from ..graphql.input.equipment_port_connection import EquipmentPortConnectionInput
 from .equipment import delete_equipment
 from .property_type import (
     edit_property_type,
@@ -241,6 +247,10 @@ def add_equipment_type(
             index=pd.port_definition_index,
             visibleLabel=pd.visible_label,
             portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+            connectedPorts=[
+                EquipmentPortConnectionInput(id=cp.id, name=cp.name)
+                for cp in pd.connected_ports
+            ],
         )
         for pd in port_definitions
     ]
@@ -262,11 +272,71 @@ def add_equipment_type(
     return equipment_type
 
 
+def add_property_types_to_equipment_type(
+    client: SymphonyClient,
+    equipment_type_id: str,
+    new_properties: List[PropertyDefinition],
+) -> EquipmentType:
+    """This function adds new property types to existing equipment type.
+
+    :param equipment_type_id: Existing equipment type ID
+    :type equipment_type_id: str
+    :param new_properties: List of property definitions
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ]
+
+    :raises:
+        FailedOperationException: Internal symphony error
+
+    :return: EquipmentType object
+    :rtype: :class:`~psym.common.data_class.EquipmentType`
+
+    **Example**
+
+    .. code-block:: python
+
+        equipment_type = client.add_property_types_to_equipment_type(
+            equipment_type_id="12345678",
+            new_properties=[
+                PropertyDefinition(
+                    property_name="Contact",
+                    property_kind=PropertyKind.string,
+                    default_raw_value=None,
+                    is_fixed=True
+                )
+            ],
+        )
+    """
+    equipment_type = get_equipment_type_by_id(
+        client=client, equipment_type_id=equipment_type_id
+    )
+    new_property_type_inputs = format_to_property_type_inputs(data=new_properties)
+
+    position_definitions = [
+        get_position_definition_input(position_definition, is_new=False)
+        for position_definition in equipment_type.position_definitions
+    ]
+    port_definitions = [
+        get_port_definition_input(port_definition, is_new=False)
+        for port_definition in equipment_type.port_definitions
+    ]
+
+    return _update_equipment_type(
+        client=client,
+        equipment_type_id=equipment_type.id,
+        name=equipment_type.name,
+        category=equipment_type.category,
+        properties=new_property_type_inputs,
+        position_definitions=position_definitions,
+        port_definitions=port_definitions,
+    )
+
+
 def edit_equipment_type(
     client: SymphonyClient,
     name: str,
     new_positions_list: List[str],
     new_port_definitions: List[EquipmentPortDefinition],
+    new_properties: Optional[Mapping[str, PropertyValue]] = None,
 ) -> EquipmentType:
     """Edit existing equipment type.
 
@@ -276,6 +346,8 @@ def edit_equipment_type(
     :type new_positions_list: List[str]
     :param new_port_definitions: EquipmentPortDefinitions list
     :type new_port_definitions: List[ :class:`~psym.common.data_class.EquipmentPortDefinition` ]
+    :param new_properties: Property definitions list
+    :type new_properties: List[ :class:`~psym.common.data_class.PropertyDefinition` ], optional
 
     :raises:
         FailedOperationException: Internal symphony error
@@ -301,10 +373,6 @@ def edit_equipment_type(
         )
     """
     equipment_type = EQUIPMENT_TYPES[name]
-    edited_property_types = [
-        format_to_property_type_input(property_type)
-        for property_type in equipment_type.property_types
-    ]
     position_definitions = [
         get_position_definition_input(position_definition, is_new=False)
         for position_definition in equipment_type.position_definitions
@@ -318,16 +386,26 @@ def edit_equipment_type(
             index=pd.port_definition_index,
             visibleLabel=pd.visible_label,
             portTypeID=PORT_TYPES[pd.port_type_name].id if pd.port_type_name else None,
+            connectedPorts=[
+                EquipmentPortConnectionInput(id=cp.id, name=cp.name)
+                for cp in pd.connected_ports
+            ],
         )
         for pd in new_port_definitions
     ]
+    new_property_type_inputs = []
+    if new_properties:
+        property_types = PORT_TYPES[equipment_type.name].property_types
+        new_property_type_inputs = get_graphql_property_type_inputs(
+            property_types, new_properties
+        )
 
     return _update_equipment_type(
         client=client,
         equipment_type_id=equipment_type.id,
         name=equipment_type.name,
         category=equipment_type.category,
-        properties=edited_property_types,
+        properties=new_property_type_inputs,
         position_definitions=position_definitions,
         port_definitions=port_definitions,
     )
@@ -622,15 +700,7 @@ def delete_equipment_type_with_equipments(
             entity=Entity.EquipmentType, entity_id=equipment_type.id
         )
     for equipment in equipment_type_with_equipments.equipments:
-        delete_equipment(
-            client,
-            Equipment(
-                id=equipment.id,
-                external_id=equipment.externalId,
-                name=equipment.name,
-                equipment_type_name=equipment.equipmentType.name,
-            ),
-        )
+        delete_equipment(client, format_to_equipment(equipment_fragment=equipment))
 
     delete_equipment_type(client=client, equipment_type_id=equipment_type.id)
 

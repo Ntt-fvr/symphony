@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	stdlog "log"
+	"net/url"
 	"os"
 	"syscall"
 
@@ -15,8 +16,8 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ctxutil"
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
 	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"go.uber.org/zap"
 
@@ -26,7 +27,8 @@ import (
 type cliFlags struct {
 	ConfigFile      kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
 	ListenAddress   string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
-	MySQLConfig     mysql.Config     `name:"mysql.dsn" env:"MYSQL_DSN" required:"" placeholder:"STRING" help:"MySQL data source name."`
+	MetricsAddress  metrics.Addr     `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
+	DatabaseURL     *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
 	LogConfig       log.Config       `embed:""`
 	TelemetryConfig telemetry.Config `embed:""`
 }
@@ -58,8 +60,10 @@ func main() {
 
 type application struct {
 	*zap.Logger
-	server *server.Server
-	addr   string
+	server      *server.Server
+	addr        string
+	metrics     *metrics.Metrics
+	metricsAddr metrics.Addr
 }
 
 func (app *application) run(ctx context.Context) error {
@@ -69,6 +73,9 @@ func (app *application) run(ctx context.Context) error {
 		err := app.server.ListenAndServe(app.addr)
 		app.Debug("server terminated", zap.Error(err))
 		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		return app.metrics.Serve(ctx, app.metricsAddr)
 	})
 	g.Go(func(ctx context.Context) error {
 		defer cancel()

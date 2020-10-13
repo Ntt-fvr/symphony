@@ -8,15 +8,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/url"
 	"runtime"
 	"strings"
 	"sync"
 
 	"github.com/facebook/ent/dialect"
 	entsql "github.com/facebook/ent/dialect/sql"
+	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	pkgmysql "github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/go-sql-driver/mysql"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/health/sqlhealth"
 )
@@ -94,25 +94,26 @@ func (c *CacheTenancy) CheckHealth() error {
 // MySQLTenancy provides logical database per tenant.
 type MySQLTenancy struct {
 	health.Checker
-	config   *mysql.Config
+	url      url.URL
 	maxConns int
 	mu       sync.Mutex
 	closers  []func()
 }
 
-// NewMySQLTenancy creates mysql tenancy for data source.
-func NewMySQLTenancy(dsn string, maxConns int) (*MySQLTenancy, error) {
-	config, err := mysql.ParseDSN(dsn)
+// NewMySQLTenancy creates mysql based tenancy.
+func NewMySQLTenancy(ctx context.Context, u *url.URL, maxConns int) (*MySQLTenancy, error) {
+	db, err := mysql.OpenURL(ctx, u)
 	if err != nil {
-		return nil, fmt.Errorf("parsing dsn: %w", err)
+		return nil, fmt.Errorf("opening mysql database: %w", err)
 	}
-	db := pkgmysql.Open(dsn)
 	checker := sqlhealth.New(db)
 	tenancy := &MySQLTenancy{
 		Checker:  checker,
-		config:   config,
+		url:      *u,
 		maxConns: maxConns,
-		closers:  []func(){checker.Stop},
+		closers: []func(){
+			checker.Stop,
+		},
 	}
 	runtime.SetFinalizer(tenancy, func(tenancy *MySQLTenancy) {
 		for _, closer := range tenancy.closers {
@@ -123,17 +124,19 @@ func NewMySQLTenancy(dsn string, maxConns int) (*MySQLTenancy, error) {
 }
 
 // ClientFor implements Tenancy interface.
-func (m *MySQLTenancy) ClientFor(_ context.Context, name string) (*ent.Client, error) {
-	config := *m.config
-	config.DBName = DBName(name)
-	db := pkgmysql.Open(config.FormatDSN())
+func (m *MySQLTenancy) ClientFor(ctx context.Context, name string) (*ent.Client, error) {
+	u := m.url
+	u.Path = "/" + DBName(name)
+	db, closer, err := mysql.Provide(ctx, &u)
+	if err != nil {
+		return nil, fmt.Errorf("opening mysql database: %w", err)
+	}
 	db.SetMaxOpenConns(m.maxConns)
 	m.mu.Lock()
-	m.closers = append(m.closers, pkgmysql.RecordStats(db))
+	m.closers = append(m.closers, closer)
 	m.mu.Unlock()
-	return ent.NewClient(
-		ent.Driver(entsql.OpenDB(dialect.MySQL, db)),
-	), nil
+	drv := ent.Driver(entsql.OpenDB(dialect.MySQL, db))
+	return ent.NewClient(drv), nil
 }
 
 const dbPrefix = "tenant_"

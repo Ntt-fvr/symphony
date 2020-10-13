@@ -12,45 +12,67 @@ import type {BlocksBar_flowDraft} from './__generated__/BlocksBar_flowDraft.grap
 import type {WithFlowData} from '../../../data/FlowDataContext';
 
 import BlocksCategory from './BlocksCategory';
-import Breadcrumbs from '@fbcnms/ui/components/Breadcrumbs';
 import CreateWorkorderBlockType from '../../canvas/graph/shapes/blocks/blockTypes/createWorkorder/CreateWorkorderBlockType';
 import DecisionBlockType from '../../canvas/graph/shapes/blocks/blockTypes/decision/DecisionBlockType';
 import EndBlockType from '../../canvas/graph/shapes/blocks/blockTypes/end/EndBlockType';
+import Logo from '../../../../../../common/Logo';
 import ManualStartBlockType from '../../canvas/graph/shapes/blocks/blockTypes/manualStart/ManualStartBlockType';
 import React from 'react';
 import SideBar from '@symphony/design-system/components/View/SideBar';
-import {AUTOMATION_FLOWS_VIEW_HEADER} from '../../../view/AutomationFlowsView';
+import Text from '@symphony/design-system/components/Text';
 import {InventoryAPIUrls} from '../../../../../../common/InventoryAPI';
+import {Link} from 'react-router-dom';
 import {createFragmentContainer, graphql} from 'react-relay';
-import {useGraph} from '../../canvas/graph/GraphContext';
-import {useHistory} from 'react-router-dom';
+import {makeStyles} from '@material-ui/styles';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 import {useMemo} from 'react';
+import {useState} from 'react';
 import {withFlowData} from '../../../data/FlowDataContext';
+
+const COLLAPSED_WIDTH = '80px';
+
+const useStyles = makeStyles(() => ({
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  name: {
+    marginLeft: '22px',
+  },
+  collapsed: {
+    width: COLLAPSED_WIDTH,
+    minWidth: COLLAPSED_WIDTH,
+    maxWidth: COLLAPSED_WIDTH,
+    flexBasis: COLLAPSED_WIDTH,
+  },
+  logo: {
+    display: 'flex',
+  },
+}));
 
 type Props = WithFlowData<BlocksBar_flowDraft>;
 
 function BlocksBar(props: Props) {
   const {flowDraft} = props;
   const flow = useGraph();
-  const history = useHistory();
+  const classes = useStyles();
+  const [collapsed, setCollapsed] = useState(false);
 
   const flowName = flowDraft?.name;
   const title = useMemo(() => {
-    const breadcrumbs = [
-      {
-        id: 'automation_flows',
-        name: AUTOMATION_FLOWS_VIEW_HEADER,
-        onClick: () => history.replace(InventoryAPIUrls.flows()),
-      },
-    ];
-    if (flowName != null && flowName.length > 0) {
-      breadcrumbs.push({
-        id: 'flow',
-        name: flowName,
-      });
-    }
-    return <Breadcrumbs breadcrumbs={breadcrumbs} size="small" />;
-  }, [flowName, history]);
+    return (
+      <div className={classes.header}>
+        <Link className={classes.logo} to={InventoryAPIUrls.flows()}>
+          <Logo />
+        </Link>
+        {!collapsed && (
+          <Text className={classes.name} variant="h6" useEllipsis={true}>
+            {flowName}
+          </Text>
+        )}
+      </div>
+    );
+  }, [flowName, classes, collapsed]);
 
   const administrativeTypes = useMemo(
     () => [new ManualStartBlockType(flow), new EndBlockType(flow)],
@@ -63,11 +85,31 @@ function BlocksBar(props: Props) {
 
   const logicTypes = useMemo(() => [new DecisionBlockType(flow)], [flow]);
 
+  const callback = collapsed => {
+    setCollapsed(collapsed);
+  };
+
   return (
-    <SideBar header={title}>
-      <BlocksCategory header="Events" blockTypes={administrativeTypes} />
-      <BlocksCategory header="Actions" blockTypes={actionTypes} />
-      <BlocksCategory header="Logic" blockTypes={logicTypes} />
+    <SideBar
+      header={title}
+      collapsible={true}
+      collapseCallback={callback}
+      className={collapsed ? classes.collapsed : ''}>
+      <BlocksCategory
+        collapsed={collapsed}
+        header="Events"
+        blockTypes={administrativeTypes}
+      />
+      <BlocksCategory
+        collapsed={collapsed}
+        header="Actions"
+        blockTypes={actionTypes}
+      />
+      <BlocksCategory
+        collapsed={collapsed}
+        header="Logic"
+        blockTypes={logicTypes}
+      />
     </SideBar>
   );
 }

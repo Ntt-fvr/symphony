@@ -8,11 +8,12 @@
  * @format
  */
 
+import type {FutureState} from '../../common/WorkOrder';
+import type {WorkOrderDetailsPaneEquipmentItem_equipment} from './__generated__/WorkOrderDetailsPaneEquipmentItem_equipment.graphql.js';
+
 import React from 'react';
 import WorkOrderDetailsPaneItem from './WorkOrderDetailsPaneItem';
 import {createFragmentContainer, graphql} from 'react-relay';
-import type {FutureState} from '../../common/WorkOrder';
-import type {WorkOrderDetailsPaneEquipmentItem_equipment} from './__generated__/WorkOrderDetailsPaneEquipmentItem_equipment.graphql.js';
 
 type Props = {
   equipment: WorkOrderDetailsPaneEquipmentItem_equipment,

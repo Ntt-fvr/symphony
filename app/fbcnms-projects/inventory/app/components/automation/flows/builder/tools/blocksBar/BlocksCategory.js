@@ -9,40 +9,40 @@
  */
 
 import type {IBlockType} from '../../canvas/graph/shapes/blocks/blockTypes/BaseBlockType';
-import type {MouseEventHandler} from '@symphony/design-system/components/Core/Clickable';
 
 import Button from '@symphony/design-system/components/Button';
-import React from 'react';
+import React, {useCallback} from 'react';
 import Text from '@symphony/design-system/components/Text';
-import symphony from '@symphony/design-system/theme/symphony';
+import classNames from 'classnames';
+import useDragAndDropHandler from '../../../utils/useDragAndDropHandler';
 import {makeStyles} from '@material-ui/styles';
-
-// import {useEffect, useState} from 'react';
-// import {useGraph} from '../canvas/graph/GraphContext';
+import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '4px',
+    marginBottom: '32px',
   },
   header: {
-    backgroundColor: symphony.palette.background,
-    padding: '2px',
-    textAlign: 'center',
+    textTransform: 'uppercase',
+    minHeight: '20px',
+    marginBottom: '16px',
   },
-  body: {
-    padding: '8px 0',
-  },
+  body: {},
   blockType: {
-    border: `1px solid ${symphony.palette.D50}`,
     width: '100%',
-    height: '80px',
-    '&:hover': {
-      borderColor: symphony.palette.primary,
+    height: '48px',
+    padding: '0',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    cursor: 'move',
+
+    '& > span': {
+      width: '100%',
     },
     '&:not(:last-child)': {
-      marginBottom: '8px',
+      marginBottom: '16px',
     },
   },
 }));
@@ -50,36 +50,83 @@ const useStyles = makeStyles(() => ({
 export type BlocksCategoryProps = $ReadOnly<{|
   header: string,
   blockTypes: $ReadOnlyArray<IBlockType>,
+  collapsed: boolean,
 |}>;
 
-function blockTypeClickHanlder(blocType: IBlockType): MouseEventHandler {
-  return () => {
-    blocType.createBlock();
-  };
-}
-
 export default function BlocksCategory(props: BlocksCategoryProps) {
-  const {header, blockTypes} = props;
+  const {header, blockTypes, collapsed} = props;
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <Text variant="subtitle2">{header}</Text>
+        {!collapsed && (
+          <Text variant="overline" color="gray">
+            {header}
+          </Text>
+        )}
       </div>
       <div className={classes.body}>
-        {blockTypes.map(blockType => {
-          const PresentationComponent = blockType.presentationComponent;
-          return (
-            <Button
-              skin="regular"
-              className={classes.blockType}
-              onClick={blockTypeClickHanlder(blockType)}>
-              <PresentationComponent />
-            </Button>
-          );
-        })}
+        {blockTypes.map((blockType, index) => (
+          <Block
+            key={index}
+            blockType={blockType}
+            className={classNames(classes.blockType)}
+          />
+        ))}
       </div>
     </div>
+  );
+}
+
+type BlockProps = $ReadOnly<{|
+  blockType: IBlockType,
+  className: string,
+|}>;
+
+function Block(props: BlockProps) {
+  const {blockType, className} = props;
+  const PresentationComponent = blockType.presentationComponent;
+
+  const enqueueSnackbar = useEnqueueSnackbar();
+
+  const callCreateBlock = useCallback(
+    (position, translateClientCoordinates) => {
+      try {
+        blockType.createBlock(position, translateClientCoordinates);
+      } catch (err) {
+        enqueueSnackbar(err, {variant: 'error'});
+      }
+    },
+    [blockType, enqueueSnackbar],
+  );
+
+  const onDrop = useCallback(
+    (clientX, clientY) => {
+      const position = {
+        x: clientX,
+        y: clientY,
+      };
+      callCreateBlock(position, true);
+    },
+    [callCreateBlock],
+  );
+  const onClick = useCallback(() => {
+    callCreateBlock();
+  }, [callCreateBlock]);
+
+  const dragAndDropHandler = useDragAndDropHandler(
+    PresentationComponent,
+    onDrop,
+    onClick,
+  );
+
+  return (
+    <Button
+      skin="regular"
+      className={className}
+      onMouseDown={dragAndDropHandler}>
+      <PresentationComponent />
+    </Button>
   );
 }

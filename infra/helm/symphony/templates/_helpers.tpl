@@ -233,9 +233,9 @@ app.kubernetes.io/component: docs
 {{ include "symphony.admin.clientLabel" . }}
 {{- end }}
 
-{{/* Create the name for graph database secret */}}
-{{- define "symphony.graphDB.secretName" -}}
-{{- print (include "symphony.fullname" .) "-graph-db" -}}
+{{/* Create the name for database secret */}}
+{{- define "symphony.database.secretName" -}}
+{{- print (include "symphony.fullname" .) "-db" -}}
 {{- end }}
 
 {{/* Create the name for migrate database secret */}}
@@ -243,10 +243,21 @@ app.kubernetes.io/component: docs
 {{- print (include "symphony.fullname" .) "-migrate-db" -}}
 {{- end }}
 
-{{/* Create the value for graph database secret */}}
-{{- define "symphony.graphDB.stringData" -}}
-{{- with .Values.graphDB.mysql }}
-MYSQL_DSN: "{{ .user }}:{{ .pass }}@tcp({{ .host }}:{{ .port }})/{{ if .param }}?{{ .param }}{{ end }}"
+{{/* Create the value for database secret */}}
+{{- define "symphony.database.stringData" -}}
+{{- with .Values.persistence.database }}
+{{- $params := "" }}
+{{- range $key, $value := .params }}
+	{{- if eq $params "" }}
+		{{- $params = print $params "?" $key }}
+	{{- else }}
+		{{- $params = print $params "&" $key }}
+	{{- end }}
+	{{- if $value -}}
+		{{- $params = print $params "=" $value }}
+	{{- end -}}
+{{- end -}}
+DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.database.user is required" .user) .pass (required ".Values.persistence.database.host is required" .host) (int .port) $params }}"
 {{- end }}
 {{- end }}
 
@@ -286,11 +297,44 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
 
-{{/* Create service metrics port */}}
-{{- define "symphony.metricsPort" -}}
-{{- if .Values.serviceMonitor.enabled }}
-- name: http-metrics
-  port: 9464
+{{/* Create container ports */}}
+{{- define "symphony.containerPorts" -}}
+- containerPort: {{ .service.targetPort }}
+  name: http
+- containerPort: {{ .service.metrics.targetPort }}
+  name: http-metrics
+{{- end }}
+
+{{/* Create service ports */}}
+{{- define "symphony.servicePorts" -}}
+- name: http
+  port: {{ .service.port }}
   targetPort: http
+- name: http-metrics
+  port: {{ .service.metrics.port }}
+  targetPort: http-metrics
+{{- end }}
+
+{{/* Create service listen args */}}
+{{- define "symphony.listenArgs" -}}
+- --web.listen-address={{ printf ":%d" (int .service.targetPort) }}
+- --metrics.listen-address={{ printf ":%d" (int .service.metrics.targetPort) }}
+{{- end }}
+
+{{/* Create service probes */}}
+{{- define "symphony.probes" -}}
+{{- with .probes.liveness }}
+livenessProbe:
+  httpGet:
+    path: {{ default "/healthz/liveness" $.probes.path }}
+    port: http
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .probes.readiness }}
+readinessProbe:
+  httpGet:
+    path: {{ default "/healthz/readiness" $.probes.path }}
+    port: http
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

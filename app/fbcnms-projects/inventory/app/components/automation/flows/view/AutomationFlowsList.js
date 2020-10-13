@@ -34,19 +34,17 @@ function AutomationFlowsList(props: Props) {
   return flows.length > 0 ? (
     <div className={classes.flowsList}>
       {flows.map(flow => (
-        <AutomationFlowCard key={flow.id} flowDraft={flow} />
+        <AutomationFlowCard key={flow.id} flow={flow} />
       ))}
     </div>
-  ) : (
-    <div>No flows available</div>
-  );
+  ) : null;
 }
 
 export default createFragmentContainer(AutomationFlowsList, {
   flows: graphql`
-    fragment AutomationFlowsList_flows on FlowDraft @relay(plural: true) {
+    fragment AutomationFlowsList_flows on Flow @relay(plural: true) {
       id
-      ...AutomationFlowCard_flowDraft
+      ...AutomationFlowCard_flow
     }
   `,
 });

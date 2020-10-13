@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "2.0.0"
+  version             = "4.0.0"
   timeout             = 600
   max_history         = 100
 
@@ -148,12 +148,17 @@ resource helm_release symphony {
           agentThriftEndpoint = "localhost:6832"
         }
       }
-      graphDB = {
-        mysql = {
-          host  = module.graph_db.this_db_instance_address
-          port  = module.graph_db.this_db_instance_port
-          user  = module.graph_db.this_db_instance_username
-          param = "charset=utf8&parseTime=true&interpolateParams=true"
+      persistence = {
+        database = {
+          scheme = "awsmysql"
+          host   = module.graph_db.this_db_instance_address
+          port   = module.graph_db.this_db_instance_port
+          user   = module.graph_db.this_db_instance_username
+          params = {
+            charset           = "utf8"
+            parseTime         = "true"
+            interpolateParams = "true"
+          }
         }
       }
       front = {
@@ -166,16 +171,6 @@ resource helm_release symphony {
             port = module.front_db.this_db_instance_port
             user = module.front_db.this_db_instance_username
             db   = "auth"
-          }
-        }
-      }
-      admin = {
-        networkPolicy = {
-          ingressNSMatchLabels = {
-            "networking/namespace" = "monitoring"
-          }
-          ingressNSPodMatchLabels = {
-            app = "prometheus"
           }
         }
       }
@@ -223,6 +218,9 @@ resource helm_release symphony {
             bucket_url    = local.store_bucket_url
             bucket_prefix = local.store_exports_path
           }
+          cadence = {
+            address = "${local.cadence.frontend_name}:${local.cadence.frontend_port}"
+          }
           extraEnvVars = [
             local.nats_server_envar
           ]
@@ -252,8 +250,8 @@ resource helm_release symphony {
       jobrunner = {
         resources = {
           limits = {
-            cpu    = "200m"
-            memory = "256Mi"
+            cpu    = "10m"
+            memory = "64Mi"
           }
         }
       }
@@ -273,7 +271,7 @@ resource helm_release symphony {
     value = module.front_db.this_db_instance_password
   }
   set_sensitive {
-    name  = "graphDB.mysql.pass"
+    name  = "persistence.database.pass"
     value = module.graph_db.this_db_instance_password
   }
 
@@ -289,6 +287,9 @@ resource kubernetes_cron_job tenant_cleaner {
     }
     fb-test = {
       schedule = "0 0 * * *"
+    }
+    ls-test-staging = {
+      schedule = "0 * * * *"
     }
   } : {}
 

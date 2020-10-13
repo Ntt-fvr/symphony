@@ -606,17 +606,10 @@ type Equipment implements Node & NamedNode {
   locationHierarchy: [Location!]!
   firstLocation: Location!
   positionHierarchy: [EquipmentPosition!]!
-  device: Device
   services: [Service]!
   images: [File]!
   files: [File]!
   hyperlinks: [Hyperlink!]!
-}
-
-type Device {
-  id: String!
-  name: String!
-  up: Boolean
 }
 
 input AddEquipmentInput {
@@ -823,6 +816,11 @@ type EquipmentPort implements Node {
   services: [Service]!
 }
 
+input EquipmentPortConnectionInput {
+  id: ID
+  name: String
+}
+
 input EquipmentPortInput {
   id: ID
   name: String!
@@ -830,6 +828,7 @@ input EquipmentPortInput {
   visibleLabel: String
   portTypeID: ID
   bandwidth: String
+  connectedPorts: [EquipmentPortConnectionInput!]
 }
 
 type SearchEntry {
@@ -903,6 +902,39 @@ type FlowDraftConnection {
   """
   pageInfo: PageInfo!
 }
+
+"""
+A flow edge in a connection.
+"""
+type FlowEdge {
+  """
+  The Flow type at the end of the edge.
+  """
+  node: Flow
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+
+"""
+A connection to a list of Flows.
+"""
+type FlowConnection {
+  """
+  Total count of Flows in all pages.
+  """
+  totalCount: Int!
+  """
+  A list of Flow edges.
+  """
+  edges: [FlowEdge!]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
 """
 A connection to a list of equipment port types.
 """
@@ -3081,133 +3113,6 @@ type LatestPythonPackageResult {
   lastBreakingPythonPackage: PythonPackage
 }
 
-enum ActionID
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/actions/core.ActionID"
-  ) {
-  magma_reboot_node
-}
-
-enum TriggerID
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/actions/core.TriggerID"
-  ) {
-  magma_alert
-}
-
-# Data type for the input to be
-enum ActionsDataType
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/actions/core.DataType"
-  ) {
-  string
-  stringArray
-}
-
-# ActionsTrigger defines a trigger itself, along with what actions and filters
-# can be used
-type ActionsTrigger {
-  id: ID! # Same as triggerID, but used for Node
-  triggerID: TriggerID!
-  description: String!
-  supportedActions: [ActionsAction]! @goField(forceResolver: true)
-  supportedFilters: [ActionsFilter]! @goField(forceResolver: true)
-}
-
-# ActionsOperator defines how to filter a trigger.
-type ActionsOperator {
-  # Ex. "is", "isNot"
-  operatorID: String!
-  # Name displayed to the user. Ex: "is", "is not"
-  description: String!
-  # Data type that's expected for this operator Ex. "string", "arrayString"
-  dataType: ActionsDataType!
-}
-
-# ActionsAction defines an action that can be executed
-# Ex. "Reboot a magma device"
-type ActionsAction {
-  actionID: ActionID!
-  description: String!
-  # Data type expected for this action. Ex. "string", "arrayString"
-  dataType: ActionsDataType!
-}
-
-# ActionsFilter is a definition for how you can filter a trigger.
-# Ex: "The alerts network id [is, is not]"
-type ActionsFilter {
-  # unique identifier for the filter
-  filterID: String!
-  # Ex. "the alerts network id"
-  description: String!
-  # a list of operators the filter supports.
-  # Ex. "is", "is not"
-  supportedOperators: [ActionsOperator]!
-}
-
-type ActionsTriggersSearchResult {
-  results: [ActionsTrigger]!
-  count: Int!
-}
-
-# ActionsRuleAction is a user-configured data about an action to execute, along
-# with data for executing that action
-type ActionsRuleAction
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/actions/core.ActionsRuleAction"
-  ) {
-  action: ActionsAction! @goField(forceResolver: true)
-  actionID: ActionID!
-  data: String!
-}
-
-# ActionsRuleFilter is a user-configured ActionsFilter to filter the trigger on
-type ActionsRuleFilter
-  @goModel(
-    model: "github.com/facebookincubator/symphony/pkg/actions/core.ActionsRuleFilter"
-  ) {
-  filterID: String
-  operatorID: String
-  operator: ActionsOperator! @goField(forceResolver: true)
-  # Serialized JSON of the metadata to filter
-  # (contextual to the operator)
-  data: String!
-}
-
-# ActionsRule is a user-configured rule tieing a trigger, filtering it, and
-# executing 1 or more actions
-type ActionsRule implements Node {
-  id: ID!
-  name: String!
-  trigger: ActionsTrigger! @goField(forceResolver: true)
-  triggerID: TriggerID!
-  ruleActions: [ActionsRuleAction]!
-  ruleFilters: [ActionsRuleFilter]!
-}
-
-type ActionsRulesSearchResult {
-  results: [ActionsRule]!
-  count: Int!
-}
-
-input ActionsRuleActionInput {
-  actionID: ActionID!
-  data: String!
-}
-
-input ActionsRuleFilterInput {
-  filterID: String!
-  operatorID: String!
-  data: String!
-}
-
-input AddActionsRuleInput {
-  name: String!
-  triggerID: TriggerID!
-  ruleActions: [ActionsRuleActionInput]!
-  ruleFilters: [ActionsRuleFilterInput]!
-}
-
 input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
 }
@@ -3275,7 +3180,6 @@ type TriggerType @goModel(model: "github.com/facebookincubator/symphony/pkg/flow
 type Block implements Node {
   id: ID!
   cid: String!
-  name: String!
   nextBlocks: [Block!]!
   prevBlocks: [Block!]!
   details: BlockDetails!
@@ -3310,6 +3214,7 @@ input VariableExpressionInput {
 type BlockUIRepresentation @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -3317,6 +3222,7 @@ type BlockUIRepresentation @goModel(
 input BlockUIRepresentationInput @goModel(
   model: "github.com/facebookincubator/symphony/pkg/flowengine/flowschema.BlockUIRepresentation"
 ) {
+  name: String!
   xPosition: Int!
   yPosition: Int!
 }
@@ -3356,34 +3262,29 @@ union BlockDetails = StartBlock | EndBlock | DecisionBlock | GotoBlock | Subflow
 
 input StartBlockInput {
   cid: String!
-  name: String!
   paramDefinitions: [VariableDefinitionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input EndBlockInput {
   cid: String!
-  name: String!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input DecisionBlockInput {
   cid: String!
-  name: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input GotoBlockInput {
   cid: String!
-  name: String!
   targetBlockCid: String!
   uiRepresentation: BlockUIRepresentationInput
 }
 
 input SubflowBlockInput {
   cid: String!
-  name: String!
   flowId: ID!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3391,7 +3292,6 @@ input SubflowBlockInput {
 
 input TriggerBlockInput {
   cid: String!
-  name: String!
   triggerType: TriggerTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3399,7 +3299,6 @@ input TriggerBlockInput {
 
 input ActionBlockInput {
   cid: String!
-  name: String!
   actionType: ActionTypeId!
   params: [VariableExpressionInput!]!
   uiRepresentation: BlockUIRepresentationInput
@@ -3434,13 +3333,18 @@ input ImportFlowDraftInput {
 
 input EditBlockInput {
   id: ID!
-  name: String
   uiRepresentation: BlockUIRepresentationInput
 }
 
 # Flow Definitions
 
 enum FlowStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.Status") {
+  PUBLISHED
+  UNPUBLISHED
+  ARCHIVED
+}
+
+enum FlowNewInstancesPolicy @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flow.NewInstancesPolicy") {
   ENABLED
   DISABLED
 }
@@ -3451,6 +3355,7 @@ type Flow implements Node {
   description: String
   endParamDefinitions: [VariableDefinition!]!
   status: FlowStatus!
+  newInstancesPolicy: FlowNewInstancesPolicy!
   blocks: [Block!]!
   connectors: [Connector!]!
   draft: FlowDraft
@@ -3465,8 +3370,16 @@ type FlowDraft implements Node {
   connectors: [Connector!]!
 }
 
+enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
+  IN_PROGRESS
+  FAILED
+  COMPLETED
+  CANCELLED
+}
+
 type FlowInstance implements Node {
   id: ID!
+  status: FlowInstanceStatus!
 }
 
 input AddFlowDraftInput {
@@ -3478,6 +3391,7 @@ input AddFlowDraftInput {
 
 input PublishFlowInput {
   flowDraftID: ID!
+  flowInstancesPolicy: FlowNewInstancesPolicy!
 }
 
 input VariableValue @goModel(
@@ -3851,8 +3765,6 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): CustomerConnection
-  actionsRules: ActionsRulesSearchResult
-  actionsTriggers: ActionsTriggersSearchResult
   reportFilters(entity: FilterEntity!): [ReportFilter!]!
   flowDrafts(
     after: Cursor
@@ -3860,6 +3772,12 @@ type Query {
     before: Cursor
     last: Int @numberValue(min: 0)
   ): FlowDraftConnection!
+  flows(
+    after: Cursor
+    first: Int @numberValue(min: 0)
+    before: Cursor
+    last: Int @numberValue(min: 0)
+  ): FlowConnection!
 }
 
 type Mutation {
@@ -4033,9 +3951,6 @@ type Mutation {
   removeCustomer(id: ID!): ID!
   addFloorPlan(input: AddFloorPlanInput!): FloorPlan!
   deleteFloorPlan(id: ID!): Boolean!
-  addActionsRule(input: AddActionsRuleInput!): ActionsRule!
-  editActionsRule(id: ID!, input: AddActionsRuleInput!): ActionsRule!
-  removeActionsRule(id: ID!): Boolean!
   technicianWorkOrderCheckIn(
     workOrderId: ID!
     input: TechnicianWorkOrderCheckInInput
@@ -4096,4 +4011,5 @@ type Mutation {
 type Subscription {
   workOrderAdded: WorkOrder
   workOrderDone: WorkOrder
+  flowInstanceDone: FlowInstance!
 }

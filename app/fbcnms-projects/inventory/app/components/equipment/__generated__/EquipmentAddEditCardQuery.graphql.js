@@ -28,9 +28,6 @@ export type EquipmentAddEditCardQueryResponse = {|
     +parentPosition?: ?{|
       +id: string
     |},
-    +device?: ?{|
-      +id: string
-    |},
     +equipmentType?: {|
       +id: string,
       +name: string,
@@ -99,9 +96,6 @@ query EquipmentAddEditCardQuery(
         id
       }
       parentPosition {
-        id
-      }
-      device {
         id
       }
       equipmentType {
@@ -212,105 +206,95 @@ v6 = {
 v7 = {
   "alias": null,
   "args": null,
-  "concreteType": "Device",
-  "kind": "LinkedField",
-  "name": "device",
-  "plural": false,
-  "selections": (v4/*: any*/),
+  "kind": "ScalarField",
+  "name": "index",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "index",
+  "name": "isInstanceProperty",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isInstanceProperty",
+  "name": "type",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "type",
+  "name": "nodeType",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "nodeType",
+  "name": "isMandatory",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "isMandatory",
+  "name": "stringValue",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "stringValue",
+  "name": "intValue",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "intValue",
+  "name": "floatValue",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "floatValue",
+  "name": "booleanValue",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "booleanValue",
+  "name": "latitudeValue",
   "storageKey": null
 },
 v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "latitudeValue",
+  "name": "longitudeValue",
   "storageKey": null
 },
 v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "longitudeValue",
+  "name": "rangeFromValue",
   "storageKey": null
 },
 v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rangeFromValue",
-  "storageKey": null
-},
-v20 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "rangeToValue",
   "storageKey": null
 },
-v21 = {
+v20 = {
   "alias": null,
   "args": null,
   "concreteType": "EquipmentType",
@@ -330,6 +314,7 @@ v21 = {
       "selections": [
         (v2/*: any*/),
         (v3/*: any*/),
+        (v7/*: any*/),
         (v8/*: any*/),
         (v9/*: any*/),
         (v10/*: any*/),
@@ -341,15 +326,14 @@ v21 = {
         (v16/*: any*/),
         (v17/*: any*/),
         (v18/*: any*/),
-        (v19/*: any*/),
-        (v20/*: any*/)
+        (v19/*: any*/)
       ],
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v22 = {
+v21 = {
   "alias": null,
   "args": null,
   "concreteType": "PropertyType",
@@ -359,16 +343,16 @@ v22 = {
   "selections": [
     (v2/*: any*/),
     (v3/*: any*/),
+    (v7/*: any*/),
     (v8/*: any*/),
     (v9/*: any*/),
     (v10/*: any*/),
-    (v11/*: any*/),
-    (v13/*: any*/),
-    (v12/*: any*/)
+    (v12/*: any*/),
+    (v11/*: any*/)
   ],
   "storageKey": null
 },
-v23 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -397,8 +381,7 @@ return {
               (v3/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
-              (v7/*: any*/),
-              (v21/*: any*/),
+              (v20/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -407,8 +390,9 @@ return {
                 "name": "properties",
                 "plural": true,
                 "selections": [
-                  (v22/*: any*/),
+                  (v21/*: any*/),
                   (v2/*: any*/),
+                  (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
@@ -416,7 +400,6 @@ return {
                   (v17/*: any*/),
                   (v18/*: any*/),
                   (v19/*: any*/),
-                  (v20/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -458,7 +441,7 @@ return {
         "name": "node",
         "plural": false,
         "selections": [
-          (v23/*: any*/),
+          (v22/*: any*/),
           (v2/*: any*/),
           {
             "kind": "InlineFragment",
@@ -466,8 +449,7 @@ return {
               (v3/*: any*/),
               (v5/*: any*/),
               (v6/*: any*/),
-              (v7/*: any*/),
-              (v21/*: any*/),
+              (v20/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -476,8 +458,9 @@ return {
                 "name": "properties",
                 "plural": true,
                 "selections": [
-                  (v22/*: any*/),
+                  (v21/*: any*/),
                   (v2/*: any*/),
+                  (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
                   (v15/*: any*/),
@@ -485,7 +468,6 @@ return {
                   (v17/*: any*/),
                   (v18/*: any*/),
                   (v19/*: any*/),
-                  (v20/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -494,7 +476,7 @@ return {
                     "name": "nodeValue",
                     "plural": false,
                     "selections": [
-                      (v23/*: any*/),
+                      (v22/*: any*/),
                       (v2/*: any*/),
                       (v3/*: any*/)
                     ],
@@ -513,16 +495,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "919ac59213c8b4adba19c2b3f02a4ac9",
+    "cacheID": "c5ff3e42c76014fa87b7ff1194494712",
     "id": null,
     "metadata": {},
     "name": "EquipmentAddEditCardQuery",
     "operationKind": "query",
-    "text": "query EquipmentAddEditCardQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      parentLocation {\n        id\n      }\n      parentPosition {\n        id\n      }\n      device {\n        id\n      }\n      equipmentType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          nodeType\n          isMandatory\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n        }\n      }\n      properties {\n        propertyType {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          nodeType\n          stringValue\n          isMandatory\n        }\n        id\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        nodeValue {\n          __typename\n          id\n          name\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query EquipmentAddEditCardQuery(\n  $equipmentId: ID!\n) {\n  equipment: node(id: $equipmentId) {\n    __typename\n    ... on Equipment {\n      id\n      name\n      parentLocation {\n        id\n      }\n      parentPosition {\n        id\n      }\n      equipmentType {\n        id\n        name\n        propertyTypes {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          nodeType\n          isMandatory\n          stringValue\n          intValue\n          floatValue\n          booleanValue\n          latitudeValue\n          longitudeValue\n          rangeFromValue\n          rangeToValue\n        }\n      }\n      properties {\n        propertyType {\n          id\n          name\n          index\n          isInstanceProperty\n          type\n          nodeType\n          stringValue\n          isMandatory\n        }\n        id\n        stringValue\n        intValue\n        floatValue\n        booleanValue\n        latitudeValue\n        longitudeValue\n        rangeFromValue\n        rangeToValue\n        nodeValue {\n          __typename\n          id\n          name\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'dab07dee818a8ec6bc4b2f31f7a96175';
+(node/*: any*/).hash = '64a622418ebaf5845d9a3641e7e96797';
 
 module.exports = node;

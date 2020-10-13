@@ -8,9 +8,8 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/facebookincubator/symphony/graph/graphgrpc"
+	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/graph/graphhttp"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -19,36 +18,39 @@ import (
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
+	"github.com/facebookincubator/symphony/pkg/server/xserver"
+	"github.com/facebookincubator/symphony/pkg/telemetry"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
+	"go.opencensus.io/stats/view"
 
 	"github.com/google/wire"
 	"gocloud.dev/server/health"
-	"google.golang.org/grpc"
 )
 
 func newApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
-			"MySQLConfig",
+			"ListenAddress",
+			"MetricsAddress",
 			"AuthURL",
 			"EventPubsubURL",
 			"LogConfig",
 			"TelemetryConfig",
-			"Orc8rConfig",
-			"TenancyConfig",
 		),
 		log.Provider,
-		newApp,
+		wire.Struct(
+			new(application),
+			"*",
+		),
 		newTenancy,
 		wire.Struct(
 			new(event.Eventer),
 			"*",
 		),
-		newHealthChecks,
 		newMySQLTenancy,
-		mysql.Provider,
+		newHealthChecks,
 		ev.ProvideEmitter,
 		wire.Bind(
 			new(ev.EmitterFactory),
@@ -60,48 +62,40 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		),
 		triggers.NewFactory,
 		actions.NewFactory,
+		wire.Struct(
+			new(hooks.Flower),
+			"*",
+		),
+		metrics.Provider,
+		telemetry.ProvideViewExporter,
+		provideViews,
 		graphhttp.NewServer,
 		wire.Struct(
 			new(graphhttp.Config), "*",
-		),
-		graphgrpc.NewServer,
-		wire.Struct(
-			new(graphgrpc.Config), "*",
 		),
 	)
 	return nil, nil, nil
 }
 
-func newApp(logger log.Logger, httpServer *server.Server, grpcServer *grpc.Server, flags *cliFlags) *application {
-	var app application
-	app.Logger = logger.Background()
-	app.http.Server = httpServer
-	app.http.addr = flags.HTTPAddress
-	app.grpc.Server = grpcServer
-	app.grpc.addr = flags.GRPCAddress
-	return &app
+func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {
+	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
+		eventer.HookTo(client)
+		flower.HookTo(client)
+	})
 }
 
-func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, triggerFactory triggers.Factory, actionFactory actions.Factory) viewer.Tenancy {
-	return viewer.NewCacheTenancy(tenancy, func(client *ent.Client) {
-		hooker := hooks.Flower{
-			TriggerFactory: triggerFactory,
-			ActionFactory:  actionFactory,
-		}
-		hooker.HookTo(client)
-		eventer.HookTo(client)
-	})
+func newMySQLTenancy(ctx context.Context, flags *cliFlags) (*viewer.MySQLTenancy, error) {
+	return viewer.NewMySQLTenancy(ctx, flags.DatabaseURL, flags.TenancyConfig.TenantMaxConn)
 }
 
 func newHealthChecks(tenancy *viewer.MySQLTenancy) []health.Checker {
 	return []health.Checker{tenancy}
 }
 
-func newMySQLTenancy(mySQLConfig mysql.Config, tenancyConfig viewer.Config, logger log.Logger) (*viewer.MySQLTenancy, error) {
-	tenancy, err := viewer.NewMySQLTenancy(mySQLConfig.String(), tenancyConfig.TenantMaxConn)
-	if err != nil {
-		return nil, fmt.Errorf("creating mysql tenancy: %w", err)
-	}
-	mysql.SetLogger(logger)
-	return tenancy, nil
+func provideViews() []*view.View {
+	views := xserver.DefaultViews()
+	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocpubsub.DefaultViews...)
+	views = append(views, ev.OpenCensusViews...)
+	return views
 }

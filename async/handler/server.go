@@ -13,6 +13,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
@@ -24,28 +25,31 @@ const ServiceName = "async"
 
 // NewServer is the events server.
 type Server struct {
-	service  *ev.Service
-	logger   log.Logger
-	tenancy  viewer.Tenancy
-	features *runtimevar.Variable
-	handlers []Handler
+	service      *ev.Service
+	logger       log.Logger
+	tenancy      viewer.Tenancy
+	features     *runtimevar.Variable
+	handlers     []Handler
+	healthPoller health.Poller
 }
 
 // Config defines the async server config.
 type Config struct {
-	Tenancy  viewer.Tenancy
-	Features *runtimevar.Variable
-	Receiver ev.Receiver
-	Logger   log.Logger
-	Handlers []Handler
+	Tenancy      viewer.Tenancy
+	Features     *runtimevar.Variable
+	Receiver     ev.Receiver
+	Logger       log.Logger
+	Handlers     []Handler
+	HealthPoller health.Poller
 }
 
 func NewServer(cfg Config) *Server {
 	srv := &Server{
-		tenancy:  cfg.Tenancy,
-		features: cfg.Features,
-		logger:   cfg.Logger,
-		handlers: cfg.Handlers,
+		tenancy:      cfg.Tenancy,
+		features:     cfg.Features,
+		logger:       cfg.Logger,
+		handlers:     cfg.Handlers,
+		healthPoller: cfg.HealthPoller,
 	}
 	srv.service, _ = ev.NewService(
 		ev.Config{
@@ -59,6 +63,9 @@ func NewServer(cfg Config) *Server {
 
 // Serve starts the server.
 func (s *Server) Serve(ctx context.Context) error {
+	if err := s.healthPoller.Wait(ctx); err != nil {
+		return fmt.Errorf("failed to wait for health checks: %w", err)
+	}
 	return s.service.Run(ctx)
 }
 

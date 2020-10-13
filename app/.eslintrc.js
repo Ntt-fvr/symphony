@@ -47,6 +47,8 @@ if (Object.keys(schemaObject).length > 0) {
   ];
 }
 
+require('eslint-plugin-lint').load(path.join(__dirname, 'scripts/lint/rules'));
+
 module.exports.overrides = [
   {
     files: ['*'],
@@ -61,6 +63,14 @@ module.exports.overrides = [
           parser: 'flow',
         },
       ],
+      'flowtype/require-valid-file-annotation': 'off',
+    },
+  },
+  {
+    files: ['*.js'],
+    excludedFiles: ['**/__generated__/*', '**/flow-typed/*'],
+    rules: {
+      'lint/type-imports-block': 'error',
     },
   },
   {
@@ -99,7 +109,6 @@ module.exports.overrides = [
     files: [
       'fbcnms-packages/**/*.js',
       'fbcnms-projects/inventory/**/*.js',
-      'fbcnms-projects/magmalte/**/*.js',
       'fbcnms-projects/platform-server/**/*.js',
     ],
     rules: {
@@ -120,8 +129,6 @@ module.exports.overrides = [
       'fbcnms-packages/fbcnms-babel-register/**/*.js',
       'fbcnms-packages/fbcnms-express-middleware/**/*.js',
       'fbcnms-packages/fbcnms-logging/**/*.js',
-      'fbcnms-packages/fbcnms-magma-api/**/*.js',
-      'fbcnms-packages/fbcnms-platform-server/**/*.js',
       'fbcnms-packages/fbcnms-relay/**/*.js',
       'fbcnms-packages/fbcnms-sequelize-models/**/*.js',
       'fbcnms-packages/fbcnms-ui/stories/**/*.js',
@@ -135,14 +142,6 @@ module.exports.overrides = [
     ],
     rules: {
       'no-console': 'off',
-    },
-  },
-  {
-    files: ['**/tgnms/**/*.js'],
-    rules: {
-      // tgnms doesn't want this because there's too many errors
-      'flowtype/no-weak-types': 'off',
-      'flowtype/require-valid-file-annotation': 'off',
     },
   },
 ];

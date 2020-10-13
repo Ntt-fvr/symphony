@@ -1,12 +1,12 @@
 # prometheus is a monitoring system and time series database
-resource helm_release prometheus_operator {
-  name       = "prometheus-operator"
+resource helm_release kube_prometheus_stack {
+  name       = "kube-prometheus-stack"
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "9.4.5"
+  version    = "10.0.1"
 
-  values = [templatefile("${path.module}/templates/prometheus-operator-values.tpl", {
+  values = [templatefile("${path.module}/templates/kube-prometheus-stack-values.tpl", {
     region             = data.aws_region.current.id
     host               = local.domains.symphony.intern_name
     env                = local.environment
@@ -18,7 +18,7 @@ resource helm_release prometheus_operator {
 
   set_sensitive {
     name  = "grafana.adminPassword"
-    value = random_string.grafana_admin_password.result
+    value = random_password.grafana_admin_password.result
   }
 
   depends_on = [helm_release.efs_provisioner]
@@ -46,7 +46,7 @@ locals {
   misc_dashboards = {
     for d in [
       { name = "go-processes", id = 6671, rev = 2 },
-      { name = "nginx-ingress", id = 9789, rev = 5 },
+      { name = "nginx-ingress", id = 9789, rev = 6 },
       { name = "nats-server", id = 2279, rev = 1 },
       { name = "cadence-frontend", id = 10373, rev = 1 },
     ] :
@@ -64,7 +64,7 @@ locals {
 }
 
 # random password generator for grafana
-resource random_string grafana_admin_password {
+resource random_password grafana_admin_password {
   length  = 10
   special = false
 }
@@ -75,7 +75,7 @@ module grafana_role {
   role_name_prefix          = "GrafanaRole"
   role_path                 = local.eks_sa_role_path
   role_policy               = data.aws_iam_policy_document.grafana.json
-  service_account_name      = "prometheus-operator-grafana"
+  service_account_name      = "kube-prometheus-stack-grafana"
   service_account_namespace = "monitoring"
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
@@ -125,12 +125,10 @@ resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.prometheus-community
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.6.0"
+  version    = "4.7.0"
   namespace  = "monitoring"
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {
     circleci_token = data.sops_file.secrets.data["circleci.token"]
   })]
-
-  depends_on = [helm_release.prometheus_operator]
 }

@@ -15,19 +15,20 @@ import AppContent from '@fbcnms/ui/components/layout/AppContent';
 import AppContext from '@fbcnms/ui/context/AppContext';
 import AppSideBar from '@fbcnms/ui/components/layout/AppSideBar';
 import ApplicationMain from '@fbcnms/ui/components/ApplicationMain';
-import ComputerIcon from '@material-ui/icons/Computer';
 import FlowBuilder from './flows/builder/FlowBuilder';
 import LoadingIndicator from '../../common/LoadingIndicator';
 import NavListItem from '@fbcnms/ui/components/NavListItem';
 import RelayEnvironment from '../../common/RelayEnvironment';
+import fbt from 'fbt';
 import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
 
+import AutomationFlowsIcon from './flows/view/icons/AutomationFlowsIcon';
 import AutomationFlowsView from './flows/view/AutomationFlowsView';
 import {Suspense, useContext} from 'react';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
-import {shouldShowSettings} from '@fbcnms/magmalte/app/components/Settings';
+import {shouldShowSettings} from '../Settings';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 
 const useStyles = makeStyles(_theme => ({
@@ -42,9 +43,9 @@ function NavItems() {
   return (
     <>
       <NavListItem
-        label="Flows"
+        label={fbt('Automation Flows', '')}
         path={relativeUrl('/flows')}
-        icon={<ComputerIcon />}
+        icon={<AutomationFlowsIcon />}
       />
     </>
   );

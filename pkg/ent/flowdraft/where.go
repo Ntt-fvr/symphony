@@ -561,7 +561,7 @@ func HasFlow() predicate.FlowDraft {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(FlowTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, FlowTable, FlowColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -573,7 +573,7 @@ func HasFlowWith(preds ...predicate.Flow) predicate.FlowDraft {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(FlowInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, FlowTable, FlowColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, FlowTable, FlowColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

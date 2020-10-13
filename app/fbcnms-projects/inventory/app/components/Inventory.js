@@ -27,7 +27,7 @@ import {Redirect, Route, Switch} from 'react-router-dom';
 import {getProjectLinks} from '@fbcnms/projects/projects';
 import {makeStyles} from '@material-ui/styles';
 import {setLoggerUser} from '../common/LoggingUtils';
-import {shouldShowSettings} from '@fbcnms/magmalte/app/components/Settings';
+import {shouldShowSettings} from './Settings';
 import {useMainContext} from './MainContext';
 import {useRelativeUrl} from '@fbcnms/ui/hooks/useRouter';
 import {useRouter} from '@fbcnms/ui/hooks';

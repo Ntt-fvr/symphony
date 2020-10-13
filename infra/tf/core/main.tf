@@ -55,10 +55,14 @@ locals {
   # current environment name
   environment = terraform.workspace != "default" ? terraform.workspace : "production"
 
+  # count for resources to be deployed only in production
+  production_only_count = local.environment == "production" ? 1 : 0
+
   # default resource tags
   tags = {
-    Environment = var.project
-    Workspace   = terraform.workspace
+    Project   = "core"
+    PartOf    = "symphony"
+    Workspace = terraform.workspace
   }
 
   # output path for file placement

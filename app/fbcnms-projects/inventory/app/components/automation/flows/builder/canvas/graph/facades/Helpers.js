@@ -35,6 +35,7 @@ export type Rect = $ReadOnly<{|
 
 export type ExtendedMouseEvent = $ReadOnly<{|
   target: HTMLElement,
+  originalEvent: MouseEvent,
 |}> &
   MouseEvent;
 

@@ -70,6 +70,11 @@ module this_team_iam {
   count      = terraform.workspace == "default" ? 1 : 0
 }
 
+data aws_iam_group this_team_group {
+  group_name = local.group_name
+  count      = 1 - length(module.this_team_iam)
+}
+
 data aws_iam_role this_team_role {
   name  = local.role_name
   count = 1 - length(module.this_team_iam)

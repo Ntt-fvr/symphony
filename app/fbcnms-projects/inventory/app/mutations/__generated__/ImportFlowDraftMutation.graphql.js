@@ -41,17 +41,16 @@ export type VariableDefinitionInput = {|
 |};
 export type StartBlockInput = {|
   cid: string,
-  name: string,
   paramDefinitions: $ReadOnlyArray<VariableDefinitionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type BlockUIRepresentationInput = {|
+  name: string,
   xPosition: number,
   yPosition: number,
 |};
 export type EndBlockInput = {|
   cid: string,
-  name: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
@@ -66,32 +65,27 @@ export type BlockVariableInput = {|
 |};
 export type DecisionBlockInput = {|
   cid: string,
-  name: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type GotoBlockInput = {|
   cid: string,
-  name: string,
   targetBlockCid: string,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type SubflowBlockInput = {|
   cid: string,
-  name: string,
   flowId: string,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type TriggerBlockInput = {|
   cid: string,
-  name: string,
   triggerType: TriggerTypeId,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
 |};
 export type ActionBlockInput = {|
   cid: string,
-  name: string,
   actionType: ActionTypeId,
   params: $ReadOnlyArray<VariableExpressionInput>,
   uiRepresentation?: ?BlockUIRepresentationInput,
@@ -107,6 +101,26 @@ export type ImportFlowDraftMutationResponse = {|
   +importFlowDraft: {|
     +id: string,
     +name: string,
+    +description: ?string,
+    +blocks: $ReadOnlyArray<{|
+      +cid: string,
+      +details: {|
+        +__typename: string
+      |},
+      +uiRepresentation: ?{|
+        +name: string,
+        +xPosition: number,
+        +yPosition: number,
+      |},
+      +nextBlocks: $ReadOnlyArray<{|
+        +cid: string,
+        +uiRepresentation: ?{|
+          +name: string,
+          +xPosition: number,
+          +yPosition: number,
+        |},
+      |}>,
+    |}>,
   |}
 |};
 export type ImportFlowDraftMutation = {|
@@ -123,6 +137,28 @@ mutation ImportFlowDraftMutation(
   importFlowDraft(input: $input) {
     id
     name
+    description
+    blocks {
+      cid
+      details {
+        __typename
+      }
+      uiRepresentation {
+        name
+        xPosition
+        yPosition
+      }
+      nextBlocks {
+        cid
+        uiRepresentation {
+          name
+          xPosition
+          yPosition
+        }
+        id
+      }
+      id
+    }
   }
 }
 */
@@ -137,44 +173,132 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "input",
-        "variableName": "input"
-      }
-    ],
-    "concreteType": "FlowDraft",
-    "kind": "LinkedField",
-    "name": "importFlowDraft",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "input",
+    "variableName": "input"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "description",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "cid",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": null,
+  "kind": "LinkedField",
+  "name": "details",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "__typename",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "BlockUIRepresentation",
+  "kind": "LinkedField",
+  "name": "uiRepresentation",
+  "plural": false,
+  "selections": [
+    (v3/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "xPosition",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "yPosition",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ImportFlowDraftMutation",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "FlowDraft",
+        "kind": "LinkedField",
+        "name": "importFlowDraft",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Block",
+            "kind": "LinkedField",
+            "name": "blocks",
+            "plural": true,
+            "selections": [
+              (v5/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Block",
+                "kind": "LinkedField",
+                "name": "nextBlocks",
+                "plural": true,
+                "selections": [
+                  (v5/*: any*/),
+                  (v7/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Mutation",
     "abstractKey": null
   },
@@ -183,19 +307,63 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ImportFlowDraftMutation",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "FlowDraft",
+        "kind": "LinkedField",
+        "name": "importFlowDraft",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Block",
+            "kind": "LinkedField",
+            "name": "blocks",
+            "plural": true,
+            "selections": [
+              (v5/*: any*/),
+              (v6/*: any*/),
+              (v7/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Block",
+                "kind": "LinkedField",
+                "name": "nextBlocks",
+                "plural": true,
+                "selections": [
+                  (v5/*: any*/),
+                  (v7/*: any*/),
+                  (v2/*: any*/)
+                ],
+                "storageKey": null
+              },
+              (v2/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "2693717e6b2a310e9bc978c0c5f8aad1",
+    "cacheID": "d28e64343e27ecf670fe4e5086428f20",
     "id": null,
     "metadata": {},
     "name": "ImportFlowDraftMutation",
     "operationKind": "mutation",
-    "text": "mutation ImportFlowDraftMutation(\n  $input: ImportFlowDraftInput!\n) {\n  importFlowDraft(input: $input) {\n    id\n    name\n  }\n}\n"
+    "text": "mutation ImportFlowDraftMutation(\n  $input: ImportFlowDraftInput!\n) {\n  importFlowDraft(input: $input) {\n    id\n    name\n    description\n    blocks {\n      cid\n      details {\n        __typename\n      }\n      uiRepresentation {\n        name\n        xPosition\n        yPosition\n      }\n      nextBlocks {\n        cid\n        uiRepresentation {\n          name\n          xPosition\n          yPosition\n        }\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a71b691310b2f82410a89a9aa0ee547e';
+(node/*: any*/).hash = '90f6f56a4c3591dacbc2f112b5a59c34';
 
 module.exports = node;

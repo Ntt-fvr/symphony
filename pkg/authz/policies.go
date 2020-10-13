@@ -262,13 +262,21 @@ func Permissions(ctx context.Context) (*models.PermissionSettings, error) {
 	var err error
 	v := viewer.FromContext(ctx)
 	fullPermissions := userHasFullPermissions(v)
-	inventoryPolicy := NewInventoryPolicy(fullPermissions)
-	workforcePolicy := NewWorkforcePolicy(true, fullPermissions)
-	if u, ok := v.(*viewer.UserViewer); ok && !fullPermissions {
-		inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, u)
+	var (
+		inventoryPolicy *models.InventoryPolicy
+		workforcePolicy *models.WorkforcePolicy
+	)
+	if fullPermissions {
+		inventoryPolicy = NewInventoryPolicy(true)
+		workforcePolicy = NewWorkforcePolicy(true, true)
+	} else if uv, ok := v.(*viewer.UserViewer); ok {
+		inventoryPolicy, workforcePolicy, err = permissionPolicies(ctx, uv)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		inventoryPolicy = NewInventoryPolicy(false)
+		workforcePolicy = NewWorkforcePolicy(false, false)
 	}
 	res := models.PermissionSettings{
 		CanWrite:        fullPermissions,

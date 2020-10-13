@@ -8,14 +8,15 @@
  * @format
  */
 
+import type {WithStyles} from '@material-ui/core';
+import type {WorkOrderDetailsPane_workOrder} from './__generated__/WorkOrderDetailsPane_workOrder.graphql.js';
+
 import React from 'react';
 import WorkOrderDetailsPaneEquipmentItem from './WorkOrderDetailsPaneEquipmentItem';
 import WorkOrderDetailsPaneItem from './WorkOrderDetailsPaneItem';
 import WorkOrderDetailsPaneLinkItem from './WorkOrderDetailsPaneLinkItem';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {withStyles} from '@material-ui/core/styles';
-import type {WithStyles} from '@material-ui/core';
-import type {WorkOrderDetailsPane_workOrder} from './__generated__/WorkOrderDetailsPane_workOrder.graphql.js';
 
 type Props = WithStyles<typeof styles> & {
   workOrder: WorkOrderDetailsPane_workOrder,

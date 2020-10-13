@@ -7,7 +7,7 @@
  * @flow
  * @format
  */
-import type {AutomationFlowCard_flowDraft} from './__generated__/AutomationFlowCard_flowDraft.graphql';
+import type {AutomationFlowCard_flow} from './__generated__/AutomationFlowCard_flow.graphql';
 
 import * as React from 'react';
 import Link from '@symphony/design-system/components/Link';
@@ -20,14 +20,14 @@ import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
 
 export const FLOW_STATUSES = {
-  DISABLED: {
-    key: 'DISABLED',
+  UNPUBLISHED: {
+    key: 'UNPUBLISHED',
     label: fbt('Unpublished', ''),
     backgroundColor: symphony.palette.D50,
     color: symphony.palette.secondary,
   },
-  ENABLED: {
-    key: 'ENABLED',
+  PUBLISHED: {
+    key: 'PUBLISHED',
     label: fbt('Published', ''),
     backgroundColor: symphony.palette.G600,
     color: symphony.palette.white,
@@ -37,6 +37,13 @@ export const FLOW_STATUSES = {
     label: fbt('Archived', ''),
     backgroundColor: symphony.palette.D700,
     color: symphony.palette.white,
+  },
+  // eslint-disable-next-line relay/no-future-added-value
+  '%future added value': {
+    key: '',
+    label: '',
+    backgroundColor: symphony.palette.white,
+    color: symphony.palette.secondary,
   },
 };
 
@@ -94,20 +101,19 @@ const useStyles = makeStyles(() => ({
 }));
 
 type Props = $ReadOnly<{|
-  flowDraft: AutomationFlowCard_flowDraft,
+  flow: AutomationFlowCard_flow,
 |}>;
 
 function AutomationFlowCard(props: Props) {
-  const {id, name} = props.flowDraft;
-  // TODO: when available get these from the AutomationFlowCard_flowDraft
-  const status = FLOW_STATUSES.DISABLED.key;
-  const hasDraft = true;
-  const description = 'A new automation flow.';
+  const {id, name, description, status, newInstancesPolicy, draft} = props.flow;
+  const hasDraft = !!draft;
+  // TODO: when available get these from the AutomationFlowCard_flow
   const runningInstances = 0;
-  const allowNewInstances = false;
 
   const classes = useStyles();
-  const editFlowUrl = InventoryAPIUrls.flow(id);
+  const editFlowUrl = draft
+    ? InventoryAPIUrls.flow(draft.id)
+    : InventoryAPIUrls.flow(id);
   return (
     <div className={classes.flowCard}>
       <div>
@@ -121,7 +127,7 @@ function AutomationFlowCard(props: Props) {
           </Link>
           <div className={classes.statuses}>
             <StatusTag status={status} />
-            {hasDraft && status !== FLOW_STATUSES.DISABLED.key ? (
+            {hasDraft && status !== FLOW_STATUSES.UNPUBLISHED.key ? (
               <Text variant="caption" color="gray" className={classes.draftTag}>
                 <fbt desc="">Draft changes</fbt>
               </Text>
@@ -133,13 +139,13 @@ function AutomationFlowCard(props: Props) {
         </Text>
       </div>
       <div>
-        {status === FLOW_STATUSES.ENABLED.key ? (
+        {status === FLOW_STATUSES.PUBLISHED.key ? (
           <div className={classes.detailsSection}>
             <Text variant="body1">
               <fbt desc="">Allow new instances</fbt>
             </Text>
             <Text variant="body2">
-              {allowNewInstances ? (
+              {newInstancesPolicy === 'ENABLED' ? (
                 <fbt desc="">yes</fbt>
               ) : (
                 <fbt desc="">no</fbt>
@@ -147,7 +153,7 @@ function AutomationFlowCard(props: Props) {
             </Text>
           </div>
         ) : null}
-        {status === FLOW_STATUSES.ENABLED.key ||
+        {status === FLOW_STATUSES.PUBLISHED.key ||
         status === FLOW_STATUSES.ARCHIVED.key ? (
           <div className={classes.detailsSection}>
             <Text variant="body1">
@@ -173,10 +179,16 @@ function AutomationFlowCard(props: Props) {
 }
 
 export default createFragmentContainer(AutomationFlowCard, {
-  flowDraft: graphql`
-    fragment AutomationFlowCard_flowDraft on FlowDraft {
+  flow: graphql`
+    fragment AutomationFlowCard_flow on Flow {
       id
       name
+      description
+      status
+      newInstancesPolicy
+      draft {
+        id
+      }
     }
   `,
 });

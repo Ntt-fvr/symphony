@@ -9,22 +9,12 @@
  */
 
 import * as React from 'react';
-import DetailsView, {getDetailsTitle} from './DetailsView';
 import emptyFunction from '@fbcnms/util/emptyFunction';
+import useSettingsPanel from './useSettingsPanel';
 import {POSITION} from '@symphony/design-system/components/Dialog/DialogFrame';
 import {makeStyles} from '@material-ui/styles';
-import {useCallback, useContext, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect} from 'react';
 import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
-import {useGraph} from '../../canvas/graph/GraphContext';
-import {useGraphSelection} from '../selection/GraphSelectionContext';
-
-const useStyles = makeStyles(() => ({
-  detailsContainer: {
-    marginRight: '16px',
-    marginTop: '64px',
-    marginBottom: '16px',
-  },
-}));
 
 export type DetailsPanelContextType = {
   isShown: boolean,
@@ -48,62 +38,53 @@ type Props = {|
   children: React.Node,
 |};
 
-export function DetailsPanelContextProvider(props: Props) {
-  const classes = useStyles();
-  const flow = useGraph();
-  const selection = useGraphSelection();
-  const dialogShowingContext = useDialogShowingContext();
+const useStyles = makeStyles(() => ({
+  detailsContainer: {
+    marginRight: '16px',
+    marginTop: '64px',
+    marginBottom: '16px',
+  },
+}));
 
-  const [isShown, setIsShown] = useState(false);
+export function DetailsPanelContextProvider(props: Props) {
+  const dialogShowingContext = useDialogShowingContext();
+  const classes = useStyles();
+  const dialogDetails = useSettingsPanel();
+
+  const hide = useCallback(() => {
+    dialogShowingContext.hideDialog();
+  }, [dialogShowingContext]);
 
   const show = useCallback(() => {
-    setIsShown(true);
-  }, []);
-  const hide = useCallback(() => {
-    setIsShown(false);
-  }, []);
-  const toggle = useCallback(() => {
-    setIsShown(isShownValue => !isShownValue);
-  }, []);
+    dialogShowingContext.showDialog(
+      {
+        ...dialogDetails,
+        className: classes.detailsContainer,
+        showCloseButton: true,
+        position: POSITION.right,
+        isModal: false,
+        onClose: hide,
+      },
+      true,
+    );
+  }, [classes.detailsContainer, dialogShowingContext, dialogDetails, hide]);
 
   useEffect(() => {
-    if (selection.selectedElements.length === 0) {
-      hide();
-    } else {
+    if (dialogShowingContext.isShown) {
+      //update only if it's already open
       show();
     }
-  }, [selection.selectedElements, show, hide]);
+  }, [dialogDetails, show, dialogShowingContext]);
 
-  useEffect(() => {
-    if (isShown) {
-      dialogShowingContext.showDialog(
-        {
-          title: getDetailsTitle(selection),
-          className: classes.detailsContainer,
-          children: <DetailsView flowSelection={selection} />,
-          showCloseButton: false,
-          position: POSITION.right,
-          isModal: false,
-        },
-        true,
-      );
-    } else {
-      if (dialogShowingContext.isShown) {
-        dialogShowingContext.hideDialog();
-      }
-    }
-  }, [
-    classes.detailsContainer,
-    dialogShowingContext,
-    isShown,
-    flow,
-    selection,
-  ]);
+  const toggle = useCallback(
+    () => (dialogShowingContext.isShown ? hide() : show()),
+    [dialogShowingContext, show, hide],
+  );
 
   return (
     <DetailsPanelContext.Provider
       value={{
-        isShown,
+        isShown: dialogShowingContext.isShown,
         show,
         hide,
         toggle,

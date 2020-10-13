@@ -7,7 +7,6 @@ package graphql
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -34,7 +33,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
 	"go.uber.org/zap"
 )
 
@@ -45,15 +43,13 @@ type HandlerConfig struct {
 	ReceiverFactory ev.ReceiverFactory
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
-	Orc8rClient     *http.Client
 }
 
 func init() {
-	views := append(
-		ocgql.DefaultViews,
+	ocgql.DefaultViews = append(ocgql.DefaultViews,
 		directive.ServerDeprecatedCountByObjectInputField,
 	)
-	for _, v := range views {
+	for _, v := range ocgql.DefaultViews {
 		v.TagKeys = append(v.TagKeys,
 			viewer.KeyTenant,
 			viewer.KeyUser,
@@ -63,7 +59,7 @@ func init() {
 }
 
 // NewHandler creates a graphql http handler.
-func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
+func NewHandler(cfg HandlerConfig) http.Handler {
 	rsv := resolver.New(
 		resolver.Config{
 			Logger:          cfg.Logger,
@@ -73,19 +69,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 				ActionFactory:  cfg.ActionFactory,
 			},
 		},
-		resolver.WithOrc8rClient(
-			cfg.Orc8rClient,
-		),
 	)
-
-	views := append(
-		ocgql.DefaultViews,
-		directive.ServerDeprecatedCountByObjectInputField,
-	)
-	if err := view.Register(views...); err != nil {
-		return nil, nil, fmt.Errorf("registering views: %w", err)
-	}
-	closer := func() { view.Unregister(views...) }
 
 	router := mux.NewRouter()
 	router.Use(func(handler http.Handler) http.Handler {
@@ -135,8 +119,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 				"query",
 			),
 		)
-
-	return router, closer, nil
+	return router
 }
 
 func errorPresenter(logger log.Logger) graphql.ErrorPresenterFunc {

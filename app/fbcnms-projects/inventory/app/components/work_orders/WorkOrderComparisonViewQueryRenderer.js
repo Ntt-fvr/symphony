@@ -12,7 +12,7 @@ import type {WorkOrderComparisonViewQueryRendererSearchQuery} from './__generate
 import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 
 import ComparisonViewNoResults from '../comparison_view/ComparisonViewNoResults';
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import WorkOrdersMap from './WorkOrdersMap';
 import WorkOrdersView, {WORK_ORDERS_PAGE_SIZE} from './WorkOrdersView';
 import classNames from 'classnames';
@@ -88,11 +88,11 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
     onOrderChanged,
   } = props;
 
-  const response = useLazyLoadQuery<WorkOrderComparisonViewQueryRendererSearchQuery>(
-    workOrderSearchQuery,
-    {
-      limit: WORK_ORDERS_PAGE_SIZE,
-      filters: filters.map(f => ({
+  const [tableKey, setTableKey] = useState(0);
+
+  const filtersVariable = useMemo(
+    () =>
+      filters.map(f => ({
         filterType: f.name.toUpperCase(),
         operator: f.operator.toUpperCase(),
         stringValue: f.stringValue,
@@ -100,6 +100,15 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
         idSet: f.idSet,
         stringSet: f.stringSet,
       })),
+    [filters],
+  );
+  useEffect(() => setTableKey(key => key + 1), [filtersVariable, orderBy]);
+
+  const response = useLazyLoadQuery<WorkOrderComparisonViewQueryRendererSearchQuery>(
+    workOrderSearchQuery,
+    {
+      limit: WORK_ORDERS_PAGE_SIZE,
+      filters: filtersVariable,
       orderBy,
     },
   );
@@ -125,6 +134,7 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
         />
       ) : (
         <WorkOrdersView
+          key={tableKey}
           workOrders={response}
           onWorkOrderSelected={onWorkOrderSelected}
           orderBy={orderBy}

@@ -1,3 +1,7 @@
+locals {
+  magma_tags = merge(local.tags, { Project = "magma" })
+}
+
 # orc8r database password
 resource random_password orc8r_db {
   length  = 50
@@ -49,7 +53,7 @@ module orc8r_db {
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
-  tags = local.tags
+  tags = local.magma_tags
 }
 
 # maria db for magmalte NMS
@@ -85,7 +89,7 @@ module magmalte_db {
   subnet_ids             = module.vpc.database_subnets
   db_subnet_group_name   = module.vpc.database_subnet_group
 
-  tags = local.tags
+  tags = local.magma_tags
 }
 
 # orc8r_db secret for orc8r deployment

@@ -36,12 +36,6 @@ func (bu *BlockUpdate) Where(ps ...predicate.Block) *BlockUpdate {
 	return bu
 }
 
-// SetName sets the name field.
-func (bu *BlockUpdate) SetName(s string) *BlockUpdate {
-	bu.mutation.SetName(s)
-	return bu
-}
-
 // SetCid sets the cid field.
 func (bu *BlockUpdate) SetCid(s string) *BlockUpdate {
 	bu.mutation.SetCid(s)
@@ -119,16 +113,8 @@ func (bu *BlockUpdate) ClearInputParams() *BlockUpdate {
 }
 
 // SetUIRepresentation sets the ui_representation field.
-func (bu *BlockUpdate) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockUpdate {
+func (bu *BlockUpdate) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdate {
 	bu.mutation.SetUIRepresentation(fur)
-	return bu
-}
-
-// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
-func (bu *BlockUpdate) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdate {
-	if fur != nil {
-		bu.SetUIRepresentation(*fur)
-	}
 	return bu
 }
 
@@ -480,11 +466,6 @@ func (bu *BlockUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (bu *BlockUpdate) check() error {
-	if v, ok := bu.mutation.Name(); ok {
-		if err := block.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := bu.mutation.Cid(); ok {
 		if err := block.CidValidator(v); err != nil {
 			return &ValidationError{Name: "cid", err: fmt.Errorf("ent: validator failed for field \"cid\": %w", err)}
@@ -531,13 +512,6 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: block.FieldUpdateTime,
-		})
-	}
-	if value, ok := bu.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: block.FieldName,
 		})
 	}
 	if value, ok := bu.mutation.Cid(); ok {
@@ -1028,12 +1002,6 @@ type BlockUpdateOne struct {
 	mutation *BlockMutation
 }
 
-// SetName sets the name field.
-func (buo *BlockUpdateOne) SetName(s string) *BlockUpdateOne {
-	buo.mutation.SetName(s)
-	return buo
-}
-
 // SetCid sets the cid field.
 func (buo *BlockUpdateOne) SetCid(s string) *BlockUpdateOne {
 	buo.mutation.SetCid(s)
@@ -1111,16 +1079,8 @@ func (buo *BlockUpdateOne) ClearInputParams() *BlockUpdateOne {
 }
 
 // SetUIRepresentation sets the ui_representation field.
-func (buo *BlockUpdateOne) SetUIRepresentation(fur flowschema.BlockUIRepresentation) *BlockUpdateOne {
+func (buo *BlockUpdateOne) SetUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdateOne {
 	buo.mutation.SetUIRepresentation(fur)
-	return buo
-}
-
-// SetNillableUIRepresentation sets the ui_representation field if the given value is not nil.
-func (buo *BlockUpdateOne) SetNillableUIRepresentation(fur *flowschema.BlockUIRepresentation) *BlockUpdateOne {
-	if fur != nil {
-		buo.SetUIRepresentation(*fur)
-	}
 	return buo
 }
 
@@ -1472,11 +1432,6 @@ func (buo *BlockUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (buo *BlockUpdateOne) check() error {
-	if v, ok := buo.mutation.Name(); ok {
-		if err := block.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
-		}
-	}
 	if v, ok := buo.mutation.Cid(); ok {
 		if err := block.CidValidator(v); err != nil {
 			return &ValidationError{Name: "cid", err: fmt.Errorf("ent: validator failed for field \"cid\": %w", err)}
@@ -1521,13 +1476,6 @@ func (buo *BlockUpdateOne) sqlSave(ctx context.Context) (_node *Block, err error
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: block.FieldUpdateTime,
-		})
-	}
-	if value, ok := buo.mutation.Name(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
-			Value:  value,
-			Column: block.FieldName,
 		})
 	}
 	if value, ok := buo.mutation.Cid(); ok {

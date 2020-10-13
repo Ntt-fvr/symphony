@@ -6,21 +6,14 @@
 package graphhttp
 
 import (
-	"github.com/facebookincubator/symphony/pkg/actions/action/magmarebootnode"
-	"github.com/facebookincubator/symphony/pkg/actions/executor"
-	"github.com/facebookincubator/symphony/pkg/actions/trigger/magmaalert"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/mysql"
-	"github.com/facebookincubator/symphony/pkg/orc8r"
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 	"net/url"
 )
@@ -32,23 +25,16 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	router, cleanup, err := newRouter(graphhttpRouterConfig)
+	router, err := newRouter(graphhttpRouterConfig)
 	if err != nil {
 		return nil, nil, err
 	}
 	logger := cfg.Logger
 	zapLogger := xserver.NewRequestLogger(logger)
 	v := cfg.HealthChecks
-	v2 := provideViews()
 	config := cfg.Telemetry
-	exporter, err := telemetry.ProvideViewExporter(config)
+	exporter, cleanup, err := telemetry.ProvideTraceExporter(config)
 	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	traceExporter, cleanup2, err := telemetry.ProvideTraceExporter(config)
-	if err != nil {
-		cleanup()
 		return nil, nil, err
 	}
 	profilingEnabler := _wireProfilingEnablerValue
@@ -58,9 +44,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	options := &server.Options{
 		RequestLogger:         zapLogger,
 		HealthChecks:          v,
-		Views:                 v2,
-		ViewExporter:          exporter,
-		TraceExporter:         traceExporter,
+		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
@@ -68,7 +52,6 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	}
 	serverServer := server.New(router, options)
 	return serverServer, func() {
-		cleanup2()
 		cleanup()
 	}, nil
 }
@@ -88,35 +71,16 @@ type Config struct {
 	TriggerFactory  triggers.Factory
 	ActionFactory   actions.Factory
 	Logger          log.Logger
-	Telemetry       *telemetry.Config
+	Telemetry       telemetry.Config
 	HealthChecks    []health.Checker
-	Orc8r           orc8r.Config
 }
 
 func newRouterConfig(config Config) (cfg routerConfig, err error) {
-	client, _ := orc8r.NewClient(config.Orc8r)
-	registry := executor.NewRegistry()
-	if err = registry.RegisterTrigger(magmaalert.New()); err != nil {
-		return
-	}
-	if err = registry.RegisterAction(magmarebootnode.New(client)); err != nil {
-		return
-	}
 	cfg = routerConfig{logger: config.Logger}
 	cfg.viewer.tenancy = config.Tenancy
 	cfg.viewer.authurl = config.AuthURL.String()
 	cfg.events.ReceiverFactory = config.ReceiverFactory
 	cfg.flow.triggerFactory = config.TriggerFactory
 	cfg.flow.actionFactory = config.ActionFactory
-	cfg.orc8r.client = client
-	cfg.actions.registry = registry
 	return cfg, nil
-}
-
-func provideViews() []*view.View {
-	views := xserver.DefaultViews()
-	views = append(views, mysql.DefaultViews...)
-	views = append(views, ocpubsub.DefaultViews...)
-	views = append(views, ev.OpenCensusViews...)
-	return views
 }

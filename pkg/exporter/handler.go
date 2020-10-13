@@ -36,19 +36,20 @@ type ExcelExporter struct {
 
 // Interface for creating an excel file
 type ExcelFile interface {
-	CreateExcelFile(context.Context, *url.URL) (*excelize.File, error)
+	CreateExcelFile(context.Context, int) (*excelize.File, error)
 }
 
 type Rower interface {
 	Rows(ctx context.Context, filters string) ([][]string, error)
 }
 
-func (m Exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.ExportTask, error) {
+func createExportTask(ctx context.Context, url *url.URL, log log.Logger) (*ent.ExportTask, error) {
 	var (
-		logger = m.Log.For(ctx)
-		err    error
-		etType exporttask.Type
+		err        error
+		etType     exporttask.Type
+		singleWOId int
 	)
+	logger := log.For(ctx)
 	logger.Debug("entered async export")
 	filtersParam := url.Query().Get("filters")
 	client := ent.FromContext(ctx)
@@ -69,15 +70,22 @@ func (m Exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 		etType = exporttask.TypeService
 	case "/work_orders":
 		etType = exporttask.TypeWorkOrder
+	case "/single_work_order":
+		etType = exporttask.TypeSingleWorkOrder
+		singleWOId, err = strconv.Atoi(url.Query().Get("id"))
+		if err != nil {
+			logger.Error("cannot query work order id", zap.Error(err))
+			return nil, fmt.Errorf("cannot query work order id: %w", err)
+		}
 	default:
 		return nil, errors.New("not supported entity for async export")
 	}
-
 	t, err := client.ExportTask.
 		Create().
 		SetType(etType).
 		SetStatus(exporttask.StatusPending).
-		SetFilters(filtersParam).
+		SetNillableFilters(&filtersParam).
+		SetNillableWoIDToExport(&singleWOId).
 		Save(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot create export task")
@@ -86,8 +94,8 @@ func (m Exporter) createExportTask(ctx context.Context, url *url.URL) (*ent.Expo
 	return t, nil
 }
 
-func (m *Exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int) {
-	log := m.Log.For(ctx)
+func writeExportTaskID(ctx context.Context, w http.ResponseWriter, id int, log log.Logger) {
+	logger := log.For(ctx)
 	taskID := struct {
 		TaskID string
 	}{
@@ -96,14 +104,14 @@ func (m *Exporter) writeExportTaskID(ctx context.Context, w http.ResponseWriter,
 
 	output, err := json.Marshal(taskID)
 	if err != nil {
-		log.Error("error in async export", zap.Error(err))
+		logger.Error("error in async export", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(output)
 	if err != nil {
-		log.Error("error in writing output", zap.Error(err))
+		logger.Error("error in writing output", zap.Error(err))
 		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 	}
 }
@@ -113,12 +121,12 @@ func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := m.Log.For(ctx)
 	if viewer.FromContext(ctx).Features().Enabled("async_export") && r.URL.Path != "/single_work_order" {
-		et, err := m.createExportTask(ctx, r.URL)
+		et, err := createExportTask(ctx, r.URL, m.Log)
 		if err != nil {
 			log.Error("error in async export", zap.Error(err))
 			http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 		} else {
-			m.writeExportTaskID(ctx, w, et.ID)
+			writeExportTaskID(ctx, w, et.ID, m.Log)
 		}
 	} else {
 		filename := "export"
@@ -149,28 +157,13 @@ func (m *Exporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // ServerHTTP handles requests to returns an export Excel file with extension xlsx
 func (m *ExcelExporter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	filename := "exportExcel"
-	rout := mux.CurrentRoute(r)
-	if rout != nil {
-		filename = rout.GetName()
-	}
-	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename+".xlsx")
-	log := m.Log.For(ctx)
-	xlsx, err := m.CreateExcelFile(ctx, r.URL)
+	et, err := createExportTask(ctx, r.URL, m.Log)
 	if err != nil {
-		log.Error("error in export", zap.Error(err))
-		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
+		m.Log.For(ctx).Error("error in async export", zap.Error(err))
+		http.Error(w, fmt.Sprintf("%q: error in async export", err), http.StatusInternalServerError)
 		return
 	}
-	if xlsx == nil {
-		http.Error(w, fmt.Sprintf("%q: error in export", err), http.StatusInternalServerError)
-		return
-	}
-	err = xlsx.Write(w)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%q: error in writing file", err), http.StatusInternalServerError)
-	}
+	writeExportTaskID(ctx, w, et.ID, m.Log)
 }
 
 // NewHandler creates a upload http handler.

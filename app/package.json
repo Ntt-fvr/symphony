@@ -19,7 +19,6 @@
     "@fbcnms/auth": "^0.1.1",
     "@fbcnms/express-middleware": "^0.1.0",
     "@fbcnms/logging": "^0.1.0",
-    "@fbcnms/magma-api": "^0.1.0",
     "@fbcnms/mobileapp": "^0.1.0",
     "@fbcnms/platform-server": "^0.1.18",
     "@fbcnms/projects": "^0.1.0",

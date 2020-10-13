@@ -27,7 +27,7 @@ global.CONFIG = {
 };
 
 const Wrapper = props => (
-  <MemoryRouter initialEntries={['/nms/mynetwork']} initialIndex={0}>
+  <MemoryRouter initialEntries={['/inventory/locations']} initialIndex={0}>
     <MuiThemeProvider theme={defaultTheme}>
       <MuiStylesThemeProvider theme={defaultTheme}>
         <AppContextProvider>{props.children}</AppContextProvider>

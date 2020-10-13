@@ -782,7 +782,9 @@ in the chain and it is not clear where to create or what to return</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Location type name</p></li>
 <li><p><strong>properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+<li><p><strong>map_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Map type</p></li>
 <li><p><strong>map_zoom_level</strong> (<em>int</em>) – Map zoom level</p></li>
+<li><p><strong>is_site</strong> (<em>bool</em>) – Is site flag</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -918,6 +920,191 @@ in the chain and it is not clear where to create or what to return</p></li>
             <span class="n">definition_index</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="n">work_order_type_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
         <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_property_types_to_equipment_type">
+<code class="sig-name descname">add_property_types_to_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.add_property_types_to_equipment_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds new property types to existing equipment type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>equipment_type_id</strong> (<em>str</em>) – Existing equipment type ID</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>EquipmentType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equipment_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_property_types_to_equipment_type</span><span class="p">(</span>
+    <span class="n">equipment_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_property_types_to_location_type">
+<code class="sig-name descname">add_property_types_to_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.PsymClient.add_property_types_to_location_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds new property types to existing location type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location_type_id</strong> (<em>str</em>) – Existing location type ID</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>LocationType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">location_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_property_types_to_location_type</span><span class="p">(</span>
+    <span class="n">location_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_property_types_to_project_type">
+<code class="sig-name descname">add_property_types_to_project_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><a class="headerlink" href="#psym.PsymClient.add_property_types_to_project_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds new property types to existing project type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_type_id</strong> (<em>str</em>) – Existing project type ID</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>LocationType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_property_types_to_project_type</span><span class="p">(</span>
+    <span class="n">project_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_property_types_to_service_type">
+<code class="sig-name descname">add_property_types_to_service_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType">psym.common.data_class.ServiceType</a><a class="headerlink" href="#psym.PsymClient.add_property_types_to_service_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds new property types to existing service type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service_type_id</strong> (<em>str</em>) – Existing service type ID</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>LocationType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_property_types_to_service_type</span><span class="p">(</span>
+    <span class="n">service_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.add_property_types_to_work_order_type">
+<code class="sig-name descname">add_property_types_to_work_order_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">work_order_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition">psym.common.data_class.PropertyDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType">psym.common.data_class.WorkOrderType</a><a class="headerlink" href="#psym.PsymClient.add_property_types_to_work_order_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds new property types to existing work order type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>work_order_type_id</strong> (<em>str</em>) – Existing work order type ID</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ]) – List of property definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>WorkOrderType object</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderType" title="psym.common.data_class.WorkOrderType"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">work_order_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">add_property_types_to_work_order_type</span><span class="p">(</span>
+    <span class="n">work_order_type_id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+    <span class="n">new_properties</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PropertyDefinition</span><span class="p">(</span>
+            <span class="n">property_name</span><span class="o">=</span><span class="s2">&quot;Contact&quot;</span><span class="p">,</span>
+            <span class="n">property_kind</span><span class="o">=</span><span class="n">PropertyKind</span><span class="o">.</span><span class="n">string</span><span class="p">,</span>
+            <span class="n">default_raw_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_fixed</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
     <span class="p">],</span>
 <span class="p">)</span>
 </pre></div>
@@ -1850,7 +2037,7 @@ It gets the requested service type ID</p>
 
 <dl class="py method">
 <dt id="psym.PsymClient.edit_equipment_type">
-<code class="sig-name descname">edit_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_positions_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">new_port_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition">psym.common.data_class.EquipmentPortDefinition</a><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.edit_equipment_type" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">edit_equipment_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_positions_list</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">new_port_definitions</span><span class="p">:</span> <span class="n">List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition">psym.common.data_class.EquipmentPortDefinition</a><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentType" title="psym.common.data_class.EquipmentType">psym.common.data_class.EquipmentType</a><a class="headerlink" href="#psym.PsymClient.edit_equipment_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edit existing equipment type.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1858,6 +2045,7 @@ It gets the requested service type ID</p>
 <li><p><strong>name</strong> (<em>str</em>) – Equipment type name</p></li>
 <li><p><strong>new_positions_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of new positions</p></li>
 <li><p><strong>new_port_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPortDefinition" title="psym.common.data_class.EquipmentPortDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquipmentPortDefinition</span></code></a> ]) – EquipmentPortDefinitions list</p></li>
+<li><p><strong>new_properties</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.PropertyDefinition" title="psym.common.data_class.PropertyDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyDefinition</span></code></a> ], optional) – Property definitions list</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -2017,6 +2205,49 @@ there are no properties or there any unknown property name in <cite>new_link_pro
 </dd></dl>
 
 <dl class="py method">
+<dt id="psym.PsymClient.edit_location_type">
+<code class="sig-name descname">edit_location_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">location_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_properties_defaults</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_map_type</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_map_zoom_level</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">8</span></em>, <em class="sig-param"><span class="n">new_is_site</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType">psym.common.data_class.LocationType</a><a class="headerlink" href="#psym.PsymClient.edit_location_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits existing LocationType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>location_type_id</strong> (<em>str</em>) – Existing location type ID</p></li>
+<li><p><strong>new_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Location type new name</p></li>
+<li><p><strong>new_properties_defaults</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em><em>, </em><em>optional</em>) – <p>Mapping of property name to property default value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new default value of the same type for this property</p></li>
+</ul>
+</p></li>
+<li><p><strong>map_type</strong> (<em>str</em><em>, </em><em>optional</em>) – New map type</p></li>
+<li><p><strong>map_zoom_level</strong> (<em>int</em><em>, </em><em>optional</em>) – New map zoom level</p></li>
+<li><p><strong>new_is_site</strong> (<em>bool</em><em>, </em><em>optional</em>) – New is site flag</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Location type does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>LocationType</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.LocationType" title="psym.common.data_class.LocationType"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocationType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edited_location_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_location_type</span><span class="p">(</span>
+    <span class="n">location_type_id</span><span class="o">=</span><span class="s2">&quot;12345678,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;New name&quot;</span><span class="p">,</span>
+    <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;New description&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="psym.PsymClient.edit_port_properties">
 <code class="sig-name descname">edit_port_properties</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">equipment</span><span class="p">:</span> <span class="n"><a class="reference internal" href="psym.common.html#psym.common.data_class.Equipment" title="psym.common.data_class.Equipment">psym.common.data_class.Equipment</a></span></em>, <em class="sig-param"><span class="n">port_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_properties</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.EquipmentPort" title="psym.common.data_class.EquipmentPort">psym.common.data_class.EquipmentPort</a><a class="headerlink" href="#psym.PsymClient.edit_port_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns edited port in equipment based on its name.</p>
@@ -2054,6 +2285,107 @@ there are no properties or there any unknown property name in <cite>new_properti
     <span class="n">equipment</span><span class="o">=</span><span class="n">equipment</span><span class="p">,</span>
     <span class="n">port_name</span><span class="o">=</span><span class="s2">&quot;Z AIO - Port 1&quot;</span><span class="p">,</span>
     <span class="n">new_properties</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Port Property 2&quot;</span><span class="p">:</span> <span class="s2">&quot;test_it&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.edit_project">
+<code class="sig-name descname">edit_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_priority</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>psym.graphql.enum.project_priority.ProjectPriority<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_creator_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_location_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_properties_dict</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project">psym.common.data_class.Project</a><a class="headerlink" href="#psym.PsymClient.edit_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits existing project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>str</em>) – Existing project ID</p></li>
+<li><p><strong>new_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Project new name</p></li>
+<li><p><strong>new_description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project new description</p></li>
+<li><p><strong>new_priority</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectPriority</span></code>, optional) – New project priority</p></li>
+<li><p><strong>new_creator_id</strong> (<em>str</em><em>, </em><em>optional</em>) – New creator ID</p></li>
+<li><p><strong>new_location_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Project new existing location ID</p></li>
+<li><p><strong>new_properties_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em><em>, </em><em>optional</em>) – <p>Dictionary of property name to property default value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new default value of the same type for this property</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Project does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.Project" title="psym.common.data_class.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Project</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edited_project</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_project</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="s2">&quot;12345678,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;New name&quot;</span><span class="p">,</span>
+    <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;New description&quot;</span><span class="p">,</span>
+    <span class="n">new_properties_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;Date Property&quot;</span><span class="p">:</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+        <span class="s2">&quot;Lat/Lng Property&quot;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.23</span><span class="p">,</span><span class="mf">9.232</span><span class="p">),</span>
+        <span class="s2">&quot;E-mail Property&quot;</span><span class="p">:</span> <span class="s2">&quot;user@fb.com&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Number Property&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">&quot;String Property&quot;</span><span class="p">:</span> <span class="s2">&quot;aa&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Float Property&quot;</span><span class="p">:</span> <span class="mf">1.23</span>
+    <span class="p">},</span>
+    <span class="n">new_work_order_definitions</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">WorkOrderDefinition</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;12345678&quot;</span><span class="p">,</span>
+            <span class="n">definition_index</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
+            <span class="n">work_order_type_id</span><span class="o">=</span><span class="s2">&quot;87654321&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.edit_project_type">
+<code class="sig-name descname">edit_project_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">project_type_id</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">new_name</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_description</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_properties_defaults</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Mapping<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>datetime.date<span class="p">, </span>datetime.datetime<span class="p">, </span>float<span class="p">, </span>int<span class="p">, </span>str<span class="p">, </span>bool<span class="p">, </span>Tuple<span class="p">[</span>float<span class="p">, </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">new_work_order_definitions</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition">psym.common.data_class.WorkOrderDefinition</a><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">[]</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType">psym.common.data_class.ProjectType</a><a class="headerlink" href="#psym.PsymClient.edit_project_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function edits existing ProjectType.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_type_id</strong> (<em>str</em>) – Existing project type ID</p></li>
+<li><p><strong>new_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Project type new name</p></li>
+<li><p><strong>new_description</strong> (<em>str</em><em>, </em><em>optional</em>) – Project type new description</p></li>
+<li><p><strong>new_properties_defaults</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>PropertyValue</em><em>]</em><em>, </em><em>optional</em>) – <p>Mapping of property name to property default value</p>
+<ul>
+<li><p>str - property name</p></li>
+<li><p>PropertyValue - new default value of the same type for this property</p></li>
+</ul>
+</p></li>
+<li><p><strong>new_work_order_definitions</strong> (List[ <a class="reference internal" href="psym.common.html#psym.common.data_class.WorkOrderDefinition" title="psym.common.data_class.WorkOrderDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkOrderDefinition</span></code></a> ], optional) – List of new work order definitions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>FailedOperationException: Internal symphony error</p></li>
+<li><p><a class="reference internal" href="#psym.exceptions.EntityNotFoundError" title="psym.exceptions.EntityNotFoundError"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityNotFoundError</span></code></a>: Project type does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Project type</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="psym.common.html#psym.common.data_class.ProjectType" title="psym.common.data_class.ProjectType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectType</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">edited_project_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">edit_project_type</span><span class="p">(</span>
+    <span class="n">project_type_id</span><span class="o">=</span><span class="s2">&quot;12345678,</span>
+    <span class="n">new_name</span><span class="o">=</span><span class="s2">&quot;New name&quot;</span><span class="p">,</span>
+    <span class="n">new_description</span><span class="o">=</span><span class="s2">&quot;New description&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -3463,6 +3795,29 @@ in case it is not found, creates one.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service_type</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_service_type</span><span class="p">(</span>
     <span class="n">service_type_id</span><span class="o">=</span><span class="s2">&quot;12345&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="psym.PsymClient.get_service_types">
+<code class="sig-name descname">get_service_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span><a class="reference internal" href="psym.common.html#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType">psym.common.data_class.ServiceType</a><span class="p">]</span><a class="headerlink" href="#psym.PsymClient.get_service_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the iterator of service types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>FailedOperationException: Internal symphony error</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ServiceType Iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ <a class="reference internal" href="psym.common.html#psym.common.data_class.ServiceType" title="psym.common.data_class.ServiceType"><code class="xref py py-class docutils literal notranslate"><span class="pre">ServiceType</span></code></a> ]</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service_types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_service_types</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">service_type</span> <span class="ow">in</span> <span class="n">service_types</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">service_type</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">service_type</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

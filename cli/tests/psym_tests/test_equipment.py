@@ -8,6 +8,7 @@ from datetime import datetime
 
 from psym.api.equipment import (
     add_equipment,
+    edit_equipment,
     get_equipment,
     get_equipment_by_external_id,
     get_equipment_properties,
@@ -108,6 +109,7 @@ class TestEquipment(BaseTest):
                     visible_label="TP-Link port",
                     port_definition_index=0,
                     port_type_name="port type 1",
+                    connected_ports=[],
                 )
             ],
             position_list=[],
@@ -181,6 +183,26 @@ class TestEquipment(BaseTest):
         self.assertTrue("Choices" in properties)
         self.assertTrue(properties["Choices"] in self.choices)
         self.assertEquals("11", properties["Choices"])
+
+    def test_edit_equipment(self) -> None:
+        edit_equipment(
+            client=self.client,
+            equipment=self.equipment,
+            new_name="New equipment name",
+            new_properties={"IP": "127.0.0.2", "Choices": "22"},
+        )
+        properties = get_equipment_properties(
+            client=self.client, equipment=self.equipment
+        )
+        self.assertTrue("IP" in properties)
+        self.assertEquals("127.0.0.2", properties["IP"])
+        self.assertTrue("Date" in properties)
+        self.assertEquals(self.date_time_date, properties["Date"])
+        self.assertTrue("DateTime" in properties)
+        self.assertEquals(self.date_time, properties["DateTime"])
+        self.assertTrue("Choices" in properties)
+        self.assertTrue(properties["Choices"] in self.choices)
+        self.assertEquals("22", properties["Choices"])
 
     def test_equipment_get_port(self) -> None:
         fetched_port = get_port(

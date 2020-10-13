@@ -13,13 +13,14 @@ import * as React from 'react';
 import Text from '@symphony/design-system/components/Text';
 import ToggleButton from '../ToggleButton/ToggleButtonGroup';
 import classNames from 'classnames';
+import {SIDE_PADDING} from './ViewBody';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
-    padding: '16px 24px',
+    padding: `32px ${SIDE_PADDING}px 24px ${SIDE_PADDING}px`,
     paddingBottom: '8px',
   },
   column: {

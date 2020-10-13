@@ -21,7 +21,11 @@ import (
 )
 
 // Provider is a Wire provider set that produces a handler from config.
-var Provider = wire.NewSet(New, wire.Bind(new(http.Handler), new(*Handler)))
+var Provider = wire.NewSet(
+	New,
+	wire.Struct(new(Config), "*"),
+	wire.Bind(new(http.Handler), new(*Handler)),
+)
 
 // Handler implements signer endpoints.
 type Handler struct {

@@ -30,6 +30,9 @@ export {default as SortUpIcon} from './Actions/SortUpIcon';
 export {default as ThreeDotsHorizontalIcon} from './Actions/ThreeDotsHorizontalIcon';
 export {default as ThreeDotsVerticalIcon} from './Actions/ThreeDotsVerticalIcon';
 export {default as UploadIcon} from './Actions/UploadIcon';
+export {default as SettingsIcon} from './Actions/SettingsIcon';
+export {default as RenameOneLineIcon} from './Actions/RenameOneLineIcon';
+export {default as RenameMultipleLinesIcon} from './Actions/RenameMultipleLinesIcon';
 
 export {default as ActivityIcon} from './Communication/ActivityIcon';
 export {default as AttachmentIcon} from './Communication/AttachmentIcon';
@@ -74,3 +77,5 @@ export {default as ListViewIcon} from './Navigation/ListViewIcon';
 export {default as MapViewIcon} from './Navigation/MapViewIcon';
 export {default as NextArrowIcon} from './Navigation/NextArrowIcon';
 export {default as NewTabIcon} from './Navigation/NewTabIcon';
+export {default as CollapseIcon} from './Navigation/CollapseIcon';
+export {default as ExpandIcon} from './Navigation/ExpandIcon';

@@ -7,6 +7,7 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"reflect"
 
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ev"
@@ -17,64 +18,103 @@ import (
 
 type subscriptionResolver struct{ resolver }
 
-func (r subscriptionResolver) workOrderSubscribe(ctx context.Context, event string) (<-chan *ent.WorkOrder, error) {
-	client := r.ClientFrom(ctx).WorkOrder
-	current := viewer.FromContext(ctx)
+func (r subscriptionResolver) subscribe(ctx context.Context, event string, object ev.EventObject) (interface{}, error) {
+	v := viewer.FromContext(ctx)
+	ptr := reflect.TypeOf(object)
+	elem := ptr.Elem()
 	logger := r.logger.For(ctx).With(
-		zap.Object("viewer", current),
+		zap.Object("viewer", v),
 		zap.String("event", event),
+		zap.String("type", elem.Name()),
 	)
-	subscription := make(chan *ent.WorkOrder, 1)
 
-	receiver, err := r.event.NewReceiver(ctx, &ent.WorkOrder{})
+	receiver, err := r.event.NewReceiver(ctx, object)
 	if err != nil {
-		logger.Error("cannot create event receiver",
+		r.logger.For(ctx).Error("cannot create event receiver",
 			zap.Error(err),
 		)
 		return nil, err
 	}
+
+	events := reflect.MakeChan(
+		reflect.ChanOf(reflect.BothDir, ptr), 1,
+	)
+	instantiate := reflect.ValueOf(r.ClientFrom(ctx)).
+		Elem().FieldByName(elem.Name()).
+		MethodByName("Instantiate")
+	id, _ := elem.FieldByName("ID")
+
 	svc, err := ev.NewService(
 		ev.Config{
 			Receiver: receiver,
 			Handler: ev.EventHandlerFunc(func(_ context.Context, evt *ev.Event) error {
-				workOrder, ok := evt.Object.(*ent.WorkOrder)
-				if !ok {
-					typ := fmt.Sprintf("%T", evt.Object)
-					logger.Error("event object is not a work order",
-						zap.String("type", typ),
+				value := reflect.ValueOf(evt.Object)
+				if value.Type() != ptr {
+					value := value.Elem()
+					logger.Error("unexpected event object type",
+						zap.String("object", value.Type().Name()),
 					)
-					return fmt.Errorf("event object %s must be a work order", typ)
+					return fmt.Errorf("event object %s must be %s",
+						value.Type().Name(), elem.Name(),
+					)
 				}
-				subscription <- client.Instantiate(workOrder)
-				logger.Debug("wrote to work order subscription",
-					zap.Int("id", workOrder.ID),
-					zap.String("name", workOrder.Name),
+				value = instantiate.Call([]reflect.Value{value})[0]
+				events.Send(value)
+				logger.Debug("wrote to subscription",
+					zap.Int64("id", value.Elem().FieldByIndex(id.Index).Int()),
 				)
 				return nil
 			}),
 		},
-		ev.WithTenant(current.Tenant()),
+		ev.WithTenant(v.Tenant()),
 		ev.WithEvent(event),
 		ev.WithMaxConcurrency(1),
 	)
 	if err != nil {
-		logger.Error("cannot create event service", zap.Error(err))
+		logger.Error("cannot create event service",
+			zap.Error(err),
+		)
 		return nil, err
 	}
 
 	go func() {
-		defer svc.Stop(ctx)
+		defer func() {
+			events.Close()
+			if err := svc.Stop(ctx); err != nil {
+				logger.Error("cannot stop event service",
+					zap.Error(err),
+				)
+			}
+		}()
 		err := svc.Run(ctx)
-		logger.Debug("subscription terminated", zap.Error(err))
+		logger.Debug("subscription terminated",
+			zap.Error(err),
+		)
 	}()
 
-	return subscription, nil
+	return events.Interface(), nil
 }
 
 func (r subscriptionResolver) WorkOrderAdded(ctx context.Context) (<-chan *ent.WorkOrder, error) {
-	return r.workOrderSubscribe(ctx, event.WorkOrderAdded)
+	events, err := r.subscribe(ctx, event.WorkOrderAdded, &ent.WorkOrder{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.WorkOrder), nil
 }
 
 func (r subscriptionResolver) WorkOrderDone(ctx context.Context) (<-chan *ent.WorkOrder, error) {
-	return r.workOrderSubscribe(ctx, event.WorkOrderDone)
+	events, err := r.subscribe(ctx, event.WorkOrderDone, &ent.WorkOrder{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.WorkOrder), nil
+}
+
+func (r subscriptionResolver) FlowInstanceDone(ctx context.Context) (<-chan *ent.FlowInstance, error) {
+	events, err := r.subscribe(ctx, event.FlowInstanceDone, &ent.FlowInstance{})
+	if err != nil {
+		return nil, err
+	}
+	return events.(chan *ent.FlowInstance), nil
 }

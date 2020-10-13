@@ -9,7 +9,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/graph/graphql/models"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	action_mocks "github.com/facebookincubator/symphony/pkg/flowengine/actions/mocks"
@@ -35,12 +34,11 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	require.Empty(t, blocks)
 
 	sb, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
-		Name: "Start",
-		Cid:  "start",
+		Cid: "start",
 	})
 	require.NoError(t, err)
 	require.Equal(t, block.TypeStart, sb.Type)
-	require.Equal(t, "Start", sb.Name)
+	require.Equal(t, "start", sb.Cid)
 	blockFlowID, err := sb.QueryFlowDraft().OnlyID(ctx)
 	require.NoError(t, err)
 	require.Equal(t, flowDraft.ID, blockFlowID)
@@ -50,12 +48,11 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	require.True(t, ok)
 
 	eb, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
-		Name: "Success",
-		Cid:  "success",
+		Cid: "success",
 	})
 	require.NoError(t, err)
 	require.Equal(t, block.TypeEnd, eb.Type)
-	require.Equal(t, "Success", eb.Name)
+	require.Equal(t, "success", eb.Cid)
 	blockFlowID, err = eb.QueryFlowDraft().OnlyID(ctx)
 	require.NoError(t, err)
 	require.Equal(t, flowDraft.ID, blockFlowID)
@@ -77,15 +74,15 @@ func TestAddDeleteBlocksOfFlowDraft(t *testing.T) {
 	xPosition := 201
 	yPosition := 21
 	sb, err = mr.EditBlock(ctx, models.EditBlockInput{
-		ID:   sb.ID,
-		Name: pointer.ToString("NewStart"),
+		ID: sb.ID,
 		UIRepresentation: &flowschema.BlockUIRepresentation{
+			Name:      "NewStart",
 			XPosition: xPosition,
 			YPosition: yPosition,
 		},
 	})
 	require.NoError(t, err)
-	require.Equal(t, "NewStart", sb.Name)
+	require.Equal(t, "NewStart", sb.UIRepresentation.Name)
 	require.Equal(t, xPosition, sb.UIRepresentation.XPosition)
 	require.Equal(t, yPosition, sb.UIRepresentation.YPosition)
 }
@@ -101,13 +98,11 @@ func TestAddDeleteConnectors(t *testing.T) {
 	})
 	require.NoError(t, err)
 	startBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
-		Name: "Start",
-		Cid:  "start",
+		Cid: "start",
 	})
 	require.NoError(t, err)
 	endBlock, err := mr.AddStartBlock(ctx, flowDraft.ID, models.StartBlockInput{
-		Name: "End",
-		Cid:  "end",
+		Cid: "end",
 	})
 	require.NoError(t, err)
 	connector, err := mr.AddConnector(ctx, flowDraft.ID, models.ConnectorInput{
@@ -159,13 +154,11 @@ func TestGotoBlock(t *testing.T) {
 	})
 	require.NoError(t, err)
 	endBlock, err := mr.AddEndBlock(ctx, flowDraft.ID, models.EndBlockInput{
-		Name: "End",
-		Cid:  "end",
+		Cid: "end",
 	})
 	require.NoError(t, err)
 
 	b, err := mr.AddGotoBlock(ctx, flowDraft.ID, models.GotoBlockInput{
-		Name:           "GotoEnd",
 		Cid:            "goto_end",
 		TargetBlockCid: endBlock.Cid,
 	})
@@ -192,7 +185,6 @@ func TestTriggerBlockNotExists(t *testing.T) {
 		Return(nil, errors.New("not found")).
 		Once()
 	_, err = mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
-		Name:        "Trigger Block",
 		Cid:         "trigger_block",
 		TriggerType: flowschema.TriggerTypeWorkOrder,
 	})
@@ -208,18 +200,16 @@ func TestTriggerBlockNotExists(t *testing.T) {
 		Return(&triggerType, nil).
 		Times(4)
 	_, err = mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
-		Name:        "Trigger Block",
 		Cid:         "trigger_block",
 		TriggerType: "Invalid",
 	})
 	require.Error(t, err)
 	triggerBlock, err := mr.AddTriggerBlock(ctx, draft.ID, models.TriggerBlockInput{
-		Name:        "Trigger Block",
 		Cid:         "trigger_block",
 		TriggerType: flowschema.TriggerTypeWorkOrder,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "Trigger Block", triggerBlock.Name)
+	require.Equal(t, "trigger_block", triggerBlock.Cid)
 
 	br := r.Block()
 	details, err := br.Details(ctx, triggerBlock)
@@ -249,7 +239,6 @@ func TestActionBlockNotExists(t *testing.T) {
 		Return(nil, errors.New("not found")).
 		Once()
 	_, err = mr.AddActionBlock(ctx, draft.ID, models.ActionBlockInput{
-		Name:       "Action Block",
 		Cid:        "action_block",
 		ActionType: flowschema.ActionTypeWorkOrder,
 	})
@@ -265,12 +254,11 @@ func TestActionBlockNotExists(t *testing.T) {
 		Return(&actionType, nil).
 		Times(3)
 	actionBlock, err := mr.AddActionBlock(ctx, draft.ID, models.ActionBlockInput{
-		Name:       "Action Block",
 		Cid:        "action_block",
 		ActionType: flowschema.ActionTypeWorkOrder,
 	})
 	require.NoError(t, err)
-	require.Equal(t, "Action Block", actionBlock.Name)
+	require.Equal(t, "action_block", actionBlock.Cid)
 	details, err := br.Details(ctx, actionBlock)
 	require.NoError(t, err)
 	action, ok := details.(*models.ActionBlock)

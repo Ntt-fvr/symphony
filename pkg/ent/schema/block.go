@@ -24,8 +24,6 @@ type Block struct {
 // Fields returns block fields.
 func (Block) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").
-			NotEmpty(),
 		field.String("cid").
 			NotEmpty(),
 		field.Enum("type").
@@ -50,7 +48,7 @@ func (Block) Fields() []ent.Field {
 			Optional(),
 		field.JSON("input_params", []*flowschema.VariableExpression{}).
 			Optional(),
-		field.JSON("ui_representation", flowschema.BlockUIRepresentation{}).
+		field.JSON("ui_representation", &flowschema.BlockUIRepresentation{}).
 			Optional(),
 	}
 }
@@ -84,15 +82,6 @@ func (Block) Edges() []ent.Edge {
 // Indexes returns block indexes.
 func (Block) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("name").
-			Edges("flow_draft").
-			Unique(),
-		index.Fields("name").
-			Edges("flow").
-			Unique(),
-		index.Fields("name").
-			Edges("flow_template").
-			Unique(),
 		index.Fields("cid").
 			Edges("flow_draft").
 			Unique(),

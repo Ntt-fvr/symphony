@@ -71,5 +71,5 @@ $ /bin/entscript --tenant=fb-test --user=fbuser@fb.com --migration=sample
 By default, feature flags are not enabled. 
 If your migration depends on a feature flag in a tenant, you can import the flags:
 ```shell script
-$ /bin/entscript --tenant=fb-test --user=fbuser@fb.com --migration=sample --db-dsn=$MYSQL_DSN --features-url=http://symphony-front:1030/features
+$ /bin/entscript --tenant=fb-test --user=fbuser@fb.com --migration=sample --db-url=$DB_URL --features-url=http://symphony-front:1030/features
 ```

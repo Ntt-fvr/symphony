@@ -14,12 +14,15 @@ import BottomBar from './tools/BottomBar';
 import Canvas from './canvas/Canvas';
 import React, {useEffect, useState} from 'react';
 import TopBar from './tools/TopBar';
+import usePaperGrab from './widgets/navigation/usePaperGrab';
+import {CopyPasteContextProvider} from './widgets/copyPaste/CopyPasteContext';
 import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FlowDataContextProvider} from '../data/FlowDataContext';
-import {GraphContextProvider} from './canvas/graph/GraphContext';
+import {GraphContextProvider} from './canvas/graph/graphAPIContext/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
+import {KeyboardShortcutsContextProvider} from './widgets/keyboardShortcuts/KeyboardShortcutsContext';
 import {makeStyles} from '@material-ui/styles';
 import {useHistory, useLocation} from 'react-router-dom';
 
@@ -28,6 +31,7 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     display: 'flex',
     flexGrow: 1,
+    userSelect: 'none',
   },
   workspace: {
     position: 'relative',
@@ -66,7 +70,6 @@ export default function FlowBuilder() {
   const showDialog = () => setDialogOpen(true);
   const hideDialog = () => setDialogOpen(false);
 
-  const classes = useStyles();
   const location = useLocation();
   const history = useHistory();
   const queryParams = new URLSearchParams(location.search);
@@ -86,31 +89,45 @@ export default function FlowBuilder() {
 
   return (
     <GraphContextProvider>
-      <FlowDataContextProvider
-        flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
-        <DialogShowingContextProvider>
-          <GraphSelectionContextProvider>
-            <DetailsPanelContextProvider>
-              <div className={classes.root}>
-                <BlocksBar />
-                <div className={classes.workspace}>
-                  <TopBar />
-                  <Canvas />
-                  <BottomBar />
-                </div>
-              </div>
-              <AddFlowDialog
-                open={dialogOpen}
-                onClose={hideDialog}
-                onSave={flowId => {
-                  setDialogOpen(false);
-                  history.push(InventoryAPIUrls.flow(flowId));
-                }}
-              />
-            </DetailsPanelContextProvider>
-          </GraphSelectionContextProvider>
-        </DialogShowingContextProvider>
-      </FlowDataContextProvider>
+      <KeyboardShortcutsContextProvider>
+        <FlowDataContextProvider
+          flowId={isNewFlowDraft || isOnPlayground ? null : flowId}>
+          <DialogShowingContextProvider>
+            <GraphSelectionContextProvider>
+              <CopyPasteContextProvider>
+                <DetailsPanelContextProvider>
+                  <FlowBuilderLayout />
+                  <AddFlowDialog
+                    open={dialogOpen}
+                    onClose={hideDialog}
+                    onSave={flowId => {
+                      setDialogOpen(false);
+                      history.push(InventoryAPIUrls.flow(flowId));
+                    }}
+                  />
+                </DetailsPanelContextProvider>
+              </CopyPasteContextProvider>
+            </GraphSelectionContextProvider>
+          </DialogShowingContextProvider>
+        </FlowDataContextProvider>
+      </KeyboardShortcutsContextProvider>
     </GraphContextProvider>
+  );
+}
+
+function FlowBuilderLayout() {
+  const classes = useStyles();
+
+  usePaperGrab();
+
+  return (
+    <div className={classes.root}>
+      <BlocksBar />
+      <div className={classes.workspace}>
+        <TopBar />
+        <Canvas />
+        <BottomBar />
+      </div>
+    </div>
   );
 }

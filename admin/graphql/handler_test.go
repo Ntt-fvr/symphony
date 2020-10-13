@@ -38,7 +38,7 @@ func TestHandler(t *testing.T) {
 		).
 		RowsWillBeClosed()
 
-	handler, _, err := graphql.NewHandler(
+	handler := graphql.NewHandler(
 		graphql.HandlerConfig{
 			DB:      db,
 			Dialect: strutil.Stringer(dialect.SQLite),

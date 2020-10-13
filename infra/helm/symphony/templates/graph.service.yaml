@@ -11,15 +11,4 @@ metadata:
 spec:
   selector: {{- include "symphony.graph.selectorLabels" . | nindent 4 }}
   type: ClusterIP
-  ports:
-    {{- with .Values.graph.service.port.http }}
-    - name: http
-      port: {{ .port }}
-      targetPort: http
-    {{- end }}
-    {{- with .Values.graph.service.port.grpc }}
-    - name: grpc
-      port: {{ .port }}
-      targetPort: grpc
-    {{- end }}
-    {{- include "symphony.metricsPort" . | indent 4 }}
+  ports: {{- include "symphony.servicePorts" .Values.graph | nindent 4 }}

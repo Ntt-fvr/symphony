@@ -77,6 +77,20 @@ func (etc *ExportTaskCreate) SetNillableStoreKey(s *string) *ExportTaskCreate {
 	return etc
 }
 
+// SetWoIDToExport sets the wo_id_to_export field.
+func (etc *ExportTaskCreate) SetWoIDToExport(i int) *ExportTaskCreate {
+	etc.mutation.SetWoIDToExport(i)
+	return etc
+}
+
+// SetNillableWoIDToExport sets the wo_id_to_export field if the given value is not nil.
+func (etc *ExportTaskCreate) SetNillableWoIDToExport(i *int) *ExportTaskCreate {
+	if i != nil {
+		etc.SetWoIDToExport(*i)
+	}
+	return etc
+}
+
 // Mutation returns the ExportTaskMutation object of the builder.
 func (etc *ExportTaskCreate) Mutation() *ExportTaskMutation {
 	return etc.mutation
@@ -234,6 +248,14 @@ func (etc *ExportTaskCreate) createSpec() (*ExportTask, *sqlgraph.CreateSpec) {
 			Column: exporttask.FieldStoreKey,
 		})
 		_node.StoreKey = &value
+	}
+	if value, ok := etc.mutation.WoIDToExport(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: exporttask.FieldWoIDToExport,
+		})
+		_node.WoIDToExport = &value
 	}
 	return _node, _spec
 }

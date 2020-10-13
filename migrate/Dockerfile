@@ -25,7 +25,7 @@ RUN mkdir /build && go build -o /build ./...
 FROM alpine
 
 # Install runtime requirements
-RUN apk add --no-cache musl curl
+RUN apk add --no-cache musl
 
 # Copy artifacts from builder
 COPY --from=builder /build/* /bin/

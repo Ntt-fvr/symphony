@@ -9,41 +9,16 @@ locals {
   eks_asg_capacity = length(module.vpc.azs) * 2
 }
 
-# eks workers ssh key
-resource tls_private_key eks_workers {
-  algorithm = "RSA"
-}
-
-# keypair from ssh key
-resource aws_key_pair eks_workers {
-  key_name_prefix = "${local.eks_cluster_name}-"
-  public_key      = tls_private_key.eks_workers.public_key_openssh
-}
-
-# security group allowing ssh traffic from bastion
-resource aws_security_group eks_worker_ssh {
-  name_prefix = "eks-ssh-"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion.id]
-  }
-}
-
 module eks {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "~> 12.0"
+  version         = "~> 13.0"
   cluster_name    = local.eks_cluster_name
   cluster_version = "1.17"
   enable_irsa     = true
 
-  subnets = module.vpc.private_subnets
-
-  vpc_id             = module.vpc.vpc_id
-  config_output_path = local.output_path
+  vpc_id                   = module.vpc.vpc_id
+  subnets                  = module.vpc.private_subnets
+  attach_worker_cni_policy = false
 
   cluster_enabled_log_types = [
     "api",
@@ -52,10 +27,6 @@ module eks {
     "controllerManager",
     "scheduler",
   ]
-
-  workers_group_defaults               = { key_name = aws_key_pair.eks_workers.key_name }
-  worker_additional_security_group_ids = [aws_security_group.eks_worker_ssh.id]
-  attach_worker_cni_policy             = false
 
   worker_groups = [
     {
@@ -85,7 +56,7 @@ module eks {
     },
   ]
 
-  map_roles = [
+  map_roles = concat([
     {
       rolearn  = aws_iam_role.eks_admin.arn
       username = "admin"
@@ -113,9 +84,16 @@ module eks {
       rolearn  = "arn:aws:iam::495344428215:role/SymphonyAdminRole"
       username = "symphony:master"
       groups   = ["symphony:masters"]
+    }], [
+    for rolearn in module.eks_fargate.eks_fargate_profile_role_arn :
+    {
+      rolearn  = rolearn
+      username = "system:node:{{SessionName}}"
+      groups   = formatlist("system:%s", ["bootstrappers", "nodes", "node-proxier"])
     }
-  ]
+  ])
 
+  config_output_path                   = local.output_path
   kubeconfig_name                      = "symphony-${local.environment}"
   kubeconfig_aws_authenticator_command = "aws"
   kubeconfig_aws_authenticator_command_args = concat(
@@ -131,6 +109,18 @@ module eks {
   write_kubeconfig = false
 
   tags = local.tags
+}
+
+# fargate profile for symphony namespace
+module eks_fargate {
+  source  = "terraform-module/eks-fargate-profile/aws"
+  version = "~> 2.0"
+
+  cluster_name = module.eks.cluster_id
+  subnet_ids   = module.vpc.private_subnets
+  namespaces   = ["symphony"]
+  labels       = { "eks.amazonaws.com/compute-type" = "fargate" }
+  tags         = local.tags
 }
 
 # generates eks access token

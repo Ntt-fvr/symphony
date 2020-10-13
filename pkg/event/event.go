@@ -24,6 +24,7 @@ type Eventer struct {
 func (e *Eventer) HookTo(client *ent.Client) {
 	client.Use(e.logHook())
 	client.WorkOrder.Use(e.workOrderHook())
+	client.FlowInstance.Use(e.flowInstanceHook())
 }
 
 func (e *Eventer) emit(ctx context.Context, name string, obj interface{}) {

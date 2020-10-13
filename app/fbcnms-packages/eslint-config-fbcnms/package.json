@@ -4,7 +4,7 @@
   "description": "This package provides Facebook NMS' eslint config as an extensible shared config. This is only used internally, use at your own risk",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebookincubator/magma.git",
+    "url": "https://github.com/facebookincubator/symphony.git",
     "directory": "nms/fbcnms-packages/eslint-config-fbcnms"
   },
   "license": "BSD-2-Clause",

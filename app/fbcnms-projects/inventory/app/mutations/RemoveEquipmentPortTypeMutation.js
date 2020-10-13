@@ -8,8 +8,6 @@
  * @format
  */
 
-import RelayEnvironment from '../common/RelayEnvironment.js';
-import {commitMutation, graphql} from 'react-relay';
 import type {MutationCallbacks} from './MutationCallbacks.js';
 import type {
   RemoveEquipmentPortTypeMutation,
@@ -17,6 +15,9 @@ import type {
   RemoveEquipmentPortTypeMutationVariables,
 } from './__generated__/RemoveEquipmentPortTypeMutation.graphql';
 import type {SelectorStoreUpdater} from 'relay-runtime';
+
+import RelayEnvironment from '../common/RelayEnvironment.js';
+import {commitMutation, graphql} from 'react-relay';
 
 const mutation = graphql`
   mutation RemoveEquipmentPortTypeMutation($id: ID!) {

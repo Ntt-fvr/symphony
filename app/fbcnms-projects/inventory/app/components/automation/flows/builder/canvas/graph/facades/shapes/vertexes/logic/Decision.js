@@ -40,6 +40,7 @@ const defaultProperties = {
   attrs: {
     ...VERTEX_COMMON_DISPLAY.attrs,
     body: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       strokeWidth: BORDER,
       stroke: DISPLAY_SETTINGS.body.stroke.default,
       fill: FILL_COLOR,
@@ -51,6 +52,7 @@ const defaultProperties = {
       refY2: 4,
     },
     image: {
+      ...VERTEX_COMMON_DISPLAY.defaultAttrProps,
       xlinkHref: '/inventory/static/svg/BlockFlowDecision.svg',
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,

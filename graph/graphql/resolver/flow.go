@@ -84,10 +84,35 @@ func (r flowDraftResolver) Connectors(ctx context.Context, obj *ent.FlowDraft) (
 
 func (r mutationResolver) AddFlowDraft(ctx context.Context, input models.AddFlowDraftInput) (*ent.FlowDraft, error) {
 	client := r.ClientFrom(ctx)
+	var flowID int
+	if input.FlowID != nil {
+		flowID = *input.FlowID
+		flowItem, err := client.Flow.Query().
+			Where(flow.ID(*input.FlowID)).
+			WithDraft().
+			Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load flow with flow id: %d. %w", input.FlowID, err)
+		}
+		if flowItem.Edges.Draft != nil {
+			return nil, fmt.Errorf("cannot creat a new draft for flow id: %d, as a draft already exists", input.FlowID)
+		}
+	} else {
+		newFlow, err := client.Flow.Create().
+			SetName(input.Name).
+			SetNillableDescription(input.Description).
+			SetEndParamDefinitions(input.EndParamDefinitions).
+			Save(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create flow: %w", err)
+		}
+		flowID = newFlow.ID
+	}
+
 	flowDraft, err := client.FlowDraft.Create().
 		SetName(input.Name).
 		SetNillableDescription(input.Description).
-		SetNillableFlowID(input.FlowID).
+		SetFlowID(flowID).
 		SetEndParamDefinitions(input.EndParamDefinitions).
 		Save(ctx)
 	if err != nil {
@@ -123,6 +148,8 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 			SetName(flowDraft.Name).
 			SetNillableDescription(flowDraft.Description).
 			SetEndParamDefinitions(flowDraft.EndParamDefinitions).
+			SetStatus(flow.StatusPublished).
+			SetNewInstancesPolicy(input.FlowInstancesPolicy).
 			Save(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create flow: %w", err)
@@ -132,6 +159,8 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 			SetName(flowDraft.Name).
 			SetNillableDescription(flowDraft.Description).
 			SetEndParamDefinitions(flowDraft.EndParamDefinitions).
+			SetStatus(flow.StatusPublished).
+			SetNewInstancesPolicy(input.FlowInstancesPolicy).
 			ClearBlocks().
 			Save(ctx)
 		if err != nil {
@@ -193,6 +222,15 @@ func (r queryResolver) FlowDrafts(
 	before *ent.Cursor, last *int,
 ) (*ent.FlowDraftConnection, error) {
 	return r.ClientFrom(ctx).FlowDraft.Query().
+		Paginate(ctx, after, first, before, last)
+}
+
+func (r queryResolver) Flows(
+	ctx context.Context,
+	after *ent.Cursor, first *int,
+	before *ent.Cursor, last *int,
+) (*ent.FlowConnection, error) {
+	return r.ClientFrom(ctx).Flow.Query().
 		Paginate(ctx, after, first, before, last)
 }
 

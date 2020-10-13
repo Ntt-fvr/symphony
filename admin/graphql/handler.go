@@ -22,11 +22,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/privacy"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/gorilla/mux"
 	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -39,12 +37,7 @@ type HandlerConfig struct {
 }
 
 // NewHandler creates a graphql http handler.
-func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
-	if err := view.Register(ocgql.DefaultViews...); err != nil {
-		return nil, nil, fmt.Errorf("cannot register views: %w", err)
-	}
-	closer := func() { view.Unregister(ocgql.DefaultViews...) }
-
+func NewHandler(cfg HandlerConfig) http.Handler {
 	srv := gqlutil.NewServer(
 		exec.NewExecutableSchema(
 			exec.Config{
@@ -96,8 +89,7 @@ func NewHandler(cfg HandlerConfig) (http.Handler, func(), error) {
 				"query",
 			),
 		)
-
-	return router, closer, nil
+	return router
 }
 
 // TenancyInjector injects viewer.Tenancy into request context.

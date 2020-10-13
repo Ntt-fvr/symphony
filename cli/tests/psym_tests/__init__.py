@@ -16,6 +16,7 @@ def load_tests(
 
     from .test_equipment import TestEquipment
     from .test_equipment_type import TestEquipmentType
+    from .test_flow import TestFlow
     from .test_link import TestLink
     from .test_location import TestLocation
     from .test_port_type import TestEquipmentPortType
@@ -46,6 +47,7 @@ def load_tests(
         TestWorkOrderSubscription,
         TestProjectType,
         TestProject,
+        TestFlow,
     ]
 
     print("Waiting for symphony to be ready")

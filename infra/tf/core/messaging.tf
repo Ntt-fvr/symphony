@@ -5,7 +5,7 @@ resource helm_release nats {
   create_namespace = true
   repository       = local.helm_repository.bitnami
   chart            = "nats"
-  version          = "4.5.5"
+  version          = "4.5.6"
 
   values = [yamlencode({
     replicaCount = 3
@@ -39,6 +39,4 @@ resource helm_release prometheus_nats_exporter {
       enabled = true
     }
   })]
-
-  depends_on = [helm_release.prometheus_operator]
 }

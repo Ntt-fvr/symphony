@@ -54,7 +54,7 @@ module efs_provisioner_role {
   role_path                 = local.eks_sa_role_path
   role_policy_arns          = ["arn:aws:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess"]
   service_account_name      = "efs-provisioner"
-  service_account_namespace = "kube-system"
+  service_account_namespace = data.kubernetes_namespace.kube_system.id
   oidc_provider_arn         = module.eks.oidc_provider_arn
   tags                      = local.tags
 }

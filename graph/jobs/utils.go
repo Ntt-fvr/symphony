@@ -36,9 +36,7 @@ func getServicesContext(ctx context.Context) *servicesContext {
 }
 
 func newServicesContext(parent context.Context) context.Context {
-	return context.WithValue(parent, ctxKey{}, &servicesContext{
-		deleted: 0,
-	})
+	return context.WithValue(parent, ctxKey{}, &servicesContext{})
 }
 
 func deleteService(ctx context.Context, s *ent.Service) error {

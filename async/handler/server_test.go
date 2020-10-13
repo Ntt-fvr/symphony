@@ -16,6 +16,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/user"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/event"
+	"github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/log/logtest"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -30,9 +31,10 @@ func newTestServer(t *testing.T, client *ent.Client, receiver ev.Receiver, handl
 		Features: constantvar.New(viewer.TenantFeatures{
 			viewertest.DefaultTenant: viewertest.DefaultFeatures,
 		}),
-		Logger:   logtest.NewTestLogger(t),
-		Receiver: receiver,
-		Handlers: handlers,
+		Logger:       logtest.NewTestLogger(t),
+		Receiver:     receiver,
+		Handlers:     handlers,
+		HealthPoller: health.NewPoller(logtest.NewTestLogger(t).Background(), nil),
 	})
 }
 
