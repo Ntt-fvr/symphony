@@ -6,7 +6,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/http/pprof"
 	"path"
@@ -15,11 +14,9 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/server/driver"
 	"github.com/facebookincubator/symphony/pkg/server/recovery"
-	"github.com/facebookincubator/symphony/pkg/telemetry"
 
 	"github.com/google/wire"
 	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"gocloud.dev/server/health"
 	"gocloud.dev/server/requestlog"
@@ -39,8 +36,6 @@ type Server struct {
 	reqlog  requestlog.Logger
 	handler http.Handler
 	health  health.Handler
-	views   []*view.View
-	ve      telemetry.ViewExporter
 	te      trace.Exporter
 	sampler trace.Sampler
 	profile ProfilingEnabler
@@ -57,12 +52,6 @@ type Options struct {
 	// HealthChecks specifies the health checks to be run when the
 	// /healthz/readiness endpoint is requested.
 	HealthChecks []health.Checker
-
-	// Views construct view data.
-	Views []*view.View
-
-	// ViewExporter exports view data.
-	ViewExporter telemetry.ViewExporter
 
 	// TraceExporter exports sampled trace spans.
 	TraceExporter trace.Exporter
@@ -93,8 +82,6 @@ func New(h http.Handler, opts *Options) *Server {
 		for _, c := range opts.HealthChecks {
 			srv.health.Add(c)
 		}
-		srv.ve = opts.ViewExporter
-		srv.views = opts.Views
 		srv.te = opts.TraceExporter
 		srv.sampler = opts.DefaultSamplingPolicy
 		srv.profile = opts.EnableProfiling
@@ -106,9 +93,6 @@ func New(h http.Handler, opts *Options) *Server {
 
 func (srv *Server) init() {
 	srv.once.Do(func() {
-		if srv.ve != nil {
-			view.RegisterExporter(srv.ve)
-		}
 		if srv.te != nil {
 			trace.RegisterExporter(srv.te)
 		}
@@ -136,15 +120,6 @@ func (srv *Server) ListenAndServe(addr string) error {
 	mux.HandleFunc(hr, health.HandleLive)
 	mux.HandleFunc(path.Join(hr, "liveness"), health.HandleLive)
 	mux.Handle(path.Join(hr, "readiness"), &srv.health)
-
-	// Setup metrics endpoint, /metrics route is taken by default.
-	if srv.ve != nil {
-		mux.Handle("/metrics", srv.ve)
-	}
-	// Register metrics views
-	if err := view.Register(srv.views...); err != nil {
-		return fmt.Errorf("registering views: %w", err)
-	}
 
 	// Setup profiling, /debug/pprof route is taken by default.
 	if srv.profile {

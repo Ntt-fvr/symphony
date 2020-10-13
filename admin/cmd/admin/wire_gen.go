@@ -61,14 +61,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handler := graphql.NewHandler(handlerConfig)
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := provideHealthCheckers(db)
-	v2 := provideViews()
 	telemetryConfig := flags.TelemetryConfig
-	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	exporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
 		cleanup2()
@@ -82,8 +75,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	options := &server.Options{
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
-		Views:                 v2,
-		ViewExporter:          viewExporter,
 		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
@@ -92,6 +83,14 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(handler, options)
 	string2 := flags.ListenAddress
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := provideViews()
 	metricsConfig := metrics.Config{
 		Log:      zapLogger,
 		Exporter: viewExporter,

@@ -14,7 +14,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
-	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 	"net/url"
 )
@@ -33,12 +32,7 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	logger := cfg.Logger
 	zapLogger := xserver.NewRequestLogger(logger)
 	v := cfg.HealthChecks
-	v2 := _wireValue
 	config := cfg.Telemetry
-	viewExporter, err := telemetry.ProvideViewExporter(config)
-	if err != nil {
-		return nil, nil, err
-	}
 	exporter, cleanup, err := telemetry.ProvideTraceExporter(config)
 	if err != nil {
 		return nil, nil, err
@@ -50,8 +44,6 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 	options := &server.Options{
 		RequestLogger:         zapLogger,
 		HealthChecks:          v,
-		Views:                 v2,
-		ViewExporter:          viewExporter,
 		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
@@ -65,7 +57,6 @@ func NewServer(cfg Config) (*server.Server, func(), error) {
 }
 
 var (
-	_wireValue                 = []*view.View(nil)
 	_wireProfilingEnablerValue = server.ProfilingEnabler(true)
 	_wireDefaultDriverValue    = &server.DefaultDriver{}
 )

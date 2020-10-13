@@ -15,7 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"gocloud.dev/server/requestlog"
 )
@@ -65,12 +64,6 @@ func TestMiddleware(t *testing.T) {
 					},
 				},
 				{
-					target: "/metrics",
-					expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
-						assert.Equal(t, http.StatusOK, rec.Code)
-					},
-				},
-				{
 					target: "/debug/pprof/",
 					expect: func(t *testing.T, rec *httptest.ResponseRecorder) {
 						assert.Equal(t, http.StatusOK, rec.Code)
@@ -101,12 +94,6 @@ func TestMiddleware(t *testing.T) {
 	defer trace.UnregisterExporter(&te)
 	defer te.AssertExpectations(t)
 
-	var tv testView
-	tv.On("ServeHTTP", mock.Anything, mock.Anything).
-		Once()
-	defer view.UnregisterExporter(&tv)
-	defer tv.AssertExpectations(t)
-
 	var tr testRecovery
 	tr.On("Recover", mock.Anything, mock.Anything).
 		Return(nil).
@@ -118,7 +105,6 @@ func TestMiddleware(t *testing.T) {
 	})
 	s := server.New(handler, &server.Options{
 		RequestLogger:         &tl,
-		ViewExporter:          &tv,
 		TraceExporter:         &te,
 		DefaultSamplingPolicy: trace.AlwaysSample(),
 		EnableProfiling:       true,
@@ -157,18 +143,6 @@ type testExporter struct {
 
 func (te *testExporter) ExportSpan(s *trace.SpanData) {
 	te.Called(s)
-}
-
-type testView struct {
-	mock.Mock
-}
-
-func (tv *testView) ExportView(data *view.Data) {
-	tv.Called(data)
-}
-
-func (tv *testView) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tv.Called(w, r)
 }
 
 type testRecovery struct {

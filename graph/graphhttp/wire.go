@@ -20,7 +20,6 @@ import (
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
-	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 )
 
@@ -40,7 +39,6 @@ type Config struct {
 func NewServer(cfg Config) (*server.Server, func(), error) {
 	wire.Build(
 		xserver.ServiceSet,
-		wire.Value([]*view.View(nil)),
 		wire.FieldsOf(new(Config), "Logger", "Telemetry", "HealthChecks"),
 		newRouterConfig,
 		newRouter,

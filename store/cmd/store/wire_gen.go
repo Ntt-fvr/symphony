@@ -43,14 +43,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handlerHandler := handler.New(handlerConfig)
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := _wireValue
-	v2 := xserver.DefaultViews()
 	telemetryConfig := flags.TelemetryConfig
-	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	exporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
 		cleanup2()
@@ -64,8 +57,6 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	options := &server.Options{
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
-		Views:                 v2,
-		ViewExporter:          viewExporter,
 		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
@@ -74,6 +65,14 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(handlerHandler, options)
 	string2 := flags.ListenAddress
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := xserver.DefaultViews()
 	metricsConfig := metrics.Config{
 		Log:      zapLogger,
 		Exporter: viewExporter,

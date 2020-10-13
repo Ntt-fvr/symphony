@@ -75,16 +75,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	v := newWorkerFactories(logger, bucket, flags)
 	healthChecker, cleanup4 := worker.NewHealthChecker(workflowserviceclientInterface, v, logger)
 	v2 := newHealthChecks(mySQLTenancy, healthChecker)
-	v3 := provideViews()
 	telemetryConfig := flags.TelemetryConfig
-	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
-	if err != nil {
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	exporter, cleanup5, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
 		cleanup4()
@@ -100,8 +91,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	options := &server.Options{
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v2,
-		Views:                 v3,
-		ViewExporter:          viewExporter,
 		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
@@ -110,6 +99,16 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(httpHandler, options)
 	string2 := flags.ListenAddress
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	if err != nil {
+		cleanup5()
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v3 := provideViews()
 	metricsConfig := metrics.Config{
 		Log:      zapLogger,
 		Exporter: viewExporter,
