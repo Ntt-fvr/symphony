@@ -144,29 +144,21 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 	}
 	outputFlow := flowDraft.Edges.Flow
 	if outputFlow == nil {
-		outputFlow, err = client.Flow.Create().
-			SetName(flowDraft.Name).
-			SetNillableDescription(flowDraft.Description).
-			SetEndParamDefinitions(flowDraft.EndParamDefinitions).
-			SetStatus(flow.StatusPublished).
-			SetNewInstancesPolicy(input.FlowInstancesPolicy).
-			Save(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create flow: %w", err)
-		}
-	} else {
-		outputFlow, err = client.Flow.UpdateOne(outputFlow).
-			SetName(flowDraft.Name).
-			SetNillableDescription(flowDraft.Description).
-			SetEndParamDefinitions(flowDraft.EndParamDefinitions).
-			SetStatus(flow.StatusPublished).
-			SetNewInstancesPolicy(input.FlowInstancesPolicy).
-			ClearBlocks().
-			Save(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to update flow: %w", err)
-		}
+		return nil, fmt.Errorf("no flow for draft: %w", err)
 	}
+
+	outputFlow, err = client.Flow.UpdateOne(outputFlow).
+		SetName(flowDraft.Name).
+		SetNillableDescription(flowDraft.Description).
+		SetEndParamDefinitions(flowDraft.EndParamDefinitions).
+		SetStatus(flow.StatusPublished).
+		SetNewInstancesPolicy(input.FlowInstancesPolicy).
+		ClearBlocks().
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update flow: %w", err)
+	}
+
 	for _, draftBlock := range flowDraft.Edges.Blocks {
 		if err := client.Block.UpdateOne(draftBlock).
 			ClearFlowDraft().
@@ -175,9 +167,10 @@ func (r mutationResolver) PublishFlow(ctx context.Context, input models.PublishF
 			return nil, fmt.Errorf("failed to set flow: %w", err)
 		}
 	}
-	if err := client.FlowDraft.DeleteOne(flowDraft).
+	if err := client.FlowDraft.UpdateOne(flowDraft).
+		SetSameAsFlow(true).
 		Exec(ctx); err != nil {
-		return nil, fmt.Errorf("failed to delete flow draft: %w", err)
+		return nil, fmt.Errorf("failed to update flow draft to SameAsFlow: true. %w", err)
 	}
 	return outputFlow, nil
 }
