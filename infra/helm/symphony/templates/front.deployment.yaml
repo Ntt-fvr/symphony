@@ -96,7 +96,6 @@ spec:
             {{- include "symphony.containerPorts" .Values.front | nindent 12 }}
             - containerPort: {{ .Values.front.service.internal.targetPort }}
               name: http-internal
-          {{- $ = set .Values.front.probes.liveness "path" "/healthz" -}}
-          {{- $ = set .Values.front.probes.readiness "path" "/healthz" -}}
+          {{- $ = set .Values.front.probes "path" "/healthz" -}}
           {{- include "symphony.probes" .Values.front | indent 10 }}
           resources: {{- toYaml .Values.front.resources | nindent 12 }}

@@ -326,15 +326,15 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- with .probes.liveness }}
 livenessProbe:
   httpGet:
-    path: {{ default "/healthz/liveness" .path }}
+    path: {{ default "/healthz/liveness" $.probes.path }}
     port: http
 {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- with .probes.readiness }}
 readinessProbe:
   httpGet:
-    path: {{ default "/healthz/readiness" .path }}
+    path: {{ default "/healthz/readiness" $.probes.path }}
     port: http
-  {{- toYaml . | nindent 2 }}
+{{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
