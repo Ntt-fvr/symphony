@@ -12,17 +12,20 @@ import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef} from 'react';
 import {useGraph} from './graph/graphAPIContext/GraphContext';
+import {useKeyboardShortcuts} from '../widgets/keyboardShortcuts/KeyboardShortcutsContext';
 
 const useStyles = makeStyles(() => ({
   graphContainer: {
     overflow: 'hidden',
   },
+  canvasKeyboardShortcutsMagnet: {},
 }));
 
 export default function Canvas() {
   const classes = useStyles();
 
   const flow = useGraph();
+  const keyboardShortcuts = useKeyboardShortcuts();
   const graphContainer = useRef();
 
   useEffect(() => {
@@ -32,7 +35,8 @@ export default function Canvas() {
 
     const container = graphContainer.current;
     flow.bindGraphContainer(container);
-  }, [flow]);
+    keyboardShortcuts.initiateKeyboardShortcutsHandlers();
+  }, [flow, keyboardShortcuts]);
 
   return (
     <div

@@ -14,7 +14,10 @@ import FlowSettings from './flowSettings/FlowSettings';
 import FlowTitle from './flowSettings/FlowTitle';
 import SelectionSettings from './selectionSettings/SelectionSettings';
 import {makeStyles} from '@material-ui/styles';
+import {useDialogShowingContext} from '@symphony/design-system/components/Dialog/DialogShowingContext';
+import {useEffect} from 'react';
 import {useGraphSelection} from '../selection/GraphSelectionContext';
+import {useKeyboardShortcuts} from '../keyboardShortcuts/KeyboardShortcutsContext';
 
 type SettingsPanelType = $ReadOnly<{|
   title: React.Node,
@@ -32,19 +35,39 @@ export default function useSettingsPanel(): SettingsPanelType {
   const selection = useGraphSelection();
   const selectionCount = selection.selectedElements.length;
 
+  const keyboardShortcutsContext = useKeyboardShortcuts();
+
   const noSelectionDetails = () => ({
     title: <FlowTitle className={classes.title} />,
-    children: <FlowSettings />,
+    children: (
+      <KeyboardShortcutsBlocker
+        block={keyboardShortcutsContext.blockShortcuts}
+        unblock={keyboardShortcutsContext.unblockShortcuts}>
+        <FlowSettings />
+      </KeyboardShortcutsBlocker>
+    ),
   });
 
   const singleSelectionDetails = () => ({
     title: 'Block Settings',
-    children: <BlockSettings block={selection.selectedElements[0]} />,
+    children: (
+      <KeyboardShortcutsBlocker
+        block={keyboardShortcutsContext.blockShortcuts}
+        unblock={keyboardShortcutsContext.unblockShortcuts}>
+        <BlockSettings block={selection.selectedElements[0]} />
+      </KeyboardShortcutsBlocker>
+    ),
   });
 
   const multiSelectionDetails = () => ({
     title: 'Selection Settings',
-    children: <SelectionSettings selection={selection} />,
+    children: (
+      <KeyboardShortcutsBlocker
+        block={keyboardShortcutsContext.blockShortcuts}
+        unblock={keyboardShortcutsContext.unblockShortcuts}>
+        <SelectionSettings selection={selection} />
+      </KeyboardShortcutsBlocker>
+    ),
   });
 
   if (selectionCount === 0) {
@@ -54,4 +77,25 @@ export default function useSettingsPanel(): SettingsPanelType {
     return singleSelectionDetails();
   }
   return multiSelectionDetails();
+}
+
+type KeyboardShortcutsBlockerProps = $ReadOnly<{|
+  children: React.Node,
+  block: () => void,
+  unblock: () => void,
+|}>;
+
+function KeyboardShortcutsBlocker(props: KeyboardShortcutsBlockerProps) {
+  const {children, block, unblock} = props;
+
+  const dialogShowingContext = useDialogShowingContext();
+  useEffect(() => {
+    if (dialogShowingContext.isShown) {
+      block();
+    } else {
+      unblock();
+    }
+  }, [dialogShowingContext.isShown, block, unblock]);
+
+  return children;
 }

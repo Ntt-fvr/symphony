@@ -12,10 +12,15 @@ import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 import type {IConnector} from '../../canvas/graph/shapes/connectors/BaseConnector';
 
 import * as React from 'react';
+import emptyFunction from '@fbcnms/util/emptyFunction';
 import useExplicitSelection from './useExplicitSelection';
 import useLassoSelection from './useLassoSelection';
 import useLinkSelection from './useLinkSelection';
 import {Events} from '../../canvas/graph/facades/Helpers';
+import {
+  PREDICATES,
+  useKeyboardShortcut,
+} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {useCallback, useContext, useEffect, useState} from 'react';
 import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 
@@ -23,22 +28,27 @@ type SelectedElement = $ReadOnly<IBlock>;
 type SelectedLink = $ReadOnly<IConnector>;
 
 export type Selection = $ReadOnlyArray<SelectedElement>;
+
+export type ChangeSelectionFunc = (SelectedElement | Selection) => void;
+export type ChangeLinkSelectionFunc = SelectedLink => void;
+
 export type GraphSelectionContextType = {
   selectedElements: Selection,
   selectedLink: ?SelectedLink,
+  changeSelection: ChangeSelectionFunc,
+  changeLinkSelection: ChangeLinkSelectionFunc,
 };
 
 const GraphSelectionContextDefaults = {
   selectedElements: [],
   selectedLink: null,
+  changeSelection: emptyFunction,
+  changeLinkSelection: emptyFunction,
 };
 
 const GraphSelectionContext = React.createContext<GraphSelectionContextType>(
   GraphSelectionContextDefaults,
 );
-
-export type ChangeSelectionFunc = (SelectedElement | Selection) => void;
-export type ChangeLinkSelectionFunc = SelectedLink => void;
 
 export type IsIgnoredElementFunc = IBlock => boolean;
 
@@ -136,11 +146,23 @@ export function GraphSelectionContextProvider(props: Props) {
     flow.onGraphBlockEvent(Events.Graph.OnRemove, onBlockRemoved);
   }, [flow, onBlockRemoved]);
 
+  const selectAllBlocks = useCallback(() => changeSelection(flow.getBlocks()), [
+    changeSelection,
+    flow,
+  ]);
+
+  useKeyboardShortcut(
+    PREDICATES.combination([PREDICATES.ctrl, PREDICATES.key('a')]),
+    selectAllBlocks,
+  );
+
   return (
     <GraphSelectionContext.Provider
       value={{
         selectedElements: selectedElements ?? [],
         selectedLink: selectedLink,
+        changeSelection,
+        changeLinkSelection,
       }}>
       {props.children}
     </GraphSelectionContext.Provider>

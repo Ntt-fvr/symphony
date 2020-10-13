@@ -45,6 +45,9 @@ const useExplicitSelection = (
   }, []);
 
   const onBlockAdded = useCallback((newBlock: IBlock) => {
+    if (newBlock.isSelected) {
+      return;
+    }
     setExplicitlySelectedElement(newBlock);
   }, []);
 

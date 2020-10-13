@@ -17,9 +17,11 @@ import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 import type {Position} from '../../canvas/graph/facades/Helpers';
 
 import Lasso from '../../canvas/graph/facades/shapes/vertexes/helpers/Lasso';
-import useKeyboardToggle from '../../../utils/useKeyboardToggle';
-import {COMMON_PREDICATES} from '../../../utils/useKeyboardShortcut';
 import {Events} from '../../canvas/graph/facades/Helpers';
+import {
+  PREDICATES,
+  useKeyboardToggle,
+} from '../keyboardShortcuts/KeyboardShortcutsContext';
 import {
   convertPointsToRect,
   useEventRegistrationToggle,
@@ -38,17 +40,23 @@ function wrapSelectedBlocksWithContainerIfNeeded(
   container: Lasso,
   blocks: ?$ReadOnlyArray<IBlock>,
 ): boolean {
+  const currentlyEmbeddedElements = container.getEmbeddedCells();
+  currentlyEmbeddedElements
+    .filter(
+      element =>
+        blocks == null || blocks.find(block => block.id === element.id) == null,
+    )
+    .forEach(element => container.unembed(element));
   if (Array.isArray(blocks) && blocks.length > 1) {
     blocks.forEach(block => {
       container.embed(block.model);
     });
-  } else {
-    return false;
+    container.setFinalSelection();
+
+    return true;
   }
 
-  container.setFinalSelection();
-
-  return true;
+  return false;
 }
 
 type LassoSelectionApi = {
@@ -81,11 +89,12 @@ export default function useLassoSelection(
         // need to keep in function
         createSelectionMarkup(flow, startPosition),
       );
+      setSelectionEnd(startPosition);
     },
     [flow],
   );
 
-  const clearSelection = useCallback(() => {
+  const removeFinalSelectionContainer = useCallback(() => {
     setFinalSelectionContainer(currentSelectionGroup => {
       if (currentSelectionGroup != null) {
         const elements = currentSelectionGroup.getEmbeddedCells();
@@ -96,6 +105,11 @@ export default function useLassoSelection(
       return null;
     });
   }, []);
+
+  const clearSelection = useCallback(() => {
+    changeSelection([]);
+    removeFinalSelectionContainer();
+  }, [removeFinalSelectionContainer, changeSelection]);
 
   const changeSelectionMarkupToSelectionContainer = useCallback(() => {
     setSelectionProgressMarkup(currentMarkup => {
@@ -117,7 +131,6 @@ export default function useLassoSelection(
     (e, x, y) => {
       clearSelection();
       startSelection({x, y});
-      setSelectionEnd({x, y});
     },
     [clearSelection, startSelection],
   );
@@ -130,14 +143,22 @@ export default function useLassoSelection(
     if (finalSelectionContainer == null) {
       return;
     }
+
     const haveLassoSelection = wrapSelectedBlocksWithContainerIfNeeded(
       finalSelectionContainer,
       selectedElements,
     );
     if (!haveLassoSelection) {
-      clearSelection();
+      removeFinalSelectionContainer();
     }
-  }, [selectedElements, finalSelectionContainer, clearSelection]);
+  }, [
+    selectedElements,
+    finalSelectionContainer,
+    removeFinalSelectionContainer,
+    selectionProgressMarkup,
+    startSelection,
+    changeSelectionMarkupToSelectionContainer,
+  ]);
 
   useEffect(() => {
     if (selectionStart == null || selectionEnd == null) {
@@ -170,7 +191,7 @@ export default function useLassoSelection(
     setIsLassoAvailable(false);
   }, [stopSelection]);
 
-  useKeyboardToggle(COMMON_PREDICATES.spaceIsPressed, blockLasso, allowLasso);
+  useKeyboardToggle(PREDICATES.space, blockLasso, allowLasso);
 
   const dragMouseEvents = useMemo(
     () => [

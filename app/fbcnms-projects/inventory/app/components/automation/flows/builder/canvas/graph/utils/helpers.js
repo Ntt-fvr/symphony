@@ -160,3 +160,71 @@ export function buildPaperConnectionValidation(
     return false;
   };
 }
+
+const BLOCK_INDEXER_REGEX = /\s\((\d+)\)$/;
+const BLOCK_NAME_REGEX: RegExp = new RegExp(
+  `^(.+)${BLOCK_INDEXER_REGEX.source}`,
+);
+
+export function blockNameFixer(
+  allBlocks: $ReadOnlyArray<IBlock>,
+): IBlock => void {
+  const blocksNameDuplicationsMap = new Map<string, number>();
+
+  const getBlockBaseName = (name: string) => {
+    const blockNameMatch = name.match(BLOCK_NAME_REGEX);
+    return (blockNameMatch == null ? name : blockNameMatch[1]).trim();
+  };
+
+  const getNameAvailableIndex = (baseName: string) => {
+    const nextIndex =
+      blocksNameDuplicationsMap.get(baseName) ||
+      getHighestIndexerForBaseName(allBlocks, baseName);
+
+    blocksNameDuplicationsMap.set(baseName, nextIndex + 1);
+
+    return nextIndex;
+  };
+
+  return (block: IBlock) => {
+    const blockBaseName = getBlockBaseName(block.name);
+    const blockNameIndexer = getNameAvailableIndex(blockBaseName);
+    const name =
+      blockNameIndexer === 0
+        ? blockBaseName
+        : `${blockBaseName} (${blockNameIndexer})`;
+    block.setName(name);
+  };
+}
+
+function getHigherIndexer(
+  candidateIndexer: number,
+  name: string,
+  nameIndexerRegEx: RegExp,
+): number {
+  const blockNameMatch = name.match(nameIndexerRegEx);
+  if (blockNameMatch) {
+    const thisBlockIndexer = parseInt(blockNameMatch[1]);
+    if (thisBlockIndexer > candidateIndexer) {
+      return thisBlockIndexer;
+    }
+  }
+  return candidateIndexer;
+}
+
+function getHighestIndexerForBaseName(
+  blocks: $ReadOnlyArray<IBlock>,
+  baseName: string,
+): number {
+  const specificBlockNameRegEx: RegExp = new RegExp(
+    `^${baseName}${BLOCK_INDEXER_REGEX.source}`,
+  );
+  return (
+    blocks.reduce((topIndex, block) => {
+      if (topIndex < 0 && block.name === baseName) {
+        topIndex = 0;
+      }
+      return getHigherIndexer(topIndex, block.name, specificBlockNameRegEx);
+    }, -1) + 1
+  );
+}

@@ -12,7 +12,7 @@
 import type {IBaseShapeAttributes, IShape} from '../facades/shapes/BaseShape';
 import type {Paper} from '../facades/Paper';
 
-import Block from './blocks/BaseBlock';
+import BaseBlock from './blocks/BaseBlock';
 import CreateWorkorder, {
   TYPE as CreateWorkorderType,
 } from '../facades/shapes/vertexes/actions/CreateWorkorder';
@@ -41,7 +41,7 @@ export function isVertex(cell: ?IShape | IBaseShapeAttributes) {
 }
 
 export interface IShapesFactory {
-  +createBlock: (type: string, id?: ?string) => Block;
+  +createBlock: (type: string, id?: ?string) => BaseBlock;
 }
 
 export default class ShapesFactory {
@@ -55,6 +55,6 @@ export default class ShapesFactory {
     const VertexCtor = nullthrows(VERTEXES[type]);
     const vertexModel = new VertexCtor(id);
 
-    return new Block(vertexModel, this.paper);
+    return new BaseBlock(vertexModel, this.paper);
   }
 }
