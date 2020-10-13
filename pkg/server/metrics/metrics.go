@@ -40,11 +40,6 @@ type Config struct {
 // Addr represents an endpoint address.
 type Addr string
 
-// String converts the Addr to a string.
-func (a Addr) String() string {
-	return string(a)
-}
-
 func New(cfg Config) *Metrics {
 	if cfg.Log == nil {
 		cfg.Log = zap.NewNop()
@@ -61,7 +56,7 @@ func New(cfg Config) *Metrics {
 
 // Start will register views and start the metrics server.
 func (m *Metrics) Start(addr Addr) (_ *http.Server, err error) {
-	ln, err := net.Listen("tcp", addr.String())
+	ln, err := net.Listen("tcp", string(addr))
 	if err != nil {
 		m.log.Error("cannot create listener", zap.Error(err))
 		return nil, err
@@ -76,6 +71,12 @@ func (m *Metrics) Start(addr Addr) (_ *http.Server, err error) {
 		return nil, err
 	}
 	view.RegisterExporter(m.exporter)
+	defer func() {
+		if err != nil {
+			view.Unregister(m.views...)
+			view.UnregisterExporter(m.exporter)
+		}
+	}()
 
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", m.exporter)
