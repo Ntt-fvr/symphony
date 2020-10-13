@@ -3368,6 +3368,7 @@ type FlowDraft implements Node {
   endParamDefinitions: [VariableDefinition!]!
   blocks: [Block!]!
   connectors: [Connector!]!
+  sameAsFlow: Boolean!
 }
 
 enum FlowInstanceStatus @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/flowinstance.Status") {
