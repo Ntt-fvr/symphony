@@ -8,7 +8,10 @@
  * @format
  */
 
-import type {FlowWrapper} from '../GraphContext';
+import type {
+  FlowWrapper,
+  FlowWrapperReference,
+} from '../graphAPIContext/GraphContext';
 import type {IBlock} from '../shapes/blocks/BaseBlock';
 import type {
   ILink,
@@ -123,9 +126,9 @@ function getLinkEndpointPort(
   return linkEndBlock.getPortByID(linkEndpoint.port);
 }
 
-export function buildPaperConnectionValidation(flowWrapper: {
-  current: ?FlowWrapper,
-}) {
+export function buildPaperConnectionValidation(
+  flowWrapper: FlowWrapperReference,
+) {
   return (
     cellViewS: IVertexView,
     magnetS: HTMLElement,

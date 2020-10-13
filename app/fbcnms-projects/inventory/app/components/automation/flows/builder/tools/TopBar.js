@@ -18,7 +18,7 @@ import {makeStyles} from '@material-ui/styles';
 import {useDetailsPane} from '../widgets/detailsPanel/DetailsPanelContext';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
 import {useFlowData} from '../../data/FlowDataContext';
-import {useGraph} from '../canvas/graph/GraphContext';
+import {useGraph} from '../canvas/graph/graphAPIContext/GraphContext';
 import {useGraphSelection} from '../widgets/selection/GraphSelectionContext';
 
 const useStyles = makeStyles(() => ({

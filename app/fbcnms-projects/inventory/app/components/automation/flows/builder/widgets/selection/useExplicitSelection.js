@@ -16,7 +16,7 @@ import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 
 import {Events} from '../../canvas/graph/facades/Helpers';
 import {useCallback, useEffect, useState} from 'react';
-import {useGraph} from '../../canvas/graph/GraphContext';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 
 const useExplicitSelection = (
   changeSelection: ChangeSelectionFunc,

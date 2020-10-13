@@ -24,7 +24,7 @@ import {InventoryAPIUrls} from '../../../../../../common/InventoryAPI';
 import {Link} from 'react-router-dom';
 import {createFragmentContainer, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
-import {useGraph} from '../../canvas/graph/GraphContext';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 import {useMemo} from 'react';
 import {useState} from 'react';
 import {withFlowData} from '../../../data/FlowDataContext';

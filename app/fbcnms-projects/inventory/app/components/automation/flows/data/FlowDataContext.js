@@ -37,7 +37,7 @@ import {
 } from './flowDataUtils';
 import {useCallback, useContext, useEffect} from 'react';
 import {useEnqueueSnackbar} from '@fbcnms/ui/hooks/useSnackbar';
-import {useGraph} from '../builder/canvas/graph/GraphContext';
+import {useGraph} from '../builder/canvas/graph/graphAPIContext/GraphContext';
 import {useHistory} from 'react-router-dom';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 import {useRef} from 'react';

@@ -17,7 +17,7 @@ import useLassoSelection from './useLassoSelection';
 import useLinkSelection from './useLinkSelection';
 import {Events} from '../../canvas/graph/facades/Helpers';
 import {useCallback, useContext, useEffect, useState} from 'react';
-import {useGraph} from '../../canvas/graph/GraphContext';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 
 type SelectedElement = $ReadOnly<IBlock>;
 type SelectedLink = $ReadOnly<IConnector>;

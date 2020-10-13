@@ -12,7 +12,7 @@ import type {
   ChangeSelectionFunc,
   IsIgnoredElementFunc,
 } from './GraphSelectionContext';
-import type {GraphContextType} from '../../canvas/graph/GraphContext';
+import type {GraphContextType} from '../../canvas/graph/graphAPIContext/GraphContext';
 import type {IBlock} from '../../canvas/graph/shapes/blocks/BaseBlock';
 import type {Position} from '../../canvas/graph/facades/Helpers';
 
@@ -25,7 +25,7 @@ import {
   useEventRegistrationToggle,
 } from '../../../utils/helpers';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {useGraph} from '../../canvas/graph/GraphContext';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 
 function createSelectionMarkup(
   flow: GraphContextType,

@@ -13,7 +13,7 @@ import {COMMON_PREDICATES} from '../../../utils/useKeyboardShortcut';
 import {Events} from '../../canvas/graph/facades/Helpers';
 import {useCallback, useMemo, useState} from 'react';
 import {useEventRegistrationToggle} from '../../../utils/helpers';
-import {useGraph} from '../../canvas/graph/GraphContext';
+import {useGraph} from '../../canvas/graph/graphAPIContext/GraphContext';
 
 export default function usePaperGrab() {
   const [isOnGrabMode, setIsOnGrabMode] = useState(false);

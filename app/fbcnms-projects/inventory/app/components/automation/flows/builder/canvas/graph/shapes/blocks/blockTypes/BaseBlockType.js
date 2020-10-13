@@ -9,7 +9,7 @@
  */
 'use strict';
 
-import type {GraphContextType} from '../../../GraphContext';
+import type {GraphContextType} from '../../../graphAPIContext/GraphContext';
 import type {IBlock} from '../BaseBlock';
 import type {Position} from '../../../facades/Helpers';
 

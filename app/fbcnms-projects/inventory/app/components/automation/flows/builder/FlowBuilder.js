@@ -18,7 +18,7 @@ import usePaperGrab from './widgets/navigation/usePaperGrab';
 import {DetailsPanelContextProvider} from './widgets/detailsPanel/DetailsPanelContext';
 import {DialogShowingContextProvider} from '@symphony/design-system/components/Dialog/DialogShowingContext';
 import {FlowDataContextProvider} from '../data/FlowDataContext';
-import {GraphContextProvider} from './canvas/graph/GraphContext';
+import {GraphContextProvider} from './canvas/graph/graphAPIContext/GraphContext';
 import {GraphSelectionContextProvider} from './widgets/selection/GraphSelectionContext';
 import {InventoryAPIUrls} from '../../../../common/InventoryAPI';
 import {makeStyles} from '@material-ui/styles';

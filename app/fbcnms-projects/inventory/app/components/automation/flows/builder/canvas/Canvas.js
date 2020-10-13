@@ -11,7 +11,7 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/styles';
 import {useEffect, useRef} from 'react';
-import {useGraph} from './graph/GraphContext';
+import {useGraph} from './graph/graphAPIContext/GraphContext';
 
 const useStyles = makeStyles(() => ({
   graphContainer: {
