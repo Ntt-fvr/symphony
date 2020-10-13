@@ -9,11 +9,6 @@ services:
     build:
       context: ../app
       dockerfile: fbcnms-projects/platform-server/Dockerfile
-    environment:
-      API_HOST: ${MAGMA_API_HOST:-api-staging.magma.etagecom.io}
-      API_CERT_FILENAME: /magma_certs/${MAGMA_API_AUTH:-}api_cert
-      API_PRIVATE_KEY_FILENAME: /magma_certs/${MAGMA_API_AUTH:-}api_key
-      USER_GRAFANA_ADDRESS: host.docker.internal:3000
     env_file:
       - conf/front.env
       - conf/telemetry.env
@@ -61,10 +56,6 @@ services:
       context: ..
       dockerfile: graph/Dockerfile
     image: integration_graph
-    environment:
-      ORC8R_HOST: ${ORC8R_API_HOSTNAME:-api-staging.magma.etagecom.io}
-      ORC8R_CERT: /magma_certs/${ORC8R_API_CERT:-}api_cert
-      ORC8R_PKEY: /magma_certs/${ORC8R_API_PRIVATE_KEY:-}api_key
     env_file:
       - conf/graph.env
       - conf/db.env
@@ -73,8 +64,6 @@ services:
     networks:
       - private
       - public
-    volumes:
-      - ${HOME}/magma_certs:/magma_certs:ro
     depends_on:
       - migrate-graph
       - mysql
