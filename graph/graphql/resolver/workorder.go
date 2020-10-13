@@ -971,7 +971,7 @@ func (r mutationResolver) TechnicianWorkOrderCheckOut(ctx context.Context, input
 		return nil, fmt.Errorf("updating work order status %q: err %w", input.WorkOrderID, err)
 	}
 
-	if _, err := client.Activity.Create().
+	activityMutator := client.Activity.Create().
 		SetActivityType(activity.ActivityTypeClockOut).
 		SetIsCreate(false).
 		SetAuthorID(v.User().ID).
@@ -980,8 +980,13 @@ func (r mutationResolver) TechnicianWorkOrderCheckOut(ctx context.Context, input
 			DistanceMeters: input.DistanceMeters,
 			Comment:        input.Comment,
 			ClockOutReason: &input.Reason,
-		}).
-		Save(ctx); err != nil {
+		})
+	if input.CheckOutTime != nil {
+		activityMutator = activityMutator.SetCreateTime(*input.CheckOutTime)
+	}
+	_, err := activityMutator.Save(ctx)
+
+	if err != nil {
 		return nil, fmt.Errorf("creating clock out activity %q: err %w", input.WorkOrderID, err)
 	}
 

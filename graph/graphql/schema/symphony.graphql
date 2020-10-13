@@ -3115,6 +3115,7 @@ type LatestPythonPackageResult {
 
 input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
+  checkInTime: Time
 }
 
 enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
@@ -3412,6 +3413,7 @@ input TechnicianWorkOrderCheckOutInput {
   checkListCategories: [CheckListCategoryInput!]
   comment: String
   distanceMeters: Float
+  checkOutTime: Time
 }
 
 type Query {
