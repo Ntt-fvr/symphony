@@ -41,7 +41,6 @@ export default function BlockSettings(props: Props) {
         onValueChanged={name => {
           block.setName(name);
         }}
-        immediateUpdate={true}
       />
     </div>
   );

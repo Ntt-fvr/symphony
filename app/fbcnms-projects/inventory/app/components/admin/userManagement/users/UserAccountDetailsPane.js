@@ -149,7 +149,6 @@ const UserAccountDetailsPane = (props: Props) => {
       onValueChanged={setPassword}
       hasError={isEditable && !!passwordRules}
       errorText={isEditable ? passwordRules : ''}
-      immediateUpdate={true}
     />
   );
   const passwordVerficationField = (
@@ -161,7 +160,6 @@ const UserAccountDetailsPane = (props: Props) => {
       onValueChanged={setPasswordVerification}
       hasError={!!passwordMismatch}
       errorText={passwordMismatch}
-      immediateUpdate={true}
     />
   );
   return (
@@ -197,7 +195,6 @@ const UserAccountDetailsPane = (props: Props) => {
                     label={`${fbt('Current Password', '')}`}
                     value={currentPassword}
                     onValueChanged={setCurrentPassword}
-                    immediateUpdate={true}
                   />
                 </Grid>
               </Grid>

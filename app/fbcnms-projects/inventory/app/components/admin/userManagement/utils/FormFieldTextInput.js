@@ -44,7 +44,7 @@ const FormFieldTextInput = (props: FormFieldTextInputProps) => {
     hasError,
     errorText,
     disabled,
-    immediateUpdate = false,
+    immediateUpdate = true,
   } = props;
   const [fieldValue, setFieldValue] = useState<string>('');
   useEffect(() => setFieldValue(propValue), [propValue]);
