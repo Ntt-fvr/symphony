@@ -58,6 +58,7 @@ fragment AutomationFlowCard_flow on Flow {
   newInstancesPolicy
   draft {
     id
+    sameAsFlow
   }
 }
 
@@ -240,7 +241,14 @@ return {
                     "name": "draft",
                     "plural": false,
                     "selections": [
-                      (v4/*: any*/)
+                      (v4/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "sameAsFlow",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   },
@@ -268,7 +276,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3ccca49530130e3469a1b73055b75c3f",
+    "cacheID": "a147cc066edfd7705b241be339a964e5",
     "id": null,
     "metadata": {
       "connection": [
@@ -284,7 +292,7 @@ return {
     },
     "name": "AutomationFlowsViewQuery",
     "operationKind": "query",
-    "text": "query AutomationFlowsViewQuery {\n  flows(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flow on Flow {\n  id\n  name\n  description\n  status\n  newInstancesPolicy\n  draft {\n    id\n  }\n}\n\nfragment AutomationFlowsList_flows on Flow {\n  id\n  ...AutomationFlowCard_flow\n}\n"
+    "text": "query AutomationFlowsViewQuery {\n  flows(first: 500) {\n    edges {\n      node {\n        ...AutomationFlowsList_flows\n        id\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AutomationFlowCard_flow on Flow {\n  id\n  name\n  description\n  status\n  newInstancesPolicy\n  draft {\n    id\n    sameAsFlow\n  }\n}\n\nfragment AutomationFlowsList_flows on Flow {\n  id\n  ...AutomationFlowCard_flow\n}\n"
   }
 };
 })();

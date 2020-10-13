@@ -106,7 +106,7 @@ type Props = $ReadOnly<{|
 
 function AutomationFlowCard(props: Props) {
   const {id, name, description, status, newInstancesPolicy, draft} = props.flow;
-  const hasDraft = !!draft;
+  const hasDraft = draft ? !draft.sameAsFlow : false;
   // TODO: when available get these from the AutomationFlowCard_flow
   const runningInstances = 0;
 
@@ -188,6 +188,7 @@ export default createFragmentContainer(AutomationFlowCard, {
       newInstancesPolicy
       draft {
         id
+        sameAsFlow
       }
     }
   `,
