@@ -21,7 +21,7 @@ scrape_configs:
       - targets: ['store:9464']
   - job_name: async
     static_configs:
-      - targets: ['async']
+      - targets: ['async:9464']
   - job_name: fluentd
     static_configs:
       - targets: ['fluentd:24231']

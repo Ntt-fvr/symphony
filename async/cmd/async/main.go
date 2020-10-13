@@ -21,6 +21,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/kongtoml"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	_ "github.com/go-sql-driver/mysql"
@@ -32,7 +33,8 @@ import (
 
 type cliFlags struct {
 	ConfigFile         kong.ConfigFlag  `type:"existingfile" placeholder:"PATH" help:"Configuration file path."`
-	HTTPAddr           string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	ListenAddress      string           `name:"web.listen-address" default:":http" help:"Web address to listen on."`
+	MetricsAddress     metrics.Addr     `name:"metrics.listen-address" default:":9464" help:"Metrics address to listen on."`
 	DatabaseURL        *url.URL         `name:"db.url" env:"DB_URL" required:"" placeholder:"URL" help:"Database URL."`
 	EventPubURL        ev.TopicFactory  `name:"event.pub-url" env:"EVENT_PUB_URL" required:"" placeholder:"URL" help:"Event publish URL."`
 	EventSubURL        ev.TopicFactory  `name:"event.sub-url" env:"EVENT_SUB_URL" required:"" placeholder:"URL" help:"Event subscribe URL."`
@@ -68,22 +70,25 @@ func main() {
 }
 
 type application struct {
-	logger *zap.Logger
-	http   struct {
-		*server.Server
-		addr string
-	}
-	server *handler.Server
-	client *worker.Client
+	logger      *zap.Logger
+	httpServer  *server.Server
+	httpAddr    string
+	metrics     *metrics.Metrics
+	metricsAddr metrics.Addr
+	server      *handler.Server
+	client      *worker.Client
 }
 
 func (app *application) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	g := ctxgroup.WithContext(ctx)
 	g.Go(func(context.Context) error {
-		err := app.http.ListenAndServe(app.http.addr)
+		err := app.httpServer.ListenAndServe(app.httpAddr)
 		app.logger.Debug("http server terminated", zap.Error(err))
 		return err
+	})
+	g.Go(func(ctx context.Context) error {
+		return app.metrics.Serve(ctx, app.metricsAddr)
 	})
 	g.Go(func(ctx context.Context) error {
 		err := app.server.Serve(ctx)
@@ -109,7 +114,7 @@ func (app *application) run(ctx context.Context) error {
 
 	g.Go(func(context.Context) error {
 		app.logger.Debug("start http server termination")
-		err := app.http.Shutdown(context.Background())
+		err := app.httpServer.Shutdown(context.Background())
 		app.logger.Debug("end http server termination", zap.Error(err))
 		return err
 	})
