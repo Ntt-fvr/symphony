@@ -695,6 +695,10 @@ func init() {
 	flowdraftDescName := flowdraftMixinFields1[0].Descriptor()
 	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
+	// flowdraftDescSameAsFlow is the schema descriptor for sameAsFlow field.
+	flowdraftDescSameAsFlow := flowdraftFields[0].Descriptor()
+	// flowdraft.DefaultSameAsFlow holds the default value on creation for the sameAsFlow field.
+	flowdraft.DefaultSameAsFlow = flowdraftDescSameAsFlow.Default.(bool)
 	flowexecutiontemplateMixin := schema.FlowExecutionTemplate{}.Mixin()
 	flowexecutiontemplate.Policy = newPolicy(schema.FlowExecutionTemplate{})
 	flowexecutiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

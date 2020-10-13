@@ -125,6 +125,13 @@ func Description(v string) predicate.FlowDraft {
 	})
 }
 
+// SameAsFlow applies equality check predicate on the "sameAsFlow" field. It's identical to SameAsFlowEQ.
+func SameAsFlow(v bool) predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSameAsFlow), v))
+	})
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.FlowDraft {
 	return predicate.FlowDraft(func(s *sql.Selector) {
@@ -524,6 +531,20 @@ func EndParamDefinitionsIsNil() predicate.FlowDraft {
 func EndParamDefinitionsNotNil() predicate.FlowDraft {
 	return predicate.FlowDraft(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldEndParamDefinitions)))
+	})
+}
+
+// SameAsFlowEQ applies the EQ predicate on the "sameAsFlow" field.
+func SameAsFlowEQ(v bool) predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSameAsFlow), v))
+	})
+}
+
+// SameAsFlowNEQ applies the NEQ predicate on the "sameAsFlow" field.
+func SameAsFlowNEQ(v bool) predicate.FlowDraft {
+	return predicate.FlowDraft(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSameAsFlow), v))
 	})
 }
 

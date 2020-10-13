@@ -131,6 +131,14 @@ func (f FlowDraft) Mixin() []ent.Mixin {
 	return append(f.schema.Mixin(), FlowMixin{})
 }
 
+// Fields returns flow draft fields.
+func (FlowDraft) Fields() []ent.Field {
+	return []ent.Field{
+		field.Bool("sameAsFlow").
+			Default(true),
+	}
+}
+
 // Edges returns flow draft edges.
 func (FlowDraft) Edges() []ent.Edge {
 	return []ent.Edge{

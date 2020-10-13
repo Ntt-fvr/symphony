@@ -2343,7 +2343,7 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node = &Node{
 		ID:     fd.ID,
 		Type:   "FlowDraft",
-		Fields: make([]*Field, 5),
+		Fields: make([]*Field, 6),
 		Edges:  make([]*Edge, 2),
 	}
 	var buf []byte
@@ -2385,6 +2385,14 @@ func (fd *FlowDraft) Node(ctx context.Context) (node *Node, err error) {
 	node.Fields[4] = &Field{
 		Type:  "[]*flowschema.VariableDefinition",
 		Name:  "end_param_definitions",
+		Value: string(buf),
+	}
+	if buf, err = json.Marshal(fd.SameAsFlow); err != nil {
+		return nil, err
+	}
+	node.Fields[5] = &Field{
+		Type:  "bool",
+		Name:  "sameAsFlow",
 		Value: string(buf),
 	}
 	var ids []int

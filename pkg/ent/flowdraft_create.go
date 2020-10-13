@@ -81,6 +81,20 @@ func (fdc *FlowDraftCreate) SetEndParamDefinitions(fd []*flowschema.VariableDefi
 	return fdc
 }
 
+// SetSameAsFlow sets the sameAsFlow field.
+func (fdc *FlowDraftCreate) SetSameAsFlow(b bool) *FlowDraftCreate {
+	fdc.mutation.SetSameAsFlow(b)
+	return fdc
+}
+
+// SetNillableSameAsFlow sets the sameAsFlow field if the given value is not nil.
+func (fdc *FlowDraftCreate) SetNillableSameAsFlow(b *bool) *FlowDraftCreate {
+	if b != nil {
+		fdc.SetSameAsFlow(*b)
+	}
+	return fdc
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (fdc *FlowDraftCreate) AddBlockIDs(ids ...int) *FlowDraftCreate {
 	fdc.mutation.AddBlockIDs(ids...)
@@ -167,6 +181,10 @@ func (fdc *FlowDraftCreate) defaults() {
 		v := flowdraft.DefaultUpdateTime()
 		fdc.mutation.SetUpdateTime(v)
 	}
+	if _, ok := fdc.mutation.SameAsFlow(); !ok {
+		v := flowdraft.DefaultSameAsFlow
+		fdc.mutation.SetSameAsFlow(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -184,6 +202,9 @@ func (fdc *FlowDraftCreate) check() error {
 		if err := flowdraft.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
+	}
+	if _, ok := fdc.mutation.SameAsFlow(); !ok {
+		return &ValidationError{Name: "sameAsFlow", err: errors.New("ent: missing required field \"sameAsFlow\"")}
 	}
 	if _, ok := fdc.mutation.FlowID(); !ok {
 		return &ValidationError{Name: "flow", err: errors.New("ent: missing required edge \"flow\"")}
@@ -254,6 +275,14 @@ func (fdc *FlowDraftCreate) createSpec() (*FlowDraft, *sqlgraph.CreateSpec) {
 			Column: flowdraft.FieldEndParamDefinitions,
 		})
 		_node.EndParamDefinitions = value
+	}
+	if value, ok := fdc.mutation.SameAsFlow(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: flowdraft.FieldSameAsFlow,
+		})
+		_node.SameAsFlow = value
 	}
 	if nodes := fdc.mutation.BlocksIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

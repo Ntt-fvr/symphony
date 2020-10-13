@@ -27,6 +27,8 @@ const (
 	FieldDescription = "description"
 	// FieldEndParamDefinitions holds the string denoting the end_param_definitions field in the database.
 	FieldEndParamDefinitions = "end_param_definitions"
+	// FieldSameAsFlow holds the string denoting the sameasflow field in the database.
+	FieldSameAsFlow = "same_as_flow"
 
 	// EdgeBlocks holds the string denoting the blocks edge name in mutations.
 	EdgeBlocks = "blocks"
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldEndParamDefinitions,
+	FieldSameAsFlow,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the FlowDraft type.
@@ -98,4 +101,6 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultSameAsFlow holds the default value on creation for the sameAsFlow field.
+	DefaultSameAsFlow bool
 )

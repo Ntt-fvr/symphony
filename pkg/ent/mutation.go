@@ -20477,6 +20477,7 @@ type FlowDraftMutation struct {
 	name                  *string
 	description           *string
 	end_param_definitions *[]*flowschema.VariableDefinition
+	sameAsFlow            *bool
 	clearedFields         map[string]struct{}
 	blocks                map[int]struct{}
 	removedblocks         map[int]struct{}
@@ -20777,6 +20778,43 @@ func (m *FlowDraftMutation) ResetEndParamDefinitions() {
 	delete(m.clearedFields, flowdraft.FieldEndParamDefinitions)
 }
 
+// SetSameAsFlow sets the sameAsFlow field.
+func (m *FlowDraftMutation) SetSameAsFlow(b bool) {
+	m.sameAsFlow = &b
+}
+
+// SameAsFlow returns the sameAsFlow value in the mutation.
+func (m *FlowDraftMutation) SameAsFlow() (r bool, exists bool) {
+	v := m.sameAsFlow
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSameAsFlow returns the old sameAsFlow value of the FlowDraft.
+// If the FlowDraft object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FlowDraftMutation) OldSameAsFlow(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSameAsFlow is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSameAsFlow requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSameAsFlow: %w", err)
+	}
+	return oldValue.SameAsFlow, nil
+}
+
+// ResetSameAsFlow reset all changes of the "sameAsFlow" field.
+func (m *FlowDraftMutation) ResetSameAsFlow() {
+	m.sameAsFlow = nil
+}
+
 // AddBlockIDs adds the blocks edge to Block by ids.
 func (m *FlowDraftMutation) AddBlockIDs(ids ...int) {
 	if m.blocks == nil {
@@ -20883,7 +20921,7 @@ func (m *FlowDraftMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FlowDraftMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, flowdraft.FieldCreateTime)
 	}
@@ -20898,6 +20936,9 @@ func (m *FlowDraftMutation) Fields() []string {
 	}
 	if m.end_param_definitions != nil {
 		fields = append(fields, flowdraft.FieldEndParamDefinitions)
+	}
+	if m.sameAsFlow != nil {
+		fields = append(fields, flowdraft.FieldSameAsFlow)
 	}
 	return fields
 }
@@ -20917,6 +20958,8 @@ func (m *FlowDraftMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case flowdraft.FieldEndParamDefinitions:
 		return m.EndParamDefinitions()
+	case flowdraft.FieldSameAsFlow:
+		return m.SameAsFlow()
 	}
 	return nil, false
 }
@@ -20936,6 +20979,8 @@ func (m *FlowDraftMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldDescription(ctx)
 	case flowdraft.FieldEndParamDefinitions:
 		return m.OldEndParamDefinitions(ctx)
+	case flowdraft.FieldSameAsFlow:
+		return m.OldSameAsFlow(ctx)
 	}
 	return nil, fmt.Errorf("unknown FlowDraft field %s", name)
 }
@@ -20979,6 +21024,13 @@ func (m *FlowDraftMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEndParamDefinitions(v)
+		return nil
+	case flowdraft.FieldSameAsFlow:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSameAsFlow(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft field %s", name)
@@ -21059,6 +21111,9 @@ func (m *FlowDraftMutation) ResetField(name string) error {
 		return nil
 	case flowdraft.FieldEndParamDefinitions:
 		m.ResetEndParamDefinitions()
+		return nil
+	case flowdraft.FieldSameAsFlow:
+		m.ResetSameAsFlow()
 		return nil
 	}
 	return fmt.Errorf("unknown FlowDraft field %s", name)

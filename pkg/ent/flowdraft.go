@@ -33,6 +33,8 @@ type FlowDraft struct {
 	Description *string `json:"description,omitempty"`
 	// EndParamDefinitions holds the value of the "end_param_definitions" field.
 	EndParamDefinitions []*flowschema.VariableDefinition `json:"end_param_definitions,omitempty"`
+	// SameAsFlow holds the value of the "sameAsFlow" field.
+	SameAsFlow bool `json:"sameAsFlow,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FlowDraftQuery when eager-loading is set.
 	Edges      FlowDraftEdges `json:"edges"`
@@ -82,6 +84,7 @@ func (*FlowDraft) scanValues() []interface{} {
 		&sql.NullString{}, // name
 		&sql.NullString{}, // description
 		&[]byte{},         // end_param_definitions
+		&sql.NullBool{},   // sameAsFlow
 	}
 }
 
@@ -133,7 +136,12 @@ func (fd *FlowDraft) assignValues(values ...interface{}) error {
 			return fmt.Errorf("unmarshal field end_param_definitions: %v", err)
 		}
 	}
-	values = values[5:]
+	if value, ok := values[5].(*sql.NullBool); !ok {
+		return fmt.Errorf("unexpected type %T for field sameAsFlow", values[5])
+	} else if value.Valid {
+		fd.SameAsFlow = value.Bool
+	}
+	values = values[6:]
 	if len(values) == len(flowdraft.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field flow_draft", value)
@@ -190,6 +198,8 @@ func (fd *FlowDraft) String() string {
 	}
 	builder.WriteString(", end_param_definitions=")
 	builder.WriteString(fmt.Sprintf("%v", fd.EndParamDefinitions))
+	builder.WriteString(", sameAsFlow=")
+	builder.WriteString(fmt.Sprintf("%v", fd.SameAsFlow))
 	builder.WriteByte(')')
 	return builder.String()
 }
