@@ -11,6 +11,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/facebook/ent/dialect"
 	entsql "github.com/facebook/ent/dialect/sql"
 	"github.com/facebook/ent/dialect/sql/schema"
@@ -40,9 +41,16 @@ func (c *GraphCmd) Run(ctx *Context) error {
 		return err
 	}
 	if c.WaitForDB {
-		if err := c.waitForDB(ctx, db); err != nil {
+		if err := backoff.Retry(
+			func() error { return db.PingContext(ctx) },
+			backoff.WithContext(
+				backoff.NewConstantBackOff(250*time.Millisecond), ctx,
+			),
+		); err != nil {
+			ctx.Error("cannot wait for database", zap.Error(err))
 			return err
 		}
+		ctx.Info("database is ready")
 	}
 	names, err := c.tenants(ctx, db)
 	if err != nil {
@@ -54,24 +62,6 @@ func (c *GraphCmd) Run(ctx *Context) error {
 		return err
 	}
 	return nil
-}
-
-func (c *GraphCmd) waitForDB(ctx *Context, db *sql.DB) error {
-	ticker := time.NewTicker(250 * time.Millisecond)
-	defer ticker.Stop()
-	ctx.Info("waiting for database")
-	for {
-		select {
-		case <-ctx.Done():
-			ctx.Error("database wait interrupted", zap.Error(ctx.Err()))
-			return ctx.Err()
-		case <-ticker.C:
-			if err := db.PingContext(ctx); err == nil {
-				ctx.Info("database is ready")
-				return nil
-			}
-		}
-	}
 }
 
 func (c *GraphCmd) tenants(ctx *Context, db *sql.DB) (names []string, err error) {

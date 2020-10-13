@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"contrib.go.opencensus.io/integrations/ocsql"
 	"github.com/facebookincubator/symphony/pkg/ev"
 	"github.com/facebookincubator/symphony/pkg/flowengine/actions"
 	"github.com/facebookincubator/symphony/pkg/flowengine/triggers"
@@ -18,11 +17,9 @@ import (
 	"github.com/facebookincubator/symphony/pkg/server"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
-	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/wire"
 	"github.com/gorilla/mux"
-	"go.opencensus.io/stats/view"
 	"gocloud.dev/server/health"
 )
 
@@ -42,7 +39,6 @@ type Config struct {
 func NewServer(cfg Config) (*server.Server, func(), error) {
 	wire.Build(
 		xserver.ServiceSet,
-		provideViews,
 		wire.FieldsOf(new(Config), "Logger", "Telemetry", "HealthChecks"),
 		newRouterConfig,
 		newRouter,
@@ -59,12 +55,4 @@ func newRouterConfig(config Config) (cfg routerConfig, err error) {
 	cfg.flow.triggerFactory = config.TriggerFactory
 	cfg.flow.actionFactory = config.ActionFactory
 	return cfg, nil
-}
-
-func provideViews() []*view.View {
-	views := xserver.DefaultViews()
-	views = append(views, ocsql.DefaultViews...)
-	views = append(views, ocpubsub.DefaultViews...)
-	views = append(views, ev.OpenCensusViews...)
-	return views
 }

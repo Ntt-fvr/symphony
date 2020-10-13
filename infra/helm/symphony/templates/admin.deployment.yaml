@@ -43,29 +43,13 @@ spec:
         - name: admin
           image: {{ .Values.admin.image.repository }}:{{ .Values.admin.image.tag }}
           imagePullPolicy: {{ .Values.admin.image.pullPolicy }}
-          args:
-            - --web.listen-address={{ printf ":%d" (int .Values.admin.service.targetPort) }}
+          args: {{- include "symphony.listenArgs" .Values.admin | nindent 12 }}
           env:
           {{- include "symphony.loggingEnv" .Values.admin | nindent 12 }}
           {{- include "symphony.tracingEnv" . | nindent 12 }}
           envFrom:
             - secretRef:
                 name: {{ template "symphony.database.secretName" . }}
-          ports:
-            - containerPort: {{ .Values.admin.service.targetPort }}
-              name: http
-          {{- with .Values.admin.probes.liveness }}
-          livenessProbe:
-            httpGet:
-              path: /healthz/liveness
-              port: http
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.admin.probes.readiness }}
-          readinessProbe:
-            httpGet:
-              path: /healthz/readiness
-              port: http
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
+          ports: {{- include "symphony.containerPorts" .Values.admin | nindent 12 }}
+          {{- include "symphony.probes" .Values.admin | indent 10 }}
           resources: {{- toYaml .Values.admin.resources | nindent 12 }}

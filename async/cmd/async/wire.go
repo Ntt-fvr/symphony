@@ -23,7 +23,7 @@ import (
 	health2 "github.com/facebookincubator/symphony/pkg/health"
 	"github.com/facebookincubator/symphony/pkg/hooks"
 	"github.com/facebookincubator/symphony/pkg/log"
-	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry/ocpubsub"
 	"github.com/facebookincubator/symphony/pkg/viewer"
@@ -31,9 +31,7 @@ import (
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 
 	"github.com/google/wire"
-	"github.com/gorilla/mux"
 	"go.opencensus.io/stats/view"
-	"go.uber.org/zap"
 	"gocloud.dev/blob"
 	"gocloud.dev/server/health"
 )
@@ -42,6 +40,8 @@ import (
 func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(), error) {
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
+			"ListenAddress",
+			"MetricsAddress",
 			"DatabaseURL",
 			"LogConfig",
 			"EventPubURL",
@@ -49,6 +49,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"TenancyConfig",
 		),
 		log.Provider,
+		metrics.Provider,
 		newTenancy,
 		wire.Struct(
 			new(event.Eventer),
@@ -78,11 +79,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			"*",
 		),
 		newHealthChecks,
-		mux.NewRouter,
-		wire.Bind(
-			new(http.Handler),
-			new(*mux.Router),
-		),
+		http.NotFoundHandler,
 		xserver.ServiceSet,
 		provideViews,
 		health2.NewPoller,
@@ -99,19 +96,11 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		worker.NewHealthChecker,
 		newBucket,
 		newHandlers,
-		newApplication,
+		wire.Struct(
+			new(application), "*",
+		),
 	)
 	return nil, nil, nil
-}
-
-func newApplication(server *handler.Server, http *server.Server, client *worker.Client, logger *zap.Logger, healthPoller health2.Poller, flags *cliFlags) *application {
-	var app application
-	app.logger = logger
-	app.server = server
-	app.http.Server = http
-	app.http.addr = flags.HTTPAddr
-	app.client = client
-	return &app
 }
 
 func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *hooks.Flower) viewer.Tenancy {

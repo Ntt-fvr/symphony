@@ -10,15 +10,18 @@ scrape_configs:
   - job_name: front
     static_configs:
       - targets: ['platform-server:9464']
+  - job_name: admin
+    static_configs:
+      - targets: ['admin:9464']
   - job_name: graph
     static_configs:
-      - targets: ['graph']
+      - targets: ['graph:9464']
   - job_name: store
     static_configs:
-      - targets: ['store']
+      - targets: ['store:9464']
   - job_name: async
     static_configs:
-      - targets: ['async']
+      - targets: ['async:9464']
   - job_name: fluentd
     static_configs:
       - targets: ['fluentd:24231']

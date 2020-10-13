@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/store/handler"
 	"github.com/google/wire"
@@ -23,15 +24,16 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		wire.Struct(new(application), "*"),
 		wire.FieldsOf(new(*cliFlags),
 			"ListenAddress",
+			"MetricsAddress",
 			"LogConfig",
 			"TelemetryConfig",
 		),
 		log.Provider,
+		metrics.Provider,
 		xserver.ServiceSet,
 		xserver.DefaultViews,
 		wire.Value([]health.Checker(nil)),
 		provideBucket,
-		wire.Struct(new(handler.Config), "*"),
 		handler.Provider,
 	)
 	return nil, nil, nil

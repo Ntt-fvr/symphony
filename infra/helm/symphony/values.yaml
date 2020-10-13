@@ -105,19 +105,22 @@ front:
 
   # Configuration for front service
   service:
-    # Port to expose on each node
-    # Only used if service.type is 'NodePort'
-    nodePort: ""
     # Service external port
     port: 80
     # Service target port
     targetPort: 8080
-    # Service type
-    type: ClusterIP
-    # Internal Service external port
-    internalPort: 1030
-    # Internal Service target port
-    targetInternalPort: 1030
+    # Configuration for internal service
+    internal:
+      # Internal Service external port
+      port: 1030
+      # Internal Service target port
+      targetPort: 1030
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for front service account
   serviceAccount:
@@ -257,6 +260,12 @@ admin:
     port: 80
     # Service target port
     targetPort: 8080
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for admin service account
   serviceAccount:
@@ -362,6 +371,12 @@ graph:
     port: 80
     # Service target port
     targetPort: 8080
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for graph service account
   serviceAccount:
@@ -471,6 +486,12 @@ async:
     port: 80
     # Service target port
     targetPort: 8080
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for async service account
   serviceAccount:
@@ -617,6 +638,12 @@ store:
     port: 80
     # Service target port
     targetPort: 8080
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for store service account
   serviceAccount:
@@ -712,6 +739,12 @@ docs:
     port: 80
     # Service target port
     targetPort: 8080
+    # Configuration for metrics service
+    metrics:
+      # Metrics external port
+      port: 9464
+      # Metrics target port
+      targetPort: 9464
 
   # Configuration for docs service account
   serviceAccount:

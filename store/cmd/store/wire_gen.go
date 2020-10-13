@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/server"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/telemetry"
 	"github.com/facebookincubator/symphony/store/handler"
@@ -42,15 +43,8 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	handlerHandler := handler.New(handlerConfig)
 	xserverZapLogger := xserver.NewRequestLogger(logger)
 	v := _wireValue
-	v2 := xserver.DefaultViews()
 	telemetryConfig := flags.TelemetryConfig
-	exporter, err := telemetry.ProvideViewExporter(telemetryConfig)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
-	traceExporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	exporter, cleanup3, err := telemetry.ProvideTraceExporter(telemetryConfig)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -63,9 +57,7 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	options := &server.Options{
 		RequestLogger:         xserverZapLogger,
 		HealthChecks:          v,
-		Views:                 v2,
-		ViewExporter:          exporter,
-		TraceExporter:         traceExporter,
+		TraceExporter:         exporter,
 		EnableProfiling:       profilingEnabler,
 		DefaultSamplingPolicy: sampler,
 		RecoveryHandler:       handlerFunc,
@@ -73,10 +65,27 @@ func newApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	serverServer := server.New(handlerHandler, options)
 	string2 := flags.ListenAddress
+	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := xserver.DefaultViews()
+	metricsConfig := metrics.Config{
+		Log:      zapLogger,
+		Exporter: viewExporter,
+		Views:    v2,
+	}
+	metricsMetrics := metrics.New(metricsConfig)
+	addr := flags.MetricsAddress
 	mainApplication := &application{
-		Logger: zapLogger,
-		server: serverServer,
-		addr:   string2,
+		Logger:      zapLogger,
+		server:      serverServer,
+		addr:        string2,
+		metrics:     metricsMetrics,
+		metricsAddr: addr,
 	}
 	return mainApplication, func() {
 		cleanup3()

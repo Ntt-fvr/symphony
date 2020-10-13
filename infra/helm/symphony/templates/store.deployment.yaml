@@ -44,26 +44,11 @@ spec:
           image: {{ .Values.store.image.repository }}:{{ .Values.store.image.tag }}
           imagePullPolicy: {{ .Values.store.image.pullPolicy }}
           args:
-            - --web.listen-address={{ printf ":%d" (int .Values.store.service.targetPort) }}
+            {{- include "symphony.listenArgs" .Values.store | nindent 12 }}
             - --bucket-url={{  required ".Values.store.spec.bucket.url is required" .Values.store.spec.bucket.url }}
           env:
             {{- include "symphony.loggingEnv" .Values.store | nindent 12 }}
             {{- include "symphony.tracingEnv" . | nindent 12 }}
-          ports:
-            - containerPort: {{ .Values.store.service.targetPort }}
-              name: http
-          {{- with .Values.store.probes.liveness }}
-          livenessProbe:
-            httpGet:
-              path: /healthz/liveness
-              port: http
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.store.probes.readiness }}
-          readinessProbe:
-            httpGet:
-              path: /healthz/readiness
-              port: http
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+          ports: {{- include "symphony.containerPorts" .Values.store | nindent 12 }}
+          {{- include "symphony.probes" .Values.store | indent 10 }}
           resources: {{- toYaml .Values.store.resources | nindent 12 }}

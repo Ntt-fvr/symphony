@@ -297,11 +297,44 @@ imagePullSecrets: {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}
 
-{{/* Create service metrics port */}}
-{{- define "symphony.metricsPort" -}}
-{{- if .Values.serviceMonitor.enabled }}
-- name: http-metrics
-  port: 9464
+{{/* Create container ports */}}
+{{- define "symphony.containerPorts" -}}
+- containerPort: {{ .service.targetPort }}
+  name: http
+- containerPort: {{ .service.metrics.targetPort }}
+  name: http-metrics
+{{- end }}
+
+{{/* Create service ports */}}
+{{- define "symphony.servicePorts" -}}
+- name: http
+  port: {{ .service.port }}
   targetPort: http
+- name: http-metrics
+  port: {{ .service.metrics.port }}
+  targetPort: http-metrics
+{{- end }}
+
+{{/* Create service listen args */}}
+{{- define "symphony.listenArgs" -}}
+- --web.listen-address={{ printf ":%d" (int .service.targetPort) }}
+- --metrics.listen-address={{ printf ":%d" (int .service.metrics.targetPort) }}
+{{- end }}
+
+{{/* Create service probes */}}
+{{- define "symphony.probes" -}}
+{{- with .probes.liveness }}
+livenessProbe:
+  httpGet:
+    path: {{ default "/healthz/liveness" .path }}
+    port: http
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- with .probes.readiness }}
+readinessProbe:
+  httpGet:
+    path: {{ default "/healthz/readiness" .path }}
+    port: http
+  {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- end }}

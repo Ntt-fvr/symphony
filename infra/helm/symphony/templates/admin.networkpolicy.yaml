@@ -35,4 +35,7 @@ spec:
           {{- end }}
         {{- end }}
       {{- end }}
+    - ports:
+        - port: {{ .Values.admin.service.metrics.targetPort }}
+          protocol: TCP
 {{- end }}

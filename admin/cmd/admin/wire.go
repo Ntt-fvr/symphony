@@ -18,8 +18,10 @@ import (
 	"github.com/facebookincubator/symphony/pkg/database/mysql"
 	"github.com/facebookincubator/symphony/pkg/gqlutil"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/server/metrics"
 	"github.com/facebookincubator/symphony/pkg/server/xserver"
 	"github.com/facebookincubator/symphony/pkg/strutil"
+	"github.com/facebookincubator/symphony/pkg/telemetry/ocgql"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"github.com/google/wire"
 	"go.opencensus.io/stats/view"
@@ -32,6 +34,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	wire.Build(
 		wire.FieldsOf(new(*cliFlags),
 			"ListenAddress",
+			"MetricsAddress",
 			"DatabaseURL",
 			"LogConfig",
 			"TelemetryConfig",
@@ -57,6 +60,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 			new(gqlutil.BeginTxExecQueryer),
 			new(*sql.DB),
 		),
+		metrics.Provider,
 		xserver.ServiceSet,
 		wire.Struct(
 			new(application),
@@ -81,5 +85,6 @@ func provideHealthCheckers(db *sql.DB) []health.Checker {
 func provideViews() []*view.View {
 	views := xserver.DefaultViews()
 	views = append(views, ocsql.DefaultViews...)
+	views = append(views, ocgql.DefaultViews...)
 	return views
 }

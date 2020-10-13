@@ -10,17 +10,9 @@ metadata:
   labels: {{- include "symphony.front.metaLabels" . | nindent 4 }}
 spec:
   selector: {{- include "symphony.front.selectorLabels" . | nindent 4 }}
-  type: {{ .Values.front.service.type }}
+  type: ClusterIP
   ports:
-    - name: http
-      {{- if (and (eq .Values.front.service.type "NodePort") (not (empty .Values.front.service.nodePort))) }}
-      nodePort: {{ .Values.front.service.nodePort }}
-      {{- end }}
-      port: {{ .Values.front.service.port }}
-      targetPort: http
+    {{- include "symphony.servicePorts" .Values.front | nindent 4 }}
     - name: http-internal
-      port: {{ .Values.front.service.internalPort }}
+      port: {{ .Values.front.service.internal.port }}
       targetPort: http-internal
-    - name: http-metrics
-      port: 9464
-      targetPort: http-metrics

@@ -47,7 +47,7 @@ spec:
             - name: PORT
               value: {{ .Values.front.service.targetPort | quote }}
             - name: INTERNAL_PORT
-              value: {{ .Values.front.service.targetInternalPort | quote }}
+              value: {{ .Values.front.service.internal.targetPort | quote }}
             - name: LOG_LEVEL
               value: {{ .Values.front.spec.log.level | quote }}
             - name: MYSQL_HOST
@@ -93,24 +93,10 @@ spec:
             - secretRef:
                 name: {{ template "symphony.front.fullname" . }}
           ports:
-            - containerPort: {{ .Values.front.service.targetPort }}
-              name: http
-            - containerPort: 9464
-              name: http-metrics
-            - containerPort: {{ .Values.front.service.targetInternalPort }}
+            {{- include "symphony.containerPorts" .Values.front | nindent 12 }}
+            - containerPort: {{ .Values.front.service.internal.targetPort }}
               name: http-internal
-          {{- with .Values.front.probes.liveness }}
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: http
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.front.probes.readiness }}
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: http
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+          {{- $ = set .Values.front.probes.liveness "path" "/healthz" -}}
+          {{- $ = set .Values.front.probes.readiness "path" "/healthz" -}}
+          {{- include "symphony.probes" .Values.front | indent 10 }}
           resources: {{- toYaml .Values.front.resources | nindent 12 }}
