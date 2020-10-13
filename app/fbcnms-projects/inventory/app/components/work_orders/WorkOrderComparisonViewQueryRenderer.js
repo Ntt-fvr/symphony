@@ -129,7 +129,6 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
           onWorkOrderSelected={onWorkOrderSelected}
           orderBy={orderBy}
           onOrderChanged={onOrderChanged}
-          isWorkOrderTable={true}
         />
       )}
     </div>

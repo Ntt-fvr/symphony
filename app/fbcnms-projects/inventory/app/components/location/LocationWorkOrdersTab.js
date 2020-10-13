@@ -13,10 +13,12 @@ import type {
   WorkOrderOrder,
 } from './__generated__/LocationWorkOrdersTabQuery.graphql';
 
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import WorkOrdersView, {
   WORK_ORDERS_PAGE_SIZE,
 } from '../work_orders/WorkOrdersView';
+import useRouter from '@fbcnms/ui/hooks/useRouter';
+import {InventoryAPIUrls} from '../../common/InventoryAPI';
 import {graphql} from 'relay-runtime';
 import {useLazyLoadQuery} from 'react-relay/hooks';
 
@@ -43,6 +45,15 @@ export default function LocationWorkOrdersTab(props: Props) {
     field: 'UPDATED_AT',
   });
 
+  const {history} = useRouter();
+
+  const navigateToWorkOrder = useCallback(
+    (selectedWorkOrderCardId: ?string) => {
+      history.push(InventoryAPIUrls.workorder(selectedWorkOrderCardId));
+    },
+    [history],
+  );
+
   const response = useLazyLoadQuery<LocationWorkOrdersTabQuery>(
     workOrderSearchQuery,
     {
@@ -65,10 +76,12 @@ export default function LocationWorkOrdersTab(props: Props) {
   return (
     <WorkOrdersView
       workOrders={response}
-      onWorkOrderSelected={() => {}}
+      onWorkOrderSelected={selectedWorkOrderCardId =>
+        navigateToWorkOrder(selectedWorkOrderCardId)
+      }
       orderBy={orderBy}
       onOrderChanged={setOrderBy}
-      isWorkOrderTable={false}
+      showLocation={false}
     />
   );
 }

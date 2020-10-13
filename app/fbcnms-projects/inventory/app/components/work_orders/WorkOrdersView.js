@@ -42,16 +42,11 @@ type Props = $ReadOnly<{|
   onWorkOrderSelected: string => void,
   orderBy: WorkOrderOrder,
   onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
-  isWorkOrderTable: boolean,
+  showLocation: boolean,
 |}>;
 
 const WorkOrdersView = (props: Props) => {
-  const {
-    onWorkOrderSelected,
-    onOrderChanged,
-    orderBy,
-    isWorkOrderTable,
-  } = props;
+  const {onWorkOrderSelected, onOrderChanged, orderBy, showLocation} = props;
   const classes = useStyles();
   const {statusValues} = useStatusValues();
 
@@ -177,7 +172,7 @@ const WorkOrdersView = (props: Props) => {
       title: 'Due Date',
       render: row => DateTimeFormat.dateOnly(row.installDate),
     },
-    ...(isWorkOrderTable
+    ...(showLocation
       ? [
           {
             key: 'location',
@@ -248,6 +243,10 @@ const WorkOrdersView = (props: Props) => {
       columns={tableColumns}
     />
   );
+};
+
+WorkOrdersView.defaultProps = {
+  showLocation: true,
 };
 
 export default WorkOrdersView;
