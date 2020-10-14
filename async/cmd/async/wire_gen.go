@@ -30,6 +30,7 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.uber.org/cadence/.gen/go/cadence/workflowserviceclient"
 	"gocloud.dev/blob"
+	"gocloud.dev/runtimevar"
 	health2 "gocloud.dev/server/health"
 	"net/http"
 )
@@ -74,10 +75,19 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	}
 	v := newWorkerFactories(logger, bucket, flags)
 	healthChecker, cleanup4 := worker.NewHealthChecker(workflowserviceclientInterface, v, logger)
-	v2 := newHealthChecks(mySQLTenancy, healthChecker)
-	telemetryConfig := flags.TelemetryConfig
-	exporter, cleanup5, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	variable, cleanup5, err := viewer.SyncFeatures(viewerConfig)
 	if err != nil {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	v2 := provideHealthCheckers(mySQLTenancy, healthChecker, variable)
+	telemetryConfig := flags.TelemetryConfig
+	exporter, cleanup6, err := telemetry.ProvideTraceExporter(telemetryConfig)
+	if err != nil {
+		cleanup5()
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -101,6 +111,7 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	string2 := flags.ListenAddress
 	viewExporter, err := telemetry.ProvideViewExporter(telemetryConfig)
 	if err != nil {
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -117,8 +128,9 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 	metricsMetrics := metrics.New(metricsConfig)
 	addr := flags.MetricsAddress
 	topicFactory := flags.EventPubURL
-	emitter, cleanup6, err := ev.ProvideEmitter(ctx, topicFactory)
+	emitter, cleanup7, err := ev.ProvideEmitter(ctx, topicFactory)
 	if err != nil {
+		cleanup6()
 		cleanup5()
 		cleanup4()
 		cleanup3()
@@ -137,16 +149,6 @@ func NewApplication(ctx context.Context, flags *cliFlags) (*application, func(),
 		ActionFactory:  actionsFactory,
 	}
 	tenancy := newTenancy(mySQLTenancy, eventer, flower)
-	variable, cleanup7, err := viewer.SyncFeatures(viewerConfig)
-	if err != nil {
-		cleanup6()
-		cleanup5()
-		cleanup4()
-		cleanup3()
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	receiverFactory := provideReceiverFactory(flags)
 	eventObject := _wireLogEntryValue
 	receiver, cleanup8, err := ev.ProvideReceiver(ctx, receiverFactory, eventObject)
@@ -230,8 +232,12 @@ func newTenancy(tenancy *viewer.MySQLTenancy, eventer *event.Eventer, flower *ho
 	})
 }
 
-func newHealthChecks(tenancy *viewer.MySQLTenancy, cadenceHealthChecker *worker.HealthChecker) []health2.Checker {
-	return []health2.Checker{tenancy, cadenceHealthChecker}
+func provideHealthCheckers(
+	tenancy *viewer.MySQLTenancy,
+	checker *worker.HealthChecker,
+	features *runtimevar.Variable,
+) []health2.Checker {
+	return []health2.Checker{tenancy, checker, features}
 }
 
 func provideViews() []*view.View {
