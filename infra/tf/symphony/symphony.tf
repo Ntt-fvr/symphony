@@ -64,7 +64,7 @@ resource helm_release symphony {
   repository          = local.helm_repository.symphony.url
   repository_username = local.helm_repository.symphony.username
   repository_password = local.helm_repository.symphony.password
-  version             = "4.0.0"
+  version             = "4.1.0"
   timeout             = 600
   max_history         = 100
 
@@ -147,6 +147,9 @@ resource helm_release symphony {
           agentEndpoint       = "localhost:6831"
           agentThriftEndpoint = "localhost:6832"
         }
+        excludeSpanNames = [
+          "gocloud.dev/pubsub.driver.Subscription.ReceiveBatch",
+        ]
       }
       persistence = {
         database = {

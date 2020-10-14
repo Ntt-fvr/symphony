@@ -287,6 +287,10 @@ DB_URL: "{{ printf "%s://%s:%s@%s:%d/%s" .scheme (required ".Values.persistence.
 - name: JAEGER_AGENT_ENDPOINT
   value: {{ . | quote }}
 {{- end }}
+{{- with .Values.tracing.excludeSpanNames }}
+- name: TELEMETRY_TRACE_EXCLUDE_SPAN_NAMES
+  value: {{ uniq . |  join "," | quote }}
+{{- end }}
 {{- end }}
 {{- end }}
 
