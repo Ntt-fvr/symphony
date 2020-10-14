@@ -99,8 +99,9 @@ function isLinkValid(flow: ?FlowWrapper, newLink: ILink) {
   }
 
   if (portSource.group === PORTS_GROUPS.INPUT) {
+    const originalSource = newLink.attributes.source;
     newLink.source(newLink.attributes.target);
-    newLink.target(newLink.attributes.source);
+    newLink.target(originalSource);
   }
 
   return true;
@@ -129,6 +130,26 @@ function getLinkEndpointPort(
 export function buildPaperConnectionValidation(
   flowWrapper: FlowWrapperReference,
 ) {
+  const isInputPort = (block: ?IBlock, portId: ?string) => {
+    if (block == null || portId == null) {
+      return false;
+    }
+
+    const blockInputPort = block.getInputPort();
+
+    return portId === blockInputPort?.id;
+  };
+
+  const isOutputPort = (block: ?IBlock, portId: ?string) => {
+    if (block == null || portId == null) {
+      return false;
+    }
+
+    const blockOutputPorts = block.getOutputPorts();
+
+    return blockOutputPorts.find(outPort => portId == outPort.id);
+  };
+
   return (
     cellViewS: IVertexView,
     magnetS: HTMLElement,
@@ -143,19 +164,18 @@ export function buildPaperConnectionValidation(
         return false;
       }
 
+      const sourcePortId = magnetS.getAttribute('port');
+      const sourceBlock = flowWrapper.current?.blocks.get(sourceBlockId);
+
       const targetPortId = magnetT.getAttribute('port');
-      if (targetPortId == null) {
-        return false;
-      }
-
       const targetBlock = flowWrapper.current?.blocks.get(targetBlockId);
-      const targetInputPort = targetBlock?.getInputPort();
 
-      if (targetInputPort == null) {
-        return false;
-      }
-
-      return targetPortId === targetInputPort?.id;
+      return (
+        (isOutputPort(sourceBlock, sourcePortId) &&
+          isInputPort(targetBlock, targetPortId)) ||
+        (isInputPort(sourceBlock, sourcePortId) &&
+          isOutputPort(targetBlock, targetPortId))
+      );
     }
     return false;
   };
