@@ -190,11 +190,10 @@ resource kubernetes_ingress kibana_redirect {
 # fluentd charts for sending logs from the cluster to elastic.
 resource helm_release fluentd_elasticsearch {
   chart      = "fluentd-elasticsearch"
-  repository = local.helm_repository.kiwigrid
+  repository = local.helm_repository.kokuwa
   name       = "fluentd-elasticsearch"
   namespace  = "monitoring"
-  version    = "9.6.2"
-  keyring    = ""
+  version    = "10.0.2"
 
   values = [<<EOT
   elasticsearch:
@@ -222,6 +221,21 @@ resource helm_release fluentd_elasticsearch {
     useDefaults:
       forwardInputConf: false
   extraConfigMaps:
+    prometheus.filter.conf: |-
+      <filter **>
+        @type prometheus
+        @id filter_prometheus
+        @log_level warn
+        <metric>
+          name fluentd_input_status_num_records_total
+          type counter
+          desc The total number of incoming records
+          <labels>
+            tag $${tag}
+            hostname $${hostname}
+          </labels>
+        </metric>
+      </filter>
     http.input.conf: |-
       <source>
         @id http

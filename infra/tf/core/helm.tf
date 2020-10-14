@@ -2,7 +2,7 @@ locals {
   helm_repository = {
     stable               = "https://kubernetes-charts.storage.googleapis.com"
     incubator            = "http://storage.googleapis.com/kubernetes-charts-incubator"
-    kiwigrid             = "https://kiwigrid.github.io"
+    kokuwa               = "https://kokuwaio.github.io/helm-charts"
     jaegertracing        = "https://jaegertracing.github.io/helm-charts"
     codecentric          = "https://codecentric.github.io/helm-charts"
     sstarcher            = "https://shanestarcher.com/helm-charts"

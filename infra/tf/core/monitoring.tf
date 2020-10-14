@@ -49,6 +49,7 @@ locals {
       { name = "nginx-ingress", id = 9789, rev = 6 },
       { name = "nats-server", id = 2279, rev = 1 },
       { name = "cadence-frontend", id = 10373, rev = 1 },
+      { name = "fluentd", id = 13042, rev = 2 },
     ] :
     d.name => {
       gnetId     = d.id,
