@@ -9,6 +9,7 @@ import (
 	"sort"
 	"sync"
 
+	"github.com/scylladb/go-set/strset"
 	"go.opencensus.io/trace"
 )
 
@@ -69,15 +70,16 @@ func AvailableTraceExporters() []string {
 
 // WithoutNameSampler returns a trace sampler filtering out a set of span names.
 func WithoutNameSampler(name string, names ...string) trace.Sampler {
-	return func(params trace.SamplingParameters) trace.SamplingDecision {
-		if params.Name == name {
-			return trace.SamplingDecision{Sample: false}
-		}
-		for _, name := range names {
-			if params.Name == name {
-				return trace.SamplingDecision{Sample: false}
+	if len(names) == 0 {
+		return func(p trace.SamplingParameters) trace.SamplingDecision {
+			return trace.SamplingDecision{
+				Sample: p.Name != name,
 			}
 		}
-		return trace.SamplingDecision{Sample: true}
+	}
+	set := strset.New(names...)
+	set.Add(name)
+	return func(p trace.SamplingParameters) trace.SamplingDecision {
+		return trace.SamplingDecision{Sample: !set.Has(p.Name)}
 	}
 }
