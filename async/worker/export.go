@@ -65,6 +65,8 @@ type SaveTaskResultInput struct {
 // activity for reporting results
 func (ew *ExportFactory) ExportSingleWoWorkflow(ctx workflow.Context, input ExportSingleWOInput) error {
 	var key string
+	workflow.GetLogger(ctx).Debug("handling export single work order workflow",
+		zap.Int("task_id", input.ExportTaskID))
 	err := workflow.ExecuteActivity(workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
 		TaskList:               ExportWorkOrderTaskListName,
 		ScheduleToStartTimeout: 1 * time.Hour,
