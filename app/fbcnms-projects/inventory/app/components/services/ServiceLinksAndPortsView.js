@@ -24,6 +24,7 @@ type Props = $ReadOnly<{|
   ports: ServiceLinksAndPortsView_ports,
   onDeleteLink: ?(link: Link) => void,
   onDeletePort: ?(port: EquipmentPort) => void,
+  onCreateLink: ?(port: EquipmentPort) => void,
 |}>;
 
 const useStyles = makeStyles(() => ({
@@ -37,7 +38,7 @@ const useStyles = makeStyles(() => ({
 const ServiceLinksAndPortsView = (props: Props) => {
   const addPortToServiceEnabled = useFeatureFlag('add_port_to_service');
   const classes = useStyles();
-  const {links, onDeleteLink, onDeletePort, ports} = props;
+  const {links, onDeleteLink, onDeletePort, ports, onCreateLink} = props;
 
   return (
     <div>
@@ -64,6 +65,9 @@ const ServiceLinksAndPortsView = (props: Props) => {
               // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
               // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
               onDeletePort={onDeletePort ? () => onDeletePort(port) : null}
+              // $FlowFixMe[prop-missing] $FlowFixMe T74239404 Found via relay types
+              // $FlowFixMe[incompatible-variance] $FlowFixMe T74239404 Found via relay types
+              onCreateLink={onCreateLink ? () => onCreateLink(port) : null}
             />
           ))}
         </>
@@ -95,6 +99,9 @@ export default createFragmentContainer(ServiceLinksAndPortsView, {
       parentEquipment {
         id
         name
+        equipmentType {
+          name
+        }
       }
       definition {
         id

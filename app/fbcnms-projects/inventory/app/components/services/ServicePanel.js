@@ -44,6 +44,7 @@ import Button from '@symphony/design-system/components/Button';
 import EditServiceMutation from '../../mutations/EditServiceMutation';
 import ExpandingPanel from '@fbcnms/ui/components/ExpandingPanel';
 import FormAction from '@symphony/design-system/components/Form/FormAction';
+import PortsConnectedStateDialog from '../equipment/PortsConnectedStateDialog';
 import React, {useState} from 'react';
 import RemoveServiceEndpointMutation from '../../mutations/RemoveServiceEndpointMutation';
 import RemoveServiceLinkMutation from '../../mutations/RemoveServiceLinkMutation';
@@ -54,6 +55,7 @@ import ServiceEndpointsView from './ServiceEndpointsView';
 import ServiceLinksAndPortsView from './ServiceLinksAndPortsView';
 import ServiceLinksSubservicesMenu from './ServiceLinksSubservicesMenu';
 import Text from '@symphony/design-system/components/Text';
+import nullthrows from '@fbcnms/util/nullthrows';
 import symphony from '@symphony/design-system/theme/symphony';
 import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {createFragmentContainer, graphql} from 'react-relay';
@@ -147,6 +149,8 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
   const {service, onOpenDetailsPanel} = props;
   const [endpointsExpanded, setEndpointsExpanded] = useState(false);
   const [linksExpanded, setLinksExpanded] = useState(false);
+  const [createLink, setCreateLink] = useState(false);
+  const [selectedPort, setSelectedPort] = useState(null);
 
   const hideEditButtons = service.serviceType?.discoveryMethod != 'MANUAL';
 
@@ -216,6 +220,10 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
       },
     };
     RemoveServicePortMutation(variables, callbacks);
+  };
+  const onCreateLink = (port: EquipmentPort) => {
+    setCreateLink(true);
+    setSelectedPort(port);
   };
   const onDeleteLink = (link: Link) => {
     const variables: RemoveServiceLinkMutationVariables = {
@@ -367,9 +375,35 @@ const ServicePanel = React.forwardRef((props: Props, ref) => {
           ports={service.ports}
           onDeleteLink={hideEditButtons ? null : onDeleteLink}
           onDeletePort={hideEditButtons ? null : onDeletePort}
+          onCreateLink={hideEditButtons ? null : onCreateLink}
         />
       </ExpandingPanel>
       <div className={classes.separator} />
+      {createLink && selectedPort && (
+        <PortsConnectedStateDialog
+          mode={'connect'}
+          link={null}
+          equipment={nullthrows(
+            selectedPort ? selectedPort.parentEquipment : null,
+          )}
+          port={nullthrows(selectedPort)}
+          workOrderId={null}
+          open={true}
+          isSubFlow={true}
+          onClose={(link?: Link) => {
+            if (link) {
+              onAddLink(link).then(() => {
+                onDeletePort(selectedPort);
+                setCreateLink(false);
+                setSelectedPort(null);
+              });
+            } else {
+              setCreateLink(false);
+              setSelectedPort(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 });

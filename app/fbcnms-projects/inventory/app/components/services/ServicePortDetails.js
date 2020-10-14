@@ -23,6 +23,7 @@ import {makeStyles} from '@material-ui/styles';
 type Props = $ReadOnly<{|
   port: EquipmentPort,
   onDeletePort: ?() => void,
+  onCreateLink: ?() => void,
 |}>;
 
 const useStyles = makeStyles(() => ({
@@ -99,7 +100,7 @@ const useStyles = makeStyles(() => ({
 
 const ServicePortDetails = (props: Props) => {
   const classes = useStyles();
-  const {port, onDeletePort} = props;
+  const {port, onDeletePort, onCreateLink} = props;
   return (
     <div className={classes.root}>
       <div className={classes.linkRow}>
@@ -129,6 +130,12 @@ const ServicePortDetails = (props: Props) => {
               onClick: () => {
                 ServerLogger.info(LogEvents.DELETE_SERVICE_LINK_BUTTON_CLICKED);
                 onDeletePort();
+              },
+            },
+            {
+              caption: 'Create Link',
+              onClick: () => {
+                onCreateLink && onCreateLink();
               },
             },
           ]}
