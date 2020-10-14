@@ -2167,7 +2167,6 @@ func TestTechnicianWorkOrderCheckOut(t *testing.T) {
 						distanceMeters
 						comment
 					}
-					createTime
 				}
 			}
 		}`
