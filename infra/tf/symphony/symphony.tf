@@ -55,6 +55,14 @@ data aws_iam_policy_document async {
       "${aws_s3_bucket.store.arn}/*/${local.store_exports_path}*",
     ]
   }
+  statement {
+    actions = [
+      "s3:GetObject",
+    ]
+    resources = [
+      "${aws_s3_bucket.store.arn}/*",
+    ]
+  }
 }
 
 resource helm_release symphony {

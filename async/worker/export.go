@@ -109,7 +109,8 @@ func (ew *ExportFactory) ExportSingleWoActivity(ctx context.Context, input Expor
 	}
 	woIDToExport := *task.WoIDToExport
 	excelExporter := exporter.SingleWo{
-		Log: ew.logger,
+		Log:    ew.logger,
+		Bucket: ew.bucket,
 	}
 	excelFile, err := excelExporter.CreateExcelFile(ctx, woIDToExport)
 	if err != nil {

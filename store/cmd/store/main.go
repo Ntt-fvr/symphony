@@ -54,6 +54,9 @@ func main() {
 	app.Info("starting application",
 		zap.String("address", cf.ListenAddress),
 	)
+	app.Info("bucket url",
+		zap.String("bucket_url", cf.BucketURL.String()),
+	)
 	err = app.run(ctx)
 	app.Info("terminating application", zap.Error(err))
 }
