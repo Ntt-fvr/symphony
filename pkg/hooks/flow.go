@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/block"
 	"github.com/facebookincubator/symphony/pkg/ent/flow"
+	"github.com/facebookincubator/symphony/pkg/ent/flowdraft"
 	"github.com/facebookincubator/symphony/pkg/ent/hook"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/flowengine"
@@ -121,6 +122,17 @@ func VerifyEndParamDefinitionsHook() ent.Hook {
 		})
 	}
 	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne)
+}
+
+// UpdateSameAsFlowOnDraftChange sets SetSameAsFlow to false upon draft change
+func UpdateSameAsFlowOnDraftChange() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.FlowDraftFunc(func(ctx context.Context, m *ent.FlowDraftMutation) (ent.Value, error) {
+			m.SetSameAsFlow(false)
+			return next.Mutate(ctx, m)
+		})
+	}
+	return hook.If(hk, hook.And(hook.Not(hook.HasFields(flowdraft.FieldSameAsFlow)), hook.HasOp(ent.OpUpdate|ent.OpUpdateOne)))
 }
 
 // DenyCreationOfInstanceOfDisabledFlowHook denied creation of flow instance based on flow status

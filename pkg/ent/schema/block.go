@@ -98,6 +98,7 @@ func (Block) Indexes() []ent.Index {
 func (Block) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyStartParamDefinitionsHook(),
+		hooks.UpdateDraftChanged(),
 	}
 }
 

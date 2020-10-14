@@ -43,7 +43,7 @@ func (FlowMixin) Edges() []ent.Edge {
 	}
 }
 
-// Edges returns flow mixin hooks.
+// Hooks returns flow mixin hooks.
 func (FlowMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.VerifyEndParamDefinitionsHook(),
@@ -146,6 +146,13 @@ func (FlowDraft) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Ref("draft"),
+	}
+}
+
+// Hooks returns flow draft hooks.
+func (FlowDraft) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.UpdateSameAsFlowOnDraftChange(),
 	}
 }
 

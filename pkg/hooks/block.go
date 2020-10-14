@@ -51,6 +51,24 @@ func VerifyStartParamDefinitionsHook() ent.Hook {
 		))
 }
 
+// UpdateDraftChanged
+func UpdateDraftChanged() ent.Hook {
+	hk := func(next ent.Mutator) ent.Mutator {
+		return hook.BlockFunc(func(ctx context.Context, mutation *ent.BlockMutation) (ent.Value, error) {
+			draftID, exists := mutation.FlowDraftID()
+			if !exists {
+				return nil, fmt.Errorf("flow draft id is missing for block")
+			}
+			err := mutation.Client().FlowDraft.UpdateOneID(draftID).SetSameAsFlow(false).Exec(ctx)
+			if err != nil {
+				return nil, fmt.Errorf("failed to update flow draft")
+			}
+			return next.Mutate(ctx, mutation)
+		})
+	}
+	return hook.On(hk, ent.OpCreate|ent.OpUpdateOne|ent.OpUpdate|ent.OpDelete|ent.OpDeleteOne)
+}
+
 func getBlockType(ctx context.Context, mutation *ent.BlockMutation) (*block.Type, error) {
 	blockType, exists := mutation.GetType()
 	if exists {

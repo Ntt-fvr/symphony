@@ -120,7 +120,7 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	ctx := viewertest.NewContext(context.Background(), r.client)
 
 	mr, qr, fr := r.Mutation(), r.Query(), r.Flow()
-	name := "5G Deployment"
+	name := "4G Deployment"
 	description := "Flow used for managing all technical operation around deployment"
 	endParamDefinitions := []*flowschema.VariableDefinition{
 		{
@@ -164,9 +164,11 @@ func TestPublishDraftToNewFlow(t *testing.T) {
 	require.Equal(t, flow.NewInstancesPolicyEnabled, flw.NewInstancesPolicy)
 	draft, err := fr.Draft(ctx, flw)
 	require.NoError(t, err)
-	require.Nil(t, draft)
+	require.NotNil(t, draft)
+	require.Equal(t, draft.ID, flowDraft.ID)
+	require.Equal(t, true, draft.SameAsFlow)
 	_, err = qr.Node(ctx, flowDraft.ID)
-	require.Error(t, err)
+	require.NoError(t, err)
 	blocks, err := fr.Blocks(ctx, flw)
 	require.NoError(t, err)
 	require.Len(t, blocks, 3)
@@ -207,6 +209,10 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 			XPosition: 30,
 			YPosition: 30,
 		})
+	firstDraft, err := r.client.Flow.QueryDraft(mainFlow).Only(ctx)
+	require.NoError(t, err)
+	err = r.client.FlowDraft.DeleteOne(firstDraft).Exec(ctx)
+	require.NoError(t, err)
 	draft, err := mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
 		Name:   "New name",
 		FlowID: pointer.ToInt(mainFlow.ID),
@@ -297,7 +303,7 @@ func TestCreateDraftFromExistingFlowAndPublish(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, blks, 3)
 	_, err = qr.Node(ctx, draft.ID)
-	require.Error(t, err)
+	require.NoError(t, err)
 }
 
 func TestStartFlow(t *testing.T) {
@@ -319,11 +325,6 @@ func TestStartFlow(t *testing.T) {
 		FlowID: flw.ID,
 	})
 	require.Error(t, err)
-	draft, err = mr.AddFlowDraft(ctx, models.AddFlowDraftInput{
-		Name:   "Flow with start",
-		FlowID: pointer.ToInt(flw.ID),
-	})
-	require.NoError(t, err)
 	_, err = mr.AddStartBlock(ctx, draft.ID, models.StartBlockInput{
 		Cid: "start",
 		ParamDefinitions: []*flowschema.VariableDefinition{
