@@ -8,6 +8,10 @@ FROM golang:1.15-alpine
 # Install build tools
 RUN apk add --no-cache git gcc musl-dev
 
+# Setup go proxy
+ARG GOPROXY
+RUN go env -w GOPROXY=$GOPROXY
+
 # Download dependencies
 WORKDIR /src/symphony
 COPY go.* ./
