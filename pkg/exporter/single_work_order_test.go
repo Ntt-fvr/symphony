@@ -31,9 +31,19 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
+	"gocloud.dev/blob"
+	"gocloud.dev/blob/memblob"
 )
 
-func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
+type SingleWoTestSuite struct {
+	bucket *blob.Bucket
+}
+
+func (s *SingleWoTestSuite) SetupTest() {
+	s.bucket = memblob.OpenBucket(nil)
+}
+
+func (s *SingleWoTestSuite) prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 	PrepareData(ctx, t)
 	client := ent.FromContext(ctx)
 
@@ -246,14 +256,14 @@ func prepareSingleWOData(ctx context.Context, t *testing.T) *ent.WorkOrder {
 	return wo
 }
 
-func TestSingleWorkOrderExport(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
 
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
 	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	workOrder := s.prepareSingleWOData(ctx, t)
 
 	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
@@ -309,14 +319,14 @@ func TestSingleWorkOrderExport(t *testing.T) {
 	}
 }
 
-func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
 
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
 	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	workOrder := s.prepareSingleWOData(ctx, t)
 
 	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
@@ -381,7 +391,7 @@ func TestSingleWorkOrderExportActivitiesAndComments(t *testing.T) {
 	}
 }
 
-func TestSingleWorkOrderExportChecklist(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWorkOrderExportChecklist(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
@@ -389,7 +399,7 @@ func TestSingleWorkOrderExportChecklist(t *testing.T) {
 	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
 
 	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	workOrder := s.prepareSingleWOData(ctx, t)
 
 	file, err := e.CreateExcelFile(ctx, workOrder.ID)
 	require.NoError(t, err)
@@ -477,7 +487,7 @@ func checkItemType(ctx context.Context, t *testing.T, item *ent.CheckListItem, v
 	}
 }
 
-func TestSingleWOAsyncExport(t *testing.T) {
+func (s *SingleWoTestSuite) TestSingleWOAsyncExport(t *testing.T) {
 	core, _ := observer.New(zap.DebugLevel)
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
@@ -492,7 +502,7 @@ func TestSingleWOAsyncExport(t *testing.T) {
 
 	viewertest.SetDefaultViewerHeaders(req)
 	ctx := viewertest.NewContext(context.Background(), client)
-	workOrder := prepareSingleWOData(ctx, t)
+	workOrder := s.prepareSingleWOData(ctx, t)
 	q := req.URL.Query()
 	q.Add("id", strconv.Itoa(workOrder.ID))
 	req.URL.RawQuery = q.Encode()
