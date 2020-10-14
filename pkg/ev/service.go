@@ -11,6 +11,8 @@ import (
 
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/hashicorp/go-multierror"
+	"go.opencensus.io/stats"
+	"go.opencensus.io/tag"
 	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 	"golang.org/x/sync/semaphore"
@@ -61,7 +63,7 @@ type Service struct {
 	sem         *semaphore.Weighted
 	concurrency int64
 	handler     EventHandler
-	onError     func(error)
+	onError     func(context.Context, error)
 }
 
 // Config configures event handling service.
@@ -73,7 +75,7 @@ type Config struct {
 	Handler EventHandler
 
 	// OnError is used for error reporting.
-	OnError func(error)
+	OnError func(context.Context, error)
 }
 
 // Option enables optional service customization.
@@ -147,7 +149,7 @@ func NewService(cfg Config, opts ...Option) (*Service, error) {
 		}
 	}
 	if cfg.OnError == nil {
-		cfg.OnError = func(error) {}
+		cfg.OnError = func(context.Context, error) {}
 	}
 	// increment concurrency in concurrent mode to account
 	// for the acquire call in Run.
@@ -187,16 +189,24 @@ func traceStatus(err error) trace.Status {
 
 // handle a single event.
 func (s *Service) handle(evt *Event) {
+	ctx, _ := tag.New(context.Background(), evt.tags()...)
+	var err error
+	defer func() {
+		if err != nil {
+			stats.Record(ctx, EventHandleErrorTotal.M(1))
+		}
+	}()
+
 	ctx, span := trace.StartSpanWithRemoteParent(
-		context.Background(), evt.Name, evt.SpanContext,
+		ctx, evt.Name, evt.SpanContext,
 	)
 	span.AddAttributes(
 		trace.StringAttribute("tenant", evt.Tenant),
 	)
-	defer span.End()
+	defer s.endSpan(span, &err)
 
-	if err := s.handler.HandleEvent(ctx, evt); err != nil {
-		s.onError(err)
+	if err = s.handler.HandleEvent(ctx, evt); err != nil {
+		s.onError(ctx, err)
 	}
 }
 

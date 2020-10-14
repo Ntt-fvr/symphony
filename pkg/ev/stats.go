@@ -47,6 +47,11 @@ var (
 		"Number of shutdown errors",
 		stats.UnitDimensionless,
 	)
+	EventHandleErrorTotal = stats.Int64(
+		"ev/event_handle_errors_total",
+		"Number of handle errors",
+		stats.UnitDimensionless,
+	)
 )
 
 // Event tag keys.
@@ -107,6 +112,13 @@ var (
 		Measure:     EventShutdownErrorTotal,
 		Aggregation: view.Count(),
 	}
+	EventHandleErrorTotalView = &view.View{
+		Name:        EventHandleErrorTotal.Name(),
+		Description: EventHandleErrorTotal.Description(),
+		TagKeys:     []tag.Key{KeyEventTenant, KeyEventName},
+		Measure:     EventHandleErrorTotal,
+		Aggregation: view.Count(),
+	}
 )
 
 // OpenCensusViews are the views provided by this package.
@@ -118,4 +130,5 @@ var OpenCensusViews = []*view.View{
 	EventReceiveErrorTotalView,
 	EventReceiveFilteredTotalView,
 	EventShutdownErrorTotalView,
+	EventHandleErrorTotalView,
 }

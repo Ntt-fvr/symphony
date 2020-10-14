@@ -54,7 +54,7 @@ func TestService(t *testing.T) {
 	defer receiver.AssertExpectations(t)
 
 	var onErrCalled bool
-	onError := func(err error) {
+	onError := func(_ context.Context, err error) {
 		require.EqualError(t, err, "bad event")
 		onErrCalled = true
 	}
