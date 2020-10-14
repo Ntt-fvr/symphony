@@ -9,7 +9,7 @@ FROM golang:1.15-alpine AS builder
 RUN apk add --no-cache git gcc musl-dev
 
 # Setup go proxy
-ARG GOPROXY
+ARG GOPROXY=""
 RUN go env -w GOPROXY=$GOPROXY
 
 # Download dependencies

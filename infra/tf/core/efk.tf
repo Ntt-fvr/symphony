@@ -29,7 +29,7 @@ resource aws_iam_service_linked_role es {
 # elastic search domain
 resource aws_elasticsearch_domain es {
   domain_name           = "tf-symphony-${terraform.workspace}"
-  elasticsearch_version = "7.4"
+  elasticsearch_version = "7.7"
 
   cluster_config {
     instance_type            = "m4.2xlarge.elasticsearch"
