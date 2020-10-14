@@ -2122,7 +2122,6 @@ func TestTechnicianWorkOrderCheckOut(t *testing.T) {
 	c := r.GraphClient()
 	ctx := viewertest.NewContext(context.Background(), r.client)
 	u := viewer.FromContext(ctx).(*viewer.UserViewer).User()
-	checkOutTime := pointer.ToTime(time.Date(2014, 6, 25, 12, 24, 40, 0, time.UTC))
 	wo := createWorkOrder(ctx, t, *r, "Foo")
 	mr := r.Mutation()
 	wo, err := mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
@@ -2136,7 +2135,6 @@ func TestTechnicianWorkOrderCheckOut(t *testing.T) {
 		WorkOrderID:    wo.ID,
 		Reason:         activity.ClockOutReasonSubmit,
 		DistanceMeters: pointer.ToFloat64(50),
-		CheckOutTime:   checkOutTime,
 	}
 
 	var rsp struct {
@@ -2152,7 +2150,6 @@ func TestTechnicianWorkOrderCheckOut(t *testing.T) {
 					DistanceMeters *float64
 					Comment        *string
 				}
-				CreateTime *time.Time
 			}
 		}
 	}
@@ -2187,7 +2184,6 @@ func TestTechnicianWorkOrderCheckOut(t *testing.T) {
 	require.Equal(t, *rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.ClockOutReason, activity.ClockOutReasonSubmit)
 	require.Nil(t, rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.Comment)
 	require.Equal(t, *rsp.TechnicianWorkOrderCheckOut.Activities[0].ClockDetails.DistanceMeters, 50.0)
-	require.Equal(t, *rsp.TechnicianWorkOrderCheckOut.Activities[0].CreateTime, checkOutTime)
 
 	blockedInput := models.TechnicianWorkOrderCheckOutInput{
 		WorkOrderID:    wo.ID,
