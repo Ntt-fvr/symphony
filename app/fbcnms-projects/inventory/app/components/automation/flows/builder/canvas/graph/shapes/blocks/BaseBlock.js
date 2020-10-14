@@ -10,6 +10,7 @@
 'use strict';
 
 import type {IConnector} from '../connectors/BaseConnector';
+import type {ILink} from '../../facades/shapes/edges/Link';
 import type {
   IVertexModel,
   IVertexView,
@@ -46,6 +47,7 @@ export interface IBlock {
   +addConnector: (
     sourcePort: ?(string | number),
     target: IBlock,
+    model?: ?ILink,
   ) => ?IConnector;
   +removeConnector: IConnector => void;
   +addToGraph: () => void;
@@ -129,7 +131,7 @@ export default class BaseBlock implements IBlock {
     delete this.outConnectors[index];
   }
 
-  addConnector(sourcePort: ?(string | number), target: IBlock) {
+  addConnector(sourcePort: ?(string | number), target: IBlock, model?: ?ILink) {
     const targetPort = target.getInputPort();
     if (targetPort == null) {
       return;
@@ -157,7 +159,7 @@ export default class BaseBlock implements IBlock {
         target,
         targetPort: targetPort.id,
       },
-      undefined,
+      model,
       this.isInGraph,
     );
 

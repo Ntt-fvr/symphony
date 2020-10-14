@@ -50,6 +50,7 @@ export function handleNewConnections(flow: ?FlowWrapper) {
     const connector = sourceBlock.addConnector(
       newLink.attributes.source.port,
       targetBlock,
+      newLink,
     );
 
     if (connector == null) {
