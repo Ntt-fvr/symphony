@@ -195,105 +195,42 @@ resource helm_release fluentd_elasticsearch {
   namespace  = "monitoring"
   version    = "10.0.2"
 
-  values = [<<EOT
-  elasticsearch:
-    hosts:
-      - ${aws_elasticsearch_domain.es.endpoint}:443
-    scheme: https
-  service:
-    ports:
-      - name: http
-        type: ClusterIP
-        port: 9880
-  livenessProbe:
-    kind:
-      httpGet:
-        path: /fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D
-        port: 9880
-      exec: null
-    initialDelaySeconds: 5
-    periodSeconds: 30
-  serviceMonitor:
-    enabled: true
-  prometheusRule:
-    enabled: true
-  configMaps:
-    useDefaults:
-      forwardInputConf: false
-  extraConfigMaps:
-    prometheus.filter.conf: |-
-      <filter **>
-        @type prometheus
-        @id filter_prometheus
-        @log_level warn
-        <metric>
-          name fluentd_input_status_num_records_total
-          type counter
-          desc The total number of incoming records
-          <labels>
-            tag $${tag}
-            hostname $${hostname}
-          </labels>
-        </metric>
-      </filter>
-    http.input.conf: |-
-      <source>
-        @id http
-        @type http
-        body_size_limit 2m
-        add_http_headers true
-      </source>
-    inventory.filter.conf: |-
-      <filter inventory>
-        @id filter_prometheus
-        @type prometheus
-        <metric>
-          name inventory_client_events_total
-          type counter
-          desc The total number of incoming client events
-          <labels>
-            event $${event}
-            tenant $${tenant}
-            user $${email}
-          </labels>
-        </metric>
-      </filter>
-    orc8r.filter.conf: |-
-      <filter kubernetes.**orc8r-proxy**>
-        @id filter_orc8r_proxy
-        @type parser
-        key_name message
-        reserve_data true
-        remove_key_name_field true
-        <parse>
-          @type multi_format
-          <pattern>
-            format regexp
-            expression /^(?<time>.*)@\|@(?<remote_addr>.*)@\|@(?<http_host>.*)@\|@(?<server_port>.*)@\|@(?<request>.*)@\|@(?<status>.*)@\|@(?<body_bytes_sent>.*)@\|@(?<request_time>.*)@\|@(?<alpn>.*)@\|@(?<tls_client_serial>.*)@\|@(?<tls_client_subject_name>.*)@\|@(?<tls_session_reused>.*)@\|@(?<tls_sni>.*)@\|@(?<tls_protocol>.*)@\|@(?<tls_cipher>.*)@\|@(?<backend_host>.*)@\|@(?<backend_port>.*)$/
-            time_format %iso8601
-          </pattern>
-          <pattern>
-            format none
-          </pattern>
-        </parse>
-      </filter>
-
-      <filter kubernetes.**orc8r-nginx**>
-        @id filter_orc8r_nginx
-        @type parser
-        key_name message
-        reserve_data true
-        remove_key_name_field true
-        <parse>
-          @type multi_format
-          <pattern>
-            format json
-          </pattern>
-          <pattern>
-            format none
-          </pattern>
-        </parse>
-      </filter>
-  EOT
-  ]
+  values = [yamlencode({
+    elasticsearch = {
+      hosts  = ["${aws_elasticsearch_domain.es.endpoint}:443"]
+      scheme = "https"
+    }
+    service = {
+      ports = [{
+        name = "http"
+        type = "ClusterIP"
+        port = 9880
+      }]
+    }
+    livenessProbe = {
+      kind = {
+        httpGet = {
+          path = "/fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D"
+          port = 9880
+        }
+        exec = null
+      }
+      initialDelaySeconds = 5
+      periodSeconds       = 30
+    }
+    serviceMonitor = {
+      enabled = true
+    }
+    prometheusRule = {
+      enabled = true
+    }
+    configMaps = {
+      useDefaults = {
+        forwardInputConf = false
+      }
+    }
+    extraConfigMaps = {
+      for f in fileset(path.module, "fluentd/*") : basename(f) => file(f)
+    }
+  })]
 }

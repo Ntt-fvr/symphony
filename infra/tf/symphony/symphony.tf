@@ -68,7 +68,7 @@ resource helm_release symphony {
   timeout             = 600
   max_history         = 100
 
-  values = concat([
+  values = [
     yamlencode({
       for s in toset(["front", "admin", "graph", "async", "store", "migrate", "jobrunner", "docs"]) :
       s => {
@@ -259,7 +259,7 @@ resource helm_release symphony {
         }
       }
     }),
-  ])
+  ]
 
   set_sensitive {
     name  = "front.spec.session_token"

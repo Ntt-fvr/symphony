@@ -4,7 +4,7 @@ resource helm_release kube_prometheus_stack {
   namespace  = "monitoring"
   repository = local.helm_repository.prometheus-community
   chart      = "kube-prometheus-stack"
-  version    = "10.0.1"
+  version    = "10.1.0"
 
   values = [templatefile("${path.module}/templates/kube-prometheus-stack-values.tpl", {
     region             = data.aws_region.current.id
