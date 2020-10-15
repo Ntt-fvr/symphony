@@ -163,7 +163,7 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 		// Handle Photos
 		if item.Type == enum.CheckListItemTypeFiles {
 			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
-			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), item.IsMandatory)
+			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), strconv.FormatBool(item.IsMandatory))
 			image, err := er.getFileData(ctx, item)
 			if err != nil {
 				logger.Error("error getting file data", zap.Error(err))
