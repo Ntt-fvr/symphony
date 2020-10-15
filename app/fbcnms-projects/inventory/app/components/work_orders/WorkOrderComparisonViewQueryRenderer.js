@@ -11,7 +11,7 @@
 import type {WorkOrderComparisonViewQueryRendererSearchQuery} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 import type {WorkOrderOrder} from './__generated__/WorkOrderComparisonViewQueryRendererSearchQuery.graphql';
 
-import EmptyStateBackdrop from '../comparison_view/EmptyStateBackdrop';
+import ComparisonViewNoResults from '../comparison_view/ComparisonViewNoResults';
 import React, {useEffect, useMemo, useState} from 'react';
 import WorkOrdersMap from './WorkOrdersMap';
 import WorkOrdersView, {WORK_ORDERS_PAGE_SIZE} from './WorkOrdersView';
@@ -20,7 +20,6 @@ import {DisplayOptions} from '../InventoryViewContainer';
 import {graphql} from 'relay-runtime';
 import {makeStyles} from '@material-ui/styles';
 import {useLazyLoadQuery} from 'react-relay/hooks';
-import EducationNote from '@symphony/design-system/illustrations/EducationNote';
 
 import type {DisplayOptionTypes} from '../InventoryViewContainer';
 
@@ -52,7 +51,6 @@ type Props = $ReadOnly<{|
   filters: Array<any>,
   orderBy: WorkOrderOrder,
   displayMode?: DisplayOptionTypes,
-  showDialog: any,
   onOrderChanged: (newOrderSettings: WorkOrderOrder) => void,
 |}>;
 
@@ -88,7 +86,6 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
     className,
     orderBy,
     onOrderChanged,
-    showDialog,
   } = props;
 
   const [tableKey, setTableKey] = useState(0);
@@ -122,14 +119,7 @@ const WorkOrderComparisonViewQueryRenderer = (props: Props) => {
 
   const {totalCount} = response.workOrdersMap;
   if (totalCount === 0) {
-    return <EmptyStateBackdrop
-      illustration={{render: EducationNote}}
-      heading={{textContent: 'Start creating work order templates'}}
-      button={{
-        textContent: 'Create work order template',
-        onClick: showDialog
-      }}
-    />;
+    return <ComparisonViewNoResults />;
   }
 
   return (

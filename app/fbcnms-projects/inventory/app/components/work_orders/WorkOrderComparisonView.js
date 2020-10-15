@@ -147,7 +147,6 @@ const WorkOrderComparisonView = () => {
           filters={filters}
           orderBy={orderBy}
           onOrderChanged={setOrderBy}
-          showDialog={showDialog}
           onWorkOrderSelected={selectedWorkOrderCardId =>
             navigateToWorkOrder(selectedWorkOrderCardId)
           }

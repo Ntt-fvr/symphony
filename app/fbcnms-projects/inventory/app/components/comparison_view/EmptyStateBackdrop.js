@@ -23,66 +23,48 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   heading: {
-    paddingTop: '28px',
-    paddingBottom: '6px',
+    margin: '15px 0'
   },
-  button: {
-    marginTop: '10px'
+  paragraph: {
+    marginBottom: '20px'
   }
 }));
 
 type EmptyStateBackdropType = {
-  wrapper?: {style: StyleType},
-  illustration?: {
-    render?: (props: StyleType) => React.Node,
-    props?: StyleType,
-  },
-  heading?: {style?: StyleType, textContent?: string},
-  paragraph?: {style?: StyleType, textContent?: string},
-  button?: {buttonTextContent?: string, buttonProps?: any},
+  wrapperStyle?: {[key: string]: string},
+  illustration?: React.Node,
+  headingText?: string,
+  paragraphText?: string,
+  children?: React.Node,
 }
 
-type StyleType = {[key: string]: string}
-
 const EmptyStateBackdrop = ({
-  wrapper,
-  illustration = {render: () => null},
-  heading,
-  paragraph,
-  button
+  wrapperStyle,
+  illustration,
+  headingText,
+  paragraphText,
+  children,
 }: EmptyStateBackdropType) => {
   const classes = useStyles();
-  const {
-    textContent: buttonTextContent,
-    ...buttonProps
-  } = button;
 
   return (
-    // $FlowFixMe
-    <div className={classes.emptyStateRoot} style={{...wrapper?.style}}>
-      <illustration.render {...illustration?.props}/>
+    <div className={classes.emptyStateRoot} style={{...wrapperStyle}}>
+      {illustration}
       <Text
         variant="h6"
         color="regular"
         className={classes.heading}
-        style={{...heading?.style}}
       >
-        {heading?.textContent}
+        {headingText}
       </Text>
       <Text
         variant="body2"
         color="regular"
-        style={{...paragraph?.style}}
+        className={classes.paragraph}
       >
-        {paragraph?.textContent}
+        {paragraphText}
       </Text>
-      {button && 
-        <Button
-          className={classes.button}
-          {...buttonProps}
-        >
-          {buttonTextContent}
-        </Button>}
+      {children}
     </div>
   );
 };
