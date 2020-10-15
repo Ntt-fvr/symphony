@@ -21,14 +21,13 @@ import (
 // EquipmentCategoryUpdate is the builder for updating EquipmentCategory entities.
 type EquipmentCategoryUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentCategoryMutation
-	predicates []predicate.EquipmentCategory
+	hooks    []Hook
+	mutation *EquipmentCategoryMutation
 }
 
 // Where adds a new predicate for the builder.
 func (ecu *EquipmentCategoryUpdate) Where(ps ...predicate.EquipmentCategory) *EquipmentCategoryUpdate {
-	ecu.predicates = append(ecu.predicates, ps...)
+	ecu.mutation.predicates = append(ecu.mutation.predicates, ps...)
 	return ecu
 }
 
@@ -150,7 +149,7 @@ func (ecu *EquipmentCategoryUpdate) sqlSave(ctx context.Context) (n int, err err
 			},
 		},
 	}
-	if ps := ecu.predicates; len(ps) > 0 {
+	if ps := ecu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

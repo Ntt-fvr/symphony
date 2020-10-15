@@ -22,14 +22,13 @@ import (
 // FlowExecutionTemplateUpdate is the builder for updating FlowExecutionTemplate entities.
 type FlowExecutionTemplateUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FlowExecutionTemplateMutation
-	predicates []predicate.FlowExecutionTemplate
+	hooks    []Hook
+	mutation *FlowExecutionTemplateMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fetu *FlowExecutionTemplateUpdate) Where(ps ...predicate.FlowExecutionTemplate) *FlowExecutionTemplateUpdate {
-	fetu.predicates = append(fetu.predicates, ps...)
+	fetu.mutation.predicates = append(fetu.mutation.predicates, ps...)
 	return fetu
 }
 
@@ -199,7 +198,7 @@ func (fetu *FlowExecutionTemplateUpdate) sqlSave(ctx context.Context) (n int, er
 			},
 		},
 	}
-	if ps := fetu.predicates; len(ps) > 0 {
+	if ps := fetu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

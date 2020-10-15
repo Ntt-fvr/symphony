@@ -237,8 +237,8 @@ func (etq *EquipmentTypeQuery) FirstID(ctx context.Context) (id int, err error) 
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (etq *EquipmentTypeQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (etq *EquipmentTypeQuery) FirstIDX(ctx context.Context) int {
 	id, err := etq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

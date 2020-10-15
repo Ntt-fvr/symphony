@@ -638,7 +638,7 @@ func TestExecuteWorkOrderRemoveEquipment(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
 		Type:               childEquipmentType.ID,
@@ -1013,7 +1013,7 @@ func TestExecuteWorkOrderInstallChildOnUninstalledParent(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	require.NoError(t, err)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
@@ -1182,7 +1182,7 @@ func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
 	assert.NoError(t, err)
 
 	require.NoError(t, err)
-	posDefID := rootEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := rootEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 
 	parentEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "parent_equipment",
@@ -1196,7 +1196,7 @@ func TestExecuteWorkOrderRemoveParentEquipment(t *testing.T) {
 		Name: "child_equipment_type",
 	})
 	assert.NoError(t, err)
-	posDefID = parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID = parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 	require.NoError(t, err)
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
@@ -1316,7 +1316,7 @@ func TestDeleteWorkOrderWithAttachmentAndLinksAdded(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstXID(ctx)
+	posDefID := parentEquipmentType.QueryPositionDefinitions().FirstIDX(ctx)
 
 	childEquipment, err := mr.AddEquipment(ctx, models.AddEquipmentInput{
 		Name:               "child_equipment",
@@ -1868,7 +1868,7 @@ func TestEditWorkOrderLocation(t *testing.T) {
 		LocationID:      &location.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, workOrder.QueryLocation().FirstXID(ctx), location.ID)
+	require.Equal(t, workOrder.QueryLocation().FirstIDX(ctx), location.ID)
 
 	location = createLocationWithName(ctx, t, *r, "location2")
 	workOrder, err = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
@@ -1877,7 +1877,7 @@ func TestEditWorkOrderLocation(t *testing.T) {
 		LocationID: &location.ID,
 	})
 	require.NoError(t, err)
-	require.Equal(t, workOrder.QueryLocation().FirstXID(ctx), location.ID)
+	require.Equal(t, workOrder.QueryLocation().FirstIDX(ctx), location.ID)
 
 	workOrder, err = mr.EditWorkOrder(ctx, models.EditWorkOrderInput{
 		ID:   workOrder.ID,

@@ -20,14 +20,13 @@ import (
 // ServiceDelete is the builder for deleting a Service entity.
 type ServiceDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceMutation
-	predicates []predicate.Service
+	hooks    []Hook
+	mutation *ServiceMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (sd *ServiceDelete) Where(ps ...predicate.Service) *ServiceDelete {
-	sd.predicates = append(sd.predicates, ps...)
+	sd.mutation.predicates = append(sd.mutation.predicates, ps...)
 	return sd
 }
 
@@ -79,7 +78,7 @@ func (sd *ServiceDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := sd.predicates; len(ps) > 0 {
+	if ps := sd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

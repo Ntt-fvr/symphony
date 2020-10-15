@@ -24,14 +24,13 @@ import (
 // WorkOrderTypeUpdate is the builder for updating WorkOrderType entities.
 type WorkOrderTypeUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *WorkOrderTypeMutation
-	predicates []predicate.WorkOrderType
+	hooks    []Hook
+	mutation *WorkOrderTypeMutation
 }
 
 // Where adds a new predicate for the builder.
 func (wotu *WorkOrderTypeUpdate) Where(ps ...predicate.WorkOrderType) *WorkOrderTypeUpdate {
-	wotu.predicates = append(wotu.predicates, ps...)
+	wotu.mutation.predicates = append(wotu.mutation.predicates, ps...)
 	return wotu
 }
 
@@ -301,7 +300,7 @@ func (wotu *WorkOrderTypeUpdate) sqlSave(ctx context.Context) (n int, err error)
 			},
 		},
 	}
-	if ps := wotu.predicates; len(ps) > 0 {
+	if ps := wotu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

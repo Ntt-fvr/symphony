@@ -20,14 +20,13 @@ import (
 // PermissionsPolicyDelete is the builder for deleting a PermissionsPolicy entity.
 type PermissionsPolicyDelete struct {
 	config
-	hooks      []Hook
-	mutation   *PermissionsPolicyMutation
-	predicates []predicate.PermissionsPolicy
+	hooks    []Hook
+	mutation *PermissionsPolicyMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ppd *PermissionsPolicyDelete) Where(ps ...predicate.PermissionsPolicy) *PermissionsPolicyDelete {
-	ppd.predicates = append(ppd.predicates, ps...)
+	ppd.mutation.predicates = append(ppd.mutation.predicates, ps...)
 	return ppd
 }
 
@@ -79,7 +78,7 @@ func (ppd *PermissionsPolicyDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ppd.predicates; len(ps) > 0 {
+	if ps := ppd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -22,14 +22,13 @@ import (
 // EquipmentPortTypeUpdate is the builder for updating EquipmentPortType entities.
 type EquipmentPortTypeUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPortTypeMutation
-	predicates []predicate.EquipmentPortType
+	hooks    []Hook
+	mutation *EquipmentPortTypeMutation
 }
 
 // Where adds a new predicate for the builder.
 func (eptu *EquipmentPortTypeUpdate) Where(ps ...predicate.EquipmentPortType) *EquipmentPortTypeUpdate {
-	eptu.predicates = append(eptu.predicates, ps...)
+	eptu.mutation.predicates = append(eptu.mutation.predicates, ps...)
 	return eptu
 }
 
@@ -223,7 +222,7 @@ func (eptu *EquipmentPortTypeUpdate) sqlSave(ctx context.Context) (n int, err er
 			},
 		},
 	}
-	if ps := eptu.predicates; len(ps) > 0 {
+	if ps := eptu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

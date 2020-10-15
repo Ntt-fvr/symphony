@@ -45,6 +45,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/location"
 	"github.com/facebookincubator/symphony/pkg/ent/locationtype"
 	"github.com/facebookincubator/symphony/pkg/ent/permissionspolicy"
+	"github.com/facebookincubator/symphony/pkg/ent/predicate"
 	"github.com/facebookincubator/symphony/pkg/ent/project"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttemplate"
 	"github.com/facebookincubator/symphony/pkg/ent/projecttype"
@@ -159,6 +160,7 @@ type ActivityMutation struct {
 	clearedwork_order bool
 	done              bool
 	oldValue          func(context.Context) (*Activity, error)
+	predicates        []predicate.Activity
 }
 
 var _ ent.Mutation = (*ActivityMutation)(nil)
@@ -990,6 +992,7 @@ type BlockMutation struct {
 	clearedinstances        bool
 	done                    bool
 	oldValue                func(context.Context) (*Block, error)
+	predicates              []predicate.Block
 }
 
 var _ ent.Mutation = (*BlockMutation)(nil)
@@ -2437,6 +2440,7 @@ type BlockInstanceMutation struct {
 	clearedsubflow_instance   bool
 	done                      bool
 	oldValue                  func(context.Context) (*BlockInstance, error)
+	predicates                []predicate.BlockInstance
 }
 
 var _ ent.Mutation = (*BlockInstanceMutation)(nil)
@@ -3358,6 +3362,7 @@ type CheckListCategoryMutation struct {
 	clearedwork_order       bool
 	done                    bool
 	oldValue                func(context.Context) (*CheckListCategory, error)
+	predicates              []predicate.CheckListCategory
 }
 
 var _ ent.Mutation = (*CheckListCategoryMutation)(nil)
@@ -3991,6 +3996,7 @@ type CheckListCategoryDefinitionMutation struct {
 	clearedwork_order_template         bool
 	done                               bool
 	oldValue                           func(context.Context) (*CheckListCategoryDefinition, error)
+	predicates                         []predicate.CheckListCategoryDefinition
 }
 
 var _ ent.Mutation = (*CheckListCategoryDefinitionMutation)(nil)
@@ -4693,6 +4699,7 @@ type CheckListItemMutation struct {
 	clearedcheck_list_category bool
 	done                       bool
 	oldValue                   func(context.Context) (*CheckListItem, error)
+	predicates                 []predicate.CheckListItem
 }
 
 var _ ent.Mutation = (*CheckListItemMutation)(nil)
@@ -6051,6 +6058,7 @@ type CheckListItemDefinitionMutation struct {
 	clearedcheck_list_category_definition bool
 	done                                  bool
 	oldValue                              func(context.Context) (*CheckListItemDefinition, error)
+	predicates                            []predicate.CheckListItemDefinition
 }
 
 var _ ent.Mutation = (*CheckListItemDefinitionMutation)(nil)
@@ -6985,6 +6993,7 @@ type CommentMutation struct {
 	clearedproject    bool
 	done              bool
 	oldValue          func(context.Context) (*Comment, error)
+	predicates        []predicate.Comment
 }
 
 var _ ent.Mutation = (*CommentMutation)(nil)
@@ -7573,6 +7582,7 @@ type CustomerMutation struct {
 	clearedservices bool
 	done            bool
 	oldValue        func(context.Context) (*Customer, error)
+	predicates      []predicate.Customer
 }
 
 var _ ent.Mutation = (*CustomerMutation)(nil)
@@ -8170,6 +8180,7 @@ type EquipmentMutation struct {
 	clearedendpoints       bool
 	done                   bool
 	oldValue               func(context.Context) (*Equipment, error)
+	predicates             []predicate.Equipment
 }
 
 var _ ent.Mutation = (*EquipmentMutation)(nil)
@@ -9510,6 +9521,7 @@ type EquipmentCategoryMutation struct {
 	clearedtypes  bool
 	done          bool
 	oldValue      func(context.Context) (*EquipmentCategory, error)
+	predicates    []predicate.EquipmentCategory
 }
 
 var _ ent.Mutation = (*EquipmentCategoryMutation)(nil)
@@ -10016,6 +10028,7 @@ type EquipmentPortMutation struct {
 	clearedservice    bool
 	done              bool
 	oldValue          func(context.Context) (*EquipmentPort, error)
+	predicates        []predicate.EquipmentPort
 }
 
 var _ ent.Mutation = (*EquipmentPortMutation)(nil)
@@ -10797,6 +10810,7 @@ type EquipmentPortDefinitionMutation struct {
 	clearedconnected_ports     bool
 	done                       bool
 	oldValue                   func(context.Context) (*EquipmentPortDefinition, error)
+	predicates                 []predicate.EquipmentPortDefinition
 }
 
 var _ ent.Mutation = (*EquipmentPortDefinitionMutation)(nil)
@@ -11749,6 +11763,7 @@ type EquipmentPortTypeMutation struct {
 	clearedport_definitions    bool
 	done                       bool
 	oldValue                   func(context.Context) (*EquipmentPortType, error)
+	predicates                 []predicate.EquipmentPortType
 }
 
 var _ ent.Mutation = (*EquipmentPortTypeMutation)(nil)
@@ -12404,6 +12419,7 @@ type EquipmentPositionMutation struct {
 	clearedattachment bool
 	done              bool
 	oldValue          func(context.Context) (*EquipmentPosition, error)
+	predicates        []predicate.EquipmentPosition
 }
 
 var _ ent.Mutation = (*EquipmentPositionMutation)(nil)
@@ -12942,6 +12958,7 @@ type EquipmentPositionDefinitionMutation struct {
 	clearedequipment_type bool
 	done                  bool
 	oldValue              func(context.Context) (*EquipmentPositionDefinition, error)
+	predicates            []predicate.EquipmentPositionDefinition
 }
 
 var _ ent.Mutation = (*EquipmentPositionDefinitionMutation)(nil)
@@ -13693,6 +13710,7 @@ type EquipmentTypeMutation struct {
 	clearedservice_endpoint_definitions bool
 	done                                bool
 	oldValue                            func(context.Context) (*EquipmentType, error)
+	predicates                          []predicate.EquipmentType
 }
 
 var _ ent.Mutation = (*EquipmentTypeMutation)(nil)
@@ -14563,6 +14581,7 @@ type ExportTaskMutation struct {
 	clearedFields      map[string]struct{}
 	done               bool
 	oldValue           func(context.Context) (*ExportTask, error)
+	predicates         []predicate.ExportTask
 }
 
 var _ ent.Mutation = (*ExportTaskMutation)(nil)
@@ -15246,6 +15265,7 @@ type FeatureMutation struct {
 	clearedgroups bool
 	done          bool
 	oldValue      func(context.Context) (*Feature, error)
+	predicates    []predicate.Feature
 }
 
 var _ ent.Mutation = (*FeatureMutation)(nil)
@@ -16028,6 +16048,7 @@ type FileMutation struct {
 	clearedsurvey_question       bool
 	done                         bool
 	oldValue                     func(context.Context) (*File, error)
+	predicates                   []predicate.File
 }
 
 var _ ent.Mutation = (*FileMutation)(nil)
@@ -17528,6 +17549,7 @@ type FloorPlanMutation struct {
 	clearedimage           bool
 	done                   bool
 	oldValue               func(context.Context) (*FloorPlan, error)
+	predicates             []predicate.FloorPlan
 }
 
 var _ ent.Mutation = (*FloorPlanMutation)(nil)
@@ -18176,6 +18198,7 @@ type FloorPlanReferencePointMutation struct {
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*FloorPlanReferencePoint, error)
+	predicates    []predicate.FloorPlanReferencePoint
 }
 
 var _ ent.Mutation = (*FloorPlanReferencePointMutation)(nil)
@@ -18881,6 +18904,7 @@ type FloorPlanScaleMutation struct {
 	clearedFields         map[string]struct{}
 	done                  bool
 	oldValue              func(context.Context) (*FloorPlanScale, error)
+	predicates            []predicate.FloorPlanScale
 }
 
 var _ ent.Mutation = (*FloorPlanScaleMutation)(nil)
@@ -19672,6 +19696,7 @@ type FlowMutation struct {
 	cleareddraft          bool
 	done                  bool
 	oldValue              func(context.Context) (*Flow, error)
+	predicates            []predicate.Flow
 }
 
 var _ ent.Mutation = (*FlowMutation)(nil)
@@ -20485,6 +20510,7 @@ type FlowDraftMutation struct {
 	clearedflow           bool
 	done                  bool
 	oldValue              func(context.Context) (*FlowDraft, error)
+	predicates            []predicate.FlowDraft
 }
 
 var _ ent.Mutation = (*FlowDraftMutation)(nil)
@@ -21188,6 +21214,7 @@ type FlowExecutionTemplateMutation struct {
 	clearedblocks         bool
 	done                  bool
 	oldValue              func(context.Context) (*FlowExecutionTemplate, error)
+	predicates            []predicate.FlowExecutionTemplate
 }
 
 var _ ent.Mutation = (*FlowExecutionTemplateMutation)(nil)
@@ -21840,6 +21867,7 @@ type FlowInstanceMutation struct {
 	clearedparent_subflow_block bool
 	done                        bool
 	oldValue                    func(context.Context) (*FlowInstance, error)
+	predicates                  []predicate.FlowInstance
 }
 
 var _ ent.Mutation = (*FlowInstanceMutation)(nil)
@@ -22660,6 +22688,7 @@ type HyperlinkMutation struct {
 	clearedwork_order bool
 	done              bool
 	oldValue          func(context.Context) (*Hyperlink, error)
+	predicates        []predicate.Hyperlink
 }
 
 var _ ent.Mutation = (*HyperlinkMutation)(nil)
@@ -23404,6 +23433,7 @@ type LinkMutation struct {
 	clearedservice    bool
 	done              bool
 	oldValue          func(context.Context) (*Link, error)
+	predicates        []predicate.Link
 }
 
 var _ ent.Mutation = (*LinkMutation)(nil)
@@ -24173,6 +24203,7 @@ type LocationMutation struct {
 	clearedfloor_plans bool
 	done               bool
 	oldValue           func(context.Context) (*Location, error)
+	predicates         []predicate.Location
 }
 
 var _ ent.Mutation = (*LocationMutation)(nil)
@@ -25829,6 +25860,7 @@ type LocationTypeMutation struct {
 	clearedsurvey_template_categories bool
 	done                              bool
 	oldValue                          func(context.Context) (*LocationType, error)
+	predicates                        []predicate.LocationType
 }
 
 var _ ent.Mutation = (*LocationTypeMutation)(nil)
@@ -26811,6 +26843,7 @@ type PermissionsPolicyMutation struct {
 	clearedgroups    bool
 	done             bool
 	oldValue         func(context.Context) (*PermissionsPolicy, error)
+	predicates       []predicate.PermissionsPolicy
 }
 
 var _ ent.Mutation = (*PermissionsPolicyMutation)(nil)
@@ -27617,6 +27650,7 @@ type ProjectMutation struct {
 	clearedcreator     bool
 	done               bool
 	oldValue           func(context.Context) (*Project, error)
+	predicates         []predicate.Project
 }
 
 var _ ent.Mutation = (*ProjectMutation)(nil)
@@ -28634,6 +28668,7 @@ type ProjectTemplateMutation struct {
 	cleared_type       bool
 	done               bool
 	oldValue           func(context.Context) (*ProjectTemplate, error)
+	predicates         []predicate.ProjectTemplate
 }
 
 var _ ent.Mutation = (*ProjectTemplateMutation)(nil)
@@ -29348,6 +29383,7 @@ type ProjectTypeMutation struct {
 	clearedprojects    bool
 	done               bool
 	oldValue           func(context.Context) (*ProjectType, error)
+	predicates         []predicate.ProjectType
 }
 
 var _ ent.Mutation = (*ProjectTypeMutation)(nil)
@@ -30113,6 +30149,7 @@ type PropertyMutation struct {
 	cleareduser_value       bool
 	done                    bool
 	oldValue                func(context.Context) (*Property, error)
+	predicates              []predicate.Property
 }
 
 var _ ent.Mutation = (*PropertyMutation)(nil)
@@ -32046,6 +32083,7 @@ type PropertyTypeMutation struct {
 	clearedproject_template         bool
 	done                            bool
 	oldValue                        func(context.Context) (*PropertyType, error)
+	predicates                      []predicate.PropertyType
 }
 
 var _ ent.Mutation = (*PropertyTypeMutation)(nil)
@@ -34436,6 +34474,7 @@ type ReportFilterMutation struct {
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*ReportFilter, error)
+	predicates    []predicate.ReportFilter
 }
 
 var _ ent.Mutation = (*ReportFilterMutation)(nil)
@@ -34972,6 +35011,7 @@ type ServiceMutation struct {
 	clearedendpoints  bool
 	done              bool
 	oldValue          func(context.Context) (*Service, error)
+	predicates        []predicate.Service
 }
 
 var _ ent.Mutation = (*ServiceMutation)(nil)
@@ -36132,6 +36172,7 @@ type ServiceEndpointMutation struct {
 	cleareddefinition bool
 	done              bool
 	oldValue          func(context.Context) (*ServiceEndpoint, error)
+	predicates        []predicate.ServiceEndpoint
 }
 
 var _ ent.Mutation = (*ServiceEndpointMutation)(nil)
@@ -36729,6 +36770,7 @@ type ServiceEndpointDefinitionMutation struct {
 	clearedequipment_type bool
 	done                  bool
 	oldValue              func(context.Context) (*ServiceEndpointDefinition, error)
+	predicates            []predicate.ServiceEndpointDefinition
 }
 
 var _ ent.Mutation = (*ServiceEndpointDefinitionMutation)(nil)
@@ -37512,6 +37554,7 @@ type ServiceTypeMutation struct {
 	clearedendpoint_definitions bool
 	done                        bool
 	oldValue                    func(context.Context) (*ServiceType, error)
+	predicates                  []predicate.ServiceType
 }
 
 var _ ent.Mutation = (*ServiceTypeMutation)(nil)
@@ -38334,6 +38377,7 @@ type SurveyMutation struct {
 	clearedquestions     bool
 	done                 bool
 	oldValue             func(context.Context) (*Survey, error)
+	predicates           []predicate.Survey
 }
 
 var _ ent.Mutation = (*SurveyMutation)(nil)
@@ -39181,6 +39225,7 @@ type SurveyCellScanMutation struct {
 	clearedlocation         bool
 	done                    bool
 	oldValue                func(context.Context) (*SurveyCellScan, error)
+	predicates              []predicate.SurveyCellScan
 }
 
 var _ ent.Mutation = (*SurveyCellScanMutation)(nil)
@@ -41726,6 +41771,7 @@ type SurveyQuestionMutation struct {
 	clearedimages        bool
 	done                 bool
 	oldValue             func(context.Context) (*SurveyQuestion, error)
+	predicates           []predicate.SurveyQuestion
 }
 
 var _ ent.Mutation = (*SurveyQuestionMutation)(nil)
@@ -44008,6 +44054,7 @@ type SurveyTemplateCategoryMutation struct {
 	clearedlocation_type             bool
 	done                             bool
 	oldValue                         func(context.Context) (*SurveyTemplateCategory, error)
+	predicates                       []predicate.SurveyTemplateCategory
 }
 
 var _ ent.Mutation = (*SurveyTemplateCategoryMutation)(nil)
@@ -44617,6 +44664,7 @@ type SurveyTemplateQuestionMutation struct {
 	clearedcategory      bool
 	done                 bool
 	oldValue             func(context.Context) (*SurveyTemplateQuestion, error)
+	predicates           []predicate.SurveyTemplateQuestion
 }
 
 var _ ent.Mutation = (*SurveyTemplateQuestionMutation)(nil)
@@ -45312,6 +45360,7 @@ type SurveyWiFiScanMutation struct {
 	clearedlocation        bool
 	done                   bool
 	oldValue               func(context.Context) (*SurveyWiFiScan, error)
+	predicates             []predicate.SurveyWiFiScan
 }
 
 var _ ent.Mutation = (*SurveyWiFiScanMutation)(nil)
@@ -47092,6 +47141,7 @@ type UserMutation struct {
 	clearedfeatures             bool
 	done                        bool
 	oldValue                    func(context.Context) (*User, error)
+	predicates                  []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -48352,6 +48402,7 @@ type UsersGroupMutation struct {
 	clearedfeatures bool
 	done            bool
 	oldValue        func(context.Context) (*UsersGroup, error)
+	predicates      []predicate.UsersGroup
 }
 
 var _ ent.Mutation = (*UsersGroupMutation)(nil)
@@ -49176,6 +49227,7 @@ type WorkOrderMutation struct {
 	clearedassignee              bool
 	done                         bool
 	oldValue                     func(context.Context) (*WorkOrder, error)
+	predicates                   []predicate.WorkOrder
 }
 
 var _ ent.Mutation = (*WorkOrderMutation)(nil)
@@ -51063,6 +51115,7 @@ type WorkOrderDefinitionMutation struct {
 	clearedproject_template bool
 	done                    bool
 	oldValue                func(context.Context) (*WorkOrderDefinition, error)
+	predicates              []predicate.WorkOrderDefinition
 }
 
 var _ ent.Mutation = (*WorkOrderDefinitionMutation)(nil)
@@ -51715,6 +51768,7 @@ type WorkOrderTemplateMutation struct {
 	cleared_type                           bool
 	done                                   bool
 	oldValue                               func(context.Context) (*WorkOrderTemplate, error)
+	predicates                             []predicate.WorkOrderTemplate
 }
 
 var _ ent.Mutation = (*WorkOrderTemplateMutation)(nil)
@@ -52506,6 +52560,7 @@ type WorkOrderTypeMutation struct {
 	cleareddefinitions                     bool
 	done                                   bool
 	oldValue                               func(context.Context) (*WorkOrderType, error)
+	predicates                             []predicate.WorkOrderType
 }
 
 var _ ent.Mutation = (*WorkOrderTypeMutation)(nil)

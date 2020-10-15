@@ -116,8 +116,8 @@ func (stqq *SurveyTemplateQuestionQuery) FirstID(ctx context.Context) (id int, e
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (stqq *SurveyTemplateQuestionQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (stqq *SurveyTemplateQuestionQuery) FirstIDX(ctx context.Context) int {
 	id, err := stqq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

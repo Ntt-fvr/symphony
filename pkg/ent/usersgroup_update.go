@@ -23,14 +23,13 @@ import (
 // UsersGroupUpdate is the builder for updating UsersGroup entities.
 type UsersGroupUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *UsersGroupMutation
-	predicates []predicate.UsersGroup
+	hooks    []Hook
+	mutation *UsersGroupMutation
 }
 
 // Where adds a new predicate for the builder.
 func (ugu *UsersGroupUpdate) Where(ps ...predicate.UsersGroup) *UsersGroupUpdate {
-	ugu.predicates = append(ugu.predicates, ps...)
+	ugu.mutation.predicates = append(ugu.mutation.predicates, ps...)
 	return ugu
 }
 
@@ -279,7 +278,7 @@ func (ugu *UsersGroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := ugu.predicates; len(ps) > 0 {
+	if ps := ugu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

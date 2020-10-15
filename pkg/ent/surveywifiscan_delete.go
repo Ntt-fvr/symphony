@@ -20,14 +20,13 @@ import (
 // SurveyWiFiScanDelete is the builder for deleting a SurveyWiFiScan entity.
 type SurveyWiFiScanDelete struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyWiFiScanMutation
-	predicates []predicate.SurveyWiFiScan
+	hooks    []Hook
+	mutation *SurveyWiFiScanMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (swfsd *SurveyWiFiScanDelete) Where(ps ...predicate.SurveyWiFiScan) *SurveyWiFiScanDelete {
-	swfsd.predicates = append(swfsd.predicates, ps...)
+	swfsd.mutation.predicates = append(swfsd.mutation.predicates, ps...)
 	return swfsd
 }
 
@@ -79,7 +78,7 @@ func (swfsd *SurveyWiFiScanDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := swfsd.predicates; len(ps) > 0 {
+	if ps := swfsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

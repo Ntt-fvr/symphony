@@ -164,8 +164,8 @@ func (scsq *SurveyCellScanQuery) FirstID(ctx context.Context) (id int, err error
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (scsq *SurveyCellScanQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (scsq *SurveyCellScanQuery) FirstIDX(ctx context.Context) int {
 	id, err := scsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

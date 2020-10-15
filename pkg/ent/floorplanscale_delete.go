@@ -20,14 +20,13 @@ import (
 // FloorPlanScaleDelete is the builder for deleting a FloorPlanScale entity.
 type FloorPlanScaleDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FloorPlanScaleMutation
-	predicates []predicate.FloorPlanScale
+	hooks    []Hook
+	mutation *FloorPlanScaleMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fpsd *FloorPlanScaleDelete) Where(ps ...predicate.FloorPlanScale) *FloorPlanScaleDelete {
-	fpsd.predicates = append(fpsd.predicates, ps...)
+	fpsd.mutation.predicates = append(fpsd.mutation.predicates, ps...)
 	return fpsd
 }
 
@@ -79,7 +78,7 @@ func (fpsd *FloorPlanScaleDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := fpsd.predicates; len(ps) > 0 {
+	if ps := fpsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

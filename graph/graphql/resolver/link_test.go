@@ -154,7 +154,7 @@ func TestAddLinkWithProperties(t *testing.T) {
 	portDef := equipmentType.QueryPortDefinitions().OnlyX(ctx)
 
 	linkVal := "Bar"
-	linkPropTypeID := portType.QueryLinkPropertyTypes().FirstXID(ctx)
+	linkPropTypeID := portType.QueryLinkPropertyTypes().FirstIDX(ctx)
 	linkProp := models.PropertyInput{
 		StringValue:    &linkVal,
 		PropertyTypeID: linkPropTypeID,
@@ -255,7 +255,7 @@ func TestEditLinkWithProperties(t *testing.T) {
 	portDef := equipmentType.QueryPortDefinitions().OnlyX(ctx)
 
 	linkVal := "Bar"
-	linkPropTypeID := portType.QueryLinkPropertyTypes().FirstXID(ctx)
+	linkPropTypeID := portType.QueryLinkPropertyTypes().FirstIDX(ctx)
 	linkProp := models.PropertyInput{
 		StringValue:    &linkVal,
 		PropertyTypeID: linkPropTypeID,
@@ -269,7 +269,7 @@ func TestEditLinkWithProperties(t *testing.T) {
 		Properties: propInput,
 	})
 	assert.NoError(t, err)
-	propID := createdLink.QueryProperties().FirstXID(ctx)
+	propID := createdLink.QueryProperties().FirstIDX(ctx)
 
 	editedLinkVal := "Baz"
 	editedLinkProp := models.PropertyInput{

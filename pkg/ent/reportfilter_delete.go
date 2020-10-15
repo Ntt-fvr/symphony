@@ -20,14 +20,13 @@ import (
 // ReportFilterDelete is the builder for deleting a ReportFilter entity.
 type ReportFilterDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ReportFilterMutation
-	predicates []predicate.ReportFilter
+	hooks    []Hook
+	mutation *ReportFilterMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (rfd *ReportFilterDelete) Where(ps ...predicate.ReportFilter) *ReportFilterDelete {
-	rfd.predicates = append(rfd.predicates, ps...)
+	rfd.mutation.predicates = append(rfd.mutation.predicates, ps...)
 	return rfd
 }
 
@@ -79,7 +78,7 @@ func (rfd *ReportFilterDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := rfd.predicates; len(ps) > 0 {
+	if ps := rfd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

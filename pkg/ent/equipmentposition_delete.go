@@ -20,14 +20,13 @@ import (
 // EquipmentPositionDelete is the builder for deleting a EquipmentPosition entity.
 type EquipmentPositionDelete struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPositionMutation
-	predicates []predicate.EquipmentPosition
+	hooks    []Hook
+	mutation *EquipmentPositionMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (epd *EquipmentPositionDelete) Where(ps ...predicate.EquipmentPosition) *EquipmentPositionDelete {
-	epd.predicates = append(epd.predicates, ps...)
+	epd.mutation.predicates = append(epd.mutation.predicates, ps...)
 	return epd
 }
 
@@ -79,7 +78,7 @@ func (epd *EquipmentPositionDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := epd.predicates; len(ps) > 0 {
+	if ps := epd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

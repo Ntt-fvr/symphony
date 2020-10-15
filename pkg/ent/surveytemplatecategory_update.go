@@ -22,14 +22,13 @@ import (
 // SurveyTemplateCategoryUpdate is the builder for updating SurveyTemplateCategory entities.
 type SurveyTemplateCategoryUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyTemplateCategoryMutation
-	predicates []predicate.SurveyTemplateCategory
+	hooks    []Hook
+	mutation *SurveyTemplateCategoryMutation
 }
 
 // Where adds a new predicate for the builder.
 func (stcu *SurveyTemplateCategoryUpdate) Where(ps ...predicate.SurveyTemplateCategory) *SurveyTemplateCategoryUpdate {
-	stcu.predicates = append(stcu.predicates, ps...)
+	stcu.mutation.predicates = append(stcu.mutation.predicates, ps...)
 	return stcu
 }
 
@@ -182,7 +181,7 @@ func (stcu *SurveyTemplateCategoryUpdate) sqlSave(ctx context.Context) (n int, e
 			},
 		},
 	}
-	if ps := stcu.predicates; len(ps) > 0 {
+	if ps := stcu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

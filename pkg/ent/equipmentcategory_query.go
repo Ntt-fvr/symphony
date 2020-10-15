@@ -116,8 +116,8 @@ func (ecq *EquipmentCategoryQuery) FirstID(ctx context.Context) (id int, err err
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (ecq *EquipmentCategoryQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (ecq *EquipmentCategoryQuery) FirstIDX(ctx context.Context) int {
 	id, err := ecq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

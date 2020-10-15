@@ -24,14 +24,13 @@ import (
 // SurveyCellScanUpdate is the builder for updating SurveyCellScan entities.
 type SurveyCellScanUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyCellScanMutation
-	predicates []predicate.SurveyCellScan
+	hooks    []Hook
+	mutation *SurveyCellScanMutation
 }
 
 // Where adds a new predicate for the builder.
 func (scsu *SurveyCellScanUpdate) Where(ps ...predicate.SurveyCellScan) *SurveyCellScanUpdate {
-	scsu.predicates = append(scsu.predicates, ps...)
+	scsu.mutation.predicates = append(scsu.mutation.predicates, ps...)
 	return scsu
 }
 
@@ -704,7 +703,7 @@ func (scsu *SurveyCellScanUpdate) sqlSave(ctx context.Context) (n int, err error
 			},
 		},
 	}
-	if ps := scsu.predicates; len(ps) > 0 {
+	if ps := scsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

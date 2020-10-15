@@ -20,14 +20,13 @@ import (
 // FlowInstanceDelete is the builder for deleting a FlowInstance entity.
 type FlowInstanceDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FlowInstanceMutation
-	predicates []predicate.FlowInstance
+	hooks    []Hook
+	mutation *FlowInstanceMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fid *FlowInstanceDelete) Where(ps ...predicate.FlowInstance) *FlowInstanceDelete {
-	fid.predicates = append(fid.predicates, ps...)
+	fid.mutation.predicates = append(fid.mutation.predicates, ps...)
 	return fid
 }
 
@@ -79,7 +78,7 @@ func (fid *FlowInstanceDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := fid.predicates; len(ps) > 0 {
+	if ps := fid.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

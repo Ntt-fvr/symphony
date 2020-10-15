@@ -23,14 +23,13 @@ import (
 // CheckListItemDefinitionUpdate is the builder for updating CheckListItemDefinition entities.
 type CheckListItemDefinitionUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListItemDefinitionMutation
-	predicates []predicate.CheckListItemDefinition
+	hooks    []Hook
+	mutation *CheckListItemDefinitionMutation
 }
 
 // Where adds a new predicate for the builder.
 func (clidu *CheckListItemDefinitionUpdate) Where(ps ...predicate.CheckListItemDefinition) *CheckListItemDefinitionUpdate {
-	clidu.predicates = append(clidu.predicates, ps...)
+	clidu.mutation.predicates = append(clidu.mutation.predicates, ps...)
 	return clidu
 }
 
@@ -270,7 +269,7 @@ func (clidu *CheckListItemDefinitionUpdate) sqlSave(ctx context.Context) (n int,
 			},
 		},
 	}
-	if ps := clidu.predicates; len(ps) > 0 {
+	if ps := clidu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

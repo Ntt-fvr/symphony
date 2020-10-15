@@ -20,14 +20,13 @@ import (
 // LocationDelete is the builder for deleting a Location entity.
 type LocationDelete struct {
 	config
-	hooks      []Hook
-	mutation   *LocationMutation
-	predicates []predicate.Location
+	hooks    []Hook
+	mutation *LocationMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ld *LocationDelete) Where(ps ...predicate.Location) *LocationDelete {
-	ld.predicates = append(ld.predicates, ps...)
+	ld.mutation.predicates = append(ld.mutation.predicates, ps...)
 	return ld
 }
 
@@ -79,7 +78,7 @@ func (ld *LocationDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ld.predicates; len(ps) > 0 {
+	if ps := ld.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

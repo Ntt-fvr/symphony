@@ -27,14 +27,13 @@ import (
 // EquipmentPortUpdate is the builder for updating EquipmentPort entities.
 type EquipmentPortUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentPortMutation
-	predicates []predicate.EquipmentPort
+	hooks    []Hook
+	mutation *EquipmentPortMutation
 }
 
 // Where adds a new predicate for the builder.
 func (epu *EquipmentPortUpdate) Where(ps ...predicate.EquipmentPort) *EquipmentPortUpdate {
-	epu.predicates = append(epu.predicates, ps...)
+	epu.mutation.predicates = append(epu.mutation.predicates, ps...)
 	return epu
 }
 
@@ -303,7 +302,7 @@ func (epu *EquipmentPortUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			},
 		},
 	}
-	if ps := epu.predicates; len(ps) > 0 {
+	if ps := epu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

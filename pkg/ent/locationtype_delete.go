@@ -20,14 +20,13 @@ import (
 // LocationTypeDelete is the builder for deleting a LocationType entity.
 type LocationTypeDelete struct {
 	config
-	hooks      []Hook
-	mutation   *LocationTypeMutation
-	predicates []predicate.LocationType
+	hooks    []Hook
+	mutation *LocationTypeMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ltd *LocationTypeDelete) Where(ps ...predicate.LocationType) *LocationTypeDelete {
-	ltd.predicates = append(ltd.predicates, ps...)
+	ltd.mutation.predicates = append(ltd.mutation.predicates, ps...)
 	return ltd
 }
 
@@ -79,7 +78,7 @@ func (ltd *LocationTypeDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ltd.predicates; len(ps) > 0 {
+	if ps := ltd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

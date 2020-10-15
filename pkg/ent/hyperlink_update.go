@@ -23,14 +23,13 @@ import (
 // HyperlinkUpdate is the builder for updating Hyperlink entities.
 type HyperlinkUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *HyperlinkMutation
-	predicates []predicate.Hyperlink
+	hooks    []Hook
+	mutation *HyperlinkMutation
 }
 
 // Where adds a new predicate for the builder.
 func (hu *HyperlinkUpdate) Where(ps ...predicate.Hyperlink) *HyperlinkUpdate {
-	hu.predicates = append(hu.predicates, ps...)
+	hu.mutation.predicates = append(hu.mutation.predicates, ps...)
 	return hu
 }
 
@@ -231,7 +230,7 @@ func (hu *HyperlinkUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := hu.predicates; len(ps) > 0 {
+	if ps := hu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

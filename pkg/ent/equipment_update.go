@@ -31,14 +31,13 @@ import (
 // EquipmentUpdate is the builder for updating Equipment entities.
 type EquipmentUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *EquipmentMutation
-	predicates []predicate.Equipment
+	hooks    []Hook
+	mutation *EquipmentMutation
 }
 
 // Where adds a new predicate for the builder.
 func (eu *EquipmentUpdate) Where(ps ...predicate.Equipment) *EquipmentUpdate {
-	eu.predicates = append(eu.predicates, ps...)
+	eu.mutation.predicates = append(eu.mutation.predicates, ps...)
 	return eu
 }
 
@@ -521,7 +520,7 @@ func (eu *EquipmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := eu.predicates; len(ps) > 0 {
+	if ps := eu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

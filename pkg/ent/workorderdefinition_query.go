@@ -164,8 +164,8 @@ func (wodq *WorkOrderDefinitionQuery) FirstID(ctx context.Context) (id int, err 
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (wodq *WorkOrderDefinitionQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (wodq *WorkOrderDefinitionQuery) FirstIDX(ctx context.Context) int {
 	id, err := wodq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

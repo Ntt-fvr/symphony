@@ -188,8 +188,8 @@ func (fiq *FlowInstanceQuery) FirstID(ctx context.Context) (id int, err error) {
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (fiq *FlowInstanceQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (fiq *FlowInstanceQuery) FirstIDX(ctx context.Context) int {
 	id, err := fiq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

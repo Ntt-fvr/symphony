@@ -20,14 +20,13 @@ import (
 // UsersGroupDelete is the builder for deleting a UsersGroup entity.
 type UsersGroupDelete struct {
 	config
-	hooks      []Hook
-	mutation   *UsersGroupMutation
-	predicates []predicate.UsersGroup
+	hooks    []Hook
+	mutation *UsersGroupMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ugd *UsersGroupDelete) Where(ps ...predicate.UsersGroup) *UsersGroupDelete {
-	ugd.predicates = append(ugd.predicates, ps...)
+	ugd.mutation.predicates = append(ugd.mutation.predicates, ps...)
 	return ugd
 }
 
@@ -79,7 +78,7 @@ func (ugd *UsersGroupDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ugd.predicates; len(ps) > 0 {
+	if ps := ugd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -116,8 +116,8 @@ func (ppq *PermissionsPolicyQuery) FirstID(ctx context.Context) (id int, err err
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (ppq *PermissionsPolicyQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (ppq *PermissionsPolicyQuery) FirstIDX(ctx context.Context) int {
 	id, err := ppq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

@@ -23,14 +23,13 @@ import (
 // LocationTypeUpdate is the builder for updating LocationType entities.
 type LocationTypeUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *LocationTypeMutation
-	predicates []predicate.LocationType
+	hooks    []Hook
+	mutation *LocationTypeMutation
 }
 
 // Where adds a new predicate for the builder.
 func (ltu *LocationTypeUpdate) Where(ps ...predicate.LocationType) *LocationTypeUpdate {
-	ltu.predicates = append(ltu.predicates, ps...)
+	ltu.mutation.predicates = append(ltu.mutation.predicates, ps...)
 	return ltu
 }
 
@@ -306,7 +305,7 @@ func (ltu *LocationTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := ltu.predicates; len(ps) > 0 {
+	if ps := ltu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

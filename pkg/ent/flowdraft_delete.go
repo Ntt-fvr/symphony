@@ -20,14 +20,13 @@ import (
 // FlowDraftDelete is the builder for deleting a FlowDraft entity.
 type FlowDraftDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FlowDraftMutation
-	predicates []predicate.FlowDraft
+	hooks    []Hook
+	mutation *FlowDraftMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fdd *FlowDraftDelete) Where(ps ...predicate.FlowDraft) *FlowDraftDelete {
-	fdd.predicates = append(fdd.predicates, ps...)
+	fdd.mutation.predicates = append(fdd.mutation.predicates, ps...)
 	return fdd
 }
 
@@ -79,7 +78,7 @@ func (fdd *FlowDraftDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := fdd.predicates; len(ps) > 0 {
+	if ps := fdd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

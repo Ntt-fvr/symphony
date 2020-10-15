@@ -20,14 +20,13 @@ import (
 // ProjectTypeDelete is the builder for deleting a ProjectType entity.
 type ProjectTypeDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ProjectTypeMutation
-	predicates []predicate.ProjectType
+	hooks    []Hook
+	mutation *ProjectTypeMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ptd *ProjectTypeDelete) Where(ps ...predicate.ProjectType) *ProjectTypeDelete {
-	ptd.predicates = append(ptd.predicates, ps...)
+	ptd.mutation.predicates = append(ptd.mutation.predicates, ps...)
 	return ptd
 }
 
@@ -79,7 +78,7 @@ func (ptd *ProjectTypeDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ptd.predicates; len(ps) > 0 {
+	if ps := ptd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

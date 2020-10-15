@@ -30,14 +30,13 @@ import (
 // PropertyUpdate is the builder for updating Property entities.
 type PropertyUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *PropertyMutation
-	predicates []predicate.Property
+	hooks    []Hook
+	mutation *PropertyMutation
 }
 
 // Where adds a new predicate for the builder.
 func (pu *PropertyUpdate) Where(ps ...predicate.Property) *PropertyUpdate {
-	pu.predicates = append(pu.predicates, ps...)
+	pu.mutation.predicates = append(pu.mutation.predicates, ps...)
 	return pu
 }
 
@@ -650,7 +649,7 @@ func (pu *PropertyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := pu.predicates; len(ps) > 0 {
+	if ps := pu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

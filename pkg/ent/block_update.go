@@ -25,14 +25,13 @@ import (
 // BlockUpdate is the builder for updating Block entities.
 type BlockUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *BlockMutation
-	predicates []predicate.Block
+	hooks    []Hook
+	mutation *BlockMutation
 }
 
 // Where adds a new predicate for the builder.
 func (bu *BlockUpdate) Where(ps ...predicate.Block) *BlockUpdate {
-	bu.predicates = append(bu.predicates, ps...)
+	bu.mutation.predicates = append(bu.mutation.predicates, ps...)
 	return bu
 }
 
@@ -500,7 +499,7 @@ func (bu *BlockUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := bu.predicates; len(ps) > 0 {
+	if ps := bu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -20,14 +20,13 @@ import (
 // ServiceEndpointDelete is the builder for deleting a ServiceEndpoint entity.
 type ServiceEndpointDelete struct {
 	config
-	hooks      []Hook
-	mutation   *ServiceEndpointMutation
-	predicates []predicate.ServiceEndpoint
+	hooks    []Hook
+	mutation *ServiceEndpointMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (sed *ServiceEndpointDelete) Where(ps ...predicate.ServiceEndpoint) *ServiceEndpointDelete {
-	sed.predicates = append(sed.predicates, ps...)
+	sed.mutation.predicates = append(sed.mutation.predicates, ps...)
 	return sed
 }
 
@@ -79,7 +78,7 @@ func (sed *ServiceEndpointDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := sed.predicates; len(ps) > 0 {
+	if ps := sed.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

@@ -135,7 +135,7 @@ func TestProjectWithWorkOrders(t *testing.T) {
 	wo := wos[0]
 	assert.EqualValues(t, wo.Name, woType.Name)
 	assert.EqualValues(t, wo.Index, *woDef.Index)
-	assert.EqualValues(t, wo.QueryLocation().FirstXID(ctx), location.ID)
+	assert.EqualValues(t, wo.QueryLocation().FirstIDX(ctx), location.ID)
 	assert.Len(t, wo.Edges.CheckListCategories, 1)
 
 	clItems, err := wo.QueryCheckListCategories().QueryCheckListItems().All(ctx)
@@ -322,13 +322,13 @@ func TestEditProjectLocation(t *testing.T) {
 	proj, err := mr.CreateProject(ctx, input)
 
 	require.NoError(t, err)
-	require.Equal(t, proj.QueryLocation().FirstXID(ctx), location.ID)
+	require.Equal(t, proj.QueryLocation().FirstIDX(ctx), location.ID)
 
 	location = createLocationWithName(ctx, t, *r, "location2")
 	ei := models.EditProjectInput{ID: proj.ID, Name: "test", Type: typ.ID, Location: &location.ID}
 	proj, err = mr.EditProject(ctx, ei)
 	require.NoError(t, err)
-	require.Equal(t, proj.QueryLocation().FirstXID(ctx), location.ID)
+	require.Equal(t, proj.QueryLocation().FirstIDX(ctx), location.ID)
 
 	ei = models.EditProjectInput{ID: proj.ID, Name: "test", Type: typ.ID}
 	proj, err = mr.EditProject(ctx, ei)

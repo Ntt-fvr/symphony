@@ -20,14 +20,13 @@ import (
 // SurveyTemplateQuestionDelete is the builder for deleting a SurveyTemplateQuestion entity.
 type SurveyTemplateQuestionDelete struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyTemplateQuestionMutation
-	predicates []predicate.SurveyTemplateQuestion
+	hooks    []Hook
+	mutation *SurveyTemplateQuestionMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (stqd *SurveyTemplateQuestionDelete) Where(ps ...predicate.SurveyTemplateQuestion) *SurveyTemplateQuestionDelete {
-	stqd.predicates = append(stqd.predicates, ps...)
+	stqd.mutation.predicates = append(stqd.mutation.predicates, ps...)
 	return stqd
 }
 
@@ -79,7 +78,7 @@ func (stqd *SurveyTemplateQuestionDelete) sqlExec(ctx context.Context) (int, err
 			},
 		},
 	}
-	if ps := stqd.predicates; len(ps) > 0 {
+	if ps := stqd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

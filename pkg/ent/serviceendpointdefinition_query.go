@@ -165,8 +165,8 @@ func (sedq *ServiceEndpointDefinitionQuery) FirstID(ctx context.Context) (id int
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (sedq *ServiceEndpointDefinitionQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (sedq *ServiceEndpointDefinitionQuery) FirstIDX(ctx context.Context) int {
 	id, err := sedq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

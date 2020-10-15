@@ -22,14 +22,13 @@ import (
 // FeatureUpdate is the builder for updating Feature entities.
 type FeatureUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FeatureMutation
-	predicates []predicate.Feature
+	hooks    []Hook
+	mutation *FeatureMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fu *FeatureUpdate) Where(ps ...predicate.Feature) *FeatureUpdate {
-	fu.predicates = append(fu.predicates, ps...)
+	fu.mutation.predicates = append(fu.mutation.predicates, ps...)
 	return fu
 }
 
@@ -229,7 +228,7 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := fu.predicates; len(ps) > 0 {
+	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

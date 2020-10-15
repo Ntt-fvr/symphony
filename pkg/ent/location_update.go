@@ -31,14 +31,13 @@ import (
 // LocationUpdate is the builder for updating Location entities.
 type LocationUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *LocationMutation
-	predicates []predicate.Location
+	hooks    []Hook
+	mutation *LocationMutation
 }
 
 // Where adds a new predicate for the builder.
 func (lu *LocationUpdate) Where(ps ...predicate.Location) *LocationUpdate {
-	lu.predicates = append(lu.predicates, ps...)
+	lu.mutation.predicates = append(lu.mutation.predicates, ps...)
 	return lu
 }
 
@@ -637,7 +636,7 @@ func (lu *LocationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := lu.predicates; len(ps) > 0 {
+	if ps := lu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

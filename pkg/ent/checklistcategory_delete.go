@@ -20,14 +20,13 @@ import (
 // CheckListCategoryDelete is the builder for deleting a CheckListCategory entity.
 type CheckListCategoryDelete struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListCategoryMutation
-	predicates []predicate.CheckListCategory
+	hooks    []Hook
+	mutation *CheckListCategoryMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (clcd *CheckListCategoryDelete) Where(ps ...predicate.CheckListCategory) *CheckListCategoryDelete {
-	clcd.predicates = append(clcd.predicates, ps...)
+	clcd.mutation.predicates = append(clcd.mutation.predicates, ps...)
 	return clcd
 }
 
@@ -79,7 +78,7 @@ func (clcd *CheckListCategoryDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := clcd.predicates; len(ps) > 0 {
+	if ps := clcd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

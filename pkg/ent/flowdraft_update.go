@@ -24,14 +24,13 @@ import (
 // FlowDraftUpdate is the builder for updating FlowDraft entities.
 type FlowDraftUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *FlowDraftMutation
-	predicates []predicate.FlowDraft
+	hooks    []Hook
+	mutation *FlowDraftMutation
 }
 
 // Where adds a new predicate for the builder.
 func (fdu *FlowDraftUpdate) Where(ps ...predicate.FlowDraft) *FlowDraftUpdate {
-	fdu.predicates = append(fdu.predicates, ps...)
+	fdu.mutation.predicates = append(fdu.mutation.predicates, ps...)
 	return fdu
 }
 
@@ -221,7 +220,7 @@ func (fdu *FlowDraftUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := fdu.predicates; len(ps) > 0 {
+	if ps := fdu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

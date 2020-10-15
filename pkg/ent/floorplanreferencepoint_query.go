@@ -90,8 +90,8 @@ func (fprpq *FloorPlanReferencePointQuery) FirstID(ctx context.Context) (id int,
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (fprpq *FloorPlanReferencePointQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (fprpq *FloorPlanReferencePointQuery) FirstIDX(ctx context.Context) int {
 	id, err := fprpq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

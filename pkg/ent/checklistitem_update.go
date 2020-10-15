@@ -26,14 +26,13 @@ import (
 // CheckListItemUpdate is the builder for updating CheckListItem entities.
 type CheckListItemUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListItemMutation
-	predicates []predicate.CheckListItem
+	hooks    []Hook
+	mutation *CheckListItemMutation
 }
 
 // Where adds a new predicate for the builder.
 func (cliu *CheckListItemUpdate) Where(ps ...predicate.CheckListItem) *CheckListItemUpdate {
-	cliu.predicates = append(cliu.predicates, ps...)
+	cliu.mutation.predicates = append(cliu.mutation.predicates, ps...)
 	return cliu
 }
 
@@ -457,7 +456,7 @@ func (cliu *CheckListItemUpdate) sqlSave(ctx context.Context) (n int, err error)
 			},
 		},
 	}
-	if ps := cliu.predicates; len(ps) > 0 {
+	if ps := cliu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

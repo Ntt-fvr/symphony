@@ -20,14 +20,13 @@ import (
 // WorkOrderTypeDelete is the builder for deleting a WorkOrderType entity.
 type WorkOrderTypeDelete struct {
 	config
-	hooks      []Hook
-	mutation   *WorkOrderTypeMutation
-	predicates []predicate.WorkOrderType
+	hooks    []Hook
+	mutation *WorkOrderTypeMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (wotd *WorkOrderTypeDelete) Where(ps ...predicate.WorkOrderType) *WorkOrderTypeDelete {
-	wotd.predicates = append(wotd.predicates, ps...)
+	wotd.mutation.predicates = append(wotd.mutation.predicates, ps...)
 	return wotd
 }
 
@@ -79,7 +78,7 @@ func (wotd *WorkOrderTypeDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := wotd.predicates; len(ps) > 0 {
+	if ps := wotd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

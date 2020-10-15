@@ -20,14 +20,13 @@ import (
 // FlowExecutionTemplateDelete is the builder for deleting a FlowExecutionTemplate entity.
 type FlowExecutionTemplateDelete struct {
 	config
-	hooks      []Hook
-	mutation   *FlowExecutionTemplateMutation
-	predicates []predicate.FlowExecutionTemplate
+	hooks    []Hook
+	mutation *FlowExecutionTemplateMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (fetd *FlowExecutionTemplateDelete) Where(ps ...predicate.FlowExecutionTemplate) *FlowExecutionTemplateDelete {
-	fetd.predicates = append(fetd.predicates, ps...)
+	fetd.mutation.predicates = append(fetd.mutation.predicates, ps...)
 	return fetd
 }
 
@@ -79,7 +78,7 @@ func (fetd *FlowExecutionTemplateDelete) sqlExec(ctx context.Context) (int, erro
 			},
 		},
 	}
-	if ps := fetd.predicates; len(ps) > 0 {
+	if ps := fetd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

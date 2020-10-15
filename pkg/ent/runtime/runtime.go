@@ -67,6 +67,7 @@ import (
 	"github.com/facebookincubator/symphony/pkg/ent/workordertype"
 
 	"github.com/facebook/ent"
+	"github.com/facebook/ent/privacy"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -74,7 +75,7 @@ import (
 // to their package variables.
 func init() {
 	activityMixin := schema.Activity{}.Mixin()
-	activity.Policy = newPolicy(schema.Activity{})
+	activity.Policy = privacy.NewPolicies(schema.Activity{})
 	activity.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := activity.Policy.EvalMutation(ctx, m); err != nil {
@@ -101,7 +102,7 @@ func init() {
 	// activity.DefaultIsCreate holds the default value on creation for the is_create field.
 	activity.DefaultIsCreate = activityDescIsCreate.Default.(bool)
 	blockMixin := schema.Block{}.Mixin()
-	block.Policy = newPolicy(schema.Block{})
+	block.Policy = privacy.NewPolicies(schema.Block{})
 	block.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := block.Policy.EvalMutation(ctx, m); err != nil {
@@ -131,7 +132,7 @@ func init() {
 	// block.CidValidator is a validator for the "cid" field. It is called by the builders before save.
 	block.CidValidator = blockDescCid.Validators[0].(func(string) error)
 	blockinstanceMixin := schema.BlockInstance{}.Mixin()
-	blockinstance.Policy = newPolicy(schema.BlockInstance{})
+	blockinstance.Policy = privacy.NewPolicies(schema.BlockInstance{})
 	blockinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := blockinstance.Policy.EvalMutation(ctx, m); err != nil {
@@ -154,7 +155,7 @@ func init() {
 	// blockinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	blockinstance.UpdateDefaultUpdateTime = blockinstanceDescUpdateTime.UpdateDefault.(func() time.Time)
 	checklistcategoryMixin := schema.CheckListCategory{}.Mixin()
-	checklistcategory.Policy = newPolicy(schema.CheckListCategory{})
+	checklistcategory.Policy = privacy.NewPolicies(schema.CheckListCategory{})
 	checklistcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := checklistcategory.Policy.EvalMutation(ctx, m); err != nil {
@@ -177,7 +178,7 @@ func init() {
 	// checklistcategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	checklistcategory.UpdateDefaultUpdateTime = checklistcategoryDescUpdateTime.UpdateDefault.(func() time.Time)
 	checklistcategorydefinitionMixin := schema.CheckListCategoryDefinition{}.Mixin()
-	checklistcategorydefinition.Policy = newPolicy(schema.CheckListCategoryDefinition{})
+	checklistcategorydefinition.Policy = privacy.NewPolicies(schema.CheckListCategoryDefinition{})
 	checklistcategorydefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := checklistcategorydefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -203,7 +204,7 @@ func init() {
 	checklistcategorydefinitionDescTitle := checklistcategorydefinitionFields[0].Descriptor()
 	// checklistcategorydefinition.TitleValidator is a validator for the "title" field. It is called by the builders before save.
 	checklistcategorydefinition.TitleValidator = checklistcategorydefinitionDescTitle.Validators[0].(func(string) error)
-	checklistitem.Policy = newPolicy(schema.CheckListItem{})
+	checklistitem.Policy = privacy.NewPolicies(schema.CheckListItem{})
 	checklistitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := checklistitem.Policy.EvalMutation(ctx, m); err != nil {
@@ -213,7 +214,7 @@ func init() {
 		})
 	}
 	checklistitemdefinitionMixin := schema.CheckListItemDefinition{}.Mixin()
-	checklistitemdefinition.Policy = newPolicy(schema.CheckListItemDefinition{})
+	checklistitemdefinition.Policy = privacy.NewPolicies(schema.CheckListItemDefinition{})
 	checklistitemdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := checklistitemdefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -236,7 +237,7 @@ func init() {
 	// checklistitemdefinition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	checklistitemdefinition.UpdateDefaultUpdateTime = checklistitemdefinitionDescUpdateTime.UpdateDefault.(func() time.Time)
 	commentMixin := schema.Comment{}.Mixin()
-	comment.Policy = newPolicy(schema.Comment{})
+	comment.Policy = privacy.NewPolicies(schema.Comment{})
 	comment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := comment.Policy.EvalMutation(ctx, m); err != nil {
@@ -259,7 +260,7 @@ func init() {
 	// comment.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	comment.UpdateDefaultUpdateTime = commentDescUpdateTime.UpdateDefault.(func() time.Time)
 	customerMixin := schema.Customer{}.Mixin()
-	customer.Policy = newPolicy(schema.Customer{})
+	customer.Policy = privacy.NewPolicies(schema.Customer{})
 	customer.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := customer.Policy.EvalMutation(ctx, m); err != nil {
@@ -290,7 +291,7 @@ func init() {
 	// customer.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	customer.ExternalIDValidator = customerDescExternalID.Validators[0].(func(string) error)
 	equipmentMixin := schema.Equipment{}.Mixin()
-	equipment.Policy = newPolicy(schema.Equipment{})
+	equipment.Policy = privacy.NewPolicies(schema.Equipment{})
 	equipment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipment.Policy.EvalMutation(ctx, m); err != nil {
@@ -321,7 +322,7 @@ func init() {
 	// equipment.DeviceIDValidator is a validator for the "device_id" field. It is called by the builders before save.
 	equipment.DeviceIDValidator = equipmentDescDeviceID.Validators[0].(func(string) error)
 	equipmentcategoryMixin := schema.EquipmentCategory{}.Mixin()
-	equipmentcategory.Policy = newPolicy(schema.EquipmentCategory{})
+	equipmentcategory.Policy = privacy.NewPolicies(schema.EquipmentCategory{})
 	equipmentcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentcategory.Policy.EvalMutation(ctx, m); err != nil {
@@ -344,7 +345,7 @@ func init() {
 	// equipmentcategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentcategory.UpdateDefaultUpdateTime = equipmentcategoryDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentportMixin := schema.EquipmentPort{}.Mixin()
-	equipmentport.Policy = newPolicy(schema.EquipmentPort{})
+	equipmentport.Policy = privacy.NewPolicies(schema.EquipmentPort{})
 	equipmentport.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentport.Policy.EvalMutation(ctx, m); err != nil {
@@ -367,7 +368,7 @@ func init() {
 	// equipmentport.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentport.UpdateDefaultUpdateTime = equipmentportDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentportdefinitionMixin := schema.EquipmentPortDefinition{}.Mixin()
-	equipmentportdefinition.Policy = newPolicy(schema.EquipmentPortDefinition{})
+	equipmentportdefinition.Policy = privacy.NewPolicies(schema.EquipmentPortDefinition{})
 	equipmentportdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentportdefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -390,7 +391,7 @@ func init() {
 	// equipmentportdefinition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentportdefinition.UpdateDefaultUpdateTime = equipmentportdefinitionDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentporttypeMixin := schema.EquipmentPortType{}.Mixin()
-	equipmentporttype.Policy = newPolicy(schema.EquipmentPortType{})
+	equipmentporttype.Policy = privacy.NewPolicies(schema.EquipmentPortType{})
 	equipmentporttype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentporttype.Policy.EvalMutation(ctx, m); err != nil {
@@ -413,7 +414,7 @@ func init() {
 	// equipmentporttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentporttype.UpdateDefaultUpdateTime = equipmentporttypeDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentpositionMixin := schema.EquipmentPosition{}.Mixin()
-	equipmentposition.Policy = newPolicy(schema.EquipmentPosition{})
+	equipmentposition.Policy = privacy.NewPolicies(schema.EquipmentPosition{})
 	equipmentposition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentposition.Policy.EvalMutation(ctx, m); err != nil {
@@ -436,7 +437,7 @@ func init() {
 	// equipmentposition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentposition.UpdateDefaultUpdateTime = equipmentpositionDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmentpositiondefinitionMixin := schema.EquipmentPositionDefinition{}.Mixin()
-	equipmentpositiondefinition.Policy = newPolicy(schema.EquipmentPositionDefinition{})
+	equipmentpositiondefinition.Policy = privacy.NewPolicies(schema.EquipmentPositionDefinition{})
 	equipmentpositiondefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmentpositiondefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -459,7 +460,7 @@ func init() {
 	// equipmentpositiondefinition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmentpositiondefinition.UpdateDefaultUpdateTime = equipmentpositiondefinitionDescUpdateTime.UpdateDefault.(func() time.Time)
 	equipmenttypeMixin := schema.EquipmentType{}.Mixin()
-	equipmenttype.Policy = newPolicy(schema.EquipmentType{})
+	equipmenttype.Policy = privacy.NewPolicies(schema.EquipmentType{})
 	equipmenttype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := equipmenttype.Policy.EvalMutation(ctx, m); err != nil {
@@ -481,7 +482,7 @@ func init() {
 	equipmenttype.DefaultUpdateTime = equipmenttypeDescUpdateTime.Default.(func() time.Time)
 	// equipmenttype.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	equipmenttype.UpdateDefaultUpdateTime = equipmenttypeDescUpdateTime.UpdateDefault.(func() time.Time)
-	exporttask.Policy = newPolicy(schema.ExportTask{})
+	exporttask.Policy = privacy.NewPolicies(schema.ExportTask{})
 	exporttask.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := exporttask.Policy.EvalMutation(ctx, m); err != nil {
@@ -503,7 +504,7 @@ func init() {
 	// exporttask.DefaultFilters holds the default value on creation for the filters field.
 	exporttask.DefaultFilters = exporttaskDescFilters.Default.(string)
 	featureMixin := schema.Feature{}.Mixin()
-	feature.Policy = newPolicy(schema.Feature{})
+	feature.Policy = privacy.NewPolicies(schema.Feature{})
 	feature.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := feature.Policy.EvalMutation(ctx, m); err != nil {
@@ -538,7 +539,7 @@ func init() {
 	// feature.DefaultEnabled holds the default value on creation for the enabled field.
 	feature.DefaultEnabled = featureDescEnabled.Default.(bool)
 	fileMixin := schema.File{}.Mixin()
-	file.Policy = newPolicy(schema.File{})
+	file.Policy = privacy.NewPolicies(schema.File{})
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := file.Policy.EvalMutation(ctx, m); err != nil {
@@ -565,7 +566,7 @@ func init() {
 	// file.SizeValidator is a validator for the "size" field. It is called by the builders before save.
 	file.SizeValidator = fileDescSize.Validators[0].(func(int) error)
 	floorplanMixin := schema.FloorPlan{}.Mixin()
-	floorplan.Policy = newPolicy(schema.FloorPlan{})
+	floorplan.Policy = privacy.NewPolicies(schema.FloorPlan{})
 	floorplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := floorplan.Policy.EvalMutation(ctx, m); err != nil {
@@ -588,7 +589,7 @@ func init() {
 	// floorplan.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	floorplan.UpdateDefaultUpdateTime = floorplanDescUpdateTime.UpdateDefault.(func() time.Time)
 	floorplanreferencepointMixin := schema.FloorPlanReferencePoint{}.Mixin()
-	floorplanreferencepoint.Policy = newPolicy(schema.FloorPlanReferencePoint{})
+	floorplanreferencepoint.Policy = privacy.NewPolicies(schema.FloorPlanReferencePoint{})
 	floorplanreferencepoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := floorplanreferencepoint.Policy.EvalMutation(ctx, m); err != nil {
@@ -611,7 +612,7 @@ func init() {
 	// floorplanreferencepoint.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	floorplanreferencepoint.UpdateDefaultUpdateTime = floorplanreferencepointDescUpdateTime.UpdateDefault.(func() time.Time)
 	floorplanscaleMixin := schema.FloorPlanScale{}.Mixin()
-	floorplanscale.Policy = newPolicy(schema.FloorPlanScale{})
+	floorplanscale.Policy = privacy.NewPolicies(schema.FloorPlanScale{})
 	floorplanscale.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := floorplanscale.Policy.EvalMutation(ctx, m); err != nil {
@@ -634,7 +635,7 @@ func init() {
 	// floorplanscale.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	floorplanscale.UpdateDefaultUpdateTime = floorplanscaleDescUpdateTime.UpdateDefault.(func() time.Time)
 	flowMixin := schema.Flow{}.Mixin()
-	flow.Policy = newPolicy(schema.Flow{})
+	flow.Policy = privacy.NewPolicies(schema.Flow{})
 	flow.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := flow.Policy.EvalMutation(ctx, m); err != nil {
@@ -665,7 +666,7 @@ func init() {
 	// flow.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flow.NameValidator = flowDescName.Validators[0].(func(string) error)
 	flowdraftMixin := schema.FlowDraft{}.Mixin()
-	flowdraft.Policy = newPolicy(schema.FlowDraft{})
+	flowdraft.Policy = privacy.NewPolicies(schema.FlowDraft{})
 	flowdraft.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := flowdraft.Policy.EvalMutation(ctx, m); err != nil {
@@ -696,7 +697,7 @@ func init() {
 	// flowdraft.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowdraft.NameValidator = flowdraftDescName.Validators[0].(func(string) error)
 	flowexecutiontemplateMixin := schema.FlowExecutionTemplate{}.Mixin()
-	flowexecutiontemplate.Policy = newPolicy(schema.FlowExecutionTemplate{})
+	flowexecutiontemplate.Policy = privacy.NewPolicies(schema.FlowExecutionTemplate{})
 	flowexecutiontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := flowexecutiontemplate.Policy.EvalMutation(ctx, m); err != nil {
@@ -727,7 +728,7 @@ func init() {
 	// flowexecutiontemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	flowexecutiontemplate.NameValidator = flowexecutiontemplateDescName.Validators[0].(func(string) error)
 	flowinstanceMixin := schema.FlowInstance{}.Mixin()
-	flowinstance.Policy = newPolicy(schema.FlowInstance{})
+	flowinstance.Policy = privacy.NewPolicies(schema.FlowInstance{})
 	flowinstance.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := flowinstance.Policy.EvalMutation(ctx, m); err != nil {
@@ -755,7 +756,7 @@ func init() {
 	// flowinstance.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	flowinstance.UpdateDefaultUpdateTime = flowinstanceDescUpdateTime.UpdateDefault.(func() time.Time)
 	hyperlinkMixin := schema.Hyperlink{}.Mixin()
-	hyperlink.Policy = newPolicy(schema.Hyperlink{})
+	hyperlink.Policy = privacy.NewPolicies(schema.Hyperlink{})
 	hyperlink.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := hyperlink.Policy.EvalMutation(ctx, m); err != nil {
@@ -778,7 +779,7 @@ func init() {
 	// hyperlink.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	hyperlink.UpdateDefaultUpdateTime = hyperlinkDescUpdateTime.UpdateDefault.(func() time.Time)
 	linkMixin := schema.Link{}.Mixin()
-	link.Policy = newPolicy(schema.Link{})
+	link.Policy = privacy.NewPolicies(schema.Link{})
 	link.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := link.Policy.EvalMutation(ctx, m); err != nil {
@@ -801,7 +802,7 @@ func init() {
 	// link.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	link.UpdateDefaultUpdateTime = linkDescUpdateTime.UpdateDefault.(func() time.Time)
 	locationMixin := schema.Location{}.Mixin()
-	location.Policy = newPolicy(schema.Location{})
+	location.Policy = privacy.NewPolicies(schema.Location{})
 	location.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := location.Policy.EvalMutation(ctx, m); err != nil {
@@ -844,7 +845,7 @@ func init() {
 	// location.DefaultSiteSurveyNeeded holds the default value on creation for the site_survey_needed field.
 	location.DefaultSiteSurveyNeeded = locationDescSiteSurveyNeeded.Default.(bool)
 	locationtypeMixin := schema.LocationType{}.Mixin()
-	locationtype.Policy = newPolicy(schema.LocationType{})
+	locationtype.Policy = privacy.NewPolicies(schema.LocationType{})
 	locationtype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := locationtype.Policy.EvalMutation(ctx, m); err != nil {
@@ -879,7 +880,7 @@ func init() {
 	// locationtype.DefaultIndex holds the default value on creation for the index field.
 	locationtype.DefaultIndex = locationtypeDescIndex.Default.(int)
 	permissionspolicyMixin := schema.PermissionsPolicy{}.Mixin()
-	permissionspolicy.Policy = newPolicy(schema.PermissionsPolicy{})
+	permissionspolicy.Policy = privacy.NewPolicies(schema.PermissionsPolicy{})
 	permissionspolicy.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := permissionspolicy.Policy.EvalMutation(ctx, m); err != nil {
@@ -910,7 +911,7 @@ func init() {
 	// permissionspolicy.DefaultIsGlobal holds the default value on creation for the is_global field.
 	permissionspolicy.DefaultIsGlobal = permissionspolicyDescIsGlobal.Default.(bool)
 	projectMixin := schema.Project{}.Mixin()
-	project.Policy = newPolicy(schema.Project{})
+	project.Policy = privacy.NewPolicies(schema.Project{})
 	project.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := project.Policy.EvalMutation(ctx, m); err != nil {
@@ -941,7 +942,7 @@ func init() {
 	// project.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	project.NameValidator = projectDescName.Validators[0].(func(string) error)
 	projecttemplateMixin := schema.ProjectTemplate{}.Mixin()
-	projecttemplate.Policy = newPolicy(schema.ProjectTemplate{})
+	projecttemplate.Policy = privacy.NewPolicies(schema.ProjectTemplate{})
 	projecttemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := projecttemplate.Policy.EvalMutation(ctx, m); err != nil {
@@ -969,7 +970,7 @@ func init() {
 	// projecttemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	projecttemplate.NameValidator = projecttemplateDescName.Validators[0].(func(string) error)
 	projecttypeMixin := schema.ProjectType{}.Mixin()
-	projecttype.Policy = newPolicy(schema.ProjectType{})
+	projecttype.Policy = privacy.NewPolicies(schema.ProjectType{})
 	projecttype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := projecttype.Policy.EvalMutation(ctx, m); err != nil {
@@ -997,7 +998,7 @@ func init() {
 	// projecttype.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	projecttype.NameValidator = projecttypeDescName.Validators[0].(func(string) error)
 	propertyMixin := schema.Property{}.Mixin()
-	property.Policy = newPolicy(schema.Property{})
+	property.Policy = privacy.NewPolicies(schema.Property{})
 	property.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := property.Policy.EvalMutation(ctx, m); err != nil {
@@ -1020,7 +1021,7 @@ func init() {
 	// property.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	property.UpdateDefaultUpdateTime = propertyDescUpdateTime.UpdateDefault.(func() time.Time)
 	propertytypeMixin := schema.PropertyType{}.Mixin()
-	propertytype.Policy = newPolicy(schema.PropertyType{})
+	propertytype.Policy = privacy.NewPolicies(schema.PropertyType{})
 	propertytype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := propertytype.Policy.EvalMutation(ctx, m); err != nil {
@@ -1059,7 +1060,7 @@ func init() {
 	// propertytype.DefaultDeleted holds the default value on creation for the deleted field.
 	propertytype.DefaultDeleted = propertytypeDescDeleted.Default.(bool)
 	reportfilterMixin := schema.ReportFilter{}.Mixin()
-	reportfilter.Policy = newPolicy(schema.ReportFilter{})
+	reportfilter.Policy = privacy.NewPolicies(schema.ReportFilter{})
 	reportfilter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := reportfilter.Policy.EvalMutation(ctx, m); err != nil {
@@ -1090,7 +1091,7 @@ func init() {
 	// reportfilter.DefaultFilters holds the default value on creation for the filters field.
 	reportfilter.DefaultFilters = reportfilterDescFilters.Default.(string)
 	serviceMixin := schema.Service{}.Mixin()
-	service.Policy = newPolicy(schema.Service{})
+	service.Policy = privacy.NewPolicies(schema.Service{})
 	service.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := service.Policy.EvalMutation(ctx, m); err != nil {
@@ -1121,7 +1122,7 @@ func init() {
 	// service.ExternalIDValidator is a validator for the "external_id" field. It is called by the builders before save.
 	service.ExternalIDValidator = serviceDescExternalID.Validators[0].(func(string) error)
 	serviceendpointMixin := schema.ServiceEndpoint{}.Mixin()
-	serviceendpoint.Policy = newPolicy(schema.ServiceEndpoint{})
+	serviceendpoint.Policy = privacy.NewPolicies(schema.ServiceEndpoint{})
 	serviceendpoint.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := serviceendpoint.Policy.EvalMutation(ctx, m); err != nil {
@@ -1144,7 +1145,7 @@ func init() {
 	// serviceendpoint.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	serviceendpoint.UpdateDefaultUpdateTime = serviceendpointDescUpdateTime.UpdateDefault.(func() time.Time)
 	serviceendpointdefinitionMixin := schema.ServiceEndpointDefinition{}.Mixin()
-	serviceendpointdefinition.Policy = newPolicy(schema.ServiceEndpointDefinition{})
+	serviceendpointdefinition.Policy = privacy.NewPolicies(schema.ServiceEndpointDefinition{})
 	serviceendpointdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := serviceendpointdefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -1171,7 +1172,7 @@ func init() {
 	// serviceendpointdefinition.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	serviceendpointdefinition.NameValidator = serviceendpointdefinitionDescName.Validators[0].(func(string) error)
 	servicetypeMixin := schema.ServiceType{}.Mixin()
-	servicetype.Policy = newPolicy(schema.ServiceType{})
+	servicetype.Policy = privacy.NewPolicies(schema.ServiceType{})
 	servicetype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := servicetype.Policy.EvalMutation(ctx, m); err != nil {
@@ -1202,7 +1203,7 @@ func init() {
 	// servicetype.DefaultIsDeleted holds the default value on creation for the is_deleted field.
 	servicetype.DefaultIsDeleted = servicetypeDescIsDeleted.Default.(bool)
 	surveyMixin := schema.Survey{}.Mixin()
-	survey.Policy = newPolicy(schema.Survey{})
+	survey.Policy = privacy.NewPolicies(schema.Survey{})
 	survey.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := survey.Policy.EvalMutation(ctx, m); err != nil {
@@ -1225,7 +1226,7 @@ func init() {
 	// survey.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	survey.UpdateDefaultUpdateTime = surveyDescUpdateTime.UpdateDefault.(func() time.Time)
 	surveycellscanMixin := schema.SurveyCellScan{}.Mixin()
-	surveycellscan.Policy = newPolicy(schema.SurveyCellScan{})
+	surveycellscan.Policy = privacy.NewPolicies(schema.SurveyCellScan{})
 	surveycellscan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := surveycellscan.Policy.EvalMutation(ctx, m); err != nil {
@@ -1248,7 +1249,7 @@ func init() {
 	// surveycellscan.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	surveycellscan.UpdateDefaultUpdateTime = surveycellscanDescUpdateTime.UpdateDefault.(func() time.Time)
 	surveyquestionMixin := schema.SurveyQuestion{}.Mixin()
-	surveyquestion.Policy = newPolicy(schema.SurveyQuestion{})
+	surveyquestion.Policy = privacy.NewPolicies(schema.SurveyQuestion{})
 	surveyquestion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := surveyquestion.Policy.EvalMutation(ctx, m); err != nil {
@@ -1271,7 +1272,7 @@ func init() {
 	// surveyquestion.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	surveyquestion.UpdateDefaultUpdateTime = surveyquestionDescUpdateTime.UpdateDefault.(func() time.Time)
 	surveytemplatecategoryMixin := schema.SurveyTemplateCategory{}.Mixin()
-	surveytemplatecategory.Policy = newPolicy(schema.SurveyTemplateCategory{})
+	surveytemplatecategory.Policy = privacy.NewPolicies(schema.SurveyTemplateCategory{})
 	surveytemplatecategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := surveytemplatecategory.Policy.EvalMutation(ctx, m); err != nil {
@@ -1294,7 +1295,7 @@ func init() {
 	// surveytemplatecategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	surveytemplatecategory.UpdateDefaultUpdateTime = surveytemplatecategoryDescUpdateTime.UpdateDefault.(func() time.Time)
 	surveytemplatequestionMixin := schema.SurveyTemplateQuestion{}.Mixin()
-	surveytemplatequestion.Policy = newPolicy(schema.SurveyTemplateQuestion{})
+	surveytemplatequestion.Policy = privacy.NewPolicies(schema.SurveyTemplateQuestion{})
 	surveytemplatequestion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := surveytemplatequestion.Policy.EvalMutation(ctx, m); err != nil {
@@ -1317,7 +1318,7 @@ func init() {
 	// surveytemplatequestion.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	surveytemplatequestion.UpdateDefaultUpdateTime = surveytemplatequestionDescUpdateTime.UpdateDefault.(func() time.Time)
 	surveywifiscanMixin := schema.SurveyWiFiScan{}.Mixin()
-	surveywifiscan.Policy = newPolicy(schema.SurveyWiFiScan{})
+	surveywifiscan.Policy = privacy.NewPolicies(schema.SurveyWiFiScan{})
 	surveywifiscan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := surveywifiscan.Policy.EvalMutation(ctx, m); err != nil {
@@ -1340,7 +1341,7 @@ func init() {
 	// surveywifiscan.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	surveywifiscan.UpdateDefaultUpdateTime = surveywifiscanDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
-	user.Policy = newPolicy(schema.User{})
+	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := user.Policy.EvalMutation(ctx, m); err != nil {
@@ -1384,7 +1385,7 @@ func init() {
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 	usersgroupMixin := schema.UsersGroup{}.Mixin()
-	usersgroup.Policy = newPolicy(schema.UsersGroup{})
+	usersgroup.Policy = privacy.NewPolicies(schema.UsersGroup{})
 	usersgroup.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := usersgroup.Policy.EvalMutation(ctx, m); err != nil {
@@ -1411,7 +1412,7 @@ func init() {
 	// usersgroup.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	usersgroup.NameValidator = usersgroupDescName.Validators[0].(func(string) error)
 	workorderMixin := schema.WorkOrder{}.Mixin()
-	workorder.Policy = newPolicy(schema.WorkOrder{})
+	workorder.Policy = privacy.NewPolicies(schema.WorkOrder{})
 	workorder.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := workorder.Policy.EvalMutation(ctx, m); err != nil {
@@ -1448,7 +1449,7 @@ func init() {
 	// workorder.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	workorder.NameValidator = workorderDescName.Validators[0].(func(string) error)
 	workorderdefinitionMixin := schema.WorkOrderDefinition{}.Mixin()
-	workorderdefinition.Policy = newPolicy(schema.WorkOrderDefinition{})
+	workorderdefinition.Policy = privacy.NewPolicies(schema.WorkOrderDefinition{})
 	workorderdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := workorderdefinition.Policy.EvalMutation(ctx, m); err != nil {
@@ -1471,7 +1472,7 @@ func init() {
 	// workorderdefinition.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	workorderdefinition.UpdateDefaultUpdateTime = workorderdefinitionDescUpdateTime.UpdateDefault.(func() time.Time)
 	workordertemplateMixin := schema.WorkOrderTemplate{}.Mixin()
-	workordertemplate.Policy = newPolicy(schema.WorkOrderTemplate{})
+	workordertemplate.Policy = privacy.NewPolicies(schema.WorkOrderTemplate{})
 	workordertemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := workordertemplate.Policy.EvalMutation(ctx, m); err != nil {
@@ -1499,7 +1500,7 @@ func init() {
 	// workordertemplate.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
 	workordertemplate.DefaultAssigneeCanCompleteWorkOrder = workordertemplateDescAssigneeCanCompleteWorkOrder.Default.(bool)
 	workordertypeMixin := schema.WorkOrderType{}.Mixin()
-	workordertype.Policy = newPolicy(schema.WorkOrderType{})
+	workordertype.Policy = privacy.NewPolicies(schema.WorkOrderType{})
 	workordertype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := workordertype.Policy.EvalMutation(ctx, m); err != nil {
@@ -1526,37 +1527,6 @@ func init() {
 	workordertypeDescAssigneeCanCompleteWorkOrder := workordertypeMixinFields1[2].Descriptor()
 	// workordertype.DefaultAssigneeCanCompleteWorkOrder holds the default value on creation for the assignee_can_complete_work_order field.
 	workordertype.DefaultAssigneeCanCompleteWorkOrder = workordertypeDescAssigneeCanCompleteWorkOrder.Default.(bool)
-}
-
-type policies []ent.Policy
-
-// newPolicy creates a policy from list of mixin and ent.Schema.
-func newPolicy(ps ...interface{ Policy() ent.Policy }) ent.Policy {
-	pocs := make(policies, 0, len(ps))
-	for _, p := range ps {
-		if policy := p.Policy(); policy != nil {
-			pocs = append(pocs, policy)
-		}
-	}
-	return pocs
-}
-
-func (p policies) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	for i := range p {
-		if err := p[i].EvalMutation(ctx, m); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (p policies) EvalQuery(ctx context.Context, q ent.Query) error {
-	for i := range p {
-		if err := p[i].EvalQuery(ctx, q); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 const (

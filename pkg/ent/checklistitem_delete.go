@@ -20,14 +20,13 @@ import (
 // CheckListItemDelete is the builder for deleting a CheckListItem entity.
 type CheckListItemDelete struct {
 	config
-	hooks      []Hook
-	mutation   *CheckListItemMutation
-	predicates []predicate.CheckListItem
+	hooks    []Hook
+	mutation *CheckListItemMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (clid *CheckListItemDelete) Where(ps ...predicate.CheckListItem) *CheckListItemDelete {
-	clid.predicates = append(clid.predicates, ps...)
+	clid.mutation.predicates = append(clid.mutation.predicates, ps...)
 	return clid
 }
 
@@ -79,7 +78,7 @@ func (clid *CheckListItemDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := clid.predicates; len(ps) > 0 {
+	if ps := clid.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

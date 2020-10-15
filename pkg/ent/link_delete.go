@@ -20,14 +20,13 @@ import (
 // LinkDelete is the builder for deleting a Link entity.
 type LinkDelete struct {
 	config
-	hooks      []Hook
-	mutation   *LinkMutation
-	predicates []predicate.Link
+	hooks    []Hook
+	mutation *LinkMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (ld *LinkDelete) Where(ps ...predicate.Link) *LinkDelete {
-	ld.predicates = append(ld.predicates, ps...)
+	ld.mutation.predicates = append(ld.mutation.predicates, ps...)
 	return ld
 }
 
@@ -79,7 +78,7 @@ func (ld *LinkDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := ld.predicates; len(ps) > 0 {
+	if ps := ld.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

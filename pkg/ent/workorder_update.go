@@ -35,14 +35,13 @@ import (
 // WorkOrderUpdate is the builder for updating WorkOrder entities.
 type WorkOrderUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *WorkOrderMutation
-	predicates []predicate.WorkOrder
+	hooks    []Hook
+	mutation *WorkOrderMutation
 }
 
 // Where adds a new predicate for the builder.
 func (wou *WorkOrderUpdate) Where(ps ...predicate.WorkOrder) *WorkOrderUpdate {
-	wou.predicates = append(wou.predicates, ps...)
+	wou.mutation.predicates = append(wou.mutation.predicates, ps...)
 	return wou
 }
 
@@ -708,7 +707,7 @@ func (wou *WorkOrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		},
 	}
-	if ps := wou.predicates; len(ps) > 0 {
+	if ps := wou.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

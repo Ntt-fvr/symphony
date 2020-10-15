@@ -20,14 +20,13 @@ import (
 // BlockDelete is the builder for deleting a Block entity.
 type BlockDelete struct {
 	config
-	hooks      []Hook
-	mutation   *BlockMutation
-	predicates []predicate.Block
+	hooks    []Hook
+	mutation *BlockMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (bd *BlockDelete) Where(ps ...predicate.Block) *BlockDelete {
-	bd.predicates = append(bd.predicates, ps...)
+	bd.mutation.predicates = append(bd.mutation.predicates, ps...)
 	return bd
 }
 
@@ -79,7 +78,7 @@ func (bd *BlockDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := bd.predicates; len(ps) > 0 {
+	if ps := bd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

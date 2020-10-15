@@ -141,8 +141,8 @@ func (clcq *CheckListCategoryQuery) FirstID(ctx context.Context) (id int, err er
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (clcq *CheckListCategoryQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (clcq *CheckListCategoryQuery) FirstIDX(ctx context.Context) int {
 	id, err := clcq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

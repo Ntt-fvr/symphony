@@ -164,8 +164,8 @@ func (ptq *ProjectTypeQuery) FirstID(ctx context.Context) (id int, err error) {
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (ptq *ProjectTypeQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (ptq *ProjectTypeQuery) FirstIDX(ctx context.Context) int {
 	id, err := ptq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

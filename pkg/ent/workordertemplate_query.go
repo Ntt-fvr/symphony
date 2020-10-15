@@ -165,8 +165,8 @@ func (wotq *WorkOrderTemplateQuery) FirstID(ctx context.Context) (id int, err er
 	return ids[0], nil
 }
 
-// FirstXID is like FirstID, but panics if an error occurs.
-func (wotq *WorkOrderTemplateQuery) FirstXID(ctx context.Context) int {
+// FirstIDX is like FirstID, but panics if an error occurs.
+func (wotq *WorkOrderTemplateQuery) FirstIDX(ctx context.Context) int {
 	id, err := wotq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)

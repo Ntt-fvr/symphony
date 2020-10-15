@@ -20,14 +20,13 @@ import (
 // HyperlinkDelete is the builder for deleting a Hyperlink entity.
 type HyperlinkDelete struct {
 	config
-	hooks      []Hook
-	mutation   *HyperlinkMutation
-	predicates []predicate.Hyperlink
+	hooks    []Hook
+	mutation *HyperlinkMutation
 }
 
 // Where adds a new predicate to the delete builder.
 func (hd *HyperlinkDelete) Where(ps ...predicate.Hyperlink) *HyperlinkDelete {
-	hd.predicates = append(hd.predicates, ps...)
+	hd.mutation.predicates = append(hd.mutation.predicates, ps...)
 	return hd
 }
 
@@ -79,7 +78,7 @@ func (hd *HyperlinkDelete) sqlExec(ctx context.Context) (int, error) {
 			},
 		},
 	}
-	if ps := hd.predicates; len(ps) > 0 {
+	if ps := hd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)

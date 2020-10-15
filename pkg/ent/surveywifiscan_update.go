@@ -24,14 +24,13 @@ import (
 // SurveyWiFiScanUpdate is the builder for updating SurveyWiFiScan entities.
 type SurveyWiFiScanUpdate struct {
 	config
-	hooks      []Hook
-	mutation   *SurveyWiFiScanMutation
-	predicates []predicate.SurveyWiFiScan
+	hooks    []Hook
+	mutation *SurveyWiFiScanMutation
 }
 
 // Where adds a new predicate for the builder.
 func (swfsu *SurveyWiFiScanUpdate) Where(ps ...predicate.SurveyWiFiScan) *SurveyWiFiScanUpdate {
-	swfsu.predicates = append(swfsu.predicates, ps...)
+	swfsu.mutation.predicates = append(swfsu.mutation.predicates, ps...)
 	return swfsu
 }
 
@@ -459,7 +458,7 @@ func (swfsu *SurveyWiFiScanUpdate) sqlSave(ctx context.Context) (n int, err erro
 			},
 		},
 	}
-	if ps := swfsu.predicates; len(ps) > 0 {
+	if ps := swfsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
