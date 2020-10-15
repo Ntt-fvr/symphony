@@ -431,7 +431,7 @@ func (s *SingleWoTestSuite) TestSingleWorkOrderExportChecklist(t *testing.T) {
 				case "Is Mandatory":
 					require.Equal(t, strconv.FormatBool(item.IsMandatory), value)
 				case "Response":
-					checkItemType(ctx, t, item, value)
+					s.checkItemType(ctx, t, item, value)
 				case "Additional Instructions":
 					if item.HelpText != nil {
 						require.Equal(t, *item.HelpText, value)
@@ -442,7 +442,7 @@ func (s *SingleWoTestSuite) TestSingleWorkOrderExportChecklist(t *testing.T) {
 	}
 }
 
-func checkItemType(ctx context.Context, t *testing.T, item *ent.CheckListItem, value string) {
+func (s *SingleWoTestSuite) checkItemType(ctx context.Context, t *testing.T, item *ent.CheckListItem, value string) {
 	switch item.Type {
 	case enum.CheckListItemTypeEnum:
 		require.Equal(t, item.SelectedEnumValues, value)
