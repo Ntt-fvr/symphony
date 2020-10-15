@@ -160,18 +160,21 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	}
 	currRow++
 	for _, item := range items {
+		// Handle Photos
 		if item.Type == enum.CheckListItemTypeFiles {
+			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
+			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), item.IsMandatory)
 			image, err := er.getFileData(ctx, item)
 			if err != nil {
 				logger.Error("error getting file data", zap.Error(err))
-			}
-			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
-			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), item.IsMandatory)
-			err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(currRow), "", item.Title, ".jpg", image)
-			if err != nil {
-				logger.Error("could not add image to spreadsheet", zap.Error(err))
+			} else {
+				err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(currRow), "", item.Title, ".jpg", image)
+				if err != nil {
+					logger.Error("could not add image to spreadsheet", zap.Error(err))
+				}
 			}
 		} else {
+			// Handle Everything else
 			for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
 				_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
 			}
@@ -257,6 +260,7 @@ func (er SingleWo) getFileData(ctx context.Context, item *ent.CheckListItem) ([]
 	blob, err := er.Bucket.NewReader(ctx, fileKey, nil)
 	if err != nil {
 		logger.Error("trouble reading bucket", zap.Error(err))
+		return nil, err
 	}
 	defer blob.Close()
 	return ioutil.ReadAll(blob)

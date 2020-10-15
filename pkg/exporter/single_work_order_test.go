@@ -261,7 +261,7 @@ func (s *SingleWoTestSuite) TestSingleWorkOrderExport(t *testing.T) {
 	log := log.NewDefaultLogger(zap.New(core))
 	client := viewertest.NewTestClient(t)
 
-	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log}}
+	e := &ExcelExporter{Log: log, ExcelFile: SingleWo{Log: log, Bucket: s.bucket}}
 	ctx := viewertest.NewContext(context.Background(), client)
 	workOrder := s.prepareSingleWOData(ctx, t)
 
