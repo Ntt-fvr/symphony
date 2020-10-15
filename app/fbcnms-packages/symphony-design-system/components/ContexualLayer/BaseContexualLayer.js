@@ -79,6 +79,11 @@ const BaseContexualLayer = (props: Props, ref: TRefFor<ContextualLayerRef>) => {
   const contextualLayerRef = useRef<HTMLDivElement | null>(null);
 
   const positionCalculationsCycles = useRef(0);
+  useLayoutEffect(() => {
+    if (hidden) {
+      positionCalculationsCycles.current = 0;
+    }
+  }, [hidden]);
 
   const recalculateStyles = useCallback(() => {
     const contextualLayerElement = contextualLayerRef.current;
@@ -95,15 +100,12 @@ const BaseContexualLayer = (props: Props, ref: TRefFor<ContextualLayerRef>) => {
       const style = {};
       switch (position) {
         case 'below':
+          const distanceFromBottom =
+            documentRect.bottom -
+            (contextRect.bottom + contextualLayerElement.clientHeight);
           if (positionCalculationsCycles.current > 3) {
-            style.top = Math.max(
-              0,
-              documentRect.bottom - contextualLayerElement.clientHeight - 16,
-            );
-          } else if (
-            contextRect.bottom + contextualLayerElement.clientHeight >
-            documentRect.bottom
-          ) {
+            style.top = Math.max(0, contextRect.bottom + distanceFromBottom);
+          } else if (distanceFromBottom < 0) {
             setPosition('above');
             break;
           } else {
