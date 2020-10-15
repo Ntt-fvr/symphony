@@ -7,20 +7,27 @@ package exporter
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/facebookincubator/symphony/pkg/ent"
-	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
+	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
+	"gocloud.dev/blob"
+
+	// Imports required for excelize to decode images
+	_ "image/jpeg"
+	_ "image/png"
 )
 
 type SingleWo struct {
-	Log log.Logger
+	Log    log.Logger
+	Bucket *blob.Bucket
 }
 
 var (
@@ -144,6 +151,7 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	_ = f.SetColWidth(sheetName, "A", "D", 40)
 	_ = f.SetColWidth(sheetName, "B", "B", 11) // Is Mandatory column
 	currRow := 1
+	logger := er.Log.For(ctx)
 
 	for i, header := range ChecklistHeader {
 		cell := Columns[i] + strconv.Itoa(currRow)
@@ -152,11 +160,27 @@ func (er SingleWo) generateChecklistItems(ctx context.Context, items []*ent.Chec
 	}
 	currRow++
 	for _, item := range items {
-		for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
-			_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
+		// Handle Photos
+		if item.Type == enum.CheckListItemTypeFiles {
+			_ = f.SetCellValue(sheetName, Columns[0]+strconv.Itoa(currRow), item.Title)
+			_ = f.SetCellValue(sheetName, Columns[1]+strconv.Itoa(currRow), strconv.FormatBool(item.IsMandatory))
+			image, err := er.getFileData(ctx, item)
+			if err != nil {
+				logger.Error("error getting file data", zap.Error(err))
+			} else {
+				err = f.AddPictureFromBytes(sheetName, Columns[2]+strconv.Itoa(currRow), "", item.Title, ".jpg", image)
+				if err != nil {
+					logger.Error("could not add image to spreadsheet", zap.Error(err))
+				}
+			}
+		} else {
+			// Handle Everything else
+			for j, data := range []string{item.Title, strconv.FormatBool(item.IsMandatory), getItemString(ctx, item)} {
+				_ = f.SetCellValue(sheetName, Columns[j]+strconv.Itoa(currRow), data)
+			}
 		}
 		if item.HelpText != nil {
-			_ = f.SetCellValue(sheetName, "D"+strconv.Itoa(currRow), *item.HelpText)
+			_ = f.SetCellValue(sheetName, Columns[3]+strconv.Itoa(currRow), *item.HelpText)
 		}
 		currRow++
 	}
@@ -178,12 +202,6 @@ func getItemString(ctx context.Context, item *ent.CheckListItem) string {
 		return "N/A"
 	case enum.CheckListItemTypeCellScan:
 		data, err := getCellScanData(ctx, item)
-		if err != nil {
-			return ""
-		}
-		return data
-	case enum.CheckListItemTypeFiles:
-		data, err := getFileData(ctx, item)
 		if err != nil {
 			return ""
 		}
@@ -230,12 +248,22 @@ func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, erro
 	return data.String(), nil
 }
 
-func getFileData(ctx context.Context, item *ent.CheckListItem) (string, error) {
-	files, err := item.QueryFiles().Select(file.FieldName).Strings(ctx)
+func (er SingleWo) getFileData(ctx context.Context, item *ent.CheckListItem) ([]byte, error) {
+	logger := er.Log.For(ctx)
+	// For now we will only support the first file
+	file, err := item.QueryFiles().First(ctx)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return strings.Join(files, ", "), nil
+	tenant := viewer.FromContext(ctx).Tenant()
+	fileKey := tenant + "/" + file.StoreKey
+	blob, err := er.Bucket.NewReader(ctx, fileKey, nil)
+	if err != nil {
+		logger.Error("trouble reading bucket", zap.Error(err))
+		return nil, err
+	}
+	defer blob.Close()
+	return ioutil.ReadAll(blob)
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
