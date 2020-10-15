@@ -52,6 +52,10 @@ export type AddEditEquipmentTypeCard_editingEquipmentType = {|
       +id: string,
       +name: string,
     |},
+    +connectedPorts: ?$ReadOnlyArray<{|
+      +id: string,
+      +name: string,
+    |}>,
   |}>,
   +numberOfEquipment: number,
   +$refType: AddEditEquipmentTypeCard_editingEquipmentType$ref,
@@ -93,7 +97,11 @@ v3 = {
   "kind": "ScalarField",
   "name": "visibleLabel",
   "storageKey": null
-};
+},
+v4 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+];
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -227,10 +235,17 @@ return {
           "kind": "LinkedField",
           "name": "portType",
           "plural": false,
-          "selections": [
-            (v0/*: any*/),
-            (v1/*: any*/)
-          ],
+          "selections": (v4/*: any*/),
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "EquipmentPortDefinition",
+          "kind": "LinkedField",
+          "name": "connectedPorts",
+          "plural": true,
+          "selections": (v4/*: any*/),
           "storageKey": null
         }
       ],

@@ -125,6 +125,10 @@ fragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {
     id
     name
   }
+  connectedPorts {
+    id
+    name
+  }
 }
 
 fragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {
@@ -198,7 +202,11 @@ v5 = {
   "kind": "ScalarField",
   "name": "visibleLabel",
   "storageKey": null
-};
+},
+v6 = [
+  (v2/*: any*/),
+  (v3/*: any*/)
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -397,10 +405,17 @@ return {
                 "kind": "LinkedField",
                 "name": "portType",
                 "plural": false,
-                "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/)
-                ],
+                "selections": (v6/*: any*/),
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "EquipmentPortDefinition",
+                "kind": "LinkedField",
+                "name": "connectedPorts",
+                "plural": true,
+                "selections": (v6/*: any*/),
                 "storageKey": null
               }
             ],
@@ -419,12 +434,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9f867e8227801a7602ebfd9faca1df7b",
+    "cacheID": "74dafaac4b041f0c8886cd694f6bfa82",
     "id": null,
     "metadata": {},
     "name": "EditEquipmentTypeMutation",
     "operationKind": "mutation",
-    "text": "mutation EditEquipmentTypeMutation(\n  $input: EditEquipmentTypeInput!\n) {\n  editEquipmentType(input: $input) {\n    id\n    name\n    ...EquipmentTypeItem_equipmentType\n  }\n}\n\nfragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {\n  ...PropertyTypeFormField_propertyType\n  id\n  index\n}\n\nfragment EquipmentTypeItem_equipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    ...DynamicPropertyTypesGrid_propertyTypes\n    id\n  }\n  positionDefinitions {\n    ...PositionDefinitionsTable_positionDefinitions\n    id\n  }\n  portDefinitions {\n    ...PortDefinitionsTable_portDefinitions\n    id\n  }\n  numberOfEquipment\n}\n\nfragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {\n  id\n  name\n  index\n  visibleLabel\n  portType {\n    id\n    name\n  }\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
+    "text": "mutation EditEquipmentTypeMutation(\n  $input: EditEquipmentTypeInput!\n) {\n  editEquipmentType(input: $input) {\n    id\n    name\n    ...EquipmentTypeItem_equipmentType\n  }\n}\n\nfragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {\n  ...PropertyTypeFormField_propertyType\n  id\n  index\n}\n\nfragment EquipmentTypeItem_equipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    ...DynamicPropertyTypesGrid_propertyTypes\n    id\n  }\n  positionDefinitions {\n    ...PositionDefinitionsTable_positionDefinitions\n    id\n  }\n  portDefinitions {\n    ...PortDefinitionsTable_portDefinitions\n    id\n  }\n  numberOfEquipment\n}\n\nfragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {\n  id\n  name\n  index\n  visibleLabel\n  portType {\n    id\n    name\n  }\n  connectedPorts {\n    id\n    name\n  }\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
   }
 };
 })();

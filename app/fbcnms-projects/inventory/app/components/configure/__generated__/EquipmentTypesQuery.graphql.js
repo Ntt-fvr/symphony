@@ -89,6 +89,10 @@ fragment AddEditEquipmentTypeCard_editingEquipmentType on EquipmentType {
       id
       name
     }
+    connectedPorts {
+      id
+      name
+    }
   }
   numberOfEquipment
 }
@@ -123,6 +127,10 @@ fragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {
   index
   visibleLabel
   portType {
+    id
+    name
+  }
+  connectedPorts {
     id
     name
   }
@@ -231,7 +239,11 @@ v7 = {
   "kind": "ScalarField",
   "name": "visibleLabel",
   "storageKey": null
-};
+},
+v8 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -476,10 +488,17 @@ return {
                         "kind": "LinkedField",
                         "name": "portType",
                         "plural": false,
-                        "selections": [
-                          (v0/*: any*/),
-                          (v1/*: any*/)
-                        ],
+                        "selections": (v8/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "EquipmentPortDefinition",
+                        "kind": "LinkedField",
+                        "name": "connectedPorts",
+                        "plural": true,
+                        "selections": (v8/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -516,7 +535,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "eb588b90a3404ea713983b5f538b2507",
+    "cacheID": "e2113eef7b1e71b0255650518e91f281",
     "id": null,
     "metadata": {
       "connection": [
@@ -532,7 +551,7 @@ return {
     },
     "name": "EquipmentTypesQuery",
     "operationKind": "query",
-    "text": "query EquipmentTypesQuery {\n  equipmentTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        ...EquipmentTypeItem_equipmentType\n        ...AddEditEquipmentTypeCard_editingEquipmentType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditEquipmentTypeCard_editingEquipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n  }\n  positionDefinitions {\n    id\n    name\n    index\n    visibleLabel\n  }\n  portDefinitions {\n    id\n    name\n    index\n    visibleLabel\n    portType {\n      id\n      name\n    }\n  }\n  numberOfEquipment\n}\n\nfragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {\n  ...PropertyTypeFormField_propertyType\n  id\n  index\n}\n\nfragment EquipmentTypeItem_equipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    ...DynamicPropertyTypesGrid_propertyTypes\n    id\n  }\n  positionDefinitions {\n    ...PositionDefinitionsTable_positionDefinitions\n    id\n  }\n  portDefinitions {\n    ...PortDefinitionsTable_portDefinitions\n    id\n  }\n  numberOfEquipment\n}\n\nfragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {\n  id\n  name\n  index\n  visibleLabel\n  portType {\n    id\n    name\n  }\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
+    "text": "query EquipmentTypesQuery {\n  equipmentTypes(first: 500) {\n    edges {\n      node {\n        id\n        name\n        ...EquipmentTypeItem_equipmentType\n        ...AddEditEquipmentTypeCard_editingEquipmentType\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment AddEditEquipmentTypeCard_editingEquipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    id\n    name\n    type\n    nodeType\n    index\n    stringValue\n    intValue\n    booleanValue\n    floatValue\n    latitudeValue\n    longitudeValue\n    isEditable\n    isInstanceProperty\n    isMandatory\n  }\n  positionDefinitions {\n    id\n    name\n    index\n    visibleLabel\n  }\n  portDefinitions {\n    id\n    name\n    index\n    visibleLabel\n    portType {\n      id\n      name\n    }\n    connectedPorts {\n      id\n      name\n    }\n  }\n  numberOfEquipment\n}\n\nfragment DynamicPropertyTypesGrid_propertyTypes on PropertyType {\n  ...PropertyTypeFormField_propertyType\n  id\n  index\n}\n\nfragment EquipmentTypeItem_equipmentType on EquipmentType {\n  id\n  name\n  propertyTypes {\n    ...DynamicPropertyTypesGrid_propertyTypes\n    id\n  }\n  positionDefinitions {\n    ...PositionDefinitionsTable_positionDefinitions\n    id\n  }\n  portDefinitions {\n    ...PortDefinitionsTable_portDefinitions\n    id\n  }\n  numberOfEquipment\n}\n\nfragment PortDefinitionsTable_portDefinitions on EquipmentPortDefinition {\n  id\n  name\n  index\n  visibleLabel\n  portType {\n    id\n    name\n  }\n  connectedPorts {\n    id\n    name\n  }\n}\n\nfragment PositionDefinitionsTable_positionDefinitions on EquipmentPositionDefinition {\n  id\n  name\n  index\n  visibleLabel\n}\n\nfragment PropertyTypeFormField_propertyType on PropertyType {\n  id\n  name\n  type\n  nodeType\n  index\n  stringValue\n  intValue\n  booleanValue\n  floatValue\n  latitudeValue\n  longitudeValue\n  rangeFromValue\n  rangeToValue\n  isEditable\n  isInstanceProperty\n  isMandatory\n  category\n  isDeleted\n}\n"
   }
 };
 })();

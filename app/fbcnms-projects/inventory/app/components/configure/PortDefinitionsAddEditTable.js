@@ -29,6 +29,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TextInput from '@symphony/design-system/components/Input/TextInput';
 import inventoryTheme from '../../common/theme';
 import update from 'immutability-helper';
+import useFeatureFlag from '@fbcnms/ui/context/useFeatureFlag';
 import {DeleteIcon, PlusIcon} from '@symphony/design-system/icons';
 import {fetchQuery, graphql} from 'react-relay';
 import {makeStyles} from '@material-ui/styles';
@@ -45,6 +46,9 @@ const useStyles = makeStyles(_theme => ({
   addButton: {
     marginBottom: '12px',
   },
+  connectedPorts: {
+    padding: '16px',
+  },
   loadingContainer: inventoryTheme.loadingContainer,
 }));
 
@@ -56,6 +60,10 @@ graphql`
     index
     visibleLabel
     portType {
+      id
+      name
+    }
+    connectedPorts {
       id
       name
     }
@@ -85,7 +93,11 @@ type Props = $ReadOnly<{|
 
 const PortDefinitionsAddEditTable = (props: Props) => {
   const [equipmentPortTypes, setEquipmentPortTypes] = useState(null);
+  const [oneSidePorts, setOneSidePorts] = useState([]);
   const classes = useStyles();
+  const backplaneConnectionsEnabled = useFeatureFlag(
+    'enable_backplane_connections',
+  );
 
   const getEquipmentPortTypes = async (): Promise<Array<EquipmentPortType>> => {
     const response = await fetchQuery(
@@ -105,6 +117,26 @@ const PortDefinitionsAddEditTable = (props: Props) => {
     getEquipmentPortTypes().then(_equipmentPortTypes => {
       setEquipmentPortTypes(_equipmentPortTypes);
     });
+  }, []);
+
+  useEffect(() => {
+    const oneSidePortsArray = [];
+    props.portDefinitions.forEach(portDef => {
+      if (portDef.connectedPorts && portDef.connectedPorts.length > 1) {
+        for (let i = 0; i < portDef.connectedPorts.length; i++)
+          oneSidePortsArray.push(portDef.id);
+      }
+    });
+    props.portDefinitions.forEach(portDef => {
+      if (
+        portDef.connectedPorts &&
+        portDef.connectedPorts.length == 1 &&
+        oneSidePortsArray.indexOf(portDef.connectedPorts[0].id) == -1
+      ) {
+        oneSidePortsArray.push(portDef.id);
+      }
+    });
+    setOneSidePorts(oneSidePortsArray);
   }, []);
 
   const getEditablePortPropertyCell = (portIndex, value, name, placeholder) => {
@@ -146,10 +178,26 @@ const PortDefinitionsAddEditTable = (props: Props) => {
 
   const onRemovePortClicked = portIndex => {
     const {onPortDefinitionsChanged} = props;
+    const portDefTobeRemoved = props.portDefinitions[portIndex].id;
+    const updateInput = {};
+    props.portDefinitions.forEach((portDef, index) => {
+      if (portIndex != index) {
+        updateInput[index] = {
+          ['connectedPorts']: {
+            $apply: connectedPorts => {
+              return connectedPorts.filter(connectedPort => {
+                return connectedPort.id != portDefTobeRemoved;
+              });
+            },
+          },
+        };
+      } else {
+        updateInput['$splice'] = [[portIndex, 1]];
+      }
+    });
+
     onPortDefinitionsChanged &&
-      onPortDefinitionsChanged(
-        update(props.portDefinitions, {$splice: [[portIndex, 1]]}),
-      );
+      onPortDefinitionsChanged(update(props.portDefinitions, updateInput));
   };
 
   const _onDragEnd = result => {
@@ -181,9 +229,82 @@ const PortDefinitionsAddEditTable = (props: Props) => {
       index: index,
       visibleLabel: '',
       portType: null,
+      connectedPorts: [],
     };
   };
 
+  const isConnectedPortSelectable = portDefinition => {
+    return oneSidePorts.indexOf(portDefinition.id) == -1;
+  };
+
+  const onConnectedPortChanged = (val, portIndex) => {
+    const currVal =
+      props.portDefinitions[portIndex].connectedPorts &&
+      props.portDefinitions[portIndex].connectedPorts.length > 0
+        ? props.portDefinitions[portIndex].connectedPorts[0].id
+        : null;
+    if (currVal) {
+      oneSidePorts.find((o, i) => {
+        if (o == currVal) {
+          oneSidePorts.splice(i, 1);
+          return true;
+        }
+      });
+    }
+
+    oneSidePorts.push(val);
+
+    const {onPortDefinitionsChanged} = props;
+    let toIdIndex = -1;
+    let prevConnectedPortIndex = -1;
+    props.portDefinitions.forEach((portDef, index) => {
+      if (portDef.id == val) {
+        toIdIndex = index;
+      }
+      if (currVal && portDef.id == currVal) {
+        prevConnectedPortIndex = index;
+      }
+    });
+    const updateInput = {};
+    updateInput[portIndex] = {
+      ['connectedPorts']: {
+        $set: [{id: val}],
+      },
+    };
+    updateInput[toIdIndex] = {
+      ['connectedPorts']: {
+        $push: [{id: props.portDefinitions[portIndex].id}],
+      },
+    };
+    if (prevConnectedPortIndex > -1) {
+      updateInput[prevConnectedPortIndex] = {
+        ['connectedPorts']: {
+          $apply: connectedPorts => {
+            return connectedPorts.filter(connectedPort => {
+              return connectedPort.id != props.portDefinitions[portIndex].id;
+            });
+          },
+        },
+      };
+    }
+    onPortDefinitionsChanged &&
+      onPortDefinitionsChanged(update(props.portDefinitions, updateInput));
+  };
+
+  const showAvailablePortsForConnection = (portDefinitions, portDefinition) => {
+    return portDefinitions
+      .filter(portDef => {
+        if (portDef.id == portDefinition.id || !portDef.name) return false;
+        if (portDef.connectedPorts && portDef.connectedPorts.length == 0)
+          return true;
+        return oneSidePorts.indexOf(portDef.id) != -1;
+      })
+      .map(portDef => ({
+        key: portDef.id,
+        value: portDef.id,
+        label: portDef.name,
+      }));
+  };
   const {portDefinitions} = props;
   if (portDefinitions.length === 0) {
     return null;
@@ -210,7 +331,12 @@ const PortDefinitionsAddEditTable = (props: Props) => {
             <TableCell component="div" className={classes.cell}>
               Type
             </TableCell>
-            <TableCell component="div" />
+            {backplaneConnectionsEnabled && (
+              <TableCell component="div" className={classes.cell}>
+                Backplane Connection
+              </TableCell>
+            )}
+            <TableCell component="div" className={classes.cell} />
           </TableRow>
         </TableHead>
         <DroppableTableBody onDragEnd={_onDragEnd}>
@@ -252,6 +378,39 @@ const PortDefinitionsAddEditTable = (props: Props) => {
                   portDefinition.portType?.name
                 )}
               </TableCell>
+              {backplaneConnectionsEnabled && (
+                <TableCell className={classes.cell} component="div" scope="row">
+                  {isConnectedPortSelectable(portDefinition) ? (
+                    <FormField>
+                      <Select
+                        className={classes.input}
+                        options={showAvailablePortsForConnection(
+                          portDefinitions,
+                          portDefinition,
+                        )}
+                        selectedValue={
+                          portDefinition.connectedPorts &&
+                          portDefinition.connectedPorts.length > 0
+                            ? portDefinition.connectedPorts[0].id
+                            : ''
+                        }
+                        onChange={value => onConnectedPortChanged(value, i)}
+                      />
+                    </FormField>
+                  ) : (
+                    <div className={classes.connectedPorts}>
+                      {portDefinition.connectedPorts &&
+                        portDefinition.connectedPorts
+                          .map(cp => {
+                            return portDefinitions
+                              .filter(pd => pd.id == cp.id)
+                              .map(pd => pd.name);
+                          })
+                          .join(', ')}
+                    </div>
+                  )}
+                </TableCell>
+              )}
               <TableCell component="div" align="right">
                 <FormAction>
                   <IconButton

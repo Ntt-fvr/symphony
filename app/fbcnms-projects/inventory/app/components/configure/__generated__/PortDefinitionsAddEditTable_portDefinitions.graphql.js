@@ -26,6 +26,10 @@ export type PortDefinitionsAddEditTable_portDefinitions = $ReadOnlyArray<{|
     +id: string,
     +name: string,
   |},
+  +connectedPorts: ?$ReadOnlyArray<{|
+    +id: string,
+    +name: string,
+  |}>,
   +$refType: PortDefinitionsAddEditTable_portDefinitions$ref,
 |}>;
 export type PortDefinitionsAddEditTable_portDefinitions$data = PortDefinitionsAddEditTable_portDefinitions;
@@ -51,7 +55,11 @@ v1 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-};
+},
+v2 = [
+  (v0/*: any*/),
+  (v1/*: any*/)
+];
 return {
   "argumentDefinitions": [],
   "kind": "Fragment",
@@ -83,10 +91,17 @@ return {
       "kind": "LinkedField",
       "name": "portType",
       "plural": false,
-      "selections": [
-        (v0/*: any*/),
-        (v1/*: any*/)
-      ],
+      "selections": (v2/*: any*/),
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "EquipmentPortDefinition",
+      "kind": "LinkedField",
+      "name": "connectedPorts",
+      "plural": true,
+      "selections": (v2/*: any*/),
       "storageKey": null
     }
   ],
@@ -95,6 +110,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '02bde9d17bd7bb5430914f693cdd659b';
+(node/*: any*/).hash = 'f2c5fd60596396613128d564008293ac';
 
 module.exports = node;
