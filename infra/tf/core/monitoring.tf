@@ -126,7 +126,7 @@ resource helm_release blackbox_exporter {
   name       = "prometheus-blackbox-exporter"
   repository = local.helm_repository.prometheus-community
   chart      = "prometheus-blackbox-exporter"
-  version    = "4.7.0"
+  version    = "4.8.0"
   namespace  = "monitoring"
 
   values = [templatefile("${path.module}/templates/blackbox-exporter-values.tpl", {

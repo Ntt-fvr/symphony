@@ -244,9 +244,6 @@ jobs:
       - *mktestdir
       - go/mod-download-cached
       - run:
-          name: Lint version
-          command: golangci-lint --version
-      - run:
           name: Lint tests
           command: golangci-lint run --out-format junit-xml > ~/test-results/lint.xml
       - *storetestdir

@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
 	"github.com/facebookincubator/symphony/pkg/ent/activity"
 	"github.com/facebookincubator/symphony/pkg/ent/checklistitem"
@@ -479,7 +480,26 @@ func (s *SingleWoTestSuite) checkItemType(item *ent.CheckListItem, value string)
 		wifiScans, err := item.QueryWifiScan().All(s.ctx)
 		s.Require().NoError(err)
 		for _, wifiScan := range wifiScans {
-			fields := []string{wifiScan.CreateTime.Format(TimeLayout), wifiScan.UpdateTime.Format(TimeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
+			fields := []string{
+				wifiScan.CreateTime.Format(TimeLayout),
+				wifiScan.UpdateTime.Format(TimeLayout),
+				wifiScan.Band, wifiScan.Bssid,
+				wifiScan.Ssid, wifiScan.Capabilities,
+				strconv.Itoa(wifiScan.Channel),
+				strconv.Itoa(wifiScan.ChannelWidth),
+				strconv.Itoa(wifiScan.Frequency),
+				strconv.FormatFloat(
+					pointer.GetFloat64(wifiScan.Rssi),
+					'f', -1, 64,
+				),
+				strconv.Itoa(wifiScan.Strength),
+				strconv.FormatFloat(
+					wifiScan.Latitude, 'f', -1, 64,
+				),
+				strconv.FormatFloat(
+					wifiScan.Longitude, 'f', -1, 64,
+				),
+			}
 			data.WriteString(strings.Join(fields, ", "))
 			data.WriteString("\n\r")
 		}

@@ -96,32 +96,38 @@ resource aws_elasticsearch_domain_policy es_management_access {
   access_policies = data.aws_iam_policy_document.es_management_access.json
 }
 
+# k8s namespace for logging resources
+resource kubernetes_namespace kube_logging {
+  metadata {
+    name = "kube-logging"
+  }
+}
+
 # helm chart for cleanning old indices.
 resource helm_release elasticsearch_curator {
   name       = "elasticsearch-curator"
   repository = local.helm_repository.stable
   chart      = "elasticsearch-curator"
-  namespace  = "monitoring"
+  namespace  = kubernetes_namespace.kube_logging.id
   version    = "2.2.1"
-  keyring    = ""
 
-  values = [<<EOT
-  configMaps:
-    config_yml: |-
-      ---
-      client:
-        hosts:
-          - ${aws_elasticsearch_domain.es.endpoint}
-        port: 80
-  EOT
-  ]
+  values = [yamlencode({
+    configMaps = {
+      config_yml = yamlencode({
+        client = {
+          hosts = [aws_elasticsearch_domain.es.endpoint]
+          port  = 80
+        }
+      })
+    }
+  })]
 }
 
 # external service for elastic
 resource kubernetes_service elastic {
   metadata {
     name      = "elastic"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
   }
 
   spec {
@@ -134,7 +140,7 @@ resource kubernetes_service elastic {
 resource kubernetes_ingress kibana {
   metadata {
     name      = "kibana"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
 
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
@@ -161,7 +167,7 @@ resource kubernetes_ingress kibana {
 resource kubernetes_ingress kibana_redirect {
   metadata {
     name      = "kibana-redirect"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.kube_logging.id
 
     annotations = {
       "kubernetes.io/ingress.class" = "nginx"
@@ -192,13 +198,17 @@ resource helm_release fluentd_elasticsearch {
   chart      = "fluentd-elasticsearch"
   repository = local.helm_repository.kokuwa
   name       = "fluentd-elasticsearch"
-  namespace  = "monitoring"
+  namespace  = kubernetes_namespace.kube_logging.id
   version    = "10.0.2"
 
   values = [yamlencode({
     elasticsearch = {
       hosts  = ["${aws_elasticsearch_domain.es.endpoint}:443"]
       scheme = "https"
+      logstash = {
+        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? 'ns.' + ns : 'logstash'}"
+      }
+      outputType = "elasticsearch_dynamic"
     }
     service = {
       ports = [{
@@ -227,6 +237,7 @@ resource helm_release fluentd_elasticsearch {
     configMaps = {
       useDefaults = {
         forwardInputConf = false
+        systemInputConf  = false
       }
     }
     extraConfigMaps = {

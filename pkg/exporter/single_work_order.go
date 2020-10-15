@@ -7,22 +7,23 @@ package exporter
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+
+	// Imports required for excelize to decode images
+	_ "image/jpeg"
+	_ "image/png"
 	"strconv"
 	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/AlekSi/pointer"
 	"github.com/facebookincubator/symphony/pkg/ent"
+	"github.com/facebookincubator/symphony/pkg/ent/file"
 	"github.com/facebookincubator/symphony/pkg/ent/schema/enum"
 	"github.com/facebookincubator/symphony/pkg/ent/workorder"
 	"github.com/facebookincubator/symphony/pkg/log"
 	"github.com/facebookincubator/symphony/pkg/viewer"
 	"go.uber.org/zap"
 	"gocloud.dev/blob"
-
-	// Imports required for excelize to decode images
-	_ "image/jpeg"
-	_ "image/png"
 )
 
 type SingleWo struct {
@@ -233,37 +234,68 @@ func getCellScanData(ctx context.Context, item *ent.CheckListItem) (string, erro
 }
 
 func getWifiScanData(ctx context.Context, item *ent.CheckListItem) (string, error) {
-	wifiScans, err := item.QueryWifiScan().All(ctx)
+	scans, err := item.QueryWifiScan().All(ctx)
 	if err != nil {
 		return "", err
 	}
-	var data strings.Builder
-	data.WriteString(strings.Join(WifiScanHeader, ", "))
-	data.WriteString("\n\r")
-	for _, wifiScan := range wifiScans {
-		fields := []string{wifiScan.CreateTime.Format(TimeLayout), wifiScan.UpdateTime.Format(TimeLayout), wifiScan.Band, wifiScan.Bssid, wifiScan.Ssid, wifiScan.Capabilities, strconv.Itoa(wifiScan.Channel), strconv.Itoa(wifiScan.ChannelWidth), strconv.Itoa(wifiScan.Frequency), fmt.Sprintf("%f", *wifiScan.Rssi), strconv.Itoa(wifiScan.Strength), fmt.Sprintf("%f", wifiScan.Latitude), fmt.Sprintf("%f", wifiScan.Longitude)}
-		data.WriteString(strings.Join(fields, ", "))
-		data.WriteString("\n\r")
+
+	var b strings.Builder
+	join := func(strs []string) {
+		for i, str := range strs {
+			if i > 0 {
+				b.WriteString(", ")
+			}
+			b.WriteString(str)
+		}
+		b.WriteString("\n\r")
 	}
-	return data.String(), nil
+	join(WifiScanHeader)
+
+	for _, scan := range scans {
+		join([]string{
+			scan.CreateTime.Format(TimeLayout),
+			scan.UpdateTime.Format(TimeLayout),
+			scan.Band, scan.Bssid,
+			scan.Ssid, scan.Capabilities,
+			strconv.Itoa(scan.Channel),
+			strconv.Itoa(scan.ChannelWidth),
+			strconv.Itoa(scan.Frequency),
+			strconv.FormatFloat(
+				pointer.GetFloat64(scan.Rssi),
+				'f', -1, 64,
+			),
+			strconv.Itoa(scan.Strength),
+			strconv.FormatFloat(
+				scan.Latitude, 'f', -1, 64,
+			),
+			strconv.FormatFloat(
+				scan.Longitude, 'f', -1, 64,
+			),
+		})
+	}
+	return b.String(), nil
 }
 
 func (er SingleWo) getFileData(ctx context.Context, item *ent.CheckListItem) ([]byte, error) {
 	logger := er.Log.For(ctx)
 	// For now we will only support the first file
-	file, err := item.QueryFiles().First(ctx)
+	key, err := item.QueryFiles().
+		Limit(1).
+		Select(file.FieldStoreKey).
+		String(ctx)
 	if err != nil {
+		logger.Error("cannot query checklist file store key", zap.Error(err))
 		return nil, err
 	}
 	tenant := viewer.FromContext(ctx).Tenant()
-	fileKey := tenant + "/" + file.StoreKey
-	blob, err := er.Bucket.NewReader(ctx, fileKey, nil)
+	data, err := er.Bucket.ReadAll(ctx, tenant+"/"+key)
 	if err != nil {
-		logger.Error("trouble reading bucket", zap.Error(err))
-		return nil, err
+		logger.Error("cannot read blob",
+			zap.String("tenant", tenant),
+			zap.String("key", key),
+		)
 	}
-	defer blob.Close()
-	return ioutil.ReadAll(blob)
+	return data, err
 }
 
 func getSummaryData(ctx context.Context, wo *ent.WorkOrder) ([]string, error) {
