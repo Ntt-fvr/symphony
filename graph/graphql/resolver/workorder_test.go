@@ -8,6 +8,7 @@ import (
 	"context"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/99designs/gqlgen/client"
 	"github.com/AlekSi/pointer"
@@ -1908,6 +1909,29 @@ func TestTechnicianCheckinToWorkOrder(t *testing.T) {
 	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
 	require.NoError(t, err)
 	assert.Len(t, activities, 1)
+}
+
+func TestTechnicianCheckinAtSpecificTimeToWorkOrder(t *testing.T) {
+	r := newTestResolver(t)
+	defer r.Close()
+	ctx := viewertest.NewContext(context.Background(), r.client)
+	mr := r.Mutation()
+
+	time := pointer.ToTime(time.Date(2014, 6, 25, 12, 24, 40, 0, time.UTC))
+	w := createWorkOrder(ctx, t, *r, "Foo")
+	w, err := mr.TechnicianWorkOrderCheckIn(
+		ctx,
+		w.ID,
+		&models.TechnicianWorkOrderCheckInInput{DistanceMeters: pointer.ToFloat64(50), CheckInTime: time},
+	)
+	require.NoError(t, err)
+
+	assert.Equal(t, w.Status, workorder.StatusInProgress)
+
+	activities, err := w.QueryActivities().Where(activity.ActivityTypeEQ(activity.ActivityTypeClockIn)).All(ctx)
+	require.NoError(t, err)
+	assert.Len(t, activities, 1)
+	assert.Equal(t, activities[0].CreateTime, *time)
 }
 
 func TestTechnicianUploadDataToWorkOrder(t *testing.T) {

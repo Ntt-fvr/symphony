@@ -11485,6 +11485,7 @@ type LatestPythonPackageResult {
 
 input TechnicianWorkOrderCheckInInput {
   distanceMeters: Float
+  checkInTime: Time
 }
 
 enum VariableType @goModel(model: "github.com/facebookincubator/symphony/pkg/ent/schema/enum.VariableType") {
@@ -11782,6 +11783,7 @@ input TechnicianWorkOrderCheckOutInput {
   checkListCategories: [CheckListCategoryInput!]
   comment: String
   distanceMeters: Float
+  checkOutTime: Time
 }
 
 type Query {
@@ -53088,6 +53090,14 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderCheckInInput(ctx co
 			if err != nil {
 				return it, err
 			}
+		case "checkInTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkInTime"))
+			it.CheckInTime, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -53137,6 +53147,14 @@ func (ec *executionContext) unmarshalInputTechnicianWorkOrderCheckOutInput(ctx c
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("distanceMeters"))
 			it.DistanceMeters, err = ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "checkOutTime":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkOutTime"))
+			it.CheckOutTime, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}

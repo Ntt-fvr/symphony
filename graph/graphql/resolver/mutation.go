@@ -3154,6 +3154,9 @@ func (r mutationResolver) TechnicianWorkOrderCheckIn(ctx context.Context, id int
 		SetWorkOrderID(id)
 	if input != nil {
 		activityMutator = activityMutator.SetClockDetails(activity.ClockDetails{DistanceMeters: input.DistanceMeters})
+		if input.CheckInTime != nil {
+			activityMutator = activityMutator.SetCreateTime(*input.CheckInTime)
+		}
 	}
 	_, err = activityMutator.Save(ctx)
 

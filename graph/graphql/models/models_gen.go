@@ -810,7 +810,8 @@ type TechnicianCheckListItemInput struct {
 }
 
 type TechnicianWorkOrderCheckInInput struct {
-	DistanceMeters *float64 `json:"distanceMeters"`
+	DistanceMeters *float64   `json:"distanceMeters"`
+	CheckInTime    *time.Time `json:"checkInTime"`
 }
 
 type TechnicianWorkOrderCheckOutInput struct {
@@ -819,6 +820,7 @@ type TechnicianWorkOrderCheckOutInput struct {
 	CheckListCategories []*CheckListCategoryInput `json:"checkListCategories"`
 	Comment             *string                   `json:"comment"`
 	DistanceMeters      *float64                  `json:"distanceMeters"`
+	CheckOutTime        *time.Time                `json:"checkOutTime"`
 }
 
 type TechnicianWorkOrderUploadInput struct {
