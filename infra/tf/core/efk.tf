@@ -206,7 +206,7 @@ resource helm_release fluentd_elasticsearch {
       hosts  = ["${aws_elasticsearch_domain.es.endpoint}:443"]
       scheme = "https"
       logstash = {
-        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? 'ns.' + ns : 'logstash'}"
+        prefix = "$${ns = record&.dig('kubernetes', 'namespace_name'); ns ? ns + '.namespace' : tag == 'inventory' ? 'symphony.http' : 'logstash'}"
       }
       outputType = "elasticsearch_dynamic"
     }
