@@ -31,6 +31,7 @@ module eks {
   worker_groups = [
     {
       instance_type        = "t3.xlarge"
+      additional_userdata  = file("${path.module}/files/userdata.sh")
       asg_desired_capacity = local.eks_asg_capacity
       asg_min_size         = local.eks_asg_capacity
       asg_max_size         = local.eks_asg_capacity * 3
