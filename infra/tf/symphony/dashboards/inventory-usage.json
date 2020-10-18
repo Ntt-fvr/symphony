@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1588689071464,
+  "iteration": 1603015664829,
   "links": [],
   "panels": [
     {
@@ -26,6 +26,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 1,
       "gridPos": {
@@ -51,10 +58,10 @@
       "links": [],
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "6.4.2",
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -64,7 +71,7 @@
       "steppedLine": true,
       "targets": [
         {
-          "expr": "count(sum by (user) (increase(inventory_client_events_total{tenant=\"$tenant\"}[$__interval]) > 0))",
+          "expr": "count(sum by (user) (increase(inventory_client_events_total{tenant=\"$tenant\", namespace=\"$namespace\"}[$__interval]) > 0))",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -118,6 +125,31 @@
     {
       "cacheTimeout": null,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {},
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -128,41 +160,20 @@
       "links": [],
       "options": {
         "displayMode": "lcd",
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "mean"
           ],
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "max": 100,
-            "min": 0,
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": [],
+          "fields": "",
           "values": false
         },
-        "orientation": "horizontal",
         "showUnfilled": true
       },
-      "pluginVersion": "6.7.1",
+      "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "sum by (user) (increase(inventory_client_events_total{tenant=\"$tenant\"}[$__interval]) > 0)",
+          "expr": "sum by (user) (increase(inventory_client_events_total{tenant=\"$tenant\", namespace=\"$namespace\"}[$__interval]) > 0)",
           "instant": false,
           "interval": "",
           "legendFormat": "{{user}}",
@@ -180,6 +191,13 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -203,9 +221,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -215,7 +234,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (event) (increase(inventory_client_events_total{tenant=\"$tenant\", event=~\"add_(location_button|equipment_button|location_type_button|link)_clicked\"}[$__interval]) > 0)",
+          "expr": "sum by (event) (increase(inventory_client_events_total{tenant=\"$tenant\", namespace=\"$namespace\" event=~\"add_(location_button|equipment_button|location_type_button|link)_clicked\"}[$__interval]) > 0)",
           "interval": "",
           "legendFormat": "{{event}}",
           "refId": "A"
@@ -241,6 +260,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:250",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -249,6 +269,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:251",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -264,7 +285,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 22,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -272,7 +293,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "fb-test",
           "value": "fb-test"
         },
@@ -280,7 +301,6 @@
         "definition": "label_values(inventory_client_events_total, tenant)",
         "hide": 0,
         "includeAll": false,
-        "index": -1,
         "label": null,
         "multi": false,
         "name": "tenant",
@@ -311,6 +331,26 @@
         "name": "adhoc",
         "skipUrlSync": false,
         "type": "adhoc"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "symphony",
+          "value": "symphony"
+        },
+        "hide": 2,
+        "label": null,
+        "name": "namespace",
+        "options": [
+          {
+            "selected": true,
+            "text": "symphony",
+            "value": "symphony"
+          }
+        ],
+        "query": "symphony",
+        "skipUrlSync": false,
+        "type": "constant"
       }
     ]
   },
@@ -335,8 +375,5 @@
   "timezone": "",
   "title": "Inventory Usage",
   "uid": "ESssXFAWk",
-  "variables": {
-    "list": []
-  },
-  "version": 4
+  "version": 1
 }

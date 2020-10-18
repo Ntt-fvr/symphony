@@ -210,24 +210,6 @@ resource helm_release fluentd_elasticsearch {
       }
       outputType = "elasticsearch_dynamic"
     }
-    service = {
-      ports = [{
-        name = "http"
-        type = "ClusterIP"
-        port = 9880
-      }]
-    }
-    livenessProbe = {
-      kind = {
-        httpGet = {
-          path = "/fluentd.pod.healthcheck?json=%7B%22log%22%3A+%22health+check%22%7D"
-          port = 9880
-        }
-        exec = null
-      }
-      initialDelaySeconds = 5
-      periodSeconds       = 30
-    }
     serviceMonitor = {
       enabled = true
     }

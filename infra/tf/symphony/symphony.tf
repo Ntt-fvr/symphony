@@ -175,7 +175,9 @@ resource helm_release symphony {
       front = {
         spec = {
           proxy = {
-            logger = data.terraform_remote_state.core.outputs.eks.fluentd_http_service
+            logger = format("%s-aggregator.%s.svc.cluster.local:9880",
+              helm_release.log_forwarder.name, helm_release.log_forwarder.namespace,
+            )
           }
           mysql = {
             host = module.front_db.this_db_instance_address
